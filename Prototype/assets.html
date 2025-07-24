@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Assets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-building me-2"></i>Asset Management
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="assets.html">
+                            <i class="fas fa-laptop me-1"></i>Assets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="employees.html">
+                            <i class="fas fa-users me-1"></i>Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="inventory.html">
+                            <i class="fas fa-warehouse me-1"></i>Inventory
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="maintenance.html">
+                            <i class="fas fa-tools me-1"></i>Maintenance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reports.html">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <span class="text-white me-3">
+                        <i class="fas fa-user-shield me-1"></i>Admin User
+                    </span>
+                    <a href="index.html" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-0">Asset Management</h2>
+                <p class="text-muted mb-0">Manage and track all company assets</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" id="toggleView">
+                    <i class="fas fa-th-large me-1"></i>Grid View
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssetModal">
+                    <i class="fas fa-plus me-1"></i>Add Asset
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-md-3 mb-3">
+                        <label class="form-label">Search Assets</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search by ID, model, serial...">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Asset Type</label>
+                        <select class="form-select">
+                            <option value="">All Types</option>
+                            <option>Laptop</option>
+                            <option>Monitor</option>
+                            <option>Mobile Device</option>
+                            <option>Tablet</option>
+                            <option>iPad</option>
+                            <option>Accessories</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Brand</label>
+                        <select class="form-select">
+                            <option value="">All Brands</option>
+                            <option>Apple</option>
+                            <option>Dell</option>
+                            <option>HP</option>
+                            <option>Lenovo</option>
+                            <option>Samsung</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select">
+                            <option value="">All Status</option>
+                            <option>Available</option>
+                            <option>Assigned</option>
+                            <option>Under Repair</option>
+                            <option>Retired</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3 mb-3">
+                        <label class="form-label">Actions</label>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary flex-fill">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets Grid/List -->
+        <div id="assetsContainer">
+            <!-- Grid View -->
+            <div class="row" id="gridView">
+                <!-- Asset Card 1 -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success">Available</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>Assign</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-qrcode me-2"></i>Generate QR</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-laptop fa-3x text-primary"></i>
+                            </div>
+                            <h6 class="card-title fw-bold">AST-001</h6>
+                            <p class="card-text">
+                                <strong>MacBook Pro 16"</strong><br>
+                                <small class="text-muted">Apple • M2 Pro</small>
+                            </p>
+                            <div class="small text-muted">
+                                <div><strong>Serial:</strong> ABC123XYZ</div>
+                                <div><strong>RAM:</strong> 16GB</div>
+                                <div><strong>Storage:</strong> 512GB SSD</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>Added: Jan 15, 2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Card 2 -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">Assigned</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-minus me-2"></i>Return</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-desktop fa-3x text-info"></i>
+                            </div>
+                            <h6 class="card-title fw-bold">AST-002</h6>
+                            <p class="card-text">
+                                <strong>Dell UltraSharp 27"</strong><br>
+                                <small class="text-muted">Dell • 4K Monitor</small>
+                            </p>
+                            <div class="small text-muted">
+                                <div><strong>Serial:</strong> DEF456UVW</div>
+                                <div><strong>Resolution:</strong> 3840x2160</div>
+                                <div><strong>Assigned to:</strong> John Doe</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <i class="fas fa-user me-1"></i>Assigned: Feb 01, 2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Card 3 -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning">Under Repair</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>Maintenance Log</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-mobile-alt fa-3x text-warning"></i>
+                            </div>
+                            <h6 class="card-title fw-bold">AST-003</h6>
+                            <p class="card-text">
+                                <strong>iPhone 14 Pro</strong><br>
+                                <small class="text-muted">Apple • 256GB</small>
+                            </p>
+                            <div class="small text-muted">
+                                <div><strong>Serial:</strong> GHI789RST</div>
+                                <div><strong>Storage:</strong> 256GB</div>
+                                <div><strong>Issue:</strong> Screen repair</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <i class="fas fa-tools me-1"></i>Repair: Mar 10, 2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Card 4 -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success">Available</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>Assign</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-tablet-alt fa-3x text-success"></i>
+                            </div>
+                            <h6 class="card-title fw-bold">AST-004</h6>
+                            <p class="card-text">
+                                <strong>iPad Pro 12.9"</strong><br>
+                                <small class="text-muted">Apple • M2 Chip</small>
+                            </p>
+                            <div class="small text-muted">
+                                <div><strong>Serial:</strong> JKL012MNO</div>
+                                <div><strong>Storage:</strong> 256GB</div>
+                                <div><strong>Color:</strong> Space Gray</div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>Added: Mar 05, 2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List View (Hidden by default) -->
+            <div class="card d-none" id="listView">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Asset ID</th>
+                                    <th>Type</th>
+                                    <th>Brand/Model</th>
+                                    <th>Serial Number</th>
+                                    <th>Status</th>
+                                    <th>Assigned To</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>AST-001</strong></td>
+                                    <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
+                                    <td>Apple MacBook Pro 16"</td>
+                                    <td>ABC123XYZ</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td>-</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AST-002</strong></td>
+                                    <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
+                                    <td>Dell UltraSharp 27"</td>
+                                    <td>DEF456UVW</td>
+                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td>John Doe</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-user-minus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AST-003</strong></td>
+                                    <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
+                                    <td>iPhone 14 Pro</td>
+                                    <td>GHI789RST</td>
+                                    <td><span class="badge bg-warning">Under Repair</span></td>
+                                    <td>-</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning">
+                                                <i class="fas fa-tools"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Asset Detail Modal -->
+    <div class="modal fade" id="assetDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Asset Details - AST-001</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Asset Information -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Asset Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Asset ID</label>
+                                            <div class="fw-bold">AST-001</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Asset Type</label>
+                                            <div class="fw-bold">Laptop</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Brand</label>
+                                            <div class="fw-bold">Apple</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Model</label>
+                                            <div class="fw-bold">MacBook Pro 16"</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Serial Number</label>
+                                            <div class="fw-bold">ABC123XYZ</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Status</label>
+                                            <div><span class="badge bg-success">Available</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Specifications -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Specifications</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Processor</label>
+                                            <div class="fw-bold">Apple M2 Pro</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">RAM</label>
+                                            <div class="fw-bold">16GB</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Storage</label>
+                                            <div class="fw-bold">512GB SSD</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Operating System</label>
+                                            <div class="fw-bold">macOS Sonoma</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assignment & Warranty -->
+                        <div class="col-lg-6">
+                            <!-- Current Assignment -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Current Assignment</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">This asset is not currently assigned</p>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-user-plus me-2"></i>Assign Asset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Warranty Information -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Warranty Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Purchase Date</label>
+                                            <div class="fw-bold">Jan 15, 2024</div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label text-muted">Warranty Expires</label>
+                                            <div class="fw-bold text-success">Jan 15, 2027</div>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label text-muted">Warranty Provider</label>
+                                            <div class="fw-bold">Apple Inc.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" style="width: 95%"></div>
+                                            </div>
+                                            <small class="text-muted">2 years 11 months remaining</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QR Code -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-qrcode me-2"></i>QR Code</h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="qr-code-placeholder bg-light border rounded p-4 mb-3">
+                                        <i class="fas fa-qrcode fa-4x text-muted"></i>
+                                        <p class="text-muted mt-2 mb-0">QR Code for AST-001</p>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Download QR Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset History -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-history me-2"></i>Asset History</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="timeline">
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker bg-success"></div>
+                                            <div class="timeline-content">
+                                                <h6 class="mb-1">Asset Added to Inventory</h6>
+                                                <p class="text-muted mb-1">Asset AST-001 was added to the inventory system</p>
+                                                <small class="text-muted">Jan 15, 2024 - 10:30 AM</small>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker bg-primary"></div>
+                                            <div class="timeline-content">
+                                                <h6 class="mb-1">Initial Configuration</h6>
+                                                <p class="text-muted mb-1">macOS setup and corporate software installation completed</p>
+                                                <small class="text-muted">Jan 16, 2024 - 2:15 PM</small>
+                                            </div>
+                                        </div>
+                                        <div class="timeline-item">
+                                            <div class="timeline-marker bg-info"></div>
+                                            <div class="timeline-content">
+                                                <h6 class="mb-1">Quality Check Passed</h6>
+                                                <p class="text-muted mb-1">Asset passed all quality checks and marked as ready for assignment</p>
+                                                <small class="text-muted">Jan 17, 2024 - 11:45 AM</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-1"></i>Assign Asset
+                        </button>
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-1"></i>Edit Asset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
