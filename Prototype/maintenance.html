@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body style="background-color: #ffffff;">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
@@ -79,59 +79,107 @@
             </button>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Stats Cards - Modern Design -->
         <div class="row mb-4">
+            <!-- Under Maintenance -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Under Maintenance</h6>
-                                <h2 class="mb-0">43</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-tools text-warning fa-lg"></i>
                             </div>
-                            <i class="fas fa-tools fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Under Maintenance</div>
+                                <div class="h3 mb-0 fw-bold text-dark">43</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-warning" style="width: 19.7%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-warning">
+                                <i class="fas fa-arrow-up me-1"></i>3.2% increase this month
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Scheduled -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Scheduled</h6>
-                                <h2 class="mb-0">12</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-info bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-calendar-alt text-info fa-lg"></i>
                             </div>
-                            <i class="fas fa-calendar-alt fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Scheduled</div>
+                                <div class="h3 mb-0 fw-bold text-dark">12</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-info" style="width: 5.5%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-info">
+                                <i class="fas fa-calendar me-1"></i>Next: Tomorrow
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Completed -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Completed</h6>
-                                <h2 class="mb-0">156</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-check-circle text-success fa-lg"></i>
                             </div>
-                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Completed</div>
+                                <div class="h3 mb-0 fw-bold text-dark">156</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-success" style="width: 71.6%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>15.2% this month
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Overdue -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-danger text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Overdue</h6>
-                                <h2 class="mb-0">7</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-danger bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
                             </div>
-                            <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Overdue</div>
+                                <div class="h3 mb-0 fw-bold text-dark">7</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-danger" style="width: 3.2%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i>Needs attention
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
@@ -142,51 +190,56 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-md-3 mb-3">
-                        <label class="form-label">Search</label>
+                    <div class="col-12 col-md-4 mb-3">
+                        <label class="form-label">Search Maintenance</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search by asset ID, vendor...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by asset ID, vendor, issue...">
                         </div>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Status</label>
-                        <select class="form-select">
+                        <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
-                            <option>Scheduled</option>
-                            <option>In Progress</option>
-                            <option>Completed</option>
-                            <option>Overdue</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Overdue">Overdue</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Priority</label>
-                        <select class="form-select">
+                        <select class="form-select" id="priorityFilter">
                             <option value="">All Priorities</option>
-                            <option>Low</option>
-                            <option>Medium</option>
-                            <option>High</option>
-                            <option>Critical</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Vendor</label>
-                        <select class="form-select">
+                        <select class="form-select" id="vendorFilter">
                             <option value="">All Vendors</option>
-                            <option>TechFix Solutions</option>
-                            <option>Apple Service</option>
-                            <option>Dell Support</option>
-                            <option>Internal Team</option>
+                            <option value="TechFix Solutions">TechFix Solutions</option>
+                            <option value="Apple Service">Apple Service</option>
+                            <option value="Dell Support">Dell Support</option>
+                            <option value="Internal Team">Internal Team</option>
                         </select>
                     </div>
-                    <div class="col-12 col-md-3 mb-3">
-                        <label class="form-label">Actions</label>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary flex-fill">
-                                <i class="fas fa-filter me-1"></i>Filter
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i>
+                            <select class="form-select" id="sortBy">
+                                <option value="assetId">Asset ID</option>
+                                <option value="status">Status</option>
+                                <option value="priority">Priority</option>
+                                <option value="vendor">Vendor</option>
+                                <option value="startDate">Start Date</option>
+                                <option value="cost">Cost</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
+                                <i class="fas fa-sort-amount-down"></i>
                             </button>
                         </div>
                     </div>
@@ -194,251 +247,178 @@
             </div>
         </div>
 
-        <!-- Maintenance Requests -->
-        <div class="row">
-            <!-- Active Maintenance Cards -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Active Maintenance</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Maintenance Item 1 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-003 - iPhone 14 Pro</h6>
-                                        <span class="badge bg-warning mb-2">In Progress</span>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Update Status</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-check me-2"></i>Mark Complete</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Screen repair</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">Apple Service</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Start Date:</small>
-                                        <div>Mar 10, 2024</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Est. Cost:</small>
-                                        <div class="fw-bold text-warning">$299.00</div>
-                                    </div>
-                                </div>
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-warning" style="width: 65%"></div>
-                                </div>
-                                <small class="text-muted">65% Complete</small>
-                            </div>
-                        </div>
-
-                        <!-- Maintenance Item 2 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-012 - Dell Laptop</h6>
-                                        <span class="badge bg-info mb-2">Scheduled</span>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Update Status</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-play me-2"></i>Start Maintenance</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Battery replacement</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">Dell Support</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Scheduled:</small>
-                                        <div>Mar 25, 2024</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Est. Cost:</small>
-                                        <div class="fw-bold text-info">$150.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Maintenance Item 3 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-015 - Monitor</h6>
-                                        <span class="badge bg-danger mb-2">Overdue</span>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Update Status</a></li>
-                                            <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle me-2"></i>Escalate</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Display flickering</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">TechFix Solutions</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Due Date:</small>
-                                        <div class="text-danger">Mar 15, 2024</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Est. Cost:</small>
-                                        <div class="fw-bold text-danger">$200.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <!-- Maintenance Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Maintenance Records</h5>
+                <div class="d-flex gap-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="showCompleted" checked>
+                        <label class="form-check-label" for="showCompleted">Show Completed</label>
                     </div>
                 </div>
             </div>
-
-            <!-- Recent Completed Maintenance -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Recently Completed</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- Completed Item 1 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-045 - Dell Monitor</h6>
-                                        <span class="badge bg-success mb-2">Completed</span>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="maintenanceTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Asset ID</th>
+                                <th>Issue</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Vendor</th>
+                                <th>Start Date</th>
+                                <th>Cost</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-asset-id="AST-003" data-status="In Progress" data-priority="Medium" data-vendor="Apple Service" data-search="AST-003 iPhone 14 Pro Screen repair Apple Service In Progress Medium">
+                                <td><strong>AST-003</strong><br><small class="text-muted">iPhone 14 Pro</small></td>
+                                <td>Screen repair</td>
+                                <td><span class="badge bg-warning text-dark">In Progress</span></td>
+                                <td><span class="badge bg-warning text-dark">Medium</span></td>
+                                <td>Apple Service</td>
+                                <td>Mar 10, 2024</td>
+                                <td><strong>$299.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success" title="Complete">
+                                            <i class="fas fa-check"></i>
+                                        </button>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Power supply repair</div>
+                                </td>
+                            </tr>
+                            <tr data-asset-id="AST-012" data-status="Scheduled" data-priority="Low" data-vendor="Dell Support" data-search="AST-012 Dell Laptop Battery replacement Dell Support Scheduled Low">
+                                <td><strong>AST-012</strong><br><small class="text-muted">Dell Laptop</small></td>
+                                <td>Battery replacement</td>
+                                <td><span class="badge bg-info text-dark">Scheduled</span></td>
+                                <td><span class="badge bg-success">Low</span></td>
+                                <td>Dell Support</td>
+                                <td>Mar 25, 2024</td>
+                                <td><strong>$150.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" title="Start">
+                                            <i class="fas fa-play"></i>
+                                        </button>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">Dell Support</div>
+                                </td>
+                            </tr>
+                            <tr data-asset-id="AST-015" data-status="Overdue" data-priority="High" data-vendor="TechFix Solutions" data-search="AST-015 Monitor Display flickering TechFix Solutions Overdue High">
+                                <td><strong>AST-015</strong><br><small class="text-muted">Monitor</small></td>
+                                <td>Display flickering</td>
+                                <td><span class="badge bg-danger">Overdue</span></td>
+                                <td><span class="badge bg-danger">High</span></td>
+                                <td>TechFix Solutions</td>
+                                <td>Mar 15, 2024</td>
+                                <td><strong>$200.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" title="Escalate">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </button>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Completed:</small>
-                                        <div>Mar 18, 2024</div>
+                                </td>
+                            </tr>
+                            <tr data-asset-id="AST-045" data-status="Completed" data-priority="Medium" data-vendor="Dell Support" data-search="AST-045 Dell Monitor Power supply repair Dell Support Completed Medium">
+                                <td><strong>AST-045</strong><br><small class="text-muted">Dell Monitor</small></td>
+                                <td>Power supply repair</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td><span class="badge bg-warning text-dark">Medium</span></td>
+                                <td>Dell Support</td>
+                                <td>Mar 18, 2024</td>
+                                <td><strong>$85.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" title="Report">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Final Cost:</small>
-                                        <div class="fw-bold text-success">$85.00</div>
+                                </td>
+                            </tr>
+                            <tr data-asset-id="AST-032" data-status="Completed" data-priority="High" data-vendor="Apple Service" data-search="AST-032 MacBook Pro Keyboard replacement Apple Service Completed High">
+                                <td><strong>AST-032</strong><br><small class="text-muted">MacBook Pro</small></td>
+                                <td>Keyboard replacement</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td><span class="badge bg-danger">High</span></td>
+                                <td>Apple Service</td>
+                                <td>Mar 16, 2024</td>
+                                <td><strong>$349.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" title="Report">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Completed Item 2 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-032 - MacBook Pro</h6>
-                                        <span class="badge bg-success mb-2">Completed</span>
+                                </td>
+                            </tr>
+                            <tr data-asset-id="AST-028" data-status="Completed" data-priority="Low" data-vendor="Internal Team" data-search="AST-028 Surface Tablet Software update Internal Team Completed Low">
+                                <td><strong>AST-028</strong><br><small class="text-muted">Surface Tablet</small></td>
+                                <td>Software update</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td><span class="badge bg-success">Low</span></td>
+                                <td>Internal Team</td>
+                                <td>Mar 14, 2024</td>
+                                <td><strong>$0.00</strong></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" title="Report">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Keyboard replacement</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">Apple Service</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Completed:</small>
-                                        <div>Mar 16, 2024</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Final Cost:</small>
-                                        <div class="fw-bold text-success">$349.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Completed Item 3 -->
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div>
-                                        <h6 class="fw-bold mb-1">AST-028 - Surface Tablet</h6>
-                                        <span class="badge bg-success mb-2">Completed</span>
-                                    </div>
-                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="text-muted">Issue:</small>
-                                        <div class="fw-bold">Software update</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Vendor:</small>
-                                        <div class="fw-bold">Internal Team</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Completed:</small>
-                                        <div>Mar 14, 2024</div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Final Cost:</small>
-                                        <div class="fw-bold text-success">$0.00</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+
+
     </div>
 
     <!-- Schedule Maintenance Modal -->
@@ -500,7 +480,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Estimated Cost</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">$</span>
+                                    <span class="input-group-text">₹</span>
                                     <input type="number" class="form-control" placeholder="0.00">
                                 </div>
                             </div>
@@ -594,7 +574,7 @@
                                         </div>
                                         <div class="col-6 mb-2">
                                             <label class="form-label text-muted">Estimated Cost</label>
-                                            <div class="fw-bold">$299.00</div>
+                                            <div class="fw-bold">₹24,999.00</div>
                                         </div>
                                         <div class="col-6 mb-2">
                                             <label class="form-label text-muted">Actual Cost</label>
@@ -645,5 +625,196 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Override dull badge colors with bright Bootstrap colors -->
+    <style>
+        /* Override custom badge colors with normal Bootstrap colors */
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .badge.bg-info {
+            background-color: #0dcaf0 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+    </style>
+    
+    <!-- Maintenance Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const priorityFilter = document.getElementById('priorityFilter');
+            const vendorFilter = document.getElementById('vendorFilter');
+            const sortBy = document.getElementById('sortBy');
+            const sortOrderBtn = document.getElementById('sortOrder');
+            const maintenanceTable = document.getElementById('maintenanceTable');
+            const showCompletedCheckbox = document.getElementById('showCompleted');
+            
+            // Sorting variables
+            let sortAscending = true;
+            
+            // Sort function
+            function sortMaintenance() {
+                const tbody = maintenanceTable.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'noResultsRow');
+                const sortField = sortBy.value;
+                
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortField) {
+                        case 'assetId':
+                            aValue = a.getAttribute('data-asset-id');
+                            bValue = b.getAttribute('data-asset-id');
+                            break;
+                        case 'status':
+                            aValue = a.getAttribute('data-status');
+                            bValue = b.getAttribute('data-status');
+                            break;
+                        case 'priority':
+                            aValue = a.getAttribute('data-priority');
+                            bValue = b.getAttribute('data-priority');
+                            // Priority sorting order: Critical > High > Medium > Low
+                            const priorityOrder = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+                            aValue = priorityOrder[aValue] || 0;
+                            bValue = priorityOrder[bValue] || 0;
+                            break;
+                        case 'vendor':
+                            aValue = a.getAttribute('data-vendor');
+                            bValue = b.getAttribute('data-vendor');
+                            break;
+                        case 'startDate':
+                            aValue = new Date(a.querySelector('td:nth-child(6)').textContent);
+                            bValue = new Date(b.querySelector('td:nth-child(6)').textContent);
+                            break;
+                        case 'cost':
+                            aValue = parseFloat(a.querySelector('td:nth-child(7)').textContent.replace(/[$,]/g, ''));
+                            bValue = parseFloat(b.querySelector('td:nth-child(7)').textContent.replace(/[$,]/g, ''));
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (sortField === 'startDate' || sortField === 'cost' || sortField === 'priority') {
+                        return sortAscending ? aValue - bValue : bValue - aValue;
+                    } else {
+                        if (aValue < bValue) return sortAscending ? -1 : 1;
+                        if (aValue > bValue) return sortAscending ? 1 : -1;
+                        return 0;
+                    }
+                });
+                
+                // Clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Update sort order icon
+                sortOrderBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                // Reapply filters after sorting
+                filterMaintenance();
+            }
+            
+            // Filter function
+            function filterMaintenance() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedStatus = statusFilter.value;
+                const selectedPriority = priorityFilter.value;
+                const selectedVendor = vendorFilter.value;
+                const showCompleted = showCompletedCheckbox.checked;
+                
+                const rows = maintenanceTable.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.id === 'noResultsRow') return;
+                    
+                    const status = row.getAttribute('data-status');
+                    const priority = row.getAttribute('data-priority');
+                    const vendor = row.getAttribute('data-vendor');
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    
+                    // Check if row matches all filters
+                    const matchesSearch = searchData.includes(searchTerm);
+                    const matchesStatus = !selectedStatus || status === selectedStatus;
+                    const matchesPriority = !selectedPriority || priority === selectedPriority;
+                    const matchesVendor = !selectedVendor || vendor === selectedVendor;
+                    const matchesCompleted = showCompleted || status !== 'Completed';
+                    
+                    if (matchesSearch && matchesStatus && matchesPriority && matchesVendor && matchesCompleted) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "no results" message
+                updateNoResultsMessage(visibleCount);
+            }
+            
+            // Add "no results" message functionality
+            function updateNoResultsMessage(count) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                
+                if (count === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noResultsRow';
+                        noResultsRow.innerHTML = `
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+                                <h6 class="text-muted">No maintenance records found</h6>
+                                <p class="text-muted mb-0">Try adjusting your search criteria</p>
+                            </td>
+                        `;
+                        maintenanceTable.querySelector('tbody').appendChild(noResultsRow);
+                    }
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', filterMaintenance);
+            statusFilter.addEventListener('change', filterMaintenance);
+            priorityFilter.addEventListener('change', filterMaintenance);
+            vendorFilter.addEventListener('change', filterMaintenance);
+            showCompletedCheckbox.addEventListener('change', filterMaintenance);
+            
+            // Sort event listeners
+            sortBy.addEventListener('change', sortMaintenance);
+            sortOrderBtn.addEventListener('click', function() {
+                sortAscending = !sortAscending;
+                sortMaintenance();
+            });
+            
+            // Initialize with all maintenance records visible
+            filterMaintenance();
+        });
+    </script>
 </body>
 </html> 

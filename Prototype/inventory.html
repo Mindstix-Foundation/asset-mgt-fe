@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body style="background-color: #ffffff;">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
@@ -84,59 +84,107 @@
             </div>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Stats Cards - Modern Design -->
         <div class="row mb-4">
+            <!-- Available Assets -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-success text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Available Assets</h6>
-                                <h2 class="mb-0">312</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-check-circle text-success fa-lg"></i>
                             </div>
-                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Available Assets</div>
+                                <div class="h3 mb-0 fw-bold text-dark">312</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-success" style="width: 63.5%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>5.2% increase this month
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Reserved -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-warning text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Reserved</h6>
-                                <h2 class="mb-0">45</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-clock text-warning fa-lg"></i>
                             </div>
-                            <i class="fas fa-clock fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Reserved</div>
+                                <div class="h3 mb-0 fw-bold text-dark">45</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-warning" style="width: 9.2%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-warning">
+                                <i class="fas fa-minus me-1"></i>2.1% from last month
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Low Stock -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-info text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Low Stock</h6>
-                                <h2 class="mb-0">8</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-danger bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
                             </div>
-                            <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Low Stock</div>
+                                <div class="h3 mb-0 fw-bold text-dark">8</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-danger" style="width: 1.6%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-danger">
+                                <i class="fas fa-arrow-down me-1"></i>3.1% needs attention
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Retired -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                <div class="card bg-secondary text-white">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-0">Retired</h6>
-                                <h2 class="mb-0">127</h2>
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-secondary bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-archive text-secondary fa-lg"></i>
                             </div>
-                            <i class="fas fa-archive fa-2x opacity-75"></i>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Retired</div>
+                                <div class="h3 mb-0 fw-bold text-dark">127</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-secondary" style="width: 25.9%"></div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-arrow-up me-1"></i>1.8% archived this month
+                            </small>
+                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
@@ -147,54 +195,61 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-md-3 mb-3">
+                    <div class="col-12 col-md-4 mb-3">
                         <label class="form-label">Search Inventory</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search by ID, model, serial...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, model, serial...">
                         </div>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Asset Type</label>
-                        <select class="form-select">
+                        <select class="form-select" id="typeFilter">
                             <option value="">All Types</option>
-                            <option>Laptop</option>
-                            <option>Monitor</option>
-                            <option>Mobile Device</option>
-                            <option>Tablet</option>
-                            <option>iPad</option>
-                            <option>Accessories</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Mobile">Mobile Device</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Accessory">Accessories</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Brand</label>
-                        <select class="form-select">
+                        <select class="form-select" id="brandFilter">
                             <option value="">All Brands</option>
-                            <option>Apple</option>
-                            <option>Dell</option>
-                            <option>HP</option>
-                            <option>Lenovo</option>
-                            <option>Samsung</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Dell">Dell</option>
+                            <option value="HP">HP</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="LG">LG</option>
+                            <option value="Microsoft">Microsoft</option>
+                            <option value="Logitech">Logitech</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Status</label>
-                        <select class="form-select">
+                        <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
-                            <option>Available</option>
-                            <option>Reserved</option>
-                            <option>Low Stock</option>
-                            <option>Retired</option>
+                            <option value="Available">Available</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Low Stock">Low Stock</option>
+                            <option value="Retired">Retired</option>
                         </select>
                     </div>
-                    <div class="col-12 col-md-3 mb-3">
-                        <label class="form-label">Actions</label>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary flex-fill">
-                                <i class="fas fa-filter me-1"></i>Filter
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i>
+                            <select class="form-select" id="sortBy">
+                                <option value="id">Asset ID</option>
+                                <option value="type">Type</option>
+                                <option value="brand">Brand</option>
+                                <option value="status">Status</option>
+                                <option value="location">Location</option>
+                                <option value="addedDate">Added Date</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
+                                <i class="fas fa-sort-amount-down"></i>
                             </button>
                         </div>
                     </div>
@@ -215,7 +270,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0" id="inventoryTable">
                         <thead class="table-light">
                             <tr>
                                 <th>Asset ID</th>
@@ -229,10 +284,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr data-id="AST-006" data-type="Laptop" data-brand="Apple" data-status="Available" data-location="Warehouse A" data-search="AST-006 Laptop MacBook Air Apple MNO123PQR Available Warehouse">
                                 <td><strong>AST-006</strong></td>
                                 <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
-                                <td>MacBook Air 13"</td>
+                                <td>Apple MacBook Air 13"</td>
                                 <td>MNO123PQR</td>
                                 <td><span class="badge bg-success">Available</span></td>
                                 <td>Warehouse A</td>
@@ -254,7 +309,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-id="AST-007" data-type="Monitor" data-brand="LG" data-status="Available" data-location="Warehouse B" data-search="AST-007 Monitor LG UltraWide STU456VWX Available Warehouse">
                                 <td><strong>AST-007</strong></td>
                                 <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
                                 <td>LG UltraWide 34"</td>
@@ -279,12 +334,12 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-id="AST-008" data-type="Tablet" data-brand="Microsoft" data-status="Reserved" data-location="Warehouse A" data-search="AST-008 Tablet Microsoft Surface Pro YZA789BCD Reserved Warehouse">
                                 <td><strong>AST-008</strong></td>
                                 <td><i class="fas fa-tablet-alt text-success me-2"></i>Tablet</td>
-                                <td>Surface Pro 9</td>
+                                <td>Microsoft Surface Pro 9</td>
                                 <td>YZA789BCD</td>
-                                <td><span class="badge bg-warning">Reserved</span></td>
+                                <td><span class="badge bg-warning text-dark">Reserved</span></td>
                                 <td>Warehouse A</td>
                                 <td>Mar 15, 2024</td>
                                 <td>
@@ -301,7 +356,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-id="AST-009" data-type="Mobile" data-brand="Samsung" data-status="Available" data-location="Warehouse C" data-search="AST-009 Mobile Samsung Galaxy S24 EFG012HIJ Available Warehouse">
                                 <td><strong>AST-009</strong></td>
                                 <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
                                 <td>Samsung Galaxy S24</td>
@@ -326,12 +381,12 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-id="AST-010" data-type="Accessory" data-brand="Apple" data-status="Low Stock" data-location="Warehouse A" data-search="AST-010 Accessory Apple AirPods Pro KLM345NOP Low Stock Warehouse">
                                 <td><strong>AST-010</strong></td>
                                 <td><i class="fas fa-headphones text-secondary me-2"></i>Accessory</td>
-                                <td>AirPods Pro 2nd Gen</td>
+                                <td>Apple AirPods Pro 2nd Gen</td>
                                 <td>KLM345NOP</td>
-                                <td><span class="badge bg-info">Low Stock</span></td>
+                                <td><span class="badge bg-info text-dark">Low Stock</span></td>
                                 <td>Warehouse A</td>
                                 <td>Mar 10, 2024</td>
                                 <td>
@@ -351,7 +406,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-id="AST-011" data-type="Accessory" data-brand="Logitech" data-status="Available" data-location="Warehouse B" data-search="AST-011 Accessory Logitech MX Keys QRS678TUV Available Warehouse">
                                 <td><strong>AST-011</strong></td>
                                 <td><i class="fas fa-keyboard text-dark me-2"></i>Accessory</td>
                                 <td>Logitech MX Keys</td>
@@ -515,7 +570,535 @@
         </div>
     </div>
 
+    <!-- Add to Inventory Modal -->
+    <div class="modal fade" id="addAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Add Asset to Inventory
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addInventoryForm">
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Asset Information -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-laptop me-2"></i>Asset Information
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="assetId" class="form-label">Asset ID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="assetId" name="assetId" placeholder="AST-XXX" required>
+                                    <div class="form-text">Auto-generated if left empty</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="assetType" class="form-label">Asset Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="assetType" name="assetType" required>
+                                        <option value="">Select Asset Type</option>
+                                        <option value="Laptop">Laptop</option>
+                                        <option value="Monitor">Monitor</option>
+                                        <option value="Mobile">Mobile Device</option>
+                                        <option value="Tablet">Tablet</option>
+                                        <option value="Accessory">Accessories</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="brand" class="form-label">Brand <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="brand" name="brand" required>
+                                        <option value="">Select Brand</option>
+                                        <option value="Apple">Apple</option>
+                                        <option value="Dell">Dell</option>
+                                        <option value="HP">HP</option>
+                                        <option value="Lenovo">Lenovo</option>
+                                        <option value="Samsung">Samsung</option>
+                                        <option value="LG">LG</option>
+                                        <option value="Microsoft">Microsoft</option>
+                                        <option value="Logitech">Logitech</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="model" class="form-label">Model <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="model" name="model" placeholder="e.g., MacBook Pro 16, Dell UltraSharp 27" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="serialNumber" class="form-label">Serial Number <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="serialNumber" name="serialNumber" placeholder="e.g., ABC123XYZ" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Inventory Details -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-warehouse me-2"></i>Inventory Details
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="status" name="status" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Available" selected>Available</option>
+                                        <option value="Reserved">Reserved</option>
+                                        <option value="Low Stock">Low Stock</option>
+                                        <option value="Retired">Retired</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Storage Location <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="location" name="location" required>
+                                        <option value="">Select Location</option>
+                                        <option value="Warehouse A">Warehouse A</option>
+                                        <option value="Warehouse B">Warehouse B</option>
+                                        <option value="Warehouse C">Warehouse C</option>
+                                        <option value="Storage Room 1">Storage Room 1</option>
+                                        <option value="Storage Room 2">Storage Room 2</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="purchaseDate" class="form-label">Purchase Date</label>
+                                    <input type="date" class="form-control" id="purchaseDate" name="purchaseDate">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="purchaseCost" class="form-label">Purchase Cost</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="purchaseCost" name="purchaseCost" placeholder="0.00" step="0.01">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="addedDate" class="form-label">Added to Inventory <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="addedDate" name="addedDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Additional Information
+                                </h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="vendor" class="form-label">Vendor/Supplier</label>
+                                        <input type="text" class="form-control" id="vendor" name="vendor" placeholder="e.g., Amazon, Best Buy, Direct from manufacturer">
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="warranty" class="form-label">Warranty Period</label>
+                                        <select class="form-select" id="warranty" name="warranty">
+                                            <option value="">Select Warranty</option>
+                                            <option value="1 Year">1 Year</option>
+                                            <option value="2 Years">2 Years</option>
+                                            <option value="3 Years">3 Years</option>
+                                            <option value="Extended">Extended Warranty</option>
+                                            <option value="No Warranty">No Warranty</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="condition" class="form-label">Condition</label>
+                                        <select class="form-select" id="condition" name="condition">
+                                            <option value="New" selected>New</option>
+                                            <option value="Like New">Like New</option>
+                                            <option value="Good">Good</option>
+                                            <option value="Fair">Fair</option>
+                                            <option value="Refurbished">Refurbished</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="quantity" class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="specifications" class="form-label">Specifications</label>
+                                    <textarea class="form-control" id="specifications" name="specifications" rows="2" placeholder="e.g., 16GB RAM, 512GB SSD, M2 Pro Chip"></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Additional notes about this asset"></textarea>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="generateQR" name="generateQR" checked>
+                                    <label class="form-check-label" for="generateQR">
+                                        Generate QR code for this asset
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo me-1"></i>Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Add to Inventory
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Override dull badge colors with bright Bootstrap colors -->
+    <style>
+        /* Override custom badge colors with normal Bootstrap colors */
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .badge.bg-info {
+            background-color: #0dcaf0 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+    </style>
+    
+    <!-- Inventory Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const brandFilter = document.getElementById('brandFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const sortBy = document.getElementById('sortBy');
+            const sortOrderBtn = document.getElementById('sortOrder');
+            const inventoryTable = document.getElementById('inventoryTable');
+            const showRetiredCheckbox = document.getElementById('showRetired');
+            
+            // Sorting variables
+            let sortAscending = true;
+            
+            // Sort function
+            function sortInventory() {
+                const tbody = inventoryTable.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'noResultsRow');
+                const sortField = sortBy.value;
+                
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortField) {
+                        case 'id':
+                            aValue = a.getAttribute('data-id');
+                            bValue = b.getAttribute('data-id');
+                            break;
+                        case 'type':
+                            aValue = a.getAttribute('data-type');
+                            bValue = b.getAttribute('data-type');
+                            break;
+                        case 'brand':
+                            aValue = a.getAttribute('data-brand');
+                            bValue = b.getAttribute('data-brand');
+                            break;
+                        case 'status':
+                            aValue = a.getAttribute('data-status');
+                            bValue = b.getAttribute('data-status');
+                            break;
+                        case 'location':
+                            aValue = a.getAttribute('data-location');
+                            bValue = b.getAttribute('data-location');
+                            break;
+                        case 'addedDate':
+                            aValue = new Date(a.querySelector('td:nth-child(7)').textContent);
+                            bValue = new Date(b.querySelector('td:nth-child(7)').textContent);
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (sortField === 'addedDate') {
+                        return sortAscending ? aValue - bValue : bValue - aValue;
+                    } else {
+                        if (aValue < bValue) return sortAscending ? -1 : 1;
+                        if (aValue > bValue) return sortAscending ? 1 : -1;
+                        return 0;
+                    }
+                });
+                
+                // Clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Update sort order icon
+                sortOrderBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                // Reapply filters after sorting
+                filterInventory();
+            }
+            
+            // Filter function
+            function filterInventory() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedType = typeFilter.value;
+                const selectedBrand = brandFilter.value;
+                const selectedStatus = statusFilter.value;
+                const showRetired = showRetiredCheckbox.checked;
+                
+                const rows = inventoryTable.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.id === 'noResultsRow') return;
+                    
+                    const type = row.getAttribute('data-type');
+                    const brand = row.getAttribute('data-brand');
+                    const status = row.getAttribute('data-status');
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    
+                    // Check if row matches all filters
+                    const matchesSearch = searchData.includes(searchTerm);
+                    const matchesType = !selectedType || type === selectedType;
+                    const matchesBrand = !selectedBrand || brand === selectedBrand;
+                    const matchesStatus = !selectedStatus || status === selectedStatus;
+                    const matchesRetired = showRetired || status !== 'Retired';
+                    
+                    if (matchesSearch && matchesType && matchesBrand && matchesStatus && matchesRetired) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "no results" message
+                updateNoResultsMessage(visibleCount);
+            }
+            
+            // Add "no results" message functionality
+            function updateNoResultsMessage(count) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                
+                if (count === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noResultsRow';
+                        noResultsRow.innerHTML = `
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+                                <h6 class="text-muted">No inventory items found</h6>
+                                <p class="text-muted mb-0">Try adjusting your search criteria</p>
+                            </td>
+                        `;
+                        inventoryTable.querySelector('tbody').appendChild(noResultsRow);
+                    }
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', filterInventory);
+            typeFilter.addEventListener('change', filterInventory);
+            brandFilter.addEventListener('change', filterInventory);
+            statusFilter.addEventListener('change', filterInventory);
+            showRetiredCheckbox.addEventListener('change', filterInventory);
+            
+            // Sort event listeners
+            sortBy.addEventListener('change', sortInventory);
+            sortOrderBtn.addEventListener('click', function() {
+                sortAscending = !sortAscending;
+                sortInventory();
+            });
+            
+            // Initialize with all inventory items visible
+            filterInventory();
+            
+            // Add Inventory Form Handling
+            const addInventoryForm = document.getElementById('addInventoryForm');
+            const addInventoryModal = new bootstrap.Modal(document.getElementById('addAssetModal'));
+            
+            addInventoryForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(addInventoryForm);
+                const inventoryData = {};
+                
+                // Convert FormData to object
+                for (let [key, value] of formData.entries()) {
+                    inventoryData[key] = value;
+                }
+                
+                // Generate asset ID if not provided
+                if (!inventoryData.assetId) {
+                    const existingIds = Array.from(inventoryTable.querySelectorAll('tbody tr'))
+                        .map(row => row.getAttribute('data-id'))
+                        .filter(id => id && id.startsWith('AST-'))
+                        .map(id => parseInt(id.split('-')[1]))
+                        .filter(num => !isNaN(num));
+                    
+                    const nextId = Math.max(...existingIds, 0) + 1;
+                    inventoryData.assetId = `AST-${String(nextId).padStart(3, '0')}`;
+                }
+                
+                // Format added date
+                const addedDate = new Date(inventoryData.addedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit'
+                });
+                
+                // Get status badge color
+                const statusColors = {
+                    'Available': 'bg-success',
+                    'Reserved': 'bg-warning text-dark',
+                    'Low Stock': 'bg-info text-dark',
+                    'Retired': 'bg-secondary'
+                };
+                
+                // Get asset type icon
+                const typeIcons = {
+                    'Laptop': 'fas fa-laptop text-primary',
+                    'Monitor': 'fas fa-desktop text-info',
+                    'Mobile': 'fas fa-mobile-alt text-warning',
+                    'Tablet': 'fas fa-tablet-alt text-success',
+                    'Accessory': 'fas fa-headphones text-secondary'
+                };
+                
+                // Create full brand/model string
+                const brandModel = `${inventoryData.brand} ${inventoryData.model}`;
+                
+                // Create new table row
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-id', inventoryData.assetId);
+                newRow.setAttribute('data-type', inventoryData.assetType);
+                newRow.setAttribute('data-brand', inventoryData.brand);
+                newRow.setAttribute('data-status', inventoryData.status);
+                newRow.setAttribute('data-location', inventoryData.location);
+                newRow.setAttribute('data-search', `${inventoryData.assetId} ${inventoryData.assetType} ${brandModel} ${inventoryData.serialNumber} ${inventoryData.status} ${inventoryData.location}`);
+                
+                newRow.innerHTML = `
+                    <td><strong>${inventoryData.assetId}</strong></td>
+                    <td><i class="${typeIcons[inventoryData.assetType] || 'fas fa-cube text-secondary'} me-2"></i>${inventoryData.assetType}</td>
+                    <td>${brandModel}</td>
+                    <td>${inventoryData.serialNumber}</td>
+                    <td><span class="badge ${statusColors[inventoryData.status] || 'bg-secondary'}">${inventoryData.status}</span></td>
+                    <td>${inventoryData.location}</td>
+                    <td>${addedDate}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inventoryDetailModal">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-success" title="Assign">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-info" title="QR Code">
+                                <i class="fas fa-qrcode"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                // Add the new row to the table
+                inventoryTable.querySelector('tbody').appendChild(newRow);
+                
+                // Show success message
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                successAlert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                successAlert.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Success!</strong> Asset ${inventoryData.assetId} has been added to inventory.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(successAlert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    if (successAlert.parentNode) {
+                        successAlert.remove();
+                    }
+                }, 5000);
+                
+                // Close modal and reset form
+                addInventoryModal.hide();
+                addInventoryForm.reset();
+                
+                // Reset default values
+                document.getElementById('status').value = 'Available';
+                document.getElementById('condition').value = 'New';
+                document.getElementById('quantity').value = '1';
+                document.getElementById('generateQR').checked = true;
+                
+                // Reapply filters to show the new inventory item
+                filterInventory();
+            });
+            
+            // Set default added date to today
+            document.getElementById('addedDate').value = new Date().toISOString().split('T')[0];
+            
+            // Auto-generate Asset ID when asset type or brand changes
+            const assetTypeSelect = document.getElementById('assetType');
+            const brandSelect = document.getElementById('brand');
+            const assetIdInput = document.getElementById('assetId');
+            
+            function generateAssetId() {
+                if (!assetIdInput.value && assetTypeSelect.value && brandSelect.value) {
+                    const existingIds = Array.from(inventoryTable.querySelectorAll('tbody tr'))
+                        .map(row => row.getAttribute('data-id'))
+                        .filter(id => id && id.startsWith('AST-'))
+                        .map(id => parseInt(id.split('-')[1]))
+                        .filter(num => !isNaN(num));
+                    
+                    const nextId = Math.max(...existingIds, 0) + 1;
+                    assetIdInput.value = `AST-${String(nextId).padStart(3, '0')}`;
+                }
+            }
+            
+            assetTypeSelect.addEventListener('change', generateAssetId);
+            brandSelect.addEventListener('change', generateAssetId);
+        });
+    </script>
 </body>
 </html> 

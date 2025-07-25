@@ -6,7 +6,7 @@ A comprehensive hollow prototype for an Asset Management Tool built with HTML, B
 
 ### 🔐 User Access & Roles
 - **Admin Login**: Full permissions (admin/admin123)
-- **Employee Login**: View-only access (emp001/emp123)
+- **HR Login**: Read-only access to all features (hr001/hr123)
 - Role-based navigation and functionality
 
 ### 📊 Dashboard
@@ -101,6 +101,26 @@ Prototype/
 - Export buttons for Excel (.xlsx)
 - Filters for department, location, asset type
 - Downloadable inventory and audit logs
+- Bulk upload functionality for assets and employees
+
+### ✅ Enhanced Asset Management
+- Brand and model dropdowns for better data consistency
+- Optional purchase date field
+- Unassign asset functionality in quick actions
+- INR currency support for maintenance costs
+
+### ✅ Improved Employee Management
+- Simplified employee form (removed department, salary, email notifications)
+- Optional position and join date fields
+- Enhanced employee status options (Maternity Leave, Sabbatical Leave)
+- Employee deletion with asset reassignment
+- Bulk employee upload via Excel
+
+### ✅ Enhanced Assignment System
+- Employee lookup by ID with auto-population
+- Removed department dependency from assignments
+- Added "Mindstix Foundation" assignment type
+- Simplified assignment workflow without priority and return dates
 
 ### ✅ Asset Metadata Management
 - Detailed asset profiles with specifications
@@ -125,10 +145,10 @@ Prototype/
 - **Password**: admin123
 - **Permissions**: Full access to all features
 
-### Employee Access
-- **Username**: emp001
-- **Password**: emp123
-- **Permissions**: View-only access (future implementation)
+### HR Access
+- **Username**: hr001
+- **Password**: hr123
+- **Permissions**: Read-only access to all features
 
 ## Responsive Design
 

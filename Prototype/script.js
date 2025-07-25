@@ -30,9 +30,10 @@ function initializeLogin() {
                 
                 setTimeout(() => {
                     if (userType === 'admin' && username === 'admin' && password === 'admin123') {
+                        localStorage.setItem('userRole', 'admin');
                         window.location.href = 'dashboard.html';
-                    } else if (userType === 'employee' && username === 'emp001' && password === 'emp123') {
-                        // Redirect to dashboard for now (employee view would be implemented later)
+                    } else if (userType === 'hr' && username === 'hr001' && password === 'hr123') {
+                        localStorage.setItem('userRole', 'hr');
                         window.location.href = 'dashboard.html';
                     } else {
                         showAlert('Invalid credentials. Please try again.', 'danger');
@@ -133,23 +134,32 @@ function initializeCharts() {
     // Asset Distribution Chart
     const assetDistCtx = document.getElementById('assetDistributionChart');
     if (assetDistCtx) {
+        // Set canvas dimensions to prevent expansion
+        assetDistCtx.style.maxHeight = '250px';
+        assetDistCtx.style.height = '250px';
+        
         new Chart(assetDistCtx, {
             type: 'doughnut',
             data: {
                 labels: ['Laptops', 'Monitors', 'Mobile Devices', 'Accessories'],
                 datasets: [{
                     data: [45, 25, 20, 10],
-                    backgroundColor: ['#007bff', '#17a2b8', '#28a745', '#ffc107'],
-                    borderWidth: 0
+                    backgroundColor: ['#f8f9fa', '#f8f9fa', '#f8f9fa', '#f8f9fa'],
+                    borderColor: ['#007bff', '#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
+                aspectRatio: 1,
                 plugins: {
                     legend: {
                         display: false
                     }
+                },
+                animation: {
+                    duration: 0
                 }
             }
         });
@@ -158,19 +168,25 @@ function initializeCharts() {
     // Asset Status Chart
     const assetStatusCtx = document.getElementById('assetStatusChart');
     if (assetStatusCtx) {
+        // Set canvas dimensions to prevent expansion
+        assetStatusCtx.style.maxHeight = '250px';
+        assetStatusCtx.style.height = '250px';
+        
         new Chart(assetStatusCtx, {
             type: 'bar',
             data: {
                 labels: ['Assigned', 'Available', 'Maintenance', 'Retired'],
                 datasets: [{
                     data: [892, 312, 43, 127],
-                    backgroundColor: ['#28a745', '#007bff', '#ffc107', '#6c757d'],
-                    borderWidth: 0
+                    backgroundColor: ['#f8f9fa', '#f8f9fa', '#f8f9fa', '#f8f9fa'],
+                    borderColor: ['#007bff', '#28a745', '#ffc107', '#6c757d'],
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
                 plugins: {
                     legend: {
                         display: false
@@ -180,6 +196,9 @@ function initializeCharts() {
                     y: {
                         beginAtZero: true
                     }
+                },
+                animation: {
+                    duration: 0
                 }
             }
         });
@@ -419,6 +438,71 @@ if ('serviceWorker' in navigator) {
         });
     });
 }
+
+// Employee lookup functionality for assign asset modal
+function initializeEmployeeLookup() {
+    const employeeIdInput = document.getElementById('employeeIdInput');
+    const employeeNameDisplay = document.getElementById('employeeNameDisplay');
+    
+    if (employeeIdInput && employeeNameDisplay) {
+        // Sample employee data (in real app, this would come from API)
+        const employees = {
+            'EMP-001': 'John Doe',
+            'EMP-002': 'Jane Smith',
+            'EMP-003': 'Mike Johnson',
+            'EMP-004': 'Sarah Wilson',
+            'EMP-005': 'David Brown'
+        };
+        
+        employeeIdInput.addEventListener('input', function() {
+            const employeeId = this.value.trim().toUpperCase();
+            if (employees[employeeId]) {
+                employeeNameDisplay.value = employees[employeeId];
+                employeeNameDisplay.classList.remove('is-invalid');
+                employeeNameDisplay.classList.add('is-valid');
+            } else if (employeeId) {
+                employeeNameDisplay.value = 'Employee not found';
+                employeeNameDisplay.classList.remove('is-valid');
+                employeeNameDisplay.classList.add('is-invalid');
+            } else {
+                employeeNameDisplay.value = '';
+                employeeNameDisplay.classList.remove('is-valid', 'is-invalid');
+            }
+        });
+    }
+}
+
+// Delete employee functionality
+function initializeDeleteEmployee() {
+    const deleteModal = document.getElementById('deleteEmployeeModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const employeeId = button.getAttribute('data-employee-id');
+            const employeeName = button.getAttribute('data-employee-name');
+            
+            document.getElementById('deleteEmployeeId').textContent = employeeId;
+            document.getElementById('deleteEmployeeName').textContent = employeeName;
+            
+            // Store the employee data for deletion
+            document.getElementById('confirmDeleteEmployee').setAttribute('data-employee-id', employeeId);
+        });
+        
+        document.getElementById('confirmDeleteEmployee').addEventListener('click', function() {
+            const employeeId = this.getAttribute('data-employee-id');
+            // In a real app, this would make an API call to delete the employee
+            showAlert(`Employee ${employeeId} has been deleted successfully.`, 'success');
+            bootstrap.Modal.getInstance(deleteModal).hide();
+        });
+    }
+}
+
+// Initialize all functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeLogin();
+    initializeEmployeeLookup();
+    initializeDeleteEmployee();
+});
 
 // Export functions for use in HTML
 window.AssetManagement = {

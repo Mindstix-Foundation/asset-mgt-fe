@@ -22,38 +22,62 @@ body {
     --mindstix-danger: #dc3545;
 }
 
-/* Navigation Bar - Company Theme */
+/* Main Content Container - Responsive margins */
+.container-fluid.py-4 {
+    max-width: calc(100% - 4rem);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Navigation Bar - White Theme - Keep full width */
 .navbar-dark.bg-primary {
-    background-color: var(--mindstix-dark) !important;
+    background-color: #ffffff !important;
     border-bottom: 1px solid var(--mindstix-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
-    color: #ffffff !important;
+    color: var(--mindstix-dark) !important;
     font-weight: 600;
 }
 
 .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: var(--mindstix-primary) !important;
     transition: all 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 0.375rem;
+    color: var(--mindstix-dark) !important;
+    background-color: var(--mindstix-hover);
+    border-radius: 0.75rem;
 }
 
 .navbar-nav .nav-link.active {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 0.375rem;
+    color: var(--mindstix-dark) !important;
+    background-color: var(--mindstix-light);
+    border-radius: 0.75rem;
 }
 
-/* Card Styles - Professional Theme */
+/* Navbar text elements - for user info */
+.navbar .text-white {
+    color: var(--mindstix-primary) !important;
+}
+
+/* Navbar toggler for mobile - dark icon */
+.navbar-toggler {
+    border-color: var(--mindstix-border);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Card Styles - Professional Theme with more rounded corners */
 .card {
     border: 1px solid var(--mindstix-border);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     transition: all 0.2s ease;
@@ -61,6 +85,170 @@ body {
 
 .card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick Action Cards - Modern Design */
+.quick-action-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid var(--mindstix-border);
+    border-radius: 1.25rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.quick-action-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--mindstix-blue);
+}
+
+.quick-action-card .action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-card:hover .action-icon {
+    transform: scale(1.02);
+}
+
+.quick-action-card .action-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mindstix-dark);
+    margin: 0;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.quick-action-card:hover .action-title {
+    color: var(--mindstix-dark);
+}
+
+/* Quick Action Card Variants */
+.quick-action-card.danger .action-icon {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.quick-action-card.danger:hover {
+    border-color: #dc3545;
+}
+
+.quick-action-card.danger:hover .action-icon {
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+}
+.quick-action-card.primary .action-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.quick-action-card.success .action-icon {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.quick-action-card.warning .action-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.quick-action-card.info .action-icon {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+/* Quick Action Card Active State */
+.quick-action-card:active {
+    transform: translateY(-4px);
+    transition: transform 0.1s ease;
+}
+
+/* Asset Distribution Styles */
+.asset-distribution-item {
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+}
+
+.asset-distribution-item:hover {
+    background-color: var(--mindstix-light);
+}
+
+.asset-type-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.asset-type-icon.laptops {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.asset-type-icon.monitors {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.asset-type-icon.mobile {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.asset-type-icon.accessories {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.asset-distribution-item:hover .asset-type-icon {
+    opacity: 0.9;
+}
+
+.asset-progress {
+    height: 8px;
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.progress-bar-laptops {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-monitors {
+    background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-mobile {
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-accessories {
+    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 1rem;
 }
 
 /* Stats Cards - Muted Professional Colors */
@@ -95,7 +283,11 @@ body {
     border-color: var(--mindstix-secondary) !important;
 }
 
-/* Button Styles - Professional Theme */
+/* Button Styles - Professional Theme with more rounded corners */
+.btn {
+    border-radius: 0.75rem;
+}
+
 .btn-primary {
     background-color: var(--mindstix-primary);
     border-color: var(--mindstix-primary);
@@ -118,13 +310,13 @@ body {
 }
 
 .btn-outline-light {
-    color: rgba(255, 255, 255, 0.85);
-    border-color: rgba(255, 255, 255, 0.5);
+    color: var(--mindstix-primary);
+    border-color: var(--mindstix-border);
 }
 
 .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.75);
+    background-color: var(--mindstix-primary);
+    border-color: var(--mindstix-primary);
     color: #ffffff;
 }
 
@@ -139,11 +331,16 @@ body {
     color: var(--mindstix-accent);
 }
 
-/* Input Group Styling - Professional Theme */
+/* Input Group Styling - Professional Theme with rounded corners */
 .input-group-text {
     background-color: var(--mindstix-light);
     border-color: var(--mindstix-border);
     color: var(--mindstix-primary);
+    border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.input-group .form-control:not(:last-child) {
+    border-radius: 0 0.75rem 0.75rem 0;
 }
 
 /* Table Styles - Clean Professional Look */
@@ -166,7 +363,11 @@ body {
     background-color: var(--mindstix-hover);
 }
 
-/* Badge Styles - Subtle Professional Colors */
+/* Badge Styles - Subtle Professional Colors with rounded corners */
+.badge {
+    border-radius: 0.75rem;
+}
+
 .badge.bg-available {
     background-color: #6c8e7f !important;
 }
@@ -201,10 +402,10 @@ body {
     background-color: #a85a5a !important;
 }
 
-/* Form Controls - Professional Styling */
+/* Form Controls - Professional Styling with rounded corners */
 .form-control, .form-select {
     border: 1px solid var(--mindstix-border);
-    border-radius: 0.375rem;
+    border-radius: 0.75rem;
     color: var(--mindstix-dark);
 }
 
@@ -306,15 +507,52 @@ body {
     transform: scale(1.02);
 }
 
-/* Modal Enhancements */
+/* Modern Stats Cards with more rounded corners */
+.stats-card-modern {
+    transition: all 0.3s ease;
+    border-radius: 1.5rem !important;
+}
+
+.stats-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-card-modern .progress {
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.stats-card-modern .progress-bar {
+    border-radius: 1rem;
+}
+
+/* Modal Enhancements with rounded corners */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 2rem);
+    margin: 1rem auto;
+}
+
 .modal-content {
     border: 1px solid var(--mindstix-border);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 .modal-header {
     background-color: var(--mindstix-light);
     border-bottom: 1px solid var(--mindstix-border);
+    border-radius: 1rem 1rem 0 0;
 }
 
 .modal-xl {
@@ -325,17 +563,17 @@ body {
     max-width: 900px;
 }
 
-/* Table Responsive Enhancements */
+/* Table Responsive Enhancements with rounded corners */
 .table-responsive {
-    border-radius: 0.375rem;
+    border-radius: 1rem;
     border: 1px solid var(--mindstix-border);
 }
 
-/* Progress Stacked Fix for Bootstrap 5 */
+/* Progress Stacked Fix for Bootstrap 5 with rounded corners */
 .progress-stacked {
     display: flex;
     height: 20px;
-    border-radius: 0.375rem;
+    border-radius: 1rem;
     overflow: hidden;
     background-color: var(--mindstix-light);
 }
@@ -349,11 +587,15 @@ body {
     background-color: var(--mindstix-primary);
 }
 
-/* Custom Button Styles */
+.progress {
+    border-radius: 1rem;
+}
+
+/* Custom Button Styles with rounded corners */
 .btn-group-sm > .btn, .btn-sm {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
 }
 
 /* Loading States */
@@ -362,16 +604,16 @@ body {
     pointer-events: none;
 }
 
-/* Dropdown Menu Enhancements */
+/* Dropdown Menu Enhancements with rounded corners */
 .dropdown-menu {
     border: 1px solid var(--mindstix-border);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 .dropdown-item {
     padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
+    border-radius: 0.75rem;
     margin: 0.125rem;
     color: var(--mindstix-dark);
 }
@@ -386,7 +628,11 @@ canvas {
     max-height: 300px;
 }
 
-/* Alert Styles - Professional Theme */
+/* Alert Styles - Professional Theme with rounded corners */
+.alert {
+    border-radius: 1rem;
+}
+
 .alert-primary {
     color: var(--mindstix-dark);
     background-color: rgba(108, 117, 125, 0.1);
@@ -422,10 +668,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .container-fluid.py-4 {
+        max-width: calc(100% - 2rem);
+    }
+}
+
 @media (max-width: 768px) {
-    .container-fluid {
-        padding-left: 15px;
-        padding-right: 15px;
+    .container-fluid.py-4 {
+        max-width: calc(100% - 1rem);
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
     
     .card-body {
@@ -450,9 +703,32 @@ h1, h2, h3, h4, h5, h6 {
         width: 10px;
         height: 10px;
     }
+    
+    /* Quick Action Cards - Mobile Adjustments */
+    .quick-action-card {
+        padding: 1.5rem 1rem;
+        min-height: 120px;
+    }
+    
+    .quick-action-card .action-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .quick-action-card .action-title {
+        font-size: 0.85rem;
+    }
 }
 
 @media (max-width: 576px) {
+    .container-fluid.py-4 {
+        max-width: 100%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
     .d-flex.gap-2 {
         flex-direction: column;
     }
@@ -471,6 +747,30 @@ h1, h2, h3, h4, h5, h6 {
     
     .modal-xl, .modal-lg {
         max-width: 95%;
+    }
+    
+    /* Ensure filter row wraps properly on mobile */
+    .row .col-12.col-md-3,
+    .row .col-12.col-md-2 {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Quick Action Cards - Small Mobile */
+    .quick-action-card {
+        padding: 1.25rem 0.75rem;
+        min-height: 100px;
+    }
+    
+    .quick-action-card .action-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .quick-action-card .action-title {
+        font-size: 0.8rem;
+        line-height: 1.2;
     }
 }
 

@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body style="background-color: #ffffff;">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
@@ -74,9 +74,17 @@
                 <h2 class="mb-0">Employee Management</h2>
                 <p class="text-muted mb-0">Manage employees and their asset assignments</p>
             </div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                <i class="fas fa-user-plus me-1"></i>Add Employee
-            </button>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" id="toggleView">
+                    <i class="fas fa-th-large me-1"></i>Grid View
+                </button>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUploadEmployeeModal">
+                    <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    <i class="fas fa-user-plus me-1"></i>Add Employee
+                </button>
+            </div>
         </div>
 
         <!-- Filters -->
@@ -87,47 +95,53 @@
                         <label class="form-label">Search Employees</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search by name, ID, department...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name, ID, department...">
                         </div>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Department</label>
-                        <select class="form-select">
+                        <select class="form-select" id="departmentFilter">
                             <option value="">All Departments</option>
-                            <option>IT</option>
-                            <option>HR</option>
-                            <option>Finance</option>
-                            <option>Marketing</option>
-                            <option>Operations</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operations">Operations</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Location</label>
-                        <select class="form-select">
+                        <select class="form-select" id="locationFilter">
                             <option value="">All Locations</option>
-                            <option>New York</option>
-                            <option>San Francisco</option>
-                            <option>London</option>
-                            <option>Remote</option>
+                            <option value="New York">New York</option>
+                            <option value="San Francisco">San Francisco</option>
+                            <option value="London">London</option>
+                            <option value="Remote">Remote</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Status</label>
-                        <select class="form-select">
+                        <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
-                            <option>On Leave</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="On Leave">On Leave</option>
+                            <option value="Maternity Leave">Maternity Leave</option>
+                            <option value="Sabbatical Leave">Sabbatical Leave</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Actions</label>
+                        <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary flex-fill">
-                                <i class="fas fa-filter me-1"></i>Filter
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i>
+                            <select class="form-select" id="sortBy">
+                                <option value="name">Name</option>
+                                <option value="id">Employee ID</option>
+                                <option value="department">Department</option>
+                                <option value="location">Location</option>
+                                <option value="joinDate">Join Date</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
+                                <i class="fas fa-sort-amount-down"></i>
                             </button>
                         </div>
                     </div>
@@ -135,165 +149,340 @@
             </div>
         </div>
 
-        <!-- Employee Cards -->
-        <div class="row">
-            <!-- Employee Card 1 -->
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                <div class="card h-100 employee-card" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="badge bg-success">Active</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Assign Asset</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Asset History</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="employee-avatar mb-3">
-                            <i class="fas fa-user-circle fa-4x text-primary"></i>
-                        </div>
-                        <h6 class="card-title fw-bold">John Doe</h6>
-                        <p class="text-muted mb-2">EMP-001</p>
-                        <p class="card-text">
-                            <strong>Software Engineer</strong><br>
-                            <small class="text-muted">IT Department</small>
-                        </p>
-                        <div class="small text-muted">
-                            <div><i class="fas fa-map-marker-alt me-1"></i>New York</div>
-                            <div><i class="fas fa-laptop me-1"></i>3 Assets Assigned</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>Joined: Jan 15, 2022
-                        </small>
+        <!-- Employees Grid/List -->
+        <div id="employeesContainer">
+            <!-- List View (Default) -->
+            <div class="card" id="listView">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="employeesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Department</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Assets Assigned</th>
+                                    <th>Join Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-name="John Doe" data-id="EMP-001" data-department="IT" data-location="New York" data-status="Active" data-search="John Doe EMP-001 Software Engineer IT New York">
+                                    <td><strong>EMP-001</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">John Doe</div>
+                                                <small class="text-muted">john.doe@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Software Engineer</td>
+                                    <td><span class="badge bg-primary">IT</span></td>
+                                    <td>New York</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>3 Assets</td>
+                                    <td>Jan 15, 2022</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-id="EMP-001" data-employee-name="John Doe">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Jane Smith" data-id="EMP-002" data-department="Marketing" data-location="San Francisco" data-status="Active" data-search="Jane Smith EMP-002 Product Manager Marketing San Francisco">
+                                    <td><strong>EMP-002</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-info me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Jane Smith</div>
+                                                <small class="text-muted">jane.smith@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Product Manager</td>
+                                    <td><span class="badge bg-warning text-dark">Marketing</span></td>
+                                    <td>San Francisco</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>2 Assets</td>
+                                    <td>Mar 10, 2021</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Mike Johnson" data-id="EMP-003" data-department="Finance" data-location="London" data-status="On Leave" data-search="Mike Johnson EMP-003 Data Analyst Finance London">
+                                    <td><strong>EMP-003</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Mike Johnson</div>
+                                                <small class="text-muted">mike.johnson@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Data Analyst</td>
+                                    <td><span class="badge bg-info">Finance</span></td>
+                                    <td>London</td>
+                                    <td><span class="badge bg-warning text-dark">On Leave</span></td>
+                                    <td>1 Asset</td>
+                                    <td>Aug 22, 2023</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Sarah Wilson" data-id="EMP-004" data-department="HR" data-location="Remote" data-status="Active" data-search="Sarah Wilson EMP-004 HR Manager HR Remote">
+                                    <td><strong>EMP-004</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-success me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Sarah Wilson</div>
+                                                <small class="text-muted">sarah.wilson@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>HR Manager</td>
+                                    <td><span class="badge bg-success">HR</span></td>
+                                    <td>Remote</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>4 Assets</td>
+                                    <td>Nov 05, 2020</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="David Brown" data-id="EMP-005" data-department="IT" data-location="New York" data-status="Active" data-search="David Brown EMP-005 DevOps Engineer IT New York">
+                                    <td><strong>EMP-005</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">David Brown</div>
+                                                <small class="text-muted">david.brown@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>DevOps Engineer</td>
+                                    <td><span class="badge bg-primary">IT</span></td>
+                                    <td>New York</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>5 Assets</td>
+                                    <td>Feb 18, 2022</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Lisa Garcia" data-id="EMP-006" data-department="Marketing" data-location="Remote" data-status="Active" data-search="Lisa Garcia EMP-006 Marketing Specialist Marketing Remote">
+                                    <td><strong>EMP-006</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-info me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Lisa Garcia</div>
+                                                <small class="text-muted">lisa.garcia@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Marketing Specialist</td>
+                                    <td><span class="badge bg-warning text-dark">Marketing</span></td>
+                                    <td>Remote</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>2 Assets</td>
+                                    <td>Jun 12, 2023</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Robert Taylor" data-id="EMP-007" data-department="Finance" data-location="San Francisco" data-status="Inactive" data-search="Robert Taylor EMP-007 Financial Analyst Finance San Francisco">
+                                    <td><strong>EMP-007</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-secondary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Robert Taylor</div>
+                                                <small class="text-muted">robert.taylor@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Financial Analyst</td>
+                                    <td><span class="badge bg-info">Finance</span></td>
+                                    <td>San Francisco</td>
+                                    <td><span class="badge bg-danger">Inactive</span></td>
+                                    <td>0 Assets</td>
+                                    <td>Apr 08, 2021</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Emily Davis" data-id="EMP-008" data-department="Operations" data-location="London" data-status="Active" data-search="Emily Davis EMP-008 Operations Manager Operations London">
+                                    <td><strong>EMP-008</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Emily Davis</div>
+                                                <small class="text-muted">emily.davis@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Operations Manager</td>
+                                    <td><span class="badge bg-secondary">Operations</span></td>
+                                    <td>London</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>3 Assets</td>
+                                    <td>Sep 15, 2022</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Kevin Martinez" data-id="EMP-009" data-department="IT" data-location="Remote" data-status="On Leave" data-search="Kevin Martinez EMP-009 Frontend Developer IT Remote">
+                                    <td><strong>EMP-009</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Kevin Martinez</div>
+                                                <small class="text-muted">kevin.martinez@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Frontend Developer</td>
+                                    <td><span class="badge bg-primary">IT</span></td>
+                                    <td>Remote</td>
+                                    <td><span class="badge bg-warning text-dark">On Leave</span></td>
+                                    <td>2 Assets</td>
+                                    <td>Jan 30, 2023</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Amanda Clark" data-id="EMP-010" data-department="HR" data-location="New York" data-status="Active" data-search="Amanda Clark EMP-010 HR Specialist HR New York">
+                                    <td><strong>EMP-010</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-success me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Amanda Clark</div>
+                                                <small class="text-muted">amanda.clark@company.com</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>HR Specialist</td>
+                                    <td><span class="badge bg-success">HR</span></td>
+                                    <td>New York</td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>1 Asset</td>
+                                    <td>Dec 03, 2023</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Employee Card 2 -->
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                <div class="card h-100 employee-card" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="badge bg-success">Active</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Assign Asset</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Asset History</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="employee-avatar mb-3">
-                            <i class="fas fa-user-circle fa-4x text-info"></i>
-                        </div>
-                        <h6 class="card-title fw-bold">Jane Smith</h6>
-                        <p class="text-muted mb-2">EMP-002</p>
-                        <p class="card-text">
-                            <strong>Product Manager</strong><br>
-                            <small class="text-muted">Marketing</small>
-                        </p>
-                        <div class="small text-muted">
-                            <div><i class="fas fa-map-marker-alt me-1"></i>San Francisco</div>
-                            <div><i class="fas fa-laptop me-1"></i>2 Assets Assigned</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>Joined: Mar 10, 2021
-                        </small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Employee Card 3 -->
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                <div class="card h-100 employee-card" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="badge bg-warning">On Leave</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Asset History</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="employee-avatar mb-3">
-                            <i class="fas fa-user-circle fa-4x text-warning"></i>
-                        </div>
-                        <h6 class="card-title fw-bold">Mike Johnson</h6>
-                        <p class="text-muted mb-2">EMP-003</p>
-                        <p class="card-text">
-                            <strong>Data Analyst</strong><br>
-                            <small class="text-muted">Finance</small>
-                        </p>
-                        <div class="small text-muted">
-                            <div><i class="fas fa-map-marker-alt me-1"></i>London</div>
-                            <div><i class="fas fa-laptop me-1"></i>1 Asset Assigned</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>Joined: Aug 22, 2023
-                        </small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Employee Card 4 -->
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                <div class="card h-100 employee-card" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="badge bg-success">Active</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Assign Asset</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Asset History</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="employee-avatar mb-3">
-                            <i class="fas fa-user-circle fa-4x text-success"></i>
-                        </div>
-                        <h6 class="card-title fw-bold">Sarah Wilson</h6>
-                        <p class="text-muted mb-2">EMP-004</p>
-                        <p class="card-text">
-                            <strong>HR Manager</strong><br>
-                            <small class="text-muted">Human Resources</small>
-                        </p>
-                        <div class="small text-muted">
-                            <div><i class="fas fa-map-marker-alt me-1"></i>Remote</div>
-                            <div><i class="fas fa-laptop me-1"></i>4 Assets Assigned</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>Joined: Nov 05, 2020
-                        </small>
-                    </div>
-                </div>
+            <!-- Grid View (Hidden by default) -->
+            <div class="row d-none" id="gridView">
+                <!-- Employee cards will be dynamically generated here -->
             </div>
         </div>
 
@@ -508,7 +697,729 @@
         </div>
     </div>
 
+    <!-- Add Employee Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus me-2"></i>Add New Employee
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addEmployeeForm">
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-user me-2"></i>Personal Information
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth">
+                                </div>
+                            </div>
+                            
+                            <!-- Employment Information -->
+                            <div class="col-md-6">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-briefcase me-2"></i>Employment Information
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="employeeId" class="form-label">Employee ID <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="EMP-XXX" required>
+                                    <div class="form-text">Auto-generated if left empty</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="position" class="form-label">Position <small class="text-muted">(Optional)</small></label>
+                                    <input type="text" class="form-control" id="position" name="position">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="location" name="location" required>
+                                        <option value="">Select Location</option>
+                                        <option value="New York">New York</option>
+                                        <option value="San Francisco">San Francisco</option>
+                                        <option value="London">London</option>
+                                        <option value="Remote">Remote</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="joinDate" class="form-label">Join Date <small class="text-muted">(Optional)</small></label>
+                                    <input type="date" class="form-control" id="joinDate" name="joinDate">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Additional Information
+                                </h6>
+                                
+                                <div class="mb-3">
+                                    <label for="manager" class="form-label">Reporting Manager</label>
+                                    <input type="text" class="form-control" id="manager" name="manager">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="2" placeholder="Street address, City, State, ZIP"></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Notes</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Additional notes about the employee"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo me-1"></i>Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-1"></i>Add Employee
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Employee Modal -->
+    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-trash me-2"></i>Delete Employee
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone.
+                    </div>
+                    <p>Are you sure you want to delete the following employee?</p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle fa-3x text-danger me-3"></i>
+                                <div>
+                                    <h6 class="mb-1" id="deleteEmployeeName">Employee Name</h6>
+                                    <small class="text-muted" id="deleteEmployeeId">Employee ID</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0">
+                        <small class="text-muted">
+                            Note: All assets assigned to this employee will be automatically unassigned and returned to inventory.
+                        </small>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteEmployee">
+                        <i class="fas fa-trash me-1"></i>Delete Employee
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Employee Modal -->
+    <div class="modal fade" id="bulkUploadEmployeeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-excel me-2"></i>Bulk Upload Employees
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Upload Instructions:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Download the template file and fill in employee details</li>
+                                    <li>Required fields: First Name, Last Name, Email, Employee ID, Location</li>
+                                    <li>Optional fields: Position, Phone, Date of Birth, Join Date, Manager, Address, Notes</li>
+                                    <li>Supported format: Excel (.xlsx)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Step 1: Download Template</h6>
+                                <button class="btn btn-outline-success btn-sm" id="downloadEmployeeTemplate">
+                                    <i class="fas fa-download me-1"></i>Download Template
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <h6 class="mb-3">Step 2: Upload Filled Template</h6>
+                            <div class="border border-2 border-dashed border-primary rounded p-4 text-center">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <p class="mb-2">Drag and drop your Excel file here, or click to browse</p>
+                                <input type="file" class="form-control" id="employeeBulkFile" accept=".xlsx,.xls" style="display: none;">
+                                <button class="btn btn-outline-primary" onclick="document.getElementById('employeeBulkFile').click()">
+                                    <i class="fas fa-folder-open me-1"></i>Choose File
+                                </button>
+                                <div id="employeeFileInfo" class="mt-3 text-muted" style="display: none;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div id="employeeUploadPreview" style="display: none;">
+                                <h6>Preview (First 5 rows):</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered" id="employeePreviewTable">
+                                        <thead class="table-light"></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadEmployeesBtn" disabled>
+                        <i class="fas fa-upload me-1"></i>Upload Employees
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Override dull badge colors with bright Bootstrap colors -->
+    <style>
+        /* Override custom badge colors with normal Bootstrap colors */
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .badge.bg-info {
+            background-color: #0dcaf0 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+        
+        /* Grid View Card Styles */
+        .employee-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .employee-details {
+            font-size: 0.9rem;
+        }
+    </style>
+    
+    <!-- Employee Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const departmentFilter = document.getElementById('departmentFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const sortBy = document.getElementById('sortBy');
+            const sortOrderBtn = document.getElementById('sortOrder');
+            const toggleViewBtn = document.getElementById('toggleView');
+            const listView = document.getElementById('listView');
+            const gridView = document.getElementById('gridView');
+            const employeesTable = document.getElementById('employeesTable');
+            
+            // Sorting variables
+            let sortAscending = true;
+            
+            // View toggle functionality
+            let isGridView = false;
+            
+            toggleViewBtn.addEventListener('click', function() {
+                if (isGridView) {
+                    // Switch to List View
+                    listView.classList.remove('d-none');
+                    gridView.classList.add('d-none');
+                    toggleViewBtn.innerHTML = '<i class="fas fa-th-large me-1"></i>Grid View';
+                    isGridView = false;
+                } else {
+                    // Switch to Grid View
+                    generateGridView();
+                    listView.classList.add('d-none');
+                    gridView.classList.remove('d-none');
+                    toggleViewBtn.innerHTML = '<i class="fas fa-list me-1"></i>List View';
+                    isGridView = true;
+                }
+            });
+            
+            // Generate grid view cards from table data
+            function generateGridView() {
+                const visibleRows = Array.from(employeesTable.querySelectorAll('tbody tr')).filter(row => 
+                    row.style.display !== 'none' && row.id !== 'noResultsRow'
+                );
+                
+                gridView.innerHTML = '';
+                
+                if (visibleRows.length === 0) {
+                    gridView.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No employees found</h5>
+                            <p class="text-muted">Try adjusting your search criteria</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                visibleRows.forEach(row => {
+                    const name = row.getAttribute('data-name');
+                    const id = row.getAttribute('data-id');
+                    const department = row.getAttribute('data-department');
+                    const location = row.getAttribute('data-location');
+                    const status = row.getAttribute('data-status');
+                    
+                    // Extract additional data from table cells
+                    const cells = row.querySelectorAll('td');
+                    const email = cells[1].querySelector('small').textContent;
+                    const position = cells[2].textContent;
+                    const assetsCount = cells[6].textContent;
+                    const joinDate = cells[7].textContent;
+                    
+                    // Get department badge color
+                    const departmentColors = {
+                        'IT': 'bg-primary',
+                        'HR': 'bg-success',
+                        'Finance': 'bg-info',
+                        'Marketing': 'bg-warning text-dark',
+                        'Operations': 'bg-secondary'
+                    };
+                    
+                    // Get status badge color
+                    const statusColors = {
+                        'Active': 'bg-success',
+                        'Inactive': 'bg-danger',
+                        'On Leave': 'bg-warning text-dark'
+                    };
+                    
+                    // Get user icon color based on department
+                    const iconColors = {
+                        'IT': 'text-primary',
+                        'HR': 'text-success',
+                        'Finance': 'text-info',
+                        'Marketing': 'text-warning',
+                        'Operations': 'text-secondary'
+                    };
+                    
+                    const card = document.createElement('div');
+                    card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
+                    card.innerHTML = `
+                        <div class="card h-100 border-0 shadow-sm employee-card">
+                            <div class="card-body text-center p-4">
+                                <div class="employee-avatar mb-3">
+                                    <i class="fas fa-user-circle fa-4x ${iconColors[department] || 'text-primary'}"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">${name}</h5>
+                                <p class="text-muted small mb-2">${id}</p>
+                                <span class="badge ${statusColors[status] || 'bg-secondary'} mb-3">${status}</span>
+                                
+                                <div class="employee-details text-start">
+                                    <div class="mb-2">
+                                        <strong>Position:</strong><br>
+                                        <span class="text-muted">${position}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Department:</strong><br>
+                                        <span class="badge ${departmentColors[department] || 'bg-primary'}">${department}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Location:</strong><br>
+                                        <span class="text-muted">${location}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Email:</strong><br>
+                                        <span class="text-muted small">${email}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Assets:</strong><br>
+                                        <span class="text-muted">${assetsCount}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Join Date:</strong><br>
+                                        <span class="text-muted">${joinDate}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </button>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-laptop"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    gridView.appendChild(card);
+                });
+            }
+            
+            // Sort function
+            function sortEmployees() {
+                const tbody = employeesTable.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'noResultsRow');
+                const sortField = sortBy.value;
+                
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortField) {
+                        case 'name':
+                            aValue = a.getAttribute('data-name');
+                            bValue = b.getAttribute('data-name');
+                            break;
+                        case 'id':
+                            aValue = a.getAttribute('data-id');
+                            bValue = b.getAttribute('data-id');
+                            break;
+                        case 'department':
+                            aValue = a.getAttribute('data-department');
+                            bValue = b.getAttribute('data-department');
+                            break;
+                        case 'location':
+                            aValue = a.getAttribute('data-location');
+                            bValue = b.getAttribute('data-location');
+                            break;
+                        case 'joinDate':
+                            aValue = new Date(a.querySelector('td:nth-child(8)').textContent);
+                            bValue = new Date(b.querySelector('td:nth-child(8)').textContent);
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (sortField === 'joinDate') {
+                        return sortAscending ? aValue - bValue : bValue - aValue;
+                    } else {
+                        if (aValue < bValue) return sortAscending ? -1 : 1;
+                        if (aValue > bValue) return sortAscending ? 1 : -1;
+                        return 0;
+                    }
+                });
+                
+                // Clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Update sort order icon
+                sortOrderBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                // Reapply filters after sorting
+                filterEmployees();
+            }
+            
+            // Filter function
+            function filterEmployees() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedDepartment = departmentFilter.value;
+                const selectedLocation = locationFilter.value;
+                const selectedStatus = statusFilter.value;
+                
+                const rows = employeesTable.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.id === 'noResultsRow') return;
+                    
+                    const department = row.getAttribute('data-department');
+                    const location = row.getAttribute('data-location');
+                    const status = row.getAttribute('data-status');
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    
+                    // Check if row matches all filters
+                    const matchesSearch = searchData.includes(searchTerm);
+                    const matchesDepartment = !selectedDepartment || department === selectedDepartment;
+                    const matchesLocation = !selectedLocation || location === selectedLocation;
+                    const matchesStatus = !selectedStatus || status === selectedStatus;
+                    
+                    if (matchesSearch && matchesDepartment && matchesLocation && matchesStatus) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "no results" message
+                updateNoResultsMessage(visibleCount);
+                
+                // Update grid view if currently active
+                if (isGridView) {
+                    generateGridView();
+                }
+            }
+            
+            // Add "no results" message functionality
+            function updateNoResultsMessage(count) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                
+                if (count === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noResultsRow';
+                        noResultsRow.innerHTML = `
+                            <td colspan="9" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+                                <h6 class="text-muted">No employees found</h6>
+                                <p class="text-muted mb-0">Try adjusting your search criteria</p>
+                            </td>
+                        `;
+                        employeesTable.querySelector('tbody').appendChild(noResultsRow);
+                    }
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', filterEmployees);
+            departmentFilter.addEventListener('change', filterEmployees);
+            locationFilter.addEventListener('change', filterEmployees);
+            statusFilter.addEventListener('change', filterEmployees);
+            
+            // Sort event listeners
+            sortBy.addEventListener('change', sortEmployees);
+            sortOrderBtn.addEventListener('click', function() {
+                sortAscending = !sortAscending;
+                sortEmployees();
+            });
+            
+            // Initialize with all employees visible
+            filterEmployees();
+            
+            // Add Employee Form Handling
+            const addEmployeeForm = document.getElementById('addEmployeeForm');
+            const addEmployeeModal = new bootstrap.Modal(document.getElementById('addEmployeeModal'));
+            
+            addEmployeeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(addEmployeeForm);
+                const employeeData = {};
+                
+                // Convert FormData to object
+                for (let [key, value] of formData.entries()) {
+                    employeeData[key] = value;
+                }
+                
+                // Generate employee ID if not provided
+                if (!employeeData.employeeId) {
+                    const existingIds = Array.from(employeesTable.querySelectorAll('tbody tr'))
+                        .map(row => row.getAttribute('data-id'))
+                        .filter(id => id && id.startsWith('EMP-'))
+                        .map(id => parseInt(id.split('-')[1]))
+                        .filter(num => !isNaN(num));
+                    
+                    const nextId = Math.max(...existingIds, 0) + 1;
+                    employeeData.employeeId = `EMP-${String(nextId).padStart(3, '0')}`;
+                }
+                
+                // Create full name
+                const fullName = `${employeeData.firstName} ${employeeData.lastName}`;
+                
+                // Format join date
+                const joinDate = new Date(employeeData.joinDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit'
+                });
+                
+                // Get department badge color
+                const departmentColors = {
+                    'IT': 'bg-primary',
+                    'HR': 'bg-success',
+                    'Finance': 'bg-info',
+                    'Marketing': 'bg-warning text-dark',
+                    'Operations': 'bg-secondary'
+                };
+                
+                // Get user icon color based on department
+                const iconColors = {
+                    'IT': 'text-primary',
+                    'HR': 'text-success',
+                    'Finance': 'text-info',
+                    'Marketing': 'text-warning',
+                    'Operations': 'text-secondary'
+                };
+                
+                // Create new table row
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-name', fullName);
+                newRow.setAttribute('data-id', employeeData.employeeId);
+                newRow.setAttribute('data-department', employeeData.department);
+                newRow.setAttribute('data-location', employeeData.location);
+                newRow.setAttribute('data-status', 'Active');
+                newRow.setAttribute('data-search', `${fullName} ${employeeData.employeeId} ${employeeData.position} ${employeeData.department} ${employeeData.location}`);
+                
+                newRow.innerHTML = `
+                    <td><strong>${employeeData.employeeId}</strong></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle fa-2x ${iconColors[employeeData.department] || 'text-primary'} me-3"></i>
+                            <div>
+                                <div class="fw-bold">${fullName}</div>
+                                <small class="text-muted">${employeeData.email}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${employeeData.position}</td>
+                    <td><span class="badge ${departmentColors[employeeData.department] || 'bg-primary'}">${employeeData.department}</span></td>
+                    <td>${employeeData.location}</td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>0 Assets</td>
+                    <td>${joinDate}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fas fa-laptop"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                // Add the new row to the table
+                employeesTable.querySelector('tbody').appendChild(newRow);
+                
+                // Show success message
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                successAlert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                successAlert.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Success!</strong> Employee ${fullName} has been added successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(successAlert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    if (successAlert.parentNode) {
+                        successAlert.remove();
+                    }
+                }, 5000);
+                
+                // Close modal and reset form
+                addEmployeeModal.hide();
+                addEmployeeForm.reset();
+                
+                // Reapply filters to show the new employee
+                filterEmployees();
+            });
+            
+            // Auto-generate Employee ID when first name or last name changes
+            const firstNameInput = document.getElementById('firstName');
+            const lastNameInput = document.getElementById('lastName');
+            const employeeIdInput = document.getElementById('employeeId');
+            
+            function generateEmployeeId() {
+                if (!employeeIdInput.value && firstNameInput.value && lastNameInput.value) {
+                    const existingIds = Array.from(employeesTable.querySelectorAll('tbody tr'))
+                        .map(row => row.getAttribute('data-id'))
+                        .filter(id => id && id.startsWith('EMP-'))
+                        .map(id => parseInt(id.split('-')[1]))
+                        .filter(num => !isNaN(num));
+                    
+                    const nextId = Math.max(...existingIds, 0) + 1;
+                    employeeIdInput.value = `EMP-${String(nextId).padStart(3, '0')}`;
+                }
+            }
+            
+            firstNameInput.addEventListener('blur', generateEmployeeId);
+            lastNameInput.addEventListener('blur', generateEmployeeId);
+            
+            // Set default join date to today
+            document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
+        });
+    </script>
 </body>
 </html> 

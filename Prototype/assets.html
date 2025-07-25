@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body style="background-color: #ffffff;">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
@@ -78,6 +78,9 @@
                 <button class="btn btn-outline-secondary" id="toggleView">
                     <i class="fas fa-th-large me-1"></i>Grid View
                 </button>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUploadAssetModal">
+                    <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                </button>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssetModal">
                     <i class="fas fa-plus me-1"></i>Add Asset
                 </button>
@@ -92,50 +95,54 @@
                         <label class="form-label">Search Assets</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search by ID, model, serial...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, model, serial...">
                         </div>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Asset Type</label>
-                        <select class="form-select">
+                        <select class="form-select" id="typeFilter">
                             <option value="">All Types</option>
-                            <option>Laptop</option>
-                            <option>Monitor</option>
-                            <option>Mobile Device</option>
-                            <option>Tablet</option>
-                            <option>iPad</option>
-                            <option>Accessories</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Mobile">Mobile Device</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Accessories">Accessories</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Brand</label>
-                        <select class="form-select">
+                        <select class="form-select" id="brandFilter">
                             <option value="">All Brands</option>
-                            <option>Apple</option>
-                            <option>Dell</option>
-                            <option>HP</option>
-                            <option>Lenovo</option>
-                            <option>Samsung</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Dell">Dell</option>
+                            <option value="HP">HP</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Microsoft">Microsoft</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Status</label>
-                        <select class="form-select">
+                        <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
-                            <option>Available</option>
-                            <option>Assigned</option>
-                            <option>Under Repair</option>
-                            <option>Retired</option>
+                            <option value="Available">Available</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Under Repair">Under Repair</option>
+                            <option value="Retired">Retired</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-3 mb-3">
-                        <label class="form-label">Actions</label>
+                        <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary flex-fill">
-                                <i class="fas fa-filter me-1"></i>Filter
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i>
+                            <select class="form-select" id="sortBy">
+                                <option value="id">Asset ID</option>
+                                <option value="type">Asset Type</option>
+                                <option value="brand">Brand</option>
+                                <option value="status">Status</option>
+                                <option value="date">Purchase Date</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
+                                <i class="fas fa-sort-amount-down"></i>
                             </button>
                         </div>
                     </div>
@@ -145,170 +152,11 @@
 
         <!-- Assets Grid/List -->
         <div id="assetsContainer">
-            <!-- Grid View -->
-            <div class="row" id="gridView">
-                <!-- Asset Card 1 -->
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge bg-success">Available</span>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>Assign</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-qrcode me-2"></i>Generate QR</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="fas fa-laptop fa-3x text-primary"></i>
-                            </div>
-                            <h6 class="card-title fw-bold">AST-001</h6>
-                            <p class="card-text">
-                                <strong>MacBook Pro 16"</strong><br>
-                                <small class="text-muted">Apple • M2 Pro</small>
-                            </p>
-                            <div class="small text-muted">
-                                <div><strong>Serial:</strong> ABC123XYZ</div>
-                                <div><strong>RAM:</strong> 16GB</div>
-                                <div><strong>Storage:</strong> 512GB SSD</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">
-                                <i class="fas fa-calendar me-1"></i>Added: Jan 15, 2024
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Asset Card 2 -->
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge bg-primary">Assigned</span>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-minus me-2"></i>Return</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="fas fa-desktop fa-3x text-info"></i>
-                            </div>
-                            <h6 class="card-title fw-bold">AST-002</h6>
-                            <p class="card-text">
-                                <strong>Dell UltraSharp 27"</strong><br>
-                                <small class="text-muted">Dell • 4K Monitor</small>
-                            </p>
-                            <div class="small text-muted">
-                                <div><strong>Serial:</strong> DEF456UVW</div>
-                                <div><strong>Resolution:</strong> 3840x2160</div>
-                                <div><strong>Assigned to:</strong> John Doe</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">
-                                <i class="fas fa-user me-1"></i>Assigned: Feb 01, 2024
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Asset Card 3 -->
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge bg-warning">Under Repair</span>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>Maintenance Log</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="fas fa-mobile-alt fa-3x text-warning"></i>
-                            </div>
-                            <h6 class="card-title fw-bold">AST-003</h6>
-                            <p class="card-text">
-                                <strong>iPhone 14 Pro</strong><br>
-                                <small class="text-muted">Apple • 256GB</small>
-                            </p>
-                            <div class="small text-muted">
-                                <div><strong>Serial:</strong> GHI789RST</div>
-                                <div><strong>Storage:</strong> 256GB</div>
-                                <div><strong>Issue:</strong> Screen repair</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">
-                                <i class="fas fa-tools me-1"></i>Repair: Mar 10, 2024
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Asset Card 4 -->
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4">
-                    <div class="card h-100 asset-card" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge bg-success">Available</span>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View Details</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-plus me-2"></i>Assign</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-3">
-                                <i class="fas fa-tablet-alt fa-3x text-success"></i>
-                            </div>
-                            <h6 class="card-title fw-bold">AST-004</h6>
-                            <p class="card-text">
-                                <strong>iPad Pro 12.9"</strong><br>
-                                <small class="text-muted">Apple • M2 Chip</small>
-                            </p>
-                            <div class="small text-muted">
-                                <div><strong>Serial:</strong> JKL012MNO</div>
-                                <div><strong>Storage:</strong> 256GB</div>
-                                <div><strong>Color:</strong> Space Gray</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <small class="text-muted">
-                                <i class="fas fa-calendar me-1"></i>Added: Mar 05, 2024
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- List View (Hidden by default) -->
-            <div class="card d-none" id="listView">
+            <!-- List View (Default) -->
+            <div class="card" id="listView">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover mb-0" id="assetsTable">
                             <thead class="table-light">
                                 <tr>
                                     <th>Asset ID</th>
@@ -317,66 +165,259 @@
                                     <th>Serial Number</th>
                                     <th>Status</th>
                                     <th>Assigned To</th>
+                                    <th>Purchase Date</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr data-type="Laptop" data-brand="Apple" data-status="Available" data-search="AST-001 MacBook Pro Apple ABC123XYZ">
                                     <td><strong>AST-001</strong></td>
                                     <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
                                     <td>Apple MacBook Pro 16"</td>
                                     <td>ABC123XYZ</td>
                                     <td><span class="badge bg-success">Available</span></td>
                                     <td>-</td>
+                                    <td>Jan 15, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary">
+                                            <button class="btn btn-secondary">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-success">
+                                            <button class="btn btn-success">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr data-type="Monitor" data-brand="Dell" data-status="Assigned" data-search="AST-002 Dell UltraSharp Monitor DEF456UVW John Doe">
                                     <td><strong>AST-002</strong></td>
                                     <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
                                     <td>Dell UltraSharp 27"</td>
                                     <td>DEF456UVW</td>
                                     <td><span class="badge bg-primary">Assigned</span></td>
                                     <td>John Doe</td>
+                                    <td>Feb 01, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary">
+                                            <button class="btn btn-secondary">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning">
+                                            <button class="btn btn-warning">
                                                 <i class="fas fa-user-minus"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr data-type="Mobile" data-brand="Apple" data-status="Under Repair" data-search="AST-003 iPhone Apple GHI789RST">
                                     <td><strong>AST-003</strong></td>
                                     <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
-                                    <td>iPhone 14 Pro</td>
+                                    <td>Apple iPhone 14 Pro</td>
                                     <td>GHI789RST</td>
-                                    <td><span class="badge bg-warning">Under Repair</span></td>
+                                    <td><span class="badge bg-warning text-dark">Under Repair</span></td>
                                     <td>-</td>
+                                    <td>Jan 20, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning">
+                                            <button class="btn btn-warning">
                                                 <i class="fas fa-tools"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Tablet" data-brand="Apple" data-status="Available" data-search="AST-004 iPad Apple JKL012MNO">
+                                    <td><strong>AST-004</strong></td>
+                                    <td><i class="fas fa-tablet-alt text-success me-2"></i>Tablet</td>
+                                    <td>Apple iPad Pro 12.9"</td>
+                                    <td>JKL012MNO</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td>-</td>
+                                    <td>Mar 05, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Laptop" data-brand="Dell" data-status="Assigned" data-search="AST-005 Dell Latitude Laptop MNO345PQR Jane Smith">
+                                    <td><strong>AST-005</strong></td>
+                                    <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
+                                    <td>Dell Latitude 7420</td>
+                                    <td>MNO345PQR</td>
+                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td>Jane Smith</td>
+                                    <td>Feb 15, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-warning">
+                                                <i class="fas fa-user-minus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Monitor" data-brand="HP" data-status="Available" data-search="AST-006 HP EliteDisplay Monitor STU678VWX">
+                                    <td><strong>AST-006</strong></td>
+                                    <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
+                                    <td>HP EliteDisplay 24"</td>
+                                    <td>STU678VWX</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td>-</td>
+                                    <td>Jan 30, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Laptop" data-brand="Lenovo" data-status="Under Repair" data-search="AST-007 Lenovo ThinkPad YZA901BCD">
+                                    <td><strong>AST-007</strong></td>
+                                    <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
+                                    <td>Lenovo ThinkPad X1 Carbon</td>
+                                    <td>YZA901BCD</td>
+                                    <td><span class="badge bg-warning text-dark">Under Repair</span></td>
+                                    <td>-</td>
+                                    <td>Dec 10, 2023</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-warning">
+                                                <i class="fas fa-tools"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Mobile" data-brand="Samsung" data-status="Assigned" data-search="AST-008 Samsung Galaxy EFG234HIJ Mike Johnson">
+                                    <td><strong>AST-008</strong></td>
+                                    <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
+                                    <td>Samsung Galaxy S23 Ultra</td>
+                                    <td>EFG234HIJ</td>
+                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td>Mike Johnson</td>
+                                    <td>Feb 28, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-warning">
+                                                <i class="fas fa-user-minus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Tablet" data-brand="Microsoft" data-status="Available" data-search="AST-009 Microsoft Surface KLM567NOP">
+                                    <td><strong>AST-009</strong></td>
+                                    <td><i class="fas fa-tablet-alt text-success me-2"></i>Tablet</td>
+                                    <td>Microsoft Surface Pro 9</td>
+                                    <td>KLM567NOP</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td>-</td>
+                                    <td>Mar 12, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Accessories" data-brand="Apple" data-status="Assigned" data-search="AST-010 Apple AirPods QRS890TUV Sarah Wilson">
+                                    <td><strong>AST-010</strong></td>
+                                    <td><i class="fas fa-headphones text-info me-2"></i>Accessories</td>
+                                    <td>Apple AirPods Pro 2</td>
+                                    <td>QRS890TUV</td>
+                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td>Sarah Wilson</td>
+                                    <td>Mar 01, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-warning">
+                                                <i class="fas fa-user-minus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Monitor" data-brand="Dell" data-status="Retired" data-search="AST-011 Dell UltraSharp WXY123ZAB">
+                                    <td><strong>AST-011</strong></td>
+                                    <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
+                                    <td>Dell UltraSharp 22"</td>
+                                    <td>WXY123ZAB</td>
+                                    <td><span class="badge bg-dark">Retired</span></td>
+                                    <td>-</td>
+                                    <td>Oct 15, 2022</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-type="Laptop" data-brand="HP" data-status="Available" data-search="AST-012 HP EliteBook CDE456FGH">
+                                    <td><strong>AST-012</strong></td>
+                                    <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
+                                    <td>HP EliteBook 840 G9</td>
+                                    <td>CDE456FGH</td>
+                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td>-</td>
+                                    <td>Mar 18, 2024</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-user-plus"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -385,6 +426,11 @@
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <!-- Grid View (Hidden by default) -->
+            <div class="row d-none" id="gridView">
+                <!-- Asset cards will be dynamically generated here -->
             </div>
         </div>
 
@@ -597,7 +643,489 @@
         </div>
     </div>
 
+    <!-- Add Asset Modal -->
+    <div class="modal fade" id="addAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Asset</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Asset ID</label>
+                                <input type="text" class="form-control" placeholder="AST-001" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Asset Type</label>
+                                <select class="form-select">
+                                    <option>Laptop</option>
+                                    <option>Monitor</option>
+                                    <option>Mobile Device</option>
+                                    <option>Tablet</option>
+                                    <option>Accessories</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Brand</label>
+                                <select class="form-select">
+                                    <option value="">Select Brand</option>
+                                    <option>Apple</option>
+                                    <option>Dell</option>
+                                    <option>HP</option>
+                                    <option>Lenovo</option>
+                                    <option>Microsoft</option>
+                                    <option>Samsung</option>
+                                    <option>LG</option>
+                                    <option>ASUS</option>
+                                    <option>Acer</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Model</label>
+                                <select class="form-select">
+                                    <option value="">Select Model</option>
+                                    <option>MacBook Pro 13"</option>
+                                    <option>MacBook Pro 14"</option>
+                                    <option>MacBook Pro 16"</option>
+                                    <option>MacBook Air 13"</option>
+                                    <option>iMac 24"</option>
+                                    <option>Dell XPS 13</option>
+                                    <option>Dell XPS 15</option>
+                                    <option>Dell Inspiron</option>
+                                    <option>HP EliteBook</option>
+                                    <option>HP Pavilion</option>
+                                    <option>ThinkPad X1</option>
+                                    <option>ThinkPad T Series</option>
+                                    <option>Surface Laptop</option>
+                                    <option>Surface Pro</option>
+                                    <option>iPhone 14</option>
+                                    <option>iPhone 15</option>
+                                    <option>iPad Pro</option>
+                                    <option>iPad Air</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" placeholder="ABC123XYZ">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Purchase Date <small class="text-muted">(Optional)</small></label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Add Asset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Asset Modal -->
+    <div class="modal fade" id="bulkUploadAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-excel me-2"></i>Bulk Upload Assets
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Upload Instructions:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Download the template file and fill in asset details</li>
+                                    <li>Required fields: Asset ID, Asset Type, Brand, Model, Serial Number</li>
+                                    <li>Optional fields: Purchase Date, Warranty Date, Location, Notes</li>
+                                    <li>Supported format: Excel (.xlsx)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Step 1: Download Template</h6>
+                                <button class="btn btn-outline-success btn-sm" id="downloadAssetTemplate">
+                                    <i class="fas fa-download me-1"></i>Download Template
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <h6 class="mb-3">Step 2: Upload Filled Template</h6>
+                            <div class="border border-2 border-dashed border-primary rounded p-4 text-center">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <p class="mb-2">Drag and drop your Excel file here, or click to browse</p>
+                                <input type="file" class="form-control" id="assetBulkFile" accept=".xlsx,.xls" style="display: none;">
+                                <button class="btn btn-outline-primary" onclick="document.getElementById('assetBulkFile').click()">
+                                    <i class="fas fa-folder-open me-1"></i>Choose File
+                                </button>
+                                <div id="assetFileInfo" class="mt-3 text-muted" style="display: none;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div id="assetUploadPreview" style="display: none;">
+                                <h6>Preview (First 5 rows):</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered" id="assetPreviewTable">
+                                        <thead class="table-light"></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadAssetsBtn" disabled>
+                        <i class="fas fa-upload me-1"></i>Upload Assets
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Override dull badge colors with bright Bootstrap colors -->
+    <style>
+        /* Override custom badge colors with normal Bootstrap colors */
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+        
+        .badge.bg-dark {
+            background-color: #212529 !important;
+        }
+        
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+        
+        /* Grid View Card Styles */
+        .asset-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .asset-details {
+            font-size: 0.9rem;
+        }
+    </style>
+    
+    <!-- Assets Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const brandFilter = document.getElementById('brandFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const sortBy = document.getElementById('sortBy');
+            const sortOrderBtn = document.getElementById('sortOrder');
+            const toggleViewBtn = document.getElementById('toggleView');
+            const listView = document.getElementById('listView');
+            const gridView = document.getElementById('gridView');
+            const assetsTable = document.getElementById('assetsTable');
+            
+            // Sorting variables
+            let sortAscending = true;
+            
+            // View toggle functionality
+            let isGridView = false;
+            
+            toggleViewBtn.addEventListener('click', function() {
+                if (isGridView) {
+                    // Switch to List View
+                    listView.classList.remove('d-none');
+                    gridView.classList.add('d-none');
+                    toggleViewBtn.innerHTML = '<i class="fas fa-th-large me-1"></i>Grid View';
+                    isGridView = false;
+                } else {
+                    // Switch to Grid View
+                    generateGridView();
+                    listView.classList.add('d-none');
+                    gridView.classList.remove('d-none');
+                    toggleViewBtn.innerHTML = '<i class="fas fa-list me-1"></i>List View';
+                    isGridView = true;
+                }
+            });
+            
+            // Generate grid view cards from table data
+            function generateGridView() {
+                const visibleRows = Array.from(assetsTable.querySelectorAll('tbody tr')).filter(row => 
+                    row.style.display !== 'none' && row.id !== 'noResultsRow'
+                );
+                
+                gridView.innerHTML = '';
+                
+                if (visibleRows.length === 0) {
+                    gridView.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-laptop fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No assets found</h5>
+                            <p class="text-muted">Try adjusting your search criteria</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                visibleRows.forEach(row => {
+                    const assetId = row.getAttribute('data-id');
+                    const type = row.getAttribute('data-type');
+                    const brand = row.getAttribute('data-brand');
+                    const status = row.getAttribute('data-status');
+                    const location = row.getAttribute('data-location');
+                    
+                    // Extract additional data from table cells
+                    const cells = row.querySelectorAll('td');
+                    const brandModel = cells[2].textContent;
+                    const serialNumber = cells[3].textContent;
+                    const assignedTo = cells[5].textContent;
+                    const lastUpdated = cells[6].textContent;
+                    
+                    // Get asset type icon and color
+                    const typeIcons = {
+                        'Laptop': { icon: 'fas fa-laptop', color: 'text-primary' },
+                        'Monitor': { icon: 'fas fa-desktop', color: 'text-info' },
+                        'Mobile': { icon: 'fas fa-mobile-alt', color: 'text-warning' },
+                        'Tablet': { icon: 'fas fa-tablet-alt', color: 'text-success' },
+                        'Accessory': { icon: 'fas fa-headphones', color: 'text-secondary' }
+                    };
+                    
+                    // Get status badge color
+                    const statusColors = {
+                        'Assigned': 'bg-success',
+                        'Available': 'bg-info',
+                        'Maintenance': 'bg-warning text-dark',
+                        'Retired': 'bg-secondary'
+                    };
+                    
+                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', color: 'text-secondary' };
+                    
+                    const card = document.createElement('div');
+                    card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
+                    card.innerHTML = `
+                        <div class="card h-100 border-0 shadow-sm asset-card">
+                            <div class="card-body text-center p-4">
+                                <div class="asset-icon mb-3">
+                                    <i class="${typeInfo.icon} fa-4x ${typeInfo.color}"></i>
+                                </div>
+                                <h5 class="fw-bold mb-1">${assetId}</h5>
+                                <p class="text-muted small mb-2">${type}</p>
+                                <span class="badge ${statusColors[status] || 'bg-secondary'} mb-3">${status}</span>
+                                
+                                <div class="asset-details text-start">
+                                    <div class="mb-2">
+                                        <strong>Brand/Model:</strong><br>
+                                        <span class="text-muted">${brandModel}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Serial Number:</strong><br>
+                                        <span class="text-muted small">${serialNumber}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Location:</strong><br>
+                                        <span class="text-muted">${location}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Assigned To:</strong><br>
+                                        <span class="text-muted">${assignedTo}</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Last Updated:</strong><br>
+                                        <span class="text-muted">${lastUpdated}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assetDetailModal">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </button>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-user-plus"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-qrcode"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    gridView.appendChild(card);
+                });
+            }
+            
+            // Sort function
+            function sortAssets() {
+                const tbody = assetsTable.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'noResultsRow');
+                const sortField = sortBy.value;
+                
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortField) {
+                        case 'id':
+                            aValue = a.querySelector('td:first-child strong').textContent;
+                            bValue = b.querySelector('td:first-child strong').textContent;
+                            break;
+                        case 'type':
+                            aValue = a.getAttribute('data-type');
+                            bValue = b.getAttribute('data-type');
+                            break;
+                        case 'brand':
+                            aValue = a.getAttribute('data-brand');
+                            bValue = b.getAttribute('data-brand');
+                            break;
+                        case 'status':
+                            aValue = a.getAttribute('data-status');
+                            bValue = b.getAttribute('data-status');
+                            break;
+                        case 'date':
+                            aValue = new Date(a.querySelector('td:nth-child(7)').textContent);
+                            bValue = new Date(b.querySelector('td:nth-child(7)').textContent);
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (sortField === 'date') {
+                        return sortAscending ? aValue - bValue : bValue - aValue;
+                    } else {
+                        if (aValue < bValue) return sortAscending ? -1 : 1;
+                        if (aValue > bValue) return sortAscending ? 1 : -1;
+                        return 0;
+                    }
+                });
+                
+                // Clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Update sort order icon
+                sortOrderBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                // Reapply filters after sorting
+                filterAssets();
+            }
+            
+            // Filter function
+            function filterAssets() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedType = typeFilter.value;
+                const selectedBrand = brandFilter.value;
+                const selectedStatus = statusFilter.value;
+                
+                const rows = assetsTable.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.id === 'noResultsRow') return;
+                    
+                    const type = row.getAttribute('data-type');
+                    const brand = row.getAttribute('data-brand');
+                    const status = row.getAttribute('data-status');
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    
+                    // Check if row matches all filters
+                    const matchesSearch = searchData.includes(searchTerm);
+                    const matchesType = !selectedType || type === selectedType;
+                    const matchesBrand = !selectedBrand || brand === selectedBrand;
+                    const matchesStatus = !selectedStatus || status === selectedStatus;
+                    
+                    if (matchesSearch && matchesType && matchesBrand && matchesStatus) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "no results" message
+                updateNoResultsMessage(visibleCount);
+                
+                // Update grid view if currently active
+                if (isGridView) {
+                    generateGridView();
+                }
+            }
+            
+            // Add "no results" message functionality
+            function updateNoResultsMessage(count) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                
+                if (count === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noResultsRow';
+                        noResultsRow.innerHTML = `
+                            <td colspan="8" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+                                <h6 class="text-muted">No assets found</h6>
+                                <p class="text-muted mb-0">Try adjusting your search criteria</p>
+                            </td>
+                        `;
+                        assetsTable.querySelector('tbody').appendChild(noResultsRow);
+                    }
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', filterAssets);
+            typeFilter.addEventListener('change', filterAssets);
+            brandFilter.addEventListener('change', filterAssets);
+            statusFilter.addEventListener('change', filterAssets);
+            
+            // Sort event listeners
+            sortBy.addEventListener('change', sortAssets);
+            sortOrderBtn.addEventListener('click', function() {
+                sortAscending = !sortAscending;
+                sortAssets();
+            });
+            
+            // Initialize with all assets visible
+            filterAssets();
+        });
+    </script>
 </body>
 </html> 
