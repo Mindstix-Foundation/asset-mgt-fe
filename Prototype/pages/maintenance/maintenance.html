@@ -224,8 +224,8 @@
                             <tr data-asset-id="AST-003" data-status="In Progress" data-priority="Medium" data-vendor="Apple Service" data-search="AST-003 iPhone 14 Pro Screen repair Apple Service In Progress Medium">
                                 <td><strong>AST-003</strong><br><small class="text-muted">iPhone 14 Pro</small></td>
                                 <td>Screen repair</td>
-                                <td><span class="badge bg-warning text-dark">In Progress</span></td>
-                                <td><span class="badge bg-warning text-dark">Medium</span></td>
+                                <td><span class="badge badge-in-progress">In Progress</span></td>
+                                <td><span class="badge badge-priority-medium">Medium</span></td>
                                 <td>Apple Service</td>
                                 <td>Mar 10, 2024</td>
                                 <td><strong>$299.00</strong></td>
@@ -246,8 +246,8 @@
                             <tr data-asset-id="AST-012" data-status="Scheduled" data-priority="Low" data-vendor="Dell Support" data-search="AST-012 Dell Laptop Battery replacement Dell Support Scheduled Low">
                                 <td><strong>AST-012</strong><br><small class="text-muted">Dell Laptop</small></td>
                                 <td>Battery replacement</td>
-                                <td><span class="badge bg-info text-dark">Scheduled</span></td>
-                                <td><span class="badge bg-success">Low</span></td>
+                                <td><span class="badge badge-scheduled">Scheduled</span></td>
+                                <td><span class="badge badge-priority-low">Low</span></td>
                                 <td>Dell Support</td>
                                 <td>Mar 25, 2024</td>
                                 <td><strong>$150.00</strong></td>
@@ -268,8 +268,8 @@
                             <tr data-asset-id="AST-015" data-status="Overdue" data-priority="High" data-vendor="TechFix Solutions" data-search="AST-015 Monitor Display flickering TechFix Solutions Overdue High">
                                 <td><strong>AST-015</strong><br><small class="text-muted">Monitor</small></td>
                                 <td>Display flickering</td>
-                                <td><span class="badge bg-danger">Overdue</span></td>
-                                <td><span class="badge bg-danger">High</span></td>
+                                <td><span class="badge badge-overdue">Overdue</span></td>
+                                <td><span class="badge badge-priority-high">High</span></td>
                                 <td>TechFix Solutions</td>
                                 <td>Mar 15, 2024</td>
                                 <td><strong>$200.00</strong></td>
@@ -290,8 +290,8 @@
                             <tr data-asset-id="AST-045" data-status="Completed" data-priority="Medium" data-vendor="Dell Support" data-search="AST-045 Dell Monitor Power supply repair Dell Support Completed Medium">
                                 <td><strong>AST-045</strong><br><small class="text-muted">Dell Monitor</small></td>
                                 <td>Power supply repair</td>
-                                <td><span class="badge bg-success">Completed</span></td>
-                                <td><span class="badge bg-warning text-dark">Medium</span></td>
+                                <td><span class="badge badge-completed">Completed</span></td>
+                                <td><span class="badge badge-priority-medium">Medium</span></td>
                                 <td>Dell Support</td>
                                 <td>Mar 18, 2024</td>
                                 <td><strong>$85.00</strong></td>
@@ -309,8 +309,8 @@
                             <tr data-asset-id="AST-032" data-status="Completed" data-priority="High" data-vendor="Apple Service" data-search="AST-032 MacBook Pro Keyboard replacement Apple Service Completed High">
                                 <td><strong>AST-032</strong><br><small class="text-muted">MacBook Pro</small></td>
                                 <td>Keyboard replacement</td>
-                                <td><span class="badge bg-success">Completed</span></td>
-                                <td><span class="badge bg-danger">High</span></td>
+                                <td><span class="badge badge-completed">Completed</span></td>
+                                <td><span class="badge badge-priority-high">High</span></td>
                                 <td>Apple Service</td>
                                 <td>Mar 16, 2024</td>
                                 <td><strong>$349.00</strong></td>
@@ -328,8 +328,8 @@
                             <tr data-asset-id="AST-028" data-status="Completed" data-priority="Low" data-vendor="Internal Team" data-search="AST-028 Surface Tablet Software update Internal Team Completed Low">
                                 <td><strong>AST-028</strong><br><small class="text-muted">Surface Tablet</small></td>
                                 <td>Software update</td>
-                                <td><span class="badge bg-success">Completed</span></td>
-                                <td><span class="badge bg-success">Low</span></td>
+                                <td><span class="badge badge-completed">Completed</span></td>
+                                <td><span class="badge badge-priority-low">Low</span></td>
                                 <td>Internal Team</td>
                                 <td>Mar 14, 2024</td>
                                 <td><strong>$0.00</strong></td>
@@ -481,11 +481,11 @@
                                         </div>
                                         <div class="col-6 mb-2">
                                             <label class="form-label text-muted">Priority</label>
-                                            <div><span class="badge bg-warning">Medium</span></div>
+                                            <div><span class="badge badge-priority-medium">Medium</span></div>
                                         </div>
                                         <div class="col-6 mb-2">
                                             <label class="form-label text-muted">Status</label>
-                                            <div><span class="badge bg-warning">In Progress</span></div>
+                                            <div><span class="badge badge-in-progress">In Progress</span></div>
                                         </div>
                                         <div class="col-6 mb-2">
                                             <label class="form-label text-muted">Progress</label>
@@ -576,31 +576,131 @@
     
     <!-- Override dull badge colors with bright Bootstrap colors -->
     <style>
-        /* Override custom badge colors with normal Bootstrap colors */
-        .badge.bg-success {
-            background-color: #198754 !important;
+        /* Dashboard-style gradient badges */
+        .badge.badge-scheduled {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
         }
         
-        .badge.bg-primary {
-            background-color: #0d6efd !important;
+        .badge.badge-in-progress {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
         }
         
-        .badge.bg-warning {
-            background-color: #ffc107 !important;
-            color: #000 !important;
+        .badge.badge-completed {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
         }
         
-        .badge.bg-danger {
-            background-color: #dc3545 !important;
+        .badge.badge-overdue {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
         }
         
-        .badge.bg-info {
-            background-color: #0dcaf0 !important;
-            color: #000 !important;
+        /* Priority badges */
+        .badge.badge-priority-low {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
         }
         
-        .badge.bg-secondary {
-            background-color: #6c757d !important;
+        .badge.badge-priority-medium {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
+        }
+        
+        .badge.badge-priority-high {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
+        }
+        
+        .badge.badge-priority-critical {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Modern Card Styles */
+        .stats-card-modern {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+            background: #fff;
+        }
+        
+        .stats-card-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card-modern:hover .stats-icon {
+            transform: scale(1.1);
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+        
+        /* Enhanced table styling */
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        
+        /* Button enhancements */
+        .btn-group .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
     </style>
     

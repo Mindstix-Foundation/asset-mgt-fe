@@ -7,96 +7,135 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
-    
-    <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
 </head>
 <body style="background-color: #f8f9fa;">
-
-    <!-- Main Content -->
-    <div class="container py-4">
+    <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="card-title mb-0">
-                            <i class="fas fa-plus me-2"></i>Register New Asset
-                        </h4>
+            <div class="col-12 col-lg-8 col-xl-6">
+                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
+                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="stats-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-plus text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-0 fw-bold text-dark">Register New Asset</h4>
+                                <p class="text-muted mb-0 small">Add a new asset to your inventory</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Asset ID</label>
-                                    <input type="text" class="form-control" placeholder="AST-001" readonly>
+                    <div class="card-body p-4 p-lg-5">
+                        <form class="needs-validation" novalidate>
+                            <div class="row g-4">
+                                <!-- Asset ID -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="assetId" placeholder="AST-001" value="AST-001" readonly style="background-color: #f8f9fa;">
+                                        <label for="assetId">
+                                            <i class="fas fa-tag me-2 text-muted"></i>Asset ID
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Asset Type</label>
-                                    <select class="form-select">
-                                        <option>Laptop</option>
-                                        <option>Monitor</option>
-                                        <option>Mobile Device</option>
-                                        <option>Tablet</option>
-                                        <option>Accessories</option>
-                                    </select>
+
+                                <!-- Asset Type -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="assetType" required>
+                                            <option value="">Choose...</option>
+                                            <option value="laptop" selected>Laptop</option>
+                                            <option value="monitor">Monitor</option>
+                                            <option value="mobile">Mobile Device</option>
+                                            <option value="tablet">Tablet</option>
+                                            <option value="accessories">Accessories</option>
+                                        </select>
+                                        <label for="assetType">
+                                            <i class="fas fa-laptop me-2 text-muted"></i>Asset Type
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Brand</label>
-                                    <select class="form-select">
-                                        <option value="">Select Brand</option>
-                                        <option>Apple</option>
-                                        <option>Dell</option>
-                                        <option>HP</option>
-                                        <option>Lenovo</option>
-                                        <option>Microsoft</option>
-                                        <option>Samsung</option>
-                                        <option>LG</option>
-                                        <option>ASUS</option>
-                                        <option>Acer</option>
-                                        <option>Other</option>
-                                    </select>
+
+                                <!-- Brand -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="brand" required>
+                                            <option value="">Choose Brand...</option>
+                                            <option value="apple">Apple</option>
+                                            <option value="dell">Dell</option>
+                                            <option value="hp">HP</option>
+                                            <option value="lenovo">Lenovo</option>
+                                            <option value="microsoft">Microsoft</option>
+                                            <option value="samsung">Samsung</option>
+                                            <option value="lg">LG</option>
+                                            <option value="asus">ASUS</option>
+                                            <option value="acer">Acer</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <label for="brand">
+                                            <i class="fas fa-building me-2 text-muted"></i>Brand
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Model</label>
-                                    <select class="form-select">
-                                        <option value="">Select Model</option>
-                                        <option>MacBook Pro 13"</option>
-                                        <option>MacBook Pro 14"</option>
-                                        <option>MacBook Pro 16"</option>
-                                        <option>MacBook Air 13"</option>
-                                        <option>iMac 24"</option>
-                                        <option>Dell XPS 13</option>
-                                        <option>Dell XPS 15</option>
-                                        <option>Dell Inspiron</option>
-                                        <option>HP EliteBook</option>
-                                        <option>HP Pavilion</option>
-                                        <option>ThinkPad X1</option>
-                                        <option>ThinkPad T Series</option>
-                                        <option>Surface Laptop</option>
-                                        <option>Surface Pro</option>
-                                        <option>iPhone 14</option>
-                                        <option>iPhone 15</option>
-                                        <option>iPad Pro</option>
-                                        <option>iPad Air</option>
-                                        <option>Other</option>
-                                    </select>
+
+                                <!-- Model -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="model" required>
+                                            <option value="">Choose Model...</option>
+                                            <option value="macbook-pro-13">MacBook Pro 13"</option>
+                                            <option value="macbook-pro-14">MacBook Pro 14"</option>
+                                            <option value="macbook-pro-16">MacBook Pro 16"</option>
+                                            <option value="macbook-air-13">MacBook Air 13"</option>
+                                            <option value="imac-24">iMac 24"</option>
+                                            <option value="dell-xps-13">Dell XPS 13</option>
+                                            <option value="dell-xps-15">Dell XPS 15</option>
+                                            <option value="dell-inspiron">Dell Inspiron</option>
+                                            <option value="hp-elitebook">HP EliteBook</option>
+                                            <option value="hp-pavilion">HP Pavilion</option>
+                                            <option value="thinkpad-x1">ThinkPad X1</option>
+                                            <option value="thinkpad-t">ThinkPad T Series</option>
+                                            <option value="surface-laptop">Surface Laptop</option>
+                                            <option value="surface-pro">Surface Pro</option>
+                                            <option value="iphone-14">iPhone 14</option>
+                                            <option value="iphone-15">iPhone 15</option>
+                                            <option value="ipad-pro">iPad Pro</option>
+                                            <option value="ipad-air">iPad Air</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <label for="model">
+                                            <i class="fas fa-cog me-2 text-muted"></i>Model
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Serial Number</label>
-                                    <input type="text" class="form-control" placeholder="ABC123XYZ">
+
+                                <!-- Serial Number -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="serialNumber" placeholder="ABC123XYZ" required>
+                                        <label for="serialNumber">
+                                            <i class="fas fa-barcode me-2 text-muted"></i>Serial Number
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Purchase Date <small class="text-muted">(Optional)</small></label>
-                                    <input type="date" class="form-control">
+
+                                <!-- Purchase Date -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="purchaseDate" placeholder="Purchase Date">
+                                        <label for="purchaseDate">
+                                            <i class="fas fa-calendar me-2 text-muted"></i>Purchase Date <small class="text-muted">(Optional)</small>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-secondary" onclick="history.back()">
-                                    <i class="fas fa-arrow-left me-1"></i>Cancel
+                            <!-- Action Buttons -->
+                            <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-5">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="history.back()">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancel
                                 </button>
-                                <button type="button" class="btn btn-primary">
-                                    <i class="fas fa-save me-1"></i>Register Asset
+                                <button type="submit" class="btn btn-primary btn-lg px-4">
+                                    <i class="fas fa-save me-2"></i>Register Asset
                                 </button>
                             </div>
                         </form>
@@ -106,9 +145,219 @@
         </div>
     </div>
 
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Asset has been registered successfully!
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Include navbar JavaScript -->
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
+    
+    <!-- Modern Theme Styles -->
+    <style>
+        /* Modern Card Styles */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+
+        /* Form enhancements */
+        .form-floating > label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:hover, .form-select:hover {
+            border-color: #667eea;
+        }
+
+        /* Button enhancements */
+        .btn {
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            color: white !important;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #e9ecef !important;
+            color: #6c757d !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+        }
+
+        /* Form validation */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #667eea;
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc3545;
+        }
+
+        /* Toast styling */
+        .toast-header.bg-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    
+    <script>
+        // Form validation and enhancement
+        (function() {
+            'use strict';
+            
+            // Bootstrap form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    if (form.checkValidity()) {
+                        // Show success toast
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
+                        
+                        // Reset form after a delay
+                        setTimeout(() => {
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            // Keep Asset ID readonly value
+                            document.getElementById('assetId').value = 'AST-001';
+                        }, 2000);
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+            
+            // Dynamic model filtering based on brand selection
+            const brandSelect = document.getElementById('brand');
+            const modelSelect = document.getElementById('model');
+            
+            const modelsByBrand = {
+                'apple': [
+                    { value: 'macbook-pro-13', text: 'MacBook Pro 13"' },
+                    { value: 'macbook-pro-14', text: 'MacBook Pro 14"' },
+                    { value: 'macbook-pro-16', text: 'MacBook Pro 16"' },
+                    { value: 'macbook-air-13', text: 'MacBook Air 13"' },
+                    { value: 'imac-24', text: 'iMac 24"' },
+                    { value: 'iphone-14', text: 'iPhone 14' },
+                    { value: 'iphone-15', text: 'iPhone 15' },
+                    { value: 'ipad-pro', text: 'iPad Pro' },
+                    { value: 'ipad-air', text: 'iPad Air' }
+                ],
+                'dell': [
+                    { value: 'dell-xps-13', text: 'Dell XPS 13' },
+                    { value: 'dell-xps-15', text: 'Dell XPS 15' },
+                    { value: 'dell-inspiron', text: 'Dell Inspiron' }
+                ],
+                'hp': [
+                    { value: 'hp-elitebook', text: 'HP EliteBook' },
+                    { value: 'hp-pavilion', text: 'HP Pavilion' }
+                ],
+                'lenovo': [
+                    { value: 'thinkpad-x1', text: 'ThinkPad X1' },
+                    { value: 'thinkpad-t', text: 'ThinkPad T Series' }
+                ],
+                'microsoft': [
+                    { value: 'surface-laptop', text: 'Surface Laptop' },
+                    { value: 'surface-pro', text: 'Surface Pro' }
+                ]
+            };
+            
+            brandSelect.addEventListener('change', function() {
+                const selectedBrand = this.value;
+                const models = modelsByBrand[selectedBrand] || [];
+                
+                // Clear current options
+                modelSelect.innerHTML = '<option value="">Choose Model...</option>';
+                
+                // Add brand-specific models
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.value;
+                    option.textContent = model.text;
+                    modelSelect.appendChild(option);
+                });
+                
+                // Add "Other" option
+                const otherOption = document.createElement('option');
+                otherOption.value = 'other';
+                otherOption.textContent = 'Other';
+                modelSelect.appendChild(otherOption);
+                
+                // Reset model selection
+                modelSelect.value = '';
+            });
+        })();
+    </script>
 </body>
 </html> 

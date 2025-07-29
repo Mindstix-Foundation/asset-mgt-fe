@@ -421,7 +421,7 @@
                                     <td>Laptop</td>
                                     <td>Apple MacBook Pro 16"</td>
                                     <td>ABC123XYZ</td>
-                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td><span class="badge badge-assigned">Assigned</span></td>
                                     <td>John Doe</td>
                                     <td>New York</td>
                                     <td>Jan 15, 2024</td>
@@ -431,7 +431,7 @@
                                     <td>Monitor</td>
                                     <td>Dell UltraSharp 27"</td>
                                     <td>DEF456UVW</td>
-                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td><span class="badge badge-assigned">Assigned</span></td>
                                     <td>John Doe</td>
                                     <td>New York</td>
                                     <td>Jan 20, 2024</td>
@@ -441,7 +441,7 @@
                                     <td>Mobile</td>
                                     <td>iPhone 14 Pro</td>
                                     <td>GHI789RST</td>
-                                    <td><span class="badge bg-warning">Under Repair</span></td>
+                                    <td><span class="badge badge-under-repair">Under Repair</span></td>
                                     <td>-</td>
                                     <td>Service Center</td>
                                     <td>Feb 01, 2024</td>
@@ -451,7 +451,7 @@
                                     <td>Tablet</td>
                                     <td>iPad Pro 12.9"</td>
                                     <td>JKL012MNO</td>
-                                    <td><span class="badge bg-success">Available</span></td>
+                                    <td><span class="badge badge-available">Available</span></td>
                                     <td>-</td>
                                     <td>Warehouse A</td>
                                     <td>Mar 05, 2024</td>
@@ -461,7 +461,7 @@
                                     <td>Mobile</td>
                                     <td>iPhone 14 Pro</td>
                                     <td>PQR345STU</td>
-                                    <td><span class="badge bg-primary">Assigned</span></td>
+                                    <td><span class="badge badge-assigned">Assigned</span></td>
                                     <td>Jane Smith</td>
                                     <td>San Francisco</td>
                                     <td>Mar 12, 2024</td>
@@ -492,5 +492,538 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../../asset/navbar.js"></script>
     <script src="../../script.js"></script>
+    
+    <!-- Reports Page Specific JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Add loading states to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                if (button.textContent.includes('Generate') || button.textContent.includes('Export')) {
+                    button.addEventListener('click', function(e) {
+                        if (!button.getAttribute('data-bs-toggle')) {
+                            e.preventDefault();
+                            
+                            // Add loading state
+                            const originalText = button.innerHTML;
+                            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+                            button.disabled = true;
+                            
+                            // Simulate processing time
+                            setTimeout(() => {
+                                button.innerHTML = originalText;
+                                button.disabled = false;
+                                
+                                // Show success message
+                                showNotification('Report generated successfully!', 'success');
+                            }, 2000);
+                        }
+                    });
+                }
+            });
+
+            // Custom date range toggle
+            const dateRangeSelect = document.querySelector('select[class="form-select"]:last-of-type');
+            if (dateRangeSelect) {
+                dateRangeSelect.addEventListener('change', function() {
+                    const customDateRange = document.getElementById('customDateRange');
+                    if (this.value === 'Custom Range') {
+                        customDateRange.style.display = 'block';
+                    } else {
+                        customDateRange.style.display = 'none';
+                    }
+                });
+            }
+
+            // Enhanced report card interactions
+            const reportCards = document.querySelectorAll('.report-card');
+            reportCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.zIndex = '10';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.zIndex = '1';
+                });
+            });
+
+            // Initialize charts with animation
+            initializeCharts();
+        });
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto dismiss after 4 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+
+        // Initialize charts with enhanced styling
+        function initializeCharts() {
+            // Asset Distribution Chart
+            const assetDistCtx = document.getElementById('assetDistributionChart');
+            if (assetDistCtx) {
+                new Chart(assetDistCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Laptops', 'Monitors', 'Mobile', 'Other'],
+                        datasets: [{
+                            data: [45, 25, 20, 10],
+                            backgroundColor: [
+                                '#667eea', // Blue-purple (matches btn-primary)
+                                '#4facfe', // Blue (matches btn-info)
+                                '#11998e', // Green (matches btn-success)
+                                '#fa709a'  // Pink (matches btn-warning)
+                            ],
+                            borderWidth: 0,
+                            hoverOffset: 10,
+                            hoverBackgroundColor: [
+                                '#5a6fd8', // Darker blue-purple
+                                '#3d9aec', // Darker blue
+                                '#0f8278', // Darker green
+                                '#f85a88'  // Darker pink
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        animation: {
+                            animateRotate: true,
+                            duration: 2000
+                        }
+                    }
+                });
+            }
+
+            // Asset Status Chart
+            const assetStatusCtx = document.getElementById('assetStatusChart');
+            if (assetStatusCtx) {
+                new Chart(assetStatusCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Assigned', 'Available', 'Maintenance', 'Retired'],
+                        datasets: [{
+                            data: [892, 312, 43, 127],
+                            backgroundColor: [
+                                '#667eea', // Blue-purple for Assigned
+                                '#11998e', // Green for Available
+                                '#fa709a', // Pink for Maintenance
+                                '#6c757d'  // Gray for Retired
+                            ],
+                            borderWidth: 0,
+                            borderRadius: 8,
+                            borderSkipped: false,
+                            hoverBackgroundColor: [
+                                '#5a6fd8', // Darker blue-purple
+                                '#0f8278', // Darker green
+                                '#f85a88', // Darker pink
+                                '#5a6169'  // Darker gray
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                },
+                                ticks: {
+                                    color: '#6c757d'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: '#6c757d'
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    <!-- Modern Theme Styles -->
+    <style>
+        /* Dashboard-style gradient badges */
+        .badge.badge-available {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+        }
+        
+        .badge.badge-assigned {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .badge.badge-under-repair {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+        }
+        
+        .badge.badge-retired {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Modern Card Styles */
+        .report-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+            cursor: pointer;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .report-card i {
+            transition: all 0.3s ease;
+        }
+        
+        .report-card:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .card {
+            border-radius: 0.75rem !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        
+        .card-header-gradient {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .card:hover .card-header-gradient::before {
+            opacity: 1;
+        }
+        
+        .info-item {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: rgba(0, 123, 255, 0.02);
+            border-left: 3px solid rgba(0, 123, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .info-item:hover {
+            background: rgba(0, 123, 255, 0.05);
+            border-left-color: rgba(0, 123, 255, 0.4);
+            transform: translateX(2px);
+        }
+        
+        .btn-modern {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+        
+        /* Enhanced table styling */
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        
+        /* Timeline enhancements */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% + 0.5rem);
+            background: linear-gradient(to bottom, #e9ecef, transparent);
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        /* Progress bars */
+        .progress {
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .progress-bar {
+            border-radius: 10px;
+        }
+        
+        /* Button enhancements */
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none !important;
+            background-color: transparent !important;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:focus, .btn:active, .btn.active {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        
+        /* Gradient Button Styles - matching badge designs */
+        .btn-success, .btn-success:visited, .btn-success:focus, .btn-success:active {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-success:hover, .btn-success:focus:hover {
+            background: linear-gradient(135deg, #0f8278 0%, #32d96b 100%) !important;
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-primary, .btn-primary:visited, .btn-primary:focus, .btn-primary:active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-warning, .btn-warning:visited, .btn-warning:focus, .btn-warning:active {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-warning:hover, .btn-warning:focus:hover {
+            background: linear-gradient(135deg, #f85a88 0%, #fedd2e 100%) !important;
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-info, .btn-info:visited, .btn-info:focus, .btn-info:active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-info:hover, .btn-info:focus:hover {
+            background: linear-gradient(135deg, #3d9aec 0%, #00e0ec 100%) !important;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-danger, .btn-danger:visited, .btn-danger:focus, .btn-danger:active {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-danger:hover, .btn-danger:focus:hover {
+            background: linear-gradient(135deg, #ff2f5a 0%, #ff3545 100%) !important;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-secondary, .btn-secondary:visited, .btn-secondary:focus, .btn-secondary:active {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+            color: #333 !important;
+            box-shadow: 0 2px 8px rgba(168, 237, 234, 0.3) !important;
+            border: none !important;
+        }
+        
+        .btn-secondary:hover, .btn-secondary:focus:hover {
+            background: linear-gradient(135deg, #96e1de 0%, #fec8d7 100%) !important;
+            box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4) !important;
+            color: #333 !important;
+            border: none !important;
+        }
+        
+        /* Outline button styles with gradients */
+        .btn-outline-primary, .btn-outline-primary:visited, .btn-outline-primary:focus, .btn-outline-primary:active {
+            background: white !important;
+            border: 2px solid #667eea !important;
+            color: #667eea !important;
+        }
+        
+        .btn-outline-primary:hover, .btn-outline-primary:focus:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border: 2px solid transparent !important;
+        }
+        
+        .btn-outline-secondary, .btn-outline-secondary:visited, .btn-outline-secondary:focus, .btn-outline-secondary:active {
+            background: white !important;
+            border: 2px solid #a8edea !important;
+            color: #666 !important;
+        }
+        
+        .btn-outline-secondary:hover, .btn-outline-secondary:focus:hover {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+            color: #333 !important;
+            border: 2px solid transparent !important;
+        }
+        
+        .btn-outline-success, .btn-outline-success:visited, .btn-outline-success:focus, .btn-outline-success:active {
+            background: white !important;
+            border: 2px solid #11998e !important;
+            color: #11998e !important;
+        }
+        
+        .btn-outline-success:hover, .btn-outline-success:focus:hover {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border: 2px solid transparent !important;
+        }
+        
+        /* Small button adjustments */
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .report-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-header-gradient {
+                height: 100px !important;
+            }
+            
+            .card-header-gradient i {
+                font-size: 2.5rem !important;
+            }
+        }
+    </style>
 </body>
 </html> 

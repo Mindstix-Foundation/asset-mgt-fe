@@ -7,100 +7,139 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
-    
-    <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
 </head>
 <body style="background-color: #f8f9fa;">
-
-    <!-- Main Content -->
-    <div class="container py-4">
+    <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-10">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="card-title mb-0">
-                            <i class="fas fa-user-plus me-2"></i>Issue Asset to Employee
-                        </h4>
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
+                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-user-plus text-success fa-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-0 fw-bold text-dark">Issue Asset to Employee</h4>
+                                <p class="text-muted mb-0 small">Assign an available asset to an employee</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
-                        <form>
-                            <div class="row">
-                                <!-- Asset Selection -->
-                                <div class="col-12 mb-4">
-                                    <h6 class="text-muted mb-3">
-                                        <i class="fas fa-laptop me-2"></i>Select Asset
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Asset ID</label>
-                                            <select class="form-select">
-                                                <option value="">Select an asset...</option>
-                                                <option>AST-001 - MacBook Pro 16"</option>
-                                                <option>AST-002 - Dell Monitor 27"</option>
-                                                <option>AST-003 - iPhone 14 Pro</option>
-                                                <option>AST-004 - Surface Laptop</option>
-                                                <option>AST-005 - iPad Pro</option>
+                    <div class="card-body p-4 p-lg-5">
+                        <form class="needs-validation" novalidate>
+                            <!-- Asset Selection Section -->
+                            <div class="mb-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="asset-type-icon laptops me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                        <i class="fas fa-laptop"></i>
+                                    </div>
+                                    <h6 class="mb-0 fw-semibold text-dark">Select Asset</h6>
+                                </div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="assetId" required>
+                                                <option value="">Choose an asset...</option>
+                                                <option value="AST-001">AST-001 - MacBook Pro 16"</option>
+                                                <option value="AST-002">AST-002 - Dell Monitor 27"</option>
+                                                <option value="AST-003">AST-003 - iPhone 14 Pro</option>
+                                                <option value="AST-004">AST-004 - Surface Laptop</option>
+                                                <option value="AST-005">AST-005 - iPad Pro</option>
                                             </select>
+                                            <label for="assetId">
+                                                <i class="fas fa-tag me-2 text-muted"></i>Asset ID
+                                            </label>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Asset Type</label>
-                                            <input type="text" class="form-control" placeholder="Will auto-populate" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="assetType" placeholder="Asset Type" readonly style="background-color: #f8f9fa;">
+                                            <label for="assetType">
+                                                <i class="fas fa-laptop me-2 text-muted"></i>Asset Type
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Employee Selection -->
-                                <div class="col-12 mb-4">
-                                    <h6 class="text-muted mb-3">
-                                        <i class="fas fa-user me-2"></i>Select Employee
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Employee ID</label>
-                                            <input type="text" class="form-control" placeholder="Enter Employee ID (e.g., EMP-001)" id="employeeIdInput">
+                            <!-- Employee Selection Section -->
+                            <div class="mb-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="asset-type-icon monitors me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <h6 class="mb-0 fw-semibold text-dark">Select Employee</h6>
+                                </div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="employeeId" placeholder="EMP-001" required>
+                                            <label for="employeeId">
+                                                <i class="fas fa-id-badge me-2 text-muted"></i>Employee ID
+                                            </label>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Employee Name</label>
-                                            <input type="text" class="form-control" placeholder="Will auto-populate from Employee ID" readonly id="employeeNameDisplay">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="employeeName" placeholder="Employee Name" readonly style="background-color: #f8f9fa;">
+                                            <label for="employeeName">
+                                                <i class="fas fa-user me-2 text-muted"></i>Employee Name
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Assignment Details -->
-                                <div class="col-12">
-                                    <h6 class="text-muted mb-3">
-                                        <i class="fas fa-calendar-alt me-2"></i>Assignment Details
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Assignment Date</label>
-                                            <input type="date" class="form-control" value="2024-03-20">
+                            <!-- Assignment Details Section -->
+                            <div class="mb-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="asset-type-icon mobile me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <h6 class="mb-0 fw-semibold text-dark">Assignment Details</h6>
+                                </div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="date" class="form-control" id="assignmentDate" required>
+                                            <label for="assignmentDate">
+                                                <i class="fas fa-calendar me-2 text-muted"></i>Assignment Date
+                                            </label>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Assignment Type</label>
-                                            <select class="form-select">
-                                                <option>Permanent Assignment</option>
-                                                <option>Temporary Assignment</option>
-                                                <option>Project-based</option>
-                                                <option>Trial Period</option>
-                                                <option>Mindstix Foundation</option>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="assignmentType" required>
+                                                <option value="">Choose type...</option>
+                                                <option value="permanent" selected>Permanent Assignment</option>
+                                                <option value="temporary">Temporary Assignment</option>
+                                                <option value="project">Project-based</option>
+                                                <option value="trial">Trial Period</option>
+                                                <option value="foundation">Mindstix Foundation</option>
                                             </select>
+                                            <label for="assignmentType">
+                                                <i class="fas fa-briefcase me-2 text-muted"></i>Assignment Type
+                                            </label>
                                         </div>
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label">Assignment Notes</label>
-                                            <textarea class="form-control" rows="3" placeholder="Add any special instructions or notes for this assignment..."></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="assignmentNotes" placeholder="Assignment Notes" style="height: 120px;"></textarea>
+                                            <label for="assignmentNotes">
+                                                <i class="fas fa-sticky-note me-2 text-muted"></i>Assignment Notes
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="d-flex justify-content-between mt-4">
-                                <button type="button" class="btn btn-secondary" onclick="history.back()">
-                                    <i class="fas fa-arrow-left me-1"></i>Cancel
+                            <!-- Action Buttons -->
+                            <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-5">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="history.back()">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancel
                                 </button>
-                                <button type="button" class="btn btn-success">
-                                    <i class="fas fa-check me-1"></i>Issue Asset
+                                <button type="submit" class="btn btn-success btn-lg px-4">
+                                    <i class="fas fa-check me-2"></i>Issue Asset
                                 </button>
                             </div>
                         </form>
@@ -110,9 +149,111 @@
         </div>
     </div>
 
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Asset has been issued successfully!
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Include navbar JavaScript -->
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
+    
+    <script>
+        // Form validation and enhancement
+        (function() {
+            'use strict';
+            
+            // Set today's date as default
+            document.getElementById('assignmentDate').value = new Date().toISOString().split('T')[0];
+            
+            // Mock data for demonstration
+            const assets = {
+                'AST-001': { type: 'Laptop', name: 'MacBook Pro 16"' },
+                'AST-002': { type: 'Monitor', name: 'Dell Monitor 27"' },
+                'AST-003': { type: 'Mobile Device', name: 'iPhone 14 Pro' },
+                'AST-004': { type: 'Laptop', name: 'Surface Laptop' },
+                'AST-005': { type: 'Tablet', name: 'iPad Pro' }
+            };
+            
+            const employees = {
+                'EMP-001': 'John Doe',
+                'EMP-002': 'Jane Smith',
+                'EMP-003': 'Mike Johnson',
+                'EMP-004': 'Sarah Wilson',
+                'EMP-005': 'David Brown'
+            };
+            
+            // Asset selection handler
+            document.getElementById('assetId').addEventListener('change', function() {
+                const selectedAsset = assets[this.value];
+                const assetTypeField = document.getElementById('assetType');
+                
+                if (selectedAsset) {
+                    assetTypeField.value = selectedAsset.type;
+                } else {
+                    assetTypeField.value = '';
+                }
+            });
+            
+            // Employee ID handler
+            document.getElementById('employeeId').addEventListener('input', function() {
+                const employeeName = employees[this.value.toUpperCase()];
+                const employeeNameField = document.getElementById('employeeName');
+                
+                if (employeeName) {
+                    employeeNameField.value = employeeName;
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else if (this.value) {
+                    employeeNameField.value = 'Employee not found';
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                } else {
+                    employeeNameField.value = '';
+                    this.classList.remove('is-valid', 'is-invalid');
+                }
+            });
+            
+            // Bootstrap form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Check if employee exists
+                    const employeeId = document.getElementById('employeeId').value.toUpperCase();
+                    const employeeExists = employees[employeeId];
+                    
+                    if (form.checkValidity() && employeeExists) {
+                        // Show success toast
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
+                        
+                        // Reset form after a delay
+                        setTimeout(() => {
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            document.getElementById('assignmentDate').value = new Date().toISOString().split('T')[0];
+                            document.getElementById('assetType').value = '';
+                            document.getElementById('employeeName').value = '';
+                        }, 2000);
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
 </body>
 </html> 

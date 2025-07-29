@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Add to Inventory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="../asset/navbar.css">
+</head>
+<body style="background-color: #f8f9fa;">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
+                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-warehouse text-success fa-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-0 fw-bold text-dark">Add Asset to Inventory</h4>
+                                <p class="text-muted mb-0 small">Register a new asset in your inventory system</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        <form id="addInventoryForm" class="needs-validation" novalidate>
+                            <div class="row g-4">
+                                <!-- Asset Information Section -->
+                                <div class="col-12">
+                                    <h6 class="mb-3 text-primary">
+                                        <i class="fas fa-laptop me-2"></i>Asset Information
+                                    </h6>
+                                </div>
+
+                                <!-- Asset ID -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="assetId" name="assetId" placeholder="AST-XXX">
+                                        <label for="assetId">
+                                            <i class="fas fa-tag me-2 text-muted"></i>Asset ID
+                                        </label>
+                                        <div class="form-text">Auto-generated if left empty</div>
+                                    </div>
+                                </div>
+
+                                <!-- Asset Type -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="assetType" name="assetType" required>
+                                            <option value="">Select Asset Type</option>
+                                            <option value="Laptop">Laptop</option>
+                                            <option value="Monitor">Monitor</option>
+                                            <option value="Mobile">Mobile Device</option>
+                                            <option value="Tablet">Tablet</option>
+                                            <option value="Accessory">Accessories</option>
+                                        </select>
+                                        <label for="assetType">
+                                            <i class="fas fa-cube me-2 text-muted"></i>Asset Type *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Brand -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="brand" name="brand" required>
+                                            <option value="">Select Brand</option>
+                                            <option value="Apple">Apple</option>
+                                            <option value="Dell">Dell</option>
+                                            <option value="HP">HP</option>
+                                            <option value="Lenovo">Lenovo</option>
+                                            <option value="Samsung">Samsung</option>
+                                            <option value="LG">LG</option>
+                                            <option value="Microsoft">Microsoft</option>
+                                            <option value="Logitech">Logitech</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <label for="brand">
+                                            <i class="fas fa-copyright me-2 text-muted"></i>Brand *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Serial Number -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="serialNumber" name="serialNumber" placeholder="e.g., ABC123XYZ" required>
+                                        <label for="serialNumber">
+                                            <i class="fas fa-barcode me-2 text-muted"></i>Serial Number *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Inventory Details Section -->
+                                <div class="col-12 mt-5">
+                                    <h6 class="mb-3 text-primary">
+                                        <i class="fas fa-warehouse me-2"></i>Inventory Details
+                                    </h6>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="status" name="status" required>
+                                            <option value="">Select Status</option>
+                                            <option value="Available" selected>Available</option>
+                                            <option value="Reserved">Reserved</option>
+                                            <option value="Low Stock">Low Stock</option>
+                                            <option value="Retired">Retired</option>
+                                        </select>
+                                        <label for="status">
+                                            <i class="fas fa-info-circle me-2 text-muted"></i>Status *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Storage Location -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="location" name="location" required>
+                                            <option value="">Select Location</option>
+                                            <option value="Warehouse A">Warehouse A</option>
+                                            <option value="Warehouse B">Warehouse B</option>
+                                            <option value="Warehouse C">Warehouse C</option>
+                                            <option value="Storage Room 1">Storage Room 1</option>
+                                            <option value="Storage Room 2">Storage Room 2</option>
+                                        </select>
+                                        <label for="location">
+                                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>Storage Location *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Purchase Date -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="purchaseDate" name="purchaseDate">
+                                        <label for="purchaseDate">
+                                            <i class="fas fa-calendar me-2 text-muted"></i>Purchase Date
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Purchase Cost -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="purchaseCost" name="purchaseCost" placeholder="0.00" step="0.01">
+                                        <label for="purchaseCost">
+                                            <i class="fas fa-dollar-sign me-2 text-muted"></i>Purchase Cost
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Added to Inventory Date -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="addedDate" name="addedDate" required>
+                                        <label for="addedDate">
+                                            <i class="fas fa-calendar-plus me-2 text-muted"></i>Added to Inventory *
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Quantity -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1">
+                                        <label for="quantity">
+                                            <i class="fas fa-sort-numeric-up me-2 text-muted"></i>Quantity
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Information Section -->
+                                <div class="col-12 mt-5">
+                                    <h6 class="mb-3 text-primary">
+                                        <i class="fas fa-info-circle me-2"></i>Additional Information
+                                    </h6>
+                                </div>
+
+                                <!-- Vendor/Supplier -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="vendor" name="vendor" placeholder="e.g., Amazon, Best Buy">
+                                        <label for="vendor">
+                                            <i class="fas fa-store me-2 text-muted"></i>Vendor/Supplier
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Warranty Period -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="warranty" name="warranty">
+                                            <option value="">Select Warranty</option>
+                                            <option value="1 Year">1 Year</option>
+                                            <option value="2 Years">2 Years</option>
+                                            <option value="3 Years">3 Years</option>
+                                            <option value="Extended">Extended Warranty</option>
+                                            <option value="No Warranty">No Warranty</option>
+                                        </select>
+                                        <label for="warranty">
+                                            <i class="fas fa-shield-alt me-2 text-muted"></i>Warranty Period
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Condition -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="condition" name="condition">
+                                            <option value="New" selected>New</option>
+                                            <option value="Like New">Like New</option>
+                                            <option value="Good">Good</option>
+                                            <option value="Fair">Fair</option>
+                                            <option value="Refurbished">Refurbished</option>
+                                        </select>
+                                        <label for="condition">
+                                            <i class="fas fa-star me-2 text-muted"></i>Condition
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Specifications -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="specifications" name="specifications" placeholder="e.g., 16GB RAM, 512GB SSD, M2 Pro Chip" style="height: 100px"></textarea>
+                                        <label for="specifications">
+                                            <i class="fas fa-list me-2 text-muted"></i>Specifications
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Notes -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="notes" name="notes" placeholder="Additional notes about this asset" style="height: 100px"></textarea>
+                                        <label for="notes">
+                                            <i class="fas fa-sticky-note me-2 text-muted"></i>Notes
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Generate QR Code -->
+                                <div class="col-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="generateQR" name="generateQR" checked>
+                                        <label class="form-check-label" for="generateQR">
+                                            <i class="fas fa-qrcode me-2"></i>Generate QR code for this asset
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="row mt-5">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                                            <i class="fas fa-arrow-left me-2"></i>Back to Inventory
+                                        </button>
+                                        <div class="d-flex gap-2">
+                                            <button type="reset" class="btn btn-outline-secondary">
+                                                <i class="fas fa-undo me-1"></i>Reset Form
+                                            </button>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-plus me-1"></i>Add to Inventory
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../asset/navbar.js"></script>
+    <script src="../script.js"></script>
+
+    <!-- Modern Theme Styles -->
+    <style>
+        /* Dashboard-style gradient badges */
+        .badge.badge-available {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+        }
+
+        /* Modern Card Styles */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+
+        /* Form enhancements */
+        .form-floating > label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.25);
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:hover, .form-select:hover {
+            border-color: #11998e;
+        }
+
+        /* Button enhancements */
+        .btn {
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            border: none !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #0f8278 0%, #32d96b 100%) !important;
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #e9ecef !important;
+            color: #6c757d !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+        }
+
+        /* Section headers */
+        h6.text-primary {
+            font-weight: 700;
+            border-bottom: 2px solid rgba(17, 153, 142, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Form validation */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #11998e;
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc3545;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+
+    <!-- Form JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('addInventoryForm');
+            const assetTypeSelect = document.getElementById('assetType');
+            const brandSelect = document.getElementById('brand');
+            const assetIdInput = document.getElementById('assetId');
+            
+            // Set default added date to today
+            document.getElementById('addedDate').value = new Date().toISOString().split('T')[0];
+
+            // Auto-generate Asset ID when asset type or brand changes
+            function generateAssetId() {
+                if (!assetIdInput.value && assetTypeSelect.value && brandSelect.value) {
+                    // Generate a random ID for demo purposes
+                    const randomNum = Math.floor(Math.random() * 999) + 1;
+                    assetIdInput.value = `AST-${String(randomNum).padStart(3, '0')}`;
+                }
+            }
+
+            assetTypeSelect.addEventListener('change', generateAssetId);
+            brandSelect.addEventListener('change', generateAssetId);
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Add was-validated class for Bootstrap validation styling
+                form.classList.add('was-validated');
+                
+                // Check if form is valid
+                if (form.checkValidity()) {
+                    // Show loading state
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding to Inventory...';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate processing time
+                    setTimeout(() => {
+                        // Show success message
+                        showSuccessMessage();
+                        
+                        // Reset form
+                        form.reset();
+                        form.classList.remove('was-validated');
+                        
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        
+                        // Reset default values
+                        document.getElementById('status').value = 'Available';
+                        document.getElementById('condition').value = 'New';
+                        document.getElementById('quantity').value = '1';
+                        document.getElementById('generateQR').checked = true;
+                        document.getElementById('addedDate').value = new Date().toISOString().split('T')[0];
+                    }, 2000);
+                }
+            });
+
+            // Success message function
+            function showSuccessMessage() {
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                successAlert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px;';
+                successAlert.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Success!</strong> Asset has been added to inventory successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(successAlert);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    if (successAlert.parentNode) {
+                        successAlert.remove();
+                    }
+                }, 5000);
+            }
+
+            // Form validation styling
+            const inputs = form.querySelectorAll('.form-control, .form-select');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

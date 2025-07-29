@@ -28,9 +28,9 @@
                 <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUploadAssetModal">
                     <i class="fas fa-file-excel me-1"></i>Bulk Upload
                 </button>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssetModal">
-                    <i class="fas fa-plus me-1"></i>Add Asset
-                </button>
+                <a href="../../form_pages/register-asset.html" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Register New Asset
+                </a>
             </div>
         </div>
 
@@ -585,91 +585,6 @@
                             <i class="fas fa-edit me-1"></i>Edit Asset
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Asset Modal -->
-    <div class="modal fade" id="addAssetModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Asset</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Asset ID</label>
-                                <input type="text" class="form-control" placeholder="AST-001" readonly>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Asset Type</label>
-                                <select class="form-select">
-                                    <option>Laptop</option>
-                                    <option>Monitor</option>
-                                    <option>Mobile Device</option>
-                                    <option>Tablet</option>
-                                    <option>Accessories</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Brand</label>
-                                <select class="form-select">
-                                    <option value="">Select Brand</option>
-                                    <option>Apple</option>
-                                    <option>Dell</option>
-                                    <option>HP</option>
-                                    <option>Lenovo</option>
-                                    <option>Microsoft</option>
-                                    <option>Samsung</option>
-                                    <option>LG</option>
-                                    <option>ASUS</option>
-                                    <option>Acer</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Model</label>
-                                <select class="form-select">
-                                    <option value="">Select Model</option>
-                                    <option>MacBook Pro 13"</option>
-                                    <option>MacBook Pro 14"</option>
-                                    <option>MacBook Pro 16"</option>
-                                    <option>MacBook Air 13"</option>
-                                    <option>iMac 24"</option>
-                                    <option>Dell XPS 13</option>
-                                    <option>Dell XPS 15</option>
-                                    <option>Dell Inspiron</option>
-                                    <option>HP EliteBook</option>
-                                    <option>HP Pavilion</option>
-                                    <option>ThinkPad X1</option>
-                                    <option>ThinkPad T Series</option>
-                                    <option>Surface Laptop</option>
-                                    <option>Surface Pro</option>
-                                    <option>iPhone 14</option>
-                                    <option>iPhone 15</option>
-                                    <option>iPad Pro</option>
-                                    <option>iPad Air</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Serial Number</label>
-                                <input type="text" class="form-control" placeholder="ABC123XYZ">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Purchase Date <small class="text-muted">(Optional)</small></label>
-                                <input type="date" class="form-control">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Add Asset</button>
                 </div>
             </div>
         </div>

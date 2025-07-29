@@ -7,20 +7,20 @@ class NavbarManager {
     // Initialize navbar
     init() {
         this.loadNavbar();
-        this.setActiveNavItem();
     }
 
     // Load navbar HTML into the page
     loadNavbar() {
-        // Determine the correct path to navbar.html based on current location
-        const pathDepth = this.getPathDepth();
-        const navbarPath = '../'.repeat(pathDepth) + 'asset/navbar.html';
+        // Use absolute path from server root
+        const navbarPath = '/asset/navbar.html';
         
         fetch(navbarPath)
             .then(response => response.text())
             .then(html => {
                 // Insert navbar at the beginning of body
                 document.body.insertAdjacentHTML('afterbegin', html);
+                // Fix the navbar links after insertion
+                this.fixNavbarLinks();
                 this.setActiveNavItem();
             })
             .catch(error => {
@@ -28,14 +28,65 @@ class NavbarManager {
             });
     }
 
+    // Fix navbar links based on current page location
+    fixNavbarLinks() {
+        const currentPath = window.location.pathname;
+        const pathPrefix = this.getPathPrefix(currentPath);
+        
+        // Update all navigation links
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('../')) {
+                // Convert relative path to appropriate path based on current location
+                if (currentPath.includes('/form_pages/')) {
+                    // From form_pages, we need to go to pages/
+                    link.setAttribute('href', href.replace('../', '/pages/'));
+                } else if (currentPath.includes('/pages/')) {
+                    // From pages subdirectory, keep the relative path
+                    // No change needed
+                } else {
+                    // From root, adjust accordingly
+                    link.setAttribute('href', href.replace('../', '/pages/'));
+                }
+            }
+        });
+
+        // Fix logout link
+        const logoutLink = document.querySelector('a[href="../../index.html"]');
+        if (logoutLink) {
+            if (currentPath.includes('/form_pages/')) {
+                logoutLink.setAttribute('href', '/index.html');
+            } else if (currentPath.includes('/pages/')) {
+                // Keep the relative path for pages
+                logoutLink.setAttribute('href', '../../index.html');
+            } else {
+                logoutLink.setAttribute('href', '/index.html');
+            }
+        }
+    }
+
+    // Get path prefix based on current location
+    getPathPrefix(currentPath) {
+        if (currentPath.includes('/pages/')) {
+            return '../../';
+        } else if (currentPath.includes('/form_pages/')) {
+            return '../';
+        }
+        return './';
+    }
+
     // Determine path depth to calculate relative paths
     getPathDepth() {
         const path = window.location.pathname;
-        const pathParts = path.split('/').filter(part => part !== '');
         
         // If we're in a page folder (like pages/dashboard/), we need to go up 2 levels
         if (path.includes('/pages/')) {
             return 2;
+        }
+        // If we're in form_pages folder, we need to go up 1 level
+        if (path.includes('/form_pages/')) {
+            return 1;
         }
         // If we're in the root Prototype folder
         return 0;
@@ -55,6 +106,8 @@ class NavbarManager {
         // Add active class to current page nav link
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
+            if (!href || href === '#') return;
+            
             const linkFile = href.split('/').pop();
             
             // Check if current file matches the navigation link
@@ -85,7 +138,7 @@ class NavbarManager {
         navLinks.forEach(link => {
             link.classList.remove('active');
             const href = link.getAttribute('href');
-            if (href.includes(pageName)) {
+            if (href && href.includes(pageName)) {
                 link.classList.add('active');
             }
         });
