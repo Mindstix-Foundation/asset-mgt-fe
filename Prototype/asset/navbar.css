@@ -1,0 +1,100 @@
+/* Navbar Additional Styles */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.navbar-brand i {
+    color: #ffd700;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    margin: 0 2px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.nav-link i {
+    width: 16px;
+    text-align: center;
+}
+
+/* User info styling */
+.navbar .text-white {
+    font-size: 0.9rem;
+}
+
+/* Logout button styling */
+.btn-outline-light {
+    border-width: 1px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem;
+        margin: 2px 0;
+    }
+    
+    .navbar .d-flex {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+
+/* Animation for navbar collapse */
+.navbar-collapse {
+    transition: all 0.3s ease;
+}
+
+/* Navbar toggler animation */
+.navbar-toggler {
+    border: none;
+    padding: 4px 8px;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon {
+    transition: all 0.3s ease;
+}
+
+/* Loading state for navbar */
+.navbar-loading {
+    opacity: 0.7;
+    pointer-events: none;
+} 
