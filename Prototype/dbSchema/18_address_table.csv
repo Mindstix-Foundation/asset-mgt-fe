@@ -1,0 +1,15 @@
+18.address,,,,
+Purpose:Physical addresses for locations employees and vendors with GPS coordinates,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for the address
+city_id,FK NOT NULL,INT,1-M,City ID (Foreign Key referencing city.id)
+street_address,NOT NULL,TEXT,,Street address details
+postal_code,NOT NULL,VARCHAR(20),,Postal/ZIP code
+latitude,NULL,DECIMAL(10,8),,GPS latitude coordinate
+longitude,NULL,DECIMAL(11,8),,GPS longitude coordinate
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Address status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated

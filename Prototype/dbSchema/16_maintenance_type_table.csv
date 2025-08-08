@@ -1,0 +1,12 @@
+16.maintenance_type,,,,
+Purpose:Categories of maintenance activities for scheduling and cost tracking,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for maintenance type
+name,NOT NULL UNIQUE,VARCHAR(50),,Maintenance type (Preventive Corrective Emergency etc.)
+description,NULL,TEXT,,Description of maintenance type
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Type status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated

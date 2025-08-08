@@ -134,11 +134,16 @@ function initializeCharts() {
     // Asset Distribution Chart
     const assetDistCtx = document.getElementById('assetDistributionChart');
     if (assetDistCtx) {
+        // Check if chart already exists and destroy it
+        if (window.assetDistChart) {
+            window.assetDistChart.destroy();
+        }
+        
         // Set canvas dimensions to prevent expansion
         assetDistCtx.style.maxHeight = '250px';
         assetDistCtx.style.height = '250px';
         
-        new Chart(assetDistCtx, {
+        window.assetDistChart = new Chart(assetDistCtx, {
             type: 'doughnut',
             data: {
                 labels: ['Laptops', 'Monitors', 'Mobile Devices', 'Accessories'],
@@ -168,11 +173,16 @@ function initializeCharts() {
     // Asset Status Chart
     const assetStatusCtx = document.getElementById('assetStatusChart');
     if (assetStatusCtx) {
+        // Check if chart already exists and destroy it
+        if (window.assetStatusChart) {
+            window.assetStatusChart.destroy();
+        }
+        
         // Set canvas dimensions to prevent expansion
         assetStatusCtx.style.maxHeight = '250px';
         assetStatusCtx.style.height = '250px';
         
-        new Chart(assetStatusCtx, {
+        window.assetStatusChart = new Chart(assetStatusCtx, {
             type: 'bar',
             data: {
                 labels: ['Assigned', 'Available', 'Maintenance', 'Retired'],

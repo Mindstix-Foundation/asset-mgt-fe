@@ -6,10 +6,10 @@
     <title>Asset Management - Reports</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="../../styles.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
     
     <!-- Include navbar CSS -->
-    <link rel="stylesheet" href="../../asset/navbar.css">
+    <link rel="stylesheet" href="../asset/navbar.css">
 </head>
 <body style="background-color: #ffffff;">
 
@@ -490,8 +490,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../../asset/navbar.js"></script>
-    <script src="../../script.js"></script>
+    <script src="../asset/navbar.js"></script>
+    <script src="../script.js"></script>
     
     <!-- Reports Page Specific JavaScript -->
     <script>
@@ -553,8 +553,8 @@
                 });
             });
 
-            // Initialize charts with animation
-            initializeCharts();
+            // Initialize charts with enhanced styling - Reports page specific
+            initializeReportsCharts();
         });
 
         // Show notification function
@@ -577,8 +577,8 @@
             }, 4000);
         }
 
-        // Initialize charts with enhanced styling
-        function initializeCharts() {
+        // Initialize charts with enhanced styling - Reports page specific
+        function initializeReportsCharts() {
             // Asset Distribution Chart
             const assetDistCtx = document.getElementById('assetDistributionChart');
             if (assetDistCtx) {

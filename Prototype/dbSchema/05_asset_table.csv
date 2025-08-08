@@ -1,0 +1,25 @@
+5.asset,,,,
+Purpose:Main asset table storing detailed information about each asset including identification purchase details and current status,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for asset
+asset_id,NOT NULL UNIQUE,VARCHAR(20),,Asset tag ID (AST-001 etc.)
+asset_type_id,FK NOT NULL,INT,1-M,Asset type ID (Foreign Key referencing asset_type.id)
+brand_id,FK NOT NULL,INT,1-M,Brand ID (Foreign Key referencing brand.id)
+model_id,FK NOT NULL,INT,1-M,Model ID (Foreign Key referencing model.id)
+serial_number,NULL UNIQUE,VARCHAR(100),,Manufacturer serial number
+purchase_date,NULL,DATE,,Date of purchase
+purchase_cost,NULL,DECIMAL(10,2),,Original purchase cost
+vendor_id,FK NULL,INT,1-M,Vendor ID (Foreign Key referencing vendor.id)
+warranty_start_date,NULL,DATE,,Warranty start date
+warranty_end_date,NULL,DATE,,Warranty end date
+location_id,FK NOT NULL,INT,1-M,Current location ID (Foreign Key referencing location.id)
+condition,NOT NULL DEFAULT 'NEW',VARCHAR(20),,Condition: NEW GOOD FAIR POOR DAMAGED
+status,NOT NULL DEFAULT 'AVAILABLE',VARCHAR(20),,Status: AVAILABLE ASSIGNED IN_MAINTENANCE RETIRED LOST
+notes,NULL,TEXT,,Additional notes about the asset
+qr_code,NULL,VARCHAR(255),,QR code for asset identification
+image_url,NULL,VARCHAR(500),,URL to asset image
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated 

@@ -11,11 +11,27 @@ class NavbarManager {
 
     // Load navbar HTML into the page
     loadNavbar() {
-        // Use absolute path from server root
-        const navbarPath = '/asset/navbar.html';
+        // Use relative path based on current page location
+        const currentPath = window.location.pathname;
+        let navbarPath;
+        
+        // Determine the correct relative path based on current location
+        if (currentPath.includes('/pages/')) {
+            navbarPath = '../asset/navbar.html';
+        } else if (currentPath.includes('/form_pages/')) {
+            navbarPath = '../asset/navbar.html';
+        } else {
+            // For root level pages
+            navbarPath = 'asset/navbar.html';
+        }
         
         fetch(navbarPath)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
             .then(html => {
                 // Insert navbar at the beginning of body
                 document.body.insertAdjacentHTML('afterbegin', html);
@@ -25,6 +41,7 @@ class NavbarManager {
             })
             .catch(error => {
                 console.error('Error loading navbar:', error);
+                console.error('Attempted to load from:', navbarPath);
             });
     }
 
