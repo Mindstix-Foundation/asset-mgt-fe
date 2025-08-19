@@ -85,7 +85,7 @@ Table employees {
   first_name varchar(50) [not null]
   last_name varchar(50) [not null]
   email varchar(255) [not null, unique, note: 'Primary email - also used for user authentication']
-  phone varchar(20) [note: 'Supports international format: +91-9876543210, extensions, etc.']
+  phone bigint [note: '10-digit Indian mobile number (e.g., 9876543210)']
   date_of_birth date
   address text [note: 'Home address']
   created_by int [ref: > users.id, not null]
@@ -188,7 +188,7 @@ Table vendors {
   name varchar(100) [not null]
   contact_person varchar(100)
   email varchar(255)
-  phone varchar(20)
+  phone bigint [note: '10-digit Indian mobile number (e.g., 9876543210)']
   address text [note: 'Vendor address']
   tax_id varchar(50) [note: 'Tax identification number']
   pan_number varchar(10) [note: 'Permanent Account Number (India)']

@@ -20,13 +20,13 @@ We have carefully analyzed each of your suggestions and have implemented the nec
 ### 1. **employees.phone Field Length**
 **Your Concern:** Phone field varchar(20) - questioning if 20 characters is necessary.
 
-**Our Response:** We have retained varchar(20) as it accommodates:
-- International formats: `+91-9876543210` (14 characters)
-- Extensions: `+1-555-123-4567 x123` (18 characters)
-- Various formatting with spaces/dashes
-- Future-proofing for different regional formats
+**Our Response:** After further analysis and confirmation with business requirements, we have optimized this field for India-specific usage only.
 
-**Action Taken:** Added explanatory note in schema documentation.
+**Action Taken:** 
+- Changed phone field from `varchar(20)` to `bigint`
+- Now stores 10-digit Indian mobile numbers (e.g., 9876543210)
+- This provides better data validation and storage efficiency
+- Eliminates the need for international format support as confirmed this system is for India office only
 
 ### 2. **users-employees Relationship (1-to-many Issue)**
 **Your Concern:** Current design allows multiple user accounts per employee.
@@ -130,6 +130,10 @@ Beyond addressing your specific concerns, we have also implemented:
    - Strategic indexing for faster queries
    - Proper data types for optimal storage
 
+4. **India-Specific Optimizations**
+   - Phone numbers optimized for 10-digit Indian format using `bigint`
+   - PAN number field specifically for Indian tax requirements
+
 ---
 
 ## Updated Schema Deliverable
@@ -140,6 +144,7 @@ The updated schema file (`dbdiagram_schema.dbml`) now includes:
 - ✅ PostgreSQL ENUM definitions
 - ✅ Enhanced documentation
 - ✅ Proper relationship constraints
+- ✅ India-specific field optimizations
 
 ---
 
