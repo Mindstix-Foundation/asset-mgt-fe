@@ -1,0 +1,486 @@
+// Asset Management System Database Schema
+// Generated for dbdiagram.io
+// Date: 2024-12-19
+// Authors: AI Assistant for Mindstix Foundation Trust
+// Updated: Based on senior review feedback
+
+Project asset_management_system {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Asset Management System Database Schema
+    Following PostgreSQL conventions and best practices
+    Features: Complete audit trail, soft delete, timezone-aware timestamps
+    
+    ENUMS REQUIRED:
+    CREATE TYPE asset_condition AS ENUM ('NEW', 'GOOD', 'FAIR', 'POOR', 'DAMAGED');
+    CREATE TYPE asset_status AS ENUM ('AVAILABLE', 'ASSIGNED', 'IN_MAINTENANCE', 'RETIRED', 'LOST');
+    CREATE TYPE maintenance_status AS ENUM ('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
+    CREATE TYPE notification_priority AS ENUM ('LOW', 'NORMAL', 'HIGH', 'URGENT');
+    CREATE TYPE return_condition AS ENUM ('GOOD', 'FAIR', 'POOR', 'DAMAGED');
+  '''
+}
+
+// USER & ACCESS MANAGEMENT TABLES
+Table users {
+  id serial [pk, increment]
+  employee_id int [ref: - employees.id, unique, not null, note: 'One-to-one relationship with employee']
+  username varchar(50) [not null, unique]
+  password_hash varchar(255) [not null]
+  is_active boolean [not null, default: true]
+  last_login timestamptz
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'System users with authentication credentials. Email is referenced from employees table.'
+  
+  indexes {
+    employee_id [unique]
+    username [unique]
+    (is_active, last_login)
+  }
+}
+
+Table roles {
+  id serial [pk, increment]
+  role_name varchar(50) [not null, unique, note: 'Admin, Manager, Employee, etc.']
+  description text
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'User roles and permissions'
+  
+  indexes {
+    role_name [unique]
+    is_active
+  }
+}
+
+Table user_roles {
+  id serial [pk, increment]
+  user_id int [ref: > users.id, not null]
+  role_id int [ref: > roles.id, not null]
+  assigned_by int [ref: > users.id, not null, note: 'User who assigned this role (must be authenticated user)']
+  assigned_at timestamptz [default: `now()`]
+  is_active boolean [not null, default: true]
+  
+  Note: 'User-role mapping for access control. assigned_by tracks which authenticated user performed the assignment.'
+  
+  indexes {
+    (user_id, role_id) [unique]
+    user_id
+    role_id
+    assigned_by
+    is_active
+  }
+}
+
+Table employees {
+  id serial [pk, increment]
+  employee_id varchar(20) [not null, unique, note: 'EMP-001, etc.']
+  first_name varchar(50) [not null]
+  last_name varchar(50) [not null]
+  email varchar(255) [not null, unique, note: 'Primary email - also used for user authentication']
+  phone varchar(20) [note: 'Supports international format: +91-9876543210, extensions, etc.']
+  date_of_birth date
+  address text [note: 'Home address']
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Employee information. Email field serves dual purpose for user authentication when linked.'
+  
+  indexes {
+    employee_id [unique]
+    email [unique]
+    (first_name, last_name)
+  }
+}
+
+// ASSET MANAGEMENT CORE
+Table asset_categories {
+  id serial [pk, increment]
+  name varchar(50) [not null, unique, note: 'Electronics, Furniture, etc.']
+  description text
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'High-level asset categories'
+  
+  indexes {
+    name [unique]
+    is_active
+  }
+}
+
+Table asset_types {
+  id serial [pk, increment]
+  category_id int [ref: > asset_categories.id, not null]
+  name varchar(50) [not null, note: 'Laptop, Monitor, Mobile, etc.']
+  description text
+  depreciation_rate decimal(5,2) [note: 'Annual depreciation rate percentage']
+  useful_life_years int [note: 'Expected useful life in years']
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Specific asset types with depreciation info'
+  
+  indexes {
+    category_id
+    (name, category_id) [unique]
+    is_active
+  }
+}
+
+Table brands {
+  id serial [pk, increment]
+  name varchar(50) [not null, unique, note: 'Apple, Dell, HP, etc.']
+  description text
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Asset manufacturers and brands'
+  
+  indexes {
+    name [unique]
+    is_active
+  }
+}
+
+Table models {
+  id serial [pk, increment]
+  brand_id int [ref: > brands.id, not null]
+  asset_type_id int [ref: > asset_types.id, not null]
+  name varchar(100) [not null, note: 'MacBook Pro 16, Dell XPS 13, etc.']
+  specifications jsonb [note: 'Technical specifications in JSON format']
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Specific product models with technical specs'
+  
+  indexes {
+    brand_id
+    asset_type_id
+    (name, brand_id, asset_type_id) [unique]
+    is_active
+  }
+}
+
+Table vendors {
+  id serial [pk, increment]
+  name varchar(100) [not null]
+  contact_person varchar(100)
+  email varchar(255)
+  phone varchar(20)
+  address text [note: 'Vendor address']
+  tax_id varchar(50) [note: 'Tax identification number']
+  pan_number varchar(10) [note: 'Permanent Account Number (India)']
+  user_id int [ref: - users.id, note: 'Optional: If vendor needs system access for maintenance updates']
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Suppliers and vendors. user_id links vendor to system access if needed.'
+  
+  indexes {
+    name
+    email
+    tax_id
+    pan_number
+    user_id [unique]
+    is_active
+  }
+}
+
+Table assets {
+  id serial [pk, increment]
+  asset_id varchar(20) [not null, unique, note: 'AST-001, etc.']
+  asset_type_id int [ref: > asset_types.id, not null]
+  brand_id int [ref: > brands.id, not null]
+  model_id int [ref: > models.id, not null]
+  serial_number varchar(100) [unique, note: 'Manufacturer serial number']
+  purchase_date date
+  purchase_cost decimal(10,2)
+  vendor_id int [ref: > vendors.id]
+  warranty_start_date date
+  warranty_end_date date
+  location text [note: 'Asset location/building/room']
+  condition asset_condition [not null, default: 'NEW', note: 'ENUM: NEW, GOOD, FAIR, POOR, DAMAGED']
+  status asset_status [not null, default: 'AVAILABLE', note: 'ENUM: AVAILABLE, ASSIGNED, IN_MAINTENANCE, RETIRED, LOST']
+  notes text
+  qr_code varchar(255) [note: 'QR code for asset identification']
+  image_url varchar(500) [note: 'URL to asset image']
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Main asset records with complete lifecycle tracking. Uses ENUMs for condition and status.'
+  
+  indexes {
+    asset_id [unique]
+    serial_number [unique]
+    asset_type_id
+    brand_id
+    model_id
+    vendor_id
+    status
+    condition
+    (status, condition)
+    qr_code
+  }
+}
+
+Table asset_assignments {
+  id serial [pk, increment]
+  asset_id int [ref: > assets.id, not null]
+  employee_id int [ref: > employees.id, not null]
+  assigned_by int [ref: > users.id, not null]
+  assigned_date date [not null]
+  expected_return_date date
+  return_date date
+  return_condition return_condition [note: 'ENUM: GOOD, FAIR, POOR, DAMAGED']
+  assignment_reason varchar(100)
+  return_reason varchar(100)
+  notes text
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Asset assignment tracking to employees'
+  
+  indexes {
+    asset_id
+    employee_id
+    assigned_by
+    is_active
+    (asset_id, is_active)
+    (employee_id, is_active)
+    assigned_date
+  }
+}
+
+// MAINTENANCE MANAGEMENT
+Table maintenance_types {
+  id serial [pk, increment]
+  name varchar(50) [not null, unique, note: 'Preventive, Corrective, Emergency, etc.']
+  description text
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Types of maintenance activities'
+  
+  indexes {
+    name [unique]
+    is_active
+  }
+}
+
+Table maintenance_schedules {
+  id serial [pk, increment]
+  asset_id int [ref: > assets.id, not null]
+  maintenance_type_id int [ref: > maintenance_types.id, not null]
+  scheduled_date date [not null]
+  frequency_days int [note: 'Frequency in days for recurring maintenance']
+  description text
+  assigned_to int [ref: > employees.id, note: 'Employee assigned to maintenance']
+  status maintenance_status [not null, default: 'SCHEDULED', note: 'ENUM: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED']
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Scheduled maintenance activities'
+  
+  indexes {
+    asset_id
+    maintenance_type_id
+    assigned_to
+    scheduled_date
+    status
+    is_active
+  }
+}
+
+Table maintenance_records {
+  id serial [pk, increment]
+  asset_id int [ref: > assets.id, not null]
+  maintenance_type_id int [ref: > maintenance_types.id, not null]
+  schedule_id int [ref: - maintenance_schedules.id, note: 'Related schedule (one-to-one)']
+  maintenance_date date [not null]
+  performed_by int [ref: > employees.id, not null]
+  vendor_id int [ref: > vendors.id, note: 'External vendor if applicable']
+  description text [not null]
+  cost decimal(10,2)
+  attachments jsonb [note: 'File attachments (receipts, photos, etc.)']
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Complete maintenance history records'
+  
+  indexes {
+    asset_id
+    maintenance_type_id
+    schedule_id [unique]
+    performed_by
+    vendor_id
+    maintenance_date
+  }
+}
+
+// SYSTEM FEATURES
+Table audit_logs {
+  id serial [pk, increment]
+  table_name varchar(50) [not null]
+  record_id int [not null]
+  action varchar(20) [not null, note: 'INSERT, UPDATE, DELETE']
+  old_values jsonb [note: 'Previous values (for UPDATE and DELETE)']
+  new_values jsonb [note: 'New values (for INSERT and UPDATE)']
+  changed_fields text[] [note: 'Array of field names that changed']
+  user_id int [ref: > users.id, not null]
+  ip_address inet
+  user_agent text
+  session_id varchar(255)
+  timestamp timestamptz [default: `now()`]
+  
+  Note: 'Complete audit trail - immutable records (no updated_by by design)'
+  
+  indexes {
+    (table_name, record_id)
+    user_id
+    action
+    timestamp
+    session_id
+  }
+}
+
+Table notifications {
+  id serial [pk, increment]
+  user_id int [ref: > users.id, not null]
+  type varchar(50) [not null, note: 'ASSET_ASSIGNED, MAINTENANCE_DUE, etc.']
+  title varchar(255) [not null]
+  message text [not null]
+  related_table varchar(50)
+  related_id int
+  is_read boolean [not null, default: false]
+  priority notification_priority [not null, default: 'NORMAL', note: 'ENUM: LOW, NORMAL, HIGH, URGENT']
+  expires_at timestamptz
+  created_at timestamptz [default: `now()`]
+  read_at timestamptz
+  
+  Note: 'System notifications to users (read-only after creation, no updated_by needed)'
+  
+  indexes {
+    user_id
+    is_read
+    priority
+    type
+    expires_at
+    (user_id, is_read)
+    (related_table, related_id)
+  }
+}
+
+Table system_settings {
+  id serial [pk, increment]
+  setting_key varchar(100) [not null, unique]
+  setting_value text
+  data_type varchar(20) [not null, default: 'STRING', note: 'STRING, INTEGER, BOOLEAN, JSON']
+  description text
+  is_user_configurable boolean [not null, default: false]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'System configuration settings'
+  
+  indexes {
+    setting_key [unique]
+    is_user_configurable
+  }
+}
+
+Table report_templates {
+  id serial [pk, increment]
+  name varchar(100) [not null]
+  description text
+  template_type varchar(50) [not null, note: 'ASSET_INVENTORY, EMPLOYEE_ASSETS, MAINTENANCE, etc.']
+  sql_query text [note: 'SQL query for generating report']
+  parameters jsonb [note: 'Report parameters configuration']
+  output_format varchar(10) [not null, default: 'CSV', note: 'CSV, PDF, XLSX']
+  is_active boolean [not null, default: true]
+  created_by int [ref: > users.id, not null]
+  created_at timestamptz [default: `now()`]
+  updated_by int [ref: > users.id, not null]
+  updated_at timestamptz [default: `now()`]
+  
+  Note: 'Report generation templates'
+  
+  indexes {
+    template_type
+    is_active
+    (name, template_type)
+  }
+}
+
+Table file_attachments {
+  id serial [pk, increment]
+  related_table varchar(50) [not null, note: 'Valid tables: assets, maintenance_records, employees, vendors']
+  related_id int [not null]
+  file_name varchar(255) [not null]
+  file_path varchar(500) [not null]
+  file_size bigint [not null]
+  mime_type varchar(100) [not null]
+  file_hash varchar(64) [note: 'SHA-256 hash of file content']
+  description text
+  uploaded_by int [ref: > users.id, not null]
+  uploaded_at timestamptz [default: `now()`]
+  
+  Note: '''
+    File attachments for any table record (polymorphic relationship)
+    Immutable after upload - no updated_by needed
+    
+    Usage Examples:
+    - Asset photos: related_table='assets', related_id=asset.id
+    - Maintenance receipts: related_table='maintenance_records', related_id=record.id
+    - Employee documents: related_table='employees', related_id=employee.id
+    
+    Application must validate related_table values against allowed list
+  '''
+  
+  indexes {
+    (related_table, related_id)
+    uploaded_by
+    file_hash
+    uploaded_at
+  }
+}
+
