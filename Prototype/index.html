@@ -8,68 +8,92 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body style="background-color: #ffffff;">
-    <div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
-        <div class="row w-100">
-            <div class="col-12 col-md-6 col-lg-4 mx-auto">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-5">
+<body class="login-page">
+    <!-- Background Elements -->
+    <div class="login-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <div class="container-fluid vh-100 d-flex align-items-center justify-content-center position-relative">
+        <div class="row w-100 justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+                <div class="login-card">
+                    <div class="login-card-body">
+                        <!-- Logo and Header -->
                         <div class="text-center mb-4">
-                            <i class="fas fa-building fa-3x mb-3" style="color: #007bff;"></i>
-                            <h2 class="fw-bold text-dark">Asset Management</h2>
-                            <p class="text-muted">Secure access to your asset portal</p>
+                            <div class="login-logo mb-3">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <h1 class="login-title">Welcome Back</h1>
+                            <p class="login-subtitle">Sign in to your Asset Management portal</p>
                         </div>
                         
-                        <form class="needs-validation" novalidate>
-                            <div class="mb-3">
-                                <label for="userType" class="form-label fw-semibold">Login As</label>
-                                <select class="form-select" id="userType" required>
-                                    <option value="">Select User Type</option>
-                                    <option value="admin">Administrator</option>
-                                    <option value="hr">HR</option>
-                                </select>
+                        <!-- Login Form -->
+                        <form class="login-form needs-validation" novalidate>
+                            <!-- Username Input -->
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control login-input" id="username" placeholder="Enter username" required>
+                                <label for="username">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
                                 <div class="invalid-feedback">
-                                    Please select a user type.
+                                    Please enter your username.
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="username" class="form-label fw-semibold">Username</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" style="background-color: var(--mindstix-light); border-color: var(--mindstix-border); color: var(--mindstix-primary);"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
-                                    <div class="invalid-feedback">
-                                        Please enter a username.
-                                    </div>
+                            <!-- Password Input -->
+                            <div class="form-floating mb-4 position-relative">
+                                <input type="password" class="form-control login-input" id="password" placeholder="Enter password" required>
+                                <label for="password">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <button class="password-toggle" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    Please enter your password.
                                 </div>
                             </div>
                             
-                            <div class="mb-4">
-                                <label for="password" class="form-label fw-semibold">Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" style="background-color: var(--mindstix-light); border-color: var(--mindstix-border); color: var(--mindstix-primary);"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-color: var(--mindstix-border); color: var(--mindstix-primary);">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <div class="invalid-feedback">
-                                        Please enter a password.
-                                    </div>
+                            <!-- Remember Me and Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
                                 </div>
+                                <a href="#" class="forgot-password">Forgot password?</a>
                             </div>
                             
-                            <a href="pages/dashboard.html" class="btn btn-primary w-100 py-2 fw-semibold" id="loginBtn">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <!-- Login Button -->
+                            <a href="pages/dashboard.html" class="login-btn w-100" id="loginBtn">
+                                <span class="btn-text">Sign In</span>
+                                <div class="btn-loader d-none">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
                             </a>
                         </form>
                         
-                        <div class="text-center mt-4">
-                            <small class="text-muted">
-                                Demo Credentials:<br>
-                                Admin: admin/admin123<br>
-                                HR: hr001/hr123<br>
-                                <em>(For prototype - any credentials work)</em>
-                            </small>
+                        <!-- Demo Credentials -->
+                        <div class="demo-credentials mt-4">
+                            <div class="demo-title">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Demo Credentials
+                            </div>
+                            <div class="credentials-grid">
+                                <div class="credential-item">
+                                    <div class="role">Administrator</div>
+                                    <div class="creds">admin / admin123</div>
+                                </div>
+                                <div class="credential-item">
+                                    <div class="role">HR Manager</div>
+                                    <div class="creds">hr001 / hr123</div>
+                                </div>
+                            </div>
+                            <small class="demo-note">Role is automatically determined by username</small>
                         </div>
                     </div>
                 </div>
@@ -97,11 +121,15 @@
             }, false);
         })();
 
-        // Password toggle functionality
+        // Enhanced login functionality
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
+            const form = document.querySelector('.needs-validation');
+            const loginInputs = document.querySelectorAll('.login-input');
             
+            // Password toggle functionality
             if (togglePassword && password) {
                 togglePassword.addEventListener('click', function() {
                     const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -118,20 +146,62 @@
                 });
             }
 
-            // Make login button work with form validation
-            const loginBtn = document.getElementById('loginBtn');
-            const form = document.querySelector('.needs-validation');
-            
+            // Enhanced input interactions
+            loginInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Login button with loading state and validation
             if (loginBtn && form) {
                 loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Check form validity
                     if (!form.checkValidity()) {
-                        e.preventDefault();
                         form.classList.add('was-validated');
+                        
+                        // Shake animation for invalid form
+                        loginBtn.style.animation = 'shake 0.5s ease-in-out';
+                        setTimeout(() => {
+                            loginBtn.style.animation = '';
+                        }, 500);
+                        
                         return false;
                     }
-                    // If form is valid, the href will work normally
+                    
+                    // Show loading state
+                    loginBtn.classList.add('loading');
+                    loginBtn.querySelector('.btn-text').textContent = 'Signing In...';
+                    loginBtn.querySelector('.btn-loader').classList.remove('d-none');
+                    
+                    // Simulate login process
+                    setTimeout(() => {
+                        // Navigate to dashboard
+                        window.location.href = 'pages/dashboard.html';
+                    }, 100);
                 });
             }
+
+            // Add shake animation for invalid inputs
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                    20%, 40%, 60%, 80% { transform: translateX(10px); }
+                }
+                
+                .form-floating.focused {
+                    transform: scale(1.02);
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>

@@ -19,27 +19,27 @@ function initializeLogin() {
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const userType = document.getElementById('userType').value;
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
             // Simple validation for demo
-            if (userType && username && password) {
+            if (username && password) {
                 // Simulate login process
                 showLoadingState(e.target);
                 
                 setTimeout(() => {
-                    if (userType === 'admin' && username === 'admin' && password === 'admin123') {
+                    // Determine role based on username and validate credentials
+                    if (username === 'admin' && password === 'admin123') {
                         localStorage.setItem('userRole', 'admin');
                         window.location.href = 'dashboard.html';
-                    } else if (userType === 'hr' && username === 'hr001' && password === 'hr123') {
+                    } else if (username === 'hr001' && password === 'hr123') {
                         localStorage.setItem('userRole', 'hr');
                         window.location.href = 'dashboard.html';
                     } else {
                         showAlert('Invalid credentials. Please try again.', 'danger');
                         hideLoadingState(e.target);
                     }
-                }, 1500);
+                }, 100);
             } else {
                 showAlert('Please fill in all fields.', 'warning');
             }
