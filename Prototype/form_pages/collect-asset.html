@@ -8,8 +8,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
+    
+    <!-- Unified Form Styles -->
+    <link rel="stylesheet" href="unified-form-styles.css">
 </head>
-<body style="background-color: #f8f9fa;">
+<body>
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-8">
@@ -38,25 +41,39 @@
                                 <div class="row g-4">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-select" id="assetId" required>
-                                                <option value="">Choose an assigned asset...</option>
-                                                <option value="AST-001">AST-001 - MacBook Pro 16" (John Doe)</option>
-                                                <option value="AST-002">AST-002 - Dell Monitor 27" (Jane Smith)</option>
-                                                <option value="AST-003">AST-003 - iPhone 14 Pro (Mike Johnson)</option>
-                                                <option value="AST-004">AST-004 - Surface Laptop (Sarah Wilson)</option>
-                                                <option value="AST-005">AST-005 - iPad Pro (David Brown)</option>
+                                            <select class="form-select" id="employeeId">
+                                                <option value="">Choose an employee...</option>
+                                                <option value="EMP-001">EMP-001 - John Smith</option>
+                                                <option value="EMP-002">EMP-002 - Sarah Wilson</option>
+                                                <option value="EMP-003">EMP-003 - Mike Johnson</option>
+                                                <option value="EMP-004">EMP-004 - David Brown</option>
+                                                <option value="EMP-005">EMP-005 - Lisa Garcia</option>
+                                                <option value="EMP-006">EMP-006 - Emily Davis</option>
                                             </select>
-                                            <label for="assetId">
-                                                <i class="fas fa-tag me-2 text-muted"></i>Asset ID
+                                            <label for="employeeId">
+                                                <i class="fas fa-user me-2 text-muted"></i>Select Employee
                                             </label>
+                                            <div class="form-text">Select employee to see their assigned assets</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="currentEmployee" placeholder="Current Employee" readonly style="background-color: #f8f9fa;">
-                                            <label for="currentEmployee">
-                                                <i class="fas fa-user me-2 text-muted"></i>Current Employee
+                                            <select class="form-select" id="assetId" required>
+                                                <option value="">Choose an assigned asset...</option>
+                                                <option value="AST-003" data-employee="EMP-001">AST-003 - iPhone 14 Pro</option>
+                                                <option value="AST-004" data-employee="EMP-002">AST-004 - Surface Laptop</option>
+                                                <option value="AST-009" data-employee="EMP-003">AST-009 - Wireless Keyboard</option>
+                                                <option value="AST-011" data-employee="EMP-004">AST-011 - External Drive</option>
+                                                <option value="AST-012" data-employee="EMP-005">AST-012 - Tablet Stand</option>
+                                                <option value="AST-013" data-employee="EMP-006">AST-013 - Bluetooth Speaker</option>
+                                                <option value="AST-014" data-employee="EMP-001">AST-014 - MacBook Pro</option>
+                                                <option value="AST-015" data-employee="EMP-002">AST-015 - Dell Monitor</option>
+                                                <option value="AST-016" data-employee="EMP-001">AST-016 - Wireless Mouse</option>
+                                            </select>
+                                            <label for="assetId">
+                                                <i class="fas fa-tag me-2 text-muted"></i>Asset ID *
                                             </label>
+                                            <div class="form-text">Select asset to collect from employee</div>
                                         </div>
                                     </div>
                                 </div>
@@ -106,12 +123,12 @@
                             </div>
                             
                             <!-- Action Buttons -->
-                            <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 mt-5">
-                                <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="history.back()">
-                                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
+                                    <i class="fas fa-times me-1"></i>Cancel
                                 </button>
-                                <button type="submit" class="btn btn-danger btn-lg px-4">
-                                    <i class="fas fa-user-minus me-2"></i>Collect Asset
+                                <button type="submit" class="btn btn-warning form-btn-warning">
+                                    <i class="fas fa-user-minus me-1"></i>Collect Asset
                                 </button>
                             </div>
                         </form>
@@ -163,10 +180,10 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary form-btn-cancel" data-bs-dismiss="modal">
                         <i class="fas fa-times me-2"></i>Cancel
                     </button>
-                    <button type="button" class="btn btn-danger" id="confirmCollectBtn">
+                    <button type="button" class="btn btn-warning form-btn-warning" id="confirmCollectBtn">
                         <i class="fas fa-user-minus me-2"></i>Confirm Collection
                     </button>
                 </div>
@@ -186,33 +203,55 @@
             // Set today's date as default
             document.getElementById('collectionDate').value = new Date().toISOString().split('T')[0];
             
-            // Mock data for demonstration
-            const assignedAssets = {
-                'AST-001': { 
-                    name: 'MacBook Pro 16"', 
-                    employee: 'John Doe',
-                    type: 'Laptop'
-                },
-                'AST-002': { 
-                    name: 'Dell Monitor 27"', 
-                    employee: 'Jane Smith',
-                    type: 'Monitor'
-                },
-                'AST-003': { 
-                    name: 'iPhone 14 Pro', 
-                    employee: 'Mike Johnson',
-                    type: 'Mobile Device'
-                },
-                'AST-004': { 
-                    name: 'Surface Laptop', 
-                    employee: 'Sarah Wilson',
-                    type: 'Laptop'
-                },
-                'AST-005': { 
-                    name: 'iPad Pro', 
-                    employee: 'David Brown',
-                    type: 'Tablet'
+            // Check if asset was pre-selected from assets page
+            const selectedAssetId = localStorage.getItem('selectedAssetId');
+            const currentEmployee = localStorage.getItem('currentEmployee');
+            
+            if (selectedAssetId && currentEmployee) {
+                // Pre-populate asset selection
+                const assetSelect = document.getElementById('assetId');
+                
+                // Add the selected asset to the dropdown if it doesn't exist
+                let assetOption = Array.from(assetSelect.options).find(option => option.value === selectedAssetId);
+                if (!assetOption) {
+                    assetOption = document.createElement('option');
+                    assetOption.value = selectedAssetId;
+                    assetOption.textContent = `${selectedAssetId} - Asset`;
+                    assetSelect.appendChild(assetOption);
                 }
+                
+                // Select the asset (this will trigger the employee sync automatically)
+                assetSelect.value = selectedAssetId;
+                assetSelect.dispatchEvent(new Event('change'));
+                
+                // Clear the localStorage
+                localStorage.removeItem('selectedAssetId');
+                localStorage.removeItem('currentEmployee');
+                
+                // Add visual indication that asset is pre-selected
+                assetSelect.classList.add('is-valid');
+            }
+            
+            // Mock data for demonstration - Employee and Asset mapping
+            const employees = {
+                'EMP-001': 'John Smith',
+                'EMP-002': 'Sarah Wilson',
+                'EMP-003': 'Mike Johnson',
+                'EMP-004': 'David Brown',
+                'EMP-005': 'Lisa Garcia',
+                'EMP-006': 'Emily Davis'
+            };
+            
+            const assignedAssets = {
+                'AST-003': { name: 'iPhone 14 Pro', employee: 'EMP-001' },
+                'AST-004': { name: 'Surface Laptop', employee: 'EMP-002' },
+                'AST-009': { name: 'Wireless Keyboard', employee: 'EMP-003' },
+                'AST-011': { name: 'External Drive', employee: 'EMP-004' },
+                'AST-012': { name: 'Tablet Stand', employee: 'EMP-005' },
+                'AST-013': { name: 'Bluetooth Speaker', employee: 'EMP-006' },
+                'AST-014': { name: 'MacBook Pro', employee: 'EMP-001' },
+                'AST-015': { name: 'Dell Monitor', employee: 'EMP-002' },
+                'AST-016': { name: 'Wireless Mouse', employee: 'EMP-001' }
             };
             
             const reasonLabels = {
@@ -223,15 +262,83 @@
                 'other': 'Other'
             };
             
-            // Asset selection handler
-            document.getElementById('assetId').addEventListener('change', function() {
-                const selectedAsset = assignedAssets[this.value];
-                const currentEmployeeField = document.getElementById('currentEmployee');
+            // Get DOM elements
+            const employeeSelect = document.getElementById('employeeId');
+            const assetSelect = document.getElementById('assetId');
+            
+            // Store original asset options
+            const allAssetOptions = Array.from(assetSelect.options).slice(1); // Skip the first "Choose..." option
+            
+            // Employee selection handler - filter assets by selected employee
+            employeeSelect.addEventListener('change', function() {
+                const selectedEmployeeId = this.value;
                 
-                if (selectedAsset) {
-                    currentEmployeeField.value = selectedAsset.employee;
+                // Clear asset selection
+                assetSelect.value = '';
+                assetSelect.classList.remove('is-valid');
+                
+                // Clear existing asset options (except first one)
+                assetSelect.innerHTML = '<option value="">Choose an assigned asset...</option>';
+                
+                if (selectedEmployeeId) {
+                    // Filter and add assets for selected employee
+                    const employeeAssets = Object.entries(assignedAssets).filter(([assetId, assetData]) => 
+                        assetData.employee === selectedEmployeeId
+                    );
+                    
+                    if (employeeAssets.length > 0) {
+                        employeeAssets.forEach(([assetId, assetData]) => {
+                            const option = document.createElement('option');
+                            option.value = assetId;
+                            option.textContent = `${assetId} - ${assetData.name}`;
+                            option.dataset.employee = selectedEmployeeId;
+                            assetSelect.appendChild(option);
+                        });
+                        assetSelect.disabled = false;
+                        this.classList.add('is-valid');
+                        
+                        // Update placeholder text
+                        assetSelect.options[0].textContent = `Choose asset assigned to ${employees[selectedEmployeeId]}...`;
+                    } else {
+                        assetSelect.disabled = true;
+                        assetSelect.options[0].textContent = 'No assets assigned to this employee';
+                    }
                 } else {
-                    currentEmployeeField.value = '';
+                    // Reset to show all assets
+                    allAssetOptions.forEach(option => {
+                        assetSelect.appendChild(option.cloneNode(true));
+                    });
+                    assetSelect.disabled = false;
+                    assetSelect.options[0].textContent = 'Choose an assigned asset...';
+                    this.classList.remove('is-valid');
+                }
+            });
+            
+            // Asset selection handler - sync with employee dropdown
+            assetSelect.addEventListener('change', function() {
+                const selectedAssetId = this.value;
+                
+                if (selectedAssetId && assignedAssets[selectedAssetId]) {
+                    const employeeId = assignedAssets[selectedAssetId].employee;
+                    
+                    // Update employee dropdown to match
+                    employeeSelect.value = employeeId;
+                    
+                    // Add validation classes
+                    this.classList.add('is-valid');
+                    employeeSelect.classList.add('is-valid');
+                } else {
+                    employeeSelect.value = '';
+                    this.classList.remove('is-valid');
+                    employeeSelect.classList.remove('is-valid');
+                    
+                    // Reset asset dropdown to show all assets if no employee selected
+                    if (!employeeSelect.value) {
+                        assetSelect.innerHTML = '<option value="">Choose an assigned asset...</option>';
+                        allAssetOptions.forEach(option => {
+                            assetSelect.appendChild(option.cloneNode(true));
+                        });
+                    }
                 }
             });
             
@@ -282,5 +389,45 @@
             });
         })();
     </script>
+    
+    <style>
+        /* Consistent Form Button Colors */
+        .form-btn-warning.btn-warning {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-color: #fbbf24;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-warning.btn-warning:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            border-color: #f59e0b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-color: #d1d5db;
+            color: #374151;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            border-color: #9ca3af;
+            color: #1f2937;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </body>
 </html> 

@@ -1,0 +1,209 @@
+/* =================================
+   UNIFIED FORM DESIGN SYSTEM
+   Asset Management - Consistent Styling
+   ONLY FOR FORM PAGES
+================================= */
+
+/* ONLY target form containers, not affecting navbar */
+.container-fluid.py-4 {
+    background: white;
+    min-height: calc(100vh - 80px);
+}
+
+/* Standardized Form Cards - Wider for Better Layout */
+.container-fluid.py-4 .card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Consistent Form Headers */
+.container-fluid.py-4 .card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.container-fluid.py-4 .card-header h1, 
+.container-fluid.py-4 .card-header h4,
+.container-fluid.py-4 .card-header .card-title {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+}
+
+/* Consistent Form Body */
+.container-fluid.py-4 .card-body {
+    padding: 2rem;
+}
+
+/* ONLY target form inputs, not affecting other pages */
+.container-fluid.py-4 .form-control, 
+.container-fluid.py-4 .form-select {
+    height: 3rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.container-fluid.py-4 .form-floating .form-control, 
+.container-fluid.py-4 .form-floating .form-select {
+    height: 3.5rem;
+    padding: 1rem 1rem 0.25rem 1rem;
+}
+
+.container-fluid.py-4 .form-floating label {
+    padding: 1rem 1rem 0.25rem 1rem;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.container-fluid.py-4 .form-control:focus, 
+.container-fluid.py-4 .form-select:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+/* STANDARDIZED BUTTON SYSTEM - Perfect Consistency */
+.container-fluid.py-4 .btn {
+    height: 3.25rem;
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 160px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid.py-4 .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* CONSISTENT BUTTON CONTAINER LAYOUTS */
+.container-fluid.py-4 .d-flex.justify-content-between,
+.container-fluid.py-4 .d-flex.gap-2,
+.container-fluid.py-4 .text-center,
+.container-fluid.py-4 .d-flex.justify-content-end {
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+/* Force consistent button spacing regardless of container */
+.container-fluid.py-4 .btn + .btn {
+    margin-left: 1.5rem;
+}
+
+/* Ensure all button containers use flex layout */
+.container-fluid.py-4 .text-center {
+    justify-content: center;
+}
+
+.container-fluid.py-4 .d-flex.justify-content-end {
+    justify-content: flex-end;
+}
+
+/* ONLY target form modals */
+.container-fluid.py-4 .modal-content {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.container-fluid.py-4 .modal-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1.5rem 2rem;
+}
+
+.container-fluid.py-4 .modal-body {
+    padding: 2rem;
+}
+
+.container-fluid.py-4 .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* RESPONSIVE DESIGN - Perfect Mobile Experience */
+@media (max-width: 768px) {
+    .container-fluid.py-4 .card {
+        max-width: 95%;
+        margin: 0 auto;
+    }
+    
+    .container-fluid.py-4 .card-header {
+        padding: 1.5rem;
+    }
+    
+    .container-fluid.py-4 .card-header h1, 
+    .container-fluid.py-4 .card-header h4,
+    .container-fluid.py-4 .card-header .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .container-fluid.py-4 .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Mobile button layout - stack vertically */
+    .container-fluid.py-4 .d-flex.justify-content-between,
+    .container-fluid.py-4 .d-flex.gap-2,
+    .container-fluid.py-4 .text-center,
+    .container-fluid.py-4 .d-flex.justify-content-end {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .container-fluid.py-4 .btn {
+        width: 100%;
+        margin-left: 0;
+        min-width: unset;
+    }
+    
+    .container-fluid.py-4 .btn + .btn {
+        margin-left: 0;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid.py-4 .card {
+        border-radius: 0.5rem;
+        max-width: 98%;
+    }
+    
+    .container-fluid.py-4 .card-header {
+        padding: 1rem;
+    }
+    
+    .container-fluid.py-4 .card-body {
+        padding: 1rem;
+    }
+    
+    .container-fluid.py-4 .btn {
+        font-size: 0.95rem;
+        height: 3rem;
+        padding: 0.75rem 1.5rem;
+    }
+}

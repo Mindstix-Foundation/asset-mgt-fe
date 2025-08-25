@@ -21,9 +21,9 @@
                 <h2 class="mb-0">Maintenance & Repairs</h2>
                 <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
             </div>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scheduleMaintenance">
+            <a href="../form_pages/schedule-maintenance.html" class="btn btn-primary btn-modern">
                 <i class="fas fa-plus me-1"></i>Schedule Maintenance
-            </button>
+            </a>
         </div>
 
         <!-- Stats Cards - Modern Design -->
@@ -106,25 +106,25 @@
                 </div>
             </div>
 
-            <!-- Overdue -->
+            <!-- Cancelled -->
             <div class="col-12 col-sm-6 col-lg-3 mb-3">
                 <div class="card border-0 shadow-sm h-100 stats-card-modern">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="stats-icon bg-danger bg-opacity-10 rounded-circle p-3">
-                                <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
+                            <div class="stats-icon bg-secondary bg-opacity-10 rounded-circle p-3">
+                                <i class="fas fa-times-circle text-secondary fa-lg"></i>
                             </div>
                             <div class="text-end">
-                                <div class="text-dark small mb-1 fw-semibold">Overdue</div>
-                                <div class="h3 mb-0 fw-bold text-dark">7</div>
+                                <div class="text-dark small mb-1 fw-semibold">Cancelled</div>
+                                <div class="h3 mb-0 fw-bold text-dark">3</div>
                             </div>
                         </div>
                         <div class="progress" style="height: 4px;">
-                            <div class="progress-bar bg-danger" style="width: 3.2%"></div>
+                            <div class="progress-bar bg-secondary" style="width: 1.4%"></div>
                         </div>
                         <div class="mt-2 d-flex justify-content-between align-items-center">
-                            <small class="text-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>Needs attention
+                            <small class="text-secondary">
+                                <i class="fas fa-info-circle me-1"></i>Cancelled this month
                             </small>
                             <small class="text-muted">Updated now</small>
                         </div>
@@ -148,20 +148,19 @@
                         <label class="form-label">Status</label>
                         <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
-                            <option value="Scheduled">Scheduled</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Overdue">Overdue</option>
+                            <option value="SCHEDULED">Scheduled</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Priority</label>
-                        <select class="form-select" id="priorityFilter">
-                            <option value="">All Priorities</option>
-                            <option value="Low">Low</option>
-                            <option value="Medium">Medium</option>
-                            <option value="High">High</option>
-                            <option value="Critical">Critical</option>
+                        <label class="form-label">Maintenance Type</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="Preventive">Preventive</option>
+                            <option value="Corrective">Corrective</option>
+                            <option value="Emergency">Emergency</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
@@ -180,9 +179,9 @@
                             <select class="form-select" id="sortBy">
                                 <option value="assetId">Asset ID</option>
                                 <option value="status">Status</option>
-                                <option value="priority">Priority</option>
+                                <option value="type">Maintenance Type</option>
                                 <option value="vendor">Vendor</option>
-                                <option value="startDate">Start Date</option>
+                                <option value="scheduledDate">Scheduled Date</option>
                                 <option value="cost">Cost</option>
                             </select>
                             <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
@@ -211,26 +210,26 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Asset ID</th>
-                                <th>Issue</th>
+                                <th>Description</th>
+                                <th>Type</th>
                                 <th>Status</th>
-                                <th>Priority</th>
-                                <th>Vendor</th>
-                                <th>Start Date</th>
+                                <th>Assigned To</th>
+                                <th>Scheduled Date</th>
                                 <th>Cost</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-asset-id="AST-003" data-status="In Progress" data-priority="Medium" data-vendor="Apple Service" data-search="AST-003 iPhone 14 Pro Screen repair Apple Service In Progress Medium">
+                            <tr data-asset-id="AST-003" data-status="IN_PROGRESS" data-type="Corrective" data-assigned="John Smith" data-search="AST-003 iPhone 14 Pro Screen repair Corrective John Smith IN_PROGRESS">
                                 <td><strong>AST-003</strong><br><small class="text-muted">iPhone 14 Pro</small></td>
-                                <td>Screen repair</td>
+                                <td>Screen repair due to physical damage</td>
+                                <td><span class="badge badge-type-corrective">Corrective</span></td>
                                 <td><span class="badge badge-in-progress">In Progress</span></td>
-                                <td><span class="badge badge-priority-medium">Medium</span></td>
-                                <td>Apple Service</td>
+                                <td>John Smith</td>
                                 <td>Mar 10, 2024</td>
                                 <td><strong>$299.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
                                         </button>
@@ -240,19 +239,22 @@
                                         <button class="btn btn-outline-success" title="Complete">
                                             <i class="fas fa-check"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr data-asset-id="AST-012" data-status="Scheduled" data-priority="Low" data-vendor="Dell Support" data-search="AST-012 Dell Laptop Battery replacement Dell Support Scheduled Low">
+                            <tr data-asset-id="AST-012" data-status="SCHEDULED" data-type="Preventive" data-assigned="Sarah Wilson" data-search="AST-012 Dell Laptop Battery replacement Preventive Sarah Wilson SCHEDULED">
                                 <td><strong>AST-012</strong><br><small class="text-muted">Dell Laptop</small></td>
-                                <td>Battery replacement</td>
+                                <td>Preventive battery replacement</td>
+                                <td><span class="badge badge-type-preventive">Preventive</span></td>
                                 <td><span class="badge badge-scheduled">Scheduled</span></td>
-                                <td><span class="badge badge-priority-low">Low</span></td>
-                                <td>Dell Support</td>
+                                <td>Sarah Wilson</td>
                                 <td>Mar 25, 2024</td>
                                 <td><strong>$150.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
                                         </button>
@@ -262,85 +264,109 @@
                                         <button class="btn btn-outline-warning" title="Start">
                                             <i class="fas fa-play"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr data-asset-id="AST-015" data-status="Overdue" data-priority="High" data-vendor="TechFix Solutions" data-search="AST-015 Monitor Display flickering TechFix Solutions Overdue High">
+                            <tr data-asset-id="AST-015" data-status="CANCELLED" data-type="Emergency" data-assigned="Mike Johnson" data-search="AST-015 Monitor Display flickering Emergency Mike Johnson CANCELLED">
                                 <td><strong>AST-015</strong><br><small class="text-muted">Monitor</small></td>
-                                <td>Display flickering</td>
-                                <td><span class="badge badge-overdue">Overdue</span></td>
-                                <td><span class="badge badge-priority-high">High</span></td>
-                                <td>TechFix Solutions</td>
+                                <td>Emergency display flickering repair</td>
+                                <td><span class="badge badge-type-emergency">Emergency</span></td>
+                                <td><span class="badge badge-cancelled">Cancelled</span></td>
+                                <td>Mike Johnson</td>
                                 <td>Mar 15, 2024</td>
                                 <td><strong>$200.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-outline-secondary" title="Update">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-outline-danger" title="Escalate">
-                                            <i class="fas fa-exclamation-triangle"></i>
+                                        <button class="btn btn-outline-info" title="Reschedule">
+                                            <i class="fas fa-calendar-plus"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr data-asset-id="AST-045" data-status="Completed" data-priority="Medium" data-vendor="Dell Support" data-search="AST-045 Dell Monitor Power supply repair Dell Support Completed Medium">
+                            <tr data-asset-id="AST-045" data-status="COMPLETED" data-type="Corrective" data-assigned="David Brown" data-search="AST-045 Dell Monitor Power supply repair Corrective David Brown COMPLETED">
                                 <td><strong>AST-045</strong><br><small class="text-muted">Dell Monitor</small></td>
                                 <td>Power supply repair</td>
+                                <td><span class="badge badge-type-corrective">Corrective</span></td>
                                 <td><span class="badge badge-completed">Completed</span></td>
-                                <td><span class="badge badge-priority-medium">Medium</span></td>
-                                <td>Dell Support</td>
+                                <td>David Brown</td>
                                 <td>Mar 18, 2024</td>
                                 <td><strong>$85.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-outline-info" title="Report">
                                             <i class="fas fa-file-alt"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr data-asset-id="AST-032" data-status="Completed" data-priority="High" data-vendor="Apple Service" data-search="AST-032 MacBook Pro Keyboard replacement Apple Service Completed High">
+                            <tr data-asset-id="AST-032" data-status="COMPLETED" data-type="Corrective" data-assigned="Lisa Garcia" data-search="AST-032 MacBook Pro Keyboard replacement Corrective Lisa Garcia COMPLETED">
                                 <td><strong>AST-032</strong><br><small class="text-muted">MacBook Pro</small></td>
-                                <td>Keyboard replacement</td>
+                                <td>Keyboard replacement due to malfunction</td>
+                                <td><span class="badge badge-type-corrective">Corrective</span></td>
                                 <td><span class="badge badge-completed">Completed</span></td>
-                                <td><span class="badge badge-priority-high">High</span></td>
-                                <td>Apple Service</td>
+                                <td>Lisa Garcia</td>
                                 <td>Mar 16, 2024</td>
                                 <td><strong>$349.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-outline-info" title="Report">
                                             <i class="fas fa-file-alt"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr data-asset-id="AST-028" data-status="Completed" data-priority="Low" data-vendor="Internal Team" data-search="AST-028 Surface Tablet Software update Internal Team Completed Low">
+                            <tr data-asset-id="AST-028" data-status="COMPLETED" data-type="Preventive" data-assigned="Internal Team" data-search="AST-028 Surface Tablet Software update Preventive Internal Team COMPLETED">
                                 <td><strong>AST-028</strong><br><small class="text-muted">Surface Tablet</small></td>
-                                <td>Software update</td>
+                                <td>Preventive software update and maintenance</td>
+                                <td><span class="badge badge-type-preventive">Preventive</span></td>
                                 <td><span class="badge badge-completed">Completed</span></td>
-                                <td><span class="badge badge-priority-low">Low</span></td>
                                 <td>Internal Team</td>
                                 <td>Mar 14, 2024</td>
                                 <td><strong>$0.00</strong></td>
                                 <td>
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
                                             <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" title="Update">
+                                            <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-outline-info" title="Report">
                                             <i class="fas fa-file-alt"></i>
                                         </button>
+                                        <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning" title="Schedule New">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -368,87 +394,7 @@
 
     </div>
 
-    <!-- Schedule Maintenance Modal -->
-    <div class="modal fade" id="scheduleMaintenance" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Schedule Maintenance</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Asset ID</label>
-                                <select class="form-select">
-                                    <option>Select Asset</option>
-                                    <option>AST-001 - MacBook Pro</option>
-                                    <option>AST-002 - Dell Monitor</option>
-                                    <option>AST-003 - iPhone 14 Pro</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Priority</label>
-                                <select class="form-select">
-                                    <option>Medium</option>
-                                    <option>Low</option>
-                                    <option>High</option>
-                                    <option>Critical</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Issue Type</label>
-                                <select class="form-select">
-                                    <option>Hardware Repair</option>
-                                    <option>Software Update</option>
-                                    <option>Preventive Maintenance</option>
-                                    <option>Replacement</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Service Provider</label>
-                                <select class="form-select">
-                                    <option>Internal Team</option>
-                                    <option>Apple Service</option>
-                                    <option>Dell Support</option>
-                                    <option>TechFix Solutions</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Start Date</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Expected End Date</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Estimated Cost</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" placeholder="0.00">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Contact Person</label>
-                                <input type="text" class="form-control" placeholder="Service contact">
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Issue Description</label>
-                                <textarea class="form-control" rows="3" placeholder="Describe the issue or maintenance required"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Schedule Maintenance</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Maintenance Detail Modal -->
     <div class="modal fade" id="maintenanceDetailModal" tabindex="-1">
@@ -607,18 +553,18 @@
             box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
         }
         
-        .badge.badge-overdue {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+        .badge.badge-cancelled {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
         }
         
-        /* Priority badges */
-        .badge.badge-priority-low {
+        /* Maintenance Type badges */
+        .badge.badge-type-preventive {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
             color: white !important;
             border: none !important;
@@ -628,7 +574,7 @@
             box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
         }
         
-        .badge.badge-priority-medium {
+        .badge.badge-type-corrective {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
             color: white !important;
             border: none !important;
@@ -638,7 +584,7 @@
             box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
         }
         
-        .badge.badge-priority-high {
+        .badge.badge-type-emergency {
             background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
             color: white !important;
             border: none !important;
@@ -646,16 +592,6 @@
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
             box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
-        }
-        
-        .badge.badge-priority-critical {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
         
         /* Modern Card Styles */
@@ -710,7 +646,7 @@
             // Get DOM elements
             const searchInput = document.getElementById('searchInput');
             const statusFilter = document.getElementById('statusFilter');
-            const priorityFilter = document.getElementById('priorityFilter');
+            const typeFilter = document.getElementById('typeFilter');
             const vendorFilter = document.getElementById('vendorFilter');
             const sortBy = document.getElementById('sortBy');
             const sortOrderBtn = document.getElementById('sortOrder');
@@ -738,19 +674,19 @@
                             aValue = a.getAttribute('data-status');
                             bValue = b.getAttribute('data-status');
                             break;
-                        case 'priority':
-                            aValue = a.getAttribute('data-priority');
-                            bValue = b.getAttribute('data-priority');
-                            // Priority sorting order: Critical > High > Medium > Low
-                            const priorityOrder = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
-                            aValue = priorityOrder[aValue] || 0;
-                            bValue = priorityOrder[bValue] || 0;
+                        case 'type':
+                            aValue = a.getAttribute('data-type');
+                            bValue = b.getAttribute('data-type');
+                            // Type sorting order: Emergency > Corrective > Preventive
+                            const typeOrder = { 'Emergency': 3, 'Corrective': 2, 'Preventive': 1 };
+                            aValue = typeOrder[aValue] || 0;
+                            bValue = typeOrder[bValue] || 0;
                             break;
                         case 'vendor':
                             aValue = a.getAttribute('data-vendor');
                             bValue = b.getAttribute('data-vendor');
                             break;
-                        case 'startDate':
+                        case 'scheduledDate':
                             aValue = new Date(a.querySelector('td:nth-child(6)').textContent);
                             bValue = new Date(b.querySelector('td:nth-child(6)').textContent);
                             break;
@@ -762,7 +698,7 @@
                             return 0;
                     }
                     
-                    if (sortField === 'startDate' || sortField === 'cost' || sortField === 'priority') {
+                    if (sortField === 'scheduledDate' || sortField === 'cost' || sortField === 'type') {
                         return sortAscending ? aValue - bValue : bValue - aValue;
                     } else {
                         if (aValue < bValue) return sortAscending ? -1 : 1;
@@ -788,7 +724,7 @@
             function filterMaintenance() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const selectedStatus = statusFilter.value;
-                const selectedPriority = priorityFilter.value;
+                const selectedType = typeFilter.value;
                 const selectedVendor = vendorFilter.value;
                 const showCompleted = showCompletedCheckbox.checked;
                 
@@ -799,18 +735,18 @@
                     if (row.id === 'noResultsRow') return;
                     
                     const status = row.getAttribute('data-status');
-                    const priority = row.getAttribute('data-priority');
-                    const vendor = row.getAttribute('data-vendor');
+                    const type = row.getAttribute('data-type');
+                    const assigned = row.getAttribute('data-assigned');
                     const searchData = row.getAttribute('data-search').toLowerCase();
                     
                     // Check if row matches all filters
                     const matchesSearch = searchData.includes(searchTerm);
                     const matchesStatus = !selectedStatus || status === selectedStatus;
-                    const matchesPriority = !selectedPriority || priority === selectedPriority;
-                    const matchesVendor = !selectedVendor || vendor === selectedVendor;
-                    const matchesCompleted = showCompleted || status !== 'Completed';
+                    const matchesType = !selectedType || type === selectedType;
+                    const matchesVendor = !selectedVendor || assigned === selectedVendor;
+                    const matchesCompleted = showCompleted || status !== 'COMPLETED';
                     
-                    if (matchesSearch && matchesStatus && matchesPriority && matchesVendor && matchesCompleted) {
+                    if (matchesSearch && matchesStatus && matchesType && matchesVendor && matchesCompleted) {
                         row.style.display = '';
                         visibleCount++;
                     } else {
@@ -849,7 +785,7 @@
             // Event listeners
             searchInput.addEventListener('input', filterMaintenance);
             statusFilter.addEventListener('change', filterMaintenance);
-            priorityFilter.addEventListener('change', filterMaintenance);
+            typeFilter.addEventListener('change', filterMaintenance);
             vendorFilter.addEventListener('change', filterMaintenance);
             showCompletedCheckbox.addEventListener('change', filterMaintenance);
             
@@ -864,5 +800,117 @@
             filterMaintenance();
         });
     </script>
+    
+    <!-- Modern Button Styles -->
+    <style>
+        /* Modern Button Styling - Unified Compact Design */
+        .btn-modern {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Consistent Button Color System - Same as Other Pages */
+        
+        /* Schedule Maintenance - Pink (Maintenance Action) */
+        .btn-modern.btn-primary {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            border-color: #ec4899;
+            color: white;
+        }
+        
+        .btn-modern.btn-warning {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            border-color: #ec4899;
+            color: white;
+        }
+        
+        /* Maintenance action buttons - Same unified style */
+        .maintenance-actions .btn {
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .maintenance-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* View Details - Purple (matches primary) */
+        .maintenance-actions .btn-outline-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Edit/Update - Indigo */
+        .maintenance-actions .btn-outline-secondary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        /* Complete - Green */
+        .maintenance-actions .btn-outline-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        
+        /* Schedule New - Pink (matches maintenance) */
+        .maintenance-actions .btn-outline-warning {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            color: white;
+            border-color: #ec4899;
+        }
+        
+        /* Report/Reschedule - Cyan (Info actions) */
+        .maintenance-actions .btn-outline-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            border-color: #06b6d4;
+        }
+    </style>
 </body>
 </html> 

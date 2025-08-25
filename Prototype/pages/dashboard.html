@@ -22,8 +22,8 @@
                 <div class="card border-0 shadow-sm h-100 stats-card-modern">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="stats-icon bg-primary bg-opacity-10 rounded-circle p-3">
-                                <i class="fas fa-laptop text-primary fa-lg"></i>
+                            <div class="stats-icon bg-primary rounded-circle p-3">
+                                <i class="fas fa-laptop fa-lg"></i>
                             </div>
                             <div class="text-end">
                                 <div class="text-dark small mb-1 fw-semibold">Total Assets</div>
@@ -48,8 +48,8 @@
                 <div class="card border-0 shadow-sm h-100 stats-card-modern">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3">
-                                <i class="fas fa-user-check text-success fa-lg"></i>
+                            <div class="stats-icon bg-success rounded-circle p-3">
+                                <i class="fas fa-user-check fa-lg"></i>
                             </div>
                             <div class="text-end">
                                 <div class="text-dark small mb-1 fw-semibold">Assigned Assets</div>
@@ -74,8 +74,8 @@
                 <div class="card border-0 shadow-sm h-100 stats-card-modern">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="stats-icon bg-info bg-opacity-10 rounded-circle p-3">
-                                <i class="fas fa-warehouse text-info fa-lg"></i>
+                            <div class="stats-icon bg-info rounded-circle p-3">
+                                <i class="fas fa-warehouse fa-lg"></i>
                             </div>
                             <div class="text-end">
                                 <div class="text-dark small mb-1 fw-semibold">Available Assets</div>
@@ -100,11 +100,11 @@
                 <div class="card border-0 shadow-sm h-100 stats-card-modern">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="stats-icon bg-warning bg-opacity-10 rounded-circle p-3">
-                                <i class="fas fa-tools text-warning fa-lg"></i>
+                            <div class="stats-icon bg-warning rounded-circle p-3">
+                                <i class="fas fa-tools fa-lg"></i>
                             </div>
                             <div class="text-end">
-                                <div class="text-dark small mb-1 fw-semibold">Under Maintenance</div>
+                                <div class="text-dark small mb-1 fw-semibold">In Maintenance</div>
                                 <div class="h3 mb-0 fw-bold text-dark">43</div>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                         <div class="action-icon">
                             <i class="fas fa-plus"></i>
                         </div>
-                        <div class="action-title">Register New Asset</div>
+                        <div class="action-title">Add New Asset</div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-3">
@@ -145,7 +145,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-3">
-                    <div class="quick-action-card warning" data-bs-toggle="modal" data-bs-target="#maintenanceModal">
+                    <div class="quick-action-card warning" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                         <div class="action-icon">
                             <i class="fas fa-wrench"></i>
                         </div>
@@ -171,7 +171,7 @@
                         <h5 class="card-title mb-0">
                             <i class="fas fa-clock me-2"></i>Recent Activities
                         </h5>
-                        <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+                        <a href="#" class="btn btn-sm btn-outline-primary dashboard-btn">View All</a>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
@@ -185,7 +185,7 @@
                             <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
                                 <div class="ms-2 me-auto">
                                     <div class="fw-bold">Maintenance completed</div>
-                                    <small class="text-muted">Dell Monitor AST-045 repaired</small>
+                                    <small class="text-muted">Dell Monitor AST-045 maintenance completed</small>
                                 </div>
                                 <small class="text-muted">4h ago</small>
                             </div>
@@ -309,5 +309,137 @@
     <!-- Include navbar JavaScript -->
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
+    
+    <style>
+        /* White Background Card Headers with Black Text - Same as Reports */
+        .card-header .card-title,
+        .card-header h5,
+        .card-header h6 {
+            color: #333333 !important;
+        }
+        
+        .card-header .card-title i,
+        .card-header h5 i,
+        .card-header h6 i {
+            color: #666666 !important;
+        }
+        
+        .card-header {
+            background: white !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 1rem 1.25rem !important;
+            min-height: 70px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        
+        /* Ensure card titles don't add extra margin/padding */
+        .card-header .card-title {
+            margin: 0 !important;
+            flex-grow: 1;
+        }
+        
+        /* Dashboard Button Styles - Consistent with Other Pages */
+        .dashboard-btn.btn-outline-primary {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+        
+        .dashboard-btn.btn-outline-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            background: #e9ecef !important;
+            border-color: #adb5bd !important;
+            color: #495057 !important;
+        }
+        
+        /* Style buttons in card headers for white background */
+        .card-header .dashboard-btn {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+        }
+        
+        .card-header .dashboard-btn:hover {
+            background: #e9ecef !important;
+            border-color: #adb5bd !important;
+            transform: translateY(-1px);
+            color: #495057 !important;
+        }
+        
+        /* Improved Stats Card Icon Colors - Light to Dark Gradients */
+        .stats-icon.bg-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%) !important;
+        }
+        
+        .stats-icon.bg-success {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-success {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+        }
+        
+        .stats-icon.bg-warning {
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-warning {
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%) !important;
+        }
+        
+        /* Available Assets - Keep info blue but improve it */
+        .stats-icon.bg-info {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-info {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important;
+        }
+        
+        /* Update asset distribution progress bars */
+        .progress-bar-laptops {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+        
+        .progress-bar-monitors {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+        
+        .progress-bar-mobile {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+        }
+        
+        .progress-bar-accessories {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%) !important;
+        }
+        
+        /* Force Collect Asset card color - Override any conflicts - Light to Dark */
+        .quick-action-card.danger .action-icon {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+            color: white !important;
+        }
+        
+        .quick-action-card.danger:hover .action-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important;
+        }
+    </style>
 </body>
 </html> 

@@ -42,43 +42,58 @@ class NavbarManager {
             .catch(error => {
                 console.error('Error loading navbar:', error);
                 console.error('Attempted to load from:', navbarPath);
+                console.error('Current path:', currentPath);
             });
     }
 
     // Fix navbar links based on current page location
     fixNavbarLinks() {
         const currentPath = window.location.pathname;
-        const pathPrefix = this.getPathPrefix(currentPath);
-        
         // Update all navigation links
         const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            if (href && href.startsWith('../')) {
-                // Convert relative path to appropriate path based on current location
+            
+            if (href && !href.startsWith('#') && !href.startsWith('http')) {
                 if (currentPath.includes('/form_pages/')) {
-                    // From form_pages, we need to go to pages/
-                    link.setAttribute('href', href.replace('../', '/pages/'));
+                    // From form_pages, we need to go to ../pages/
+                    if (href.endsWith('.html')) {
+                        link.setAttribute('href', '../pages/' + href);
+                    }
                 } else if (currentPath.includes('/pages/')) {
-                    // From pages subdirectory, keep the relative path
-                    // No change needed
+                    // From pages subdirectory, links should work as-is
+                    // No change needed for relative links
                 } else {
-                    // From root, adjust accordingly
-                    link.setAttribute('href', href.replace('../', '/pages/'));
+                    // From root, go to pages/
+                    if (href.endsWith('.html')) {
+                        link.setAttribute('href', 'pages/' + href);
+                    }
                 }
             }
         });
+
+        // Fix brand link (navbar-brand)
+        const brandLink = document.querySelector('.navbar-brand');
+        if (brandLink && brandLink.getAttribute('href') === '#') {
+            if (currentPath.includes('/form_pages/')) {
+                brandLink.setAttribute('href', '../pages/dashboard.html');
+            } else if (currentPath.includes('/pages/')) {
+                brandLink.setAttribute('href', 'dashboard.html');
+            } else {
+                brandLink.setAttribute('href', 'pages/dashboard.html');
+            }
+        }
 
         // Fix logout link
         const logoutLink = document.querySelector('a[href="../../index.html"]');
         if (logoutLink) {
             if (currentPath.includes('/form_pages/')) {
-                logoutLink.setAttribute('href', '/index.html');
+                logoutLink.setAttribute('href', '../../index.html');
             } else if (currentPath.includes('/pages/')) {
                 // Keep the relative path for pages
                 logoutLink.setAttribute('href', '../../index.html');
             } else {
-                logoutLink.setAttribute('href', '/index.html');
+                logoutLink.setAttribute('href', '../index.html');
             }
         }
     }

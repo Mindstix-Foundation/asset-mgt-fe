@@ -18,163 +18,66 @@
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-0" id="pageTitle">Asset & Inventory Management</h2>
-                <p class="text-muted mb-0" id="pageSubtitle">Manage and track all company assets and inventory</p>
+                <h2 class="mb-0" id="pageTitle">Asset Management</h2>
+                <p class="text-muted mb-0" id="pageSubtitle">Manage and track all company assets</p>
             </div>
-            <div class="d-flex gap-2">
-                <!-- Mode Toggle -->
-                <div class="btn-group" role="group" aria-label="View Mode">
-                    <input type="radio" class="btn-check" name="viewMode" id="assetsMode" checked>
-                    <label class="btn btn-outline-primary" for="assetsMode">
-                        <i class="fas fa-laptop me-1"></i>Assets
-                    </label>
-                    <input type="radio" class="btn-check" name="viewMode" id="inventoryMode">
-                    <label class="btn btn-outline-primary" for="inventoryMode">
-                        <i class="fas fa-warehouse me-1"></i>Inventory
-                    </label>
-                </div>
-                
-                <!-- View Toggle (Grid/List) -->
-                <button class="btn btn-outline-secondary" id="toggleView">
+            <div class="d-flex align-items-center gap-3">
+                <!-- View Toggle -->
+                <button class="btn btn-outline-secondary btn-modern" id="toggleView">
                     <i class="fas fa-th-large me-1"></i>Grid View
                 </button>
                 
-                <!-- Action Buttons -->
-                <div id="assetActions">
-                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUploadAssetModal">
-                        <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                <!-- Primary Action -->
+                <a href="../form_pages/register-asset.html" class="btn btn-primary btn-modern">
+                    <i class="fas fa-plus me-1"></i>Add New Asset
+                </a>
+                
+                <!-- Data Management Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-modern dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cog me-1"></i>More Actions
                     </button>
-                    <a href="../form_pages/register-asset.html" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Register Asset
-                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#bulkUploadAssetModal">
+                                <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" type="button" id="exportAssets">
+                                <i class="fas fa-download me-2 text-success"></i>Export Assets
+                            </button>
+                        </li>
+                    </ul>
                 </div>
                 
-                <div id="inventoryActions" class="d-none">
-                    <button class="btn btn-outline-success" id="exportInventory">
-                        <i class="fas fa-download me-1"></i>Export Inventory
-                    </button>
-                    <a href="../form_pages/add-inventory.html" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Add to Inventory
+                <!-- Asset Management Actions -->
+                <div class="btn-group" role="group">
+                    <a href="../form_pages/issue-asset.html" class="btn btn-success btn-modern">
+                        <i class="fas fa-user-plus me-1"></i>Issue Asset
+                    </a>
+                    <a href="../form_pages/collect-asset.html" class="btn btn-warning btn-modern">
+                        <i class="fas fa-user-minus me-1"></i>Collect Asset
+                    </a>
+                    <a href="../form_pages/schedule-maintenance.html" class="btn btn-outline-warning btn-modern">
+                        <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Inventory Stats Cards (shown only in inventory mode) -->
-        <div id="inventoryStats" class="d-none">
-            <div class="row mb-4">
-                <!-- Available Assets -->
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="card border-0 shadow-sm h-100 stats-card-modern">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3">
-                                    <i class="fas fa-check-circle text-success fa-lg"></i>
-                                </div>
-                                <div class="text-end">
-                                    <div class="text-dark small mb-1 fw-semibold">Available Stock</div>
-                                    <div class="h3 mb-0 fw-bold text-dark">312</div>
-                                </div>
-                            </div>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-success" style="width: 63.5%"></div>
-                            </div>
-                            <div class="mt-2 d-flex justify-content-between align-items-center">
-                                <small class="text-success">
-                                    <i class="fas fa-arrow-up me-1"></i>5.2% increase
-                                </small>
-                                <small class="text-muted">Updated now</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Reserved -->
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="card border-0 shadow-sm h-100 stats-card-modern">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="stats-icon bg-warning bg-opacity-10 rounded-circle p-3">
-                                    <i class="fas fa-clock text-warning fa-lg"></i>
-                                </div>
-                                <div class="text-end">
-                                    <div class="text-dark small mb-1 fw-semibold">Reserved</div>
-                                    <div class="h3 mb-0 fw-bold text-dark">45</div>
-                                </div>
-                            </div>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-warning" style="width: 9.2%"></div>
-                            </div>
-                            <div class="mt-2 d-flex justify-content-between align-items-center">
-                                <small class="text-warning">
-                                    <i class="fas fa-minus me-1"></i>2.1% from last month
-                                </small>
-                                <small class="text-muted">Updated now</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Low Stock -->
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="card border-0 shadow-sm h-100 stats-card-modern">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="stats-icon bg-danger bg-opacity-10 rounded-circle p-3">
-                                    <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
-                                </div>
-                                <div class="text-end">
-                                    <div class="text-dark small mb-1 fw-semibold">Low Stock</div>
-                                    <div class="h3 mb-0 fw-bold text-dark">8</div>
-                                </div>
-                            </div>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-danger" style="width: 1.6%"></div>
-                            </div>
-                            <div class="mt-2 d-flex justify-content-between align-items-center">
-                                <small class="text-danger">
-                                    <i class="fas fa-arrow-down me-1"></i>Needs attention
-                                </small>
-                                <small class="text-muted">Updated now</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Items -->
-                <div class="col-12 col-sm-6 col-lg-3 mb-3">
-                    <div class="card border-0 shadow-sm h-100 stats-card-modern">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div class="stats-icon bg-info bg-opacity-10 rounded-circle p-3">
-                                    <i class="fas fa-boxes text-info fa-lg"></i>
-                                </div>
-                                <div class="text-end">
-                                    <div class="text-dark small mb-1 fw-semibold">Total Items</div>
-                                    <div class="h3 mb-0 fw-bold text-dark">492</div>
-                                </div>
-                            </div>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-info" style="width: 100%"></div>
-                            </div>
-                            <div class="mt-2 d-flex justify-content-between align-items-center">
-                                <small class="text-info">
-                                    <i class="fas fa-arrow-up me-1"></i>2.3% growth
-                                </small>
-                                <small class="text-muted">Updated now</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Filters -->
         <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Assets</h6>
+                <small class="text-muted">Use filters to find specific assets or view only available assets for assignment</small>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-3 mb-3">
-                        <label class="form-label" id="searchLabel">Search Items</label>
+                        <label class="form-label">Search Assets</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, model, serial...">
@@ -184,37 +87,28 @@
                         <label class="form-label">Asset Type</label>
                         <select class="form-select" id="typeFilter">
                             <option value="">All Types</option>
-                            <option value="Laptop">Laptop</option>
-                            <option value="Monitor">Monitor</option>
-                            <option value="Mobile">Mobile Device</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Accessory">Accessories</option>
+                            <!-- Asset types will be loaded from database -->
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Brand</label>
                         <select class="form-select" id="brandFilter">
                             <option value="">All Brands</option>
-                            <option value="Apple">Apple</option>
-                            <option value="Dell">Dell</option>
-                            <option value="HP">HP</option>
-                            <option value="Lenovo">Lenovo</option>
-                            <option value="Samsung">Samsung</option>
-                            <option value="LG">LG</option>
-                            <option value="Microsoft">Microsoft</option>
-                            <option value="Logitech">Logitech</option>
+                            <!-- Brands will be loaded from database -->
                         </select>
                     </div>
                     <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Status</label>
+                        <label class="form-label">
+                            Status 
+                            <i class="fas fa-info-circle text-muted" title="Available = Ready for assignment, Assigned = Currently with employee"></i>
+                        </label>
                         <select class="form-select" id="statusFilter">
-                            <option value="">All Status</option>
-                            <option value="Available">Available</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="Reserved">Reserved</option>
-                            <option value="Under Repair">Under Repair</option>
-                            <option value="Low Stock">Low Stock</option>
-                            <option value="Retired">Retired</option>
+                            <option value="">All Assets</option>
+                            <option value="AVAILABLE">📦 Available (Ready for assignment)</option>
+                            <option value="ASSIGNED">👤 Assigned (Currently with employee)</option>
+                            <option value="IN_MAINTENANCE">🔧 In Maintenance</option>
+                            <option value="RETIRED">📴 Retired</option>
+                            <option value="LOST">❌ Lost</option>
                         </select>
                     </div>
                     <div class="col-12 col-md-3 mb-3">
@@ -267,7 +161,7 @@
                             </thead>
                             <tbody id="tableBody">
                                 <!-- Assets Data -->
-                                <tr data-type="Laptop" data-brand="Apple" data-status="Available" data-location="Warehouse A" data-search="AST-001 MacBook Pro Apple ABC123XYZ Available">
+                                <tr data-type="Laptop" data-brand="Apple" data-status="AVAILABLE" data-location="Warehouse A" data-search="AST-001 MacBook Pro Apple ABC123XYZ Available">
                                     <td><strong>AST-001</strong></td>
                                     <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
                                     <td>Apple MacBook Pro 16"</td>
@@ -276,7 +170,7 @@
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Jan 15, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -286,13 +180,16 @@
                                             <button class="btn btn-outline-success assign-btn" title="Assign">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Monitor" data-brand="Dell" data-status="Assigned" data-location="Office Floor 1" data-search="AST-002 Dell UltraSharp Monitor DEF456UVW Assigned John Doe">
+                                <tr data-type="Monitor" data-brand="Dell" data-status="ASSIGNED" data-location="Office Floor 1" data-search="AST-002 Dell UltraSharp Monitor DEF456UVW Assigned John Doe">
                                     <td><strong>AST-002</strong></td>
                                     <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
                                     <td>Dell UltraSharp 27"</td>
@@ -301,7 +198,7 @@
                                     <td class="assigned-to">John Doe</td>
                                     <td class="date-column">Feb 01, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -311,27 +208,36 @@
                                             <button class="btn btn-outline-warning unassign-btn" title="Unassign">
                                                 <i class="fas fa-user-minus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Mobile" data-brand="Apple" data-status="Under Repair" data-location="Repair Center" data-search="AST-003 iPhone Apple GHI789RST Under Repair">
+                                <tr data-type="Mobile" data-brand="Apple" data-status="IN_MAINTENANCE" data-location="Repair Center" data-search="AST-003 iPhone Apple GHI789RST Under Repair">
                                     <td><strong>AST-003</strong></td>
                                     <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
                                     <td>Apple iPhone 14 Pro</td>
                                     <td>GHI789RST</td>
-                                    <td><span class="badge badge-under-repair">Under Repair</span></td>
+                                    <td><span class="badge badge-under-repair">In Maintenance</span></td>
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Jan 20, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                            <button class="btn btn-outline-secondary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                             <button class="btn btn-outline-warning" title="Repair Status">
                                                 <i class="fas fa-tools"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
                                             </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
@@ -339,7 +245,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Laptop" data-brand="Dell" data-status="Available" data-location="Warehouse B" data-search="AST-004 Dell Latitude Laptop JKL012MNO Available">
+                                <tr data-type="Laptop" data-brand="Dell" data-status="AVAILABLE" data-location="Warehouse B" data-search="AST-004 Dell Latitude Laptop JKL012MNO Available">
                                     <td><strong>AST-004</strong></td>
                                     <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
                                     <td>Dell Latitude 7420</td>
@@ -348,7 +254,7 @@
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Feb 15, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -358,27 +264,36 @@
                                             <button class="btn btn-outline-success assign-btn" title="Assign">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Tablet" data-brand="Microsoft" data-status="Reserved" data-location="Warehouse A" data-search="AST-005 Microsoft Surface Tablet MNO345PQR Reserved">
+                                <tr data-type="Tablet" data-brand="Microsoft" data-status="AVAILABLE" data-location="Warehouse A" data-search="AST-005 Microsoft Surface Tablet MNO345PQR Available">
                                     <td><strong>AST-005</strong></td>
                                     <td><i class="fas fa-tablet-alt text-success me-2"></i>Tablet</td>
                                     <td>Microsoft Surface Pro 9</td>
                                     <td>MNO345PQR</td>
-                                    <td><span class="badge badge-reserved">Reserved</span></td>
+                                    <td><span class="badge badge-available">Available</span></td>
                                     <td class="assigned-to">Reserved for Jane Smith</td>
                                     <td class="date-column">Mar 05, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success assign-btn" title="Assign">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
                                             </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
@@ -386,24 +301,27 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Accessory" data-brand="Apple" data-status="Low Stock" data-location="Warehouse A" data-search="AST-006 Apple AirPods Accessory PQR678STU Low Stock">
+                                <tr data-type="Accessory" data-brand="Apple" data-status="AVAILABLE" data-location="Warehouse A" data-search="AST-006 Apple AirPods Accessory PQR678STU Available">
                                     <td><strong>AST-006</strong></td>
                                     <td><i class="fas fa-headphones text-secondary me-2"></i>Accessory</td>
                                     <td>Apple AirPods Pro 2nd Gen</td>
                                     <td>PQR678STU</td>
-                                    <td><span class="badge badge-low-stock">Low Stock</span></td>
+                                    <td><span class="badge badge-available">Available</span></td>
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Mar 10, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-danger" title="Reorder">
-                                                <i class="fas fa-shopping-cart"></i>
+                                            <button class="btn btn-outline-success assign-btn" title="Assign">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
                                             </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
@@ -411,7 +329,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Monitor" data-brand="LG" data-status="Available" data-location="Warehouse B" data-search="AST-007 LG UltraWide Monitor STU901VWX Available">
+                                <tr data-type="Monitor" data-brand="LG" data-status="AVAILABLE" data-location="Warehouse B" data-search="AST-007 LG UltraWide Monitor STU901VWX Available">
                                     <td><strong>AST-007</strong></td>
                                     <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
                                     <td>LG UltraWide 34"</td>
@@ -420,7 +338,7 @@
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Mar 18, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -430,13 +348,16 @@
                                             <button class="btn btn-outline-success assign-btn" title="Assign">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Mobile" data-brand="Samsung" data-status="Assigned" data-location="Office Floor 2" data-search="AST-008 Samsung Galaxy Mobile VWX234YZA Assigned Mike Johnson">
+                                <tr data-type="Mobile" data-brand="Samsung" data-status="ASSIGNED" data-location="Office Floor 2" data-search="AST-008 Samsung Galaxy Mobile VWX234YZA Assigned Mike Johnson">
                                     <td><strong>AST-008</strong></td>
                                     <td><i class="fas fa-mobile-alt text-warning me-2"></i>Mobile</td>
                                     <td>Samsung Galaxy S23 Ultra</td>
@@ -445,7 +366,7 @@
                                     <td class="assigned-to">Mike Johnson</td>
                                     <td class="date-column">Feb 28, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -455,13 +376,16 @@
                                             <button class="btn btn-outline-warning unassign-btn" title="Unassign">
                                                 <i class="fas fa-user-minus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Accessory" data-brand="Logitech" data-status="Available" data-location="Warehouse C" data-search="AST-009 Logitech Keyboard Accessory YZA567BCD Available">
+                                <tr data-type="Accessory" data-brand="Logitech" data-status="AVAILABLE" data-location="Warehouse C" data-search="AST-009 Logitech Keyboard Accessory YZA567BCD Available">
                                     <td><strong>AST-009</strong></td>
                                     <td><i class="fas fa-keyboard text-dark me-2"></i>Accessory</td>
                                     <td>Logitech MX Keys</td>
@@ -470,7 +394,7 @@
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Mar 08, 2024</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -480,13 +404,16 @@
                                             <button class="btn btn-outline-success assign-btn" title="Assign">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
+                                            </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Laptop" data-brand="HP" data-status="Retired" data-location="Storage" data-search="AST-010 HP EliteBook Laptop BCD890EFG Retired">
+                                <tr data-type="Laptop" data-brand="HP" data-status="RETIRED" data-location="Storage" data-search="AST-010 HP EliteBook Laptop BCD890EFG Retired">
                                     <td><strong>AST-010</strong></td>
                                     <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
                                     <td>HP EliteBook 840 G8</td>
@@ -495,9 +422,15 @@
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Oct 15, 2022</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm asset-actions">
                                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
                                                 <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                                <i class="fas fa-wrench"></i>
                                             </button>
                                             <button class="btn btn-outline-info" title="QR Code">
                                                 <i class="fas fa-qrcode"></i>
@@ -763,6 +696,196 @@
     
     <!-- Styles -->
     <style>
+        /* Dropdown Fallback Styling */
+        .dropdown-menu.show {
+            display: block;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            min-width: 10rem;
+            padding: 0.5rem 0;
+            margin: 0.125rem 0 0;
+            background-color: #fff;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 0.375rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+        }
+        
+        /* Enhanced Button Group Styling */
+        .btn-group {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .btn-group .btn-modern {
+            border-radius: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-group .btn-modern:first-child {
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+        }
+        
+        .btn-group .btn-modern:last-child {
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            border-right: none;
+        }
+        
+        .dropdown-toggle-split {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        
+        /* Modern Button Styling - Unified Compact Design */
+        .btn-modern {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Consistent Button Color System - Each Function Has Unique Color */
+        
+        /* Primary Actions - Add/Create */
+        .btn-modern.btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+        
+        /* Issue/Assign Actions - Green */
+        .btn-modern.btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+            color: white;
+        }
+        
+        /* Collect/Return Actions - Orange */
+        .btn-modern.btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-color: #f59e0b;
+            color: white;
+        }
+        
+        /* Schedule/Maintenance Actions - Pink */
+        .btn-modern.btn-outline-warning {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            border-color: #ec4899;
+            color: white;
+        }
+        
+        /* Export/Download Actions - Teal */
+        .btn-modern.btn-outline-success {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            border-color: #14b8a6;
+            color: white;
+        }
+        
+        /* Bulk/Upload Actions - Blue */
+        .btn-modern.btn-outline-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        /* View Toggle/Secondary Actions - Gray */
+        .btn-modern.btn-outline-secondary,
+        .btn-modern.btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            border-color: #6b7280;
+            color: white;
+        }
+        
+        /* Individual asset action buttons - Same unified style */
+        .asset-actions .btn {
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .asset-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* View Details - Purple (matches primary) */
+        .asset-actions .btn-outline-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Edit - Indigo */
+        .asset-actions .btn-outline-secondary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        /* Assign - Green (matches success) */
+        .asset-actions .btn-outline-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        
+        /* Maintenance - Pink (matches schedule maintenance) */
+        .asset-actions .btn-outline-warning {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            color: white;
+            border-color: #ec4899;
+        }
+        
+        /* QR Code - Cyan */
+        .asset-actions .btn-outline-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            border-color: #06b6d4;
+        }
+
         /* Modern Badge Styles */
         .badge.badge-available {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
@@ -931,11 +1054,101 @@
                 font-size: 2.5rem !important;
             }
         }
+        
+        /* Enhanced Button Group Responsive Design */
+        @media (max-width: 768px) {
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn-group .btn-modern {
+                flex: 1;
+                text-align: center;
+            }
+            
+            #toggleView {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .btn-group {
+                flex-direction: column;
+                border-radius: 0.5rem;
+            }
+            
+            .btn-group .btn-modern {
+                border-radius: 0;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .btn-group .btn-modern:first-child {
+                border-radius: 0.5rem 0.5rem 0 0;
+            }
+            
+            .btn-group .btn-modern:last-child {
+                border-radius: 0 0 0.5rem 0.5rem;
+                border-bottom: none;
+            }
+        }
     </style>
     
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap dropdowns with error handling
+            try {
+                const dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+                const dropdownList = dropdownTriggerList.map(function (dropdownTriggerEl) {
+                    return new bootstrap.Dropdown(dropdownTriggerEl);
+                });
+                console.log('Bootstrap dropdowns initialized successfully');
+            } catch (error) {
+                console.error('Bootstrap dropdown initialization failed:', error);
+                // Fallback: Add click handlers manually
+                document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const dropdown = this.nextElementSibling;
+                        if (dropdown && dropdown.classList.contains('dropdown-menu')) {
+                            dropdown.classList.toggle('show');
+                        }
+                    });
+                });
+            }
+            
+            // Load schema-based filter data
+            const schemaData = {
+                types: [
+                    { id: '1', name: 'Laptop' },
+                    { id: '2', name: 'Monitor' },
+                    { id: '3', name: 'Mobile Device' },
+                    { id: '4', name: 'Tablet' },
+                    { id: '5', name: 'Printer' },
+                    { id: '6', name: 'Scanner' },
+                    { id: '7', name: 'Accessories' }
+                ],
+                brands: [
+                    { id: '1', name: 'Apple' },
+                    { id: '2', name: 'Dell' },
+                    { id: '3', name: 'HP' },
+                    { id: '4', name: 'Lenovo' },
+                    { id: '5', name: 'Samsung' },
+                    { id: '6', name: 'LG' },
+                    { id: '7', name: 'Microsoft' },
+                    { id: '8', name: 'Logitech' }
+                ]
+            };
+            
             // Get DOM elements
             const searchInput = document.getElementById('searchInput');
             const typeFilter = document.getElementById('typeFilter');
@@ -949,89 +1162,42 @@
             const mainTable = document.getElementById('mainTable');
             const showRetiredCheckbox = document.getElementById('showRetired');
             
-            // Mode elements
-            const assetsModeBtn = document.getElementById('assetsMode');
-            const inventoryModeBtn = document.getElementById('inventoryMode');
-            const pageTitle = document.getElementById('pageTitle');
-            const pageSubtitle = document.getElementById('pageSubtitle');
-            const searchLabel = document.getElementById('searchLabel');
-            const tableTitle = document.getElementById('tableTitle');
-            const assetActions = document.getElementById('assetActions');
-            const inventoryActions = document.getElementById('inventoryActions');
-            const inventoryStats = document.getElementById('inventoryStats');
-            const assignedColumn = document.getElementById('assignedColumn');
-            const dateColumn = document.getElementById('dateColumn');
-            const retiredToggle = document.getElementById('retiredToggle');
-            
-            // View and mode variables
+            // View variables
             let isGridView = false;
-            let isInventoryMode = false;
             let sortAscending = true;
             
-            // Mode toggle functionality
-            assetsModeBtn.addEventListener('change', function() {
-                if (this.checked) {
-                    switchToAssetsMode();
-                }
-            });
-            
-            inventoryModeBtn.addEventListener('change', function() {
-                if (this.checked) {
-                    switchToInventoryMode();
-                }
-            });
-            
-            function switchToAssetsMode() {
-                isInventoryMode = false;
-                pageTitle.textContent = 'Asset Management';
-                pageSubtitle.textContent = 'Manage and track all company assets';
-                searchLabel.textContent = 'Search Assets';
-                tableTitle.innerHTML = '<i class="fas fa-laptop me-2"></i>Assets';
-                assetActions.classList.remove('d-none');
-                inventoryActions.classList.add('d-none');
-                inventoryStats.classList.add('d-none');
-                assignedColumn.textContent = 'Assigned To';
-                dateColumn.textContent = 'Purchase Date';
-                retiredToggle.classList.remove('d-none');
+            // Populate filters with schema data
+            function populateFilters() {
+                // Populate asset types
+                schemaData.types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.name;
+                    option.textContent = type.name;
+                    typeFilter.appendChild(option);
+                });
                 
-                // Update table data for assets view
-                updateTableForAssetsMode();
-                filterItems();
+                // Populate brands
+                schemaData.brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand.name;
+                    option.textContent = brand.name;
+                    brandFilter.appendChild(option);
+                });
             }
             
-            function switchToInventoryMode() {
-                isInventoryMode = true;
-                pageTitle.textContent = 'Inventory Management';
-                pageSubtitle.textContent = 'Manage available and spare assets';
-                searchLabel.textContent = 'Search Inventory';
-                tableTitle.innerHTML = '<i class="fas fa-warehouse me-2"></i>Inventory Items';
-                assetActions.classList.add('d-none');
-                inventoryActions.classList.remove('d-none');
-                inventoryStats.classList.remove('d-none');
-                assignedColumn.textContent = 'Location';
-                dateColumn.textContent = 'Added Date';
-                retiredToggle.classList.add('d-none');
-                
-                // Update table data for inventory view
-                updateTableForInventoryMode();
-                filterItems();
-            }
-            
-            function updateTableForAssetsMode() {
+            // Initialize table data
+            function initializeTable() {
                 const rows = mainTable.querySelectorAll('tbody tr');
                 rows.forEach(row => {
                     const assignedToCell = row.querySelector('.assigned-to');
-                    const dateCell = row.querySelector('.date-column');
                     const status = row.getAttribute('data-status');
                     
                     // Update assigned to column based on status
-                    if (status === 'Assigned') {
+                    if (status === 'ASSIGNED') {
                         const assetId = row.querySelector('strong').textContent;
                         if (assetId === 'AST-002') assignedToCell.textContent = 'John Doe';
                         else if (assetId === 'AST-008') assignedToCell.textContent = 'Mike Johnson';
                         else assignedToCell.textContent = '-';
-                    } else if (status === 'Reserved') {
-                        assignedToCell.textContent = 'Reserved for Jane Smith';
                     } else {
                         assignedToCell.textContent = '-';
                     }
@@ -1040,7 +1206,7 @@
                     const actionButtons = row.querySelectorAll('.btn-group .btn');
                     actionButtons.forEach(btn => btn.style.display = '');
                     
-                    if (status === 'Assigned') {
+                    if (status === 'ASSIGNED') {
                         const assignBtn = row.querySelector('.assign-btn');
                         const unassignBtn = row.querySelector('.unassign-btn');
                         if (assignBtn) assignBtn.style.display = 'none';
@@ -1051,27 +1217,10 @@
                             newUnassignBtn.innerHTML = '<i class="fas fa-user-minus"></i>';
                             row.querySelector('.btn-group').appendChild(newUnassignBtn);
                         }
-                    } else if (status === 'Available') {
+                    } else if (status === 'AVAILABLE') {
                         const unassignBtn = row.querySelector('.unassign-btn');
                         if (unassignBtn) unassignBtn.style.display = 'none';
                     }
-                });
-            }
-            
-            function updateTableForInventoryMode() {
-                const rows = mainTable.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const assignedToCell = row.querySelector('.assigned-to');
-                    const location = row.getAttribute('data-location');
-                    
-                    // Update location column
-                    assignedToCell.textContent = location || 'Warehouse A';
-                    
-                    // Hide assign/unassign buttons in inventory mode
-                    const assignBtn = row.querySelector('.assign-btn');
-                    const unassignBtn = row.querySelector('.unassign-btn');
-                    if (assignBtn) assignBtn.style.display = 'none';
-                    if (unassignBtn) unassignBtn.style.display = 'none';
                 });
             }
             
@@ -1136,12 +1285,11 @@
                     
                     // Get status badge color and style
                     const statusStyles = {
-                        'Available': { class: 'badge-available', icon: 'fas fa-check-circle' },
-                        'Assigned': { class: 'badge-assigned', icon: 'fas fa-user' },
-                        'Reserved': { class: 'badge-reserved', icon: 'fas fa-clock' },
-                        'Under Repair': { class: 'badge-under-repair', icon: 'fas fa-tools' },
-                        'Low Stock': { class: 'badge-low-stock', icon: 'fas fa-exclamation-triangle' },
-                        'Retired': { class: 'badge-retired', icon: 'fas fa-archive' }
+                        'AVAILABLE': { class: 'badge-available', icon: 'fas fa-check-circle' },
+                        'ASSIGNED': { class: 'badge-assigned', icon: 'fas fa-user' },
+                        'IN_MAINTENANCE': { class: 'badge-under-repair', icon: 'fas fa-tools' },
+                        'RETIRED': { class: 'badge-retired', icon: 'fas fa-archive' },
+                        'LOST': { class: 'badge-retired', icon: 'fas fa-question-circle' }
                     };
                     
                     const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' };
@@ -1187,8 +1335,8 @@
                                     
                                     <div class="info-item mb-3">
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-${isInventoryMode ? 'map-marker-alt' : 'user'} text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">${isInventoryMode ? 'Location' : 'Assigned To'}</small>
+                                            <i class="fas fa-user text-primary me-2"></i>
+                                            <small class="text-muted fw-semibold">Assigned To</small>
                                         </div>
                                         <div class="ps-3">${assignedToOrLocation}</div>
                                     </div>
@@ -1196,7 +1344,7 @@
                                     <div class="info-item mb-4">
                                         <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-clock text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">${isInventoryMode ? 'Added Date' : 'Purchase Date'}</small>
+                                            <small class="text-muted fw-semibold">Purchase Date</small>
                                         </div>
                                         <div class="ps-3 small">${lastUpdated}</div>
                                     </div>
@@ -1210,19 +1358,15 @@
                                         <button class="btn btn-outline-secondary btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        ${!isInventoryMode && status === 'Available' ? 
+                                        ${status === 'AVAILABLE' ? 
                                             '<button class="btn btn-outline-success btn-sm" title="Assign"><i class="fas fa-user-plus"></i></button>' : 
-                                            !isInventoryMode && status === 'Assigned' ? 
+                                            status === 'ASSIGNED' ? 
                                             '<button class="btn btn-outline-warning btn-sm" title="Unassign"><i class="fas fa-user-minus"></i></button>' : 
                                             ''
                                         }
                                         <button class="btn btn-outline-info btn-sm" title="QR Code">
                                             <i class="fas fa-qrcode"></i>
                                         </button>
-                                        ${status === 'Low Stock' ? 
-                                            '<button class="btn btn-outline-danger btn-sm" title="Reorder"><i class="fas fa-shopping-cart"></i></button>' : 
-                                            ''
-                                        }
                                     </div>
                                 </div>
                             </div>
@@ -1374,13 +1518,56 @@
                 sortItems();
             });
             
-            // Export inventory functionality
-            document.getElementById('exportInventory').addEventListener('click', function() {
-                alert('Export inventory functionality - to be implemented');
+            // Export assets functionality
+            document.getElementById('exportAssets').addEventListener('click', function() {
+                alert('Export assets functionality - to be implemented');
             });
             
-            // Initialize with assets mode
-            switchToAssetsMode();
+            // Handle assign/unassign button clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.assign-btn')) {
+                    const row = e.target.closest('tr');
+                    const assetId = row.querySelector('strong').textContent;
+                    const assetType = row.querySelector('td:nth-child(2)').textContent.trim();
+                    
+                    // Store asset info in localStorage for the issue-asset form
+                    localStorage.setItem('selectedAssetId', assetId);
+                    localStorage.setItem('selectedAssetType', assetType);
+                    
+                    // Redirect to issue asset form
+                    window.location.href = '../form_pages/issue-asset.html';
+                }
+                
+                if (e.target.closest('.unassign-btn')) {
+                    const row = e.target.closest('tr');
+                    const assetId = row.querySelector('strong').textContent;
+                    const assignedTo = row.querySelector('.assigned-to').textContent;
+                    
+                    // Store asset info for collect-asset form
+                    localStorage.setItem('selectedAssetId', assetId);
+                    localStorage.setItem('currentEmployee', assignedTo);
+                    
+                    // Redirect to collect asset form
+                    window.location.href = '../form_pages/collect-asset.html';
+                }
+                
+                if (e.target.closest('.maintenance-btn')) {
+                    const row = e.target.closest('tr');
+                    const assetId = row.querySelector('strong').textContent;
+                    const assetType = row.querySelector('td:nth-child(2)').textContent.trim();
+                    
+                    // Store asset info for schedule-maintenance form
+                    localStorage.setItem('selectedAssetId', assetId);
+                    localStorage.setItem('selectedAssetType', assetType);
+                    
+                    // Redirect to schedule maintenance form
+                    window.location.href = '../form_pages/schedule-maintenance.html';
+                }
+            });
+            
+            // Initialize the table and filters
+            populateFilters();
+            initializeTable();
         });
     </script>
 </body>

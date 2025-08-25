@@ -95,36 +95,12 @@
                                 <option value="audit">Audit Log Report</option>
                             </select>
                         </div>
-                        <div class="col-12 col-md-2 mb-3">
-                            <label class="form-label">Department</label>
-                            <select class="form-select">
-                                <option value="">All Departments</option>
-                                <option>IT</option>
-                                <option>HR</option>
-                                <option>Finance</option>
-                                <option>Marketing</option>
-                                <option>Operations</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-2 mb-3">
-                            <label class="form-label">Location</label>
-                            <select class="form-select">
-                                <option value="">All Locations</option>
-                                <option>New York</option>
-                                <option>San Francisco</option>
-                                <option>London</option>
-                                <option>Remote</option>
-                            </select>
-                        </div>
+
                         <div class="col-12 col-md-2 mb-3">
                             <label class="form-label">Asset Type</label>
-                            <select class="form-select">
+                            <select class="form-select" id="assetTypeFilter">
                                 <option value="">All Types</option>
-                                <option>Laptop</option>
-                                <option>Monitor</option>
-                                <option>Mobile Device</option>
-                                <option>Tablet</option>
-                                <option>Accessories</option>
+                                <!-- Asset types will be loaded from database -->
                             </select>
                         </div>
                         <div class="col-12 col-md-3 mb-3">
@@ -173,33 +149,90 @@
             </div>
         </div>
 
-        <!-- Analytics Dashboard -->
-        <div class="row">
-            <!-- Asset Distribution Chart -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Asset Distribution by Type</h5>
+        <!-- Compact Analytics Dashboard -->
+        <div class="row mb-4">
+            <!-- Asset Distribution by Type -->
+            <div class="col-12 col-xl-3 col-lg-6 mb-4">
+                <div class="card compact-chart-card">
+                    <div class="card-header compact-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Asset Distribution</h6>
                     </div>
-                    <div class="card-body">
-                        <canvas id="assetDistributionChart" width="400" height="200"></canvas>
-                        <div class="mt-3">
-                            <div class="row text-center">
-                                <div class="col-3">
-                                    <div class="text-primary fw-bold">45%</div>
-                                    <small class="text-muted">Laptops</small>
+                    <div class="card-body p-3">
+                        <div class="mini-chart-container mb-3">
+                            <canvas id="assetDistributionChart" width="200" height="150"></canvas>
+                        </div>
+                        <div class="compact-stats">
+                            <div class="stat-row">
+                                <div class="stat-dot bg-primary"></div>
+                                <span class="stat-label">Laptops</span>
+                                <span class="stat-value">561 (45%)</span>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-dot bg-info"></div>
+                                <span class="stat-label">Monitors</span>
+                                <span class="stat-value">312 (25%)</span>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-dot bg-success"></div>
+                                <span class="stat-label">Mobile</span>
+                                <span class="stat-value">249 (20%)</span>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-dot bg-warning"></div>
+                                <span class="stat-label">Accessories</span>
+                                <span class="stat-value">125 (10%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Status Overview -->
+            <div class="col-12 col-xl-3 col-lg-6 mb-4">
+                <div class="card compact-chart-card">
+                    <div class="card-header compact-header">
+                        <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Status Overview</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="status-grid">
+                            <div class="status-mini-card assigned">
+                                <div class="status-icon">
+                                    <i class="fas fa-user-check"></i>
                                 </div>
-                                <div class="col-3">
-                                    <div class="text-info fw-bold">25%</div>
-                                    <small class="text-muted">Monitors</small>
+                                <div class="status-info">
+                                    <div class="status-count">892</div>
+                                    <div class="status-label">Assigned</div>
+                                    <div class="status-percent">71.5%</div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="text-success fw-bold">20%</div>
-                                    <small class="text-muted">Mobile</small>
+                            </div>
+                            <div class="status-mini-card available">
+                                <div class="status-icon">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
-                                <div class="col-3">
-                                    <div class="text-warning fw-bold">10%</div>
-                                    <small class="text-muted">Other</small>
+                                <div class="status-info">
+                                    <div class="status-count">312</div>
+                                    <div class="status-label">Available</div>
+                                    <div class="status-percent">25.0%</div>
+                                </div>
+                            </div>
+                            <div class="status-mini-card maintenance">
+                                <div class="status-icon">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <div class="status-info">
+                                    <div class="status-count">43</div>
+                                    <div class="status-label">Maintenance</div>
+                                    <div class="status-percent">3.4%</div>
+                                </div>
+                            </div>
+                            <div class="status-mini-card retired">
+                                <div class="status-icon">
+                                    <i class="fas fa-archive"></i>
+                                </div>
+                                <div class="status-info">
+                                    <div class="status-count">127</div>
+                                    <div class="status-label">Retired</div>
+                                    <div class="status-percent">10.2%</div>
                                 </div>
                             </div>
                         </div>
@@ -207,93 +240,41 @@
                 </div>
             </div>
 
-            <!-- Asset Status Chart -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Asset Status Overview</h5>
+            <!-- Asset Value Distribution -->
+            <div class="col-12 col-xl-3 col-lg-6 mb-4">
+                <div class="card compact-chart-card">
+                    <div class="card-header compact-header">
+                        <h6 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Value Distribution</h6>
                     </div>
-                    <div class="card-body">
-                        <canvas id="assetStatusChart" width="400" height="200"></canvas>
-                        <div class="mt-3">
-                            <div class="row text-center">
-                                <div class="col-3">
-                                    <div class="text-success fw-bold">892</div>
-                                    <small class="text-muted">Assigned</small>
-                                </div>
-                                <div class="col-3">
-                                    <div class="text-primary fw-bold">312</div>
-                                    <small class="text-muted">Available</small>
-                                </div>
-                                <div class="col-3">
-                                    <div class="text-warning fw-bold">43</div>
-                                    <small class="text-muted">Maintenance</small>
-                                </div>
-                                <div class="col-3">
-                                    <div class="text-secondary fw-bold">127</div>
-                                    <small class="text-muted">Retired</small>
-                                </div>
-                            </div>
+                    <div class="card-body p-3">
+                        <div class="value-summary mb-3">
+                            <div class="total-value">$3.97M</div>
+                            <div class="total-label">Total Asset Value</div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Department Allocation -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-building me-2"></i>Assets by Department</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="progress-stacked mb-3">
-                            <div class="progress" style="width: 35%">
-                                <div class="progress-bar bg-primary" style="width: 100%"></div>
-                            </div>
-                            <div class="progress" style="width: 25%">
-                                <div class="progress-bar bg-info" style="width: 100%"></div>
-                            </div>
-                            <div class="progress" style="width: 20%">
-                                <div class="progress-bar bg-success" style="width: 100%"></div>
-                            </div>
-                            <div class="progress" style="width: 15%">
-                                <div class="progress-bar bg-warning" style="width: 100%"></div>
-                            </div>
-                            <div class="progress" style="width: 5%">
-                                <div class="progress-bar bg-danger" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-6 mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <span class="small">IT Department (35%)</span>
+                        <div class="value-breakdown">
+                            <div class="value-row">
+                                <div class="value-bar">
+                                    <div class="value-fill bg-primary" style="width: 53%"></div>
                                 </div>
+                                <span class="value-text">Laptops $2.1M</span>
                             </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-info rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <span class="small">Marketing (25%)</span>
+                            <div class="value-row">
+                                <div class="value-bar">
+                                    <div class="value-fill bg-info" style="width: 21%"></div>
                                 </div>
+                                <span class="value-text">Monitors $850K</span>
                             </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-success rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <span class="small">Finance (20%)</span>
+                            <div class="value-row">
+                                <div class="value-bar">
+                                    <div class="value-fill bg-success" style="width: 17%"></div>
                                 </div>
+                                <span class="value-text">Mobile $680K</span>
                             </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-warning rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <span class="small">HR (15%)</span>
+                            <div class="value-row">
+                                <div class="value-bar">
+                                    <div class="value-fill bg-warning" style="width: 9%"></div>
                                 </div>
-                            </div>
-                            <div class="col-6 mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-danger rounded me-2" style="width: 12px; height: 12px;"></div>
-                                    <span class="small">Operations (5%)</span>
-                                </div>
+                                <span class="value-text">Accessories $340K</span>
                             </div>
                         </div>
                     </div>
@@ -301,44 +282,57 @@
             </div>
 
             <!-- Recent Activity -->
-            <div class="col-12 col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h5>
-                        <button class="btn btn-sm btn-outline-primary">View All</button>
+            <div class="col-12 col-xl-3 col-lg-6 mb-4">
+                <div class="card compact-chart-card">
+                    <div class="card-header compact-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h6>
+                        <small class="text-muted">Last 24h</small>
                     </div>
-                    <div class="card-body">
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-success"></div>
-                                <div class="timeline-content">
-                                    <h6 class="mb-1">Asset Assignment</h6>
-                                    <p class="text-muted mb-1 small">MacBook Pro assigned to John Doe</p>
-                                    <small class="text-muted">2 hours ago</small>
+                    <div class="card-body p-0">
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon assigned">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">MacBook Pro assigned to John Doe</div>
+                                    <div class="activity-time">2 hours ago</div>
                                 </div>
                             </div>
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-warning"></div>
-                                <div class="timeline-content">
-                                    <h6 class="mb-1">Maintenance Scheduled</h6>
-                                    <p class="text-muted mb-1 small">iPhone screen repair scheduled</p>
-                                    <small class="text-muted">4 hours ago</small>
+                            <div class="activity-item">
+                                <div class="activity-icon maintenance">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">Dell Monitor maintenance scheduled</div>
+                                    <div class="activity-time">4 hours ago</div>
                                 </div>
                             </div>
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-primary"></div>
-                                <div class="timeline-content">
-                                    <h6 class="mb-1">New Asset Added</h6>
-                                    <p class="text-muted mb-1 small">Dell Monitor added to inventory</p>
-                                    <small class="text-muted">6 hours ago</small>
+                            <div class="activity-item">
+                                <div class="activity-icon added">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">5 new assets added to inventory</div>
+                                    <div class="activity-time">6 hours ago</div>
                                 </div>
                             </div>
-                            <div class="timeline-item">
-                                <div class="timeline-marker bg-info"></div>
-                                <div class="timeline-content">
-                                    <h6 class="mb-1">Asset Returned</h6>
-                                    <p class="text-muted mb-1 small">Surface Tablet returned by Jane Smith</p>
-                                    <small class="text-muted">1 day ago</small>
+                            <div class="activity-item">
+                                <div class="activity-icon returned">
+                                    <i class="fas fa-undo"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">iPhone returned by Sarah Wilson</div>
+                                    <div class="activity-time">1 day ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item border-0">
+                                <div class="activity-icon retired">
+                                    <i class="fas fa-archive"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-text">Old laptops marked as retired</div>
+                                    <div class="activity-time">1 day ago</div>
                                 </div>
                             </div>
                         </div>
@@ -346,6 +340,8 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <!-- Generate Report Modal -->
@@ -411,7 +407,7 @@
                                     <th>Serial Number</th>
                                     <th>Status</th>
                                     <th>Assigned To</th>
-                                    <th>Location</th>
+                                    <th>Asset Location</th>
                                     <th>Purchase Date</th>
                                 </tr>
                             </thead>
@@ -577,44 +573,50 @@
             }, 4000);
         }
 
-        // Initialize charts with enhanced styling - Reports page specific
+        // Initialize compact charts - Reports page specific
         function initializeReportsCharts() {
-            // Asset Distribution Chart
+            // Compact Asset Distribution Chart
             const assetDistCtx = document.getElementById('assetDistributionChart');
             if (assetDistCtx) {
                 new Chart(assetDistCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Laptops', 'Monitors', 'Mobile', 'Other'],
+                        labels: ['Laptops', 'Monitors', 'Mobile', 'Accessories'],
                         datasets: [{
                             data: [45, 25, 20, 10],
                             backgroundColor: [
-                                '#667eea', // Blue-purple (matches btn-primary)
-                                '#4facfe', // Blue (matches btn-info)
-                                '#11998e', // Green (matches btn-success)
-                                '#fa709a'  // Pink (matches btn-warning)
+                                '#667eea', // Blue-purple for Laptops
+                                '#4facfe', // Blue for Monitors
+                                '#11998e', // Green for Mobile
+                                '#fa709a'  // Pink for Accessories
                             ],
-                            borderWidth: 0,
-                            hoverOffset: 10,
-                            hoverBackgroundColor: [
-                                '#5a6fd8', // Darker blue-purple
-                                '#3d9aec', // Darker blue
-                                '#0f8278', // Darker green
-                                '#f85a88'  // Darker pink
-                            ]
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 8,
+                            hoverBorderWidth: 3
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                cornerRadius: 6,
+                                displayColors: false,
+                                bodyFont: { size: 12 },
+                                titleFont: { size: 12 }
                             }
                         },
                         animation: {
                             animateRotate: true,
-                            duration: 2000
+                            duration: 1000
                         }
                     }
                 });
@@ -684,6 +686,47 @@
     </script>
     <!-- Modern Theme Styles -->
     <style>
+        /* White Background Card Headers with Black Text */
+        .card-header .card-title,
+        .card-header h5,
+        .card-header h6 {
+            color: #333333 !important;
+            margin: 0 !important;
+            flex-grow: 1;
+        }
+        
+        .card-header .card-title i,
+        .card-header h5 i,
+        .card-header h6 i {
+            color: #666666 !important;
+        }
+        
+        .card-header {
+            background: white !important;
+            border-bottom: 1px solid #e9ecef !important;
+            padding: 1rem 1.25rem !important;
+            min-height: 70px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        
+        /* Flex layout handles title positioning */
+        
+        /* Style buttons in card headers for white background */
+        .card-header .btn {
+            background: #f8f9fa !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+        }
+        
+        .card-header .btn:hover {
+            background: #e9ecef !important;
+            border-color: #adb5bd !important;
+            transform: translateY(-1px);
+            color: #495057 !important;
+        }
+        
         /* Dashboard-style gradient badges */
         .badge.badge-available {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
@@ -1010,8 +1053,281 @@
             font-size: 0.875rem;
         }
         
+        /* Compact Chart Styling */
+        .compact-chart-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .compact-chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .compact-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem 1rem 0 0;
+            border: none;
+            padding: 0.75rem 1rem;
+        }
+        
+        .compact-header h6 {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        /* Mini Chart Container */
+        .mini-chart-container {
+            position: relative;
+            height: 120px;
+        }
+        
+        /* Compact Stats */
+        .compact-stats .stat-row {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .compact-stats .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .stat-label {
+            flex: 1;
+            font-size: 0.8rem;
+            color: #495057;
+        }
+        
+        .stat-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        /* Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .status-mini-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .status-mini-card:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-mini-card.assigned .status-icon { color: #28a745; }
+        .status-mini-card.available .status-icon { color: #007bff; }
+        .status-mini-card.maintenance .status-icon { color: #ffc107; }
+        .status-mini-card.retired .status-icon { color: #6c757d; }
+        
+        .status-count {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+        }
+        
+        .status-mini-card.assigned .status-count { color: #28a745; }
+        .status-mini-card.available .status-count { color: #007bff; }
+        .status-mini-card.maintenance .status-count { color: #ffc107; }
+        .status-mini-card.retired .status-count { color: #6c757d; }
+        
+        .status-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.2rem;
+        }
+        
+        .status-percent {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+        
+        /* Value Summary */
+        .value-summary {
+            text-align: center;
+            padding: 1rem 0;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .total-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 0.2rem;
+        }
+        
+        .total-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+        
+        /* Value Breakdown */
+        .value-breakdown .value-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .value-bar {
+            width: 60px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 2px;
+            margin-right: 0.75rem;
+            overflow: hidden;
+        }
+        
+        .value-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+        
+        .value-text {
+            font-size: 0.8rem;
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        /* Activity List */
+        .activity-list {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .activity-item:hover {
+            background: rgba(102, 126, 234, 0.02);
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .activity-icon.assigned { background: linear-gradient(135deg, #28a745, #20c997); }
+        .activity-icon.maintenance { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+        .activity-icon.added { background: linear-gradient(135deg, #007bff, #17a2b8); }
+        .activity-icon.returned { background: linear-gradient(135deg, #6f42c1, #e83e8c); }
+        .activity-icon.retired { background: linear-gradient(135deg, #6c757d, #495057); }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            font-size: 0.8rem;
+            color: #212529;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+        
+        .activity-time {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+        
         /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .status-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .status-mini-card {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                padding: 0.5rem;
+            }
+            
+            .status-icon {
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .status-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .status-count {
+                font-size: 1.2rem;
+            }
+        }
+        
         @media (max-width: 768px) {
+            .compact-chart-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .mini-chart-container {
+                height: 100px;
+            }
+            
+            .total-value {
+                font-size: 1.5rem;
+            }
+            
+            .activity-item {
+                padding: 0.5rem;
+            }
+            
+            .activity-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+            
             .report-card {
                 margin-bottom: 1.5rem;
             }

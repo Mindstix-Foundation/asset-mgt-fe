@@ -19,16 +19,19 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="mb-0">Employee Management</h2>
-                <p class="text-muted mb-0">Manage employees and their asset assignments</p>
+                <p class="text-muted mb-0">Manage employee information and asset assignments</p>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary" id="toggleView">
+                <!-- View Toggle (Grid/List) -->
+                <button class="btn btn-outline-secondary btn-modern" id="toggleView">
                     <i class="fas fa-th-large me-1"></i>Grid View
                 </button>
-                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUploadEmployeeModal">
+                
+                <!-- Action Buttons -->
+                <button class="btn btn-outline-primary btn-modern" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
                     <i class="fas fa-file-excel me-1"></i>Bulk Upload
                 </button>
-                <a href="../form_pages/add-employee.html" class="btn btn-primary">
+                <a href="../form_pages/add-employee.html" class="btn btn-primary btn-modern">
                     <i class="fas fa-user-plus me-1"></i>Add Employee
                 </a>
             </div>
@@ -36,56 +39,26 @@
 
         <!-- Filters -->
         <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Employees</h6>
+                <small class="text-muted">Search and filter employees by various criteria</small>
+            </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
                         <label class="form-label">Search Employees</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name, ID, department...">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name, ID, email...">
                         </div>
                     </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Department</label>
-                        <select class="form-select" id="departmentFilter">
-                            <option value="">All Departments</option>
-                            <option value="IT">IT</option>
-                            <option value="HR">HR</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Operations">Operations</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Location</label>
-                        <select class="form-select" id="locationFilter">
-                            <option value="">All Locations</option>
-                            <option value="New York">New York</option>
-                            <option value="San Francisco">San Francisco</option>
-                            <option value="London">London</option>
-                            <option value="Remote">Remote</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="">All Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="On Leave">On Leave</option>
-                            <option value="Maternity Leave">Maternity Leave</option>
-                            <option value="Sabbatical Leave">Sabbatical Leave</option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
                             <select class="form-select" id="sortBy">
                                 <option value="name">Name</option>
                                 <option value="id">Employee ID</option>
-                                <option value="department">Department</option>
-                                <option value="location">Location</option>
-                                <option value="joinDate">Join Date</option>
+                                <option value="email">Email</option>
                             </select>
                             <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
                                 <i class="fas fa-sort-amount-down"></i>
@@ -96,7 +69,7 @@
             </div>
         </div>
 
-        <!-- Employees Grid/List -->
+        <!-- Employees Content -->
         <div id="employeesContainer">
             <!-- List View (Default) -->
             <div class="card" id="listView">
@@ -107,35 +80,28 @@
                                 <tr>
                                     <th>Employee ID</th>
                                     <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Department</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Assets Assigned</th>
-                                    <th>Join Date</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-name="John Doe" data-id="EMP-001" data-department="IT" data-location="New York" data-status="Active" data-search="John Doe EMP-001 Software Engineer IT New York">
+                                <tr data-name="John Doe" data-id="EMP-001" data-email="john.doe@company.com" data-search="John Doe EMP-001 john.doe@company.com">
                                     <td><strong>EMP-001</strong></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
                                             <div>
                                                 <div class="fw-bold">John Doe</div>
-                                                <small class="text-muted">john.doe@company.com</small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>Software Engineer</td>
-                                    <td><span class="badge badge-dept-it">IT</span></td>
-                                    <td>New York</td>
-                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>john.doe@company.com</td>
+                                    <td>+1 (555) 123-4567</td>
                                     <td>3 Assets</td>
-                                    <td>Jan 15, 2022</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm employee-actions">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -145,90 +111,24 @@
                                             <button class="btn btn-success">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
-                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-id="EMP-001" data-employee-name="John Doe">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Jane Smith" data-id="EMP-002" data-department="Marketing" data-location="San Francisco" data-status="Active" data-search="Jane Smith EMP-002 Product Manager Marketing San Francisco">
+                                <tr data-name="Jane Smith" data-id="EMP-002" data-email="jane.smith@company.com" data-search="Jane Smith EMP-002 jane.smith@company.com">
                                     <td><strong>EMP-002</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-info me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">Jane Smith</div>
-                                                <small class="text-muted">jane.smith@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Product Manager</td>
-                                    <td><span class="badge badge-dept-marketing">Marketing</span></td>
-                                    <td>San Francisco</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>2 Assets</td>
-                                    <td>Mar 10, 2021</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-success">
-                                                <i class="fas fa-laptop"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Mike Johnson" data-id="EMP-003" data-department="Finance" data-location="London" data-status="On Leave" data-search="Mike Johnson EMP-003 Data Analyst Finance London">
-                                    <td><strong>EMP-003</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-warning me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">Mike Johnson</div>
-                                                <small class="text-muted">mike.johnson@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Data Analyst</td>
-                                    <td><span class="badge badge-dept-finance">Finance</span></td>
-                                    <td>London</td>
-                                    <td><span class="badge badge-on-leave">On Leave</span></td>
-                                    <td>1 Asset</td>
-                                    <td>Aug 22, 2023</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Sarah Wilson" data-id="EMP-004" data-department="HR" data-location="Remote" data-status="Active" data-search="Sarah Wilson EMP-004 HR Manager HR Remote">
-                                    <td><strong>EMP-004</strong></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-user-circle fa-2x text-success me-3"></i>
                                             <div>
-                                                <div class="fw-bold">Sarah Wilson</div>
-                                                <small class="text-muted">sarah.wilson@company.com</small>
+                                                <div class="fw-bold">Jane Smith</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>HR Manager</td>
-                                    <td><span class="badge badge-dept-hr">HR</span></td>
-                                    <td>Remote</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>4 Assets</td>
-                                    <td>Nov 05, 2020</td>
+                                    <td>jane.smith@company.com</td>
+                                    <td>+1 (555) 234-5678</td>
+                                    <td>2 Assets</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm employee-actions">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -241,56 +141,21 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="David Brown" data-id="EMP-005" data-department="IT" data-location="New York" data-status="Active" data-search="David Brown EMP-005 DevOps Engineer IT New York">
-                                    <td><strong>EMP-005</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">David Brown</div>
-                                                <small class="text-muted">david.brown@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>DevOps Engineer</td>
-                                    <td><span class="badge badge-dept-it">IT</span></td>
-                                    <td>New York</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>5 Assets</td>
-                                    <td>Feb 18, 2022</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-success">
-                                                <i class="fas fa-laptop"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Lisa Garcia" data-id="EMP-006" data-department="Marketing" data-location="Remote" data-status="Active" data-search="Lisa Garcia EMP-006 Marketing Specialist Marketing Remote">
-                                    <td><strong>EMP-006</strong></td>
+                                <tr data-name="Mike Johnson" data-id="EMP-003" data-email="mike.johnson@company.com" data-search="Mike Johnson EMP-003 mike.johnson@company.com">
+                                    <td><strong>EMP-003</strong></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-user-circle fa-2x text-info me-3"></i>
                                             <div>
-                                                <div class="fw-bold">Lisa Garcia</div>
-                                                <small class="text-muted">lisa.garcia@company.com</small>
+                                                <div class="fw-bold">Mike Johnson</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>Marketing Specialist</td>
-                                    <td><span class="badge badge-dept-marketing">Marketing</span></td>
-                                    <td>Remote</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>2 Assets</td>
-                                    <td>Jun 12, 2023</td>
+                                    <td>mike.johnson@company.com</td>
+                                    <td>+1 (555) 345-6789</td>
+                                    <td>1 Asset</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm employee-actions">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -303,112 +168,48 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Robert Taylor" data-id="EMP-007" data-department="Finance" data-location="San Francisco" data-status="Inactive" data-search="Robert Taylor EMP-007 Financial Analyst Finance San Francisco">
-                                    <td><strong>EMP-007</strong></td>
+                                <tr data-name="Sarah Wilson" data-id="EMP-004" data-email="sarah.wilson@company.com" data-search="Sarah Wilson EMP-004 sarah.wilson@company.com">
+                                    <td><strong>EMP-004</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-circle fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Sarah Wilson</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>sarah.wilson@company.com</td>
+                                    <td>+1 (555) 456-7890</td>
+                                    <td>4 Assets</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm employee-actions">
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-secondary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-success">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="David Brown" data-id="EMP-005" data-email="david.brown@company.com" data-search="David Brown EMP-005 david.brown@company.com">
+                                    <td><strong>EMP-005</strong></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-user-circle fa-2x text-secondary me-3"></i>
                                             <div>
-                                                <div class="fw-bold">Robert Taylor</div>
-                                                <small class="text-muted">robert.taylor@company.com</small>
+                                                <div class="fw-bold">David Brown</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>Financial Analyst</td>
-                                    <td><span class="badge badge-dept-finance">Finance</span></td>
-                                    <td>San Francisco</td>
-                                    <td><span class="badge badge-inactive">Inactive</span></td>
-                                    <td>0 Assets</td>
-                                    <td>Apr 08, 2021</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Emily Davis" data-id="EMP-008" data-department="Operations" data-location="London" data-status="Active" data-search="Emily Davis EMP-008 Operations Manager Operations London">
-                                    <td><strong>EMP-008</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">Emily Davis</div>
-                                                <small class="text-muted">emily.davis@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Operations Manager</td>
-                                    <td><span class="badge badge-dept-operations">Operations</span></td>
-                                    <td>London</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>3 Assets</td>
-                                    <td>Sep 15, 2022</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-success">
-                                                <i class="fas fa-laptop"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Kevin Martinez" data-id="EMP-009" data-department="IT" data-location="Remote" data-status="On Leave" data-search="Kevin Martinez EMP-009 Frontend Developer IT Remote">
-                                    <td><strong>EMP-009</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-warning me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">Kevin Martinez</div>
-                                                <small class="text-muted">kevin.martinez@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Frontend Developer</td>
-                                    <td><span class="badge badge-dept-it">IT</span></td>
-                                    <td>Remote</td>
-                                    <td><span class="badge badge-on-leave">On Leave</span></td>
+                                    <td>david.brown@company.com</td>
+                                    <td>+1 (555) 567-8901</td>
                                     <td>2 Assets</td>
-                                    <td>Jan 30, 2023</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-secondary">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-name="Amanda Clark" data-id="EMP-010" data-department="HR" data-location="New York" data-status="Active" data-search="Amanda Clark EMP-010 HR Specialist HR New York">
-                                    <td><strong>EMP-010</strong></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <i class="fas fa-user-circle fa-2x text-success me-3"></i>
-                                            <div>
-                                                <div class="fw-bold">Amanda Clark</div>
-                                                <small class="text-muted">amanda.clark@company.com</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>HR Specialist</td>
-                                    <td><span class="badge badge-dept-hr">HR</span></td>
-                                    <td>New York</td>
-                                    <td><span class="badge badge-active">Active</span></td>
-                                    <td>1 Asset</td>
-                                    <td>Dec 03, 2023</td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="btn-group btn-group-sm employee-actions">
                                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
@@ -429,7 +230,7 @@
 
             <!-- Grid View (Hidden by default) -->
             <div class="row d-none" id="gridView">
-                <!-- Employee cards will be dynamically generated here -->
+                <!-- Grid cards will be dynamically generated here -->
             </div>
         </div>
 
@@ -454,7 +255,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Employee Profile - John Doe</h5>
+                    <h5 class="modal-title">Employee Details - John Doe (EMP-001)</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -462,24 +263,16 @@
                         <!-- Employee Information -->
                         <div class="col-lg-4">
                             <div class="card">
-                                <div class="card-body text-center">
-                                    <div class="employee-avatar mb-3">
-                                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Employee Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-4">
+                                        <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                                        <h5 class="fw-bold">John Doe</h5>
+                                        <p class="text-muted">EMP-001</p>
                                     </div>
-                                    <h5 class="fw-bold">John Doe</h5>
-                                    <p class="text-muted">EMP-001</p>
-                                    <span class="badge badge-active mb-3">Active</span>
-                                    
-                                    <div class="text-start">
-                                        <div class="mb-2">
-                                            <strong>Position:</strong> Software Engineer
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Department:</strong> IT
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Location:</strong> New York
-                                        </div>
+                                    <div class="employee-details">
                                         <div class="mb-2">
                                             <strong>Email:</strong> john.doe@company.com
                                         </div>
@@ -487,7 +280,10 @@
                                             <strong>Phone:</strong> +1 (555) 123-4567
                                         </div>
                                         <div class="mb-2">
-                                            <strong>Join Date:</strong> Jan 15, 2022
+                                            <strong>Date of Birth:</strong> Jan 15, 1990
+                                        </div>
+                                        <div class="mb-2">
+                                            <strong>Address:</strong> 123 Main St, New York, NY 10001
                                         </div>
                                     </div>
                                 </div>
@@ -508,119 +304,61 @@
                                         <!-- Asset 1 -->
                                         <div class="col-md-6 mb-3">
                                             <div class="card border">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="fas fa-laptop text-primary fa-2x me-3"></i>
                                                         <div>
-                                                            <h6 class="fw-bold mb-1">AST-001</h6>
-                                                            <p class="mb-1">MacBook Pro 16"</p>
-                                                            <small class="text-muted">Apple • M2 Pro</small>
+                                                            <div class="fw-bold">AST-001</div>
+                                                            <small class="text-muted">MacBook Pro 16"</small>
                                                         </div>
-                                                        <i class="fas fa-laptop fa-2x text-primary"></i>
                                                     </div>
-                                                    <div class="small text-muted">
-                                                        <div><strong>Serial:</strong> ABC123XYZ</div>
-                                                        <div><strong>Assigned:</strong> Feb 01, 2024</div>
-                                                    </div>
-                                                    <div class="mt-2">
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-assigned">Assigned</span>
                                                         <button class="btn btn-sm btn-outline-warning">
-                                                            <i class="fas fa-undo"></i>
+                                                            <i class="fas fa-user-minus"></i> Return
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <!-- Asset 2 -->
                                         <div class="col-md-6 mb-3">
                                             <div class="card border">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="fas fa-desktop text-info fa-2x me-3"></i>
                                                         <div>
-                                                            <h6 class="fw-bold mb-1">AST-002</h6>
-                                                            <p class="mb-1">Dell UltraSharp 27"</p>
-                                                            <small class="text-muted">Dell • 4K Monitor</small>
+                                                            <div class="fw-bold">AST-015</div>
+                                                            <small class="text-muted">Dell UltraSharp 27"</small>
                                                         </div>
-                                                        <i class="fas fa-desktop fa-2x text-info"></i>
                                                     </div>
-                                                    <div class="small text-muted">
-                                                        <div><strong>Serial:</strong> DEF456UVW</div>
-                                                        <div><strong>Assigned:</strong> Feb 01, 2024</div>
-                                                    </div>
-                                                    <div class="mt-2">
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-assigned">Assigned</span>
                                                         <button class="btn btn-sm btn-outline-warning">
-                                                            <i class="fas fa-undo"></i>
+                                                            <i class="fas fa-user-minus"></i> Return
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <!-- Asset 3 -->
                                         <div class="col-md-6 mb-3">
                                             <div class="card border">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="fas fa-mobile-alt text-warning fa-2x me-3"></i>
                                                         <div>
-                                                            <h6 class="fw-bold mb-1">AST-005</h6>
-                                                            <p class="mb-1">iPhone 14 Pro</p>
-                                                            <small class="text-muted">Apple • 256GB</small>
+                                                            <div class="fw-bold">AST-023</div>
+                                                            <small class="text-muted">iPhone 14 Pro</small>
                                                         </div>
-                                                        <i class="fas fa-mobile-alt fa-2x text-success"></i>
                                                     </div>
-                                                    <div class="small text-muted">
-                                                        <div><strong>Serial:</strong> JKL789MNO</div>
-                                                        <div><strong>Assigned:</strong> Mar 15, 2024</div>
-                                                    </div>
-                                                    <div class="mt-2">
-                                                        <button class="btn btn-sm btn-outline-primary me-1">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-assigned">Assigned</span>
                                                         <button class="btn btn-sm btn-outline-warning">
-                                                            <i class="fas fa-undo"></i>
+                                                            <i class="fas fa-user-minus"></i> Return
                                                         </button>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Asset History -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-history me-2"></i>Asset Assignment History</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="timeline">
-                                        <div class="timeline-item">
-                                            <div class="timeline-marker bg-success"></div>
-                                            <div class="timeline-content">
-                                                <h6 class="mb-1">iPhone 14 Pro Assigned</h6>
-                                                <p class="text-muted mb-1">Asset AST-005 assigned to John Doe</p>
-                                                <small class="text-muted">Mar 15, 2024 - 2:30 PM</small>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-item">
-                                            <div class="timeline-marker bg-primary"></div>
-                                            <div class="timeline-content">
-                                                <h6 class="mb-1">MacBook Pro & Monitor Assigned</h6>
-                                                <p class="text-muted mb-1">Assets AST-001 and AST-002 assigned to John Doe</p>
-                                                <small class="text-muted">Feb 01, 2024 - 10:15 AM</small>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-item">
-                                            <div class="timeline-marker bg-info"></div>
-                                            <div class="timeline-content">
-                                                <h6 class="mb-1">Employee Onboarded</h6>
-                                                <p class="text-muted mb-1">John Doe joined the company</p>
-                                                <small class="text-muted">Jan 15, 2022 - 9:00 AM</small>
                                             </div>
                                         </div>
                                     </div>
@@ -644,298 +382,14 @@
         </div>
     </div>
 
-    <!-- Delete Employee Modal -->
-    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-trash me-2"></i>Delete Employee
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Warning:</strong> This action cannot be undone.
-                    </div>
-                    <p>Are you sure you want to delete the following employee?</p>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-circle fa-3x text-danger me-3"></i>
-                                <div>
-                                    <h6 class="mb-1" id="deleteEmployeeName">Employee Name</h6>
-                                    <small class="text-muted" id="deleteEmployeeId">Employee ID</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="mt-3 mb-0">
-                        <small class="text-muted">
-                            Note: All assets assigned to this employee will be automatically unassigned and returned to inventory.
-                        </small>
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteEmployee">
-                        <i class="fas fa-trash me-1"></i>Delete Employee
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bulk Upload Employee Modal -->
-    <div class="modal fade" id="bulkUploadEmployeeModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-file-excel me-2"></i>Bulk Upload Employees
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Upload Instructions:</strong>
-                                <ul class="mb-0 mt-2">
-                                    <li>Download the template file and fill in employee details</li>
-                                    <li>Required fields: First Name, Last Name, Email, Employee ID, Location</li>
-                                    <li>Optional fields: Position, Phone, Date of Birth, Join Date, Manager, Address, Notes</li>
-                                    <li>Supported format: Excel (.xlsx)</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div class="col-12 mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">Step 1: Download Template</h6>
-                                <button class="btn btn-outline-success btn-sm" id="downloadEmployeeTemplate">
-                                    <i class="fas fa-download me-1"></i>Download Template
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="col-12 mb-3">
-                            <h6 class="mb-3">Step 2: Upload Filled Template</h6>
-                            <div class="border border-2 border-dashed border-primary rounded p-4 text-center">
-                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
-                                <p class="mb-2">Drag and drop your Excel file here, or click to browse</p>
-                                <input type="file" class="form-control" id="employeeBulkFile" accept=".xlsx,.xls" style="display: none;">
-                                <button class="btn btn-outline-primary" onclick="document.getElementById('employeeBulkFile').click()">
-                                    <i class="fas fa-folder-open me-1"></i>Choose File
-                                </button>
-                                <div id="employeeFileInfo" class="mt-3 text-muted" style="display: none;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-12">
-                            <div id="employeeUploadPreview" style="display: none;">
-                                <h6>Preview (First 5 rows):</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered" id="employeePreviewTable">
-                                        <thead class="table-light"></thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="uploadEmployeesBtn" disabled>
-                        <i class="fas fa-upload me-1"></i>Upload Employees
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
     
-    <!-- Override dull badge colors with bright Bootstrap colors -->
-    <style>
-        /* Dashboard-style gradient badges */
-        .badge.badge-active {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
-        }
-        
-        .badge.badge-inactive {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
-        }
-        
-        .badge.badge-on-leave {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
-        }
-        
-        /* Department badges with gradients */
-        .badge.badge-dept-it {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-        
-        .badge.badge-dept-hr {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
-        }
-        
-        .badge.badge-dept-finance {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
-        }
-        
-        .badge.badge-dept-marketing {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-            color: white !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
-        }
-        
-        .badge.badge-dept-operations {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
-            color: #333 !important;
-            border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(168, 237, 234, 0.3);
-        }
-        
-        /* Modern Grid View Card Styles */
-        .employee-card-modern {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 0.75rem !important;
-            overflow: hidden;
-            background: #fff;
-        }
-        
-        .employee-card-modern:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-        }
-        
-        .card-header-gradient {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card-header-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .employee-card-modern:hover .card-header-gradient::before {
-            opacity: 1;
-        }
-        
-        .employee-info-modern .info-item {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            background: rgba(0, 123, 255, 0.02);
-            border-left: 3px solid rgba(0, 123, 255, 0.2);
-            transition: all 0.2s ease;
-        }
-        
-        .employee-info-modern .info-item:hover {
-            background: rgba(0, 123, 255, 0.05);
-            border-left-color: rgba(0, 123, 255, 0.4);
-            transform: translateX(2px);
-        }
-        
-        .btn-modern {
-            border-radius: 0.5rem;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-        }
-        
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .employee-card-modern {
-                margin-bottom: 1.5rem;
-            }
-            
-            .card-header-gradient {
-                height: 100px !important;
-            }
-            
-            .card-header-gradient i {
-                font-size: 2.5rem !important;
-            }
-        }
-    </style>
-    
-    <!-- Employee Page Specific JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get DOM elements
             const searchInput = document.getElementById('searchInput');
-            const departmentFilter = document.getElementById('departmentFilter');
-            const locationFilter = document.getElementById('locationFilter');
-            const statusFilter = document.getElementById('statusFilter');
             const sortBy = document.getElementById('sortBy');
             const sortOrderBtn = document.getElementById('sortOrder');
             const toggleViewBtn = document.getElementById('toggleView');
@@ -943,12 +397,11 @@
             const gridView = document.getElementById('gridView');
             const employeesTable = document.getElementById('employeesTable');
             
-            // Sorting variables
+            // View and sort variables
+            let isGridView = false;
             let sortAscending = true;
             
             // View toggle functionality
-            let isGridView = false;
-            
             toggleViewBtn.addEventListener('click', function() {
                 if (isGridView) {
                     // Switch to List View
@@ -986,43 +439,13 @@
                 }
                 
                 visibleRows.forEach(row => {
-                    const name = row.getAttribute('data-name');
-                    const id = row.getAttribute('data-id');
-                    const department = row.getAttribute('data-department');
-                    const location = row.getAttribute('data-location');
-                    const status = row.getAttribute('data-status');
-                    
-                    // Extract additional data from table cells
+                    // Extract data from table cells
                     const cells = row.querySelectorAll('td');
-                    const email = cells[1].querySelector('small').textContent;
-                    const position = cells[2].textContent;
-                    const assetsCount = cells[6].textContent;
-                    const joinDate = cells[7].textContent;
-                    
-                    // Get department badge color
-                    const departmentColors = {
-                        'IT': 'badge-dept-it',
-                        'HR': 'badge-dept-hr',
-                        'Finance': 'badge-dept-finance',
-                        'Marketing': 'badge-dept-marketing',
-                        'Operations': 'badge-dept-operations'
-                    };
-                    
-                    // Get status badge color
-                    const statusColors = {
-                        'Active': 'badge-active',
-                        'Inactive': 'badge-inactive',
-                        'On Leave': 'badge-on-leave'
-                    };
-                    
-                    // Get user icon color based on department
-                    const iconColors = {
-                        'IT': 'text-primary',
-                        'HR': 'text-success',
-                        'Finance': 'text-info',
-                        'Marketing': 'text-warning',
-                        'Operations': 'text-secondary'
-                    };
+                    const id = cells[0].querySelector('strong').textContent;
+                    const name = cells[1].querySelector('.fw-bold').textContent;
+                    const email = cells[2].textContent.trim();
+                    const phone = cells[3].textContent.trim();
+                    const assets = cells[4].textContent.trim();
                     
                     const card = document.createElement('div');
                     card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
@@ -1031,12 +454,6 @@
                             <div class="card-header-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 120px; position: relative; border-radius: 0.5rem 0.5rem 0 0;">
                                 <div class="d-flex justify-content-center align-items-center h-100">
                                     <i class="fas fa-user-circle fa-3x text-white"></i>
-                                </div>
-                                <div class="position-absolute top-0 end-0 p-3">
-                                    <span class="badge ${statusColors[status] || 'badge-active'} d-flex align-items-center gap-1">
-                                        <i class="fas fa-circle fa-xs"></i>
-                                        ${status}
-                                    </span>
                                 </div>
                             </div>
                             <div class="card-body p-4">
@@ -1048,66 +465,39 @@
                                 <div class="employee-info-modern">
                                     <div class="info-item mb-3">
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-briefcase text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Position</small>
-                                        </div>
-                                        <div class="ps-3 fw-medium">${position}</div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-building text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Department</small>
-                                        </div>
-                                        <div class="ps-3"><span class="badge ${departmentColors[department] || 'badge-dept-it'}">${department}</span></div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Location</small>
-                                        </div>
-                                        <div class="ps-3">${location}</div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
                                             <i class="fas fa-envelope text-primary me-2"></i>
                                             <small class="text-muted fw-semibold">Email</small>
                                         </div>
-                                        <div class="ps-3 small">${email}</div>
+                                        <div class="ps-3 fw-medium small">${email}</div>
                                     </div>
                                     
                                     <div class="info-item mb-3">
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-laptop text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Assets</small>
+                                            <i class="fas fa-phone text-primary me-2"></i>
+                                            <small class="text-muted fw-semibold">Phone</small>
                                         </div>
-                                        <div class="ps-3">${assetsCount}</div>
+                                        <div class="ps-3 small">${phone}</div>
                                     </div>
                                     
                                     <div class="info-item mb-4">
                                         <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-calendar text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Join Date</small>
+                                            <i class="fas fa-laptop text-primary me-2"></i>
+                                            <small class="text-muted fw-semibold">Assets</small>
                                         </div>
-                                        <div class="ps-3 small">${joinDate}</div>
+                                        <div class="ps-3">${assets}</div>
                                     </div>
                                 </div>
                                 
                                 <div class="d-grid gap-2">
-                                    <button class="btn btn-primary btn-modern" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                         <i class="fas fa-eye me-2"></i>View Details
                                     </button>
                                     <div class="btn-group">
-                                        <button class="btn btn-outline-secondary btn-sm" title="Edit Employee">
+                                        <button class="btn btn-outline-secondary btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button class="btn btn-outline-success btn-sm" title="Assign Asset">
                                             <i class="fas fa-laptop"></i>
-                                        </button>
-                                        <button class="btn btn-outline-info btn-sm" title="View Profile">
-                                            <i class="fas fa-user"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -1137,29 +527,17 @@
                             aValue = a.getAttribute('data-id');
                             bValue = b.getAttribute('data-id');
                             break;
-                        case 'department':
-                            aValue = a.getAttribute('data-department');
-                            bValue = b.getAttribute('data-department');
-                            break;
-                        case 'location':
-                            aValue = a.getAttribute('data-location');
-                            bValue = b.getAttribute('data-location');
-                            break;
-                        case 'joinDate':
-                            aValue = new Date(a.querySelector('td:nth-child(8)').textContent);
-                            bValue = new Date(b.querySelector('td:nth-child(8)').textContent);
+                        case 'email':
+                            aValue = a.getAttribute('data-email');
+                            bValue = b.getAttribute('data-email');
                             break;
                         default:
                             return 0;
                     }
                     
-                    if (sortField === 'joinDate') {
-                        return sortAscending ? aValue - bValue : bValue - aValue;
-                    } else {
-                        if (aValue < bValue) return sortAscending ? -1 : 1;
-                        if (aValue > bValue) return sortAscending ? 1 : -1;
-                        return 0;
-                    }
+                    if (aValue < bValue) return sortAscending ? -1 : 1;
+                    if (aValue > bValue) return sortAscending ? 1 : -1;
+                    return 0;
                 });
                 
                 // Clear tbody and re-append sorted rows
@@ -1178,28 +556,18 @@
             // Filter function
             function filterEmployees() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const selectedDepartment = departmentFilter.value;
-                const selectedLocation = locationFilter.value;
-                const selectedStatus = statusFilter.value;
-                
                 const rows = employeesTable.querySelectorAll('tbody tr');
                 let visibleCount = 0;
                 
                 rows.forEach(row => {
                     if (row.id === 'noResultsRow') return;
                     
-                    const department = row.getAttribute('data-department');
-                    const location = row.getAttribute('data-location');
-                    const status = row.getAttribute('data-status');
                     const searchData = row.getAttribute('data-search').toLowerCase();
                     
-                    // Check if row matches all filters
+                    // Check if row matches search
                     const matchesSearch = searchData.includes(searchTerm);
-                    const matchesDepartment = !selectedDepartment || department === selectedDepartment;
-                    const matchesLocation = !selectedLocation || location === selectedLocation;
-                    const matchesStatus = !selectedStatus || status === selectedStatus;
                     
-                    if (matchesSearch && matchesDepartment && matchesLocation && matchesStatus) {
+                    if (matchesSearch) {
                         row.style.display = '';
                         visibleCount++;
                     } else {
@@ -1225,7 +593,7 @@
                         noResultsRow = document.createElement('tr');
                         noResultsRow.id = 'noResultsRow';
                         noResultsRow.innerHTML = `
-                            <td colspan="9" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
                                 <h6 class="text-muted">No employees found</h6>
                                 <p class="text-muted mb-0">Try adjusting your search criteria</p>
@@ -1242,108 +610,118 @@
             
             // Event listeners
             searchInput.addEventListener('input', filterEmployees);
-            departmentFilter.addEventListener('change', filterEmployees);
-            locationFilter.addEventListener('change', filterEmployees);
-            statusFilter.addEventListener('change', filterEmployees);
-            
-            // Sort event listeners
             sortBy.addEventListener('change', sortEmployees);
             sortOrderBtn.addEventListener('click', function() {
                 sortAscending = !sortAscending;
                 sortEmployees();
             });
-            
-            // Initialize with all employees visible
-            filterEmployees();
-            
-            // Delete Employee Modal Handling
-            const deleteEmployeeModal = new bootstrap.Modal(document.getElementById('deleteEmployeeModal'));
-            const confirmDeleteBtn = document.getElementById('confirmDeleteEmployee');
-            const deleteEmployeeName = document.getElementById('deleteEmployeeName');
-            const deleteEmployeeId = document.getElementById('deleteEmployeeId');
-
-            employeesTable.addEventListener('click', function(e) {
-                const deleteButton = e.target.closest('.btn-danger');
-                if (deleteButton) {
-                    const employeeId = deleteButton.dataset.employeeId;
-                    const employeeName = deleteButton.dataset.employeeName;
-                    deleteEmployeeName.textContent = employeeName;
-                    deleteEmployeeId.textContent = employeeId;
-                    deleteEmployeeModal.show();
-                }
-            });
-
-            confirmDeleteBtn.addEventListener('click', function() {
-                const employeeId = deleteEmployeeId.textContent;
-                const rowToDelete = Array.from(employeesTable.querySelectorAll('tbody tr')).find(row => row.getAttribute('data-id') === employeeId);
-                
-                if (rowToDelete) {
-                    rowToDelete.remove();
-                    deleteEmployeeModal.hide();
-                    updateNoResultsMessage(0); // Ensure no results message is shown if all are deleted
-                    filterEmployees(); // Re-apply filters to show the updated table
-                }
-            });
-
-            // Bulk Upload Employee Modal Handling
-            const bulkUploadModal = new bootstrap.Modal(document.getElementById('bulkUploadEmployeeModal'));
-            const downloadTemplateBtn = document.getElementById('downloadEmployeeTemplate');
-            const employeeBulkFileInput = document.getElementById('employeeBulkFile');
-            const employeeFileInfoDiv = document.getElementById('employeeFileInfo');
-            const employeeUploadPreviewDiv = document.getElementById('employeeUploadPreview');
-            const employeePreviewTable = document.getElementById('employeePreviewTable');
-            const uploadEmployeesBtn = document.getElementById('uploadEmployeesBtn');
-
-            downloadTemplateBtn.addEventListener('click', function() {
-                const templateUrl = '../../templates/employee_template.xlsx'; // Adjust path as needed
-                const link = document.createElement('a');
-                link.href = templateUrl;
-                link.download = 'employee_template.xlsx'; // Suggest a filename
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-
-            employeeBulkFileInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    employeeFileInfoDiv.style.display = 'block';
-                    employeeFileInfoDiv.textContent = `Selected file: ${file.name}`;
-                    employeeUploadPreviewDiv.style.display = 'none'; // Hide preview until upload
-                    uploadEmployeesBtn.disabled = true;
-                } else {
-                    employeeFileInfoDiv.style.display = 'none';
-                    employeeFileInfoDiv.textContent = '';
-                    employeeUploadPreviewDiv.style.display = 'none';
-                    uploadEmployeesBtn.disabled = true;
-                }
-            });
-
-            uploadEmployeesBtn.addEventListener('click', function() {
-                const formData = new FormData();
-                formData.append('file', employeeBulkFileInput.files[0]);
-
-                fetch('../../scripts/bulk_upload_employees.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Employees uploaded successfully!');
-                        bulkUploadModal.hide();
-                        // Refresh the page or update the table to show new employees
-                        location.reload(); 
-                    } else {
-                        alert('Error uploading employees: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during upload.');
-                });
-            });
         });
     </script>
+    
+    <!-- Modern Button Styles -->
+    <style>
+        /* Modern Button Styling - Unified Compact Design */
+        .btn-modern {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Consistent Button Color System - Same as Assets Page */
+        
+        /* Add Employee - Purple (Primary Action) */
+        .btn-modern.btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+        
+        /* Bulk Upload - Blue */
+        .btn-modern.btn-outline-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #3b82f6;
+            color: white;
+        }
+        
+        /* View Toggle - Gray */
+        .btn-modern.btn-outline-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            border-color: #6b7280;
+            color: white;
+        }
+        
+        /* Employee action buttons - Same unified style */
+        .employee-actions .btn {
+            border-radius: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .employee-actions .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* View Details - Purple (matches primary) */
+        .employee-actions .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+        
+        /* Edit - Indigo */
+        .employee-actions .btn-secondary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-color: #6366f1;
+            color: white;
+        }
+        
+        /* Assign Asset - Green */
+        .employee-actions .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+            color: white;
+        }
+    </style>
 </body>
-</html> 
+</html>

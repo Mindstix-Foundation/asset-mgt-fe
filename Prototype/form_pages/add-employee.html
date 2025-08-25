@@ -8,11 +8,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
+    
+    <!-- Unified Form Styles -->
+    <link rel="stylesheet" href="unified-form-styles.css">
 </head>
-<body style="background-color: #f8f9fa;">
+<body>
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-10 col-xl-8">
+            <div class="col-12 col-lg-8 col-xl-6">
                 <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
                     <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
                         <div class="d-flex align-items-center justify-content-center mb-2">
@@ -28,13 +31,6 @@
                     <div class="card-body p-4 p-lg-5">
                         <form id="addEmployeeForm" class="needs-validation" novalidate>
                             <div class="row g-4">
-                                <!-- Personal Information Section -->
-                                <div class="col-12">
-                                    <h6 class="mb-3 text-primary">
-                                        <i class="fas fa-user me-2"></i>Personal Information
-                                    </h6>
-                                </div>
-
                                 <!-- Employee ID -->
                                 <div class="col-md-6">
                                     <div class="form-floating">
@@ -96,117 +92,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Employment Information Section -->
-                                <div class="col-12 mt-5">
-                                    <h6 class="mb-3 text-primary">
-                                        <i class="fas fa-briefcase me-2"></i>Employment Information
-                                    </h6>
-                                </div>
-
-                                <!-- Position -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="position" name="position" placeholder="Software Engineer">
-                                        <label for="position">
-                                            <i class="fas fa-briefcase me-2 text-muted"></i>Position
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Department -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="department" name="department" required>
-                                            <option value="">Select Department</option>
-                                            <option value="IT">IT</option>
-                                            <option value="HR">HR</option>
-                                            <option value="Finance">Finance</option>
-                                            <option value="Marketing">Marketing</option>
-                                            <option value="Operations">Operations</option>
-                                        </select>
-                                        <label for="department">
-                                            <i class="fas fa-building me-2 text-muted"></i>Department *
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Location -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="location" name="location" required>
-                                            <option value="">Select Location</option>
-                                            <option value="New York">New York</option>
-                                            <option value="San Francisco">San Francisco</option>
-                                            <option value="London">London</option>
-                                            <option value="Remote">Remote</option>
-                                        </select>
-                                        <label for="location">
-                                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>Location *
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Join Date -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="date" class="form-control" id="joinDate" name="joinDate">
-                                        <label for="joinDate">
-                                            <i class="fas fa-calendar me-2 text-muted"></i>Join Date
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Salary -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="number" class="form-control" id="salary" name="salary" placeholder="50000" step="1000">
-                                        <label for="salary">
-                                            <i class="fas fa-dollar-sign me-2 text-muted"></i>Annual Salary
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Employee Status -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="status" name="status">
-                                            <option value="Active" selected>Active</option>
-                                            <option value="Inactive">Inactive</option>
-                                            <option value="On Leave">On Leave</option>
-                                        </select>
-                                        <label for="status">
-                                            <i class="fas fa-user-check me-2 text-muted"></i>Employment Status
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Additional Information Section -->
-                                <div class="col-12 mt-5">
-                                    <h6 class="mb-3 text-primary">
-                                        <i class="fas fa-info-circle me-2"></i>Additional Information
-                                    </h6>
-                                </div>
-
-                                <!-- Reporting Manager -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="manager" name="manager" placeholder="Jane Smith">
-                                        <label for="manager">
-                                            <i class="fas fa-user-tie me-2 text-muted"></i>Reporting Manager
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Emergency Contact -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="+1 (555) 987-6543">
-                                        <label for="emergencyContact">
-                                            <i class="fas fa-phone-alt me-2 text-muted"></i>Emergency Contact
-                                        </label>
-                                    </div>
-                                </div>
-
                                 <!-- Address -->
                                 <div class="col-12">
                                     <div class="form-floating">
@@ -216,43 +101,18 @@
                                         </label>
                                     </div>
                                 </div>
-
-                                <!-- Notes -->
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="notes" name="notes" placeholder="Additional notes about the employee" style="height: 100px"></textarea>
-                                        <label for="notes">
-                                            <i class="fas fa-sticky-note me-2 text-muted"></i>Notes
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Send Welcome Email -->
-                                <div class="col-12">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="sendWelcomeEmail" name="sendWelcomeEmail" checked>
-                                        <label class="form-check-label" for="sendWelcomeEmail">
-                                            <i class="fas fa-envelope me-2"></i>Send welcome email to employee
-                                        </label>
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Form Actions -->
-                            <div class="row mt-5">
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
-                                            <i class="fas fa-arrow-left me-2"></i>Back to Employees
+                                        <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
+                                            <i class="fas fa-times me-1"></i>Cancel
                                         </button>
-                                        <div class="d-flex gap-2">
-                                            <button type="reset" class="btn btn-outline-secondary">
-                                                <i class="fas fa-undo me-1"></i>Reset Form
-                                            </button>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-user-plus me-1"></i>Add Employee
-                                            </button>
-                                        </div>
+                                        <button type="submit" class="btn btn-primary form-btn-primary">
+                                            <i class="fas fa-user-plus me-1"></i>Add Employee
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -342,13 +202,6 @@
             color: #495057 !important;
         }
 
-        /* Section headers */
-        h6.text-primary {
-            font-weight: 700;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
-            padding-bottom: 0.5rem;
-        }
-
         /* Form validation */
         .was-validated .form-control:valid,
         .was-validated .form-select:valid {
@@ -381,9 +234,6 @@
             const lastNameInput = document.getElementById('lastName');
             const employeeIdInput = document.getElementById('employeeId');
             
-            // Set default join date to today
-            document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
-
             // Auto-generate Employee ID when first name or last name changes
             function generateEmployeeId() {
                 if (!employeeIdInput.value && firstNameInput.value && lastNameInput.value) {
@@ -423,11 +273,6 @@
                         // Reset button
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
-                        
-                        // Reset default values
-                        document.getElementById('status').value = 'Active';
-                        document.getElementById('sendWelcomeEmail').checked = true;
-                        document.getElementById('joinDate').value = new Date().toISOString().split('T')[0];
                     }, 2000);
                 }
             });
@@ -467,5 +312,45 @@
             });
         });
     </script>
+    
+    <style>
+        /* Consistent Form Button Colors */
+        .form-btn-primary.btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
+            border-color: #8b5cf6;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-primary.btn-primary:hover {
+            background: linear-gradient(135deg, #667eea 0%, #5b21b6 100%);
+            border-color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-color: #d1d5db;
+            color: #374151;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            border-color: #9ca3af;
+            color: #1f2937;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </body>
 </html> 
