@@ -184,12 +184,14 @@ Table models {
 Table vendors {
   id serial [pk, increment]
   name varchar(100) [not null]
+  vendor_type varchar(20) [not null, default: 'supplier', note: 'supplier, service_provider, both']
   contact_person varchar(100)
   email varchar(255)
   phone varchar(15) [note: 'Phone number with country code (e.g., +91-9876543210)']
   address text [note: 'Vendor address']
   tax_id varchar(50) [note: 'Tax identification number']
   pan_number varchar(10) [note: 'Permanent Account Number (India)']
+  notes text [note: 'Additional notes about the vendor']
   user_id int [ref: - users.id, note: 'Optional: If vendor needs system access for maintenance updates']
   is_active boolean [not null, default: true]
   created_by int [ref: > users.id, not null]
@@ -201,6 +203,7 @@ Table vendors {
   
   indexes {
     name
+    vendor_type
     email
     tax_id
     pan_number

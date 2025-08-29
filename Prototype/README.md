@@ -29,6 +29,12 @@ A comprehensive hollow prototype for an Asset Management Tool built with HTML, B
 - Employee filtering by department and location
 - Comprehensive employee-asset mapping
 
+### 🚚 Vendor Management
+- Complete vendor directory with contact information
+- Supplier and service provider categorization
+- Vendor performance tracking and asset sourcing history
+- Tax information and system access management
+
 ### 📦 Inventory Management
 - Available and spare assets tracking
 - Stock level monitoring

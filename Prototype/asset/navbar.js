@@ -157,6 +157,8 @@ class NavbarManager {
                 link.classList.add('active');
             } else if (currentPath.includes('/maintenance/') && href.includes('maintenance')) {
                 link.classList.add('active');
+            } else if (currentPath.includes('/vendors/') && href.includes('vendors')) {
+                link.classList.add('active');
             } else if (currentPath.includes('/reports/') && href.includes('reports')) {
                 link.classList.add('active');
             }

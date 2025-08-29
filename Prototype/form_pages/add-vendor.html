@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Add New Vendor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="../asset/navbar.css">
+    
+    <!-- Unified Form Styles -->
+    <link rel="stylesheet" href="unified-form-styles.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div id="navbar-container"></div>
+    
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
+                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
+                        <div class="d-flex align-items-center justify-content-center mb-2">
+                            <div class="stats-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                <i class="fas fa-truck text-primary fa-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="card-title mb-0 fw-bold text-dark">Add New Vendor</h4>
+                                <p class="text-muted mb-0 small">Register a new supplier or service provider</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        <form class="needs-validation" novalidate>
+                            <div class="row g-4">
+                                <!-- Vendor Name -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="vendorName" placeholder="Vendor Name" required>
+                                        <label for="vendorName">
+                                            <i class="fas fa-building me-2 text-muted"></i>Vendor Name *
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            Please provide a vendor name.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Vendor Type -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="vendorType" required>
+                                            <option value="">Choose Type...</option>
+                                            <option value="supplier">Supplier</option>
+                                            <option value="service">Service Provider</option>
+                                            <option value="both">Both</option>
+                                        </select>
+                                        <label for="vendorType">
+                                            <i class="fas fa-tags me-2 text-muted"></i>Vendor Type *
+                                        </label>
+                                        <div class="form-text">Select the type of vendor/service they provide</div>
+                                        <div class="invalid-feedback">
+                                            Please select a vendor type.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Person -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="contactPerson" placeholder="Contact Person">
+                                        <label for="contactPerson">
+                                            <i class="fas fa-user me-2 text-muted"></i>Contact Person <small class="text-muted">(Optional)</small>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" placeholder="Email Address">
+                                        <label for="email">
+                                            <i class="fas fa-envelope me-2 text-muted"></i>Email Address <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            Please provide a valid email address.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                                        <label for="phone">
+                                            <i class="fas fa-phone me-2 text-muted"></i>Phone Number <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <div class="form-text">Include country code (e.g., +91-9876543210)</div>
+                                    </div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="status">
+                                            <option value="active" selected>Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                        <label for="status">
+                                            <i class="fas fa-toggle-on me-2 text-muted"></i>Status
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="address" placeholder="Address" style="height: 100px"></textarea>
+                                        <label for="address">
+                                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>Address <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <div class="form-text">Complete address including city, state, and country</div>
+                                    </div>
+                                </div>
+
+                                <!-- Tax Information Section -->
+                                <div class="col-12">
+                                    <hr class="my-4">
+                                    <h6 class="text-muted mb-3">
+                                        <i class="fas fa-receipt me-2"></i>Tax Information <small>(Optional)</small>
+                                    </h6>
+                                </div>
+
+                                <!-- Tax ID -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="taxId" placeholder="Tax ID">
+                                        <label for="taxId">
+                                            <i class="fas fa-id-card me-2 text-muted"></i>Tax ID <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <div class="form-text">Tax identification number</div>
+                                    </div>
+                                </div>
+
+                                <!-- PAN Number (India specific) -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="panNumber" placeholder="PAN Number" maxlength="10">
+                                        <label for="panNumber">
+                                            <i class="fas fa-id-badge me-2 text-muted"></i>PAN Number <small class="text-muted">(India)</small>
+                                        </label>
+                                        <div class="form-text">Permanent Account Number for Indian vendors</div>
+                                    </div>
+                                </div>
+
+
+
+
+                                <!-- Notes -->
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="notes" placeholder="Additional notes" style="height: 100px"></textarea>
+                                        <label for="notes">
+                                            <i class="fas fa-sticky-note me-2 text-muted"></i>Notes <small class="text-muted">(Optional)</small>
+                                        </label>
+                                        <div class="form-text">Any additional information about this vendor</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="form-actions">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
+                                        <i class="fas fa-times me-1"></i>Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary form-btn-primary">
+                                        <i class="fas fa-plus me-1"></i>Add Vendor
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Vendor has been added successfully!
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../asset/navbar.js"></script>
+    <script src="../script.js"></script>
+    
+    <!-- Modern Design System Styles -->
+    <style>
+        /* Modern Card Styles */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .stats-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Modern Form Styles */
+        .form-floating {
+            position: relative;
+        }
+
+        .form-floating > label {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            padding: 0.75rem 1rem;
+            background-color: #ffffff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background-color: #ffffff;
+        }
+
+        .form-control:hover, .form-select:hover {
+            border-color: #9ca3af;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        /* Textarea Styling */
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Form Text & Validation */
+        .form-text {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .invalid-feedback {
+            font-size: 0.8rem;
+        }
+
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #10b981;
+            background-image: none;
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #ef4444;
+            background-image: none;
+        }
+
+        /* Modern Button System */
+        .btn {
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0.75rem 2rem;
+            font-size: 0.95rem;
+            border: 2px solid transparent;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white !important;
+        }
+
+        .btn-outline-secondary {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+            border: 2px solid #d1d5db !important;
+            color: #374151 !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%) !important;
+            border-color: #9ca3af !important;
+            color: #1f2937 !important;
+        }
+
+        /* Section Dividers */
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+            margin: 2rem 0;
+        }
+
+        .text-muted {
+            color: #6b7280 !important;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Toast Styling */
+        .toast {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast-header.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            border-bottom: none;
+        }
+
+        .toast-body {
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        /* Icon Enhancements - Removed gradient for consistency */
+
+        /* Loading States */
+        .btn:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .btn {
+                padding: 0.625rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-icon {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .form-actions .d-flex {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Smooth Animations */
+        * {
+            transition: all 0.2s ease;
+        }
+
+        /* Focus States */
+        .btn:focus,
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+        }
+
+        /* Modern Shadows */
+        .shadow-sm {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        }
+    </style>
+    
+    <script>
+        // Form validation and enhancement
+        (function() {
+            'use strict';
+            
+            // Bootstrap form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    if (form.checkValidity()) {
+                        // Show success toast
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
+                        
+                        // Reset form after a delay
+                        setTimeout(() => {
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            // Reset default values
+                            document.getElementById('status').value = 'active';
+                        }, 2000);
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Form enhancements and validations
+
+            // PAN number formatting (uppercase, alphanumeric)
+            const panInput = document.getElementById('panNumber');
+            panInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            });
+
+            // Phone number formatting
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function() {
+                // Allow only numbers, +, -, and spaces
+                this.value = this.value.replace(/[^0-9+\-\s]/g, '');
+            });
+
+            // Email validation enhancement
+            const emailInput = document.getElementById('email');
+            emailInput.addEventListener('blur', function() {
+                if (this.value && !this.checkValidity()) {
+                    this.classList.add('is-invalid');
+                } else if (this.value) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                }
+            });
+
+        })();
+    </script>
+    
+    <style>
+        /* =================================
+           UNIFIED FORM DESIGN SYSTEM
+        ================================= */
+        
+        /* Form Container & Card Standardization */
+        .form-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 0;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .form-header h1 {
+            color: #1e293b;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .form-body {
+            padding: 2.5rem;
+        }
+        
+        /* Standardized Input Fields */
+        .form-control, .form-select {
+            height: 3rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            background-color: #ffffff;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            outline: none;
+        }
+        
+        .form-control.is-valid, .form-select.is-valid {
+            border-color: #10b981;
+            background-image: none;
+        }
+        
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: #ef4444;
+            background-image: none;
+        }
+        
+        /* Standardized Labels */
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-label .text-danger {
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+        
+        /* Form Row Spacing */
+        .form-row {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        /* Form actions styling handled by unified CSS */
+        
+        /* Button styling handled by unified CSS */
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-header {
+                padding: 1.5rem;
+            }
+            
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-body {
+                padding: 1.5rem;
+            }
+            
+            .btn-form {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .form-actions .d-flex {
+                flex-direction: column;
+            }
+        }
+        
+        /* Consistent Form Button Colors */
+        .form-btn-primary.btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
+            border-color: #8b5cf6;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-primary.btn-primary:hover {
+            background: linear-gradient(135deg, #667eea 0%, #5b21b6 100%);
+            border-color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            border-color: #d1d5db;
+            color: #374151;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .form-btn-cancel.btn-outline-secondary:hover {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            border-color: #9ca3af;
+            color: #1f2937;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</body>
+</html>
