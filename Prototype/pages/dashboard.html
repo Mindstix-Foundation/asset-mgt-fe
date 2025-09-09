@@ -33,11 +33,10 @@
                         <div class="progress" style="height: 4px;">
                             <div class="progress-bar bg-primary" style="width: 100%"></div>
                         </div>
-                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <div class="mt-2">
                             <small class="text-success">
                                 <i class="fas fa-arrow-up me-1"></i>8.5% increase in last month
                             </small>
-                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
@@ -59,11 +58,10 @@
                         <div class="progress" style="height: 4px;">
                             <div class="progress-bar bg-success" style="width: 71.5%"></div>
                         </div>
-                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <div class="mt-2">
                             <small class="text-success">
                                 <i class="fas fa-arrow-up me-1"></i>12.3% increase in last month
                             </small>
-                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
@@ -85,11 +83,10 @@
                         <div class="progress" style="height: 4px;">
                             <div class="progress-bar bg-info" style="width: 25%"></div>
                         </div>
-                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <div class="mt-2">
                             <small class="text-success">
                                 <i class="fas fa-arrow-up me-1"></i>5.7% increase in last month
                             </small>
-                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
@@ -111,19 +108,28 @@
                         <div class="progress" style="height: 4px;">
                             <div class="progress-bar bg-warning" style="width: 3.4%"></div>
                         </div>
-                        <div class="mt-2 d-flex justify-content-between align-items-center">
+                        <div class="mt-2">
                             <small class="text-danger">
                                 <i class="fas fa-arrow-down me-1"></i>2.1% increase in last month
                             </small>
-                            <small class="text-muted">Updated now</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Updated Status Line -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
+                    <div class="status-indicator me-2"></div>
+                    <small class="text-muted">Updated 1 Minute Ago</small>
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
-        <div class="mb-4">
+        <div class="mb-4" style="margin-top: -5px;">
             <h5 class="mb-3">
                 <i class="fas fa-bolt me-2"></i>Quick Actions
             </h5>
@@ -439,6 +445,55 @@
         
         .quick-action-card.danger:hover .action-icon {
             background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important;
+        }
+        
+        /* Status Indicator - Green Dot */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+        
+        /* Remove hover effects from stats cards */
+        .stats-card-modern {
+            cursor: default !important;
+            transition: none !important;
+        }
+        
+        .stats-card-modern:hover {
+            transform: none !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        }
+        
+        /* Remove hover effects from asset distribution icons */
+        .asset-type-icon {
+            transition: none !important;
+        }
+        
+        .asset-type-icon:hover {
+            transform: none !important;
+        }
+        
+        .asset-type-icon i {
+            transition: none !important;
+        }
+        
+        .asset-type-icon:hover i {
+            transform: none !important;
         }
     </style>
 </body>

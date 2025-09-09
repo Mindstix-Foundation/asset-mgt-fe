@@ -3,20 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Management Tool - Login</title>
+    <title>TrackStix - Asset Management Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
 <body class="login-page">
-    <!-- Background Elements -->
-    <div class="login-bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-    </div>
+    <!-- Removed background animations for cleaner design -->
     
-    <div class="container-fluid vh-100 d-flex align-items-center justify-content-center position-relative">
+    <div class="container-fluid min-vh-100 d-flex justify-content-center position-relative" style="padding-top: 5vh; padding-bottom: 5vh;">
         <div class="row w-100 justify-content-center">
             <div class="col-12 col-md-8 col-lg-5 col-xl-4">
                 <div class="login-card">
@@ -24,77 +19,59 @@
                         <!-- Logo and Header -->
                         <div class="text-center mb-4">
                             <div class="login-logo mb-3">
-                                <i class="fas fa-cube"></i>
+                                <i class="fas fa-clipboard-check"></i>
                             </div>
-                            <h1 class="login-title">Welcome Back</h1>
+                            <div class="brand-name mb-2">TrackStix</div>
                             <p class="login-subtitle">Sign in to your Asset Management portal</p>
                         </div>
                         
                         <!-- Login Form -->
-                        <form class="login-form needs-validation" novalidate>
-                            <!-- Username Input -->
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control login-input" id="username" placeholder="Enter username" required>
+                        <form class="login-form" onsubmit="handleLogin(event);">
+                            <!-- Username Input with clear label -->
+                            <div class="login-field-label mb-2">
                                 <label for="username">
-                                    <i class="fas fa-user me-2"></i>Username
+                                    <i class="fas fa-user me-2"></i>Employee ID or Email Address
                                 </label>
-                                <div class="invalid-feedback">
-                                    Please enter your username.
-                                </div>
+                            </div>
+                            <div class="mb-4 position-relative">
+                                <input type="text" class="form-control login-input" id="username" placeholder="Enter your employee ID or email" aria-label="Employee ID or Email Address">
                             </div>
                             
-                            <!-- Password Input -->
-                            <div class="form-floating mb-4 position-relative">
-                                <input type="password" class="form-control login-input" id="password" placeholder="Enter password" required>
+                            <!-- Password Input with clear label -->
+                            <div class="login-field-label mb-2">
                                 <label for="password">
                                     <i class="fas fa-lock me-2"></i>Password
                                 </label>
-                                <button class="password-toggle" type="button" id="togglePassword">
+                            </div>
+                            <div class="mb-3 position-relative password-field">
+                                <input type="password" class="form-control login-input" id="password" placeholder="Enter your password" aria-label="Password">
+                                <button class="password-toggle" type="button" id="togglePassword" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <div class="invalid-feedback">
-                                    Please enter your password.
-                                </div>
                             </div>
                             
-                            <!-- Remember Me and Forgot Password -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="rememberMe">
-                                    <label class="form-check-label" for="rememberMe">
-                                        Remember me
-                                    </label>
-                                </div>
-                                <a href="#" class="forgot-password">Forgot password?</a>
+                            <!-- Login Error Message -->
+                            <div class="error-message d-none mt-3" id="loginError" role="alert">
+                                <span id="loginErrorMessage">Either email/employee ID is wrong or password is wrong.</span>
+                            </div>
+                            
+                            <!-- Forgot Password -->
+                            <div class="d-flex justify-content-end align-items-center mb-3">
+                                <a href="#" class="forgot-password-link">
+                                    <i class="fas fa-key me-1"></i>
+                                    Forgot password?
+                                </a>
                             </div>
                             
                             <!-- Login Button -->
-                            <a href="pages/dashboard.html" class="login-btn w-100" id="loginBtn">
-                                <span class="btn-text">Sign In</span>
+                            <button type="submit" class="login-btn w-100" id="loginBtn" aria-label="Sign in to your account">
+                                <span class="btn-text">Sign In to Account</span>
                                 <div class="btn-loader d-none">
-                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
                                 </div>
-                            </a>
+                            </button>
                         </form>
-                        
-                        <!-- Demo Credentials -->
-                        <div class="demo-credentials mt-4">
-                            <div class="demo-title">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Demo Credentials
-                            </div>
-                            <div class="credentials-grid">
-                                <div class="credential-item">
-                                    <div class="role">Administrator</div>
-                                    <div class="creds">admin / admin123</div>
-                                </div>
-                                <div class="credential-item">
-                                    <div class="role">HR Manager</div>
-                                    <div class="creds">hr001 / hr123</div>
-                                </div>
-                            </div>
-                            <small class="demo-note">Role is automatically determined by username</small>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -104,105 +81,176 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
     <script>
-        // Bootstrap form validation
-        (function() {
-            'use strict';
-            window.addEventListener('load', function() {
-                var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            }, false);
-        })();
 
+        
         // Enhanced login functionality
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
+            const username = document.getElementById('username');
             const loginBtn = document.getElementById('loginBtn');
-            const form = document.querySelector('.needs-validation');
+            const form = document.querySelector('.login-form');
             const loginInputs = document.querySelectorAll('.login-input');
+            const loginError = document.getElementById('loginError');
+
             
-            // Password toggle functionality
+            // Password toggle functionality with state tracking
             if (togglePassword && password) {
-                togglePassword.addEventListener('click', function() {
-                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                    password.setAttribute('type', type);
+                console.log('Setting up password toggle event listener');
+                
+                // Track password visibility state
+                let isPasswordVisible = false;
+                
+                togglePassword.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Password toggle clicked via event listener');
+                    console.log('Current state - isPasswordVisible:', isPasswordVisible);
+                    
+                    // Toggle the state
+                    isPasswordVisible = !isPasswordVisible;
                     
                     const icon = this.querySelector('i');
-                    if (type === 'password') {
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
+                    
+                    if (isPasswordVisible) {
+                        // Show password
+                        password.type = 'text';
+                        icon.className = 'fas fa-eye-slash';
+                        console.log('Password now visible - changed to text type, eye-slash icon');
                     } else {
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
+                        // Hide password
+                        password.type = 'password';
+                        icon.className = 'fas fa-eye';
+                        console.log('Password now hidden - changed to password type, eye icon');
                     }
+                    
+                    console.log('Final state - isPasswordVisible:', isPasswordVisible);
+                    console.log('Final DOM type:', password.type);
+                    console.log('Final getAttribute type:', password.getAttribute('type'));
                 });
+            } else {
+                console.error('Password toggle elements not found');
             }
 
             // Enhanced input interactions
-            loginInputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.classList.add('focused');
-                });
-                
-                input.addEventListener('blur', function() {
-                    this.parentElement.classList.remove('focused');
-                });
+            username.addEventListener('input', function() {
+                // Hide main error message when typing
+                if (loginError && !loginError.classList.contains('d-none')) {
+                    loginError.classList.add('d-none');
+                }
+            });
+            
+            password.addEventListener('input', function() {
+                // Hide main error message when typing
+                if (loginError && !loginError.classList.contains('d-none')) {
+                    loginError.classList.add('d-none');
+                }
             });
 
-            // Login button with loading state and validation
-            if (loginBtn && form) {
-                loginBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
+            // Validate email format
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Validate employee ID
+            function isValidEmployeeId(id) {
+                // Employee ID should start with 'admin'
+                return id.toLowerCase().startsWith('admin');
+            }
+            
+            // Handle login function
+            window.handleLogin = function(event) {
+                if (event) {
+                    event.preventDefault();
+                }
+                
+                console.log('Login function called'); // Debug log
+                
+                const usernameValue = username.value.trim();
+                const passwordValue = password.value.trim();
+                
+                console.log('Username:', usernameValue, 'Password:', passwordValue); // Debug log
+                
+                // Reset error messages
+                loginError.classList.add('d-none');
+                
+                // Check for empty fields and focus accordingly
+                if (!usernameValue) {
+                    console.log('Username is empty, focusing'); // Debug log
+                    username.focus();
+                    return false;
+                }
+                
+                if (!passwordValue) {
+                    console.log('Password is empty, focusing'); // Debug log
+                    password.focus();
+                    return false;
+                }
+                
+                console.log('Both fields filled, starting login process'); // Debug log
+                
+                // Show loading state only if both fields have values
+                loginBtn.classList.add('loading');
+                loginBtn.querySelector('.btn-text').textContent = 'Signing In...';
+                loginBtn.querySelector('.btn-loader').classList.remove('d-none');
+                loginBtn.disabled = true;
+                
+                // Simulate login process
+                setTimeout(() => {
+                    console.log('Checking credentials...'); // Debug log
                     
-                    // Check form validity
-                    if (!form.checkValidity()) {
-                        form.classList.add('was-validated');
+                    // Simple demo authentication - check credentials
+                    const validCredentials = [
+                        { username: 'admin', password: 'admin123' },
+                        { username: 'admin123', password: 'admin123' },
+                        { username: 'test@example.com', password: 'test123' }
+                    ];
+                    
+                    // Check if credentials match any valid combination
+                    const isValidLogin = validCredentials.some(cred => 
+                        cred.username === usernameValue && cred.password === passwordValue
+                    );
+                    
+                    console.log('Login valid:', isValidLogin); // Debug log
+                    
+                    if (isValidLogin) {
+                        console.log('Redirecting to dashboard...'); // Debug log
+                        // Navigate to dashboard
+                        window.location.href = 'pages/dashboard.html';
+                    } else {
+                        console.log('Invalid credentials, showing error'); // Debug log
+                        // Show error message for any invalid credentials (empty fields, wrong format, wrong credentials)
+                        loginError.classList.remove('d-none');
+                        document.getElementById('loginErrorMessage').textContent = 'Either email/employee ID is wrong or password is wrong.';
                         
-                        // Shake animation for invalid form
+                        // Reset button state
+                        loginBtn.classList.remove('loading');
+                        loginBtn.querySelector('.btn-text').textContent = 'Sign In to Account';
+                        loginBtn.querySelector('.btn-loader').classList.add('d-none');
+                        loginBtn.disabled = false;
+                        
+                        // Shake animation for error
                         loginBtn.style.animation = 'shake 0.5s ease-in-out';
                         setTimeout(() => {
                             loginBtn.style.animation = '';
                         }, 500);
-                        
-                        return false;
                     }
-                    
-                    // Show loading state
-                    loginBtn.classList.add('loading');
-                    loginBtn.querySelector('.btn-text').textContent = 'Signing In...';
-                    loginBtn.querySelector('.btn-loader').classList.remove('d-none');
-                    
-                    // Simulate login process
-                    setTimeout(() => {
-                        // Navigate to dashboard
-                        window.location.href = 'pages/dashboard.html';
-                    }, 100);
-                });
-            }
+                }, 1500);
+            };
 
             // Add shake animation for invalid inputs
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes shake {
                     0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-                    20%, 40%, 60%, 80% { transform: translateX(10px); }
-                }
-                
-                .form-floating.focused {
-                    transform: scale(1.02);
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
                 }
             `;
             document.head.appendChild(style);
         });
     </script>
 </body>
-</html> 
+</html>

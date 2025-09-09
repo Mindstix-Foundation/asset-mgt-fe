@@ -770,37 +770,17 @@
         
         /* Modern Card Styles */
         .report-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 0.75rem !important;
             overflow: hidden;
-            cursor: pointer;
+            cursor: default;
             border: none !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        }
-        
-        .report-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-        }
-        
-        .report-card i {
-            transition: all 0.3s ease;
-        }
-        
-        .report-card:hover i {
-            transform: scale(1.1) rotate(5deg);
         }
         
         .card {
             border-radius: 0.75rem !important;
             border: none !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-            transform: translateY(-2px);
         }
         
         .card-header-gradient {
@@ -850,6 +830,28 @@
             box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
         
+        /* Ensure buttons in cards have proper hover effects */
+        .report-card .btn:hover,
+        .card .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Override global card hover effects for report cards */
+        .report-card:hover,
+        .card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+        }
+        
+        /* Override specific card type hover effects */
+        .compact-chart-card:hover,
+        .status-mini-card:hover {
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+        }
+        
         .badge {
             font-size: 0.75rem;
             font-weight: 600;
@@ -860,7 +862,6 @@
         /* Enhanced table styling */
         .table-hover tbody tr:hover {
             background-color: rgba(0, 123, 255, 0.05);
-            transform: scale(1.01);
             transition: all 0.2s ease;
         }
         
@@ -1062,10 +1063,7 @@
             height: 100%;
         }
         
-        .compact-chart-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
+
         
         .compact-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1134,11 +1132,7 @@
             text-align: center;
         }
         
-        .status-mini-card:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+
         
         .status-icon {
             font-size: 1.2rem;

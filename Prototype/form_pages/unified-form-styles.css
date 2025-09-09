@@ -1,21 +1,49 @@
 /* =================================
    UNIFIED FORM DESIGN SYSTEM
-   Asset Management - Consistent Styling
+   Asset Management - TrackStix Theme
    ONLY FOR FORM PAGES
 ================================= */
 
+/* TrackStix Color Variables */
+:root {
+    /* Primary Palette */
+    --primary-white: #FFFFFF;
+    --primary-light-gray: #F3F3F3;
+    --primary-mid-light: #B7B7B7;
+    --primary-mid-gray: #999999;
+    --primary-dark-gray: #666666;
+    --primary-black: #0A0A0A;
+    
+    /* Secondary Palette */
+    --secondary-purple: #331FEA;
+    --secondary-pink: #FF579F;
+    --secondary-yellow: #FFC000;
+    --secondary-green: #21AF65;
+    --secondary-orange: #FF8C61;
+    --secondary-red: #E97676;
+    
+    /* Role-based Colors */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --text-primary: #0A0A0A;
+    --text-secondary: #222222;
+    --accent-navy: #1A2A43;
+    --element-gray: #E0E0E0;
+    --element-light-gray: #CCCCCC;
+}
+
 /* ONLY target form containers, not affecting navbar */
 .container-fluid.py-4 {
-    background: white;
+    background: var(--bg-primary);
     min-height: calc(100vh - 80px);
 }
 
 /* Standardized Form Cards - Wider for Better Layout */
 .container-fluid.py-4 .card {
-    background: white;
+    background: var(--bg-primary);
     border-radius: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08);
+    border: 1px solid var(--element-gray);
     max-width: 900px;
     width: 100%;
     margin: 0 auto;
@@ -23,16 +51,16 @@
 
 /* Consistent Form Headers */
 .container-fluid.py-4 .card-header {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--primary-light-gray) 0%, var(--element-gray) 100%);
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--element-gray);
     border-radius: 1rem 1rem 0 0;
 }
 
 .container-fluid.py-4 .card-header h1, 
 .container-fluid.py-4 .card-header h4,
 .container-fluid.py-4 .card-header .card-title {
-    color: #1e293b;
+    color: var(--text-primary);
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
@@ -50,9 +78,11 @@
     height: 3rem;
     padding: 0.75rem 1rem;
     font-size: 0.95rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--element-gray);
     border-radius: 0.5rem;
     transition: all 0.2s ease;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
 }
 
 .container-fluid.py-4 .form-floating .form-control, 
@@ -64,14 +94,14 @@
 .container-fluid.py-4 .form-floating label {
     padding: 1rem 1rem 0.25rem 1rem;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--primary-dark-gray);
     font-size: 0.9rem;
 }
 
 .container-fluid.py-4 .form-control:focus, 
 .container-fluid.py-4 .form-select:focus {
-    border-color: #8b5cf6;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    border-color: var(--accent-navy);
+    box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.1);
 }
 
 /* STANDARDIZED BUTTON SYSTEM - Perfect Consistency */
@@ -88,12 +118,77 @@
     gap: 0.5rem;
     min-width: 160px;
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(10, 10, 10, 0.1);
 }
 
 .container-fluid.py-4 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(10, 10, 10, 0.2);
+}
+
+/* Primary Button - Navy Blue */
+.container-fluid.py-4 .btn-primary {
+    background-color: var(--accent-navy);
+    border-color: var(--accent-navy);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-primary:hover {
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
+    color: var(--bg-primary);
+}
+
+/* Success Button - Green */
+.container-fluid.py-4 .btn-success {
+    background-color: var(--secondary-green);
+    border-color: var(--secondary-green);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-success:hover {
+    background-color: #1e9c5a;
+    border-color: #1e9c5a;
+    color: var(--bg-primary);
+}
+
+/* Warning Button - Yellow */
+.container-fluid.py-4 .btn-warning {
+    background-color: var(--secondary-yellow);
+    border-color: var(--secondary-yellow);
+    color: var(--text-primary);
+}
+
+.container-fluid.py-4 .btn-warning:hover {
+    background-color: #e6ad00;
+    border-color: #e6ad00;
+    color: var(--text-primary);
+}
+
+/* Danger Button - Red */
+.container-fluid.py-4 .btn-danger {
+    background-color: var(--secondary-red);
+    border-color: var(--secondary-red);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-danger:hover {
+    background-color: #e66666;
+    border-color: #e66666;
+    color: var(--bg-primary);
+}
+
+/* Secondary Button - Gray */
+.container-fluid.py-4 .btn-secondary {
+    background-color: var(--primary-mid-gray);
+    border-color: var(--primary-mid-gray);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-secondary:hover {
+    background-color: var(--primary-dark-gray);
+    border-color: var(--primary-dark-gray);
+    color: var(--bg-primary);
 }
 
 /* CONSISTENT BUTTON CONTAINER LAYOUTS */
@@ -102,7 +197,7 @@
 .container-fluid.py-4 .text-center,
 .container-fluid.py-4 .d-flex.justify-content-end {
     padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--element-gray);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -127,22 +222,25 @@
 .container-fluid.py-4 .modal-content {
     border-radius: 1rem;
     border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 40px rgba(10, 10, 10, 0.15);
+    background: var(--bg-primary);
 }
 
 .container-fluid.py-4 .modal-header {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, var(--primary-light-gray) 0%, var(--element-gray) 100%);
+    border-bottom: 1px solid var(--element-gray);
     padding: 1.5rem 2rem;
 }
 
 .container-fluid.py-4 .modal-body {
     padding: 2rem;
+    background: var(--bg-primary);
 }
 
 .container-fluid.py-4 .modal-footer {
     padding: 1.5rem 2rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--element-gray);
+    background: var(--bg-primary);
 }
 
 /* RESPONSIVE DESIGN - Perfect Mobile Experience */

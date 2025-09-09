@@ -1,25 +1,51 @@
-/* Custom styles for Asset Management Tool - Mindstix Theme */
+/* Custom styles for Asset Management Tool - TrackStix Theme */
 
 /* General Styles */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #495057;
+    background-color: #F5F5F5;
+    color: #222222;
 }
 
-/* Company Theme Colors */
+/* TrackStix Theme Colors - Consistent Color Palette */
 :root {
-    --mindstix-primary: #6c757d;
-    --mindstix-secondary: #adb5bd;
-    --mindstix-light: #f8f9fa;
-    --mindstix-dark: #343a40;
-    --mindstix-accent: #495057;
-    --mindstix-border: #dee2e6;
-    --mindstix-hover: #e9ecef;
-    --mindstix-blue: #6c8eb3;
-    --mindstix-success: #28a745;
-    --mindstix-warning: #ffc107;
-    --mindstix-danger: #dc3545;
+    /* Primary Palette */
+    --primary-white: #FFFFFF;
+    --primary-light-gray: #F3F3F3;
+    --primary-mid-light: #B7B7B7;
+    --primary-mid-gray: #999999;
+    --primary-dark-gray: #666666;
+    --primary-black: #0A0A0A;
+    
+    /* Secondary Palette */
+    --secondary-purple: #331FEA;
+    --secondary-pink: #FF579F;
+    --secondary-yellow: #FFC000;
+    --secondary-green: #21AF65;
+    --secondary-orange: #FF8C61;
+    --secondary-red: #E97676;
+    
+    /* Role-based Colors */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --text-primary: #0A0A0A;
+    --text-secondary: #222222;
+    --accent-navy: #1A2A43;
+    --element-gray: #E0E0E0;
+    --element-light-gray: #CCCCCC;
+    
+    /* Legacy mappings for backward compatibility */
+    --mindstix-primary: var(--primary-dark-gray);
+    --mindstix-secondary: var(--primary-mid-light);
+    --mindstix-light: var(--primary-light-gray);
+    --mindstix-dark: var(--text-secondary);
+    --mindstix-accent: var(--accent-navy);
+    --mindstix-border: var(--element-gray);
+    --mindstix-hover: var(--element-light-gray);
+    --mindstix-blue: var(--accent-navy);
+    --mindstix-success: var(--secondary-green);
+    --mindstix-warning: var(--secondary-yellow);
+    --mindstix-danger: var(--secondary-red);
 }
 
 /* Main Content Container - Responsive margins */
@@ -31,70 +57,71 @@ body {
     padding-right: 1rem;
 }
 
-/* Navigation Bar - White Theme - Keep full width */
+/* Navigation Bar - TrackStix Theme */
 .navbar-dark.bg-primary {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid var(--mindstix-border);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-primary) !important;
+    border-bottom: 1px solid var(--element-gray);
+    box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
 }
 
 .navbar-brand {
-    color: var(--mindstix-dark) !important;
+    color: var(--text-primary) !important;
     font-weight: 600;
 }
 
 .navbar-nav .nav-link {
-    color: var(--mindstix-primary) !important;
+    color: var(--primary-dark-gray) !important;
     transition: all 0.2s ease;
 }
 
 .navbar-nav .nav-link:hover {
-    color: var(--mindstix-dark) !important;
-    background-color: var(--mindstix-hover);
+    color: var(--text-primary) !important;
+    background-color: var(--primary-light-gray);
     border-radius: 0.75rem;
 }
 
 .navbar-nav .nav-link.active {
-    color: var(--mindstix-dark) !important;
-    background-color: var(--mindstix-light);
+    color: inherit !important;
+    background-color: transparent;
     border-radius: 0.75rem;
+    font-weight: 700;
 }
 
 /* Navbar text elements - for user info */
 .navbar .text-white {
-    color: var(--mindstix-primary) !important;
+    color: var(--primary-dark-gray) !important;
 }
 
 /* Navbar toggler for mobile - dark icon */
 .navbar-toggler {
-    border-color: var(--mindstix-border);
+    border-color: var(--element-gray);
 }
 
 .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2810, 10, 10, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-/* Card Styles - Professional Theme with more rounded corners */
+/* Card Styles - TrackStix Theme with rounded corners */
 .card {
-    border: 1px solid var(--mindstix-border);
+    border: 1px solid var(--element-gray);
     border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+    background-color: var(--bg-primary);
     transition: all 0.2s ease;
 }
 
 .card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(10, 10, 10, 0.1);
 }
 
 /* Quick Action Cards - Modern Design */
 .quick-action-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 1px solid var(--mindstix-border);
+    background: var(--bg-primary);
+    border: 1px solid var(--element-gray);
     border-radius: 1.25rem;
     padding: 2rem 1.5rem;
     text-align: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: filter 0.2s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -107,7 +134,7 @@ body {
 }
 
 .quick-action-card:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    filter: brightness(0.95);
     border-color: var(--mindstix-blue);
 }
 
@@ -120,14 +147,12 @@ body {
     justify-content: center;
     margin: 0 auto 1rem;
     font-size: 1.5rem;
-    transition: all 0.2s ease;
+    transition: none;
     position: relative;
     overflow: hidden;
 }
 
-.quick-action-card:hover .action-icon {
-    transform: scale(1.02);
-}
+
 
 .quick-action-card .action-title {
     font-size: 0.95rem;
@@ -144,9 +169,9 @@ body {
 
 /* Quick Action Card Variants - Updated with Consistent Color System */
 
-/* Add New Asset - Purple (Primary Action) - Light to Dark */
+/* Add New Asset - Purple (Primary Action) */
 .quick-action-card.primary .action-icon {
-    background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
+    background: #8b5cf6;
     color: white;
 }
 
@@ -155,26 +180,26 @@ body {
 }
 
 .quick-action-card.primary:hover .action-icon {
-    background: linear-gradient(135deg, #667eea 0%, #5b21b6 100%);
+    background: #667eea;
 }
 
-/* Issue Asset - Green (Assign Action) - Light to Dark */
+/* Issue Asset - Green (Assign Action) */
 .quick-action-card.success .action-icon {
-    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    background: #34d399;
     color: white;
 }
 
 .quick-action-card.success:hover {
-    border-color: #34d399;
+border-color: #34d399;
 }
 
 .quick-action-card.success:hover .action-icon {
-    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    background: #10b981;
 }
 
-/* Schedule Maintenance - Pink (Maintenance Action) - Light to Dark */
+/* Schedule Maintenance - Pink (Maintenance Action) */
 .quick-action-card.warning .action-icon {
-    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    background: #f472b6;
     color: white;
 }
 
@@ -183,13 +208,13 @@ body {
 }
 
 .quick-action-card.warning:hover .action-icon {
-    background: linear-gradient(135deg, #ec4899 0%, #9d174d 100%);
+    background: #ec4899;
 }
 
-/* Collect Asset - Orange (Collect/Return Action) - Light to Dark */
+/* Collect Asset - Orange (Collect/Return Action) */
 .quick-action-card.collect .action-icon,
 .quick-action-card.danger .action-icon {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    background: #fbbf24;
     color: white;
 }
 
@@ -200,18 +225,17 @@ body {
 
 .quick-action-card.collect:hover .action-icon,
 .quick-action-card.danger:hover .action-icon {
-    background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+    background: #f59e0b;
 }
 
 .quick-action-card.info .action-icon {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
     color: white;
 }
 
 /* Quick Action Card Active State */
 .quick-action-card:active {
-    transform: translateY(-4px);
-    transition: transform 0.1s ease;
+    filter: brightness(0.9);
 }
 
 /* Asset Distribution Styles */
@@ -238,15 +262,15 @@ body {
 }
 
 .asset-type-icon.laptops {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
 }
 
 .asset-type-icon.monitors {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background: #11998e;
 }
 
 .asset-type-icon.mobile {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: #4facfe;
 }
 
 .asset-type-icon.accessories {
@@ -265,22 +289,22 @@ body {
 }
 
 .progress-bar-laptops {
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--accent-navy) 100%);
     border-radius: 1rem;
 }
 
 .progress-bar-monitors {
-    background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+    background: linear-gradient(90deg, var(--secondary-green) 0%, #1e9c5a 100%);
     border-radius: 1rem;
 }
 
 .progress-bar-mobile {
-    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--secondary-pink) 100%);
     border-radius: 1rem;
 }
 
 .progress-bar-accessories {
-    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(90deg, var(--secondary-orange) 0%, var(--secondary-red) 100%);
     border-radius: 1rem;
 }
 
@@ -316,52 +340,53 @@ body {
     border-color: var(--mindstix-secondary) !important;
 }
 
-/* Button Styles - Professional Theme with more rounded corners */
+/* Button Styles - TrackStix Theme with rounded corners */
 .btn {
     border-radius: 0.75rem;
 }
 
 .btn-primary {
-    background-color: var(--mindstix-primary);
-    border-color: var(--mindstix-primary);
-    color: #ffffff;
+    background-color: var(--accent-navy);
+    border-color: var(--accent-navy);
+    color: var(--bg-primary);
 }
 
 .btn-primary:hover {
-    background-color: var(--mindstix-accent);
-    border-color: var(--mindstix-accent);
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
 }
 
 .btn-outline-primary {
-    color: var(--mindstix-primary);
-    border-color: var(--mindstix-primary);
+    color: var(--accent-navy);
+    border-color: var(--accent-navy);
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--mindstix-primary);
-    border-color: var(--mindstix-primary);
+    background-color: var(--accent-navy);
+    border-color: var(--accent-navy);
+    color: var(--bg-primary);
 }
 
 .btn-outline-light {
-    color: var(--mindstix-primary);
-    border-color: var(--mindstix-border);
+    color: var(--primary-dark-gray);
+    border-color: var(--element-gray);
 }
 
 .btn-outline-light:hover {
-    background-color: var(--mindstix-primary);
-    border-color: var(--mindstix-primary);
-    color: #ffffff;
+    background-color: var(--primary-dark-gray);
+    border-color: var(--primary-dark-gray);
+    color: var(--bg-primary);
 }
 
 .btn-outline-secondary {
-    color: var(--mindstix-primary);
-    border-color: var(--mindstix-border);
+    color: var(--primary-dark-gray);
+    border-color: var(--element-gray);
 }
 
 .btn-outline-secondary:hover {
-    background-color: var(--mindstix-hover);
-    border-color: var(--mindstix-border);
-    color: var(--mindstix-accent);
+    background-color: var(--element-light-gray);
+    border-color: var(--element-gray);
+    color: var(--text-primary);
 }
 
 /* Input Group Styling - Professional Theme with rounded corners */
@@ -378,68 +403,75 @@ body {
 
 /* Table Styles - Clean Professional Look */
 .table {
-    color: var(--mindstix-dark);
+    color: var(--text-secondary);
 }
 
 .table thead th {
-    background-color: var(--mindstix-light);
-    border-bottom: 2px solid var(--mindstix-border);
-    color: var(--mindstix-dark);
+    background-color: var(--primary-light-gray);
+    border-bottom: 2px solid var(--element-gray);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(108, 117, 125, 0.05);
+    background-color: rgba(102, 102, 102, 0.05);
 }
 
 .table-hover tbody tr:hover {
-    background-color: var(--mindstix-hover);
+    background-color: var(--element-light-gray);
 }
 
-/* Badge Styles - Subtle Professional Colors with rounded corners */
+/* Badge Styles - TrackStix Colors with rounded corners */
 .badge {
     border-radius: 0.75rem;
 }
 
 .badge.bg-available {
-    background-color: #6c8e7f !important;
+    background-color: var(--secondary-green) !important;
+    color: var(--bg-primary) !important;
 }
 
 .badge.bg-assigned {
-    background-color: var(--mindstix-blue) !important;
+    background-color: var(--accent-navy) !important;
+    color: var(--bg-primary) !important;
 }
 
 .badge.bg-maintenance {
-    background-color: #b8a865 !important;
-    color: #ffffff !important;
+    background-color: var(--secondary-yellow) !important;
+    color: var(--text-primary) !important;
 }
 
 .badge.bg-retired {
-    background-color: var(--mindstix-secondary) !important;
+    background-color: var(--primary-mid-light) !important;
+    color: var(--text-primary) !important;
 }
 
 .badge.bg-primary {
-    background-color: var(--mindstix-primary) !important;
+    background-color: var(--accent-navy) !important;
+    color: var(--bg-primary) !important;
 }
 
 .badge.bg-success {
-    background-color: #6c8e7f !important;
+    background-color: var(--secondary-green) !important;
+    color: var(--bg-primary) !important;
 }
 
 .badge.bg-warning {
-    background-color: #b8a865 !important;
-    color: #ffffff !important;
+    background-color: var(--secondary-yellow) !important;
+    color: var(--text-primary) !important;
 }
 
 .badge.bg-danger {
-    background-color: #a85a5a !important;
+    background-color: var(--secondary-red) !important;
+    color: var(--bg-primary) !important;
 }
 
-/* Form Controls - Professional Styling with rounded corners */
+/* Form Controls - TrackStix Styling with rounded corners */
 .form-control, .form-select {
-    border: 1px solid var(--mindstix-border);
+    border: 1px solid var(--element-gray);
     border-radius: 0.75rem;
-    color: var(--mindstix-dark);
+    color: var(--text-secondary);
+    background-color: var(--bg-primary);
 }
 
 .form-control:focus, .form-select:focus {
@@ -450,12 +482,11 @@ body {
 /* Card Hover Effects */
 .asset-card, .employee-card, .report-card {
     cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition: filter 0.2s ease;
 }
 
 .asset-card:hover, .employee-card:hover, .report-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    filter: brightness(0.95);
 }
 
 /* Progress Circles */
@@ -542,13 +573,12 @@ body {
 
 /* Modern Stats Cards with more rounded corners */
 .stats-card-modern {
-    transition: all 0.3s ease;
+    transition: filter 0.2s ease;
     border-radius: 1.5rem !important;
 }
 
 .stats-card-modern:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    filter: brightness(0.95);
 }
 
 .stats-icon {
@@ -661,38 +691,38 @@ canvas {
     max-height: 300px;
 }
 
-/* Alert Styles - Professional Theme with rounded corners */
+/* Alert Styles - TrackStix Theme with rounded corners */
 .alert {
     border-radius: 1rem;
 }
 
 .alert-primary {
-    color: var(--mindstix-dark);
-    background-color: rgba(108, 117, 125, 0.1);
-    border-color: rgba(108, 117, 125, 0.2);
+    color: var(--accent-navy);
+    background-color: rgba(26, 42, 67, 0.1);
+    border-color: rgba(26, 42, 67, 0.2);
 }
 
 .alert-success {
-    color: #155724;
-    background-color: rgba(108, 142, 127, 0.1);
-    border-color: rgba(108, 142, 127, 0.2);
+    color: #1a8c54;
+    background-color: rgba(33, 175, 101, 0.1);
+    border-color: rgba(33, 175, 101, 0.2);
 }
 
 .alert-warning {
-    color: #856404;
-    background-color: rgba(184, 168, 101, 0.1);
-    border-color: rgba(184, 168, 101, 0.2);
+    color: #cc9900;
+    background-color: rgba(255, 192, 0, 0.1);
+    border-color: rgba(255, 192, 0, 0.2);
 }
 
 .alert-danger {
-    color: #721c24;
-    background-color: rgba(168, 90, 90, 0.1);
-    border-color: rgba(168, 90, 90, 0.2);
+    color: #d65c5c;
+    background-color: rgba(233, 118, 118, 0.1);
+    border-color: rgba(233, 118, 118, 0.2);
 }
 
-/* Professional Spacing and Typography */
+/* TrackStix Spacing and Typography */
 h1, h2, h3, h4, h5, h6 {
-    color: var(--mindstix-dark);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -835,75 +865,35 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== LOGIN PAGE STYLES ===== */
 
-/* Login Page Background */
+/* Login Page Background - Clean White */
 .login-page {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-secondary);
     min-height: 100vh;
     position: relative;
-    overflow: hidden;
 }
 
-/* Animated Background Shapes */
-.login-bg-shapes {
-    position: fixed;
-    top: 0;
-    left: 0;
+/* Login page container alignment */
+.login-page .container-fluid {
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* Ensure proper spacing for error states */
+.login-page .row {
+    margin: 0;
     width: 100%;
-    height: 100%;
-    z-index: 1;
-    overflow: hidden;
-}
-
-.shape {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.1;
-    animation: float 6s ease-in-out infinite;
-}
-
-.shape-1 {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
-    top: 10%;
-    left: 10%;
-    animation-delay: 0s;
-}
-
-.shape-2 {
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
-    top: 70%;
-    right: 10%;
-    animation-delay: 2s;
-}
-
-.shape-3 {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.9) 100%);
-    top: 50%;
-    left: 80%;
-    animation-delay: 4s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    33% { transform: translateY(-30px) rotate(120deg); }
-    66% { transform: translateY(30px) rotate(240deg); }
 }
 
 /* Login Card */
 .login-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: var(--bg-primary);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08);
+    border: 1px solid var(--element-gray);
     position: relative;
     z-index: 10;
-    animation: slideUp 0.8s ease-out;
 }
 
 @keyframes slideUp {
@@ -925,36 +915,39 @@ h1, h2, h3, h4, h5, h6 {
 .login-logo {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
+    background: var(--primary-light-gray);
+    border: 2px solid var(--element-gray);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    animation: pulse 2s ease-in-out infinite alternate;
 }
 
 .login-logo i {
     font-size: 2rem;
-    color: white;
+    color: var(--accent-navy);
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.05); }
+/* Brand Name */
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
 }
 
 /* Login Title and Subtitle */
 .login-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #2d3748;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
-    color: #718096;
+    color: var(--primary-dark-gray);
     font-size: 1rem;
     margin-bottom: 0;
 }
@@ -964,188 +957,328 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 2rem;
 }
 
-/* Form Floating Labels */
-.form-floating > label {
-    color: #718096;
-    font-weight: 500;
+/* Form Labels */
+label {
+    color: var(--primary-dark-gray); /* Darker gray for better contrast */
+    font-weight: 600; /* Bolder text */
+    font-size: 1.05rem; /* Slightly larger font */
 }
 
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label,
-.form-floating > .form-select ~ label {
-    color: #667eea;
-    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+/* Login Field Labels - For better accessibility */
+.login-field-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
 }
+
+.login-field-label label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+}
+
+.login-field-label i {
+    color: var(--accent-navy);
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+
 
 /* Login Inputs */
 .login-input {
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem 1rem;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    border: 2px solid var(--element-gray); /* Thicker border */
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    height: auto;
+    font-size: 1.05rem; /* Larger font size for better readability */
+    transition: all 0.2s ease;
+    background: var(--bg-primary);
+    color: var(--text-secondary); /* Darker text for better contrast */
+    box-shadow: none;
+}
+
+/* Password field styling */
+.password-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d; /* Bootstrap secondary color */
+    cursor: pointer !important;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    z-index: 1000; /* Higher z-index to ensure it's above validation icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; /* Slightly larger touch target */
+    height: 36px; /* Slightly larger touch target */
+    pointer-events: auto;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.password-toggle:hover {
+    color: #495057; /* Darker gray on hover */
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--secondary-red); /* TrackStix danger color */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Center error message for login errors */
+#loginError {
+    text-align: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Remove Bootstrap's default validation styles and ensure consistent styling */
+.form-control {
+    background-image: none !important;
+    padding-right: 0.75rem !important;
+    border-color: #d1d5db !important;
+    background-color: #ffffff !important;
+}
+
+.form-control:focus {
+    border-color: #0a4b9f !important;
+    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Ensure no validation styling appears */
+.form-control:valid,
+.form-control:invalid {
+    border-color: #d1d5db !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.form-control:valid:focus,
+.form-control:invalid:focus {
+    border-color: #0a4b9f !important;
+    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
+}
+
+
+
+/* Ensure password field has proper padding */
+#password {
+    padding-right: 40px !important;
+}
+
+/* Ensure password field has proper padding and never gets validation styling */
+#password {
+    padding-right: 40px !important;
+    border-color: #d1d5db !important;
+    background-image: none !important;
+}
+
+#password:focus {
+    border-color: #0a4b9f !important;
+    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
+}
+
+/* Ensure password field can change type properly */
+#password[type="text"] {
+    -webkit-text-security: none !important;
+    text-security: none !important;
+}
+
+#password[type="password"] {
+    -webkit-text-security: disc !important;
+    text-security: disc !important;
+}
+
+/* Placeholder styles for better contrast */
+.login-input::placeholder {
+    color: var(--primary-mid-gray);
+    opacity: 0.8;
 }
 
 .login-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-2px);
+    border-color: var(--accent-navy); /* Darker blue for better contrast */
+    box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25); /* More visible focus ring */
+    outline: none;
 }
 
 .login-input:hover {
-    border-color: #cbd5e0;
-    transform: translateY(-1px);
+    border-color: var(--primary-dark-gray); /* Darker border on hover for better visibility */
+}
+
+.login-input.is-invalid {
+    border-color: var(--secondary-red);
+    box-shadow: 0 0 0 3px rgba(233, 118, 118, 0.1);
 }
 
 /* Password Toggle Button */
 .password-toggle {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #718096;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
+    color: #4b5563; /* Darker color for better contrast */
+    cursor: pointer !important;
+    padding: 6px;
+    border-radius: 4px;
     transition: all 0.2s ease;
-    z-index: 5;
+    z-index: 1000; /* Higher z-index to ensure it's above validation icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; /* Slightly larger touch target */
+    height: 36px; /* Slightly larger touch target */
+    pointer-events: auto;
+    outline: none;
+    -webkit-appearance: none;
 }
 
 .password-toggle:hover {
-    color: #667eea;
-    background: rgba(102, 126, 234, 0.1);
+    color: #0a4b9f; /* Darker blue for better contrast */
+    background: rgba(10, 75, 159, 0.15); /* Slightly more visible hover state */
 }
 
-/* Form Check (Remember Me) */
-.form-check-input:checked {
-    background-color: #667eea;
-    border-color: #667eea;
+.password-toggle:focus {
+    outline: 2px solid #0a4b9f; /* Visible focus outline */
+    outline-offset: 2px;
+    color: #0a4b9f;
+    background: rgba(10, 75, 159, 0.15);
 }
 
-.form-check-label {
-    color: #718096;
-    font-size: 0.9rem;
+.password-toggle i {
+    font-size: 16px; /* Larger icon for better visibility */
 }
+
+
 
 /* Forgot Password Link */
-.forgot-password {
-    color: #667eea;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
+.forgot-password-link {
+    color: #007bff; /* Primary blue color */
+    text-decoration: underline; /* Underline for better accessibility */
+    font-size: 1rem; /* Increased font size */
+    font-weight: 600; /* Bolder text */
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
 }
 
-.forgot-password:hover {
-    color: #5a67d8;
+.forgot-password-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+    background: rgba(0, 123, 255, 0.1);
     text-decoration: underline;
 }
 
-/* Login Button */
+/* Login Button - TrackStix Design */
 .login-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #007bff; /* Primary blue background */
     border: none;
-    border-radius: 12px;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
+    border-radius: 8px;
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem; /* Larger font size */
+    font-weight: 700; /* Bolder text */
+    color: var(--bg-primary);
     text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 48px;
+    box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1); /* Subtle shadow for depth */
+    text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2); /* Text shadow for better readability */
 }
 
-.login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-    color: white;
+.login-btn:hover:not(:disabled) {
+    background: #0056b3; /* Darker blue on hover */
+    color: var(--bg-primary);
     text-decoration: none;
+    box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
 }
 
-.login-btn:active {
-    transform: translateY(0);
+.login-btn:active:not(:disabled) {
+    background: #004085; /* Even darker blue on active */
+    box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
 }
 
-.login-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-}
-
-.login-btn:hover::before {
-    left: 100%;
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .btn-loader {
     margin-left: 0.5rem;
 }
 
-/* Demo Credentials */
-.demo-credentials {
-    background: rgba(102, 126, 234, 0.05);
-    border: 1px solid rgba(102, 126, 234, 0.1);
-    border-radius: 16px;
-    padding: 1.5rem;
-    text-align: center;
+/* Login Error Alert */
+.alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    border-radius: 8px;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
 }
 
-.demo-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #667eea;
-    margin-bottom: 1rem;
-    display: flex;
+.alert-danger i {
+    color: #dc2626;
+}
+
+
+/* Loading State for Login Button */
+.login-btn.loading .btn-text {
+    opacity: 0;
+}
+
+.login-btn.loading .btn-loader {
+    display: flex !important;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.credentials-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+/* Improved Accessibility - Focus States for Keyboard Navigation */
+:focus-visible {
+    outline: 3px solid #0a4b9f;
+    outline-offset: 2px;
 }
 
-.credential-item {
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 12px;
-    padding: 0.75rem;
-    border: 1px solid rgba(102, 126, 234, 0.1);
+.login-btn:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
 }
 
-.credential-item .role {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #667eea;
-    margin-bottom: 0.25rem;
-}
-
-.credential-item .creds {
-    font-size: 0.85rem;
-    color: #4a5568;
-    font-family: 'Courier New', monospace;
+/* Invalid Feedback Styling */
+.form-floating .invalid-feedback {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #dc2626;
     font-weight: 500;
-}
-
-.demo-note {
-    color: #718096;
-    font-size: 0.75rem;
-    font-style: italic;
 }
 
 /* Responsive Design for Login */
@@ -1156,6 +1289,10 @@ h1, h2, h3, h4, h5, h6 {
     
     .login-title {
         font-size: 1.75rem;
+    }
+    
+    .brand-name {
+        font-size: 1.25rem;
     }
     
     .login-logo {
@@ -1171,6 +1308,10 @@ h1, h2, h3, h4, h5, h6 {
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
+    
+    .forgot-password-link {
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1180,6 +1321,10 @@ h1, h2, h3, h4, h5, h6 {
     
     .login-title {
         font-size: 1.5rem;
+    }
+    
+    .brand-name {
+        font-size: 1.1rem;
     }
     
     .login-logo {
@@ -1194,19 +1339,4 @@ h1, h2, h3, h4, h5, h6 {
     .shape {
         display: none;
     }
-}
-
-/* Loading State for Login Button */
-.login-btn.loading .btn-text {
-    opacity: 0;
-}
-
-.login-btn.loading .btn-loader {
-    display: block !important;
-}
-
-/* Invalid Feedback Styling */
-.form-floating .invalid-feedback {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
 } 

@@ -1,8 +1,20 @@
 <!-- Navigation -->
+<style>
+.brand-x {
+    background: linear-gradient(to right, #007bff 50%, #000000 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+.brand-s {
+    font-size: 0.8em;
+}
+</style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="#">
-            <i class="fas fa-boxes me-2"></i>Asset Management
+            Track<span class="brand-s">S</span>ti<span class="brand-x">x</span>
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -13,47 +25,47 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="dashboard.html" id="nav-dashboard">
-                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="assets.html" id="nav-assets">
-                        <i class="fas fa-laptop me-1"></i>Assets & Inventory
+                        Assets & Inventory
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="employees.html" id="nav-employees">
-                        <i class="fas fa-users me-1"></i>Employees
+                        Employees
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="maintenance.html" id="nav-maintenance">
-                        <i class="fas fa-tools me-1"></i>Maintenance
+                        Maintenance
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="vendors.html" id="nav-vendors">
-                        <i class="fas fa-truck me-1"></i>Vendors
+                        Vendors
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="reports.html" id="nav-reports">
-                        <i class="fas fa-chart-bar me-1"></i>Reports
+                        Reports
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" id="nav-qr-scanner" onclick="alert('QR Scanner functionality - to be implemented')">
-                        <i class="fas fa-qrcode me-1"></i>QR Scanner
+                        QR Scanner
                     </a>
                 </li>
             </ul>
             
             <div class="d-flex align-items-center">
                 <span class="text-white me-3">
-                    <i class="fas fa-user-shield me-1"></i>Admin User
+                    Admin User
                 </span>
                 <a href="../../index.html" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    Logout
                 </a>
             </div>
         </div>

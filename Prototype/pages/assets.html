@@ -748,77 +748,61 @@
             font-size: 0.875rem;
             text-transform: none;
             letter-spacing: 0.025em;
-            transition: all 0.2s ease;
+            transition: filter 0.2s ease;
             border: 1.5px solid;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
             min-height: 38px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
         }
         
-        .btn-modern:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-modern:hover:before {
-            left: 100%;
-        }
+
         
         .btn-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            filter: brightness(0.9);
         }
         
         /* Consistent Button Color System - Each Function Has Unique Color */
         
         /* Primary Actions - Add/Create */
         .btn-modern.btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             border-color: #667eea;
             color: white;
         }
         
         /* Issue/Assign Actions - Green */
         .btn-modern.btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #10b981;
             border-color: #10b981;
             color: white;
         }
         
         /* Collect/Return Actions - Orange */
         .btn-modern.btn-warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            background: #f59e0b;
             border-color: #f59e0b;
             color: white;
         }
         
         /* Schedule/Maintenance Actions - Pink */
         .btn-modern.btn-outline-warning {
-            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            background: #ec4899;
             border-color: #ec4899;
             color: white;
         }
         
         /* Export/Download Actions - Teal */
         .btn-modern.btn-outline-success {
-            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            background: #14b8a6;
             border-color: #14b8a6;
             color: white;
         }
         
         /* Bulk/Upload Actions - Blue */
         .btn-modern.btn-outline-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: #3b82f6;
             border-color: #3b82f6;
             color: white;
         }
@@ -826,7 +810,7 @@
         /* View Toggle/Secondary Actions - Gray */
         .btn-modern.btn-outline-secondary,
         .btn-modern.btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            background: #6b7280;
             border-color: #6b7280;
             color: white;
         }
@@ -847,48 +831,47 @@
         }
         
         .asset-actions .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            filter: brightness(0.9);
         }
         
         /* View Details - Purple (matches primary) */
         .asset-actions .btn-outline-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
             border-color: #667eea;
         }
         
         /* Edit - Indigo */
         .asset-actions .btn-outline-secondary {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            background: #6366f1;
             color: white;
             border-color: #6366f1;
         }
         
         /* Assign - Green (matches success) */
         .asset-actions .btn-outline-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #10b981;
             color: white;
             border-color: #10b981;
         }
         
         /* Maintenance - Pink (matches schedule maintenance) */
         .asset-actions .btn-outline-warning {
-            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            background: #ec4899;
             color: white;
             border-color: #ec4899;
         }
         
         /* QR Code - Cyan */
         .asset-actions .btn-outline-info {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            background: #06b6d4;
             color: white;
             border-color: #06b6d4;
         }
 
         /* Modern Badge Styles */
         .badge.badge-available {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            background: #11998e !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -898,7 +881,7 @@
         }
         
         .badge.badge-assigned {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background: #667eea !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -908,7 +891,7 @@
         }
         
         .badge.badge-reserved {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background: #667eea !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -918,7 +901,7 @@
         }
         
         .badge.badge-under-repair {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            background: #f093fb !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -928,7 +911,7 @@
         }
         
         .badge.badge-low-stock {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            background: #f093fb !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -938,7 +921,7 @@
         }
         
         .badge.badge-retired {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            background: #ff416c !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
@@ -949,58 +932,52 @@
         
         /* Modern Stats Card Styles */
         .stats-card-modern {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: filter 0.2s ease;
             border-radius: 0.75rem !important;
             overflow: hidden;
             background: #fff;
         }
         
         .stats-card-modern:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+            filter: brightness(0.95);
         }
         
-        .stats-icon {
-            transition: all 0.3s ease;
-        }
+
         
-        .stats-card-modern:hover .stats-icon {
-            transform: scale(1.1);
-        }
+
         
         /* Modern Grid View Card Styles */
         .asset-card-modern {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 0.75rem !important;
             overflow: hidden;
             background: #fff;
+            transition: none !important;
+            cursor: default !important;
         }
         
+        /* Remove all hover effects from grid view cards */
         .asset-card-modern:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
         }
+        
+        /* Remove hover effects from badges in grid view */
+        .asset-card-modern .badge:hover {
+            box-shadow: none !important;
+            transform: none !important;
+            filter: none !important;
+            cursor: default !important;
+        }
+        
+
         
         .card-header-gradient {
             position: relative;
             overflow: hidden;
         }
         
-        .card-header-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .asset-card-modern:hover .card-header-gradient::before {
-            opacity: 1;
-        }
+
         
         .asset-info-modern .info-item {
             padding: 0.5rem;
@@ -1013,13 +990,11 @@
         .asset-info-modern .info-item:hover {
             background: rgba(0, 123, 255, 0.05);
             border-left-color: rgba(0, 123, 255, 0.4);
-            transform: translateX(2px);
         }
         
         /* Enhanced table styling */
         .table-hover tbody tr:hover {
             background-color: rgba(0, 123, 255, 0.05);
-            transform: scale(1.01);
             transition: all 0.2s ease;
         }
         
@@ -1029,8 +1004,7 @@
         }
         
         .btn-group .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            filter: brightness(0.9);
         }
         
         /* Mode toggle styles */
@@ -1274,13 +1248,13 @@
                     const assignedToOrLocation = cells[5].textContent.trim() === '-' ? 'Not Assigned' : cells[5].textContent.trim();
                     const lastUpdated = cells[6].textContent.trim();
                     
-                    // Get asset type icon and color with gradient backgrounds
+                    // Get asset type icon and color with solid backgrounds
                     const typeIcons = {
-                        'Laptop': { icon: 'fas fa-laptop', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' },
-                        'Monitor': { icon: 'fas fa-desktop', gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', color: 'white' },
-                        'Mobile': { icon: 'fas fa-mobile-alt', gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', color: 'white' },
-                        'Tablet': { icon: 'fas fa-tablet-alt', gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', color: 'white' },
-                        'Accessory': { icon: 'fas fa-headphones', gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', color: 'white' }
+                        'Laptop': { icon: 'fas fa-laptop', gradient: '#667eea', color: 'white' },
+                        'Monitor': { icon: 'fas fa-desktop', gradient: '#f093fb', color: 'white' },
+                        'Mobile': { icon: 'fas fa-mobile-alt', gradient: '#4facfe', color: 'white' },
+                        'Tablet': { icon: 'fas fa-tablet-alt', gradient: '#43e97b', color: 'white' },
+                        'Accessory': { icon: 'fas fa-headphones', gradient: '#fa709a', color: 'white' }
                     };
                     
                     // Get status badge color and style
@@ -1292,7 +1266,7 @@
                         'LOST': { class: 'badge-retired', icon: 'fas fa-question-circle' }
                     };
                     
-                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' };
+                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', gradient: '#667eea', color: 'white' };
                     const statusInfo = statusStyles[status] || { class: 'badge-retired', icon: 'fas fa-question-circle' };
                     
                     const card = document.createElement('div');
