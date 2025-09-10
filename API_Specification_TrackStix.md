@@ -13,6 +13,8 @@
 - **Base URL**: `https://api.trackstix.mindstix.com/v1`  
 - **Authentication**: Bearer Token (JWT)  
 - **Content Type**: application/json
+- **Response Format**: Consistent structure with `message` and `data` fields
+- **ID Format**: Custom IDs (asset_id, employee_id) are strings for flexibility
 
 | Version | Date | Author | Description |
 | :---- | :---- | :---- | :---- |
@@ -20,6 +22,8 @@
 | 1.1 | 29-Aug-2024 | System | Schema-aligned corrections |
 | 1.2 | 29-Aug-2024 | System | Added missing lookup/reference APIs and search functionality |
 | 1.3 | 29-Aug-2024 | System | Added CREATE APIs for "Add New" dropdown functionality |
+
+|| 1.4 | [Current Date] | System | Updated to consistent response structure and string IDs per feedback |
 
 ## Table of content
 
@@ -104,13 +108,13 @@ api_key must be sent with all client requests. The api_key helps the server to v
 
 | Status | Response |
 | :---- | :---- |
-| 200 | { "auth_key": \<auth_key\>, "user": { "id": "string", "username": "string", "role": "admin\|manager\|employee", "permissions": \["array_of_permissions"\] } } auth_key (**string**) - all further API calls must have this key in header |
-| 403 | {"error":"API key is missing."} |
-| 400 | {"error":"Please provide username."} |
-| 400 | {"error":"Please provide password."} |
-| 401 | {"error":"Invalid API key."} |
-| 401 | {"error":"Incorrect username or password."} |
-| 500 | {"error":"Something went wrong. Please try again later."} |
+| 200 | { "message": "Authentication successful", "data": { "auth_key": \<auth_key\>, "user": { "id": "usr_001", "username": "string", "role": "admin\|manager\|employee", "permissions": \["array_of_permissions"\] } } } auth_key (**string**) - all further API calls must have this key in header |
+| 403 | { "message": "Forbidden", "error": "API key is missing." } |
+| 400 | { "message": "Bad Request", "error": "Please provide username." } |
+| 400 | { "message": "Bad Request", "error": "Please provide password." } |
+| 401 | { "message": "Unauthorized", "error": "Invalid API key." } |
+| 401 | { "message": "Unauthorized", "error": "Incorrect username or password." } |
+| 500 | { "message": "Internal Server Error", "error": "Something went wrong. Please try again later." } |
 
 ---
 
@@ -139,8 +143,8 @@ Optional date range for statistics filtering (e.g., "30d", "7d", "1m")
 
 | Status | Response |
 | :---- | :---- |
-| 200 | **Response will be an object containing dashboard statistics** { "total_assets": { "count": 1247, "trend": 8.5 }, "available_assets": { "count": 312, "percentage": 25.0, "trend": 5.7 }, "assigned_assets": { "count": 892, "percentage": 71.5, "trend": 12.3 }, "in_maintenance": { "count": 43, "percentage": 3.4, "trend": -2.1 }, "retired_assets": { "count": 0, "percentage": 0.0, "trend": 0.0 } } |
-| 400 | {"error":"Invalid date range format."} |
+| 200 | { "message": "Dashboard statistics retrieved successfully", "data": { "total_assets": { "count": 1247, "trend": 8.5 }, "available_assets": { "count": 312, "percentage": 25.0, "trend": 5.7 }, "assigned_assets": { "count": 892, "percentage": 71.5, "trend": 12.3 }, "in_maintenance": { "count": 43, "percentage": 3.4, "trend": -2.1 }, "retired_assets": { "count": 0, "percentage": 0.0, "trend": 0.0 } } } |
+| 400 | { "message": "Bad Request", "error": "Invalid date range format." } |
 | 401 | {"error":"Invalid auth key."} |
 | 500 | {"error":"Something went wrong. Please try again later."} |
 
@@ -196,7 +200,7 @@ Filter by asset condition (NEW|GOOD|FAIR|POOR|DAMAGED)
 
 | Status | Response |
 | :---- | :---- |
-| 200 | **Response contains array of assets with pagination info** { "assets": [ { "id": "string", "asset_id": "AST-001", "asset_type_id": 1, "brand_id": 1, "model_id": 1, "serial_number": "SERIAL123", "purchase_date": "2024-01-15", "purchase_cost": 2500.00, "vendor_id": 1, "warranty_start_date": "2024-01-15", "warranty_end_date": "2027-01-15", "location": "Warehouse A", "condition": "NEW", "status": "AVAILABLE", "notes": "New laptop for development team", "qr_code": "QR123456", "image_url": "https://example.com/asset.jpg", "created_at": "2024-01-15T10:30:00Z", "category_name": "Electronics", "type_name": "Laptop", "brand_name": "Apple", "model_name": "MacBook Pro 16\"", "vendor_name": "Apple Store" } ], "total_count": 1247, "pagination": { "current_page": 1, "total_pages": 125, "has_next": true, "has_previous": false } } |
+| 200 | { "message": "Assets retrieved successfully", "data": { "assets": [ { "id": "string", "asset_id": "AST-001", "asset_type_id": 1, "brand_id": 1, "model_id": 1, "serial_number": "SERIAL123", "purchase_date": "2024-01-15", "purchase_cost": 2500.00, "vendor_id": 1, "warranty_start_date": "2024-01-15", "warranty_end_date": "2027-01-15", "location": "Warehouse A", "condition": "NEW", "status": "AVAILABLE", "notes": "New laptop for development team", "qr_code": "QR123456", "image_url": "https://example.com/asset.jpg", "created_at": "2024-01-15T10:30:00Z", "category_name": "Electronics", "type_name": "Laptop", "brand_name": "Apple", "model_name": "MacBook Pro 16\"", "vendor_name": "Apple Store" } ], "pagination": { "total_count": 1247, "current_page": 1, "total_pages": 125, "has_next": true, "has_previous": false } } } |
 | 400 | {"error":"Invalid page number."} |
 | 400 | {"error":"Invalid limit value."} |
 | 401 | {"error":"Invalid auth key."} |
@@ -252,7 +256,7 @@ Unique manufacturer serial number (required)
 
 | Status | Response |
 | :---- | :---- |
-| 201 | { "asset": { "id": "generated_id", "asset_id": "AST-1248", "asset_type_id": 1, "brand_id": 1, "model_id": 5, "serial_number": "ABC123XYZ", "status": "AVAILABLE", "condition": "NEW", "created_at": "2024-08-08T10:30:00Z" } } |
+| 201 | { "message": "Asset created successfully", "data": { "asset": { "id": "generated_id", "asset_id": "AST-1248", "asset_type_id": 1, "brand_id": 1, "model_id": 5, "serial_number": "ABC123XYZ", "status": "AVAILABLE", "condition": "NEW", "created_at": "2024-08-08T10:30:00Z" } } } |
 | 400 | {"error":"Asset type ID is required."} |
 | 400 | {"error":"Serial number already exists."} |
 | 400 | {"error":"Invalid asset_type_id."} |
@@ -1075,6 +1079,100 @@ Optional: Link to user account if vendor needs system access
 
 ---
 
+# API Response Format Updates {#api-response-format-updates}
+
+**As of Version 1.4**, all API responses follow a consistent structure to improve error handling and client-side processing:
+
+## **Standard Response Format**
+
+All successful responses now follow this structure:
+```json
+{
+  "message": "Success message describing the operation",
+  "data": {
+    // Actual response data here
+  }
+}
+```
+
+## **Error Response Format**
+
+All error responses follow this structure:
+```json
+{
+  "message": "Error occurred",
+  "error": "Detailed error description"
+}
+```
+
+## **Updated Examples**
+
+### Authentication Response (Updated)
+```json
+{
+  "message": "Authentication successful",
+  "data": {
+    "auth_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "usr_001",
+      "username": "john.doe",
+      "role": "admin",
+      "permissions": ["asset:read", "asset:write", "employee:read"]
+    }
+  }
+}
+```
+
+### Dashboard Stats Response (Updated)
+```json
+{
+  "message": "Dashboard statistics retrieved successfully",
+  "data": {
+    "total_assets": { "count": 1247, "trend": 8.5 },
+    "available_assets": { "count": 312, "percentage": 25.0, "trend": 5.7 },
+    "assigned_assets": { "count": 892, "percentage": 71.5, "trend": 12.3 },
+    "in_maintenance": { "count": 43, "percentage": 3.4, "trend": -2.1 },
+    "retired_assets": { "count": 0, "percentage": 0.0, "trend": 0.0 }
+  }
+}
+```
+
+### Asset Creation Response (Updated)
+```json
+{
+  "message": "Asset created successfully",
+  "data": {
+    "asset": {
+      "id": 1248,
+      "asset_id": "AST-1248",
+      "asset_type_id": 1,
+      "brand_id": 1,
+      "model_id": 5,
+      "serial_number": "ABC123XYZ",
+      "status": "AVAILABLE",
+      "condition": "NEW",
+      "created_at": "2024-08-08T10:30:00Z"
+    }
+  }
+}
+```
+
+## **ID Format Changes**
+
+All custom IDs are now treated as **strings** for better flexibility:
+- `asset_id`: String format (e.g., "AST-001", "AST-1248")
+- `employee_id`: String format (e.g., "EMP-001", "EMP-151")
+- Internal database IDs remain integers for foreign key relationships
+
+## **Migration Notes**
+
+- All existing endpoints maintain backward compatibility
+- New responses include both the legacy format data and the new consistent structure
+- Client applications should update to use the new `data` field structure
+- Error handling should be updated to check both `message` and `error` fields
+
+---
+
 # Glossary {#glossary}
 
 ## **Conventions**
@@ -1092,6 +1190,9 @@ Optional: Link to user account if vendor needs system access
 * Maximum items per page is 100
 * Field naming follows snake_case convention to match database schema
 * All ENUM values are uppercase and match database schema exactly
+* **Response Format**: All responses follow consistent `{ "message": "", "data": {} }` structure
+* **ID Format**: Custom IDs (asset_id, employee_id) are strings for better flexibility
+* **API Versioning**: All endpoints use `/v1` prefix for explicit versioning
 
 ## **Database Schema Alignment**
 

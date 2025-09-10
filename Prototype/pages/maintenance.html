@@ -14,14 +14,14 @@
 <body style="background-color: #ffffff;">
 
     <!-- Main Content -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-3 py-4">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="mb-0" style="color: #0A0A0A;">Maintenance & Repairs</h2>
                 <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
             </div>
-            <a href="../form_pages/schedule-maintenance.html" class="btn btn-primary btn-modern">
+            <a href="../form_pages/schedule-maintenance.html" class="btn btn-warning btn-modern">
                 <i class="fas fa-plus me-1"></i>Schedule Maintenance
             </a>
         </div>
@@ -561,7 +561,7 @@
         }
         
         .badge.badge-in-progress {
-            background-color: #FFC000FF !important;
+            background-color: #FF8C61FF !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -622,7 +622,7 @@
         }
 
         .badge.badge-priority-medium {
-            background-color: #FFC000FF !important;
+            background-color: #FF8C61FF !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -641,12 +641,12 @@
         
         /* Stats Icons - Solid Colors from Palette */
         .stats-icon.bg-warning {
-            background-color: #FFC000FF !important;
+            background-color: #FF8C61FF !important;
             color: white !important;
         }
         
         .progress-bar.bg-warning {
-            background-color: #FFC000FF !important;
+            background-color: #FF8C61FF !important;
         }
         
         .stats-icon.bg-info {
@@ -699,7 +699,7 @@
         
         /* Text Colors - Updated to match palette */
         .text-warning {
-            color: #FFC000FF !important;
+            color: #FF8C61FF !important;
         }
         
         .text-info {
@@ -729,6 +729,40 @@
         .table-hover tbody tr:hover {
             background-color: #F3F3F3FF !important;
             transition: all 0.2s ease !important;
+        }
+        
+        /* Table responsive container - no padding to avoid white border */
+        .table-responsive {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Table cell padding adjustments for balanced spacing */
+        .table td, .table th {
+            padding: 0.75rem !important;
+        }
+        
+        /* First column padding adjustments */
+        .table td:first-child, .table th:first-child {
+            padding-left: 1.5rem !important;
+        }
+        
+        /* Actions column (last column) padding adjustments */
+        .table td:last-child, .table th:last-child {
+            padding-right: 1.5rem !important;
+            text-align: center !important;
+        }
+        
+        /* Maintenance actions button group spacing */
+        .maintenance-actions {
+            justify-content: center !important;
+            gap: 0.25rem !important;
+        }
+        
+        .maintenance-actions .btn {
+            padding: 0.25rem 0.5rem !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
         }
         
         /* Card improvements */
@@ -972,30 +1006,19 @@
         
         /* Consistent Button Color System - Same as Other Pages */
         
-        /* Schedule Maintenance - Primary Color */
-        .btn-modern.btn-primary {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
-            color: white !important;
-        }
-        
-        .btn-modern.btn-primary:hover {
-            background-color: #2415c7 !important;
-            border-color: #2415c7 !important;
-            color: white !important;
-        }
-        
+        /* Schedule Maintenance - Orange Color */
         .btn-modern.btn-warning {
-            background-color: #FFC000FF !important;
-            border-color: #FFC000FF !important;
+            background-color: #FF8C61FF !important;
+            border-color: #FF8C61FF !important;
             color: white !important;
         }
         
         .btn-modern.btn-warning:hover {
-            background-color: #e6ac00 !important;
-            border-color: #e6ac00 !important;
+            background-color: #e67d4d !important;
+            border-color: #e67d4d !important;
             color: white !important;
         }
+        
         
         /* Maintenance action buttons - Updated Design */
         .maintenance-actions .btn {
@@ -1029,8 +1052,8 @@
         }
         
         .maintenance-actions .btn-outline-secondary:hover {
-            color: #FFC000FF !important;
-            border-color: #FFC000FF !important;
+            color: #FF8C61FF !important;
+            border-color: #FF8C61FF !important;
         }
         
         .maintenance-actions .btn-outline-success:hover {

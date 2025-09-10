@@ -8,116 +8,167 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
-    
-    <!-- Unified Form Styles -->
     <link rel="stylesheet" href="unified-form-styles.css">
 </head>
 <body>
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8 col-xl-6">
-                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
-                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
-                        <div class="d-flex align-items-center justify-content-center mb-2">
-                            <div class="stats-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                                <i class="fas fa-user-plus text-primary fa-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="card-title mb-0 fw-bold text-dark">Add New Employee</h4>
-                                <p class="text-muted mb-0 small">Register a new employee in your system</p>
-                            </div>
-                        </div>
+            <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
+                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;">
+                        <h4 class="card-title mb-2 fw-bold text-dark">Add New Employee</h4>
+                        <p class="text-muted mb-0 small">Register a new employee in your system</p>
                     </div>
-                    <div class="card-body p-4 p-lg-5">
-                        <form id="addEmployeeForm" class="needs-validation" novalidate>
+                    <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+                        <form id="employeeForm" class="needs-validation" novalidate>
+                            
+                            <!-- Section 1: Basic Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Basic Information</legend>
                             <div class="row g-4">
                                 <!-- Employee ID -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="EMP-XXX">
-                                        <label for="employeeId">
-                                            <i class="fas fa-id-badge me-2 text-muted"></i>Employee ID
-                                        </label>
-                                        <div class="form-text">Auto-generated if left empty</div>
-                                    </div>
+                                        <label for="employeeId" class="form-label">Employee ID <span class="text-muted">(Auto-generated)</span></label>
+                                        <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="EMP-XXX" readonly style="background-color: #f8f9fa;">
+                                        <div class="form-text">Automatically generated when form is submitted</div>
                                 </div>
 
                                 <!-- First Name -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="John" required>
-                                        <label for="firstName">
-                                            <i class="fas fa-user me-2 text-muted"></i>First Name *
-                                        </label>
-                                    </div>
+                                        <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name" 
+                                               required minlength="2" maxlength="50" 
+                                               pattern="[A-Za-z\s]{2,50}"
+                                               title="First name must be 2-50 characters (letters and spaces only)">
+                                        <div class="form-text">2-50 characters (letters and spaces only)</div>
                                 </div>
 
                                 <!-- Last Name -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Doe" required>
-                                        <label for="lastName">
-                                            <i class="fas fa-user me-2 text-muted"></i>Last Name *
-                                        </label>
-                                    </div>
+                                        <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter last name" 
+                                               required minlength="2" maxlength="50" 
+                                               pattern="[A-Za-z\s]{2,50}"
+                                               title="Last name must be 2-50 characters (letters and spaces only)">
+                                        <div class="form-text">2-50 characters (letters and spaces only)</div>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="john.doe@company.com" required>
-                                        <label for="email">
-                                            <i class="fas fa-envelope me-2 text-muted"></i>Email Address *
-                                        </label>
+                                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="john.doe@company.com" 
+                                               required maxlength="100"
+                                               title="Please enter a valid email address">
+                                        <div class="form-text">Corporate email address (required)</div>
                                     </div>
                                 </div>
 
+                            </fieldset>
+
+                            <!-- Section 2: Contact & Personal Details -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Contact & Personal Details</legend>
+                                <div class="row g-4">
                                 <!-- Phone -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+1 (555) 123-4567">
-                                        <label for="phone">
-                                            <i class="fas fa-phone me-2 text-muted"></i>Phone Number
-                                        </label>
-                                    </div>
+                                        <label for="phone" class="form-label">Phone Number <span class="text-muted">(Optional)</span></label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+1 (555) 123-4567" 
+                                               pattern="[\+]?[0-9\s\-\(\)]{10,20}"
+                                               title="Please enter a valid phone number">
+                                        <div class="form-text">Contact phone number with country code</div>
                                 </div>
 
                                 <!-- Date of Birth -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                        <label for="dateOfBirth" class="form-label">Date of Birth <span class="text-muted">(Optional)</span></label>
                                         <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth">
-                                        <label for="dateOfBirth">
-                                            <i class="fas fa-birthday-cake me-2 text-muted"></i>Date of Birth
-                                        </label>
-                                    </div>
+                                        <div class="form-text">Used for HR records and birthday notifications</div>
                                 </div>
 
                                 <!-- Address -->
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="address" name="address" placeholder="Street address, City, State, ZIP" style="height: 100px"></textarea>
-                                        <label for="address">
-                                            <i class="fas fa-home me-2 text-muted"></i>Address
+                                        <label for="address" class="form-label">
+                                            Address <span class="text-muted">(Optional)</span>
                                         </label>
+                                        <textarea class="form-control expandable-notes" id="address" name="address" rows="3" 
+                                                  placeholder="Click to expand and add address..." 
+                                                  onclick="expandNotesField(this)" maxlength="300">
+                                        </textarea>
+                                        <div class="form-text">
+                                            Click to expand for more space. Include street address, city, state, and ZIP code
+                                        </div>
+                                        <div class="character-count text-end" id="addressCounter">
+                                            <small class="text-muted">0/300 characters</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Form Actions -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
-                                            <i class="fas fa-times me-1"></i>Cancel
-                                        </button>
-                                        <button type="submit" class="btn btn-primary form-btn-primary">
-                                            <i class="fas fa-user-plus me-1"></i>Add Employee
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            </fieldset>
                         </form>
                     </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="card-footer bg-light border-top">
+                        <div class="form-actions">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="history.back()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary px-5 py-2" form="employeeForm">
+                                        Add Employee
+                                    </button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Fields marked with <span class="text-danger">*</span> are required
+                                    </small>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Success Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Employee Added Successfully</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="successMessage" class="mb-3">
+                    <strong id="employeeDetails"></strong> has been added successfully!
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="addAnotherEmployee()">
+                        Add Another
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewEmployeeList()">
+                        View Employees
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Registration Failed</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="errorMessage" class="mb-3">
+                    Please check all required fields and try again.
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="scrollToFirstError()">
+                        Find Errors
+                    </button>
                 </div>
             </div>
         </div>
@@ -127,9 +178,176 @@
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
 
-    <!-- Modern Theme Styles -->
+    <!-- Clean Bootstrap 5 Styles -->
     <style>
-        /* Modern Card Styles */
+        /* Dynamic Card Sizing */
+        .card {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        .card-body {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+        
+        /* Consistent Fieldset Styling */
+        .form-fieldset {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+            background: rgba(248, 250, 252, 0.3);
+            position: relative;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .form-fieldset:hover {
+            border-color: #cbd5e1 !important;
+            background: rgba(248, 250, 252, 0.5);
+            transition: all 0.2s ease;
+        }
+        
+        .form-legend {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            padding: 0.375rem 0.75rem !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.375rem !important;
+            margin-bottom: 1rem !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: auto !important;
+            float: none !important;
+        }
+        
+        /* Form Container */
+        .needs-validation {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* WCAG AA Compliant Form Controls */
+        .form-control, .form-select {
+            border: 2px solid #9ca3af; /* Darker border for better visibility */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            color: #1f2937; /* High contrast text */
+        }
+        
+        /* Enhanced placeholder contrast - WCAG AA compliant */
+        .form-control::placeholder {
+            color: #4b5563 !important; /* Much darker grey for better contrast */
+            opacity: 1;
+        }
+        
+        .form-select option {
+            color: #1f2937; /* High contrast for dropdown options */
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #331FEAFF;
+            box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+            outline: 2px solid transparent; /* Maintain focus visibility */
+        }
+        
+        .form-control:hover, .form-select:hover {
+            border-color: #6b7280; /* Darker hover state for better visibility */
+        }
+        
+        /* High Contrast Form Text - WCAG AA Compliant */
+        .form-text {
+            font-size: 0.875rem;
+            color: #374151 !important; /* Much darker for better contrast */
+            margin-top: 0.25rem;
+            font-weight: 500; /* Slightly bolder for better readability */
+        }
+        
+        /* Enhanced Required Field Indicator */
+        .text-danger {
+            color: #dc2626 !important;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+         /* WCAG AA Compliant Optional Field Indicator */
+         .text-muted {
+             color: #4b5563 !important; /* Darker grey for better contrast */
+             font-weight: 600; /* Bolder for better readability */
+             font-size: 0.9em;
+         }
+        
+        /* Action Buttons */
+        .form-actions {
+            padding: 1.5rem;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 2px solid #dee2e6 !important;
+            border-radius: 0 0 1.5rem 1.5rem !important;
+        }
+        
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+        }
+
+        /* WCAG AA Compliant Cancel Button */
+        .btn-outline-secondary {
+            background-color: #f8f9fa !important;
+            border: 2px solid #6c757d !important;
+            color: #495057 !important; /* High contrast text */
+            font-weight: 600;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #e9ecef !important;
+            border-color: #5a6268 !important;
+            color: #343a40 !important; /* Even higher contrast on hover */
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-secondary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+            border-color: #5a6268 !important;
+        }
+        
+        /* Card Styling */
         .card {
             border-radius: 1.5rem !important;
             border: none !important;
@@ -144,213 +362,652 @@
             transform: scale(1.1);
         }
 
-        /* Form enhancements */
-        .form-floating > label {
-            font-weight: 500;
-            color: #6c757d;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .form-control, .form-select {
-            border-radius: 0.75rem;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:hover, .form-select:hover {
-            border-color: #667eea;
-        }
-
-        /* Button enhancements */
-        .btn {
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            padding: 0.75rem 1.5rem;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border: none !important;
-            color: white !important;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            color: white !important;
-        }
-
-        .btn-outline-secondary {
-            border: 2px solid #e9ecef !important;
-            color: #6c757d !important;
-        }
-
-        .btn-outline-secondary:hover {
-            background: #f8f9fa !important;
-            border-color: #dee2e6 !important;
-            color: #495057 !important;
-        }
-
-        /* Form validation */
+        /* Validation States */
         .was-validated .form-control:valid,
         .was-validated .form-select:valid {
-            border-color: #667eea;
+            border-color: #10b981;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
         }
 
         .was-validated .form-control:invalid,
         .was-validated .form-select:invalid {
-            border-color: #dc3545;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
+        /* Expandable Notes Styling */
+        .expandable-notes {
+            transition: height 0.3s ease, border-color 0.2s ease;
+            cursor: pointer;
+            resize: none;
+        }
+        
+        .expandable-notes:hover {
+            border-color: #9ca3af;
+        }
+        
+        .expandable-notes.expanded {
+            cursor: text;
+            resize: vertical;
+        }
+        
+        .expandable-notes:focus {
+            cursor: text;
+        }
+        
+        /* Enhanced Button Accessibility */
+        .btn:focus-visible {
+            outline: 2px solid #331FEAFF;
+            outline-offset: 2px;
+        }
+        
+        /* Character Counter Styling */
+        .character-count {
+            margin-top: 0.25rem;
+            transition: color 0.3s ease;
+        }
+        
+        .character-count .text-warning {
+            color: #f59e0b !important;
+        }
+        
+        .character-count .text-danger {
+            color: #dc2626 !important;
+            font-weight: 600;
+        }
+        
+        /* Disable automatic validation styling - only show on form submission */
+        .form-control:valid,
+        .form-select:valid {
+            border-color: #9ca3af !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        .form-control:invalid,
+        .form-select:invalid {
+            border-color: #9ca3af !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        /* Only show validation styling when form has been submitted */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
         }
 
-        /* Responsive adjustments */
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+            animation: subtle-shake 0.3s ease-in-out;
+        }
+        
+         @keyframes subtle-shake {
+             0%, 100% { transform: translateX(0); }
+             25% { transform: translateX(-2px); }
+             75% { transform: translateX(2px); }
+         }
+         
+         /* WCAG AA Compliant Toast Styling */
+         .toast-header.bg-success {
+             background: #198754 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-danger {
+             background: #dc3545 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-info {
+             background: #0d6efd !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-warning {
+             background: #fd7e14 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast {
+             border-radius: 0.75rem !important;
+             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+             border: 2px solid #dee2e6 !important; /* Visible border for better definition */
+             min-width: 350px;
+             max-width: 500px;
+         }
+         
+         .toast-body {
+             padding: 1rem 1.25rem;
+             background-color: #ffffff;
+             color: #212529; /* High contrast text */
+             font-weight: 500;
+         }
+         
+         .toast .btn-sm {
+             padding: 0.375rem 0.75rem;
+             font-size: 0.875rem;
+             border-radius: 0.375rem;
+            font-weight: 600;
+             margin: 0 0.25rem;
+         }
+         
+         /* Enhanced toast button styling */
+         .toast .btn-primary {
+             background-color: #0d6efd;
+             border-color: #0d6efd;
+             color: #ffffff;
+         }
+         
+         .toast .btn-outline-primary {
+             background-color: #ffffff;
+             border: 2px solid #0d6efd;
+             color: #0d6efd;
+         }
+         
+         .toast .btn-danger {
+             background-color: #dc3545;
+            border-color: #dc3545;
+             color: #ffffff;
+         }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
             .card-body {
                 padding: 1.5rem !important;
             }
             
+            .form-actions {
+                padding: 1rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 1rem 1rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+                border-radius: 0.375rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.9rem !important;
+                padding: 0.25rem 0.5rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
             .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0 !important;
+            }
+        }
+        
+        /* Responsive Enhancements */
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+            
+            .form-actions {
+                padding: 0.75rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 0.75rem 0.75rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+                border-radius: 0.25rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .expandable-notes.expanded {
+                height: 100px !important;
             }
         }
     </style>
 
-    <!-- Form JavaScript -->
+    <!-- Enhanced Form JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('addEmployeeForm');
-            const firstNameInput = document.getElementById('firstName');
-            const lastNameInput = document.getElementById('lastName');
-            const employeeIdInput = document.getElementById('employeeId');
+        // Enhanced form validation and functionality
+        (function() {
+            'use strict';
             
-            // Auto-generate Employee ID when first name or last name changes
-            function generateEmployeeId() {
-                if (!employeeIdInput.value && firstNameInput.value && lastNameInput.value) {
-                    // Generate a random ID for demo purposes
-                    const randomNum = Math.floor(Math.random() * 999) + 1;
-                    employeeIdInput.value = `EMP-${String(randomNum).padStart(3, '0')}`;
+            // Enhanced validation system
+            initializeFormValidation();
+            
+            function initializeFormValidation() {
+                setupDateValidation();
+                setupRealTimeValidation();
+                setupCustomValidationRules();
+                setupEmployeeIdGeneration();
+            }
+            
+            function setupDateValidation() {
+                const dateOfBirth = document.getElementById('dateOfBirth');
+                
+                // Date of birth cannot be in future and should be reasonable (18+ years old)
+                dateOfBirth.addEventListener('change', function() {
+                    const today = new Date();
+                    const minAge = new Date();
+                    minAge.setFullYear(today.getFullYear() - 100); // Max 100 years old
+                    const maxAge = new Date();
+                    maxAge.setFullYear(today.getFullYear() - 16); // Min 16 years old
+                    
+                    const birthDate = new Date(this.value);
+                    
+                    if (this.value && birthDate > today) {
+                        setFieldError(this, 'Date of birth cannot be in the future');
+                        return false;
+                    } else if (this.value && birthDate > maxAge) {
+                        setFieldError(this, 'Employee must be at least 16 years old');
+                        return false;
+                    } else if (this.value && birthDate < minAge) {
+                        setFieldError(this, 'Please enter a valid date of birth');
+                        return false;
+                    } else {
+                        setFieldValid(this);
+                        return true;
+                    }
+                });
+            }
+            
+            function setupRealTimeValidation() {
+                // Clean page load
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                    input.setCustomValidity('');
+                });
+                
+                // Add inline validation for required fields
+                const requiredFields = document.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    field.addEventListener('blur', function() {
+                        validateFieldInline(this);
+                    });
+                    
+                    field.addEventListener('focus', function() {
+                        if (this.classList.contains('is-invalid')) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid') && this.value.trim()) {
+                            validateFieldInline(this);
+                        }
+                    });
+                });
+            }
+            
+            function validateFieldInline(field) {
+                if (field.disabled || field.readOnly) return;
+                
+                if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+                
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                    return true;
+                } else {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
                 }
             }
-
-            firstNameInput.addEventListener('blur', generateEmployeeId);
-            lastNameInput.addEventListener('blur', generateEmployeeId);
-
-            // Form submission
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+            
+            function setupCustomValidationRules() {
+                const firstName = document.getElementById('firstName');
+                const lastName = document.getElementById('lastName');
+                const email = document.getElementById('email');
+                const phone = document.getElementById('phone');
+                const address = document.getElementById('address');
                 
-                // Add was-validated class for Bootstrap validation styling
-                form.classList.add('was-validated');
+                // Name validation
+                if (firstName) {
+                    firstName.pattern = '[A-Za-z\\s]{2,50}';
+                    firstName.title = 'First name must be 2-50 characters (letters and spaces only)';
+                }
                 
-                // Check if form is valid
+                if (lastName) {
+                    lastName.pattern = '[A-Za-z\\s]{2,50}';
+                    lastName.title = 'Last name must be 2-50 characters (letters and spaces only)';
+                }
+                
+                // Email validation (additional)
+                if (email) {
+                    email.addEventListener('blur', function() {
+                        if (this.value && !this.value.includes('@')) {
+                            setFieldError(this, 'Please enter a valid email address');
+                        }
+                    });
+                }
+                
+                // Phone validation
+                if (phone) {
+                    phone.addEventListener('blur', function() {
+                        if (this.value && this.value.length < 10) {
+                            setFieldError(this, 'Phone number must be at least 10 digits');
+                        }
+                    });
+                }
+                
+                if (address) {
+                    address.maxLength = 300;
+                    address.title = 'Address cannot exceed 300 characters';
+                }
+            }
+            
+            function setupEmployeeIdGeneration() {
+                const firstName = document.getElementById('firstName');
+                const lastName = document.getElementById('lastName');
+                const employeeId = document.getElementById('employeeId');
+                
+                function generateEmployeeId() {
+                    if (firstName.value && lastName.value) {
+                        // Generate ID based on name initials + random number
+                        const firstInitial = firstName.value.charAt(0).toUpperCase();
+                        const lastInitial = lastName.value.charAt(0).toUpperCase();
+                        const randomNum = Math.floor(Math.random() * 999) + 1;
+                        employeeId.value = `EMP-${firstInitial}${lastInitial}${String(randomNum).padStart(3, '0')}`;
+                    }
+                }
+                
+                firstName.addEventListener('blur', generateEmployeeId);
+                lastName.addEventListener('blur', generateEmployeeId);
+            }
+            
+            function setFieldError(field, message) {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+                field.setCustomValidity(message);
+            }
+            
+            function setFieldValid(field) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+                field.setCustomValidity('');
+            }
+            
+            // Bootstrap form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
                 if (form.checkValidity()) {
+                        // Generate specific success message
+                        const employeeDetails = generateEmployeeDetails();
+                        document.getElementById('employeeDetails').textContent = employeeDetails;
+                        
                     // Show loading state
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding Employee...';
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Employee...';
                     submitBtn.disabled = true;
                     
                     // Simulate processing time
                     setTimeout(() => {
-                        // Show success message
-                        showSuccessMessage();
+                            // Show success toast
+                            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                            toast.show();
                         
-                        // Reset form
+                            // Reset form after a delay
+                            setTimeout(() => {
                         form.reset();
                         form.classList.remove('was-validated');
+                                // Clear validation classes
+                                const fields = form.querySelectorAll('.is-valid, .is-invalid');
+                                fields.forEach(field => {
+                                    field.classList.remove('is-valid', 'is-invalid');
+                                });
+                                // Reset employee ID
+                                document.getElementById('employeeId').value = '';
+                            }, 1000);
                         
                         // Reset button
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                     }, 2000);
-                }
-            });
-
-            // Success message function
-            function showSuccessMessage() {
-                const successAlert = document.createElement('div');
-                successAlert.className = 'alert alert-success alert-dismissible fade show position-fixed';
-                successAlert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px;';
-                successAlert.innerHTML = `
-                    <i class="fas fa-check-circle me-2"></i>
-                    <strong>Success!</strong> Employee has been added successfully.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-                document.body.appendChild(successAlert);
-                
-                // Auto dismiss after 5 seconds
-                setTimeout(() => {
-                    if (successAlert.parentNode) {
-                        successAlert.remove();
-                    }
-                }, 5000);
-            }
-
-            // Form validation styling
-            const inputs = form.querySelectorAll('.form-control, .form-select');
-            inputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    if (this.checkValidity()) {
-                        this.classList.remove('is-invalid');
-                        this.classList.add('is-valid');
                     } else {
-                        this.classList.remove('is-valid');
-                        this.classList.add('is-invalid');
+                        // Show error toast for invalid form
+                        showErrorToast('Please check all required fields and try again.');
+                    }
+                    
+                    // Show validation styling only after form submission attempt
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        // Generate employee details for success message
+        function generateEmployeeDetails() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const employeeId = document.getElementById('employeeId').value;
+            
+            let employeeDescription = '';
+            
+            if (firstName && lastName) {
+                employeeDescription += `${firstName} ${lastName}`;
+            }
+            
+            if (employeeId) {
+                employeeDescription += ` (${employeeId})`;
+            }
+            
+            return employeeDescription || 'Employee';
+        }
+        
+        function showErrorToast(message) {
+            document.getElementById('errorMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+            toast.show();
+        }
+        
+        function addAnotherEmployee() {
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            const form = document.querySelector('.needs-validation');
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Clear validation classes
+            const fields = form.querySelectorAll('.is-valid, .is-invalid');
+            fields.forEach(field => {
+                field.classList.remove('is-valid', 'is-invalid');
+            });
+            
+            // Reset employee ID
+            document.getElementById('employeeId').value = '';
+            
+            // Focus on first field
+            document.getElementById('firstName').focus();
+            
+            showToast('Ready to add another employee!', 'info');
+        }
+        
+        function viewEmployeeList() {
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            showToast('Redirecting to Employee List...', 'info');
+            
+            setTimeout(() => {
+                alert('In a real application, this would navigate to the Employee List page.');
+            }, 1500);
+        }
+        
+        function scrollToFirstError() {
+            const errorToast = bootstrap.Toast.getInstance(document.getElementById('errorToast'));
+            if (errorToast) errorToast.hide();
+            
+            const firstInvalid = document.querySelector('.is-invalid, :invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                setTimeout(() => {
+                    firstInvalid.focus();
+                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(220, 38, 38, 0.5)';
+                    setTimeout(() => {
+                        firstInvalid.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            }
+        }
+
+        // Enhanced helper function to show toast messages
+        function showToast(message, type = 'success') {
+            let bgClass, iconClass, headerText;
+            
+            switch (type) {
+                case 'success':
+                    bgClass = 'bg-success';
+                    iconClass = 'fa-check-circle';
+                    headerText = 'Success';
+                    break;
+                case 'error':
+                case 'danger':
+                    bgClass = 'bg-danger';
+                    iconClass = 'fa-exclamation-circle';
+                    headerText = 'Error';
+                    break;
+                case 'info':
+                    bgClass = 'bg-info';
+                    iconClass = 'fa-info-circle';
+                    headerText = 'Info';
+                    break;
+                case 'warning':
+                    bgClass = 'bg-warning';
+                    iconClass = 'fa-exclamation-triangle';
+                    headerText = 'Warning';
+                    break;
+                default:
+                    bgClass = 'bg-secondary';
+                    iconClass = 'fa-bell';
+                    headerText = 'Notification';
+            }
+            
+            const duration = type === 'error' || type === 'danger' ? '10000' : '6000';
+            const ariaLive = type === 'error' || type === 'danger' ? 'assertive' : 'polite';
+            
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="${ariaLive}" aria-atomic="true" data-bs-delay="${duration}">
+                    <div class="toast-header ${bgClass} text-white">
+                        <i class="fas ${iconClass} me-2"></i>
+                        <strong class="me-auto">${headerText}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // Expandable address field functionality with character counter
+        function expandNotesField(textarea) {
+            if (!textarea.classList.contains('expanded')) {
+                textarea.classList.add('expanded');
+                textarea.style.height = '120px';
+                textarea.rows = 6;
+                textarea.placeholder = 'Enter complete address with street, city, state, and ZIP code...';
+                textarea.focus();
+                
+                const helpText = textarea.nextElementSibling;
+                helpText.innerHTML = 'Expanded! Include street address, city, state, and ZIP code';
+            }
+            
+            updateCharacterCount(textarea);
+        }
+        
+        function updateCharacterCount(textarea) {
+            const counter = document.getElementById('addressCounter');
+            const maxLength = textarea.getAttribute('maxlength') || 300;
+            const currentLength = textarea.value.length;
+            
+            if (counter) {
+                const percentage = (currentLength / maxLength) * 100;
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const addressField = document.getElementById('address');
+            if (addressField) {
+                addressField.addEventListener('input', function() {
+                    updateCharacterCount(this);
+                });
+                updateCharacterCount(addressField);
+            }
+            
+            // Ensure submit button works properly
+            const submitButton = document.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('employeeForm');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
                     }
                 });
-            });
+            }
         });
     </script>
-    
-    <style>
-        /* Consistent Form Button Colors */
-        .form-btn-primary.btn-primary {
-            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
-            border-color: #8b5cf6;
-            color: white;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        .form-btn-primary.btn-primary:hover {
-            background: linear-gradient(135deg, #667eea 0%, #5b21b6 100%);
-            border-color: #667eea;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .form-btn-cancel.btn-outline-secondary {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            border-color: #d1d5db;
-            color: #374151;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        .form-btn-cancel.btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-            border-color: #9ca3af;
-            color: #1f2937;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-    </style>
 </body>
 </html> 

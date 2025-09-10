@@ -79,7 +79,7 @@ Table user_roles {
 
 Table employees {
   id serial [pk, increment]
-  employee_id varchar(20) [not null, unique, note: 'EMP-001, etc.']
+  employee_id varchar(20) [not null, unique, note: 'EMP-001, etc. - String format for flexibility']
   first_name varchar(50) [not null]
   last_name varchar(50) [not null]
   email varchar(255) [not null, unique, note: 'Primary email - also used for user authentication']
@@ -214,7 +214,7 @@ Table vendors {
 
 Table assets {
   id serial [pk, increment]
-  asset_id varchar(20) [not null, unique, note: 'AST-001, etc.']
+  asset_id varchar(20) [not null, unique, note: 'AST-001, etc. - String format for flexibility']
   asset_type_id int [ref: > asset_types.id, not null]
   brand_id int [ref: > brands.id, not null]
   model_id int [ref: > models.id, not null]

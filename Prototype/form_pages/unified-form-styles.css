@@ -4,27 +4,27 @@
    ONLY FOR FORM PAGES
 ================================= */
 
-/* TrackStix Color Variables */
+/* TrackStix Color Variables - Updated from Recommended Palette */
 :root {
-    /* Primary Palette */
+    /* Primary Palette - Exact match from image */
     --primary-white: #FFFFFF;
-    --primary-light-gray: #F3F3F3;
-    --primary-mid-light: #B7B7B7;
-    --primary-mid-gray: #999999;
-    --primary-dark-gray: #666666;
+    --primary-light-gray: #F3F3F3FF;
+    --primary-mid-light: #B7B7B7FF;
+    --primary-mid-gray: #999999FF;
+    --primary-dark-gray: #666666FF;
     --primary-black: #0A0A0A;
     
-    /* Secondary Palette */
-    --secondary-purple: #331FEA;
-    --secondary-pink: #FF579F;
-    --secondary-yellow: #FFC000;
-    --secondary-green: #21AF65;
-    --secondary-orange: #FF8C61;
-    --secondary-red: #E97676;
+    /* Secondary Palette - Exact match from image */
+    --secondary-purple: #331FEAFF;
+    --secondary-pink: #FF579FFF;
+    --secondary-yellow: #FF8C61FF;
+    --secondary-green: #21AF65FF;
+    --secondary-orange: #FF8C61FF;
+    --secondary-red: #E97676FF;
     
-    /* Role-based Colors */
+    /* Role-based Colors - Updated to match palette */
     --bg-primary: #FFFFFF;
-    --bg-secondary: #F5F5F5;
+    --bg-secondary: #F3F3F3FF;
     --text-primary: #0A0A0A;
     --text-secondary: #222222;
     --accent-navy: #1A2A43;
@@ -100,8 +100,8 @@
 
 .container-fluid.py-4 .form-control:focus, 
 .container-fluid.py-4 .form-select:focus {
-    border-color: var(--accent-navy);
-    box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.1);
+    border-color: var(--secondary-purple);
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.1);
 }
 
 /* STANDARDIZED BUTTON SYSTEM - Perfect Consistency */
@@ -126,16 +126,16 @@
     box-shadow: 0 4px 16px rgba(10, 10, 10, 0.2);
 }
 
-/* Primary Button - Navy Blue */
+/* Primary Button - Updated with Palette Colors */
 .container-fluid.py-4 .btn-primary {
-    background-color: var(--accent-navy);
-    border-color: var(--accent-navy);
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
     color: var(--bg-primary);
 }
 
 .container-fluid.py-4 .btn-primary:hover {
-    background-color: var(--secondary-purple);
-    border-color: var(--secondary-purple);
+    background-color: #2415c7;
+    border-color: #2415c7;
     color: var(--bg-primary);
 }
 
@@ -152,17 +152,17 @@
     color: var(--bg-primary);
 }
 
-/* Warning Button - Yellow */
+/* Warning Button - Pink from Palette */
 .container-fluid.py-4 .btn-warning {
-    background-color: var(--secondary-yellow);
-    border-color: var(--secondary-yellow);
-    color: var(--text-primary);
+    background-color: var(--secondary-pink);
+    border-color: var(--secondary-pink);
+    color: var(--bg-primary);
 }
 
 .container-fluid.py-4 .btn-warning:hover {
-    background-color: #e6ad00;
-    border-color: #e6ad00;
-    color: var(--text-primary);
+    background-color: #e64d8f;
+    border-color: #e64d8f;
+    color: var(--bg-primary);
 }
 
 /* Danger Button - Red */
@@ -178,7 +178,7 @@
     color: var(--bg-primary);
 }
 
-/* Secondary Button - Gray */
+/* Secondary Button - Updated Gray */
 .container-fluid.py-4 .btn-secondary {
     background-color: var(--primary-mid-gray);
     border-color: var(--primary-mid-gray);

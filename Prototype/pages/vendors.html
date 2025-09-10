@@ -14,7 +14,7 @@
 <body style="background-color: #ffffff;">
 
     <!-- Main Content -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-3 py-4">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -1376,8 +1376,8 @@
         }
         
         .btn-edit:hover {
-            color: #FFC000FF !important;
-            border-color: #FFC000FF !important;
+            color: #FF8C61FF !important;
+            border-color: #FF8C61FF !important;
         }
         
         .btn-contact:hover {
@@ -1440,8 +1440,8 @@
         }
         
         .vendor-actions .btn-edit:hover {
-            color: #FFC000FF !important;
-            border-color: #FFC000FF !important;
+            color: #FF8C61FF !important;
+            border-color: #FF8C61FF !important;
         }
         
         .vendor-actions .btn-contact:hover {
@@ -1454,6 +1454,40 @@
             border: 1px solid #E0E0E0 !important;
             border-radius: 0.75rem !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+        
+        /* Table responsive container - no padding to avoid white border */
+        .table-responsive {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Table cell padding adjustments for balanced spacing */
+        .table td, .table th {
+            padding: 0.75rem !important;
+        }
+        
+        /* First column padding adjustments */
+        .table td:first-child, .table th:first-child {
+            padding-left: 1.5rem !important;
+        }
+        
+        /* Actions column (last column) padding adjustments */
+        .table td:last-child, .table th:last-child {
+            padding-right: 1.5rem !important;
+            text-align: center !important;
+        }
+        
+        /* Vendor actions button group spacing */
+        .vendor-actions {
+            justify-content: center !important;
+            gap: 0.25rem !important;
+        }
+        
+        .vendor-actions .btn {
+            padding: 0.25rem 0.5rem !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
         }
 
         /* View toggle buttons */

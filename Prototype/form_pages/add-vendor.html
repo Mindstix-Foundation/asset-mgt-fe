@@ -8,8 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
-    
-    <!-- Unified Form Styles -->
     <link rel="stylesheet" href="unified-form-styles.css">
 </head>
 <body>
@@ -19,185 +17,219 @@
     
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-10 col-xl-8">
-                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
-                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
-                        <div class="d-flex align-items-center justify-content-center mb-2">
-                            <div class="stats-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                                <i class="fas fa-truck text-primary fa-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="card-title mb-0 fw-bold text-dark">Add New Vendor</h4>
-                                <p class="text-muted mb-0 small">Register a new supplier or service provider</p>
-                            </div>
-                        </div>
+            <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
+                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;">
+                        <h4 class="card-title mb-2 fw-bold text-dark">Add New Vendor</h4>
+                        <p class="text-muted mb-0 small">Register a new supplier or service provider</p>
                     </div>
-                    <div class="card-body p-4 p-lg-5">
-                        <form class="needs-validation" novalidate>
+                    <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+                        <form id="vendorForm" class="needs-validation" novalidate>
+                            
+                            <!-- Section 1: Basic Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Basic Information</legend>
                             <div class="row g-4">
                                 <!-- Vendor Name -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="vendorName" placeholder="Vendor Name" required>
-                                        <label for="vendorName">
-                                            <i class="fas fa-building me-2 text-muted"></i>Vendor Name *
-                                        </label>
-                                        <div class="invalid-feedback">
-                                            Please provide a vendor name.
-                                        </div>
-                                    </div>
+                                        <label for="vendorName" class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="vendorName" placeholder="Enter vendor name" 
+                                               required minlength="2" maxlength="100" 
+                                               pattern="[A-Za-z0-9\s\.\-&]{2,100}"
+                                               title="Vendor name must be 2-100 characters">
+                                        <div class="form-text">Company or organization name (2-100 characters)</div>
                                 </div>
 
                                 <!-- Vendor Type -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
+                                        <label for="vendorType" class="form-label">Vendor Type <span class="text-danger">*</span></label>
                                         <select class="form-select" id="vendorType" required>
-                                            <option value="">Choose Type...</option>
+                                            <option value="" selected>Choose Type...</option>
                                             <option value="supplier">Supplier</option>
                                             <option value="service">Service Provider</option>
-                                            <option value="both">Both</option>
+                                            <option value="manufacturer">Manufacturer</option>
+                                            <option value="distributor">Distributor</option>
+                                            <option value="contractor">Contractor</option>
+                                            <option value="both">Supplier & Service Provider</option>
                                         </select>
-                                        <label for="vendorType">
-                                            <i class="fas fa-tags me-2 text-muted"></i>Vendor Type *
-                                        </label>
-                                        <div class="form-text">Select the type of vendor/service they provide</div>
-                                        <div class="invalid-feedback">
-                                            Please select a vendor type.
+                                        <div class="form-text">Select the primary type of vendor/service they provide (required)</div>
                                         </div>
-                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="col-md-6">
+                                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="status" required>
+                                            <option value="active" selected>Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="pending">Pending Approval</option>
+                                            <option value="suspended">Suspended</option>
+                                        </select>
+                                        <div class="form-text">Current status of the vendor relationship (required)</div>
                                 </div>
 
                                 <!-- Contact Person -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="contactPerson" placeholder="Contact Person">
-                                        <label for="contactPerson">
-                                            <i class="fas fa-user me-2 text-muted"></i>Contact Person <small class="text-muted">(Optional)</small>
-                                        </label>
+                                        <label for="contactPerson" class="form-label">Contact Person <span class="text-muted">(Optional)</span></label>
+                                        <input type="text" class="form-control" id="contactPerson" placeholder="Enter contact person name" 
+                                               maxlength="100" pattern="[A-Za-z\s]{2,100}"
+                                               title="Contact person name must be 2-100 characters (letters and spaces only)">
+                                        <div class="form-text">Primary contact person at the vendor</div>
                                     </div>
-                                </div>
+                                    </div>
+                                
 
+                            </fieldset>
+
+                            <!-- Section 2: Contact Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Contact Information</legend>
+                                <div class="row g-4">
                                 <!-- Email -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" placeholder="Email Address">
-                                        <label for="email">
-                                            <i class="fas fa-envelope me-2 text-muted"></i>Email Address <small class="text-muted">(Optional)</small>
-                                        </label>
-                                        <div class="invalid-feedback">
-                                            Please provide a valid email address.
-                                        </div>
-                                    </div>
+                                        <label for="email" class="form-label">Email Address <span class="text-muted">(Optional)</span></label>
+                                        <input type="email" class="form-control" id="email" placeholder="vendor@company.com" 
+                                               maxlength="100" title="Please enter a valid email address">
+                                        <div class="form-text">Primary email address for communication</div>
                                 </div>
 
                                 <!-- Phone -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
-                                        <label for="phone">
-                                            <i class="fas fa-phone me-2 text-muted"></i>Phone Number <small class="text-muted">(Optional)</small>
-                                        </label>
-                                        <div class="form-text">Include country code (e.g., +91-9876543210)</div>
-                                    </div>
-                                </div>
-
-                                <!-- Status -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="status">
-                                            <option value="active" selected>Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                        <label for="status">
-                                            <i class="fas fa-toggle-on me-2 text-muted"></i>Status
-                                        </label>
-                                    </div>
+                                        <label for="phone" class="form-label">Phone Number <span class="text-muted">(Optional)</span></label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="+1 (555) 123-4567" 
+                                               pattern="[\+]?[0-9\s\-\(\)]{10,20}"
+                                               title="Please enter a valid phone number">
+                                        <div class="form-text">Include country code (e.g., +1-555-123-4567)</div>
                                 </div>
 
                                 <!-- Address -->
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="address" placeholder="Address" style="height: 100px"></textarea>
-                                        <label for="address">
-                                            <i class="fas fa-map-marker-alt me-2 text-muted"></i>Address <small class="text-muted">(Optional)</small>
+                                        <label for="address" class="form-label">
+                                            Address <span class="text-muted">(Optional)</span>
                                         </label>
-                                        <div class="form-text">Complete address including city, state, and country</div>
+                                        <textarea class="form-control expandable-notes" id="address" rows="3" 
+                                                  placeholder="Click to expand and add complete address..." 
+                                                  onclick="expandNotesField(this)" maxlength="500">
+                                        </textarea>
+                                        <div class="form-text">
+                                            Click to expand for more space. Include street address, city, state, and country
+                                        </div>
+                                        <div class="character-count text-end" id="addressCounter">
+                                            <small class="text-muted">0/500 characters</small>
+                                        </div>
                                     </div>
-                                </div>
+                                    </div>
+                                
 
-                                <!-- Tax Information Section -->
-                                <div class="col-12">
-                                    <hr class="my-4">
-                                    <h6 class="text-muted mb-3">
-                                        <i class="fas fa-receipt me-2"></i>Tax Information <small>(Optional)</small>
-                                    </h6>
-                                </div>
+                            </fieldset>
 
+                            <!-- Section 3: Tax & Legal Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Tax & Legal Information</legend>
+                                <div class="row g-4">
                                 <!-- Tax ID -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="taxId" placeholder="Tax ID">
-                                        <label for="taxId">
-                                            <i class="fas fa-id-card me-2 text-muted"></i>Tax ID <small class="text-muted">(Optional)</small>
-                                        </label>
-                                        <div class="form-text">Tax identification number</div>
-                                    </div>
+                                        <label for="taxId" class="form-label">Tax ID <span class="text-muted">(Optional)</span></label>
+                                        <input type="text" class="form-control" id="taxId" placeholder="Enter tax identification number" 
+                                               maxlength="50" pattern="[A-Za-z0-9\-]{5,50}"
+                                               title="Tax ID must be 5-50 characters (letters, numbers, hyphens only)">
+                                        <div class="form-text">Tax identification number for your country</div>
                                 </div>
 
                                 <!-- PAN Number (India specific) -->
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="panNumber" placeholder="PAN Number" maxlength="10">
-                                        <label for="panNumber">
-                                            <i class="fas fa-id-badge me-2 text-muted"></i>PAN Number <small class="text-muted">(India)</small>
-                                        </label>
-                                        <div class="form-text">Permanent Account Number for Indian vendors</div>
-                                    </div>
+                                        <label for="panNumber" class="form-label">PAN Number <span class="text-muted">(India - Optional)</span></label>
+                                        <input type="text" class="form-control" id="panNumber" placeholder="ABCDE1234F" 
+                                               maxlength="10" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                                               title="PAN must be in format: ABCDE1234F (5 letters, 4 digits, 1 letter)">
+                                        <div class="form-text">Permanent Account Number for Indian vendors (format: ABCDE1234F)</div>
                                 </div>
-
-
-
 
                                 <!-- Notes -->
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="notes" placeholder="Additional notes" style="height: 100px"></textarea>
-                                        <label for="notes">
-                                            <i class="fas fa-sticky-note me-2 text-muted"></i>Notes <small class="text-muted">(Optional)</small>
+                                        <label for="notes" class="form-label">
+                                            Additional Notes <span class="text-muted">(Optional)</span>
                                         </label>
-                                        <div class="form-text">Any additional information about this vendor</div>
+                                        <textarea class="form-control expandable-notes" id="notes" rows="3" 
+                                                  placeholder="Click to expand and add vendor notes..." 
+                                                  onclick="expandNotesField(this)" maxlength="1000">
+                                        </textarea>
+                                        <div class="form-text">
+                                            Click to expand for more space. Include payment terms, special requirements, or other relevant information
+                                        </div>
+                                        <div class="character-count text-end" id="notesCounter">
+                                            <small class="text-muted">0/1000 characters</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="form-actions">
-                                <div class="d-flex justify-content-between">
-                                    <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
-                                        <i class="fas fa-times me-1"></i>Cancel
-                                    </button>
-                                    <button type="submit" class="btn btn-primary form-btn-primary">
-                                        <i class="fas fa-plus me-1"></i>Add Vendor
-                                    </button>
-                                </div>
-                            </div>
+                            </fieldset>
                         </form>
                     </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="card-footer bg-light border-top">
+                        <div class="form-actions">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="history.back()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary px-5 py-2" form="vendorForm">
+                                        Add Vendor
+                                    </button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Fields marked with <span class="text-danger">*</span> are required
+                                    </small>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Success Toast -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <!-- Enhanced Success Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
             <div class="toast-header bg-success text-white">
-                <i class="fas fa-check-circle me-2"></i>
-                <strong class="me-auto">Success</strong>
+                <strong class="me-auto">Vendor Added Successfully</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Vendor has been added successfully!
+                <div id="successMessage" class="mb-3">
+                    <strong id="vendorDetails"></strong> has been added successfully!
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="addAnotherVendor()">
+                        Add Another
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewVendorList()">
+                        View Vendors
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Registration Failed</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="errorMessage" class="mb-3">
+                    Please check all required fields and try again.
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="scrollToFirstError()">
+                        Find Errors
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -206,227 +238,603 @@
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
     
-    <!-- Modern Design System Styles -->
+    <!-- Clean Bootstrap 5 Styles -->
     <style>
-        /* Modern Card Styles */
+        /* Dynamic Card Sizing */
         .card {
-            border-radius: 1.5rem !important;
-            border: none !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
-            overflow: hidden;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
         }
-
-        .card-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-            border-bottom: 1px solid #e2e8f0 !important;
-        }
-
-        .stats-icon {
-            width: 60px;
-            height: 60px;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover .stats-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        /* Modern Form Styles */
-        .form-floating {
+        
+        .card-body {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
             position: relative;
         }
-
-        .form-floating > label {
-            font-weight: 500;
-            color: #6b7280;
-            font-size: 0.875rem;
+        
+        /* Consistent Fieldset Styling */
+        .form-fieldset {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+            background: rgba(248, 250, 252, 0.3);
+            position: relative;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
-
+        
+        .form-fieldset:hover {
+            border-color: #cbd5e1 !important;
+            background: rgba(248, 250, 252, 0.5);
+            transition: all 0.2s ease;
+        }
+        
+        .form-legend {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            padding: 0.375rem 0.75rem !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.375rem !important;
+            margin-bottom: 1rem !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: auto !important;
+            float: none !important;
+        }
+        
+        /* Form Container */
+        .needs-validation {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* WCAG AA Compliant Form Controls */
         .form-control, .form-select {
-            border-radius: 0.75rem;
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            padding: 0.75rem 1rem;
-            background-color: #ffffff;
+            border: 2px solid #9ca3af; /* Darker border for better visibility */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            color: #1f2937; /* High contrast text */
+        }
+        
+        /* Enhanced placeholder contrast - WCAG AA compliant */
+        .form-control::placeholder {
+            color: #4b5563 !important; /* Much darker grey for better contrast */
+            opacity: 1;
+        }
+        
+        .form-select option {
+            color: #1f2937; /* High contrast for dropdown options */
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background-color: #ffffff;
+            border-color: #331FEAFF;
+            box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+            outline: 2px solid transparent; /* Maintain focus visibility */
         }
 
         .form-control:hover, .form-select:hover {
-            border-color: #9ca3af;
+            border-color: #6b7280; /* Darker hover state for better visibility */
+        }
+        
+        /* Enhanced dropdown styling with better visibility */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 0.75rem center !important;
+            background-size: 16px 12px !important;
         }
 
-        .form-control::placeholder {
-            color: #9ca3af;
+        .form-select:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
         }
-
-        /* Textarea Styling */
-        textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Form Text & Validation */
+        
+        /* High Contrast Form Text - WCAG AA Compliant */
         .form-text {
-            color: #6b7280;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
+            color: #374151 !important; /* Much darker for better contrast */
             margin-top: 0.25rem;
+            font-weight: 500; /* Slightly bolder for better readability */
+        }
+        
+        /* Enhanced Required Field Indicator */
+        .text-danger {
+            color: #dc2626 !important;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+         /* WCAG AA Compliant Optional Field Indicator */
+         .text-muted {
+             color: #4b5563 !important; /* Darker grey for better contrast */
+             font-weight: 600; /* Bolder for better readability */
+             font-size: 0.9em;
+         }
+        
+        /* Action Buttons */
+        .form-actions {
+            padding: 1.5rem;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 2px solid #dee2e6 !important;
+            border-radius: 0 0 1.5rem 1.5rem !important;
+        }
+        
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
-        .invalid-feedback {
-            font-size: 0.8rem;
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
+        .btn-primary {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+        }
+
+        /* WCAG AA Compliant Cancel Button */
+        .btn-outline-secondary {
+            background-color: #f8f9fa !important;
+            border: 2px solid #6c757d !important;
+            color: #495057 !important; /* High contrast text */
+            font-weight: 600;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #e9ecef !important;
+            border-color: #5a6268 !important;
+            color: #343a40 !important; /* Even higher contrast on hover */
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-secondary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+            border-color: #5a6268 !important;
+        }
+        
+        /* Card Styling */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+        
+        /* Validation States */
         .was-validated .form-control:valid,
         .was-validated .form-select:valid {
             border-color: #10b981;
-            background-image: none;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
         }
 
         .was-validated .form-control:invalid,
         .was-validated .form-select:invalid {
-            border-color: #ef4444;
-            background-image: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
         }
-
-        /* Modern Button System */
-        .btn {
-            border-radius: 0.75rem;
+        
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
+        /* Expandable Notes Styling */
+        .expandable-notes {
+            transition: height 0.3s ease, border-color 0.2s ease;
+            cursor: pointer;
+            resize: none;
+        }
+        
+        .expandable-notes:hover {
+            border-color: #9ca3af;
+        }
+        
+        .expandable-notes.expanded {
+            cursor: text;
+            resize: vertical;
+        }
+        
+        .expandable-notes:focus {
+            cursor: text;
+        }
+        
+        /* Enhanced Button Accessibility */
+        .btn:focus-visible {
+            outline: 2px solid #331FEAFF;
+            outline-offset: 2px;
+        }
+        
+        /* Character Counter Styling */
+        .character-count {
+            margin-top: 0.25rem;
+            transition: color 0.3s ease;
+        }
+        
+        .character-count .text-warning {
+            color: #f59e0b !important;
+        }
+        
+        .character-count .text-danger {
+            color: #dc2626 !important;
             font-weight: 600;
-            transition: all 0.3s ease;
-            padding: 0.75rem 2rem;
-            font-size: 0.95rem;
-            border: 2px solid transparent;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border: none !important;
-            color: white !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            color: white !important;
-        }
-
-        .btn-outline-secondary {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
-            border: 2px solid #d1d5db !important;
-            color: #374151 !important;
-        }
-
-        .btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%) !important;
+        
+        /* Disable automatic validation styling - only show on form submission */
+        .form-control:valid,
+        .form-select:valid {
             border-color: #9ca3af !important;
-            color: #1f2937 !important;
+            box-shadow: none !important;
+            background-image: none !important;
         }
-
-        /* Section Dividers */
-        hr {
-            border: none;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-            margin: 2rem 0;
+        
+        .form-control:invalid,
+        .form-select:invalid {
+            border-color: #9ca3af !important;
+            box-shadow: none !important;
+            background-image: none !important;
         }
-
-        .text-muted {
-            color: #6b7280 !important;
+        
+        /* Only show validation styling when form has been submitted */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
         }
-
-        /* Form Actions */
-        .form-actions {
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 1px solid #e5e7eb;
+        
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+            animation: subtle-shake 0.3s ease-in-out;
         }
-
-        /* Toast Styling */
-        .toast {
-            border: none;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
+        
+         @keyframes subtle-shake {
+             0%, 100% { transform: translateX(0); }
+             25% { transform: translateX(-2px); }
+             75% { transform: translateX(2px); }
+         }
+         
+         /* WCAG AA Compliant Toast Styling */
         .toast-header.bg-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-            border-bottom: none;
+             background: #198754 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-danger {
+             background: #dc3545 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-info {
+             background: #0d6efd !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast-header.bg-warning {
+             background: #fd7e14 !important; /* Solid color for better contrast */
+             color: #ffffff !important;
+         }
+         
+         .toast {
+             border-radius: 0.75rem !important;
+             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+             border: 2px solid #dee2e6 !important; /* Visible border for better definition */
+             min-width: 350px;
+             max-width: 500px;
         }
 
         .toast-body {
-            padding: 1rem;
+             padding: 1rem 1.25rem;
+             background-color: #ffffff;
+             color: #212529; /* High contrast text */
             font-weight: 500;
         }
 
-        /* Icon Enhancements - Removed gradient for consistency */
-
-        /* Loading States */
-        .btn:disabled {
-            opacity: 0.6;
-            transform: none;
-            cursor: not-allowed;
-        }
-
+         .toast .btn-sm {
+             padding: 0.375rem 0.75rem;
+             font-size: 0.875rem;
+             border-radius: 0.375rem;
+            font-weight: 600;
+             margin: 0 0.25rem;
+         }
+         
+         /* Enhanced toast button styling */
+         .toast .btn-primary {
+             background-color: #0d6efd;
+             border-color: #0d6efd;
+             color: #ffffff;
+         }
+         
+         .toast .btn-outline-primary {
+             background-color: #ffffff;
+             border: 2px solid #0d6efd;
+             color: #0d6efd;
+         }
+         
+         .toast .btn-danger {
+             background-color: #dc3545;
+             border-color: #dc3545;
+             color: #ffffff;
+         }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .card-body {
                 padding: 1.5rem !important;
             }
             
-            .btn {
-                padding: 0.625rem 1.5rem;
-                font-size: 0.9rem;
+            .form-actions {
+                padding: 1rem;
             }
             
-            .stats-icon {
-                width: 50px;
-                height: 50px;
+            .card-footer {
+                border-radius: 0 0 1rem 1rem !important;
             }
             
-            .form-actions .d-flex {
-                flex-direction: column;
-                gap: 0.75rem;
+            .form-fieldset {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+                border-radius: 0.375rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.9rem !important;
+                padding: 0.25rem 0.5rem !important;
+                margin-bottom: 0.75rem !important;
             }
             
             .btn {
                 width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0 !important;
             }
         }
-
-        /* Smooth Animations */
-        * {
-            transition: all 0.2s ease;
-        }
-
-        /* Focus States */
-        .btn:focus,
-        .form-control:focus,
-        .form-select:focus {
-            outline: none;
-        }
-
-        /* Modern Shadows */
-        .shadow-sm {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        
+        /* Responsive Enhancements */
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+            
+            .form-actions {
+                padding: 0.75rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 0.75rem 0.75rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+                border-radius: 0.25rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .expandable-notes.expanded {
+                height: 100px !important;
+            }
         }
     </style>
     
+    <!-- Enhanced Form JavaScript -->
     <script>
-        // Form validation and enhancement
+        // Enhanced form validation and functionality
         (function() {
             'use strict';
+            
+            // Enhanced validation system
+            initializeFormValidation();
+            
+            function initializeFormValidation() {
+                setupRealTimeValidation();
+                setupCustomValidationRules();
+                setupFieldFormatting();
+            }
+            
+            function setupRealTimeValidation() {
+                // Clean page load
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                    input.setCustomValidity('');
+                });
+                
+                // Add inline validation for required fields
+                const requiredFields = document.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    field.addEventListener('blur', function() {
+                        validateFieldInline(this);
+                    });
+                    
+                    field.addEventListener('focus', function() {
+                        if (this.classList.contains('is-invalid')) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid') && this.value.trim()) {
+                            validateFieldInline(this);
+                        }
+                    });
+                });
+            }
+            
+            function validateFieldInline(field) {
+                if (field.disabled || field.readOnly) return;
+                
+                if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+                
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                    return true;
+                } else {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+            }
+            
+            function setupCustomValidationRules() {
+                const vendorName = document.getElementById('vendorName');
+                const contactPerson = document.getElementById('contactPerson');
+                const email = document.getElementById('email');
+                const phone = document.getElementById('phone');
+                const taxId = document.getElementById('taxId');
+                const panNumber = document.getElementById('panNumber');
+                const address = document.getElementById('address');
+                const notes = document.getElementById('notes');
+                
+                // Vendor name validation
+                if (vendorName) {
+                    vendorName.pattern = '[A-Za-z0-9\\s\\.\\-&]{2,100}';
+                    vendorName.title = 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands only)';
+                }
+                
+                // Contact person validation
+                if (contactPerson) {
+                    contactPerson.addEventListener('blur', function() {
+                        if (this.value && this.value.length < 2) {
+                            setFieldError(this, 'Contact person name must be at least 2 characters');
+                        }
+                    });
+                }
+                
+                // Email validation (additional)
+                if (email) {
+                    email.addEventListener('blur', function() {
+                        if (this.value && !this.value.includes('@')) {
+                            setFieldError(this, 'Please enter a valid email address');
+                        }
+                    });
+                }
+                
+                // Phone validation
+                if (phone) {
+                    phone.addEventListener('blur', function() {
+                        if (this.value && this.value.length < 10) {
+                            setFieldError(this, 'Phone number must be at least 10 digits');
+                        }
+                    });
+                }
+                
+                // PAN number validation
+                if (panNumber) {
+                    panNumber.addEventListener('blur', function() {
+                        if (this.value && this.value.length === 10) {
+                            const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+                            if (!panPattern.test(this.value)) {
+                                setFieldError(this, 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)');
+                            }
+                        }
+                    });
+                }
+                
+                // Tax ID validation
+                if (taxId) {
+                    taxId.addEventListener('blur', function() {
+                        if (this.value && this.value.length < 5) {
+                            setFieldError(this, 'Tax ID must be at least 5 characters');
+                        }
+                    });
+                }
+                
+                if (address) {
+                    address.maxLength = 500;
+                    address.title = 'Address cannot exceed 500 characters';
+                }
+                
+                if (notes) {
+                    notes.maxLength = 1000;
+                    notes.title = 'Notes cannot exceed 1000 characters';
+                }
+            }
+            
+            function setupFieldFormatting() {
+                // PAN number formatting (uppercase, alphanumeric)
+                const panInput = document.getElementById('panNumber');
+                panInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                });
+
+                // Phone number formatting
+                const phoneInput = document.getElementById('phone');
+                phoneInput.addEventListener('input', function() {
+                    // Allow only numbers, +, -, spaces, and parentheses
+                    this.value = this.value.replace(/[^0-9+\-\s\(\)]/g, '');
+                });
+                
+                // Tax ID formatting (uppercase)
+                const taxIdInput = document.getElementById('taxId');
+                taxIdInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase();
+                });
+            }
+            
+            function setFieldError(field, message) {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+                field.setCustomValidity(message);
+            }
+            
+            function setFieldValid(field) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+                field.setCustomValidity('');
+            }
             
             // Bootstrap form validation
             const forms = document.querySelectorAll('.needs-validation');
@@ -437,6 +845,18 @@
                     event.stopPropagation();
                     
                     if (form.checkValidity()) {
+                        // Generate specific success message
+                        const vendorDetails = generateVendorDetails();
+                        document.getElementById('vendorDetails').textContent = vendorDetails;
+                        
+                        // Show loading state
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Vendor...';
+                        submitBtn.disabled = true;
+                        
+                        // Simulate processing time
+                        setTimeout(() => {
                         // Show success toast
                         const toast = new bootstrap.Toast(document.getElementById('successToast'));
                         toast.show();
@@ -445,204 +865,245 @@
                         setTimeout(() => {
                             form.reset();
                             form.classList.remove('was-validated');
+                                // Clear validation classes
+                                const fields = form.querySelectorAll('.is-valid, .is-invalid');
+                                fields.forEach(field => {
+                                    field.classList.remove('is-valid', 'is-invalid');
+                                });
                             // Reset default values
                             document.getElementById('status').value = 'active';
+                            }, 1000);
+                            
+                            // Reset button
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
                         }, 2000);
+                    } else {
+                        // Show error toast for invalid form
+                        showErrorToast('Please check all required fields and try again.');
                     }
                     
+                    // Show validation styling only after form submission attempt
                     form.classList.add('was-validated');
                 }, false);
             });
-
-            // Form enhancements and validations
-
-            // PAN number formatting (uppercase, alphanumeric)
-            const panInput = document.getElementById('panNumber');
-            panInput.addEventListener('input', function() {
-                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            });
-
-            // Phone number formatting
-            const phoneInput = document.getElementById('phone');
-            phoneInput.addEventListener('input', function() {
-                // Allow only numbers, +, -, and spaces
-                this.value = this.value.replace(/[^0-9+\-\s]/g, '');
-            });
-
-            // Email validation enhancement
-            const emailInput = document.getElementById('email');
-            emailInput.addEventListener('blur', function() {
-                if (this.value && !this.checkValidity()) {
-                    this.classList.add('is-invalid');
-                } else if (this.value) {
-                    this.classList.remove('is-invalid');
-                    this.classList.add('is-valid');
-                }
-            });
-
         })();
+
+        // Generate vendor details for success message
+        function generateVendorDetails() {
+            const vendorName = document.getElementById('vendorName').value;
+            const vendorType = document.getElementById('vendorType');
+            
+            let vendorDescription = '';
+            
+            if (vendorName) {
+                vendorDescription += vendorName;
+            }
+            
+            if (vendorType.value && vendorType.selectedOptions.length > 0) {
+                vendorDescription += ` (${vendorType.selectedOptions[0].text})`;
+            }
+            
+            return vendorDescription || 'Vendor';
+        }
+        
+        function showErrorToast(message) {
+            document.getElementById('errorMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+            toast.show();
+        }
+        
+        function addAnotherVendor() {
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            const form = document.querySelector('.needs-validation');
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Clear validation classes
+            const fields = form.querySelectorAll('.is-valid, .is-invalid');
+            fields.forEach(field => {
+                field.classList.remove('is-valid', 'is-invalid');
+            });
+            
+            // Reset default values
+            document.getElementById('status').value = 'active';
+            
+            // Focus on first field
+            document.getElementById('vendorName').focus();
+            
+            showToast('Ready to add another vendor!', 'info');
+        }
+        
+        function viewVendorList() {
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            showToast('Redirecting to Vendor List...', 'info');
+            
+            setTimeout(() => {
+                alert('In a real application, this would navigate to the Vendor List page.');
+            }, 1500);
+        }
+        
+        function scrollToFirstError() {
+            const errorToast = bootstrap.Toast.getInstance(document.getElementById('errorToast'));
+            if (errorToast) errorToast.hide();
+            
+            const firstInvalid = document.querySelector('.is-invalid, :invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                setTimeout(() => {
+                    firstInvalid.focus();
+                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(220, 38, 38, 0.5)';
+                    setTimeout(() => {
+                        firstInvalid.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            }
+        }
+
+        // Enhanced helper function to show toast messages
+        function showToast(message, type = 'success') {
+            let bgClass, iconClass, headerText;
+            
+            switch (type) {
+                case 'success':
+                    bgClass = 'bg-success';
+                    iconClass = 'fa-check-circle';
+                    headerText = 'Success';
+                    break;
+                case 'error':
+                case 'danger':
+                    bgClass = 'bg-danger';
+                    iconClass = 'fa-exclamation-circle';
+                    headerText = 'Error';
+                    break;
+                case 'info':
+                    bgClass = 'bg-info';
+                    iconClass = 'fa-info-circle';
+                    headerText = 'Info';
+                    break;
+                case 'warning':
+                    bgClass = 'bg-warning';
+                    iconClass = 'fa-exclamation-triangle';
+                    headerText = 'Warning';
+                    break;
+                default:
+                    bgClass = 'bg-secondary';
+                    iconClass = 'fa-bell';
+                    headerText = 'Notification';
+            }
+            
+            const duration = type === 'error' || type === 'danger' ? '10000' : '6000';
+            const ariaLive = type === 'error' || type === 'danger' ? 'assertive' : 'polite';
+            
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="${ariaLive}" aria-atomic="true" data-bs-delay="${duration}">
+                    <div class="toast-header ${bgClass} text-white">
+                        <i class="fas ${iconClass} me-2"></i>
+                        <strong class="me-auto">${headerText}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // Expandable field functionality with character counter
+        function expandNotesField(textarea) {
+            if (!textarea.classList.contains('expanded')) {
+                textarea.classList.add('expanded');
+                textarea.style.height = '120px';
+                textarea.rows = 6;
+                
+                if (textarea.id === 'address') {
+                    textarea.placeholder = 'Enter complete address with street, city, state, and country...';
+                } else if (textarea.id === 'notes') {
+                    textarea.placeholder = 'Enter payment terms, special requirements, or other vendor information...';
+                }
+                
+                textarea.focus();
+                
+                const helpText = textarea.nextElementSibling;
+                if (textarea.id === 'address') {
+                    helpText.innerHTML = 'Expanded! Include street address, city, state, and country';
+                } else if (textarea.id === 'notes') {
+                    helpText.innerHTML = 'Expanded! Include payment terms, special requirements, or other relevant information';
+                }
+            }
+            
+            updateCharacterCount(textarea);
+        }
+        
+        function updateCharacterCount(textarea) {
+            const counterId = textarea.id === 'address' ? 'addressCounter' : 'notesCounter';
+            const counter = document.getElementById(counterId);
+            const maxLength = textarea.getAttribute('maxlength') || (textarea.id === 'address' ? 500 : 1000);
+            const currentLength = textarea.value.length;
+            
+            if (counter) {
+                const percentage = (currentLength / maxLength) * 100;
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const addressField = document.getElementById('address');
+            const notesField = document.getElementById('notes');
+            
+            if (addressField) {
+                addressField.addEventListener('input', function() {
+                    updateCharacterCount(this);
+                });
+                updateCharacterCount(addressField);
+            }
+            
+            if (notesField) {
+                notesField.addEventListener('input', function() {
+                    updateCharacterCount(this);
+                });
+                updateCharacterCount(notesField);
+            }
+            
+            // Ensure submit button works properly
+            const submitButton = document.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('vendorForm');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                });
+            }
+        });
     </script>
-    
-    <style>
-        /* =================================
-           UNIFIED FORM DESIGN SYSTEM
-        ================================= */
-        
-        /* Form Container & Card Standardization */
-        .form-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 2rem 0;
-        }
-        
-        .form-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            border: none;
-            overflow: hidden;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .form-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 2rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .form-header h1 {
-            color: #1e293b;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .form-body {
-            padding: 2.5rem;
-        }
-        
-        /* Standardized Input Fields */
-        .form-control, .form-select {
-            height: 3rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            background-color: #ffffff;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-            outline: none;
-        }
-        
-        .form-control.is-valid, .form-select.is-valid {
-            border-color: #10b981;
-            background-image: none;
-        }
-        
-        .form-control.is-invalid, .form-select.is-invalid {
-            border-color: #ef4444;
-            background-image: none;
-        }
-        
-        /* Standardized Labels */
-        .form-label {
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .form-label .text-danger {
-            color: #ef4444;
-            margin-left: 0.25rem;
-        }
-        
-        /* Form Row Spacing */
-        .form-row {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-        }
-        
-        /* Form actions styling handled by unified CSS */
-        
-        /* Button styling handled by unified CSS */
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .form-container {
-                padding: 1rem;
-            }
-            
-            .form-header {
-                padding: 1.5rem;
-            }
-            
-            .form-header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .form-body {
-                padding: 1.5rem;
-            }
-            
-            .btn-form {
-                width: 100%;
-                margin-bottom: 0.75rem;
-            }
-            
-            .form-actions .d-flex {
-                flex-direction: column;
-            }
-        }
-        
-        /* Consistent Form Button Colors */
-        .form-btn-primary.btn-primary {
-            background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%);
-            border-color: #8b5cf6;
-            color: white;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        .form-btn-primary.btn-primary:hover {
-            background: linear-gradient(135deg, #667eea 0%, #5b21b6 100%);
-            border-color: #667eea;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .form-btn-cancel.btn-outline-secondary {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            border-color: #d1d5db;
-            color: #374151;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-        
-        .form-btn-cancel.btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-            border-color: #9ca3af;
-            color: #1f2937;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-    </style>
 </body>
 </html>

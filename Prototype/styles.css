@@ -20,7 +20,7 @@ body {
     /* Secondary Palette */
     --secondary-purple: #331FEA;
     --secondary-pink: #FF579F;
-    --secondary-yellow: #FFC000;
+    --secondary-yellow: #FF8C61;
     --secondary-green: #21AF65;
     --secondary-orange: #FF8C61;
     --secondary-red: #E97676;
@@ -438,7 +438,7 @@ border-color: #34d399;
 
 .badge.bg-maintenance {
     background-color: var(--secondary-yellow) !important;
-    color: var(--text-primary) !important;
+    color: white !important;
 }
 
 .badge.bg-retired {
@@ -458,7 +458,7 @@ border-color: #34d399;
 
 .badge.bg-warning {
     background-color: var(--secondary-yellow) !important;
-    color: var(--text-primary) !important;
+    color: white !important;
 }
 
 .badge.bg-danger {

@@ -8,41 +8,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
-    
-    <!-- Unified Form Styles -->
     <link rel="stylesheet" href="unified-form-styles.css">
 </head>
 <body>
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-10 col-xl-8">
-                <div class="card shadow-sm border-0" style="border-radius: 1.5rem;">
-                    <div class="card-header bg-white border-0 text-center py-4" style="border-radius: 1.5rem 1.5rem 0 0;">
-                        <div class="d-flex align-items-center justify-content-center mb-2">
-                            <div class="stats-icon bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                                <i class="fas fa-user-plus text-success fa-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="card-title mb-0 fw-bold text-dark">Issue Asset to Employee</h4>
-                                <p class="text-muted mb-0 small">Assign an available asset to an employee</p>
-                            </div>
-                        </div>
+            <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
+                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;">
+                        <h4 class="card-title mb-2 fw-bold text-dark">Issue Asset to Employee</h4>
+                        <p class="text-muted mb-0 small">Assign an available asset to an employee</p>
                     </div>
-                    <div class="card-body p-4 p-lg-5">
-                        <form class="needs-validation" novalidate>
-                            <!-- Asset Selection Section -->
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="asset-type-icon laptops me-3" style="width: 40px; height: 40px; font-size: 1rem;">
-                                        <i class="fas fa-laptop"></i>
-                                    </div>
-                                    <h6 class="mb-0 fw-semibold text-dark">Select Asset</h6>
-                                </div>
+                    <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+                        <form id="issueAssetForm" class="needs-validation" novalidate>
+                            
+                            <!-- Section 1: Asset Selection -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Asset Selection</legend>
                                 <div class="row g-4">
+                                    <!-- Asset ID -->
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                                                                    <select class="form-select" id="assetId" required>
-                                            <option value="">Choose an asset...</option>
+                                        <label for="assetId" class="form-label">Asset ID <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="assetId" required>
+                                            <option value="" selected>Choose an asset...</option>
                                             <option value="AST-001">AST-001 - MacBook Pro 16"</option>
                                             <option value="AST-002">AST-002 - Dell UltraSharp 27"</option>
                                             <option value="AST-005">AST-005 - iPad Pro</option>
@@ -52,122 +40,152 @@
                                             <option value="AST-009">AST-009 - Wireless Keyboard</option>
                                             <option value="AST-010">AST-010 - Webcam HD</option>
                                         </select>
-                                            <label for="assetId">
-                                                <i class="fas fa-tag me-2 text-muted"></i>Asset ID
-                                            </label>
-                                        </div>
+                                        <div class="form-text">Select from available assets only (required)</div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="assetType" placeholder="Asset Type" readonly style="background-color: #f8f9fa;">
-                                            <label for="assetType">
-                                                <i class="fas fa-laptop me-2 text-muted"></i>Asset Type
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Employee Selection Section -->
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="asset-type-icon monitors me-3" style="width: 40px; height: 40px; font-size: 1rem;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <h6 class="mb-0 fw-semibold text-dark">Select Employee</h6>
-                                </div>
-                                <div class="row g-4">
+                                    <!-- Asset Type -->
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <select class="form-select" id="employeeId" required>
-                                                <option value="">Choose an employee...</option>
-                                                <option value="EMP-001">EMP-001</option>
-                                                <option value="EMP-002">EMP-002</option>
-                                                <option value="EMP-003">EMP-003</option>
-                                                <option value="EMP-004">EMP-004</option>
-                                                <option value="EMP-005">EMP-005</option>
-                                                <option value="EMP-006">EMP-006</option>
-                                                <option value="EMP-007">EMP-007</option>
-                                                <option value="EMP-008">EMP-008</option>
-                                            </select>
-                                            <label for="employeeId">
-                                                <i class="fas fa-id-badge me-2 text-muted"></i>Employee ID
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="employeeName" placeholder="Employee Name" readonly style="background-color: #f8f9fa;">
-                                            <label for="employeeName">
-                                                <i class="fas fa-user me-2 text-muted"></i>Employee Name
-                                            </label>
-                                        </div>
+                                        <label for="assetType" class="form-label">Asset Type</label>
+                                        <input type="text" class="form-control" id="assetType" readonly style="background-color: #f8f9fa;" placeholder="Auto-filled from selection">
+                                        <div class="form-text">Automatically populated based on asset selection</div>
                                     </div>
                                 </div>
-                            </div>
+                            </fieldset>
 
-                            <!-- Assignment Details Section -->
-                            <div class="mb-5">
-                                <div class="d-flex align-items-center mb-4">
-                                    <div class="asset-type-icon mobile me-3" style="width: 40px; height: 40px; font-size: 1rem;">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </div>
-                                    <h6 class="mb-0 fw-semibold text-dark">Assignment Details</h6>
-                                </div>
+                            <!-- Section 2: Employee Selection -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Employee Selection</legend>
                                 <div class="row g-4">
+                                    <!-- Employee ID -->
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="date" class="form-control" id="assignmentDate" required>
-                                            <label for="assignmentDate">
-                                                <i class="fas fa-calendar me-2 text-muted"></i>Assignment Date
-                                            </label>
-                                        </div>
+                                        <label for="employeeId" class="form-label">Employee ID <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="employeeId" required>
+                                            <option value="" selected>Choose an employee...</option>
+                                            <option value="EMP-001">EMP-001 - John Smith</option>
+                                            <option value="EMP-002">EMP-002 - Sarah Wilson</option>
+                                            <option value="EMP-003">EMP-003 - Mike Johnson</option>
+                                            <option value="EMP-004">EMP-004 - David Brown</option>
+                                            <option value="EMP-005">EMP-005 - Lisa Garcia</option>
+                                            <option value="EMP-006">EMP-006 - Emily Davis</option>
+                                            <option value="EMP-007">EMP-007 - Robert Miller</option>
+                                            <option value="EMP-008">EMP-008 - Jennifer Taylor</option>
+                                        </select>
+                                        <div class="form-text">Select active employee from the list (required)</div>
                                     </div>
+
+                                    <!-- Employee Name -->
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="assignmentReason" placeholder="e.g., Work laptop, Project requirement" required>
-                                            <label for="assignmentReason">
-                                                <i class="fas fa-clipboard me-2 text-muted"></i>Assignment Reason
-                                            </label>
-                                        </div>
+                                        <label for="employeeName" class="form-label">Employee Name</label>
+                                        <input type="text" class="form-control" id="employeeName" readonly style="background-color: #f8f9fa;" placeholder="Auto-filled from selection">
+                                        <div class="form-text">Employee name will appear after selection</div>
                                     </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Section 3: Assignment Details -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Assignment Details</legend>
+                                <div class="row g-4">
+                                    <!-- Assignment Reason -->
+                                    <div class="col-md-6">
+                                        <label for="assignmentReason" class="form-label">Assignment Reason <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="assignmentReason" placeholder="e.g., Work laptop, Project requirement" 
+                                               required minlength="5" maxlength="100" 
+                                               title="Assignment reason must be 5-100 characters">
+                                        <div class="form-text">Specify the reason for this assignment - 5-100 characters (required)</div>
+                                    </div>
+
+                                    <!-- Assignment Date -->
+                                    <div class="col-md-6">
+                                        <label for="assignmentDate" class="form-label">Assignment Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="assignmentDate" required>
+                                        <div class="form-text">Date when the asset will be assigned (required)</div>
+                                    </div>
+
+                                    <!-- Assignment Notes -->
                                     <div class="col-12">
-                                        <div class="form-floating">
-                                            <textarea class="form-control" id="assignmentNotes" placeholder="Assignment Notes" style="height: 120px;"></textarea>
-                                            <label for="assignmentNotes">
-                                                <i class="fas fa-sticky-note me-2 text-muted"></i>Assignment Notes
-                                            </label>
+                                        <label for="assignmentNotes" class="form-label">
+                                            Assignment Notes <span class="text-muted">(Optional)</span>
+                                        </label>
+                                        <textarea class="form-control expandable-notes" id="assignmentNotes" rows="3" 
+                                                  placeholder="Click to expand and add assignment notes..." 
+                                                  onclick="expandNotesField(this)" maxlength="500"></textarea>
+                                        <div class="form-text">
+                                            Click to expand for more space. Include special instructions, conditions, or other relevant information
+                                        </div>
+                                        <div class="character-count text-end" id="notesCounter">
+                                            <small class="text-muted">0/500 characters</small>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-outline-secondary form-btn-cancel" onclick="history.back()">
-                                    <i class="fas fa-times me-1"></i>Cancel
-                                </button>
-                                <button type="submit" class="btn btn-success form-btn-success">
-                                    <i class="fas fa-check me-1"></i>Issue Asset
-                                </button>
-                            </div>
+                            </fieldset>
                         </form>
                     </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="card-footer bg-light border-top">
+                        <div class="form-actions">
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="history.back()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-success px-5 py-2" form="issueAssetForm">
+                                        Issue Asset
+                                    </button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Fields marked with <span class="text-danger">*</span> are required
+                                    </small>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Success Toast -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <!-- Enhanced Success Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
             <div class="toast-header bg-success text-white">
-                <i class="fas fa-check-circle me-2"></i>
-                <strong class="me-auto">Success</strong>
+                <strong class="me-auto">Asset Issued Successfully</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Asset has been issued successfully!
+                <div id="successMessage" class="mb-3">
+                    <strong id="assignmentDetails"></strong> has been assigned successfully!
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-success" onclick="issueAnotherAsset()">
+                        Issue Another Asset
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success" onclick="viewAssignments()">
+                        View Assignments
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Assignment Failed</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="errorMessage" class="mb-3">
+                    Please check all required fields and try again.
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="scrollToFirstError()">
+                        Find Errors
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -177,23 +195,116 @@
     <script src="../script.js"></script>
     
     <script>
-        // Form validation and enhancement
+        // Enhanced form validation and functionality
         (function() {
             'use strict';
             
             // Set today's date as default
             document.getElementById('assignmentDate').value = new Date().toISOString().split('T')[0];
             
+            // Enhanced validation system
+            initializeFormValidation();
+            
+            function initializeFormValidation() {
+                setupDateValidation();
+                setupRealTimeValidation();
+                setupCustomValidationRules();
+            }
+            
+            function setupDateValidation() {
+                const assignmentDate = document.getElementById('assignmentDate');
+                
+                // Validate assignment date (can be today or future)
+                assignmentDate.addEventListener('change', function() {
+                    const today = new Date().toISOString().split('T')[0];
+                    if (this.value && this.value < today) {
+                        setFieldError(this, 'Assignment date cannot be in the past');
+                        return false;
+                    } else {
+                        setFieldValid(this);
+                        return true;
+                    }
+                });
+            }
+            
+            function setupRealTimeValidation() {
+                // Clean page load
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                    input.setCustomValidity('');
+                });
+                
+                // Add inline validation for required fields
+                const requiredFields = document.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    field.addEventListener('blur', function() {
+                        validateFieldInline(this);
+                    });
+                    
+                    field.addEventListener('focus', function() {
+                        if (this.classList.contains('is-invalid')) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    field.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid') && this.value.trim()) {
+                            validateFieldInline(this);
+                        }
+                    });
+                });
+            }
+            
+            function validateFieldInline(field) {
+                if (field.disabled) return;
+                
+                if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+                
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                    return true;
+                } else {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+            }
+            
+            function setupCustomValidationRules() {
+                const assignmentReason = document.getElementById('assignmentReason');
+                
+                if (assignmentReason) {
+                    assignmentReason.pattern = '.{5,100}';
+                    assignmentReason.title = 'Assignment reason must be 5-100 characters';
+                }
+            }
+            
+            function setFieldError(field, message) {
+                field.classList.remove('is-valid');
+                field.classList.add('is-invalid');
+                field.setCustomValidity(message);
+            }
+            
+            function setFieldValid(field) {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+                field.setCustomValidity('');
+            }
+            
             // Check if asset was pre-selected from assets page
             const selectedAssetId = localStorage.getItem('selectedAssetId');
             const selectedAssetType = localStorage.getItem('selectedAssetType');
             
             if (selectedAssetId && selectedAssetType) {
-                // Pre-populate asset selection
                 const assetSelect = document.getElementById('assetId');
                 const assetTypeField = document.getElementById('assetType');
                 
-                // Add the selected asset to the dropdown if it doesn't exist
                 let assetOption = Array.from(assetSelect.options).find(option => option.value === selectedAssetId);
                 if (!assetOption) {
                     assetOption = document.createElement('option');
@@ -202,26 +313,23 @@
                     assetSelect.appendChild(assetOption);
                 }
                 
-                // Select the asset and populate type field
                 assetSelect.value = selectedAssetId;
                 assetTypeField.value = selectedAssetType;
                 
-                // Clear the localStorage
                 localStorage.removeItem('selectedAssetId');
                 localStorage.removeItem('selectedAssetType');
-                
-                // Add visual indication that asset is pre-selected
-                assetSelect.classList.add('is-valid');
-                assetTypeField.classList.add('is-valid');
             }
             
             // Mock data for demonstration
             const assets = {
                 'AST-001': { type: 'Laptop', name: 'MacBook Pro 16"' },
-                'AST-002': { type: 'Monitor', name: 'Dell Monitor 27"' },
-                'AST-003': { type: 'Mobile Device', name: 'iPhone 14 Pro' },
-                'AST-004': { type: 'Laptop', name: 'Surface Laptop' },
-                'AST-005': { type: 'Tablet', name: 'iPad Pro' }
+                'AST-002': { type: 'Monitor', name: 'Dell UltraSharp 27"' },
+                'AST-005': { type: 'Tablet', name: 'iPad Pro' },
+                'AST-006': { type: 'Printer', name: 'HP Printer' },
+                'AST-007': { type: 'Monitor', name: 'Samsung Monitor' },
+                'AST-008': { type: 'Mouse', name: 'Logitech Mouse' },
+                'AST-009': { type: 'Keyboard', name: 'Wireless Keyboard' },
+                'AST-010': { type: 'Webcam', name: 'Webcam HD' }
             };
             
             const employees = {
@@ -247,22 +355,20 @@
                 }
             });
             
-            // Employee ID handler
+            // Employee selection handler
             document.getElementById('employeeId').addEventListener('change', function() {
-                const employeeName = employees[this.value];
+                const selectedValue = this.value;
                 const employeeNameField = document.getElementById('employeeName');
                 
-                if (employeeName) {
+                if (selectedValue) {
+                    // Extract employee name from the option text (format: "EMP-001 - John Smith")
+                    const selectedOption = this.options[this.selectedIndex];
+                    const optionText = selectedOption.textContent;
+                    const employeeName = optionText.includes(' - ') ? optionText.split(' - ')[1] : '';
+                    
                     employeeNameField.value = employeeName;
-                    this.classList.remove('is-invalid');
-                    this.classList.add('is-valid');
-                } else if (this.value) {
-                    employeeNameField.value = 'Employee not found';
-                    this.classList.remove('is-valid');
-                    this.classList.add('is-invalid');
                 } else {
                     employeeNameField.value = '';
-                    this.classList.remove('is-valid', 'is-invalid');
                 }
             });
             
@@ -274,11 +380,11 @@
                     event.preventDefault();
                     event.stopPropagation();
                     
-                    // Check if employee exists
-                    const employeeId = document.getElementById('employeeId').value.toUpperCase();
-                    const employeeExists = employees[employeeId];
-                    
-                    if (form.checkValidity() && employeeExists) {
+                    if (form.checkValidity()) {
+                        // Generate specific success message
+                        const assignmentDetails = generateAssignmentDetails();
+                        document.getElementById('assignmentDetails').textContent = assignmentDetails;
+                        
                         // Show success toast
                         const toast = new bootstrap.Toast(document.getElementById('successToast'));
                         toast.show();
@@ -287,55 +393,663 @@
                         setTimeout(() => {
                             form.reset();
                             form.classList.remove('was-validated');
+                            // Clear validation classes
+                            const fields = form.querySelectorAll('.is-valid, .is-invalid');
+                            fields.forEach(field => {
+                                field.classList.remove('is-valid', 'is-invalid');
+                            });
+                            // Reset default date
                             document.getElementById('assignmentDate').value = new Date().toISOString().split('T')[0];
                             document.getElementById('assetType').value = '';
                             document.getElementById('employeeName').value = '';
                         }, 2000);
+                    } else {
+                        // Show error toast for invalid form
+                        showErrorToast('Please check all required fields and try again.');
                     }
                     
+                    // Show validation styling only after form submission attempt
                     form.classList.add('was-validated');
                 }, false);
             });
         })();
+
+        // Generate assignment details for success message
+        function generateAssignmentDetails() {
+            const assetSelect = document.getElementById('assetId');
+            const employeeSelect = document.getElementById('employeeId');
+            
+            let assetDescription = '';
+            let employeeName = '';
+            
+            // Get asset description
+            if (assetSelect.value && assetSelect.selectedOptions.length > 0) {
+                assetDescription = assetSelect.selectedOptions[0].textContent;
+            }
+            
+            // Get employee name
+            if (employeeSelect.value && employeeSelect.selectedOptions.length > 0) {
+                const optionText = employeeSelect.selectedOptions[0].textContent;
+                employeeName = optionText.includes(' - ') ? optionText.split(' - ')[1] : optionText;
+            }
+            
+            return `${assetDescription} to ${employeeName}`;
+        }
+        
+        function showErrorToast(message) {
+            document.getElementById('errorMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+            toast.show();
+        }
+        
+        function issueAnotherAsset() {
+            // Dismiss the success toast
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            // Reset the form for another entry
+            const form = document.querySelector('.needs-validation');
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Reset values
+            document.getElementById('assignmentDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('assetType').value = '';
+            document.getElementById('employeeName').value = '';
+            
+            // Focus on first field
+            document.getElementById('assetId').focus();
+            
+            // Show brief confirmation
+            showToast('Ready to issue another asset!', 'info');
+        }
+        
+        function viewAssignments() {
+            // Dismiss the success toast
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            // In a real app, this would navigate to the assignments list
+            showToast('Redirecting to Asset Assignments...', 'info');
+            
+            // Simulate navigation after delay
+            setTimeout(() => {
+                alert('In a real application, this would navigate to the Asset Assignments page.');
+            }, 1500);
+        }
+        
+        function scrollToFirstError() {
+            // Dismiss error toast
+            const errorToast = bootstrap.Toast.getInstance(document.getElementById('errorToast'));
+            if (errorToast) errorToast.hide();
+            
+            // Find first invalid field
+            const firstInvalid = document.querySelector('.is-invalid, :invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Focus and highlight the field
+                setTimeout(() => {
+                    firstInvalid.focus();
+                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(220, 38, 38, 0.5)';
+                    setTimeout(() => {
+                        firstInvalid.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            }
+        }
+
+        // Enhanced helper function to show toast messages
+        function showToast(message, type = 'success') {
+            let bgClass, iconClass, headerText;
+            
+            switch (type) {
+                case 'success':
+                    bgClass = 'bg-success';
+                    iconClass = 'fa-check-circle';
+                    headerText = 'Success';
+                    break;
+                case 'error':
+                case 'danger':
+                    bgClass = 'bg-danger';
+                    iconClass = 'fa-exclamation-circle';
+                    headerText = 'Error';
+                    break;
+                case 'info':
+                    bgClass = 'bg-info';
+                    iconClass = 'fa-info-circle';
+                    headerText = 'Info';
+                    break;
+                case 'warning':
+                    bgClass = 'bg-warning';
+                    iconClass = 'fa-exclamation-triangle';
+                    headerText = 'Warning';
+                    break;
+                default:
+                    bgClass = 'bg-secondary';
+                    iconClass = 'fa-bell';
+                    headerText = 'Notification';
+            }
+            
+            const duration = type === 'error' || type === 'danger' ? '10000' : '6000';
+            const ariaLive = type === 'error' || type === 'danger' ? 'assertive' : 'polite';
+            
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="${ariaLive}" aria-atomic="true" data-bs-delay="${duration}">
+                    <div class="toast-header ${bgClass} text-white">
+                        <strong class="me-auto">${headerText}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // Expandable notes functionality with character counter
+        function expandNotesField(textarea) {
+            if (!textarea.classList.contains('expanded')) {
+                textarea.classList.add('expanded');
+                textarea.style.height = '120px';
+                textarea.rows = 6;
+                textarea.placeholder = 'Enter detailed assignment notes...';
+                textarea.focus();
+                
+                // Update the helper text
+                const helpText = textarea.nextElementSibling;
+                helpText.innerHTML = 'Expanded! Enter detailed assignment information, special conditions, or instructions.';
+            }
+            
+            // Initialize character counter
+            updateCharacterCount(textarea);
+        }
+        
+        // Character counter functionality
+        function updateCharacterCount(textarea) {
+            const counter = document.getElementById('notesCounter');
+            const maxLength = textarea.getAttribute('maxlength') || 500;
+            const currentLength = textarea.value.length;
+            
+            if (counter) {
+                const percentage = (currentLength / maxLength) * 100;
+                
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+            }
+        }
+        
+        // Initialize character counter on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const notesField = document.getElementById('assignmentNotes');
+            if (notesField) {
+                notesField.addEventListener('input', function() {
+                    updateCharacterCount(this);
+                });
+                updateCharacterCount(notesField);
+            }
+            
+            // Ensure submit button works properly
+            const submitButton = document.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('issueAssetForm');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                });
+            }
+        });
     </script>
     
+    <!-- Clean Bootstrap 5 Styles -->
     <style>
-        /* Consistent Form Button Colors */
-        .form-btn-success.btn-success {
-            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-            border-color: #34d399;
-            color: white;
-            border-radius: 0.5rem;
-            font-weight: 500;
+        /* Dynamic Card Sizing */
+        .card {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        .card-body {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+        
+        /* Consistent Fieldset Styling */
+        .form-fieldset {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+            background: rgba(248, 250, 252, 0.3);
+            position: relative;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .form-fieldset:hover {
+            border-color: #cbd5e1 !important;
+            background: rgba(248, 250, 252, 0.5);
             transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         
-        .form-btn-success.btn-success:hover {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            border-color: #10b981;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        .form-legend {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            color: #374151 !important;
+            background-color: #ffffff !important;
+            padding: 0.375rem 0.75rem !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.375rem !important;
+            margin-bottom: 1rem !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: auto !important;
+            float: none !important;
         }
         
-        .form-btn-cancel.btn-outline-secondary {
-            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-            border-color: #d1d5db;
+        /* Form Container */
+        .needs-validation {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
             color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* WCAG AA Compliant Form Controls */
+        .form-control, .form-select {
+            border: 2px solid #9ca3af; /* Darker border for better visibility */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            color: #1f2937; /* High contrast text */
+        }
+        
+        /* Enhanced placeholder contrast - WCAG AA compliant */
+        .form-control::placeholder {
+            color: #4b5563 !important; /* Much darker grey for better contrast */
+            opacity: 1;
+        }
+        
+        .form-select option {
+            color: #1f2937; /* High contrast for dropdown options */
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #331FEAFF;
+            box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+            outline: 2px solid transparent; /* Maintain focus visibility */
+        }
+        
+        .form-control:hover, .form-select:hover {
+            border-color: #6b7280; /* Darker hover state for better visibility */
+        }
+        
+        /* Enhanced dropdown styling with better visibility */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 0.75rem center !important;
+            background-size: 16px 12px !important;
+        }
+
+        .form-select:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* WCAG AA Compliant Disabled Fields */
+        .form-select:disabled {
+            background-color: #f3f4f6;
+            border-color: #9ca3af; /* Better contrast for disabled border */
+            color: #6b7280; /* Improved contrast for disabled text */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* High Contrast Form Text - WCAG AA Compliant */
+        .form-text {
+            font-size: 0.875rem;
+            color: #374151 !important; /* Much darker for better contrast */
+            margin-top: 0.25rem;
+            font-weight: 500; /* Slightly bolder for better readability */
+        }
+        
+        /* Enhanced Required Field Indicator */
+        .text-danger {
+            color: #dc2626 !important;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        /* WCAG AA Compliant Optional Field Indicator */
+        .text-muted {
+            color: #4b5563 !important; /* Darker grey for better contrast */
+            font-weight: 600; /* Bolder for better readability */
+            font-size: 0.9em;
+        }
+        
+        /* Action Buttons */
+        .form-actions {
+            padding: 1.5rem;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 2px solid #dee2e6 !important;
+            border-radius: 0 0 1.5rem 1.5rem !important;
+        }
+        
+        .btn {
             border-radius: 0.5rem;
             font-weight: 600;
             transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
-        
-        .form-btn-cancel.btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-            border-color: #9ca3af;
-            color: #1f2937;
+
+        .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background-color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
+            color: white !important;
+        }
+
+        .btn-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+        }
+        
+        /* WCAG AA Compliant Cancel Button */
+        .btn-outline-secondary {
+            background-color: #f8f9fa !important;
+            border: 2px solid #6c757d !important;
+            color: #495057 !important; /* High contrast text */
+            font-weight: 600;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #e9ecef !important;
+            border-color: #5a6268 !important;
+            color: #343a40 !important; /* Even higher contrast on hover */
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-secondary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+            border-color: #5a6268 !important;
+        }
+        
+        /* Card Styling */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+        
+        /* Validation States */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #10b981;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc2626;
+            font-weight: 500;
+        }
+        
+        /* Expandable Notes Styling */
+        .expandable-notes {
+            transition: height 0.3s ease, border-color 0.2s ease;
+            cursor: pointer;
+            resize: none;
+        }
+        
+        .expandable-notes:hover {
+            border-color: #9ca3af;
+        }
+        
+        .expandable-notes.expanded {
+            cursor: text;
+            resize: vertical;
+        }
+        
+        .expandable-notes:focus {
+            cursor: text;
+        }
+        
+        /* Character Counter Styling */
+        .character-count {
+            margin-top: 0.25rem;
+            transition: color 0.3s ease;
+        }
+        
+        .character-count .text-warning {
+            color: #f59e0b !important;
+        }
+        
+        .character-count .text-danger {
+            color: #dc2626 !important;
+            font-weight: 600;
+        }
+        
+        /* Disable automatic validation styling - only show on form submission */
+        .form-control:valid,
+        .form-select:valid {
+            border-color: #9ca3af !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        .form-control:invalid,
+        .form-select:invalid {
+            border-color: #9ca3af !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        /* Only show validation styling when form has been submitted */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+        }
+        
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+            animation: subtle-shake 0.3s ease-in-out;
+        }
+        
+        @keyframes subtle-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        /* WCAG AA Compliant Toast Styling */
+        .toast-header.bg-success {
+            background: #198754 !important; /* Solid color for better contrast */
+            color: #ffffff !important;
+        }
+        
+        .toast-header.bg-danger {
+            background: #dc3545 !important; /* Solid color for better contrast */
+            color: #ffffff !important;
+        }
+        
+        .toast-header.bg-info {
+            background: #0d6efd !important; /* Solid color for better contrast */
+            color: #ffffff !important;
+        }
+        
+        .toast {
+            border-radius: 0.75rem !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            border: 2px solid #dee2e6 !important; /* Visible border for better definition */
+            min-width: 350px;
+            max-width: 500px;
+        }
+        
+        .toast-body {
+            padding: 1rem 1.25rem;
+            background-color: #ffffff;
+            color: #212529; /* High contrast text */
+            font-weight: 500;
+        }
+        
+        .toast .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            margin: 0 0.25rem;
+        }
+        
+        /* Enhanced toast button styling */
+        .toast .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+            color: #ffffff;
+        }
+        
+        .toast .btn-outline-success {
+            background-color: #ffffff;
+            border: 2px solid #198754;
+            color: #198754;
+        }
+        
+        .toast .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #ffffff;
+        }
+        
+        /* Enhanced Button Accessibility */
+        .btn:focus-visible {
+            outline: 2px solid #331FEAFF;
+            outline-offset: 2px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .form-actions {
+                padding: 1rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 1rem 1rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+                border-radius: 0.375rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.9rem !important;
+                padding: 0.25rem 0.5rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0 !important;
+            }
+        }
+        
+        /* Responsive Enhancements */
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+            
+            .form-actions {
+                padding: 0.75rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 0.75rem 0.75rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+                border-radius: 0.25rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .expandable-notes.expanded {
+                height: 100px !important;
+            }
         }
     </style>
 </body>
