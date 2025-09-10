@@ -18,14 +18,19 @@
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-0" id="pageTitle">Asset Management</h2>
+                <h2 class="mb-0" id="pageTitle" style="color: #0A0A0A;">Asset Management</h2>
                 <p class="text-muted mb-0" id="pageSubtitle">Manage and track all company assets</p>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <!-- View Toggle -->
-                <button class="btn btn-outline-secondary btn-modern" id="toggleView">
-                    <i class="fas fa-th-large me-1"></i>Grid View
-                </button>
+                <div class="btn-group" role="group" aria-label="View toggle">
+                    <button class="btn btn-outline-secondary btn-modern view-toggle active" data-view="list" id="listToggle">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-modern view-toggle" data-view="grid" id="gridToggle">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
                 
                 <!-- Primary Action -->
                 <a href="../form_pages/register-asset.html" class="btn btn-primary btn-modern">
@@ -52,7 +57,7 @@
                 </div>
                 
                 <!-- Asset Management Actions -->
-                <div class="btn-group" role="group">
+                <div class="d-flex gap-2">
                     <a href="../form_pages/issue-asset.html" class="btn btn-success btn-modern">
                         <i class="fas fa-user-plus me-1"></i>Issue Asset
                     </a>
@@ -69,47 +74,25 @@
 
 
         <!-- Filters -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Assets</h6>
-                <small class="text-muted">Use filters to find specific assets or view only available assets for assignment</small>
+        <div class="card mb-4 filter-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Assets</h6>
+                    <small class="text-muted">Use filters to find specific assets or view only available assets for assignment</small>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary" id="toggleAdvancedFilters">
+                    <i class="fas fa-chevron-down me-1"></i>Advanced
+                </button>
             </div>
             <div class="card-body">
+                <!-- Basic Filters -->
                 <div class="row">
-                    <div class="col-12 col-md-3 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
                         <label class="form-label">Search Assets</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, model, serial...">
                         </div>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Asset Type</label>
-                        <select class="form-select" id="typeFilter">
-                            <option value="">All Types</option>
-                            <!-- Asset types will be loaded from database -->
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">Brand</label>
-                        <select class="form-select" id="brandFilter">
-                            <option value="">All Brands</option>
-                            <!-- Brands will be loaded from database -->
-                        </select>
-                    </div>
-                    <div class="col-12 col-md-2 mb-3">
-                        <label class="form-label">
-                            Status 
-                            <i class="fas fa-info-circle text-muted" title="Available = Ready for assignment, Assigned = Currently with employee"></i>
-                        </label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="">All Assets</option>
-                            <option value="AVAILABLE">📦 Available (Ready for assignment)</option>
-                            <option value="ASSIGNED">👤 Assigned (Currently with employee)</option>
-                            <option value="IN_MAINTENANCE">🔧 In Maintenance</option>
-                            <option value="RETIRED">📴 Retired</option>
-                            <option value="LOST">❌ Lost</option>
-                        </select>
                     </div>
                     <div class="col-12 col-md-3 mb-3">
                         <label class="form-label">Sort By</label>
@@ -124,6 +107,46 @@
                             </select>
                             <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
                                 <i class="fas fa-sort-amount-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Filters (Collapsible) -->
+                <div class="collapse" id="advancedFilters">
+                    <hr class="my-3">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">Asset Type</label>
+                            <select class="form-select" id="typeFilter">
+                                <option value="">All Types</option>
+                                <!-- Asset types will be loaded from database -->
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">Brand</label>
+                            <select class="form-select" id="brandFilter">
+                                <option value="">All Brands</option>
+                                <!-- Brands will be loaded from database -->
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">
+                                Status 
+                                <i class="fas fa-info-circle text-muted" title="Available = Ready for assignment, Assigned = Currently with employee"></i>
+                            </label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Assets</option>
+                                <option value="AVAILABLE">📦 Available (Ready for assignment)</option>
+                                <option value="ASSIGNED">👤 Assigned (Currently with employee)</option>
+                                <option value="IN_MAINTENANCE">🔧 In Maintenance</option>
+                                <option value="RETIRED">📴 Retired</option>
+                                <option value="LOST">❌ Lost</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
+                                <i class="fas fa-times me-1"></i>Clear Filters
                             </button>
                         </div>
                     </div>
@@ -445,25 +468,66 @@
             </div>
 
             <!-- Grid View (Hidden by default) -->
-            <div class="row d-none" id="gridView">
-                <!-- Grid cards will be dynamically generated here -->
+            <div class="d-none" id="gridView">
+                <div class="row" id="gridContainer">
+                    <!-- Asset Cards will be generated here -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        <small>Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalAssets">10</span> assets</small>
+                    </div>
+                    <nav aria-label="Asset pagination">
+                        <ul class="pagination pagination-modern mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
         <!-- Pagination -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
-                </li>
-            </ul>
-        </nav>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="text-muted">
+                <small>Showing <span>1</span>-<span>10</span> of <span>10</span> assets</small>
+            </div>
+            <nav aria-label="Asset pagination">
+                <ul class="pagination pagination-modern mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 
     <!-- Detail Modal -->
@@ -740,194 +804,249 @@
             padding-right: 0.75rem;
         }
         
-        /* Modern Button Styling - Unified Compact Design */
+        /* Modern Button Styling - Updated Color Palette */
         .btn-modern {
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            text-transform: none;
-            letter-spacing: 0.025em;
-            transition: filter 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            min-height: 38px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            font-size: 0.875rem !important;
+            text-transform: none !important;
+            letter-spacing: 0.025em !important;
+            transition: all 0.2s ease !important;
+            border: 1.5px solid !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+            min-height: 38px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-        
-
         
         .btn-modern:hover {
-            filter: brightness(0.9);
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
-        
-        /* Consistent Button Color System - Each Function Has Unique Color */
         
         /* Primary Actions - Add/Create */
         .btn-modern.btn-primary {
-            background: #667eea;
-            border-color: #667eea;
-            color: white;
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
         }
         
         /* Issue/Assign Actions - Green */
         .btn-modern.btn-success {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
+            background-color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
         }
         
         /* Collect/Return Actions - Orange */
         .btn-modern.btn-warning {
-            background: #f59e0b;
-            border-color: #f59e0b;
-            color: white;
+            background-color: #FFC000FF !important;
+            border-color: #FFC000FF !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-warning:hover {
+            background-color: #e6ac00 !important;
+            border-color: #e6ac00 !important;
+            color: white !important;
         }
         
         /* Schedule/Maintenance Actions - Pink */
         .btn-modern.btn-outline-warning {
-            background: #ec4899;
-            border-color: #ec4899;
-            color: white;
+            background-color: #FF579FFF !important;
+            border-color: #FF579FFF !important;
+            color: white !important;
         }
         
-        /* Export/Download Actions - Teal */
+        .btn-modern.btn-outline-warning:hover {
+            background-color: #e64d8f !important;
+            border-color: #e64d8f !important;
+            color: white !important;
+        }
+        
+        /* Export/Download Actions - Green */
         .btn-modern.btn-outline-success {
-            background: #14b8a6;
-            border-color: #14b8a6;
-            color: white;
+            background-color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-outline-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
         }
         
         /* Bulk/Upload Actions - Blue */
         .btn-modern.btn-outline-primary {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            color: white;
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-outline-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
         }
         
         /* View Toggle/Secondary Actions - Gray */
         .btn-modern.btn-outline-secondary,
         .btn-modern.btn-secondary {
-            background: #6b7280;
-            border-color: #6b7280;
-            color: white;
+            background-color: #F3F3F3FF !important;
+            border-color: #E0E0E0 !important;
+            color: #666666FF !important;
         }
         
-        /* Individual asset action buttons - Same unified style */
+        .btn-modern.btn-outline-secondary:hover,
+        .btn-modern.btn-secondary:hover {
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
+            color: #0A0A0A !important;
+        }
+
+        /* View toggle buttons */
+        .view-toggle {
+            background-color: #F3F3F3FF !important;
+            border: 1px solid #E0E0E0 !important;
+            color: #666666FF !important;
+        }
+
+        .view-toggle.active {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+
+        .view-toggle:hover:not(.active) {
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
+        }
+        
+        /* Individual asset action buttons - Updated Design */
         .asset-actions .btn {
-            border-radius: 0.5rem;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-            min-height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #F3F3F3FF !important;
+            border: 1px solid #E0E0E0 !important;
+            color: #666666FF !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            min-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 36px !important;
         }
         
         .asset-actions .btn:hover {
-            filter: brightness(0.9);
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
         }
         
-        /* View Details - Purple (matches primary) */
-        .asset-actions .btn-outline-primary {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+        /* Specific action button hover colors */
+        .asset-actions .btn-outline-primary:hover {
+            color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
         }
         
-        /* Edit - Indigo */
-        .asset-actions .btn-outline-secondary {
-            background: #6366f1;
-            color: white;
-            border-color: #6366f1;
+        .asset-actions .btn-outline-secondary:hover {
+            color: #FFC000FF !important;
+            border-color: #FFC000FF !important;
         }
         
-        /* Assign - Green (matches success) */
-        .asset-actions .btn-outline-success {
-            background: #10b981;
-            color: white;
-            border-color: #10b981;
+        .asset-actions .btn-outline-success:hover {
+            color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
         }
         
-        /* Maintenance - Pink (matches schedule maintenance) */
-        .asset-actions .btn-outline-warning {
-            background: #ec4899;
-            color: white;
-            border-color: #ec4899;
+        .asset-actions .btn-outline-warning:hover {
+            color: #FF579FFF !important;
+            border-color: #FF579FFF !important;
         }
         
-        /* QR Code - Cyan */
-        .asset-actions .btn-outline-info {
-            background: #06b6d4;
-            color: white;
-            border-color: #06b6d4;
+        .asset-actions .btn-outline-info:hover {
+            color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
         }
 
-        /* Modern Badge Styles */
+        /* Modern Badge Styles - Updated Color Palette */
         .badge.badge-available {
-            background: #11998e !important;
+            background-color: #21AF65FF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         .badge.badge-assigned {
-            background: #667eea !important;
+            background-color: #331FEAFF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         .badge.badge-reserved {
-            background: #667eea !important;
+            background-color: #331FEAFF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         .badge.badge-under-repair {
-            background: #f093fb !important;
+            background-color: #FFC000FF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         .badge.badge-low-stock {
-            background: #f093fb !important;
+            background-color: #FF579FFF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         .badge.badge-retired {
-            background: #ff416c !important;
+            background-color: #E97676FF !important;
             color: white !important;
             border: none !important;
-            font-weight: 600;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         /* Modern Stats Card Styles */
@@ -957,7 +1076,7 @@
         
         /* Remove all hover effects from grid view cards */
         .asset-card-modern:hover {
-            box-shadow: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
             transform: none !important;
             filter: none !important;
         }
@@ -968,6 +1087,65 @@
             transform: none !important;
             filter: none !important;
             cursor: default !important;
+        }
+
+        /* Asset Actions Footer */
+        .asset-actions-footer {
+            border-top: 1px solid #E0E0E0 !important;
+            padding-top: 0.75rem !important;
+            margin-top: auto !important;
+        }
+
+        /* Action Button Styles for Grid View */
+        .btn-action {
+            background-color: #F3F3F3FF !important;
+            border: 1px solid #E0E0E0 !important;
+            color: #666666FF !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            min-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 36px !important;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
+        }
+
+        /* Specific action button hover colors */
+        .btn-action.btn-view:hover {
+            color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+        }
+
+        .btn-action.btn-edit:hover {
+            color: #FFC000FF !important;
+            border-color: #FFC000FF !important;
+        }
+
+        .btn-action.btn-assign:hover {
+            color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
+        }
+
+        .btn-action.btn-maintenance:hover {
+            color: #FF579FFF !important;
+            border-color: #FF579FFF !important;
+        }
+
+        /* Badge sizing */
+        .badge-sm {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.5rem !important;
         }
         
 
@@ -992,10 +1170,91 @@
             border-left-color: rgba(0, 123, 255, 0.4);
         }
         
+        /* Card improvements */
+        .card {
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .card:hover:not(.asset-card-modern) {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .card-header {
+            background-color: #F3F3F3FF !important;
+            border-bottom: 1px solid #E0E0E0 !important;
+        }
+
+        /* Filter card styling */
+        .filter-card {
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+
         /* Enhanced table styling */
         .table-hover tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.05);
-            transition: all 0.2s ease;
+            background-color: #F3F3F3FF !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* Modern Pagination Styles */
+        .pagination-modern {
+            --bs-pagination-padding-x: 0.75rem;
+            --bs-pagination-padding-y: 0.5rem;
+            --bs-pagination-font-size: 0.875rem;
+            --bs-pagination-color: #666666FF;
+            --bs-pagination-bg: #FFFFFF;
+            --bs-pagination-border-width: 1px;
+            --bs-pagination-border-color: #E0E0E0;
+            --bs-pagination-border-radius: 0.5rem;
+            --bs-pagination-hover-color: #331FEAFF;
+            --bs-pagination-hover-bg: #F3F3F3FF;
+            --bs-pagination-hover-border-color: #B7B7B7FF;
+            --bs-pagination-focus-color: #331FEAFF;
+            --bs-pagination-focus-bg: #F3F3F3FF;
+            --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
+            --bs-pagination-active-color: #FFFFFF;
+            --bs-pagination-active-bg: #331FEAFF;
+            --bs-pagination-active-border-color: #331FEAFF;
+            --bs-pagination-disabled-color: #999999FF;
+            --bs-pagination-disabled-bg: #F3F3F3FF;
+            --bs-pagination-disabled-border-color: #E0E0E0;
+        }
+
+        .pagination-modern .page-link {
+            border-radius: 0.5rem !important;
+            margin: 0 0.125rem !important;
+            min-width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .pagination-modern .page-item.active .page-link {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
+        }
+
+        .pagination-modern .page-item:not(.active) .page-link:hover {
+            background-color: #F3F3F3FF !important;
+            border-color: #B7B7B7FF !important;
+            color: #331FEAFF !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .pagination-modern .page-item.disabled .page-link {
+            background-color: #F3F3F3FF !important;
+            border-color: #E0E0E0 !important;
+            color: #999999FF !important;
+            cursor: not-allowed !important;
         }
         
         /* Button enhancements */
@@ -1198,22 +1457,34 @@
                 });
             }
             
+            // Initialize with list view
+            listView.classList.remove('d-none');
+            gridView.classList.add('d-none');
+
             // View toggle functionality
-            toggleViewBtn.addEventListener('click', function() {
-                if (isGridView) {
-                    // Switch to List View
-                    listView.classList.remove('d-none');
-                    gridView.classList.add('d-none');
-                    toggleViewBtn.innerHTML = '<i class="fas fa-th-large me-1"></i>Grid View';
-                    isGridView = false;
-                } else {
-                    // Switch to Grid View
-                    generateGridView();
-                    listView.classList.add('d-none');
-                    gridView.classList.remove('d-none');
-                    toggleViewBtn.innerHTML = '<i class="fas fa-list me-1"></i>List View';
-                    isGridView = true;
-                }
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const viewType = this.getAttribute('data-view');
+                    
+                    // Remove active class from all toggle buttons
+                    document.querySelectorAll('.view-toggle').forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    if (viewType === 'grid') {
+                        // Switch to Grid View
+                        generateGridView();
+                        listView.classList.add('d-none');
+                        gridView.classList.remove('d-none');
+                        isGridView = true;
+                    } else {
+                        // Switch to List View
+                        listView.classList.remove('d-none');
+                        gridView.classList.add('d-none');
+                        isGridView = false;
+                    }
+                });
             });
             
             // Generate grid view cards from table data
@@ -1221,11 +1492,11 @@
                 const visibleRows = Array.from(mainTable.querySelectorAll('tbody tr')).filter(row => 
                     row.style.display !== 'none' && row.id !== 'noResultsRow'
                 );
-                
-                gridView.innerHTML = '';
+                const gridContainer = document.getElementById('gridContainer');
+                gridContainer.innerHTML = '';
                 
                 if (visibleRows.length === 0) {
-                    gridView.innerHTML = `
+                    gridContainer.innerHTML = `
                         <div class="col-12 text-center py-5">
                             <i class="fas fa-laptop fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No items found</h5>
@@ -1248,13 +1519,13 @@
                     const assignedToOrLocation = cells[5].textContent.trim() === '-' ? 'Not Assigned' : cells[5].textContent.trim();
                     const lastUpdated = cells[6].textContent.trim();
                     
-                    // Get asset type icon and color with solid backgrounds
+                    // Get asset type icon and color with solid backgrounds from palette
                     const typeIcons = {
-                        'Laptop': { icon: 'fas fa-laptop', gradient: '#667eea', color: 'white' },
-                        'Monitor': { icon: 'fas fa-desktop', gradient: '#f093fb', color: 'white' },
-                        'Mobile': { icon: 'fas fa-mobile-alt', gradient: '#4facfe', color: 'white' },
-                        'Tablet': { icon: 'fas fa-tablet-alt', gradient: '#43e97b', color: 'white' },
-                        'Accessory': { icon: 'fas fa-headphones', gradient: '#fa709a', color: 'white' }
+                        'Laptop': { icon: 'fas fa-laptop', color: '#331FEAFF' },
+                        'Monitor': { icon: 'fas fa-desktop', color: '#21AF65FF' },
+                        'Mobile': { icon: 'fas fa-mobile-alt', color: '#FF579FFF' },
+                        'Tablet': { icon: 'fas fa-tablet-alt', color: '#FFC000FF' },
+                        'Accessory': { icon: 'fas fa-headphones', color: '#E97676FF' }
                     };
                     
                     // Get status badge color and style
@@ -1266,88 +1537,86 @@
                         'LOST': { class: 'badge-retired', icon: 'fas fa-question-circle' }
                     };
                     
-                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', gradient: '#667eea', color: 'white' };
+                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', color: '#331FEAFF' };
                     const statusInfo = statusStyles[status] || { class: 'badge-retired', icon: 'fas fa-question-circle' };
                     
                     const card = document.createElement('div');
                     card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
                     card.innerHTML = `
-                        <div class="card h-100 border-0 shadow-lg asset-card-modern">
-                            <div class="card-header-gradient" style="background: ${typeInfo.gradient}; height: 120px; position: relative; border-radius: 0.5rem 0.5rem 0 0;">
-                                <div class="d-flex justify-content-center align-items-center h-100">
-                                    <i class="${typeInfo.icon} fa-3x" style="color: ${typeInfo.color};"></i>
-                                </div>
-                                <div class="position-absolute top-0 end-0 p-3">
-                                    <span class="badge ${statusInfo.class} d-flex align-items-center gap-1">
-                                        <i class="${statusInfo.icon} fa-xs"></i>
-                                        ${status}
+                        <div class="card h-100 asset-card-modern" style="border: 1px solid #E0E0E0; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex flex-grow-1">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 48px; height: 48px; background-color: ${typeInfo.color}; flex-shrink: 0;">
+                                            <i class="${typeInfo.icon} fa-lg text-white"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-1 fw-bold" style="color: #0A0A0A;">${assetId}</h5>
+                                            <p class="text-muted mb-0 small">${type}</p>
+                                        </div>
+                                    </div>
+                                    <span class="badge ${statusInfo.class} badge-sm">
+                                        ${status.replace('_', ' ')}
                                     </span>
                                 </div>
-                            </div>
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <h5 class="fw-bold mb-1 text-primary">${assetId}</h5>
-                                    <p class="text-muted small mb-0">${type}</p>
-                                </div>
                                 
-                                <div class="asset-info-modern">
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-tag text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Brand/Model</small>
+                                <div class="mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <small class="text-muted">Brand/Model</small>
+                                            <div class="fw-medium text-truncate" style="color: #0A0A0A;">${brandModel}</div>
                                         </div>
-                                        <div class="ps-3 fw-medium">${brandModel}</div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-barcode text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Serial Number</small>
+                                        <div class="col-12">
+                                            <small class="text-muted">Serial Number</small>
+                                            <div class="small font-monospace text-truncate" style="color: #666666FF;">${serialNumber}</div>
                                         </div>
-                                        <div class="ps-3 small font-monospace text-dark">${serialNumber}</div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-user text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Assigned To</small>
+                                        <div class="col-12">
+                                            <small class="text-muted">Assigned To</small>
+                                            <div class="text-truncate" style="color: #0A0A0A;">${assignedToOrLocation}</div>
                                         </div>
-                                        <div class="ps-3">${assignedToOrLocation}</div>
-                                    </div>
-                                    
-                                    <div class="info-item mb-4">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-clock text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Purchase Date</small>
+                                        <div class="col-12">
+                                            <small class="text-muted">Purchase Date</small>
+                                            <div class="small text-truncate" style="color: #666666FF;">${lastUpdated}</div>
                                         </div>
-                                        <div class="ps-3 small">${lastUpdated}</div>
                                     </div>
                                 </div>
                                 
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detailModal">
-                                        <i class="fas fa-eye me-2"></i>View Details
-                                    </button>
-                                    <div class="btn-group">
-                                        <button class="btn btn-outline-secondary btn-sm" title="Edit">
+                                <div class="asset-actions-footer mt-auto pt-2 border-top" style="border-color: #E0E0E0 !important;">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-action btn-view btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal" 
+                                                data-bs-toggle="tooltip" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-edit btn-sm" data-bs-toggle="tooltip" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         ${status === 'AVAILABLE' ? 
-                                            '<button class="btn btn-outline-success btn-sm" title="Assign"><i class="fas fa-user-plus"></i></button>' : 
+                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Assign"><i class="fas fa-user-plus"></i></button>' : 
                                             status === 'ASSIGNED' ? 
-                                            '<button class="btn btn-outline-warning btn-sm" title="Unassign"><i class="fas fa-user-minus"></i></button>' : 
+                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Unassign"><i class="fas fa-user-minus"></i></button>' : 
                                             ''
                                         }
-                                        <button class="btn btn-outline-info btn-sm" title="QR Code">
-                                            <i class="fas fa-qrcode"></i>
+                                        <button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Maintenance">
+                                            <i class="fas fa-wrench"></i>
                                         </button>
+                                        <div class="btn-group">
+                                            <button class="btn btn-action btn-sm" data-bs-toggle="dropdown" aria-expanded="false" 
+                                                    data-bs-toggle="tooltip" title="More Actions">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-qrcode me-2"></i>QR Code</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>History</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
                     
-                    gridView.appendChild(card);
+                    gridContainer.appendChild(card);
                 });
             }
             
@@ -1539,6 +1808,29 @@
                 }
             });
             
+            // Advanced filters functionality
+            document.getElementById('toggleAdvancedFilters').addEventListener('click', function() {
+                const advancedFilters = document.getElementById('advancedFilters');
+                const icon = this.querySelector('i');
+                
+                if (advancedFilters.classList.contains('show')) {
+                    advancedFilters.classList.remove('show');
+                    icon.className = 'fas fa-chevron-down me-1';
+                } else {
+                    advancedFilters.classList.add('show');
+                    icon.className = 'fas fa-chevron-up me-1';
+                }
+            });
+
+            // Clear filters functionality
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('typeFilter').value = '';
+                document.getElementById('brandFilter').value = '';
+                document.getElementById('statusFilter').value = '';
+                filterItems();
+            });
+
             // Initialize the table and filters
             populateFilters();
             initializeTable();

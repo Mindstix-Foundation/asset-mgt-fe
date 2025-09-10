@@ -23,15 +23,21 @@
             </div>
         </div>
 
+        <!-- Standard Reports Section -->
+        <div class="mb-4">
+            <h4 class="mb-3" style="color: #0A0A0A; font-weight: 600;">Standard Reports</h4>
+            <p class="mb-4" style="color: #666666;">Pre-configured reports for common asset management needs</p>
+        </div>
+
         <!-- Quick Report Cards -->
-        <div class="row mb-4">
+        <div class="row mb-5">
             <div class="col-12 col-md-6 col-lg-3 mb-3">
                 <div class="card h-100 report-card" data-bs-toggle="modal" data-bs-target="#generateReportModal">
                     <div class="card-body text-center">
-                        <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
+                        <i class="fas fa-file-excel fa-3x mb-3" style="color: #331FEAFF;"></i>
                         <h5 class="card-title">Asset Inventory Report</h5>
                         <p class="card-text text-muted">Complete list of all assets with details</p>
-                        <button class="btn btn-success">
+                        <button class="btn btn-primary">
                             <i class="fas fa-download me-1"></i>Generate Excel
                         </button>
                     </div>
@@ -41,10 +47,10 @@
             <div class="col-12 col-md-6 col-lg-3 mb-3">
                 <div class="card h-100 report-card" data-bs-toggle="modal" data-bs-target="#generateReportModal">
                     <div class="card-body text-center">
-                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <i class="fas fa-users fa-3x mb-3" style="color: #21AF65FF;"></i>
                         <h5 class="card-title">Employee Asset Report</h5>
                         <p class="card-text text-muted">Assets assigned to each employee</p>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-success">
                             <i class="fas fa-download me-1"></i>Generate Excel
                         </button>
                     </div>
@@ -67,10 +73,10 @@
             <div class="col-12 col-md-6 col-lg-3 mb-3">
                 <div class="card h-100 report-card" data-bs-toggle="modal" data-bs-target="#generateReportModal">
                     <div class="card-body text-center">
-                        <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                        <i class="fas fa-chart-line fa-3x mb-3" style="color: #FF579F;"></i>
                         <h5 class="card-title">Audit Log Report</h5>
                         <p class="card-text text-muted">Complete audit trail of all activities</p>
-                        <button class="btn btn-info">
+                        <button class="btn btn-audit">
                             <i class="fas fa-download me-1"></i>Generate Excel
                         </button>
                     </div>
@@ -78,10 +84,16 @@
             </div>
         </div>
 
+        <!-- Custom Reports Section -->
+        <div class="mb-4">
+            <h4 class="mb-3" style="color: #0A0A0A; font-weight: 600;">Custom Reports</h4>
+            <p class="mb-4" style="color: #666666;">Build tailored reports with specific filters and date ranges</p>
+        </div>
+
         <!-- Custom Report Builder -->
-        <div class="card mb-4">
+        <div class="card mb-5">
             <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Custom Report Builder</h5>
+                <h5 class="mb-0" style="color: #0A0A0A;"><i class="fas fa-filter me-2" style="color: #331FEA;"></i>Custom Report Builder</h5>
             </div>
             <div class="card-body">
                 <form>
@@ -129,17 +141,19 @@
                     
                     <div class="row">
                         <div class="col-12">
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reportPreviewModal">
+                            <div class="d-flex flex-wrap gap-2">
+                                <!-- Primary Actions -->
+                                <button type="button" class="btn btn-custom-primary" data-bs-toggle="modal" data-bs-target="#reportPreviewModal" id="previewReportBtn">
                                     <i class="fas fa-eye me-1"></i>Preview Report
                                 </button>
-                                <button type="button" class="btn btn-success">
+                                <button type="button" class="btn btn-custom-success" id="customExportExcelBtn">
                                     <i class="fas fa-file-excel me-1"></i>Export to Excel
                                 </button>
-                                <button type="button" class="btn btn-danger">
+                                <!-- Secondary Actions -->
+                                <button type="button" class="btn btn-custom-danger" id="customExportPdfBtn">
                                     <i class="fas fa-file-pdf me-1"></i>Export to PDF
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary">
+                                <button type="button" class="btn btn-text-secondary" id="clearFiltersBtn">
                                     <i class="fas fa-times me-1"></i>Clear Filters
                                 </button>
                             </div>
@@ -149,8 +163,14 @@
             </div>
         </div>
 
+        <!-- Analytics Dashboard -->
+        <div class="mb-4">
+            <h4 class="mb-3" style="color: #0A0A0A; font-weight: 600;">Analytics Dashboard</h4>
+            <p class="mb-4" style="color: #666666;">Real-time insights and key metrics overview</p>
+        </div>
+
         <!-- Compact Analytics Dashboard -->
-        <div class="row mb-4">
+        <div class="row mb-5 analytics-cards">
             <!-- Asset Distribution by Type -->
             <div class="col-12 col-xl-3 col-lg-6 mb-4">
                 <div class="card compact-chart-card">
@@ -163,22 +183,22 @@
                         </div>
                         <div class="compact-stats">
                             <div class="stat-row">
-                                <div class="stat-dot bg-primary"></div>
+                                <div class="stat-dot" style="background-color: #331FEAFF;"></div>
                                 <span class="stat-label">Laptops</span>
                                 <span class="stat-value">561 (45%)</span>
                             </div>
                             <div class="stat-row">
-                                <div class="stat-dot bg-info"></div>
+                                <div class="stat-dot" style="background-color: #21AF65FF;"></div>
                                 <span class="stat-label">Monitors</span>
                                 <span class="stat-value">312 (25%)</span>
                             </div>
                             <div class="stat-row">
-                                <div class="stat-dot bg-success"></div>
+                                <div class="stat-dot" style="background-color: #FFC000FF;"></div>
                                 <span class="stat-label">Mobile</span>
                                 <span class="stat-value">249 (20%)</span>
                             </div>
                             <div class="stat-row">
-                                <div class="stat-dot bg-warning"></div>
+                                <div class="stat-dot" style="background-color: #FF579FFF;"></div>
                                 <span class="stat-label">Accessories</span>
                                 <span class="stat-value">125 (10%)</span>
                             </div>
@@ -254,25 +274,25 @@
                         <div class="value-breakdown">
                             <div class="value-row">
                                 <div class="value-bar">
-                                    <div class="value-fill bg-primary" style="width: 53%"></div>
+                                    <div class="value-fill" style="width: 53%; background-color: #331FEAFF;"></div>
                                 </div>
                                 <span class="value-text">Laptops $2.1M</span>
                             </div>
                             <div class="value-row">
                                 <div class="value-bar">
-                                    <div class="value-fill bg-info" style="width: 21%"></div>
+                                    <div class="value-fill" style="width: 21%; background-color: #21AF65FF;"></div>
                                 </div>
                                 <span class="value-text">Monitors $850K</span>
                             </div>
                             <div class="value-row">
                                 <div class="value-bar">
-                                    <div class="value-fill bg-success" style="width: 17%"></div>
+                                    <div class="value-fill" style="width: 17%; background-color: #FFC000FF;"></div>
                                 </div>
                                 <span class="value-text">Mobile $680K</span>
                             </div>
                             <div class="value-row">
                                 <div class="value-bar">
-                                    <div class="value-fill bg-warning" style="width: 9%"></div>
+                                    <div class="value-fill" style="width: 9%; background-color: #FF579FFF;"></div>
                                 </div>
                                 <span class="value-text">Accessories $340K</span>
                             </div>
@@ -296,7 +316,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-text">MacBook Pro assigned to John Doe</div>
-                                    <div class="activity-time">2 hours ago</div>
+                                    <div class="activity-time" data-bs-toggle="tooltip" data-bs-placement="top" title="September 10, 2025 at 2:15 PM">2 hours ago</div>
                                 </div>
                             </div>
                             <div class="activity-item">
@@ -305,7 +325,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-text">Dell Monitor maintenance scheduled</div>
-                                    <div class="activity-time">4 hours ago</div>
+                                    <div class="activity-time" data-bs-toggle="tooltip" data-bs-placement="top" title="September 10, 2025 at 12:15 PM">4 hours ago</div>
                                 </div>
                             </div>
                             <div class="activity-item">
@@ -314,7 +334,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-text">5 new assets added to inventory</div>
-                                    <div class="activity-time">6 hours ago</div>
+                                    <div class="activity-time" data-bs-toggle="tooltip" data-bs-placement="top" title="September 10, 2025 at 10:15 AM">6 hours ago</div>
                                 </div>
                             </div>
                             <div class="activity-item">
@@ -323,7 +343,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-text">iPhone returned by Sarah Wilson</div>
-                                    <div class="activity-time">1 day ago</div>
+                                    <div class="activity-time" data-bs-toggle="tooltip" data-bs-placement="top" title="September 9, 2025 at 4:15 PM">1 day ago</div>
                                 </div>
                             </div>
                             <div class="activity-item border-0">
@@ -332,7 +352,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-text">Old laptops marked as retired</div>
-                                    <div class="activity-time">1 day ago</div>
+                                    <div class="activity-time" data-bs-toggle="tooltip" data-bs-placement="top" title="September 9, 2025 at 11:30 AM">1 day ago</div>
                                 </div>
                             </div>
                         </div>
@@ -349,39 +369,43 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Generate Report</h5>
+                    <h5 class="modal-title">Asset Inventory Report</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center py-4">
-                        <i class="fas fa-file-excel fa-4x text-success mb-3"></i>
-                        <h5>Asset Inventory Report</h5>
-                        <p class="text-muted">This report will include all assets with their current status, assignment details, and specifications.</p>
+                    <div class="text-center py-3">
+                        <i class="fas fa-file-excel fa-4x mb-3" style="color: #21AF65;"></i>
+                        <p class="mb-4" style="color: #666666;">This report will include all assets with their current status, assignment details, and specifications.</p>
+                        <p class="small mb-3" style="color: #999999;">Available in Excel format only</p>
                         
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="includeImages" checked>
-                            <label class="form-check-label" for="includeImages">
-                                Include asset images
-                            </label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="includeHistory" checked>
-                            <label class="form-check-label" for="includeHistory">
-                                Include assignment history
-                            </label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="includeWarranty">
-                            <label class="form-check-label" for="includeWarranty">
-                                Include warranty information
-                            </label>
+                        <div class="text-start">
+                            <h6 class="mb-3" style="color: #0A0A0A; font-weight: 600;">Include in Report:</h6>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="includeImages" checked>
+                                <label class="form-check-label" for="includeImages" style="color: #0A0A0A;">
+                                    Include asset images
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="includeHistory" checked>
+                                <label class="form-check-label" for="includeHistory" style="color: #0A0A0A;">
+                                    Include assignment history
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="includeWarranty">
+                                <label class="form-check-label" for="includeWarranty" style="color: #0A0A0A;">
+                                    Include warranty information
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success">
-                        <i class="fas fa-download me-1"></i>Download Excel
+                    <button type="button" class="btn btn-simple-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-simple-success" id="generateReportBtn">
+                        <i class="fas fa-file-excel me-1"></i>Export to Excel
                     </button>
                 </div>
             </div>
@@ -393,22 +417,22 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Report Preview</h5>
+                    <h5 class="modal-title">Asset Report Preview</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead class="table-dark">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark sticky-top">
                                 <tr>
-                                    <th>Asset ID</th>
-                                    <th>Type</th>
-                                    <th>Brand/Model</th>
-                                    <th>Serial Number</th>
-                                    <th>Status</th>
-                                    <th>Assigned To</th>
-                                    <th>Asset Location</th>
-                                    <th>Purchase Date</th>
+                                    <th style="min-width: 100px;">Asset ID</th>
+                                    <th style="min-width: 80px;">Type</th>
+                                    <th style="min-width: 180px;">Brand/Model</th>
+                                    <th style="min-width: 120px;">Serial Number</th>
+                                    <th style="min-width: 130px;">Status</th>
+                                    <th style="min-width: 120px;">Assigned To</th>
+                                    <th style="min-width: 130px;">Asset Location</th>
+                                    <th style="min-width: 120px;">Purchase Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -417,7 +441,7 @@
                                     <td>Laptop</td>
                                     <td>Apple MacBook Pro 16"</td>
                                     <td>ABC123XYZ</td>
-                                    <td><span class="badge badge-assigned">Assigned</span></td>
+                                    <td><span class="badge badge-assigned"><i class="fas fa-user me-1"></i>Assigned</span></td>
                                     <td>John Doe</td>
                                     <td>New York</td>
                                     <td>Jan 15, 2024</td>
@@ -427,7 +451,7 @@
                                     <td>Monitor</td>
                                     <td>Dell UltraSharp 27"</td>
                                     <td>DEF456UVW</td>
-                                    <td><span class="badge badge-assigned">Assigned</span></td>
+                                    <td><span class="badge badge-assigned"><i class="fas fa-user me-1"></i>Assigned</span></td>
                                     <td>John Doe</td>
                                     <td>New York</td>
                                     <td>Jan 20, 2024</td>
@@ -437,7 +461,7 @@
                                     <td>Mobile</td>
                                     <td>iPhone 14 Pro</td>
                                     <td>GHI789RST</td>
-                                    <td><span class="badge badge-under-repair">Under Repair</span></td>
+                                    <td><span class="badge badge-under-repair"><i class="fas fa-tools me-1"></i>Under Repair</span></td>
                                     <td>-</td>
                                     <td>Service Center</td>
                                     <td>Feb 01, 2024</td>
@@ -447,7 +471,7 @@
                                     <td>Tablet</td>
                                     <td>iPad Pro 12.9"</td>
                                     <td>JKL012MNO</td>
-                                    <td><span class="badge badge-available">Available</span></td>
+                                    <td><span class="badge badge-available"><i class="fas fa-check-circle me-1"></i>Available</span></td>
                                     <td>-</td>
                                     <td>Warehouse A</td>
                                     <td>Mar 05, 2024</td>
@@ -457,25 +481,84 @@
                                     <td>Mobile</td>
                                     <td>iPhone 14 Pro</td>
                                     <td>PQR345STU</td>
-                                    <td><span class="badge badge-assigned">Assigned</span></td>
+                                    <td><span class="badge badge-assigned"><i class="fas fa-user me-1"></i>Assigned</span></td>
                                     <td>Jane Smith</td>
                                     <td>San Francisco</td>
                                     <td>Mar 12, 2024</td>
                                 </tr>
+                                <tr>
+                                    <td>AST-006</td>
+                                    <td>Laptop</td>
+                                    <td>Dell XPS 13"</td>
+                                    <td>XYZ789ABC</td>
+                                    <td><span class="badge badge-retired"><i class="fas fa-archive me-1"></i>Retired</span></td>
+                                    <td>-</td>
+                                    <td>Storage</td>
+                                    <td>Jan 10, 2023</td>
+                                </tr>
+                                <tr>
+                                    <td>AST-007</td>
+                                    <td>Monitor</td>
+                                    <td>Samsung 24" LED</td>
+                                    <td>SAM456DEF</td>
+                                    <td><span class="badge badge-available"><i class="fas fa-check-circle me-1"></i>Available</span></td>
+                                    <td>-</td>
+                                    <td>Warehouse B</td>
+                                    <td>Mar 20, 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>AST-008</td>
+                                    <td>Tablet</td>
+                                    <td>Surface Pro 9</td>
+                                    <td>SUR123GHI</td>
+                                    <td><span class="badge badge-under-repair"><i class="fas fa-tools me-1"></i>Under Repair</span></td>
+                                    <td>-</td>
+                                    <td>Service Center</td>
+                                    <td>Feb 15, 2024</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-center mt-3">
-                        <small class="text-muted">Showing 5 of 1,247 records</small>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <small class="text-muted">Showing 8 of 1,247 records</small>
+                        <nav aria-label="Report pagination">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">3</a>
+                                </li>
+                                <li class="page-item">
+                                    <span class="page-link">...</span>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">156</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success">
+                    <button type="button" class="btn btn-simple-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-simple-success" id="exportExcelBtn">
                             <i class="fas fa-file-excel me-1"></i>Export Excel
                         </button>
-                        <button type="button" class="btn btn-danger">
+                        <button type="button" class="btn btn-simple-danger" id="exportPdfBtn">
                             <i class="fas fa-file-pdf me-1"></i>Export PDF
                         </button>
                     </div>
@@ -508,7 +591,14 @@
                             
                             // Add loading state
                             const originalText = button.innerHTML;
-                            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+                            const isExport = button.textContent.includes('Export');
+                            const exportType = button.textContent.includes('Excel') ? 'Excel' : 'PDF';
+                            
+                            if (isExport) {
+                                button.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>Exporting ${exportType}...`;
+                            } else {
+                                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+                            }
                             button.disabled = true;
                             
                             // Simulate processing time
@@ -517,11 +607,99 @@
                                 button.disabled = false;
                                 
                                 // Show success message
-                                showNotification('Report generated successfully!', 'success');
+                                if (isExport) {
+                                    showNotification(`Report exported to ${exportType} successfully!`, 'success');
+                                } else {
+                                    showNotification('Report generated successfully!', 'success');
+                                }
                             }, 2000);
                         }
                     });
                 }
+            });
+
+            // Specific handlers for modal export buttons
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+
+            if (exportExcelBtn) {
+                exportExcelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleExport(this, 'Excel');
+                });
+            }
+
+            if (exportPdfBtn) {
+                exportPdfBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleExport(this, 'PDF');
+                });
+            }
+
+            // Generate Report modal button
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleGenerateReport(this);
+                });
+            }
+
+            // Custom Report Builder buttons
+            const customExportExcelBtn = document.getElementById('customExportExcelBtn');
+            const customExportPdfBtn = document.getElementById('customExportPdfBtn');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+            if (customExportExcelBtn) {
+                customExportExcelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleCustomExport(this, 'Excel');
+                });
+            }
+
+            if (customExportPdfBtn) {
+                customExportPdfBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleCustomExport(this, 'PDF');
+                });
+            }
+
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleClearFilters();
+                });
+            }
+
+            // Pagination functionality
+            const paginationLinks = document.querySelectorAll('#reportPreviewModal .page-link');
+            paginationLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (!this.parentElement.classList.contains('disabled') && 
+                        !this.parentElement.classList.contains('active')) {
+                        
+                        // Remove active class from all items
+                        document.querySelectorAll('#reportPreviewModal .page-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked item (if it's a number)
+                        if (this.textContent.trim() && !isNaN(this.textContent.trim())) {
+                            this.parentElement.classList.add('active');
+                        }
+                        
+                        // Simulate loading new data
+                        const tableBody = document.querySelector('#reportPreviewModal tbody');
+                        tableBody.style.opacity = '0.5';
+                        
+                        setTimeout(() => {
+                            tableBody.style.opacity = '1';
+                            // Here you would typically load new data
+                            showNotification('Page loaded successfully!', 'info');
+                        }, 500);
+                    }
+                });
             });
 
             // Custom date range toggle
@@ -537,38 +715,222 @@
                 });
             }
 
-            // Enhanced report card interactions
-            const reportCards = document.querySelectorAll('.report-card');
-            reportCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.zIndex = '10';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.zIndex = '1';
-                });
-            });
+            // Report cards - no hover effects on cards, only on buttons
 
             // Initialize charts with enhanced styling - Reports page specific
             initializeReportsCharts();
         });
 
-        // Show notification function
+        // Handle export functionality
+        function handleExport(button, exportType) {
+            const originalText = button.innerHTML;
+            button.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>Exporting ${exportType}...`;
+            button.disabled = true;
+            
+            // Simulate export process
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                // Show success notification
+                showNotification(`Report exported to ${exportType} successfully!`, 'success');
+                
+                // Simulate file download
+                const filename = `asset-report-${new Date().toISOString().split('T')[0]}.${exportType.toLowerCase()}`;
+                console.log(`Downloading: ${filename}`);
+            }, 2500);
+        }
+
+        // Handle generate report functionality
+        function handleGenerateReport(button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Preparing report...';
+            button.disabled = true;
+            
+            // Get selected options
+            const includeImages = document.getElementById('includeImages').checked;
+            const includeHistory = document.getElementById('includeHistory').checked;
+            const includeWarranty = document.getElementById('includeWarranty').checked;
+            
+            console.log('Report options:', {
+                includeImages,
+                includeHistory,
+                includeWarranty
+            });
+            
+            // Simulate report generation
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('generateReportModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Show success notification
+                showNotification('Asset Inventory Report exported to Excel successfully!', 'success');
+                
+                // Simulate file download
+                const filename = `asset-inventory-report-${new Date().toISOString().split('T')[0]}.xlsx`;
+                console.log(`Downloading: ${filename}`);
+            }, 2500);
+        }
+
+        // Handle custom export functionality with dynamic naming
+        function handleCustomExport(button, exportType) {
+            const originalText = button.innerHTML;
+            const reportTypeSelect = document.getElementById('reportType');
+            const reportType = reportTypeSelect ? reportTypeSelect.value : 'assets';
+            
+            // Get report type name for dynamic button text
+            const reportNames = {
+                'assets': 'Asset Report',
+                'employees': 'Employee Report',
+                'maintenance': 'Maintenance Report',
+                'audit': 'Audit Log Report'
+            };
+            
+            const reportName = reportNames[reportType] || 'Custom Report';
+            
+            button.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>Exporting ${reportName}...`;
+            button.disabled = true;
+            
+            // Simulate export process
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                // Show success notification with dynamic name
+                showNotification(`${reportName} exported to ${exportType} successfully!`, 'success');
+                
+                // Simulate file download
+                const filename = `${reportType}-report-${new Date().toISOString().split('T')[0]}.${exportType.toLowerCase()}`;
+                console.log(`Downloading: ${filename}`);
+            }, 2500);
+        }
+
+        // Handle clear filters functionality
+        function handleClearFilters() {
+            // Reset all form fields
+            const reportTypeSelect = document.getElementById('reportType');
+            const assetTypeSelect = document.getElementById('assetTypeFilter');
+            const dateRangeSelect = document.querySelector('select[class="form-select"]:last-of-type');
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (reportTypeSelect) reportTypeSelect.value = 'assets';
+            if (assetTypeSelect) assetTypeSelect.value = '';
+            if (dateRangeSelect) dateRangeSelect.value = 'Last 30 Days';
+            if (customDateRange) customDateRange.style.display = 'none';
+            
+            // Clear custom date inputs
+            const fromDate = document.querySelector('#customDateRange input[type="date"]:first-child');
+            const toDate = document.querySelector('#customDateRange input[type="date"]:last-child');
+            if (fromDate) fromDate.value = '';
+            if (toDate) toDate.value = '';
+            
+            // Show feedback
+            showNotification('All filters have been cleared', 'info');
+        }
+
+        // Show notification function - consistent with add asset form (two-tone design)
         function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.custom-toast-notification');
+            existingNotifications.forEach(notification => notification.remove());
+
             const notification = document.createElement('div');
-            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            notification.className = 'custom-toast-notification';
+            
+            // Set colors based on type using palette colors
+            let headerColor, headerText, icon;
+            switch(type) {
+                case 'success':
+                    headerColor = '#21AF65';
+                    headerText = 'Success';
+                    icon = 'check-circle';
+                    break;
+                case 'warning':
+                    headerColor = '#FFC000';
+                    headerText = 'Warning';
+                    icon = 'exclamation-triangle';
+                    break;
+                case 'danger':
+                case 'error':
+                    headerColor = '#E97676';
+                    headerText = 'Error';
+                    icon = 'exclamation-circle';
+                    break;
+                case 'info':
+                default:
+                    headerColor = '#331FEA';
+                    headerText = 'Info';
+                    icon = 'info-circle';
+                    break;
+            }
+            
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                background-color: #FFFFFF;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                font-size: 14px;
+                max-width: 350px;
+                min-width: 300px;
+                overflow: hidden;
+                animation: slideInUp 0.3s ease-out;
             `;
+            
+            notification.innerHTML = `
+                <div style="
+                    background-color: ${headerColor};
+                    color: #FFFFFF;
+                    padding: 8px 16px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                ">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-${icon} me-2" style="color: #FFFFFF; font-size: 16px;"></i>
+                        <span>${headerText}</span>
+                    </div>
+                    <button type="button" class="btn-close-custom" onclick="this.parentElement.parentElement.remove()" style="
+                        background: none;
+                        border: none;
+                        color: #FFFFFF;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 0;
+                        opacity: 0.8;
+                        line-height: 1;
+                    ">&times;</button>
+                </div>
+                <div style="
+                    background-color: #FFFFFF;
+                    color: #0A0A0A;
+                    padding: 12px 16px;
+                    font-weight: 400;
+                ">
+                    ${message}
+                </div>
+            `;
+            
             document.body.appendChild(notification);
             
             // Auto dismiss after 4 seconds
             setTimeout(() => {
                 if (notification.parentNode) {
-                    notification.remove();
+                    notification.style.animation = 'slideOutDown 0.3s ease-in forwards';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
                 }
             }, 4000);
         }
@@ -585,10 +947,10 @@
                         datasets: [{
                             data: [45, 25, 20, 10],
                             backgroundColor: [
-                                '#667eea', // Blue-purple for Laptops
-                                '#4facfe', // Blue for Monitors
-                                '#11998e', // Green for Mobile
-                                '#fa709a'  // Pink for Accessories
+                                '#331FEAFF', // Primary Blue for Laptops
+                                '#21AF65FF', // Green for Monitors
+                                '#FFC000FF', // Yellow for Mobile
+                                '#FF579FFF'  // Pink for Accessories
                             ],
                             borderWidth: 2,
                             borderColor: '#ffffff',
@@ -632,19 +994,19 @@
                         datasets: [{
                             data: [892, 312, 43, 127],
                             backgroundColor: [
-                                '#667eea', // Blue-purple for Assigned
-                                '#11998e', // Green for Available
-                                '#fa709a', // Pink for Maintenance
-                                '#6c757d'  // Gray for Retired
+                                '#331FEAFF', // Primary Blue for Assigned
+                                '#21AF65FF', // Green for Available
+                                '#FF8C61FF', // Orange for Maintenance
+                                '#666666FF'  // Gray for Retired
                             ],
                             borderWidth: 0,
                             borderRadius: 8,
                             borderSkipped: false,
                             hoverBackgroundColor: [
-                                '#5a6fd8', // Darker blue-purple
-                                '#0f8278', // Darker green
-                                '#f85a88', // Darker pink
-                                '#5a6169'  // Darker gray
+                                '#2a19c7FF', // Darker primary blue
+                                '#1e9c5aFF', // Darker green
+                                '#ff7a4dFF', // Darker orange
+                                '#555555FF'  // Darker gray
                             ]
                         }]
                     },
@@ -727,45 +1089,45 @@
             color: #495057 !important;
         }
         
-        /* Dashboard-style gradient badges */
+        /* Solid color badges using recommended palette */
         .badge.badge-available {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            background-color: #21AF65 !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+            box-shadow: none;
         }
         
         .badge.badge-assigned {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background-color: #331FEA !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: none;
         }
         
         .badge.badge-under-repair {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            background-color: #FF8C61 !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+            box-shadow: none;
         }
         
         .badge.badge-retired {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            background-color: #666666 !important;
             color: white !important;
             border: none !important;
             font-weight: 600;
             padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3);
+            box-shadow: none;
         }
         
         /* Modern Card Styles */
@@ -775,6 +1137,7 @@
             cursor: default;
             border: none !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+            transition: none !important;
         }
         
         .card {
@@ -830,26 +1193,20 @@
             box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
         
-        /* Ensure buttons in cards have proper hover effects */
-        .report-card .btn:hover,
-        .card .btn:hover {
+        /* Only buttons in report cards should have hover effects, not the cards themselves */
+        .report-card .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
-        /* Override global card hover effects for report cards */
+        /* Remove all hover effects from cards */
         .report-card:hover,
-        .card:hover {
-            transform: none !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-        }
-        
-        /* Override specific card type hover effects */
+        .card:hover,
         .compact-chart-card:hover,
         .status-mini-card:hover {
             transform: none !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-            background: rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+            background: none !important;
         }
         
         .badge {
@@ -926,126 +1283,141 @@
             outline: none !important;
         }
         
-        /* Gradient Button Styles - matching badge designs */
+        /* Solid Button Styles using recommended palette */
         .btn-success, .btn-success:visited, .btn-success:focus, .btn-success:active {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            background-color: #21AF65 !important;
             color: white !important;
-            box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3) !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-success:hover, .btn-success:focus:hover {
-            background: linear-gradient(135deg, #0f8278 0%, #32d96b 100%) !important;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4) !important;
+            background-color: #1e9c5a !important;
+            box-shadow: none !important;
             color: white !important;
             border: none !important;
         }
         
         .btn-primary, .btn-primary:visited, .btn-primary:focus, .btn-primary:active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background-color: #331FEA !important;
             color: white !important;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-primary:hover, .btn-primary:focus:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%) !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+            background-color: #2a19c7 !important;
+            box-shadow: none !important;
             color: white !important;
             border: none !important;
         }
         
         .btn-warning, .btn-warning:visited, .btn-warning:focus, .btn-warning:active {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-            color: white !important;
-            box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3) !important;
+            background-color: #FFC000 !important;
+            color: #0A0A0A !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-warning:hover, .btn-warning:focus:hover {
-            background: linear-gradient(135deg, #f85a88 0%, #fedd2e 100%) !important;
-            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4) !important;
-            color: white !important;
+            background-color: #e6ad00 !important;
+            box-shadow: none !important;
+            color: #0A0A0A !important;
             border: none !important;
         }
         
         .btn-info, .btn-info:visited, .btn-info:focus, .btn-info:active {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            background-color: #331FEA !important;
             color: white !important;
-            box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3) !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-info:hover, .btn-info:focus:hover {
-            background: linear-gradient(135deg, #3d9aec 0%, #00e0ec 100%) !important;
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4) !important;
+            background-color: #2a19c7 !important;
+            box-shadow: none !important;
             color: white !important;
             border: none !important;
         }
         
         .btn-danger, .btn-danger:visited, .btn-danger:focus, .btn-danger:active {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%) !important;
+            background-color: #E97676 !important;
             color: white !important;
-            box-shadow: 0 2px 8px rgba(255, 65, 108, 0.3) !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-danger:hover, .btn-danger:focus:hover {
-            background: linear-gradient(135deg, #ff2f5a 0%, #ff3545 100%) !important;
-            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4) !important;
+            background-color: #e56565 !important;
+            box-shadow: none !important;
             color: white !important;
             border: none !important;
         }
         
         .btn-secondary, .btn-secondary:visited, .btn-secondary:focus, .btn-secondary:active {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
-            color: #333 !important;
-            box-shadow: 0 2px 8px rgba(168, 237, 234, 0.3) !important;
+            background-color: #B7B7B7 !important;
+            color: #0A0A0A !important;
+            box-shadow: none !important;
             border: none !important;
         }
         
         .btn-secondary:hover, .btn-secondary:focus:hover {
-            background: linear-gradient(135deg, #96e1de 0%, #fec8d7 100%) !important;
-            box-shadow: 0 4px 15px rgba(168, 237, 234, 0.4) !important;
-            color: #333 !important;
+            background-color: #999999 !important;
+            box-shadow: none !important;
+            color: #0A0A0A !important;
             border: none !important;
         }
         
-        /* Outline button styles with gradients */
+        /* Outline button styles with solid colors */
         .btn-outline-primary, .btn-outline-primary:visited, .btn-outline-primary:focus, .btn-outline-primary:active {
-            background: white !important;
-            border: 2px solid #667eea !important;
-            color: #667eea !important;
+            background-color: white !important;
+            border: 2px solid #331FEA !important;
+            color: #331FEA !important;
         }
         
         .btn-outline-primary:hover, .btn-outline-primary:focus:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            background-color: #331FEA !important;
             color: white !important;
-            border: 2px solid transparent !important;
+            border: 2px solid #331FEA !important;
         }
         
         .btn-outline-secondary, .btn-outline-secondary:visited, .btn-outline-secondary:focus, .btn-outline-secondary:active {
-            background: white !important;
-            border: 2px solid #a8edea !important;
-            color: #666 !important;
+            background-color: white !important;
+            border: 2px solid #B7B7B7 !important;
+            color: #666666 !important;
         }
         
         .btn-outline-secondary:hover, .btn-outline-secondary:focus:hover {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
-            color: #333 !important;
-            border: 2px solid transparent !important;
+            background-color: #B7B7B7 !important;
+            color: #0A0A0A !important;
+            border: 2px solid #B7B7B7 !important;
         }
         
         .btn-outline-success, .btn-outline-success:visited, .btn-outline-success:focus, .btn-outline-success:active {
-            background: white !important;
-            border: 2px solid #11998e !important;
-            color: #11998e !important;
+            background-color: white !important;
+            border: 2px solid #21AF65 !important;
+            color: #21AF65 !important;
         }
         
         .btn-outline-success:hover, .btn-outline-success:focus:hover {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            background-color: #21AF65 !important;
             color: white !important;
-            border: 2px solid transparent !important;
+            border: 2px solid #21AF65 !important;
+        }
+
+        /* Audit button with bright pink color */
+        .btn-audit, .btn-audit:visited, .btn-audit:focus, .btn-audit:active {
+            background-color: #FF579F !important;
+            color: white !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .btn-audit:hover, .btn-audit:focus:hover {
+            background-color: #e5499a !important;
+            box-shadow: none !important;
+            color: white !important;
+            border: none !important;
         }
         
         /* Small button adjustments */
@@ -1066,7 +1438,7 @@
 
         
         .compact-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #331FEA;
             color: white;
             border-radius: 1rem 1rem 0 0;
             border: none;
@@ -1139,10 +1511,10 @@
             margin-bottom: 0.5rem;
         }
         
-        .status-mini-card.assigned .status-icon { color: #28a745; }
-        .status-mini-card.available .status-icon { color: #007bff; }
-        .status-mini-card.maintenance .status-icon { color: #ffc107; }
-        .status-mini-card.retired .status-icon { color: #6c757d; }
+        .status-mini-card.assigned .status-icon { color: #331FEAFF; }
+        .status-mini-card.available .status-icon { color: #21AF65FF; }
+        .status-mini-card.maintenance .status-icon { color: #FF8C61FF; }
+        .status-mini-card.retired .status-icon { color: #666666FF; }
         
         .status-count {
             font-size: 1.5rem;
@@ -1150,10 +1522,10 @@
             margin-bottom: 0.2rem;
         }
         
-        .status-mini-card.assigned .status-count { color: #28a745; }
-        .status-mini-card.available .status-count { color: #007bff; }
-        .status-mini-card.maintenance .status-count { color: #ffc107; }
-        .status-mini-card.retired .status-count { color: #6c757d; }
+        .status-mini-card.assigned .status-count { color: #331FEAFF; }
+        .status-mini-card.available .status-count { color: #21AF65FF; }
+        .status-mini-card.maintenance .status-count { color: #FF8C61FF; }
+        .status-mini-card.retired .status-count { color: #666666FF; }
         
         .status-label {
             font-size: 0.75rem;
@@ -1171,7 +1543,7 @@
         .value-summary {
             text-align: center;
             padding: 1rem 0;
-            background: rgba(102, 126, 234, 0.05);
+            background-color: rgba(51, 31, 234, 0.05);
             border-radius: 0.5rem;
             margin-bottom: 1rem;
         }
@@ -1179,7 +1551,7 @@
         .total-value {
             font-size: 1.8rem;
             font-weight: 800;
-            color: #667eea;
+            color: #331FEA;
             margin-bottom: 0.2rem;
         }
         
@@ -1232,7 +1604,7 @@
         }
         
         .activity-item:hover {
-            background: rgba(102, 126, 234, 0.02);
+            background-color: rgba(51, 31, 234, 0.02);
         }
         
         .activity-icon {
@@ -1247,11 +1619,11 @@
             color: white;
         }
         
-        .activity-icon.assigned { background: linear-gradient(135deg, #28a745, #20c997); }
-        .activity-icon.maintenance { background: linear-gradient(135deg, #ffc107, #fd7e14); }
-        .activity-icon.added { background: linear-gradient(135deg, #007bff, #17a2b8); }
-        .activity-icon.returned { background: linear-gradient(135deg, #6f42c1, #e83e8c); }
-        .activity-icon.retired { background: linear-gradient(135deg, #6c757d, #495057); }
+        .activity-icon.assigned { background-color: #21AF65; }
+        .activity-icon.maintenance { background-color: #FFC000; }
+        .activity-icon.added { background-color: #331FEA; }
+        .activity-icon.returned { background-color: #FF579F; }
+        .activity-icon.retired { background-color: #666666; }
         
         .activity-content {
             flex: 1;
@@ -1266,9 +1638,385 @@
         
         .activity-time {
             font-size: 0.7rem;
-            color: #6c757d;
+            color: #666666;
+            cursor: help;
+            border-bottom: 1px dotted #999999;
+            transition: color 0.2s ease;
+        }
+
+        .activity-time:hover {
+            color: #0A0A0A;
+        }
+
+        /* Toast Notification Animations - consistent with add asset form */
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Custom toast notification styles */
+        .custom-toast-notification {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .custom-toast-notification .btn-close-custom:hover {
+            opacity: 1 !important;
         }
         
+        /* Pagination Styling */
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            background-color: #fff;
+            margin: 0 2px;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-sm .page-item.active .page-link {
+            background-color: #331FEA;
+            border-color: #331FEA;
+            color: white;
+            box-shadow: none;
+        }
+
+        .pagination-sm .page-link:hover:not(.active) {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+            color: #495057;
+            transform: translateY(-1px);
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+
+        /* Sticky table header */
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Enhanced table styling for modal */
+        #reportPreviewModal .table {
+            margin-bottom: 0;
+        }
+
+        #reportPreviewModal .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        #reportPreviewModal .table tbody tr:hover {
+            background-color: rgba(51, 31, 234, 0.05);
+            transform: scale(1.002);
+        }
+
+        /* Badge improvements for accessibility */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .badge i {
+            font-size: 0.7rem;
+        }
+
+        /* Scrollbar styling for table */
+        .table-responsive::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background-color: #331FEA;
+            border-radius: 3px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background-color: #2a19c7;
+        }
+
+        /* Loading state for table */
+        .table tbody {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Simple Button Styles */
+        .btn-simple-secondary {
+            background-color: #6c757d !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-simple-secondary:hover {
+            background-color: #5a6268 !important;
+            color: white !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-simple-success {
+            background-color: #28a745 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-simple-success:hover {
+            background-color: #218838 !important;
+            color: white !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-simple-danger {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-simple-danger:hover {
+            background-color: #c82333 !important;
+            color: white !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Override any focus states */
+        .btn-simple-secondary:focus,
+        .btn-simple-secondary:active,
+        .btn-simple-success:focus,
+        .btn-simple-success:active,
+        .btn-simple-danger:focus,
+        .btn-simple-danger:active {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        /* Modal styles using recommended palette */
+        #generateReportModal .modal-content {
+            background-color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 4px 20px rgba(10, 10, 10, 0.15) !important;
+        }
+
+        #generateReportModal .modal-header {
+            background-color: #FFFFFF !important;
+            border-bottom: 1px solid #E0E0E0 !important;
+            padding: 1.25rem !important;
+        }
+
+        #generateReportModal .modal-title {
+            color: #0A0A0A !important;
+            font-weight: 600 !important;
+            font-size: 1.25rem !important;
+        }
+
+        #generateReportModal .modal-body {
+            background-color: #FFFFFF !important;
+            padding: 1.5rem !important;
+        }
+
+        #generateReportModal .modal-footer {
+            background-color: #FFFFFF !important;
+            border-top: 1px solid #E0E0E0 !important;
+            padding: 1rem 1.25rem !important;
+        }
+
+        #generateReportModal .btn-close {
+            color: #666666 !important;
+            opacity: 1 !important;
+        }
+
+        #generateReportModal .btn-close:hover {
+            color: #0A0A0A !important;
+            opacity: 1 !important;
+        }
+
+        /* Form check styles */
+        #generateReportModal .form-check-input {
+            border-color: #B7B7B7 !important;
+            background-color: #FFFFFF !important;
+        }
+
+        #generateReportModal .form-check-input:checked {
+            background-color: #21AF65 !important;
+            border-color: #21AF65 !important;
+        }
+
+        #generateReportModal .form-check-input:focus {
+            border-color: #21AF65 !important;
+            box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+        }
+
+        #generateReportModal .form-check-label {
+            color: #0A0A0A !important;
+            font-weight: 500 !important;
+        }
+
+        /* Custom Report Builder Button Hierarchy */
+        .btn-custom-primary, .btn-custom-primary:visited, .btn-custom-primary:focus, .btn-custom-primary:active {
+            background-color: #331FEA !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 600 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-primary:hover, .btn-custom-primary:focus:hover {
+            background-color: #2a19c7 !important;
+            color: #FFFFFF !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-success, .btn-custom-success:visited, .btn-custom-success:focus, .btn-custom-success:active {
+            background-color: #21AF65 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 600 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-success:hover, .btn-custom-success:focus:hover {
+            background-color: #1e9c5a !important;
+            color: #FFFFFF !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-danger, .btn-custom-danger:visited, .btn-custom-danger:focus, .btn-custom-danger:active {
+            background-color: #E97676 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 600 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-danger:hover, .btn-custom-danger:focus:hover {
+            background-color: #e56565 !important;
+            color: #FFFFFF !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-secondary, .btn-custom-secondary:visited, .btn-custom-secondary:focus, .btn-custom-secondary:active {
+            background-color: #E0E0E0 !important;
+            color: #0A0A0A !important;
+            border: none !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: background-color 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-custom-secondary:hover, .btn-custom-secondary:focus:hover {
+            background-color: #CCCCCC !important;
+            color: #0A0A0A !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-text-secondary, .btn-text-secondary:visited, .btn-text-secondary:focus, .btn-text-secondary:active {
+            background-color: transparent !important;
+            color: #666666 !important;
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: none !important;
+        }
+
+        .btn-text-secondary:hover, .btn-text-secondary:focus:hover {
+            background-color: #F5F5F5 !important;
+            color: #0A0A0A !important;
+            border-color: #B7B7B7 !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Analytics Cards Improvements */
+        .analytics-cards .compact-chart-card {
+            min-height: 380px !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .analytics-cards .col-12 {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        /* Improved card spacing */
+        .analytics-cards .card-body {
+            padding: 1.25rem !important;
+        }
+
+        /* Better visual hierarchy for section headers */
+        .reports-section-header {
+            border-bottom: 2px solid #F5F5F5;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 1200px) {
             .status-grid {
@@ -1296,6 +2044,18 @@
             
             .status-count {
                 font-size: 1.2rem;
+            }
+
+            /* Modal table responsive */
+            #reportPreviewModal .table-responsive {
+                max-height: 300px;
+            }
+
+            #reportPreviewModal th,
+            #reportPreviewModal td {
+                min-width: auto !important;
+                font-size: 0.875rem;
+                padding: 0.5rem 0.25rem;
             }
         }
         

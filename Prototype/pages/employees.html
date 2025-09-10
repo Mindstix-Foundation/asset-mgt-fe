@@ -18,17 +18,22 @@
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-0">Employee Management</h2>
+                <h2 class="mb-0" style="color: #0A0A0A;">Employee Management</h2>
                 <p class="text-muted mb-0">Manage employee information and asset assignments</p>
             </div>
-            <div class="d-flex gap-2">
-                <!-- View Toggle (Grid/List) -->
-                <button class="btn btn-outline-secondary btn-modern" id="toggleView">
-                    <i class="fas fa-th-large me-1"></i>Grid View
-                </button>
+            <div class="d-flex gap-2 align-items-center">
+                <!-- View Toggle (List/Grid) -->
+                <div class="btn-group" role="group" aria-label="View toggle">
+                    <button class="btn btn-outline-secondary btn-modern view-toggle active" data-view="list" id="listToggle">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-modern view-toggle" data-view="grid" id="gridToggle">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
                 
                 <!-- Action Buttons -->
-                <button class="btn btn-outline-primary btn-modern" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
+                <button class="btn btn-outline-secondary btn-modern" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
                     <i class="fas fa-file-excel me-1"></i>Bulk Upload
                 </button>
                 <a href="../form_pages/add-employee.html" class="btn btn-primary btn-modern">
@@ -38,12 +43,18 @@
         </div>
 
         <!-- Filters -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Employees</h6>
-                <small class="text-muted">Search and filter employees by various criteria</small>
+        <div class="card mb-4 filter-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Employees</h6>
+                    <small class="text-muted">Search and filter employees by various criteria</small>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary" id="toggleAdvancedFilters">
+                    <i class="fas fa-chevron-down me-1"></i>Advanced
+                </button>
             </div>
             <div class="card-body">
+                <!-- Basic Filters -->
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label class="form-label">Search Employees</label>
@@ -62,6 +73,45 @@
                             </select>
                             <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
                                 <i class="fas fa-sort-amount-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Filters (Collapsible) -->
+                <div class="collapse" id="advancedFilters">
+                    <hr class="my-3">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">Department</label>
+                            <select class="form-select" id="filterDepartment">
+                                <option value="">All Departments</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">Asset Count</label>
+                            <select class="form-select" id="filterAssets">
+                                <option value="">All</option>
+                                <option value="0">No Assets</option>
+                                <option value="1-2">1-2 Assets</option>
+                                <option value="3+">3+ Assets</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
+                                <i class="fas fa-times me-1"></i>Clear Filters
                             </button>
                         </div>
                     </div>
@@ -102,13 +152,13 @@
                                     <td>3 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal" title="View Details" data-bs-toggle="tooltip">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-secondary">
+                                            <button class="btn btn-action btn-edit" title="Edit Employee" data-bs-toggle="tooltip">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-action btn-assign" title="Assign Asset" data-bs-toggle="tooltip">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
                                         </div>
@@ -129,13 +179,13 @@
                                     <td>2 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal" title="View Details" data-bs-toggle="tooltip">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-secondary">
+                                            <button class="btn btn-action btn-edit" title="Edit Employee" data-bs-toggle="tooltip">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-action btn-assign" title="Assign Asset" data-bs-toggle="tooltip">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
                                         </div>
@@ -156,13 +206,13 @@
                                     <td>1 Asset</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal" title="View Details" data-bs-toggle="tooltip">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-secondary">
+                                            <button class="btn btn-action btn-edit" title="Edit Employee" data-bs-toggle="tooltip">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-action btn-assign" title="Assign Asset" data-bs-toggle="tooltip">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
                                         </div>
@@ -183,13 +233,13 @@
                                     <td>4 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal" title="View Details" data-bs-toggle="tooltip">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-secondary">
+                                            <button class="btn btn-action btn-edit" title="Edit Employee" data-bs-toggle="tooltip">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-action btn-assign" title="Assign Asset" data-bs-toggle="tooltip">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
                                         </div>
@@ -210,13 +260,13 @@
                                     <td>2 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal" title="View Details" data-bs-toggle="tooltip">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-secondary">
+                                            <button class="btn btn-action btn-edit" title="Edit Employee" data-bs-toggle="tooltip">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-success">
+                                            <button class="btn btn-action btn-assign" title="Assign Asset" data-bs-toggle="tooltip">
                                                 <i class="fas fa-laptop"></i>
                                             </button>
                                         </div>
@@ -229,25 +279,62 @@
             </div>
 
             <!-- Grid View (Hidden by default) -->
-            <div class="row d-none" id="gridView">
-                <!-- Grid cards will be dynamically generated here -->
+            <div class="d-none" id="gridView">
+                <div class="row" id="gridContainer">
+                    <!-- Employee Cards will be generated here -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        <small>Showing <span id="showingStart">1</span>-<span id="showingEnd">5</span> of <span id="totalEmployees">5</span> employees</small>
+                    </div>
+                    <nav aria-label="Employee pagination">
+                        <ul class="pagination pagination-modern mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
         <!-- Pagination -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
-                </li>
-            </ul>
-        </nav>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <div class="text-muted">
+                <small>Showing <span>1</span>-<span>5</span> of <span>5</span> employees</small>
+            </div>
+            <nav aria-label="Employee pagination">
+                <ul class="pagination pagination-modern mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 
     <!-- Employee Detail Modal -->
@@ -401,22 +488,34 @@
             let isGridView = false;
             let sortAscending = true;
             
+            // Initialize with list view
+            listView.classList.remove('d-none');
+            gridView.classList.add('d-none');
+
             // View toggle functionality
-            toggleViewBtn.addEventListener('click', function() {
-                if (isGridView) {
-                    // Switch to List View
-                    listView.classList.remove('d-none');
-                    gridView.classList.add('d-none');
-                    toggleViewBtn.innerHTML = '<i class="fas fa-th-large me-1"></i>Grid View';
-                    isGridView = false;
-                } else {
-                    // Switch to Grid View
-                    generateGridView();
-                    listView.classList.add('d-none');
-                    gridView.classList.remove('d-none');
-                    toggleViewBtn.innerHTML = '<i class="fas fa-list me-1"></i>List View';
-                    isGridView = true;
-                }
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const viewType = this.getAttribute('data-view');
+                    
+                    // Remove active class from all toggle buttons
+                    document.querySelectorAll('.view-toggle').forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    if (viewType === 'grid') {
+                        // Switch to Grid View
+                        generateGridView();
+                        listView.classList.add('d-none');
+                        gridView.classList.remove('d-none');
+                        isGridView = true;
+                    } else {
+                        // Switch to List View
+                        listView.classList.remove('d-none');
+                        gridView.classList.add('d-none');
+                        isGridView = false;
+                    }
+                });
             });
             
             // Generate grid view cards from table data
@@ -424,11 +523,11 @@
                 const visibleRows = Array.from(employeesTable.querySelectorAll('tbody tr')).filter(row => 
                     row.style.display !== 'none' && row.id !== 'noResultsRow'
                 );
-                
-                gridView.innerHTML = '';
+                const gridContainer = document.getElementById('gridContainer');
+                gridContainer.innerHTML = '';
                 
                 if (visibleRows.length === 0) {
-                    gridView.innerHTML = `
+                    gridContainer.innerHTML = `
                         <div class="col-12 text-center py-5">
                             <i class="fas fa-users fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No employees found</h5>
@@ -447,65 +546,53 @@
                     const phone = cells[3].textContent.trim();
                     const assets = cells[4].textContent.trim();
                     
-                    const card = document.createElement('div');
-                    card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
-                    card.innerHTML = `
-                        <div class="card h-100 border-0 shadow-lg employee-card-modern">
-                            <div class="card-header-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 120px; position: relative; border-radius: 0.5rem 0.5rem 0 0;">
-                                <div class="d-flex justify-content-center align-items-center h-100">
-                                    <i class="fas fa-user-circle fa-3x text-white"></i>
-                                </div>
-                            </div>
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <h5 class="fw-bold mb-1 text-primary">${name}</h5>
-                                    <p class="text-muted small mb-0">${id}</p>
-                                </div>
-                                
-                                <div class="employee-info-modern">
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-envelope text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Email</small>
+                    const cardHtml = `
+                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                            <div class="card h-100 employee-card">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="employee-header mb-2">
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <i class="fas fa-user-circle fa-3x" style="color: #331FEAFF;"></i>
                                         </div>
-                                        <div class="ps-3 fw-medium small">${email}</div>
+                                        <div class="text-center mb-3">
+                                            <h6 class="card-title fw-bold mb-1 text-truncate" style="color: #0A0A0A;">${name}</h6>
+                                            <p class="text-muted small mb-0">${id}</p>
+                                        </div>
                                     </div>
                                     
-                                    <div class="info-item mb-3">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-phone text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Phone</small>
+                                    <div class="employee-details flex-grow-1 mb-3">
+                                        <div class="mb-2">
+                                            <i class="fas fa-envelope text-muted me-2" style="width: 14px;"></i>
+                                            <small class="text-truncate">${email}</small>
                                         </div>
-                                        <div class="ps-3 small">${phone}</div>
+                                        <div class="mb-2">
+                                            <i class="fas fa-phone text-muted me-2" style="width: 14px;"></i>
+                                            <small class="text-truncate">${phone}</small>
+                                        </div>
+                                        <div class="mb-0">
+                                            <i class="fas fa-laptop text-muted me-2" style="width: 14px;"></i>
+                                            <small class="text-truncate">${assets}</small>
+                                        </div>
                                     </div>
                                     
-                                    <div class="info-item mb-4">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <i class="fas fa-laptop text-primary me-2"></i>
-                                            <small class="text-muted fw-semibold">Assets</small>
+                                    <div class="employee-actions-footer mt-auto pt-2 border-top">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-sm btn-action btn-view employee-view-btn" title="View Employee Details" data-bs-toggle="tooltip" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-action btn-edit employee-edit-btn" title="Edit Employee" data-bs-toggle="tooltip">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-action btn-assign employee-assign-btn" title="Assign Asset" data-bs-toggle="tooltip">
+                                                <i class="fas fa-laptop"></i>
+                                            </button>
                                         </div>
-                                        <div class="ps-3">${assets}</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
-                                        <i class="fas fa-eye me-2"></i>View Details
-                                    </button>
-                                    <div class="btn-group">
-                                        <button class="btn btn-outline-secondary btn-sm" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-outline-success btn-sm" title="Assign Asset">
-                                            <i class="fas fa-laptop"></i>
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
-                    
-                    gridView.appendChild(card);
+                    gridContainer.insertAdjacentHTML('beforeend', cardHtml);
                 });
             }
             
@@ -615,113 +702,301 @@
                 sortAscending = !sortAscending;
                 sortEmployees();
             });
+
+            // Advanced filters functionality
+            document.getElementById('toggleAdvancedFilters').addEventListener('click', function() {
+                const advancedFilters = document.getElementById('advancedFilters');
+                const icon = this.querySelector('i');
+                
+                if (advancedFilters.classList.contains('show')) {
+                    advancedFilters.classList.remove('show');
+                    icon.className = 'fas fa-chevron-down me-1';
+                } else {
+                    advancedFilters.classList.add('show');
+                    icon.className = 'fas fa-chevron-up me-1';
+                }
+            });
+
+            // Clear filters functionality
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('filterDepartment').value = '';
+                document.getElementById('filterAssets').value = '';
+                document.getElementById('filterStatus').value = '';
+                filterEmployees();
+            });
+
+            // Initialize tooltips
+            setTimeout(() => {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }, 100);
         });
     </script>
     
     <!-- Modern Button Styles -->
     <style>
-        /* Modern Button Styling - Unified Compact Design */
+        /* Modern Button Styling - Updated Color Palette */
         .btn-modern {
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            text-transform: none;
-            letter-spacing: 0.025em;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
-            min-height: 38px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-modern:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-modern:hover:before {
-            left: 100%;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 1rem !important;
+            font-weight: 500 !important;
+            font-size: 0.875rem !important;
+            text-transform: none !important;
+            letter-spacing: 0.025em !important;
+            transition: all 0.2s ease !important;
+            border: 1.5px solid !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            min-height: 38px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         
         .btn-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
         }
         
-        /* Consistent Button Color System - Same as Assets Page */
-        
-        /* Add Employee - Purple (Primary Action) */
+        /* Add Employee - Primary Color */
         .btn-modern.btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
-            color: white;
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
         }
         
-        /* Bulk Upload - Blue */
-        .btn-modern.btn-outline-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-color: #3b82f6;
-            color: white;
+        .btn-modern.btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
         }
         
-        /* View Toggle - Gray */
+        /* Bulk Upload - Secondary */
         .btn-modern.btn-outline-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            border-color: #6b7280;
-            color: white;
+            background-color: #F3F3F3FF !important;
+            border-color: #E0E0E0 !important;
+            color: #666666FF !important;
         }
         
-        /* Employee action buttons - Same unified style */
+        .btn-modern.btn-outline-secondary:hover {
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
+            color: #0A0A0A !important;
+        }
+
+        /* View toggle buttons */
+        .view-toggle {
+            background-color: #F3F3F3FF !important;
+            border: 1px solid #E0E0E0 !important;
+            color: #666666FF !important;
+        }
+
+        .view-toggle.active {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+        }
+
+        .view-toggle:hover:not(.active) {
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
+        }
+        
+        /* Employee action buttons - Updated Design */
         .employee-actions .btn {
-            border-radius: 0.5rem;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: 1.5px solid;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-            min-height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #F3F3F3FF !important;
+            border: 1px solid #E0E0E0 !important;
+            color: #666666FF !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            min-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 36px !important;
         }
         
         .employee-actions .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: #FFFFFF !important;
+            border-color: #B7B7B7FF !important;
         }
         
-        /* View Details - Purple (matches primary) */
-        .employee-actions .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: #667eea;
-            color: white;
+        /* Specific action button hover colors */
+        .btn-view:hover {
+            color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
         }
         
-        /* Edit - Indigo */
-        .employee-actions .btn-secondary {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            border-color: #6366f1;
-            color: white;
+        .btn-edit:hover {
+            color: #FFC000FF !important;
+            border-color: #FFC000FF !important;
         }
         
-        /* Assign Asset - Green */
-        .employee-actions .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-color: #10b981;
-            color: white;
+        .btn-assign:hover {
+            color: #21AF65FF !important;
+            border-color: #21AF65FF !important;
         }
+
+        /* Card improvements */
+        .card {
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .card:hover:not(.employee-card-modern) {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .card-header {
+            background-color: #F3F3F3FF !important;
+            border-bottom: 1px solid #E0E0E0 !important;
+        }
+
+        /* Filter card styling */
+        .filter-card {
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Table hover effects */
+        .table-hover tbody tr:hover {
+            background-color: #F3F3F3FF !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* Badge styles */
+        .badge-assigned {
+            background-color: #21AF65FF !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        /* Modern Pagination Styles */
+        .pagination-modern {
+            --bs-pagination-padding-x: 0.75rem;
+            --bs-pagination-padding-y: 0.5rem;
+            --bs-pagination-font-size: 0.875rem;
+            --bs-pagination-color: #666666FF;
+            --bs-pagination-bg: #FFFFFF;
+            --bs-pagination-border-width: 1px;
+            --bs-pagination-border-color: #E0E0E0;
+            --bs-pagination-border-radius: 0.5rem;
+            --bs-pagination-hover-color: #331FEAFF;
+            --bs-pagination-hover-bg: #F3F3F3FF;
+            --bs-pagination-hover-border-color: #B7B7B7FF;
+            --bs-pagination-focus-color: #331FEAFF;
+            --bs-pagination-focus-bg: #F3F3F3FF;
+            --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
+            --bs-pagination-active-color: #FFFFFF;
+            --bs-pagination-active-bg: #331FEAFF;
+            --bs-pagination-active-border-color: #331FEAFF;
+            --bs-pagination-disabled-color: #999999FF;
+            --bs-pagination-disabled-bg: #F3F3F3FF;
+            --bs-pagination-disabled-border-color: #E0E0E0;
+        }
+
+        .pagination-modern .page-link {
+            border-radius: 0.5rem !important;
+            margin: 0 0.125rem !important;
+            min-width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .pagination-modern .page-item.active .page-link {
+            background-color: #331FEAFF !important;
+            border-color: #331FEAFF !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
+        }
+
+        .pagination-modern .page-item:not(.active) .page-link:hover {
+            background-color: #F3F3F3FF !important;
+            border-color: #B7B7B7FF !important;
+            color: #331FEAFF !important;
+            transform: translateY(-1px) !important;
+        }
+
+                 .pagination-modern .page-item.disabled .page-link {
+             background-color: #F3F3F3FF !important;
+             border-color: #E0E0E0 !important;
+             color: #999999FF !important;
+             cursor: not-allowed !important;
+         }
+
+         /* Employee Card Specific Styles */
+         .employee-card {
+             border: 1px solid #E0E0E0 !important;
+             border-radius: 0.75rem !important;
+             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+             transition: all 0.2s ease !important;
+         }
+
+         .employee-card:hover {
+             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+             transform: translateY(-1px) !important;
+         }
+
+         .employee-actions-footer {
+             border-top: 1px solid #F3F3F3FF !important;
+             background-color: #FFFFFF !important;
+         }
+
+         /* Employee Details Styling */
+         .employee-details {
+             background-color: #F3F3F3FF !important;
+             border-radius: 0.5rem !important;
+             padding: 0.75rem !important;
+         }
+
+         /* Bulk Upload Modal - Add if needed later */
+         .bulk-upload-modal .modal-header {
+             background-color: #F3F3F3FF !important;
+             border-bottom: 1px solid #E0E0E0 !important;
+         }
+
+         .bulk-upload-modal .modal-footer {
+             background-color: #F3F3F3FF !important;
+             border-top: 1px solid #E0E0E0 !important;
+         }
+
+         /* General improvements */
+         .btn-action {
+             background-color: #F3F3F3FF !important;
+             border: 1px solid #E0E0E0 !important;
+             color: #666666FF !important;
+             border-radius: 0.5rem !important;
+             padding: 0.375rem 0.75rem !important;
+             font-size: 0.8rem !important;
+             font-weight: 500 !important;
+             transition: all 0.2s ease !important;
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+             min-height: 32px !important;
+             display: inline-flex !important;
+             align-items: center !important;
+             justify-content: center !important;
+             min-width: 36px !important;
+         }
     </style>
 </body>
 </html>
