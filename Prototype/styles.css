@@ -171,65 +171,65 @@ body {
 
 /* Add New Asset - Purple (Primary Action) */
 .quick-action-card.primary .action-icon {
-    background: #8b5cf6;
+    background: var(--secondary-purple);
     color: white;
 }
 
 .quick-action-card.primary:hover {
-    border-color: #8b5cf6;
+    border-color: var(--secondary-purple);
 }
 
 .quick-action-card.primary:hover .action-icon {
-    background: #667eea;
+    background: var(--accent-navy);
 }
 
 /* Issue Asset - Green (Assign Action) */
 .quick-action-card.success .action-icon {
-    background: #34d399;
+    background: var(--secondary-green);
     color: white;
 }
 
 .quick-action-card.success:hover {
-border-color: #34d399;
+border-color: var(--secondary-green);
 }
 
 .quick-action-card.success:hover .action-icon {
-    background: #10b981;
+    background: var(--primary-dark-gray);
 }
 
 /* Schedule Maintenance - Pink (Maintenance Action) */
 .quick-action-card.warning .action-icon {
-    background: #f472b6;
+    background: var(--secondary-pink);
     color: white;
 }
 
 .quick-action-card.warning:hover {
-    border-color: #f472b6;
+    border-color: var(--secondary-pink);
 }
 
 .quick-action-card.warning:hover .action-icon {
-    background: #ec4899;
+    background: var(--secondary-red);
 }
 
 /* Collect Asset - Orange (Collect/Return Action) */
 .quick-action-card.collect .action-icon,
 .quick-action-card.danger .action-icon {
-    background: #fbbf24;
+    background: var(--secondary-orange);
     color: white;
 }
 
 .quick-action-card.collect:hover,
 .quick-action-card.danger:hover {
-    border-color: #fbbf24;
+    border-color: var(--secondary-orange);
 }
 
 .quick-action-card.collect:hover .action-icon,
 .quick-action-card.danger:hover .action-icon {
-    background: #f59e0b;
+    background: var(--secondary-red);
 }
 
 .quick-action-card.info .action-icon {
-    background: #4facfe;
+    background: var(--accent-navy);
     color: white;
 }
 
@@ -262,19 +262,19 @@ border-color: #34d399;
 }
 
 .asset-type-icon.laptops {
-    background: #667eea;
+    background: var(--secondary-purple);
 }
 
 .asset-type-icon.monitors {
-    background: #11998e;
+    background: var(--secondary-green);
 }
 
 .asset-type-icon.mobile {
-    background: #4facfe;
+    background: var(--secondary-pink);
 }
 
 .asset-type-icon.accessories {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--secondary-orange);
 }
 
 .asset-distribution-item:hover .asset-type-icon {
@@ -294,7 +294,7 @@ border-color: #34d399;
 }
 
 .progress-bar-monitors {
-    background: linear-gradient(90deg, var(--secondary-green) 0%, #1e9c5a 100%);
+    background: linear-gradient(90deg, var(--secondary-green) 0%, var(--primary-dark-gray) 100%);
     border-radius: 1rem;
 }
 
@@ -315,19 +315,19 @@ border-color: #34d399;
 }
 
 .card.bg-success {
-    background-color: #6c8e7f !important;
-    border-color: #6c8e7f !important;
+    background-color: var(--secondary-green) !important;
+    border-color: var(--secondary-green) !important;
 }
 
 .card.bg-warning {
-    background-color: #b8a865 !important;
-    border-color: #b8a865 !important;
-    color: #ffffff !important;
+    background-color: var(--secondary-orange) !important;
+    border-color: var(--secondary-orange) !important;
+    color: var(--primary-white) !important;
 }
 
 .card.bg-danger {
-    background-color: #a85a5a !important;
-    border-color: #a85a5a !important;
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
 }
 
 .card.bg-info {
@@ -703,19 +703,19 @@ canvas {
 }
 
 .alert-success {
-    color: #1a8c54;
+    color: var(--secondary-green);
     background-color: rgba(33, 175, 101, 0.1);
     border-color: rgba(33, 175, 101, 0.2);
 }
 
 .alert-warning {
-    color: #cc9900;
-    background-color: rgba(255, 192, 0, 0.1);
-    border-color: rgba(255, 192, 0, 0.2);
+    color: var(--secondary-orange);
+    background-color: rgba(255, 140, 97, 0.1);
+    border-color: rgba(255, 140, 97, 0.2);
 }
 
 .alert-danger {
-    color: #d65c5c;
+    color: var(--secondary-red);
     background-color: rgba(233, 118, 118, 0.1);
     border-color: rgba(233, 118, 118, 0.2);
 }
@@ -1012,7 +1012,7 @@ label {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #6c757d; /* Bootstrap secondary color */
+    color: var(--primary-mid-gray); /* TrackStix secondary color */
     cursor: pointer !important;
     padding: 6px;
     border-radius: 4px;
@@ -1029,7 +1029,7 @@ label {
 }
 
 .password-toggle:hover {
-    color: #495057; /* Darker gray on hover */
+    color: var(--primary-dark-gray); /* Darker gray on hover */
     background: rgba(0, 0, 0, 0.05);
 }
 
@@ -1052,29 +1052,29 @@ label {
 .form-control {
     background-image: none !important;
     padding-right: 0.75rem !important;
-    border-color: #d1d5db !important;
-    background-color: #ffffff !important;
+    border-color: var(--element-gray) !important;
+    background-color: var(--primary-white) !important;
 }
 
 .form-control:focus {
-    border-color: #0a4b9f !important;
-    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
-    background-color: #ffffff !important;
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
+    background-color: var(--primary-white) !important;
     background-image: none !important;
 }
 
 /* Ensure no validation styling appears */
 .form-control:valid,
 .form-control:invalid {
-    border-color: #d1d5db !important;
+    border-color: var(--element-gray) !important;
     background-image: none !important;
     box-shadow: none !important;
 }
 
 .form-control:valid:focus,
 .form-control:invalid:focus {
-    border-color: #0a4b9f !important;
-    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
 }
 
 
@@ -1087,13 +1087,13 @@ label {
 /* Ensure password field has proper padding and never gets validation styling */
 #password {
     padding-right: 40px !important;
-    border-color: #d1d5db !important;
+    border-color: var(--element-gray) !important;
     background-image: none !important;
 }
 
 #password:focus {
-    border-color: #0a4b9f !important;
-    box-shadow: 0 0 0 3px rgba(10, 75, 159, 0.25) !important;
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
 }
 
 /* Ensure password field can change type properly */
@@ -1136,7 +1136,7 @@ label {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #4b5563; /* Darker color for better contrast */
+    color: var(--primary-dark-gray); /* Darker color for better contrast */
     cursor: pointer !important;
     padding: 6px;
     border-radius: 4px;
@@ -1153,15 +1153,15 @@ label {
 }
 
 .password-toggle:hover {
-    color: #0a4b9f; /* Darker blue for better contrast */
-    background: rgba(10, 75, 159, 0.15); /* Slightly more visible hover state */
+    color: var(--secondary-purple); /* Purple for better contrast */
+    background: rgba(51, 31, 234, 0.15); /* Slightly more visible hover state */
 }
 
 .password-toggle:focus {
-    outline: 2px solid #0a4b9f; /* Visible focus outline */
+    outline: 2px solid var(--secondary-purple); /* Visible focus outline */
     outline-offset: 2px;
-    color: #0a4b9f;
-    background: rgba(10, 75, 159, 0.15);
+    color: var(--secondary-purple);
+    background: rgba(51, 31, 234, 0.15);
 }
 
 .password-toggle i {
@@ -1172,7 +1172,7 @@ label {
 
 /* Forgot Password Link */
 .forgot-password-link {
-    color: #007bff; /* Primary blue color */
+    color: var(--secondary-purple); /* Primary purple color */
     text-decoration: underline; /* Underline for better accessibility */
     font-size: 1rem; /* Increased font size */
     font-weight: 600; /* Bolder text */
@@ -1184,14 +1184,14 @@ label {
 }
 
 .forgot-password-link:hover {
-    color: #0056b3; /* Darker blue on hover */
-    background: rgba(0, 123, 255, 0.1);
+    color: var(--accent-navy); /* Navy on hover */
+    background: rgba(51, 31, 234, 0.1);
     text-decoration: underline;
 }
 
 /* Login Button - TrackStix Design */
 .login-btn {
-    background: #007bff; /* Primary blue background */
+    background: var(--secondary-purple); /* Primary purple background */
     border: none;
     border-radius: 8px;
     padding: 0.875rem 2rem;
@@ -1211,14 +1211,14 @@ label {
 }
 
 .login-btn:hover:not(:disabled) {
-    background: #0056b3; /* Darker blue on hover */
+    background: var(--accent-navy); /* Darker navy on hover */
     color: var(--bg-primary);
     text-decoration: none;
     box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
 }
 
 .login-btn:active:not(:disabled) {
-    background: #004085; /* Even darker blue on active */
+    background: var(--primary-dark-gray); /* Dark gray on active */
     box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
 }
 
@@ -1233,9 +1233,9 @@ label {
 
 /* Login Error Alert */
 .alert-danger {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #dc2626;
+    background: rgba(233, 118, 118, 0.1);
+    border: 1px solid rgba(233, 118, 118, 0.2);
+    color: var(--secondary-red);
     border-radius: 8px;
     padding: 0.875rem;
     margin-bottom: 1rem;
@@ -1243,7 +1243,7 @@ label {
 }
 
 .alert-danger i {
-    color: #dc2626;
+    color: var(--secondary-red);
 }
 
 
@@ -1264,12 +1264,12 @@ label {
 
 /* Improved Accessibility - Focus States for Keyboard Navigation */
 :focus-visible {
-    outline: 3px solid #0a4b9f;
+    outline: 3px solid var(--secondary-purple);
     outline-offset: 2px;
 }
 
 .login-btn:focus-visible {
-    outline: 3px solid #ffffff;
+    outline: 3px solid var(--primary-white);
     outline-offset: 3px;
 }
 
@@ -1277,8 +1277,187 @@ label {
 .form-floating .invalid-feedback {
     margin-top: 0.5rem;
     font-size: 0.875rem;
-    color: #dc2626;
+    color: var(--secondary-red);
     font-weight: 500;
+}
+
+/* Bootstrap Text Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .text-primary,
+.text-primary {
+    color: var(--secondary-purple) !important;
+}
+
+body .text-secondary,
+.text-secondary {
+    color: var(--primary-mid-gray) !important;
+}
+
+body .text-success,
+.text-success {
+    color: var(--secondary-green) !important;
+}
+
+body .text-danger,
+.text-danger {
+    color: var(--secondary-red) !important;
+}
+
+body .text-warning,
+.text-warning {
+    color: var(--secondary-orange) !important;
+}
+
+body .text-info,
+.text-info {
+    color: var(--secondary-pink) !important;
+}
+
+body .text-light,
+.text-light {
+    color: var(--primary-light-gray) !important;
+}
+
+body .text-dark,
+.text-dark {
+    color: var(--primary-black) !important;
+}
+
+body .text-muted,
+.text-muted {
+    color: var(--primary-dark-gray) !important;
+}
+
+/* Bootstrap Background Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .bg-primary,
+.bg-primary {
+    background-color: var(--secondary-purple) !important;
+}
+
+body .bg-secondary,
+.bg-secondary {
+    background-color: var(--primary-mid-gray) !important;
+}
+
+body .bg-success,
+.bg-success {
+    background-color: var(--secondary-green) !important;
+}
+
+body .bg-danger,
+.bg-danger {
+    background-color: var(--secondary-red) !important;
+}
+
+body .bg-warning,
+.bg-warning {
+    background-color: var(--secondary-orange) !important;
+}
+
+body .bg-info,
+.bg-info {
+    background-color: var(--secondary-pink) !important;
+}
+
+body .bg-light,
+.bg-light {
+    background-color: var(--primary-light-gray) !important;
+}
+
+body .bg-dark,
+.bg-dark {
+    background-color: var(--primary-black) !important;
+}
+
+/* Bootstrap Button Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .btn-primary,
+.btn-primary {
+    background-color: var(--secondary-purple) !important;
+    border-color: var(--secondary-purple) !important;
+    color: var(--primary-white) !important;
+}
+
+body .btn-primary:hover,
+body .btn-primary:focus,
+body .btn-primary:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--accent-navy) !important;
+    border-color: var(--accent-navy) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-secondary {
+    background-color: var(--primary-mid-gray) !important;
+    border-color: var(--primary-mid-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-success {
+    background-color: var(--secondary-green) !important;
+    border-color: var(--secondary-green) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-danger {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-warning {
+    background-color: var(--secondary-orange) !important;
+    border-color: var(--secondary-orange) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-info {
+    background-color: var(--secondary-pink) !important;
+    border-color: var(--secondary-pink) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
 }
 
 /* Responsive Design for Login */
@@ -1339,4 +1518,91 @@ label {
     .shape {
         display: none;
     }
+}
+
+/* FINAL OVERRIDE: Force all icons to use TrackStix palette colors */
+/* This section has the highest priority to override any external CSS */
+
+/* Force FontAwesome icons to inherit color properly */
+.fas, .far, .fab, .fa {
+    color: inherit !important;
+}
+
+/* Specific icon color overrides for common patterns */
+.text-primary .fas,
+.text-primary .far,
+.text-primary .fab,
+.text-primary .fa,
+i.text-primary {
+    color: var(--secondary-purple) !important;
+}
+
+.text-success .fas,
+.text-success .far,
+.text-success .fab,
+.text-success .fa,
+i.text-success {
+    color: var(--secondary-green) !important;
+}
+
+.text-info .fas,
+.text-info .far,
+.text-info .fab,
+.text-info .fa,
+i.text-info {
+    color: var(--secondary-pink) !important;
+}
+
+.text-warning .fas,
+.text-warning .far,
+.text-warning .fab,
+.text-warning .fa,
+i.text-warning {
+    color: var(--secondary-orange) !important;
+}
+
+.text-danger .fas,
+.text-danger .far,
+.text-danger .fab,
+.text-danger .fa,
+i.text-danger {
+    color: var(--secondary-red) !important;
+}
+
+.text-muted .fas,
+.text-muted .far,
+.text-muted .fab,
+.text-muted .fa,
+i.text-muted {
+    color: var(--primary-dark-gray) !important;
+}
+
+/* Override any remaining Bootstrap default colors */
+.btn-outline-primary i,
+.btn-outline-secondary i,
+.btn-outline-success i,
+.btn-outline-info i,
+.btn-outline-warning i,
+.btn-outline-danger i {
+    color: inherit !important;
+}
+
+/* Force specific asset type icon colors */
+.asset-type-icon i {
+    color: white !important;
+}
+
+/* Ensure action icons use proper colors */
+.action-icon i {
+    color: white !important;
+}
+
+/* Stats icons force colors */
+.stats-icon i {
+    color: white !important;
+}
+
+/* Final catch-all for any missed icons */
+[class*="fa-"] {
+    color: inherit !important;
 } 
