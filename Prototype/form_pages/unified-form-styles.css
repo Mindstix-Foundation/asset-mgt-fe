@@ -6,30 +6,29 @@
 
 /* TrackStix Color Variables - Updated from Recommended Palette */
 :root {
-    /* Primary Palette - Exact match from image */
+    /* Primary Palette - Exact colors from palette */
     --primary-white: #FFFFFF;
-    --primary-light-gray: #F3F3F3FF;
-    --primary-mid-light: #B7B7B7FF;
-    --primary-mid-gray: #999999FF;
-    --primary-dark-gray: #666666FF;
+    --primary-light-gray: #F3F3F3;
+    --primary-mid-light: #B7B7B7;
+    --primary-mid-gray: #999999;
+    --primary-dark-gray: #666666;
     --primary-black: #0A0A0A;
     
-    /* Secondary Palette - Exact match from image */
-    --secondary-purple: #331FEAFF;
-    --secondary-pink: #FF579FFF;
-    --secondary-yellow: #FF8C61FF;
-    --secondary-green: #21AF65FF;
-    --secondary-orange: #FF8C61FF;
-    --secondary-red: #E97676FF;
+    /* Secondary Palette - Exact colors from palette */
+    --secondary-purple: #331FEA;
+    --secondary-pink: #FF579F;
+    --secondary-yellow: #FFC000;
+    --secondary-green: #21AF65;
+    --secondary-orange: #FF8C61;
+    --secondary-red: #E97676;
     
-    /* Role-based Colors - Updated to match palette */
+    /* Role-based Colors - Using only palette colors */
     --bg-primary: #FFFFFF;
-    --bg-secondary: #F3F3F3FF;
+    --bg-secondary: #F3F3F3;
     --text-primary: #0A0A0A;
-    --text-secondary: #222222;
-    --accent-navy: #1A2A43;
-    --element-gray: #E0E0E0;
-    --element-light-gray: #CCCCCC;
+    --text-secondary: #666666;
+    --element-gray: #B7B7B7;
+    --element-light-gray: #999999;
 }
 
 /* ONLY target form containers, not affecting navbar */
@@ -51,7 +50,7 @@
 
 /* Consistent Form Headers */
 .container-fluid.py-4 .card-header {
-    background: linear-gradient(135deg, var(--primary-light-gray) 0%, var(--element-gray) 100%);
+    background: var(--primary-light-gray);
     padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--element-gray);
     border-radius: 1rem 1rem 0 0;
@@ -121,9 +120,11 @@
     box-shadow: 0 2px 8px rgba(10, 10, 10, 0.1);
 }
 
+
+/* General Button Hover - Subtle Effect */
 .container-fluid.py-4 .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(10, 10, 10, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Primary Button - Updated with Palette Colors */
@@ -134,10 +135,12 @@
 }
 
 .container-fluid.py-4 .btn-primary:hover {
-    background-color: #2415c7;
-    border-color: #2415c7;
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
     color: var(--bg-primary);
+    opacity: 0.9;
 }
+
 
 /* Success Button - Green */
 .container-fluid.py-4 .btn-success {
@@ -147,23 +150,27 @@
 }
 
 .container-fluid.py-4 .btn-success:hover {
-    background-color: #1e9c5a;
-    border-color: #1e9c5a;
+    background-color: var(--secondary-green);
+    border-color: var(--secondary-green);
     color: var(--bg-primary);
+    opacity: 0.9;
 }
 
-/* Warning Button - Pink from Palette */
+
+/* Warning Button - Yellow from Palette */
 .container-fluid.py-4 .btn-warning {
-    background-color: var(--secondary-pink);
-    border-color: var(--secondary-pink);
-    color: var(--bg-primary);
+    background-color: var(--secondary-yellow);
+    border-color: var(--secondary-yellow);
+    color: var(--primary-black);
 }
 
 .container-fluid.py-4 .btn-warning:hover {
-    background-color: #e64d8f;
-    border-color: #e64d8f;
-    color: var(--bg-primary);
+    background-color: var(--secondary-yellow);
+    border-color: var(--secondary-yellow);
+    color: var(--primary-black);
+    opacity: 0.9;
 }
+
 
 /* Danger Button - Red */
 .container-fluid.py-4 .btn-danger {
@@ -173,10 +180,12 @@
 }
 
 .container-fluid.py-4 .btn-danger:hover {
-    background-color: #e66666;
-    border-color: #e66666;
+    background-color: var(--secondary-red);
+    border-color: var(--secondary-red);
     color: var(--bg-primary);
+    opacity: 0.9;
 }
+
 
 /* Secondary Button - Updated Gray */
 .container-fluid.py-4 .btn-secondary {
@@ -186,10 +195,60 @@
 }
 
 .container-fluid.py-4 .btn-secondary:hover {
-    background-color: var(--primary-dark-gray);
-    border-color: var(--primary-dark-gray);
+    background-color: var(--primary-mid-gray);
+    border-color: var(--primary-mid-gray);
+    color: var(--bg-primary);
+    opacity: 0.9;
+}
+
+/* Cancel Button - Changes to Red on Hover */
+.container-fluid.py-4 .btn-outline-secondary:hover {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--bg-primary) !important;
+}
+
+
+/* Additional Button Styles - Using Palette Colors */
+.container-fluid.py-4 .btn-info {
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
     color: var(--bg-primary);
 }
+
+.container-fluid.py-4 .btn-info:hover {
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
+    color: var(--bg-primary);
+    opacity: 0.9;
+}
+
+.container-fluid.py-4 .btn-pink {
+    background-color: var(--secondary-pink);
+    border-color: var(--secondary-pink);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-pink:hover {
+    background-color: var(--secondary-pink);
+    border-color: var(--secondary-pink);
+    color: var(--bg-primary);
+    opacity: 0.9;
+}
+
+.container-fluid.py-4 .btn-orange {
+    background-color: var(--secondary-orange);
+    border-color: var(--secondary-orange);
+    color: var(--bg-primary);
+}
+
+.container-fluid.py-4 .btn-orange:hover {
+    background-color: var(--secondary-orange);
+    border-color: var(--secondary-orange);
+    color: var(--bg-primary);
+    opacity: 0.9;
+}
+
 
 /* CONSISTENT BUTTON CONTAINER LAYOUTS */
 .container-fluid.py-4 .d-flex.justify-content-between,
@@ -227,7 +286,7 @@
 }
 
 .container-fluid.py-4 .modal-header {
-    background: linear-gradient(135deg, var(--primary-light-gray) 0%, var(--element-gray) 100%);
+    background: var(--primary-light-gray);
     border-bottom: 1px solid var(--element-gray);
     padding: 1.5rem 2rem;
 }

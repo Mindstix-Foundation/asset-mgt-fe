@@ -15,10 +15,12 @@
     <div class="container-fluid py-4">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
-                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
-                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;">
-                        <h4 class="card-title mb-2 fw-bold text-dark">Add New Asset</h4>
-                        <p class="text-muted mb-0 small">Register a new asset in the system</p>
+                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
+                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
+                        <div style="display: block;">
+                            <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">Add New Asset</h4>
+                            <p class="text-muted mb-0 small" style="display: block;">Register a new asset in the system</p>
+                        </div>
                     </div>
                     <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
                         <form id="assetForm" class="needs-validation" novalidate>
@@ -30,7 +32,7 @@
                                 <!-- Asset ID -->
                                 <div class="col-md-6">
                                         <label for="assetId" class="form-label">Asset ID</label>
-                                        <input type="text" class="form-control" id="assetId" value="AST-001" readonly style="background-color: #f8f9fa;">
+                                        <input type="text" class="form-control" id="assetId" value="AST-001" readonly style="background-color: #F3F3F3;">
                                     </div>
 
                                     <!-- Serial Number -->
@@ -51,7 +53,7 @@
                                             <option value="2">Furniture</option>
                                             <option value="3">Vehicles</option>
                                             <option value="4">Equipment</option>
-                                            <option value="add_new" style="color: #0d6efd; font-weight: 600;">
+                                            <option value="add_new" style="color: #331FEA; font-weight: 600;">
                                                 ➕ Other (Add New Category)
                                             </option>
                                         </select>
@@ -109,12 +111,12 @@
                                 <div class="col-md-6">
                                         <label for="purchaseCost" class="form-label">Purchase Cost <span class="text-muted">(Optional)</span></label>
                                         <div class="input-group">
-                                            <span class="input-group-text">$</span>
+                                            <span class="input-group-text">₹</span>
                                         <input type="number" class="form-control" id="purchaseCost" placeholder="0.00" 
                                                step="0.01" min="0" max="1000000" 
-                                               title="Purchase cost cannot exceed $1,000,000">
+                                               title="Purchase cost cannot exceed ₹10,00,000">
                                     </div>
-                                        <div class="form-text">Enter amount in your local currency (max $1,000,000)</div>
+                                        <div class="form-text">Enter amount in Indian Rupees (max ₹10,00,000)</div>
                                 </div>
 
                                 <!-- Vendor -->
@@ -243,7 +245,7 @@
     <!-- Enhanced Success Toast -->
     <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
         <div id="successToast" class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
-            <div class="toast-header bg-success text-white">
+            <div class="toast-header text-white" style="background-color: #21AF65 !important;">
                 <strong class="me-auto">Asset Registered Successfully</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -266,7 +268,7 @@
     <!-- Error Toast -->
     <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
-            <div class="toast-header bg-danger text-white">
+            <div class="toast-header text-white" style="background-color: #E97676 !important;">
                 <strong class="me-auto">Registration Failed</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -456,32 +458,32 @@
         
         /* Consistent Fieldset Styling */
         .form-fieldset {
-            border: 1px solid #e2e8f0 !important;
+            border: 1px solid #B7B7B7 !important;
             border-radius: 0.5rem !important;
             padding: 1.25rem !important;
             margin-bottom: 1.5rem !important;
-            background: rgba(248, 250, 252, 0.3);
+            background: rgba(243, 243, 243, 0.3);
             position: relative;
             width: 100% !important;
             box-sizing: border-box !important;
         }
         
         .form-fieldset:hover {
-            border-color: #cbd5e1 !important;
-            background: rgba(248, 250, 252, 0.5);
+            border-color: #B7B7B7 !important;
+            background: rgba(243, 243, 243, 0.5);
             transition: all 0.2s ease;
         }
         
         .form-legend {
             font-size: 1rem !important;
             font-weight: 600 !important;
-            color: #374151 !important;
-            background-color: #ffffff !important;
+            color: #666666 !important;
+            background-color: #FFFFFF !important;
             padding: 0.375rem 0.75rem !important;
-            border: 1px solid #e2e8f0 !important;
+            border: 1px solid #B7B7B7 !important;
             border-radius: 0.375rem !important;
             margin-bottom: 1rem !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
             width: auto !important;
             float: none !important;
         }
@@ -496,42 +498,42 @@
         /* Form Labels */
         .form-label {
             font-weight: 600;
-            color: #374151;
+            color: #666666;
             margin-bottom: 0.5rem;
         }
         
         /* WCAG AA Compliant Form Controls */
         .form-control, .form-select {
-            border: 2px solid #9ca3af; /* Darker border for better visibility */
+            border: 2px solid #999999; /* Darker border for better visibility */
             border-radius: 0.5rem;
             padding: 0.75rem;
             transition: all 0.2s ease;
-            color: #1f2937; /* High contrast text */
+            color: #0A0A0A; /* High contrast text */
         }
         
         /* Enhanced placeholder contrast - WCAG AA compliant */
         .form-control::placeholder {
-            color: #4b5563 !important; /* Much darker grey for better contrast */
+            color: #666666 !important; /* Much darker grey for better contrast */
             opacity: 1;
         }
         
         .form-select option {
-            color: #1f2937; /* High contrast for dropdown options */
+            color: #0A0A0A; /* High contrast for dropdown options */
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #331FEAFF;
+            border-color: #331FEA;
             box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
             outline: 2px solid transparent; /* Maintain focus visibility */
         }
         
         .form-control:hover, .form-select:hover {
-            border-color: #6b7280; /* Darker hover state for better visibility */
+            border-color: #666666; /* Darker hover state for better visibility */
         }
         
         /* Enhanced dropdown styling with better visibility */
         .form-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
             background-repeat: no-repeat !important;
             background-position: right 0.75rem center !important;
             background-size: 16px 12px !important;
@@ -543,30 +545,30 @@
         
         /* WCAG AA Compliant Disabled Fields */
         .form-select:disabled {
-            background-color: #f3f4f6;
-            border-color: #9ca3af; /* Better contrast for disabled border */
-            color: #6b7280; /* Improved contrast for disabled text */
+            background-color: #F3F3F3;
+            border-color: #999999; /* Better contrast for disabled border */
+            color: #666666; /* Improved contrast for disabled text */
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
         }
         
         /* High Contrast Form Text - WCAG AA Compliant */
         .form-text {
             font-size: 0.875rem;
-            color: #374151 !important; /* Much darker for better contrast */
+            color: #666666 !important; /* Much darker for better contrast */
             margin-top: 0.25rem;
             font-weight: 500; /* Slightly bolder for better readability */
         }
         
         /* Enhanced Required Field Indicator */
         .text-danger {
-            color: #dc2626 !important;
+            color: #E97676 !important;
             font-weight: 700;
             font-size: 1.1em;
         }
         
          /* WCAG AA Compliant Optional Field Indicator */
          .text-muted {
-             color: #4b5563 !important; /* Darker grey for better contrast */
+             color: #666666 !important; /* Darker grey for better contrast */
              font-weight: 600; /* Bolder for better readability */
              font-size: 0.9em;
          }
@@ -579,8 +581,8 @@
         }
         
         .card-footer {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-            border-top: 2px solid #dee2e6 !important;
+            background: #F3F3F3 !important;
+            border-top: 2px solid #B7B7B7 !important;
             border-radius: 0 0 1.5rem 1.5rem !important;
         }
         
@@ -590,15 +592,11 @@
             transition: all 0.2s ease;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
 
         .btn-primary {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
-            color: white !important;
+            background-color: #331FEA !important;
+            border-color: #331FEA !important;
+            color: #FFFFFF !important;
         }
 
         .btn-primary:hover {
@@ -630,7 +628,7 @@
         .card {
             border-radius: 1.5rem !important;
             border: none !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 10px 40px rgba(10, 10, 10, 0.1) !important;
         }
         
         .stats-icon {
@@ -644,14 +642,14 @@
         /* Validation States */
         .was-validated .form-control:valid,
         .was-validated .form-select:valid {
-            border-color: #10b981;
-            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+            border-color: #21AF65;
+            box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25);
         }
 
         .was-validated .form-control:invalid,
         .was-validated .form-select:invalid {
-            border-color: #dc2626;
-            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+            border-color: #E97676;
+            box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25);
         }
         
         .invalid-feedback {
@@ -659,16 +657,16 @@
             width: 100%;
             margin-top: 0.25rem;
             font-size: 0.875rem;
-            color: #dc2626;
+            color: #E97676;
             font-weight: 500;
         }
         
         /* WCAG AA Compliant Input Group Styling */
         .input-group-text {
-            background-color: #f3f4f6;
-            border: 2px solid #9ca3af; /* Darker border for consistency */
+            background-color: #F3F3F3;
+            border: 2px solid #999999; /* Darker border for consistency */
             border-right: none;
-            color: #374151; /* High contrast text */
+            color: #666666; /* High contrast text */
             font-weight: 600;
         }
         
@@ -677,12 +675,12 @@
         }
         
         .input-group:focus-within .input-group-text {
-            border-color: #331FEAFF;
-            background-color: #f8fafc;
+            border-color: #331FEA;
+            background-color: #F3F3F3;
         }
         
         .input-group:hover .input-group-text {
-            border-color: #6b7280;
+            border-color: #666666;
         }
         
         /* Responsive Design */
@@ -852,7 +850,7 @@
                     const addNewOption = document.createElement('option');
                     addNewOption.value = 'add_new';
                     addNewOption.innerHTML = '➕ Other (Add New Type)';
-                    addNewOption.style.color = '#0d6efd';
+                    addNewOption.style.color = '#331FEA';
                     addNewOption.style.fontWeight = '600';
                     typeSelect.appendChild(addNewOption);
                 }
@@ -893,7 +891,7 @@
                     const addNewOption = document.createElement('option');
                     addNewOption.value = 'add_new';
                     addNewOption.innerHTML = '➕ Other (Add New Brand)';
-                    addNewOption.style.color = '#0d6efd';
+                    addNewOption.style.color = '#331FEA';
                     addNewOption.style.fontWeight = '600';
                     brandSelect.appendChild(addNewOption);
                 }
@@ -931,7 +929,7 @@
                     const addNewOption = document.createElement('option');
                     addNewOption.value = 'add_new';
                     addNewOption.innerHTML = '➕ Other (Add New Model)';
-                    addNewOption.style.color = '#0d6efd';
+                    addNewOption.style.color = '#331FEA';
                     addNewOption.style.fontWeight = '600';
                     modelSelect.appendChild(addNewOption);
                 }
@@ -1073,7 +1071,7 @@
                 
                 if (purchaseCost) {
                     purchaseCost.max = '1000000';
-                    purchaseCost.title = 'Purchase cost cannot exceed $1,000,000';
+                    purchaseCost.title = 'Purchase cost cannot exceed ₹10,00,000';
                 }
                 
                 if (location) {
@@ -1181,7 +1179,7 @@
                 // Focus and highlight the field
                 setTimeout(() => {
                     firstInvalid.focus();
-                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(220, 38, 38, 0.5)';
+                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(233, 118, 118, 0.5)';
                     setTimeout(() => {
                         firstInvalid.style.boxShadow = '';
                     }, 2000);
@@ -1357,45 +1355,56 @@
 
         // Enhanced helper function to show toast messages
         function showToast(message, type = 'success') {
-            let bgClass, iconClass, headerText;
-            
+            let bgStyle = '';
+            let headerText = '';
+            let iconClass = '';
+            let textColor = 'text-white'; // Default text color for toast headers
+
+            const config = {
+                duration: '6000',
+                ariaLive: 'polite',
+                bgStyle: '',
+                headerText: 'Notification',
+                iconClass: ''
+            };
+
             switch (type) {
                 case 'success':
-                    bgClass = 'bg-success';
-                    iconClass = 'fa-check-circle';
-                    headerText = 'Success';
+                    config.bgStyle = 'background-color: #21AF65 !important;'; // Green
+                    config.headerText = 'Success';
+                    config.iconClass = 'fa-check-circle';
                     break;
                 case 'error':
                 case 'danger':
-                    bgClass = 'bg-danger';
-                    iconClass = 'fa-exclamation-circle';
-                    headerText = 'Error';
-                    break;
-                case 'info':
-                    bgClass = 'bg-info';
-                    iconClass = 'fa-info-circle';
-                    headerText = 'Info';
+                    config.bgStyle = 'background-color: #E97676 !important;'; // Red
+                    config.headerText = 'Error';
+                    config.iconClass = 'fa-times-circle';
+                    config.duration = '10000';
+                    config.ariaLive = 'assertive';
                     break;
                 case 'warning':
-                    bgClass = 'bg-warning';
-                    iconClass = 'fa-exclamation-triangle';
-                    headerText = 'Warning';
+                    config.bgStyle = 'background-color: #FFC000 !important;'; // Yellow
+                    config.headerText = 'Warning';
+                    config.iconClass = 'fa-exclamation-triangle';
+                    textColor = 'text-dark'; // Black text for yellow background
+                    break;
+                case 'info':
+                    config.bgStyle = 'background-color: #331FEA !important;'; // Purple
+                    config.headerText = 'Info';
+                    config.iconClass = 'fa-info-circle';
                     break;
                 default:
-                    bgClass = 'bg-secondary';
-                    iconClass = 'fa-bell';
-                    headerText = 'Notification';
+                    config.bgStyle = 'background-color: #331FEA !important;'; // Default to purple
+                    config.headerText = 'Notification';
+                    config.iconClass = 'fa-bell';
             }
             
             // Create toast element with consistent design
-            const duration = type === 'error' || type === 'danger' ? '10000' : '6000';
-            const ariaLive = type === 'error' || type === 'danger' ? 'assertive' : 'polite';
-            
             const toastHtml = `
-                <div class="toast" role="alert" aria-live="${ariaLive}" aria-atomic="true" data-bs-delay="${duration}">
-                    <div class="toast-header ${bgClass} text-white">
-                        <i class="fas ${iconClass} me-2"></i>
-                        <strong class="me-auto">${headerText}</strong>
+                <div class="toast" role="alert" aria-live="${config.ariaLive}" aria-atomic="true" data-bs-delay="${config.duration}">
+                    <div class="toast-header ${textColor}" style="${config.bgStyle}">
+                        <i class="fas ${config.iconClass} me-2"></i>
+                        <strong class="me-auto">${config.headerText}</strong>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                         <div class="toast-body">
@@ -1489,12 +1498,12 @@
             dateInputs.forEach(input => {
                 // Add better visual feedback for date inputs
                 input.addEventListener('focus', function() {
-                    this.style.borderColor = '#331FEAFF';
+                    this.style.borderColor = '#331FEA';
                 });
                 
                 input.addEventListener('blur', function() {
                     if (!this.value) {
-                        this.style.borderColor = '#e2e8f0';
+                        this.style.borderColor = '#B7B7B7';
                     }
                 });
                 
@@ -1531,7 +1540,7 @@
         }
         
         .expandable-notes:hover {
-            border-color: #9ca3af;
+            border-color: #999999;
         }
         
         .expandable-notes.expanded {
@@ -1565,7 +1574,7 @@
         
         /* Improved Disabled Field Feedback */
         .form-select:disabled + .form-text {
-            color: #6b7280; /* Better contrast for disabled field text */
+            color: #666666; /* Better contrast for disabled field text */
             font-style: italic;
             font-weight: 500;
         }
@@ -1579,11 +1588,11 @@
         }
         
         .character-count .text-warning {
-            color: #f59e0b !important;
+            color: #FFC000 !important;
         }
         
         .character-count .text-danger {
-            color: #dc2626 !important;
+            color: #E97676 !important;
             font-weight: 600;
         }
         
@@ -1592,14 +1601,14 @@
         /* Prevent any automatic validation colors until form is submitted */
         .form-control:valid,
         .form-select:valid {
-            border-color: #9ca3af !important;
+            border-color: #999999 !important;
             box-shadow: none !important;
             background-image: none !important;
         }
         
         .form-control:invalid,
         .form-select:invalid {
-            border-color: #9ca3af !important;
+            border-color: #999999 !important;
             box-shadow: none !important;
             background-image: none !important;
         }
@@ -1607,14 +1616,14 @@
         /* Only show validation styling when form has been submitted */
         .was-validated .form-control:valid,
         .was-validated .form-select:valid {
-            border-color: #10b981 !important;
-            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+            border-color: #21AF65 !important;
+            box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
         }
         
         .was-validated .form-control:invalid,
         .was-validated .form-select:invalid {
-            border-color: #dc2626 !important;
-            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+            border-color: #E97676 !important;
+            box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
             animation: subtle-shake 0.3s ease-in-out;
         }
         
@@ -1626,37 +1635,37 @@
          
          /* WCAG AA Compliant Toast Styling */
          .toast-header.bg-success {
-             background: #198754 !important; /* Solid color for better contrast */
-             color: #ffffff !important;
+             background: #21AF65 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
          }
          
          .toast-header.bg-danger {
-             background: #dc3545 !important; /* Solid color for better contrast */
-             color: #ffffff !important;
+             background: #E97676 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
          }
          
          .toast-header.bg-info {
-             background: #0d6efd !important; /* Solid color for better contrast */
-             color: #ffffff !important;
+             background: #331FEA !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
          }
          
          .toast-header.bg-warning {
-             background: #fd7e14 !important; /* Solid color for better contrast */
-             color: #ffffff !important;
+             background: #FF8C61 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
          }
          
          .toast {
              border-radius: 0.75rem !important;
-             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
-             border: 2px solid #dee2e6 !important; /* Visible border for better definition */
+             box-shadow: 0 8px 32px rgba(10, 10, 10, 0.15) !important;
+             border: 2px solid #B7B7B7 !important; /* Visible border for better definition */
              min-width: 350px;
              max-width: 500px;
          }
          
          .toast-body {
              padding: 1rem 1.25rem;
-             background-color: #ffffff;
-             color: #212529; /* High contrast text */
+             background-color: #FFFFFF;
+             color: #0A0A0A; /* High contrast text */
              font-weight: 500;
          }
          
@@ -1670,26 +1679,26 @@
          
          /* Enhanced toast button styling */
          .toast .btn-primary {
-             background-color: #0d6efd;
-             border-color: #0d6efd;
-             color: #ffffff;
+             background-color: #331FEA;
+             border-color: #331FEA;
+             color: #FFFFFF;
          }
          
          .toast .btn-outline-primary {
-             background-color: #ffffff;
-             border: 2px solid #0d6efd;
-             color: #0d6efd;
+             background-color: #FFFFFF;
+             border: 2px solid #331FEA;
+             color: #331FEA;
          }
          
          .toast .btn-danger {
-             background-color: #dc3545;
-             border-color: #dc3545;
-             color: #ffffff;
+             background-color: #E97676;
+             border-color: #E97676;
+             color: #FFFFFF;
          }
         
         /* Enhanced Button Accessibility */
         .btn:focus-visible {
-            outline: 2px solid #331FEAFF;
+            outline: 2px solid #331FEA;
             outline-offset: 2px;
         }
         
