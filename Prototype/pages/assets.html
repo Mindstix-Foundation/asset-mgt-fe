@@ -11,14 +11,14 @@
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
 </head>
-<body style="background-color: #ffffff;">
+<body style="background-color: var(--primary-white);">
 
     <!-- Main Content -->
     <div class="container-fluid px-3 py-4">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-0" id="pageTitle" style="color: #0A0A0A;">Asset Management</h2>
+                <h2 class="mb-0" id="pageTitle" style="color: var(--primary-black);">Asset Management</h2>
                 <p class="text-muted mb-0" id="pageSubtitle">Manage and track all company assets</p>
             </div>
             <div class="d-flex align-items-center gap-3">
@@ -476,21 +476,27 @@
                 <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <div class="text-muted">
-                        <small>Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalAssets">10</span> assets</small>
+                        <small>Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalAssets">30</span> assets</small>
                     </div>
                     <nav aria-label="Asset pagination">
                         <ul class="pagination pagination-modern mb-0">
                             <li class="page-item disabled">
                                 <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
+                                    <i class="fas fa-chevron-left"></i>
                                 </a>
                             </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
                             <li class="page-item">
                                 <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
+                                    <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>
                         </ul>
@@ -499,10 +505,10 @@
             </div>
         </div>
 
-        <!-- Pagination -->
-        <div class="d-flex justify-content-between align-items-center mt-4">
+        <!-- Pagination for List View -->
+        <div class="d-flex justify-content-between align-items-center mt-4" id="listViewPagination">
             <div class="text-muted">
-                <small>Showing <span>1</span>-<span>10</span> of <span>10</span> assets</small>
+                <small>Showing <span>1</span>-<span>10</span> of <span>30</span> assets</small>
             </div>
             <nav aria-label="Asset pagination">
                 <ul class="pagination pagination-modern mb-0">
@@ -828,8 +834,8 @@
         
         /* Primary Actions - Add/Create */
         .btn-modern.btn-primary {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
@@ -841,8 +847,8 @@
         
         /* Issue/Assign Actions - Green */
         .btn-modern.btn-success {
-            background-color: #21AF65FF !important;
-            border-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
             color: white !important;
         }
         
@@ -854,8 +860,8 @@
         
         /* Schedule/Maintenance Actions - Orange */
         .btn-modern.btn-warning {
-            background-color: #FF8C61FF !important;
-            border-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
             color: white !important;
         }
         
@@ -867,8 +873,8 @@
         
         /* Collect/Return Actions - Pink */
         .btn-modern.btn-outline-warning {
-            background-color: #FF579FFF !important;
-            border-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
+            border-color: var(--secondary-pink) !important;
             color: white !important;
         }
         
@@ -880,8 +886,8 @@
         
         /* Export/Download Actions - Green */
         .btn-modern.btn-outline-success {
-            background-color: #21AF65FF !important;
-            border-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
             color: white !important;
         }
         
@@ -893,8 +899,8 @@
         
         /* Bulk/Upload Actions - Blue */
         .btn-modern.btn-outline-primary {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
@@ -907,41 +913,41 @@
         /* View Toggle/Secondary Actions - Gray */
         .btn-modern.btn-outline-secondary,
         .btn-modern.btn-secondary {
-            background-color: #F3F3F3FF !important;
-            border-color: #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
         }
         
         .btn-modern.btn-outline-secondary:hover,
         .btn-modern.btn-secondary:hover {
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
-            color: #0A0A0A !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
         }
 
         /* View toggle buttons */
         .view-toggle {
-            background-color: #F3F3F3FF !important;
-            border: 1px solid #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
         }
 
         .view-toggle.active {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
             color: white !important;
         }
 
         .view-toggle:hover:not(.active) {
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
         }
         
         /* Individual asset action buttons - Updated Design */
         .asset-actions .btn {
-            background-color: #F3F3F3FF !important;
-            border: 1px solid #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
             border-radius: 0.5rem !important;
             padding: 0.375rem 0.75rem !important;
             font-size: 0.8rem !important;
@@ -958,39 +964,39 @@
         .asset-actions .btn:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
         }
         
         /* Specific action button hover colors */
         .asset-actions .btn-outline-primary:hover {
-            color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
         }
         
         .asset-actions .btn-outline-secondary:hover {
-            color: #FF8C61FF !important;
-            border-color: #FF8C61FF !important;
+            color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
         }
         
         .asset-actions .btn-outline-success:hover {
-            color: #21AF65FF !important;
-            border-color: #21AF65FF !important;
+            color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
         }
         
         .asset-actions .btn-outline-warning:hover {
-            color: #FF579FFF !important;
-            border-color: #FF579FFF !important;
+            color: var(--secondary-pink) !important;
+            border-color: var(--secondary-pink) !important;
         }
         
         .asset-actions .btn-outline-info:hover {
-            color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
         }
 
         /* Modern Badge Styles - Updated Color Palette */
         .badge.badge-available {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1000,7 +1006,7 @@
         }
         
         .badge.badge-assigned {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1010,7 +1016,7 @@
         }
         
         .badge.badge-reserved {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1020,7 +1026,7 @@
         }
         
         .badge.badge-under-repair {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1030,7 +1036,7 @@
         }
         
         .badge.badge-low-stock {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1040,7 +1046,7 @@
         }
         
         .badge.badge-retired {
-            background-color: #E97676FF !important;
+            background-color: var(--secondary-red) !important;
             color: white !important;
             border: none !important;
             font-size: 0.75rem !important;
@@ -1091,16 +1097,16 @@
 
         /* Asset Actions Footer */
         .asset-actions-footer {
-            border-top: 1px solid #E0E0E0 !important;
+            border-top: 1px solid var(--element-gray) !important;
             padding-top: 0.75rem !important;
             margin-top: auto !important;
         }
 
         /* Action Button Styles for Grid View */
         .btn-action {
-            background-color: #F3F3F3FF !important;
-            border: 1px solid #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
             border-radius: 0.5rem !important;
             padding: 0.375rem 0.75rem !important;
             font-size: 0.8rem !important;
@@ -1117,29 +1123,29 @@
         .btn-action:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
         }
 
         /* Specific action button hover colors */
         .btn-action.btn-view:hover {
-            color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
         }
 
         .btn-action.btn-edit:hover {
-            color: #FF8C61FF !important;
-            border-color: #FF8C61FF !important;
+            color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
         }
 
         .btn-action.btn-assign:hover {
-            color: #21AF65FF !important;
-            border-color: #21AF65FF !important;
+            color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
         }
 
         .btn-action.btn-maintenance:hover {
-            color: #FF579FFF !important;
-            border-color: #FF579FFF !important;
+            color: var(--secondary-pink) !important;
+            border-color: var(--secondary-pink) !important;
         }
 
         /* Badge sizing */
@@ -1172,7 +1178,7 @@
         
         /* Card improvements */
         .card {
-            border: 1px solid #E0E0E0 !important;
+            border: 1px solid var(--element-gray) !important;
             border-radius: 0.75rem !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
             transition: all 0.2s ease !important;
@@ -1183,20 +1189,20 @@
         }
 
         .card-header {
-            background-color: #F3F3F3FF !important;
-            border-bottom: 1px solid #E0E0E0 !important;
+            background-color: var(--primary-light-gray) !important;
+            border-bottom: 1px solid var(--element-gray) !important;
         }
 
         /* Filter card styling */
         .filter-card {
-            border: 1px solid #E0E0E0 !important;
+            border: 1px solid var(--element-gray) !important;
             border-radius: 0.75rem !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
         }
 
         /* Enhanced table styling */
         .table-hover tbody tr:hover {
-            background-color: #F3F3F3FF !important;
+            background-color: var(--primary-light-gray) !important;
             transition: all 0.2s ease !important;
         }
         
@@ -1239,23 +1245,23 @@
             --bs-pagination-padding-x: 0.75rem;
             --bs-pagination-padding-y: 0.5rem;
             --bs-pagination-font-size: 0.875rem;
-            --bs-pagination-color: #666666FF;
-            --bs-pagination-bg: #FFFFFF;
+            --bs-pagination-color: var(--primary-dark-gray);
+            --bs-pagination-bg: var(--primary-white);
             --bs-pagination-border-width: 1px;
-            --bs-pagination-border-color: #E0E0E0;
+            --bs-pagination-border-color: var(--element-gray);
             --bs-pagination-border-radius: 0.5rem;
-            --bs-pagination-hover-color: #331FEAFF;
-            --bs-pagination-hover-bg: #F3F3F3FF;
-            --bs-pagination-hover-border-color: #B7B7B7FF;
-            --bs-pagination-focus-color: #331FEAFF;
-            --bs-pagination-focus-bg: #F3F3F3FF;
+            --bs-pagination-hover-color: var(--secondary-purple);
+            --bs-pagination-hover-bg: var(--primary-light-gray);
+            --bs-pagination-hover-border-color: var(--primary-mid-light);
+            --bs-pagination-focus-color: var(--secondary-purple);
+            --bs-pagination-focus-bg: var(--primary-light-gray);
             --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-            --bs-pagination-active-color: #FFFFFF;
-            --bs-pagination-active-bg: #331FEAFF;
-            --bs-pagination-active-border-color: #331FEAFF;
-            --bs-pagination-disabled-color: #999999FF;
-            --bs-pagination-disabled-bg: #F3F3F3FF;
-            --bs-pagination-disabled-border-color: #E0E0E0;
+            --bs-pagination-active-color: var(--primary-white);
+            --bs-pagination-active-bg: var(--secondary-purple);
+            --bs-pagination-active-border-color: var(--secondary-purple);
+            --bs-pagination-disabled-color: var(--primary-mid-gray);
+            --bs-pagination-disabled-bg: var(--primary-light-gray);
+            --bs-pagination-disabled-border-color: var(--element-gray);
         }
 
         .pagination-modern .page-link {
@@ -1271,24 +1277,38 @@
         }
 
         .pagination-modern .page-item.active .page-link {
-            background-color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
             color: white !important;
             box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
         }
 
         .pagination-modern .page-item:not(.active) .page-link:hover {
-            background-color: #F3F3F3FF !important;
-            border-color: #B7B7B7FF !important;
-            color: #331FEAFF !important;
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--secondary-purple) !important;
             transform: translateY(-1px) !important;
         }
 
         .pagination-modern .page-item.disabled .page-link {
-            background-color: #F3F3F3FF !important;
-            border-color: #E0E0E0 !important;
-            color: #999999FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-mid-gray) !important;
             cursor: not-allowed !important;
+        }
+
+        /* Special styling for ellipsis dots */
+        .pagination-modern .page-dots {
+            cursor: default !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: var(--primary-mid-gray) !important;
+        }
+
+        .pagination-modern .page-dots:hover {
+            background-color: transparent !important;
+            border: none !important;
+            transform: none !important;
         }
         
         /* Button enhancements */
@@ -1426,6 +1446,7 @@
             const toggleViewBtn = document.getElementById('toggleView');
             const listView = document.getElementById('listView');
             const gridView = document.getElementById('gridView');
+            const listViewPagination = document.getElementById('listViewPagination');
             const mainTable = document.getElementById('mainTable');
             const showRetiredCheckbox = document.getElementById('showRetired');
             
@@ -1494,6 +1515,7 @@
             // Initialize with list view
             listView.classList.remove('d-none');
             gridView.classList.add('d-none');
+            listViewPagination.classList.remove('d-none');
 
             // View toggle functionality
             document.querySelectorAll('.view-toggle').forEach(btn => {
@@ -1510,11 +1532,13 @@
                         // Switch to Grid View
                         generateGridView();
                         listView.classList.add('d-none');
+                        listViewPagination.classList.add('d-none');
                         gridView.classList.remove('d-none');
                         isGridView = true;
                     } else {
                         // Switch to List View
                         listView.classList.remove('d-none');
+                        listViewPagination.classList.remove('d-none');
                         gridView.classList.add('d-none');
                         isGridView = false;
                     }
@@ -1555,11 +1579,11 @@
                     
                     // Get asset type icon and color with solid backgrounds from palette
                     const typeIcons = {
-                        'Laptop': { icon: 'fas fa-laptop', color: '#331FEAFF' },
-                        'Monitor': { icon: 'fas fa-desktop', color: '#21AF65FF' },
-                        'Mobile': { icon: 'fas fa-mobile-alt', color: '#FF579FFF' },
-                        'Tablet': { icon: 'fas fa-tablet-alt', color: '#FF8C61FF' },
-                        'Accessory': { icon: 'fas fa-headphones', color: '#E97676FF' }
+                        'Laptop': { icon: 'fas fa-laptop', color: 'var(--secondary-purple)' },
+                        'Monitor': { icon: 'fas fa-desktop', color: 'var(--secondary-green)' },
+                        'Mobile': { icon: 'fas fa-mobile-alt', color: 'var(--secondary-pink)' },
+                        'Tablet': { icon: 'fas fa-tablet-alt', color: 'var(--secondary-orange)' },
+                        'Accessory': { icon: 'fas fa-headphones', color: 'var(--secondary-red)' }
                     };
                     
                     // Get status badge color and style
@@ -1571,13 +1595,13 @@
                         'LOST': { class: 'badge-retired', icon: 'fas fa-question-circle' }
                     };
                     
-                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', color: '#331FEAFF' };
+                    const typeInfo = typeIcons[type] || { icon: 'fas fa-cube', color: 'var(--secondary-purple)' };
                     const statusInfo = statusStyles[status] || { class: 'badge-retired', icon: 'fas fa-question-circle' };
                     
                     const card = document.createElement('div');
                     card.className = 'col-12 col-sm-6 col-lg-4 col-xl-3 mb-4';
                     card.innerHTML = `
-                        <div class="card h-100 asset-card-modern" style="border: 1px solid #E0E0E0; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
+                        <div class="card h-100 asset-card-modern" style="border: 1px solid var(--element-gray); border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <div class="d-flex flex-grow-1">
@@ -1586,7 +1610,7 @@
                                             <i class="${typeInfo.icon} fa-lg text-white"></i>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <h5 class="mb-1 fw-bold" style="color: #0A0A0A;">${assetId}</h5>
+                                            <h5 class="mb-1 fw-bold" style="color: var(--primary-black);">${assetId}</h5>
                                             <p class="text-muted mb-0 small">${type}</p>
                                         </div>
                                     </div>
@@ -1599,24 +1623,24 @@
                                     <div class="row g-2">
                                         <div class="col-12">
                                             <small class="text-muted">Brand/Model</small>
-                                            <div class="fw-medium text-truncate" style="color: #0A0A0A;">${brandModel}</div>
+                                            <div class="fw-medium text-truncate" style="color: var(--primary-black);">${brandModel}</div>
                                         </div>
                                         <div class="col-12">
                                             <small class="text-muted">Serial Number</small>
-                                            <div class="small font-monospace text-truncate" style="color: #666666FF;">${serialNumber}</div>
+                                            <div class="small font-monospace text-truncate" style="color: var(--primary-dark-gray);">${serialNumber}</div>
                                         </div>
                                         <div class="col-12">
                                             <small class="text-muted">Assigned To</small>
-                                            <div class="text-truncate" style="color: #0A0A0A;">${assignedToOrLocation}</div>
+                                            <div class="text-truncate" style="color: var(--primary-black);">${assignedToOrLocation}</div>
                                         </div>
                                         <div class="col-12">
                                             <small class="text-muted">Purchase Date</small>
-                                            <div class="small text-truncate" style="color: #666666FF;">${lastUpdated}</div>
+                                            <div class="small text-truncate" style="color: var(--primary-dark-gray);">${lastUpdated}</div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="asset-actions-footer mt-auto pt-2 border-top" style="border-color: #E0E0E0 !important;">
+                                <div class="asset-actions-footer mt-auto pt-2 border-top" style="border-color: var(--element-gray) !important;">
                                     <div class="d-flex justify-content-center gap-2">
                                         <button class="btn btn-action btn-view btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal" 
                                                 data-bs-toggle="tooltip" title="View Details">

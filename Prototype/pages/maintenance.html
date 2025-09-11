@@ -11,14 +11,14 @@
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
 </head>
-<body style="background-color: #ffffff;">
+<body style="background-color: var(--primary-white);">
 
     <!-- Main Content -->
     <div class="container-fluid px-3 py-4">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-0" style="color: #0A0A0A;">Maintenance & Repairs</h2>
+                <h2 class="mb-0" style="color: var(--primary-black);">Maintenance & Repairs</h2>
                 <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
             </div>
             <a href="../form_pages/schedule-maintenance.html" class="btn btn-warning btn-modern">
@@ -233,7 +233,7 @@
                                 <td><span class="badge badge-in-progress">In Progress</span></td>
                                 <td>John Smith</td>
                                 <td>Mar 10, 2024</td>
-                                <td><strong>$299.00</strong></td>
+                                <td><strong>₹299.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -258,7 +258,7 @@
                                 <td><span class="badge badge-scheduled">Scheduled</span></td>
                                 <td>Sarah Wilson</td>
                                 <td>Mar 25, 2024</td>
-                                <td><strong>$150.00</strong></td>
+                                <td><strong>₹150.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -283,7 +283,7 @@
                                 <td><span class="badge badge-cancelled">Cancelled</span></td>
                                 <td>Mike Johnson</td>
                                 <td>Mar 15, 2024</td>
-                                <td><strong>$200.00</strong></td>
+                                <td><strong>₹200.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -308,7 +308,7 @@
                                 <td><span class="badge badge-completed">Completed</span></td>
                                 <td>David Brown</td>
                                 <td>Mar 18, 2024</td>
-                                <td><strong>$85.00</strong></td>
+                                <td><strong>₹85.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -333,7 +333,7 @@
                                 <td><span class="badge badge-completed">Completed</span></td>
                                 <td>Lisa Garcia</td>
                                 <td>Mar 16, 2024</td>
-                                <td><strong>$349.00</strong></td>
+                                <td><strong>₹349.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -358,7 +358,7 @@
                                 <td><span class="badge badge-completed">Completed</span></td>
                                 <td>Internal Team</td>
                                 <td>Mar 14, 2024</td>
-                                <td><strong>$0.00</strong></td>
+                                <td><strong>₹0.00</strong></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
                                         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal">
@@ -551,7 +551,7 @@
     <style>
         /* Status badges - Updated Color Palette */
         .badge.badge-scheduled {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -561,7 +561,7 @@
         }
         
         .badge.badge-in-progress {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -571,7 +571,7 @@
         }
         
         .badge.badge-completed {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -581,7 +581,7 @@
         }
         
         .badge.badge-cancelled {
-            background-color: #E97676FF !important;
+            background-color: var(--secondary-red) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -592,7 +592,7 @@
         
         /* Maintenance Type badges */
         .badge.badge-type-preventive {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -602,7 +602,7 @@
         }
         
         .badge.badge-type-corrective {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -612,7 +612,7 @@
         }
         
         .badge.badge-type-emergency {
-            background-color: #E97676FF !important;
+            background-color: var(--secondary-red) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -622,7 +622,7 @@
         }
 
         .badge.badge-priority-medium {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
             border: none !important;
             font-weight: 500 !important;
@@ -634,53 +634,53 @@
         /* Modern Card Styles */
         .stats-card-modern {
             border-radius: 0.75rem !important;
-            border: 1px solid #E0E0E0 !important;
-            background-color: #FFFFFF !important;
+            border: 1px solid var(--element-gray) !important;
+            background-color: var(--primary-white) !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
         }
         
         /* Stats Icons - Solid Colors from Palette */
         .stats-icon.bg-warning {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
         }
         
         .progress-bar.bg-warning {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
         }
         
         .stats-icon.bg-info {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
         .progress-bar.bg-info {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
         }
         
         .stats-icon.bg-success {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
         }
         
         .progress-bar.bg-success {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
         }
         
         .stats-icon.bg-secondary {
-            background-color: #E97676FF !important;
+            background-color: var(--secondary-red) !important;
             color: white !important;
         }
         
         .progress-bar.bg-secondary {
-            background-color: #E97676FF !important;
+            background-color: var(--secondary-red) !important;
         }
         
         /* Status Indicator - Updated Green */
         .status-indicator {
             width: 8px;
             height: 8px;
-            background-color: #21AF65FF;
+            background-color: var(--secondary-green);
             border-radius: 50%;
             animation: pulse-green 2s infinite;
         }
@@ -699,19 +699,19 @@
         
         /* Text Colors - Updated to match palette */
         .text-warning {
-            color: #FF8C61FF !important;
+            color: var(--secondary-orange) !important;
         }
         
         .text-info {
-            color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
         }
         
         .text-success {
-            color: #21AF65FF !important;
+            color: var(--secondary-green) !important;
         }
         
         .text-secondary {
-            color: #E97676FF !important;
+            color: var(--secondary-red) !important;
         }
         
         .stats-icon {
@@ -727,7 +727,7 @@
         
         /* Enhanced table styling */
         .table-hover tbody tr:hover {
-            background-color: #F3F3F3FF !important;
+            background-color: var(--primary-light-gray) !important;
             transition: all 0.2s ease !important;
         }
         
@@ -767,7 +767,7 @@
         
         /* Card improvements */
         .card {
-            border: 1px solid #E0E0E0 !important;
+            border: 1px solid var(--element-gray) !important;
             border-radius: 0.75rem !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
         }
@@ -787,8 +787,8 @@
         }
 
         .card-header {
-            background-color: #F3F3F3FF !important;
-            border-bottom: 1px solid #E0E0E0 !important;
+            background-color: var(--primary-light-gray) !important;
+            border-bottom: 1px solid var(--element-gray) !important;
         }
 
         /* Button enhancements */
@@ -853,8 +853,8 @@
                             bValue = new Date(b.querySelector('td:nth-child(6)').textContent);
                             break;
                         case 'cost':
-                            aValue = parseFloat(a.querySelector('td:nth-child(7)').textContent.replace(/[$,]/g, ''));
-                            bValue = parseFloat(b.querySelector('td:nth-child(7)').textContent.replace(/[$,]/g, ''));
+                                            aValue = parseFloat(a.querySelector('td:nth-child(7)').textContent.replace(/[₹,]/g, ''));
+                bValue = parseFloat(b.querySelector('td:nth-child(7)').textContent.replace(/[₹,]/g, ''));
                             break;
                         default:
                             return 0;
@@ -1008,8 +1008,8 @@
         
         /* Schedule Maintenance - Orange Color */
         .btn-modern.btn-warning {
-            background-color: #FF8C61FF !important;
-            border-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
             color: white !important;
         }
         
@@ -1022,9 +1022,9 @@
         
         /* Maintenance action buttons - Updated Design */
         .maintenance-actions .btn {
-            background-color: #F3F3F3FF !important;
-            border: 1px solid #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
             border-radius: 0.5rem !important;
             padding: 0.375rem 0.75rem !important;
             font-size: 0.8rem !important;
@@ -1041,41 +1041,41 @@
         .maintenance-actions .btn:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
         }
         
         /* Specific action button hover colors */
         .maintenance-actions .btn-outline-primary:hover {
-            color: #331FEAFF !important;
-            border-color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
         }
         
         .maintenance-actions .btn-outline-secondary:hover {
-            color: #FF8C61FF !important;
-            border-color: #FF8C61FF !important;
+            color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
         }
         
         .maintenance-actions .btn-outline-success:hover {
-            color: #21AF65FF !important;
-            border-color: #21AF65FF !important;
+            color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
         }
         
         .maintenance-actions .btn-outline-warning:hover {
-            color: #FF579FFF !important;
-            border-color: #FF579FFF !important;
+            color: var(--secondary-pink) !important;
+            border-color: var(--secondary-pink) !important;
         }
         
                  .maintenance-actions .btn-outline-info:hover {
-             color: #331FEAFF !important;
-             border-color: #331FEAFF !important;
+             color: var(--secondary-purple) !important;
+             border-color: var(--secondary-purple) !important;
          }
 
          /* Modal and secondary button styles */
          .btn-cancel {
-             background-color: #F3F3F3FF !important;
-             border: 1px solid #E0E0E0 !important;
-             color: #666666FF !important;
+             background-color: var(--primary-light-gray) !important;
+             border: 1px solid var(--element-gray) !important;
+             color: var(--primary-dark-gray) !important;
              border-radius: 0.5rem !important;
              padding: 0.75rem 1.5rem !important;
              font-weight: 500 !important;
@@ -1083,14 +1083,14 @@
          }
 
          .btn-cancel:hover {
-             background-color: #E0E0E0 !important;
-             border-color: #B7B7B7FF !important;
-             color: #0A0A0A !important;
+             background-color: var(--element-gray) !important;
+             border-color: var(--primary-mid-light) !important;
+             color: var(--primary-black) !important;
          }
 
          .btn-success {
-             background-color: #21AF65FF !important;
-             border-color: #21AF65FF !important;
+             background-color: var(--secondary-green) !important;
+             border-color: var(--secondary-green) !important;
              color: white !important;
          }
 
@@ -1105,23 +1105,23 @@
              --bs-pagination-padding-x: 0.75rem;
              --bs-pagination-padding-y: 0.5rem;
              --bs-pagination-font-size: 0.875rem;
-             --bs-pagination-color: #666666FF;
-             --bs-pagination-bg: #FFFFFF;
+             --bs-pagination-color: var(--primary-dark-gray);
+             --bs-pagination-bg: var(--primary-white);
              --bs-pagination-border-width: 1px;
-             --bs-pagination-border-color: #E0E0E0;
+             --bs-pagination-border-color: var(--element-gray);
              --bs-pagination-border-radius: 0.5rem;
-             --bs-pagination-hover-color: #331FEAFF;
-             --bs-pagination-hover-bg: #F3F3F3FF;
-             --bs-pagination-hover-border-color: #B7B7B7FF;
-             --bs-pagination-focus-color: #331FEAFF;
-             --bs-pagination-focus-bg: #F3F3F3FF;
+             --bs-pagination-hover-color: var(--secondary-purple);
+             --bs-pagination-hover-bg: var(--primary-light-gray);
+             --bs-pagination-hover-border-color: var(--primary-mid-light);
+             --bs-pagination-focus-color: var(--secondary-purple);
+             --bs-pagination-focus-bg: var(--primary-light-gray);
              --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-             --bs-pagination-active-color: #FFFFFF;
-             --bs-pagination-active-bg: #331FEAFF;
-             --bs-pagination-active-border-color: #331FEAFF;
-             --bs-pagination-disabled-color: #999999FF;
-             --bs-pagination-disabled-bg: #F3F3F3FF;
-             --bs-pagination-disabled-border-color: #E0E0E0;
+             --bs-pagination-active-color: var(--primary-white);
+             --bs-pagination-active-bg: var(--secondary-purple);
+             --bs-pagination-active-border-color: var(--secondary-purple);
+             --bs-pagination-disabled-color: var(--primary-mid-gray);
+             --bs-pagination-disabled-bg: var(--primary-light-gray);
+             --bs-pagination-disabled-border-color: var(--element-gray);
          }
 
          .pagination-modern .page-link {
@@ -1137,30 +1137,30 @@
          }
 
          .pagination-modern .page-item.active .page-link {
-             background-color: #331FEAFF !important;
-             border-color: #331FEAFF !important;
+             background-color: var(--secondary-purple) !important;
+             border-color: var(--secondary-purple) !important;
              color: white !important;
              box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
          }
 
          .pagination-modern .page-item:not(.active) .page-link:hover {
-             background-color: #F3F3F3FF !important;
-             border-color: #B7B7B7FF !important;
-             color: #331FEAFF !important;
+             background-color: var(--primary-light-gray) !important;
+             border-color: var(--primary-mid-light) !important;
+             color: var(--secondary-purple) !important;
              transform: translateY(-1px) !important;
          }
 
          .pagination-modern .page-item.disabled .page-link {
-             background-color: #F3F3F3FF !important;
-             border-color: #E0E0E0 !important;
-             color: #999999FF !important;
+             background-color: var(--primary-light-gray) !important;
+             border-color: var(--element-gray) !important;
+             color: var(--primary-mid-gray) !important;
              cursor: not-allowed !important;
          }
 
          .pagination-modern .page-dots {
              background: none !important;
              border: none !important;
-             color: #666666FF !important;
+             color: var(--primary-dark-gray) !important;
              cursor: default !important;
          }
 

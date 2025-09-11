@@ -11,7 +11,7 @@
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
 </head>
-<body style="background-color: #ffffff;">
+<body style="background-color: var(--primary-white);">
 
     <!-- Main Content -->
     <div class="container-fluid py-4">
@@ -371,102 +371,102 @@
 
         /* Stats Icons - Solid Colors from Palette */
         .stats-icon.bg-primary {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
         .progress-bar.bg-primary {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
         }
         
         .stats-icon.bg-success {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
         }
         
         .progress-bar.bg-success {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
         }
         
         .stats-icon.bg-warning {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
         }
         
         .progress-bar.bg-warning {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
         }
         
         .stats-icon.bg-info {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             color: white !important;
         }
         
         .progress-bar.bg-info {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
         }
 
         /* Quick Action Cards - Updated Colors */
         .quick-action-card.primary .action-icon {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
         .quick-action-card.primary:hover .action-icon {
-            background-color: #2415c7 !important;
+            background-color: var(--accent-navy) !important;
         }
         
         .quick-action-card.success .action-icon {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             color: white !important;
         }
         
         .quick-action-card.success:hover .action-icon {
-            background-color: #1e9c5a !important;
+            background-color: var(--primary-dark-gray) !important;
         }
         
         .quick-action-card.warning .action-icon {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             color: white !important;
         }
         
         .quick-action-card.warning:hover .action-icon {
-            background-color: #e64d8f !important;
+            background-color: var(--secondary-red) !important;
         }
         
         .quick-action-card.danger .action-icon {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             color: white !important;
         }
         
         .quick-action-card.danger:hover .action-icon {
-            background-color: #e67d4d !important;
+            background-color: var(--secondary-red) !important;
         }
 
         /* Asset Distribution Progress Bars - Solid Colors */
         .progress-bar-laptops {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             background-image: none !important;
         }
         
         .progress-bar-monitors {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             background-image: none !important;
         }
         
         .progress-bar-mobile {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             background-image: none !important;
         }
         
         .progress-bar-accessories {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             background-image: none !important;
         }
 
         /* Asset Type Icons - Solid Colors */
         .asset-type-icon.laptops {
-            background-color: #331FEAFF !important;
+            background-color: var(--secondary-purple) !important;
             background-image: none !important;
             color: white !important;
             border-radius: 0.5rem !important;
@@ -479,7 +479,7 @@
         }
 
         .asset-type-icon.monitors {
-            background-color: #21AF65FF !important;
+            background-color: var(--secondary-green) !important;
             background-image: none !important;
             color: white !important;
             border-radius: 0.5rem !important;
@@ -492,7 +492,7 @@
         }
 
         .asset-type-icon.mobile {
-            background-color: #FF579FFF !important;
+            background-color: var(--secondary-pink) !important;
             background-image: none !important;
             color: white !important;
             border-radius: 0.5rem !important;
@@ -505,7 +505,7 @@
         }
 
         .asset-type-icon.accessories {
-            background-color: #FF8C61FF !important;
+            background-color: var(--secondary-orange) !important;
             background-image: none !important;
             color: white !important;
             border-radius: 0.5rem !important;
@@ -540,9 +540,9 @@
 
         /* Dashboard Button - Updated Design */
         .dashboard-btn.btn-outline-primary {
-            background-color: #F3F3F3FF !important;
-            border-color: #E0E0E0 !important;
-            color: #666666FF !important;
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
             border-radius: 0.5rem !important;
             padding: 0.375rem 0.75rem !important;
             font-weight: 500 !important;
@@ -555,16 +555,16 @@
         .dashboard-btn.btn-outline-primary:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-            background-color: #FFFFFF !important;
-            border-color: #B7B7B7FF !important;
-            color: #0A0A0A !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
         }
 
         /* Status Indicator - Updated Green */
         .status-indicator {
             width: 8px;
             height: 8px;
-            background-color: #21AF65FF;
+            background-color: var(--secondary-green);
             border-radius: 50%;
             animation: pulse-green 2s infinite;
         }
@@ -583,54 +583,54 @@
 
         /* Progress Bars General Styling */
         .progress {
-            background-color: #F3F3F3FF !important;
+            background-color: var(--primary-light-gray) !important;
             border-radius: 0.25rem !important;
         }
 
         .asset-progress {
             height: 8px !important;
-            background-color: #F3F3F3FF !important;
+            background-color: var(--primary-light-gray) !important;
             border-radius: 0.5rem !important;
         }
 
         /* Text Colors */
         .text-dark {
-            color: #0A0A0A !important;
+            color: var(--primary-black) !important;
         }
 
         .text-muted {
-            color: #666666FF !important;
+            color: var(--primary-dark-gray) !important;
         }
 
         /* List Group Items */
         .list-group-item {
-            border-color: #E0E0E0 !important;
+            border-color: var(--element-gray) !important;
         }
 
         .list-group-item:hover {
-            background-color: #F3F3F3FF !important;
+            background-color: var(--primary-light-gray) !important;
             transition: all 0.2s ease !important;
         }
 
         /* Asset Distribution Percentages */
         .text-primary {
-            color: #331FEAFF !important;
+            color: var(--secondary-purple) !important;
         }
 
         .text-success {
-            color: #21AF65FF !important;
+            color: var(--secondary-green) !important;
         }
 
         .text-info {
-            color: #FF579FFF !important;
+            color: var(--secondary-pink) !important;
         }
 
         .text-warning {
-            color: #FF8C61FF !important;
+            color: var(--secondary-orange) !important;
         }
 
         .text-danger {
-            color: #E97676FF !important;
+            color: var(--secondary-red) !important;
         }
     </style>
 </body>
