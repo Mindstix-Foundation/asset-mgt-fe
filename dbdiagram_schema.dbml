@@ -228,6 +228,10 @@ Table assets {
   condition asset_condition [not null, default: 'NEW', note: 'ENUM: NEW, GOOD, FAIR, POOR, DAMAGED']
   status asset_status [not null, default: 'AVAILABLE', note: 'ENUM: AVAILABLE, ASSIGNED, IN_MAINTENANCE, RETIRED, LOST']
   notes text
+  retirement_date date [note: 'Date when asset was retired']
+  retirement_reason text [note: 'Reason for asset retirement (free text)']
+  reactivation_date date [note: 'Date when asset was reactivated from retirement']
+  reactivation_reason text [note: 'Reason for reactivating the asset (free text)']
   qr_code varchar(255) [note: 'QR code for asset identification']
   image_url varchar(500) [note: 'URL to asset image']
   created_by int [ref: > users.id, not null]
@@ -247,6 +251,8 @@ Table assets {
     status
     condition
     (status, condition)
+    retirement_date
+    reactivation_date
     qr_code
   }
 }

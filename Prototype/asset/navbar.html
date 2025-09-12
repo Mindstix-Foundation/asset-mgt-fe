@@ -10,6 +10,45 @@
 .brand-s {
     font-size: 0.8em;
 }
+
+/* Navbar backdrop */
+.navbar {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(51, 31, 234, 0.9) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Logout button hover effect */
+.btn-outline-light:hover {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: white !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Navigation links styling */
+.navbar-nav .nav-link {
+    position: relative;
+    padding: 0.75rem 1rem !important;
+    border-radius: 0.5rem;
+    margin: 0 0.25rem;
+    transition: all 0.3s ease;
+    color: var(--primary-black) !important;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: var(--primary-light-gray) !important;
+    color: var(--primary-black) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-link.active {
+    background-color: var(--primary-white) !important;
+    color: var(--primary-black) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div class="container-fluid">
@@ -70,4 +109,38 @@
             </div>
         </div>
     </div>
-</nav> 
+</nav>
+
+<script>
+// Set active nav link based on current page
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    
+    // Remove active class from all links
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Add active class to current page link
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && currentPath.includes(href.replace('.html', ''))) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Handle special cases
+    if (currentPath.includes('dashboard') || currentPath.endsWith('/') || currentPath.includes('index')) {
+        document.getElementById('nav-dashboard')?.classList.add('active');
+    } else if (currentPath.includes('assets')) {
+        document.getElementById('nav-assets')?.classList.add('active');
+    } else if (currentPath.includes('employees')) {
+        document.getElementById('nav-employees')?.classList.add('active');
+    } else if (currentPath.includes('maintenance')) {
+        document.getElementById('nav-maintenance')?.classList.add('active');
+    } else if (currentPath.includes('vendors')) {
+        document.getElementById('nav-vendors')?.classList.add('active');
+    } else if (currentPath.includes('reports')) {
+        document.getElementById('nav-reports')?.classList.add('active');
+    }
+});
+</script> 

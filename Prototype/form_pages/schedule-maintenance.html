@@ -6,6 +6,7 @@
     <title>Asset Management - Schedule Maintenance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../styles.css" rel="stylesheet">
     <link rel="stylesheet" href="../asset/navbar.css">
     <link rel="stylesheet" href="unified-form-styles.css">
@@ -88,20 +89,16 @@
                                         <div class="form-text">Repeat every X days (e.g., 30 = monthly). Leave empty for one-time maintenance</div>
                                     </div>
 
-                                    <!-- Assigned To -->
+                                    <!-- Estimated Cost -->
                                     <div class="col-md-6">
-                                        <label for="assignedTo" class="form-label">Assigned To <span class="text-muted">(Optional)</span></label>
-                                            <select class="form-select" id="assignedTo">
-                                            <option value="" selected>Not assigned yet</option>
-                                            <option value="EMP-001">EMP-001 - John Smith (IT Support)</option>
-                                            <option value="EMP-002">EMP-002 - Sarah Wilson (Facilities)</option>
-                                            <option value="EMP-003">EMP-003 - Mike Johnson (IT Manager)</option>
-                                            <option value="EMP-004">EMP-004 - David Brown (Technician)</option>
-                                            <option value="EMP-005">EMP-005 - Lisa Garcia (Admin)</option>
-                                            <option value="EMP-006">EMP-006 - Emily Davis (Support)</option>
-                                                <option value="TECH-001">TECH-001 - External Technician</option>
-                                            </select>
-                                        <div class="form-text">Assign maintenance to a specific person or team</div>
+                                        <label for="estimatedCost" class="form-label">Estimated Cost <span class="text-muted">(Optional)</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                                            <input type="number" class="form-control" id="estimatedCost" placeholder="0.00" 
+                                                   step="0.01" min="0" max="100000" 
+                                                   title="Estimated cost cannot exceed ₹1,00,000">
+                                        </div>
+                                        <div class="form-text">Estimated cost for this maintenance activity (max ₹1,00,000)</div>
                                     </div>
 
                                     <!-- Description -->
@@ -850,18 +847,34 @@
             border-radius: 0.5rem; /* Overall container radius */
         }
         
-        .input-group-text {
+        /* Currency input group (icon on left) */
+        .input-group .input-group-text:first-child {
+            background-color: #F3F3F3;
+            border: 2px solid #999999; /* Darker border for consistency */
+            border-right: none;
+            color: #666666; /* High contrast text */
+            font-weight: 600;
+            border-radius: 0.5rem 0 0 0.5rem !important; /* Left side rounded */
+        }
+        
+        .input-group .form-control:last-child {
+            border-left: none;
+            border-radius: 0 0.5rem 0.5rem 0 !important; /* Right side rounded */
+        }
+        
+        /* Frequency input group (text on right) */
+        .input-group .form-control:first-child {
+            border-right: none;
+            border-radius: 0.5rem 0 0 0.5rem !important; /* Left side rounded */
+        }
+        
+        .input-group .input-group-text:last-child {
             background-color: #F3F3F3;
             border: 2px solid #999999; /* Darker border for consistency */
             border-left: none;
             color: #666666; /* High contrast text */
             font-weight: 600;
             border-radius: 0 0.5rem 0.5rem 0 !important; /* Right side rounded */
-        }
-        
-        .input-group .form-control {
-            border-right: none;
-            border-radius: 0.5rem 0 0 0.5rem !important; /* Left side rounded */
         }
         
         /* Override Bootstrap's default input group radius */
@@ -909,21 +922,50 @@
             background-color: #F3F3F3;
         }
         
-        .input-group:focus-within .input-group-text {
+        /* Focus states for currency input group (icon on left) */
+        .input-group:focus-within .input-group-text:first-child {
             border-color: #331FEA !important;
             background-color: #F3F3F3;
+            border-right: none !important;
         }
 
-        .input-group:focus-within .form-control {
+        .input-group:focus-within .form-control:last-child {
             border-color: #331FEA !important;
+            border-left: none !important;
         }
         
-        .input-group:hover .input-group-text {
-            border-color: #666666 !important;
+        /* Focus states for frequency input group (text on right) */
+        .input-group:focus-within .form-control:first-child {
+            border-color: #331FEA !important;
+            border-right: none !important;
+        }
+
+        .input-group:focus-within .input-group-text:last-child {
+            border-color: #331FEA !important;
+            background-color: #F3F3F3;
+            border-left: none !important;
         }
         
-        .input-group:hover .form-control {
+        /* Hover states for currency input group (icon on left) */
+        .input-group:hover .input-group-text:first-child {
             border-color: #666666 !important;
+            border-right: none !important;
+        }
+        
+        .input-group:hover .form-control:last-child {
+            border-color: #666666 !important;
+            border-left: none !important;
+        }
+        
+        /* Hover states for frequency input group (text on right) */
+        .input-group:hover .form-control:first-child {
+            border-color: #666666 !important;
+            border-right: none !important;
+        }
+        
+        .input-group:hover .input-group-text:last-child {
+            border-color: #666666 !important;
+            border-left: none !important;
         }
         
         /* Expandable Notes Styling */

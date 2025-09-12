@@ -512,178 +512,82 @@
 
     <!-- Vendor Detail Modal -->
     <div class="modal fade" id="vendorDetailModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Vendor Details - Apple Store (VEN-001)</h5>
+                    <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;">Vendor Details - Apple Store</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <!-- Vendor Information -->
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-store me-2"></i>Vendor Information</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center mb-4">
-                                        <i class="fas fa-store fa-5x text-primary mb-3"></i>
-                                        <h5 class="fw-bold">Apple Store</h5>
-                                        <p class="text-muted">VEN-001</p>
-                                        <span class="badge badge-supplier">Supplier</span>
-                                        <span class="badge badge-active ms-2">Active</span>
+                    <!-- Compact Vendor Information -->
+                    <div class="row g-3">
+                        <!-- Left Column: Basic Info -->
+                        <div class="col-md-6">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor ID</label>
+                                        <div class="info-value fw-bold">VEN-001</div>
                                     </div>
-                                    <div class="vendor-details">
-                                        <div class="mb-2">
-                                            <strong>Contact Person:</strong> John Smith
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Email:</strong> procurement@apple.com
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Phone:</strong> +91-80-4567-8901
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Address:</strong> 1 Apple Park Way, Cupertino, CA 95014
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Tax ID:</strong> 94-2404110
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>PAN Number:</strong> AAAPL1234C
-                                        </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor Name</label>
+                                        <div class="info-value fw-bold">Apple Store</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Contract Information -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Contract Information</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Contract Start</label>
-                                            <div class="fw-bold">Jan 15, 2024</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Contract End</label>
-                                            <div class="fw-bold text-success">Jan 15, 2027</div>
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label text-muted">Payment Terms</label>
-                                            <div class="fw-bold">Net 30 Days</div>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label text-muted">Notes</label>
-                                            <div class="text-muted">Premium electronics supplier with excellent service record. Preferred vendor for Apple products.</div>
-                                        </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor Type</label>
+                                        <div class="info-value"><span class="badge badge-supplier">Supplier</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Contact Person</label>
+                                        <div class="info-value">John Smith</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Status</label>
+                                        <div class="info-value"><span class="badge badge-active">Active</span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Purchase History & Performance -->
-                        <div class="col-lg-6">
-                            <!-- Recent Purchases -->
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Recent Purchases (5)</h6>
-                                    <button class="btn btn-sm btn-primary">
-                                        <i class="fas fa-plus me-1"></i>New Purchase
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <!-- Purchase 1 -->
-                                        <div class="col-12 mb-3">
-                                            <div class="card border">
-                                                <div class="card-body p-3">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="fas fa-laptop text-primary fa-2x me-3"></i>
-                                                        <div>
-                                                            <div class="fw-bold">MacBook Pro 16"</div>
-                                                            <small class="text-muted">PO-2024-001 • Mar 15, 2024</small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="fw-bold text-success">₹2,499.00</span>
-                                                        <span class="badge bg-success">Delivered</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Purchase 2 -->
-                                        <div class="col-12 mb-3">
-                                            <div class="card border">
-                                                <div class="card-body p-3">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="fas fa-mobile-alt text-warning fa-2x me-3"></i>
-                                                        <div>
-                                                            <div class="fw-bold">iPhone 14 Pro</div>
-                                                            <small class="text-muted">PO-2024-002 • Mar 20, 2024</small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="fw-bold text-success">₹999.00</span>
-                                                        <span class="badge bg-warning">In Transit</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Purchase 3 -->
-                                        <div class="col-12 mb-3">
-                                            <div class="card border">
-                                                <div class="card-body p-3">
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="fas fa-tablet-alt text-info fa-2x me-3"></i>
-                                                        <div>
-                                                            <div class="fw-bold">iPad Pro 12.9"</div>
-                                                            <small class="text-muted">PO-2024-003 • Mar 25, 2024</small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="fw-bold text-success">₹1,099.00</span>
-                                                        <span class="badge bg-success">Delivered</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                        <!-- Right Column: Contact & Legal -->
+                        <div class="col-md-6">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-address-book me-2"></i>Contact & Legal Details</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Email Address</label>
+                                        <div class="info-value">procurement@apple.com</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Phone Number</label>
+                                        <div class="info-value">+91-80-4567-8901</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Address</label>
+                                        <div class="info-value">1 Apple Park Way, Cupertino, CA 95014</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Tax ID</label>
+                                        <div class="info-value font-monospace">94-2404110</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">PAN Number</label>
+                                        <div class="info-value font-monospace">AAAPL1234C</div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Performance Metrics -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Performance Metrics</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">On-time Delivery</label>
-                                            <div class="fw-bold text-success">98%</div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-success" style="width: 98%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Quality Rating</label>
-                                            <div class="fw-bold text-success">4.9/5</div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-success" style="width: 98%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Total Orders</label>
-                                            <div class="fw-bold">127</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Total Value</label>
-                                            <div class="fw-bold text-primary">₹284,550</div>
-                                        </div>
+                    <!-- Additional Notes Section -->
+                    <div class="row g-3 mt-2">
+                        <div class="col-12">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-value">Premium electronics supplier with excellent service record. Preferred vendor for Apple products and accessories. Maintains consistent quality and delivery standards.</div>
                                     </div>
                                 </div>
                             </div>
@@ -692,14 +596,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success">
-                            <i class="fas fa-shopping-cart me-1"></i>New Purchase
-                        </button>
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fas fa-edit me-1"></i>Edit Vendor
-                        </button>
-                    </div>
+                    <button type="button" class="btn btn-success" onclick="window.location.href='../form_pages/register-asset.html'">
+                        <i class="fas fa-plus me-1"></i>Register New Asset
+                    </button>
+                    <button type="button" class="btn btn-primary-blue" onclick="window.location.href='../form_pages/add-vendor.html'">
+                        <i class="fas fa-edit me-1"></i>Edit Vendor
+                    </button>
                 </div>
             </div>
         </div>
@@ -1891,7 +1793,6 @@
              border: 1px solid var(--element-gray) !important;
              color: var(--primary-dark-gray) !important;
              border-radius: 0.5rem !important;
-             padding: 0.75rem 1.5rem !important;
              font-weight: 500 !important;
              transition: all 0.2s ease !important;
          }
@@ -1907,7 +1808,6 @@
              border: 1px solid var(--secondary-purple) !important;
              color: white !important;
              border-radius: 0.5rem !important;
-             padding: 0.75rem 1.5rem !important;
              font-weight: 500 !important;
              transition: all 0.2s ease !important;
              box-shadow: 0 2px 8px rgba(51, 31, 234, 0.15) !important;
@@ -2031,6 +1931,170 @@
             background-color: transparent !important;
             border: none !important;
             transform: none !important;
+        }
+
+        /* Modal Footer Button Styling */
+        .modal-footer {
+            background-color: var(--primary-light-gray) !important;
+            border-top: 1px solid var(--element-gray) !important;
+            padding: 1rem 1.5rem !important;
+        }
+
+        .modal-footer .btn {
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .modal-footer .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+
+        .modal-footer .btn-success {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-outline-primary {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--secondary-purple) !important;
+            color: var(--secondary-purple) !important;
+        }
+
+        .modal-footer .btn-outline-primary:hover {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-cancel {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-cancel:hover {
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+
+        .modal-footer .btn-upload-primary {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-upload-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        /* Vendor Detail Modal Styling - Consistent with Assets/Employees Modals */
+        .vendor-info-section {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .vendor-info-section .section-title {
+            color: var(--primary-black) !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+            border-bottom: 1px solid var(--element-gray) !important;
+        }
+
+        .vendor-info-section .info-label {
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            color: var(--primary-dark-gray) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        .vendor-info-section .info-value {
+            font-size: 0.9rem !important;
+            color: var(--primary-black) !important;
+            font-weight: 500 !important;
+        }
+
+        .vendor-info-section .info-item {
+            margin-bottom: 1rem !important;
+        }
+
+        .vendor-info-section .info-item:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        /* Vendor Status Badges */
+        .badge-supplier {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 1rem !important;
+        }
+
+        .badge-active {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 1rem !important;
+        }
+
+        /* Button Styling for Vendor Modal */
+        .modal-footer .btn-primary-blue {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-primary-blue:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
         }
     </style>
 </body>

@@ -157,17 +157,7 @@
         <!-- Assets/Inventory Content -->
         <div id="contentContainer">
             <!-- List View (Default) -->
-            <div class="card" id="listView">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0" id="tableTitle"><i class="fas fa-laptop me-2"></i>Assets</h5>
-                    <div class="d-flex gap-2">
-                        <div class="form-check form-switch" id="retiredToggle">
-                            <input class="form-check-input" type="checkbox" id="showRetired">
-                            <label class="form-check-label" for="showRetired">Show Retired</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
+           
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="mainTable">
                             <thead class="table-light" id="tableHead">
@@ -194,19 +184,19 @@
                                     <td class="date-column">Jan 15, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
+                                            <button class="btn btn-outline-success assign-btn" title="Issue Asset" onclick="window.location.href='../form_pages/issue-asset.html'">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -222,19 +212,19 @@
                                     <td class="date-column">Feb 01, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assignedAssetModal" title="View Assigned Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning unassign-btn" title="Unassign">
+                                            <button class="btn btn-outline-warning unassign-btn" title="Collect Asset" onclick="window.location.href='../form_pages/collect-asset.html'">
                                                 <i class="fas fa-user-minus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -250,131 +240,119 @@
                                     <td class="date-column">Jan 20, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inMaintenanceAssetModal" title="View Maintenance Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
-                                                <i class="fas fa-edit"></i>
+                                            <button class="btn btn-outline-warning" title="View Full Maintenance" onclick="window.location.href='../pages/maintenance.html'">
+                                                <i class="fas fa-clipboard-list"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning" title="Repair Status">
-                                                <i class="fas fa-tools"></i>
+                                            <button class="btn btn-outline-success" title="Complete Maintenance" data-bs-toggle="modal" data-bs-target="#completeAssetMaintenanceModal">
+                                                <i class="fas fa-check"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
-                                                <i class="fas fa-wrench"></i>
-                                            </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Laptop" data-brand="Dell" data-status="AVAILABLE" data-location="Warehouse B" data-search="AST-004 Dell Latitude Laptop JKL012MNO Available">
+                                <tr data-type="Laptop" data-brand="Dell" data-status="IN_MAINTENANCE" data-location="Repair Center" data-search="AST-004 Dell Latitude Laptop JKL012MNO Under Repair">
                                     <td><strong>AST-004</strong></td>
                                     <td><i class="fas fa-laptop text-primary me-2"></i>Laptop</td>
                                     <td>Dell Latitude 7420</td>
                                     <td>JKL012MNO</td>
-                                    <td><span class="badge badge-available">Available</span></td>
+                                    <td><span class="badge badge-under-repair">In Maintenance</span></td>
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Feb 15, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inMaintenanceAssetModal" title="View Maintenance Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
-                                                <i class="fas fa-edit"></i>
+                                            <button class="btn btn-outline-warning" title="View Full Maintenance" onclick="window.location.href='../pages/maintenance.html'">
+                                                <i class="fas fa-clipboard-list"></i>
                                             </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
-                                                <i class="fas fa-user-plus"></i>
+                                            <button class="btn btn-outline-success" title="Complete Maintenance" data-bs-toggle="modal" data-bs-target="#completeAssetMaintenanceModal">
+                                                <i class="fas fa-check"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
-                                                <i class="fas fa-wrench"></i>
-                                            </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Tablet" data-brand="Microsoft" data-status="AVAILABLE" data-location="Warehouse A" data-search="AST-005 Microsoft Surface Tablet MNO345PQR Available">
+                                <tr data-type="Tablet" data-brand="Microsoft" data-status="ASSIGNED" data-location="Office Floor 1" data-search="AST-005 Microsoft Surface Tablet MNO345PQR Assigned Sarah Wilson">
                                     <td><strong>AST-005</strong></td>
                                     <td><i class="fas fa-tablet-alt text-success me-2"></i>Tablet</td>
                                     <td>Microsoft Surface Pro 9</td>
                                     <td>MNO345PQR</td>
-                                    <td><span class="badge badge-available">Available</span></td>
-                                    <td class="assigned-to">Reserved for Jane Smith</td>
+                                    <td><span class="badge badge-assigned">Assigned</span></td>
+                                    <td class="assigned-to">Sarah Wilson</td>
                                     <td class="date-column">Mar 05, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assignedAssetModal" title="View Assigned Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
-                                                <i class="fas fa-user-plus"></i>
+                                            <button class="btn btn-outline-warning unassign-btn" title="Collect Asset" onclick="window.location.href='../form_pages/collect-asset.html'">
+                                                <i class="fas fa-user-minus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Accessory" data-brand="Apple" data-status="AVAILABLE" data-location="Warehouse A" data-search="AST-006 Apple AirPods Accessory PQR678STU Available">
+                                <tr data-type="Accessory" data-brand="Apple" data-status="RETIRED" data-location="Storage" data-search="AST-006 Apple AirPods Accessory PQR678STU Retired">
                                     <td><strong>AST-006</strong></td>
                                     <td><i class="fas fa-headphones text-secondary me-2"></i>Accessory</td>
                                     <td>Apple AirPods Pro 2nd Gen</td>
                                     <td>PQR678STU</td>
-                                    <td><span class="badge badge-available">Available</span></td>
+                                    <td><span class="badge badge-retired">Retired</span></td>
                                     <td class="assigned-to">-</td>
                                     <td class="date-column">Mar 10, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#retiredAssetModal" title="View Retired Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
-                                                <i class="fas fa-user-plus"></i>
-                                            </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Restoration" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-type="Monitor" data-brand="LG" data-status="AVAILABLE" data-location="Warehouse B" data-search="AST-007 LG UltraWide Monitor STU901VWX Available">
+                                <tr data-type="Monitor" data-brand="LG" data-status="ASSIGNED" data-location="Office Floor 3" data-search="AST-007 LG UltraWide Monitor STU901VWX Assigned Emily Davis">
                                     <td><strong>AST-007</strong></td>
                                     <td><i class="fas fa-desktop text-info me-2"></i>Monitor</td>
                                     <td>LG UltraWide 34"</td>
                                     <td>STU901VWX</td>
-                                    <td><span class="badge badge-available">Available</span></td>
-                                    <td class="assigned-to">-</td>
+                                    <td><span class="badge badge-assigned">Assigned</span></td>
+                                    <td class="assigned-to">Emily Davis</td>
                                     <td class="date-column">Mar 18, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assignedAssetModal" title="View Assigned Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
-                                                <i class="fas fa-user-plus"></i>
+                                            <button class="btn btn-outline-warning unassign-btn" title="Collect Asset" onclick="window.location.href='../form_pages/collect-asset.html'">
+                                                <i class="fas fa-user-minus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -390,19 +368,19 @@
                                     <td class="date-column">Feb 28, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assignedAssetModal" title="View Assigned Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning unassign-btn" title="Unassign">
+                                            <button class="btn btn-outline-warning unassign-btn" title="Collect Asset" onclick="window.location.href='../form_pages/collect-asset.html'">
                                                 <i class="fas fa-user-minus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -418,19 +396,19 @@
                                     <td class="date-column">Mar 08, 2024</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
+                                            <button class="btn btn-outline-secondary" title="Edit Asset" onclick="window.location.href='../form_pages/register-asset.html'">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-outline-success assign-btn" title="Assign">
+                                            <button class="btn btn-outline-success assign-btn" title="Issue Asset" onclick="window.location.href='../form_pages/issue-asset.html'">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -446,16 +424,13 @@
                                     <td class="date-column">Oct 15, 2022</td>
                                     <td>
                                         <div class="btn-group btn-group-sm asset-actions">
-                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal" title="View Details">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#retiredAssetModal" title="View Retired Asset Details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="btn btn-outline-secondary" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Maintenance">
+                                            <button class="btn btn-outline-warning maintenance-btn" title="Schedule Restoration" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                                 <i class="fas fa-wrench"></i>
                                             </button>
-                                            <button class="btn btn-outline-info" title="QR Code">
+                                            <button class="btn btn-outline-info" title="View QR Code">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
                                         </div>
@@ -464,8 +439,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
+               
 
             <!-- Grid View (Hidden by default) -->
             <div class="d-none" id="gridView">
@@ -538,138 +512,112 @@
 
     <!-- Detail Modal -->
     <div class="modal fade" id="detailModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Asset Details - AST-001</h5>
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">Asset Details - AST-001</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <!-- Asset Information -->
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Asset Information</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Asset ID</label>
-                                            <div class="fw-bold">AST-001</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Asset Type</label>
-                                            <div class="fw-bold">Laptop</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Brand</label>
-                                            <div class="fw-bold">Apple</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Model</label>
-                                            <div class="fw-bold">MacBook Pro 16"</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Serial Number</label>
-                                            <div class="fw-bold">ABC123XYZ</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Status</label>
-                                            <div><span class="badge badge-available">Available</span></div>
-                                        </div>
+                    <!-- Compact Asset Information -->
+                    <div class="row g-3">
+                        <!-- Left Column: Basic Info -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Asset ID</label>
+                                        <div class="info-value fw-bold">AST-001</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Specifications -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Specifications</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Processor</label>
-                                            <div class="fw-bold">Apple M2 Pro</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">RAM</label>
-                                            <div class="fw-bold">16GB</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Storage</label>
-                                            <div class="fw-bold">512GB SSD</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Operating System</label>
-                                            <div class="fw-bold">macOS Sonoma</div>
-                                        </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Category</label>
+                                        <div class="info-value">Electronics</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Asset Type</label>
+                                        <div class="info-value fw-bold">Laptop</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Brand & Model</label>
+                                        <div class="info-value fw-bold">Apple MacBook Pro 16"</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Serial Number</label>
+                                        <div class="info-value font-monospace">ABC123XYZ</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Status</label>
+                                        <div class="info-value"><span class="badge badge-available">Available</span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Location & Assignment -->
-                        <div class="col-lg-6">
-                            <!-- Current Assignment -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Current Assignment</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center py-4">
-                                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">This asset is not currently assigned</p>
-                                        <button class="btn btn-primary">
-                                            <i class="fas fa-user-plus me-2"></i>Assign Asset
-                                        </button>
+                        <!-- Right Column: Location & Financial -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Location & Details</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Current Location</label>
+                                        <div class="info-value fw-bold">Warehouse A - Shelf B2</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Location & Warranty -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Location & Warranty</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label text-muted">Current Location</label>
-                                            <div class="fw-bold">Warehouse A - Shelf B2</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Purchase Date</label>
-                                            <div class="fw-bold">Jan 15, 2024</div>
-                                        </div>
-                                        <div class="col-6 mb-3">
-                                            <label class="form-label text-muted">Warranty Expires</label>
-                                            <div class="fw-bold text-success">Jan 15, 2027</div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="progress">
-                                                <div class="progress-bar bg-success" style="width: 95%"></div>
+                                    <div class="info-item">
+                                        <label class="info-label">Condition</label>
+                                        <div class="info-value"><span class="badge badge-condition-good">Good</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Purchase Date</label>
+                                        <div class="info-value">Jan 15, 2024</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Purchase Cost</label>
+                                        <div class="info-value">₹1,49,999</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor</label>
+                                        <div class="info-value">Apple Store</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Warranty</label>
+                                        <div class="info-value">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span style="color: var(--secondary-green);">Jan 15, 2027</span>
+                                                <div class="warranty-indicator">
+                                                    <div class="progress" style="width: 60px; height: 4px;">
+                                                        <div class="progress-bar" style="width: 95%; background-color: var(--secondary-green);"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <small class="text-muted">2 years 11 months remaining</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- QR Code -->
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-qrcode me-2"></i>QR Code</h6>
-                                </div>
-                                <div class="card-body text-center">
-                                    <div class="qr-code-placeholder bg-light border rounded p-4 mb-3">
-                                        <i class="fas fa-qrcode fa-4x text-muted"></i>
-                                        <p class="text-muted mt-2 mb-0">QR Code for AST-001</p>
+                    <!-- Assignment Status Row -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="assignment-status-compact">
+                                <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="assignment-icon">
+                                            <i class="fas fa-box fa-2x" style="color: var(--secondary-green);"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1" style="color: var(--primary-black); font-size: 1rem; font-weight: 600;">Assignment Status</h6>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge badge-available">Available for Issue</span>
+                                                <span class="text-muted" style="font-size: 0.875rem;">Ready to be assigned to an employee</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <button class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-download me-1"></i>Download QR Code
-                                    </button>
+                                    <div class="qr-code-mini">
+                                        <i class="fas fa-qrcode fa-2x text-muted" title="QR Code Available"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -677,12 +625,18 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-1"></i>Assign Asset
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-success" onclick="window.location.href='../form_pages/issue-asset.html'">
+                            <i class="fas fa-user-plus me-1"></i>Issue Asset
                         </button>
-                        <button type="button" class="btn btn-outline-primary">
+                        <button type="button" class="btn btn-warning" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                            <i class="fas fa-wrench me-1"></i>Schedule Maintenance
+                        </button>
+                        <button type="button" class="btn btn-primary-blue">
                             <i class="fas fa-edit me-1"></i>Edit Asset
+                        </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#retireAssetModal" data-bs-dismiss="modal">
+                            <i class="fas fa-archive me-1"></i>Retire Asset
                         </button>
                     </div>
                 </div>
@@ -760,6 +714,725 @@
         </div>
     </div>
 
+    <!-- IN_MAINTENANCE Asset View Modal -->
+    <div class="modal fade" id="inMaintenanceAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-tools me-2" style="color: var(--secondary-orange);"></i>Asset Details - AST-003
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Asset Summary -->
+                    <div class="row g-3 mb-4">
+                        <!-- Left Column: Basic Info -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-mobile-alt me-2"></i>Asset Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Asset ID</label>
+                                        <div class="info-value fw-bold">AST-003</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Asset Type</label>
+                                        <div class="info-value fw-bold">Mobile</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Brand & Model</label>
+                                        <div class="info-value fw-bold">Apple iPhone 14 Pro</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Serial Number</label>
+                                        <div class="info-value font-monospace">GHI789RST</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Status</label>
+                                        <div class="info-value"><span class="badge badge-under-repair">In Maintenance</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Condition</label>
+                                        <div class="info-value"><span class="badge badge-condition-damaged">Damaged</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Maintenance Details -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-wrench me-2"></i>Maintenance Details</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Maintenance Type</label>
+                                        <div class="info-value"><span class="badge badge-type-corrective">Corrective</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Status</label>
+                                        <div class="info-value"><span class="badge badge-in-progress">In Progress</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Scheduled Date</label>
+                                        <div class="info-value">Mar 10, 2024</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Assigned To</label>
+                                        <div class="info-value">John Smith</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Location</label>
+                                        <div class="info-value fw-bold">Repair Center</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Purchase Date</label>
+                                        <div class="info-value">Jan 20, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Description -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
+                                <div class="maintenance-description">
+                                    <p class="mb-2"><strong>Issue:</strong> Screen repair due to physical damage</p>
+                                    <p class="mb-0 text-muted">Device screen is cracked and showing display artifacts. Touch functionality is partially impaired.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service & Cost Information -->
+                    <div class="row g-3">
+                        <!-- Left Column: Service Provider -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-building me-2"></i>Service Provider</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor Name</label>
+                                        <div class="info-value fw-bold">TechFix Solutions</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Contact Person</label>
+                                        <div class="info-value">Service Manager</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Phone</label>
+                                        <div class="info-value">+91-9876543210</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Email</label>
+                                        <div class="info-value">service@techfix.com</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Cost Information -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="bi bi-currency-rupee me-2"></i>Cost Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Estimated Cost</label>
+                                        <div class="info-value fw-bold">₹299.00</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Actual Cost</label>
+                                        <div class="info-value text-muted">Pending completion</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Warranty Status</label>
+                                        <div class="info-value"><span class="badge bg-danger">Expired</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Service Date</label>
+                                        <div class="info-value">Mar 10, 2024</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-warning" onclick="window.location.href='../pages/maintenance.html'">
+                            <i class="fas fa-clipboard-list me-1"></i>View Maintenance Records
+                        </button>
+                        <button type="button" class="btn btn-primary-blue" data-bs-toggle="modal" data-bs-target="#completeAssetMaintenanceModal">
+                            <i class="fas fa-check me-1"></i>Complete Maintenance
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Asset Maintenance Modal -->
+    <div class="modal fade" id="completeAssetMaintenanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">Complete Maintenance - AST-003</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="completeAssetMaintenanceForm" class="needs-validation" novalidate>
+                        <div class="complete-maintenance-form">
+                            <div class="mb-3">
+                                <p><strong>Asset:</strong> iPhone 14 Pro (AST-003)</p>
+                                <p><strong>Maintenance:</strong> Screen repair due to physical damage</p>
+                                <p><strong>Estimated Cost:</strong> ₹299.00</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="assetActualCost" class="form-label">Actual Cost <span class="text-danger">*</span></label>
+                                <div class="input-group has-validation">
+                                    <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                                    <input type="number" class="form-control" id="assetActualCost" placeholder="0.00" 
+                                           step="0.01" min="0.01" max="100000" required
+                                           title="Please enter the actual cost for this maintenance">
+                                    <div class="invalid-feedback">
+                                        Please enter a valid actual cost (minimum ₹0.01, maximum ₹1,00,000).
+                                    </div>
+                                </div>
+                                <div class="form-text">Enter the actual cost incurred for this maintenance activity (required)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="assetConditionAfterMaintenance" class="form-label">Asset Condition After Maintenance <span class="text-danger">*</span></label>
+                                <select class="form-select" id="assetConditionAfterMaintenance" required>
+                                    <option value="">Select Condition...</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="GOOD">GOOD</option>
+                                    <option value="FAIR">FAIR</option>
+                                    <option value="POOR">POOR</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select the asset condition after maintenance.
+                                </div>
+                                <div class="form-text">Select the current condition of the asset after maintenance</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="assetCompletionNotes" class="form-label">Completion Notes <span class="text-muted">(Optional)</span></label>
+                                <textarea class="form-control" id="assetCompletionNotes" rows="3" 
+                                          placeholder="Add any final notes about the completed maintenance..." 
+                                          maxlength="500"></textarea>
+                                <div class="form-text">Any additional notes about the completion (max 500 characters)</div>
+                                <div class="character-count text-end" id="assetCompletionNotesCounter">
+                                    <small class="text-muted">0/500 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="completeAssetMaintenanceWithValidation()">
+                        <i class="fas fa-check me-1"></i>Complete Maintenance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Asset Detail Modal -->
+    <div class="modal fade" id="assignedAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-user-check me-2" style="color: var(--secondary-green);"></i>Assigned Asset Details - AST-002
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Asset Summary -->
+                    <div class="row g-3 mb-4">
+                        <!-- Left Column: Basic Asset Info -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-desktop me-2"></i>Asset Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Asset ID</label>
+                                        <div class="info-value font-monospace">AST-002</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Asset Name</label>
+                                        <div class="info-value">Dell UltraSharp 27"</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Category</label>
+                                        <div class="info-value">Electronics</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Type</label>
+                                        <div class="info-value">Monitor</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Brand & Model</label>
+                                        <div class="info-value">Dell UltraSharp 27"</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Serial Number</label>
+                                        <div class="info-value font-monospace">DEF456UVW</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Condition</label>
+                                        <div class="info-value">
+                                            <span class="badge badge-condition-good">GOOD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column: Assignment Details -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-user-check me-2"></i>Assignment Details</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Assigned To</label>
+                                        <div class="info-value">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-user-circle fa-lg text-success me-2"></i>
+                                                <div>
+                                                    <div class="fw-bold">John Doe</div>
+                                                    <small class="text-muted">EMP-001</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Assignment Date</label>
+                                        <div class="info-value">February 01, 2024</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Assignment Reason</label>
+                                        <div class="info-value">Secondary display for enhanced productivity</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Expected Return</label>
+                                        <div class="info-value">
+                                            <span class="text-muted">No return date set</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Days Assigned</label>
+                                        <div class="info-value">
+                                            <span class="badge badge-duration">225 days</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Assigned By</label>
+                                        <div class="info-value">
+                                            <small class="text-muted">IT Admin (EMP-100)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial & Warranty Information -->
+                    <div class="row g-3 mb-4">
+                        <!-- Left Column: Financial Details -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="bi bi-currency-rupee me-2"></i>Financial Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Purchase Cost</label>
+                                        <div class="info-value">₹35,000.00</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Purchase Date</label>
+                                        <div class="info-value">January 15, 2024</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor</label>
+                                        <div class="info-value">Dell Direct</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column: Warranty & Location -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-shield-alt me-2"></i>Warranty & Location</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Warranty Status</label>
+                                        <div class="info-value">
+                                            <div class="warranty-indicator warranty-active">
+                                                <i class="fas fa-shield-check me-1"></i>
+                                                <span>Active</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Warranty Until</label>
+                                        <div class="info-value">January 15, 2027</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Location</label>
+                                        <div class="info-value">
+                                            <i class="fas fa-map-marker-alt text-primary me-1"></i>
+                                            Employee Workstation
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assignment Notes -->
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-clipboard-list me-2"></i>Assignment Notes</h6>
+                                <div class="assignment-notes">
+                                    <p class="mb-2"><strong>Assignment Purpose:</strong> Secondary monitor for dual-screen setup to improve productivity</p>
+                                    <p class="mb-0 text-muted">Employee has been briefed on proper handling and company asset policies. Monitor includes HDMI cable and adjustable stand.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-pink" onclick="window.location.href='../form_pages/collect-asset.html'">
+                            <i class="fas fa-user-minus me-1"></i>Collect Asset
+                        </button>
+                        <button type="button" class="btn btn-primary-blue" onclick="window.location.href='../form_pages/register-asset.html'">
+                            <i class="fas fa-edit me-1"></i>Edit Asset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Retired Asset View Modal -->
+    <div class="modal fade" id="retiredAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-archive me-2" style="color: var(--secondary-red);"></i>Retired Asset Details - AST-010
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Asset Summary -->
+                    <div class="row g-3 mb-4">
+                        <!-- Left Column: Basic Info -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-info-circle me-2"></i>Asset Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Asset ID</label>
+                                        <div class="info-value fw-bold">AST-010</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Asset Type</label>
+                                        <div class="info-value fw-bold">HP EliteBook 840 G8</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Serial Number</label>
+                                        <div class="info-value font-monospace">BCD890EFG</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Status</label>
+                                        <div class="info-value"><span class="badge badge-retired">Retired</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Retirement Details -->
+                        <div class="col-md-6">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-calendar me-2"></i>Retirement History</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Retirement Date</label>
+                                        <div class="info-value">Oct 15, 2022</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Days Retired</label>
+                                        <div class="info-value">847 days</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Condition at Retirement</label>
+                                        <div class="info-value"><span class="badge badge-condition-poor">Poor</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Current Location</label>
+                                        <div class="info-value">Storage Room B</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Retirement Reason -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="asset-info-section">
+                                <h6 class="section-title"><i class="fas fa-comment me-2"></i>Retirement Reason</h6>
+                                <div class="p-3 bg-light rounded">
+                                    <p class="mb-0" style="color: var(--primary-black);">
+                                        "Battery completely dead and screen has multiple cracks. Keyboard keys are sticky and trackpad is unresponsive. Cost of repair would exceed replacement cost."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reactivation Status -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-lightbulb fa-2x me-3" style="color: var(--secondary-orange);"></i>
+                                    <div>
+                                        <h6 class="mb-1">Asset Reactivation Available</h6>
+                                        <p class="mb-0">This retired asset can be restored to active status through maintenance and reactivation process.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-warning" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                            <i class="fas fa-wrench me-1"></i>Schedule Restoration
+                        </button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#reactivateAssetModal" data-bs-dismiss="modal">
+                            <i class="fas fa-power-off me-1"></i>Reactivate Asset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reactivate Asset Modal -->
+    <div class="modal fade" id="reactivateAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-power-off me-2" style="color: var(--secondary-green);"></i>Reactivate Asset - AST-010
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Asset Reactivation:</strong> This will restore the asset to active inventory and make it available for assignment.
+                    </div>
+                    
+                    <form id="reactivateAssetForm" class="needs-validation" novalidate>
+                        <!-- Asset Summary -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="asset-info-section">
+                                    <h6 class="section-title"><i class="fas fa-laptop me-2"></i>Asset Summary</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="info-item">
+                                                <label class="info-label">Asset ID</label>
+                                                <div class="info-value fw-bold">AST-010</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="info-item">
+                                                <label class="info-label">Asset Type</label>
+                                                <div class="info-value fw-bold">HP EliteBook 840 G8</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reactivation Details -->
+                        <div class="row g-3">
+                            <!-- Reactivation Date -->
+                            <div class="col-md-6">
+                                <label for="reactivationDate" class="form-label">Reactivation Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="reactivationDate" required>
+                                <div class="form-text">Date when asset returns to active status</div>
+                                <div class="invalid-feedback">Please select the reactivation date.</div>
+                            </div>
+
+                            <!-- New Condition -->
+                            <div class="col-md-6">
+                                <label for="newCondition" class="form-label">Current Condition <span class="text-danger">*</span></label>
+                                <select class="form-select" id="newCondition" required>
+                                    <option value="">Assess Current Condition...</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="GOOD">GOOD</option>
+                                    <option value="FAIR">FAIR</option>
+                                    <option value="POOR">POOR</option>
+                                    <option value="DAMAGED">DAMAGED</option>
+                                </select>
+                                <div class="form-text">Current physical condition after any repairs</div>
+                                <div class="invalid-feedback">Please assess the asset's current condition.</div>
+                            </div>
+
+                            <!-- New Status -->
+                            <div class="col-md-6">
+                                <label for="newStatus" class="form-label">New Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="newStatus" required>
+                                    <option value="">Select Status...</option>
+                                    <option value="AVAILABLE" selected>AVAILABLE</option>
+                                    <option value="IN_MAINTENANCE">IN_MAINTENANCE</option>
+                                </select>
+                                <div class="form-text">Status after reactivation</div>
+                                <div class="invalid-feedback">Please select the new status.</div>
+                            </div>
+
+                            <!-- New Location -->
+                            <div class="col-md-6">
+                                <label for="newLocation" class="form-label">New Location <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="newLocation" placeholder="e.g., Warehouse A, Shelf B2" required>
+                                <div class="form-text">Where the asset will be stored/used</div>
+                                <div class="invalid-feedback">Please specify the new location.</div>
+                            </div>
+
+                            <!-- Reactivation Reason -->
+                            <div class="col-12">
+                                <label for="reactivationReason" class="form-label">Reactivation Reason <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="reactivationReason" rows="3" 
+                                          placeholder="Describe why this asset is being reactivated and what repairs/improvements were made..." 
+                                          maxlength="1000" required></textarea>
+                                <div class="form-text">Explain why the asset is being reactivated (max 1000 characters)</div>
+                                <div class="character-count text-end mt-1">
+                                    <small class="text-muted" id="reactivationReasonCounter">0/1000 characters</small>
+                                </div>
+                                <div class="invalid-feedback">Please provide a reason for reactivation.</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmReactivateBtn">
+                        <i class="fas fa-power-off me-1"></i>Confirm Reactivation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Retire Asset Modal -->
+    <div class="modal fade" id="retireAssetModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-archive me-2" style="color: var(--secondary-red);"></i>Retire Asset - AST-001
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action will permanently retire the asset. It cannot be assigned to employees after retirement.
+                    </div>
+                    
+                    <form id="retireAssetForm" class="needs-validation" novalidate>
+                        <!-- Asset Summary -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="asset-info-section">
+                                    <h6 class="section-title"><i class="fas fa-laptop me-2"></i>Asset Summary</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="info-item">
+                                                <label class="info-label">Asset ID</label>
+                                                <div class="info-value fw-bold">AST-001</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="info-item">
+                                                <label class="info-label">Asset Type</label>
+                                                <div class="info-value fw-bold">Apple MacBook Pro 16"</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Retirement Details -->
+                        <div class="row g-3">
+                            <!-- Retirement Date -->
+                            <div class="col-md-6">
+                                <label for="retirementDate" class="form-label">Retirement Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="retirementDate" required>
+                                <div class="form-text">Date when asset is being retired</div>
+                                <div class="invalid-feedback">Please select the retirement date.</div>
+                            </div>
+
+                            <!-- Condition at Retirement -->
+                            <div class="col-md-6">
+                                <label for="retirementCondition" class="form-label">Condition at Retirement <span class="text-danger">*</span></label>
+                                <select class="form-select" id="retirementCondition" required>
+                                    <option value="">Select Condition...</option>
+                                    <option value="NEW">NEW</option>
+                                    <option value="GOOD">GOOD</option>
+                                    <option value="FAIR">FAIR</option>
+                                    <option value="POOR">POOR</option>
+                                    <option value="DAMAGED">DAMAGED</option>
+                                </select>
+                                <div class="form-text">Current physical condition of the asset</div>
+                                <div class="invalid-feedback">Please select the asset's condition.</div>
+                            </div>
+
+                            <!-- Retirement Reason -->
+                            <div class="col-12">
+                                <label for="retirementReason" class="form-label">Retirement Reason <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="retirementReason" rows="4" 
+                                          placeholder="Please describe the reason for retiring this asset..." 
+                                          maxlength="1000" required></textarea>
+                                <div class="form-text">Describe why this asset is being retired (max 1000 characters)</div>
+                                <div class="character-count text-end mt-1">
+                                    <small class="text-muted" id="retirementReasonCounter">0/1000 characters</small>
+                                </div>
+                                <div class="invalid-feedback">Please provide a reason for retirement.</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmRetireBtn">
+                        <i class="fas fa-archive me-1"></i>Confirm Retirement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../asset/navbar.js"></script>
     <script src="../script.js"></script>
@@ -784,7 +1457,7 @@
         
         /* Enhanced Button Group Styling */
         .btn-group {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+           
             border-radius: 0.5rem;
             overflow: hidden;
         }
@@ -825,11 +1498,104 @@
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
+            white-space: nowrap !important;
         }
         
         .btn-modern:hover {
             transform: translateY(-1px) !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* Additional Badge Styles for IN_MAINTENANCE Modal */
+        .badge.badge-condition-damaged {
+            background-color: var(--secondary-red) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+            font-size: 0.75rem !important;
+        }
+        
+        .badge.badge-under-repair {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+            font-size: 0.75rem !important;
+        }
+        
+        .badge.badge-type-corrective {
+            background-color: var(--secondary-pink) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+            font-size: 0.75rem !important;
+        }
+        
+        .badge.badge-in-progress {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+            font-size: 0.75rem !important;
+        }
+        
+        /* Grid Layout for Modal Sections */
+        .col-span-2 {
+            grid-column: span 2;
+        }
+        
+        /* Maintenance Description Styling */
+        .maintenance-description {
+            padding: 0.75rem;
+            background-color: var(--primary-light-gray);
+            border-radius: 0.375rem;
+            border-left: 4px solid var(--secondary-orange);
+        }
+
+        .maintenance-description p {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .maintenance-description strong {
+            color: var(--primary-black);
+            font-weight: 600;
+        }
+
+        /* Assignment Notes Styling */
+        .assignment-notes {
+            padding: 0.75rem;
+            background-color: var(--primary-light-gray);
+            border-radius: 0.375rem;
+            border-left: 4px solid var(--secondary-green);
+        }
+
+        .assignment-notes p {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .assignment-notes strong {
+            color: var(--primary-black);
+            font-weight: 600;
+        }
+
+        /* Badge Styling for Assignment Duration */
+        .badge-duration {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
         }
         
         /* Primary Actions - Add/Create */
@@ -1154,6 +1920,11 @@
             padding: 0.25rem 0.5rem !important;
         }
         
+        /* Grid view icon colors - ensure icons are white */
+        .asset-card-modern .rounded-circle i {
+            color: white !important;
+        }
+        
 
         
         .card-header-gradient {
@@ -1217,27 +1988,75 @@
             padding: 0.75rem !important;
         }
         
-        /* First column padding adjustments */
-        .table td:first-child, .table th:first-child {
+        /* Table column width optimization */
+        .table {
+            table-layout: fixed !important;
+        }
+        
+        /* Prevent text wrapping in table headers */
+        .table th {
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Column width distribution for optimal space usage */
+        .table th:nth-child(1), .table td:nth-child(1) { /* Asset ID */
+            width: 110px !important;
+            min-width: 110px !important;
             padding-left: 1.5rem !important;
         }
         
-        /* Actions column (last column) padding adjustments */
+        .table th:nth-child(2), .table td:nth-child(2) { /* Type */
+            width: 120px !important;
+            min-width: 120px !important;
+        }
+        
+        .table th:nth-child(3), .table td:nth-child(3) { /* Brand/Model */
+            width: 200px !important;
+            min-width: 200px !important;
+        }
+        
+        .table th:nth-child(4), .table td:nth-child(4) { /* Serial Number */
+            width: 130px !important;
+            min-width: 130px !important;
+        }
+        
+        .table th:nth-child(5), .table td:nth-child(5) { /* Status */
+            width: 120px !important;
+            min-width: 120px !important;
+        }
+        
+        .table th:nth-child(6), .table td:nth-child(6) { /* Assigned To */
+            width: 140px !important;
+            min-width: 140px !important;
+        }
+        
+        .table th:nth-child(7), .table td:nth-child(7) { /* Purchase Date */
+            width: 130px !important;
+            min-width: 130px !important;
+        }
+        
+        /* Actions column (last column) - exact width for 5 buttons */
         .table td:last-child, .table th:last-child {
             padding-right: 1.5rem !important;
-            text-align: center !important;
+            padding-left: 1rem !important;
+            text-align: left !important;
+            width: 200px !important; /* Exact width for 5 action buttons with no extra space */
+            min-width: 200px !important;
+            max-width: 200px !important;
         }
         
         /* Asset actions button group spacing */
         .asset-actions {
-            justify-content: center !important;
+            justify-content: flex-start !important;
             gap: 0.25rem !important;
         }
         
         .asset-actions .btn {
-            padding: 0.25rem 0.5rem !important;
-            min-width: 32px !important;
-            min-height: 32px !important;
+            padding: 0.375rem 0.5rem !important;
+            min-width: 34px !important;
+            min-height: 34px !important;
         }
 
         /* Modern Pagination Styles */
@@ -1309,6 +2128,317 @@
             background-color: transparent !important;
             border: none !important;
             transform: none !important;
+        }
+
+        /* Modal Footer Button Styling */
+        .modal-footer {
+            background-color: var(--primary-light-gray) !important;
+            border-top: 1px solid var(--element-gray) !important;
+            padding: 1rem 1.5rem !important;
+        }
+
+        .modal-footer .btn {
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .modal-footer .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-primary {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-outline-primary {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--secondary-purple) !important;
+            color: var(--secondary-purple) !important;
+        }
+
+        .modal-footer .btn-outline-primary:hover {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-success {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-warning {
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-warning:hover {
+            background-color: #e67d4d !important;
+            border-color: #e67d4d !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-outline-secondary {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--primary-mid-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-outline-secondary:hover {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--primary-dark-gray) !important;
+            color: var(--primary-black) !important;
+        }
+
+        .modal-footer .btn-primary-blue {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-primary-blue:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-pink {
+            background-color: var(--secondary-pink) !important;
+            border-color: var(--secondary-pink) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-pink:hover {
+            background-color: #e6478a !important;
+            border-color: #e6478a !important;
+            color: white !important;
+        }
+
+        /* Assignment Status Styling */
+        .assignment-status-icon .fa-box {
+            color: var(--secondary-green) !important;
+        }
+
+        .assignment-info .badge-available {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+            font-size: 0.875rem !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        /* QR Code Section Styling - Removed since QR is now integrated */
+
+        .btn-outline-secondary.btn-sm {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--primary-mid-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .btn-outline-secondary.btn-sm:hover {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--primary-dark-gray) !important;
+            color: var(--primary-black) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Compact Modal Styling */
+        .asset-info-section {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 1rem !important;
+            height: 100% !important;
+        }
+
+        .section-title {
+            color: var(--primary-black) !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+            border-bottom: 1px solid var(--element-gray) !important;
+        }
+
+        .info-grid {
+            display: grid !important;
+            gap: 0.75rem !important;
+        }
+
+        .info-item {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.25rem !important;
+        }
+
+        .info-label {
+            font-size: 0.875rem !important;
+            color: var(--primary-mid-gray) !important;
+            font-weight: 500 !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        .info-value {
+            color: var(--primary-black) !important;
+            font-size: 0.875rem !important;
+            line-height: 1.4 !important;
+            font-weight: 400 !important;
+        }
+
+        .info-value.fw-bold {
+            font-weight: 600 !important;
+        }
+
+        .font-monospace {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+            font-size: 0.875rem !important;
+            background-color: var(--primary-light-gray) !important;
+            padding: 0.25rem 0.5rem !important;
+            border-radius: 0.25rem !important;
+            display: inline-block !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        /* Badge Styling for Modal - Consistent with main page */
+        .badge-condition-good {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge-condition-new {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge-condition-fair {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge-condition-poor {
+            background-color: var(--secondary-red) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        /* Assignment Status Compact */
+        .assignment-status-compact {
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.5rem !important;
+            background-color: var(--primary-white) !important;
+        }
+
+        .assignment-status-compact .bg-light {
+            background-color: var(--primary-light-gray) !important;
+        }
+
+        .assignment-icon {
+            width: 50px !important;
+            height: 50px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: rgba(33, 175, 101, 0.1) !important;
+            border-radius: 50% !important;
+        }
+
+        .qr-code-mini {
+            opacity: 0.6 !important;
+            transition: opacity 0.2s ease !important;
+        }
+
+        .qr-code-mini:hover {
+            opacity: 1 !important;
+            cursor: pointer !important;
+        }
+
+        /* Warranty Progress Indicator */
+        .warranty-indicator .progress {
+            border-radius: 2px !important;
+            background-color: var(--element-gray) !important;
+        }
+
+        .warranty-indicator .progress-bar {
+            border-radius: 2px !important;
+        }
+
+        /* Modal Size Adjustments */
+        .modal-lg .modal-body {
+            padding: 1.5rem !important;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .info-grid {
+                gap: 0.5rem !important;
+            }
+            
+            .asset-info-section {
+                padding: 0.75rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            .assignment-status-compact .d-flex {
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 1rem !important;
+            }
+            
+            .assignment-icon {
+                align-self: center !important;
+            }
         }
         
         /* Button enhancements */
@@ -1484,6 +2614,8 @@
                     if (status === 'ASSIGNED') {
                         const assetId = row.querySelector('strong').textContent;
                         if (assetId === 'AST-002') assignedToCell.textContent = 'John Doe';
+                        else if (assetId === 'AST-005') assignedToCell.textContent = 'Sarah Wilson';
+                        else if (assetId === 'AST-007') assignedToCell.textContent = 'Emily Davis';
                         else if (assetId === 'AST-008') assignedToCell.textContent = 'Mike Johnson';
                         else assignedToCell.textContent = '-';
                     } else {
@@ -1493,6 +2625,9 @@
                     // Show/hide action buttons based on status
                     const actionButtons = row.querySelectorAll('.btn-group .btn');
                     actionButtons.forEach(btn => btn.style.display = '');
+                    
+                    // Get edit button
+                    const editBtn = row.querySelector('.btn-outline-secondary[title="Edit Asset"]');
                     
                     if (status === 'ASSIGNED') {
                         const assignBtn = row.querySelector('.assign-btn');
@@ -1508,6 +2643,9 @@
                     } else if (status === 'AVAILABLE') {
                         const unassignBtn = row.querySelector('.unassign-btn');
                         if (unassignBtn) unassignBtn.style.display = 'none';
+                    } else if (status === 'IN_MAINTENANCE' || status === 'RETIRED') {
+                        // Hide edit button for assets in maintenance or retired
+                        if (editBtn) editBtn.style.display = 'none';
                     }
                 });
             }
@@ -1603,17 +2741,18 @@
                     card.innerHTML = `
                         <div class="card h-100 asset-card-modern" style="border: 1px solid var(--element-gray); border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
                             <div class="card-body p-3">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div class="d-flex flex-grow-1">
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 48px; height: 48px; background-color: ${typeInfo.color}; flex-shrink: 0;">
-                                            <i class="${typeInfo.icon} fa-lg text-white"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h5 class="mb-1 fw-bold" style="color: var(--primary-black);">${assetId}</h5>
-                                            <p class="text-muted mb-0 small">${type}</p>
-                                        </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 48px; height: 48px; background-color: ${typeInfo.color}; flex-shrink: 0;">
+                                        <i class="${typeInfo.icon} fa-lg text-white"></i>
                                     </div>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1 fw-bold" style="color: var(--primary-black);">${assetId}</h5>
+                                        <p class="text-muted mb-0 small">${type} • ${serialNumber}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
                                     <span class="badge ${statusInfo.class} badge-sm">
                                         ${status.replace('_', ' ')}
                                     </span>
@@ -1624,10 +2763,6 @@
                                         <div class="col-12">
                                             <small class="text-muted">Brand/Model</small>
                                             <div class="fw-medium text-truncate" style="color: var(--primary-black);">${brandModel}</div>
-                                        </div>
-                                        <div class="col-12">
-                                            <small class="text-muted">Serial Number</small>
-                                            <div class="small font-monospace text-truncate" style="color: var(--primary-dark-gray);">${serialNumber}</div>
                                         </div>
                                         <div class="col-12">
                                             <small class="text-muted">Assigned To</small>
@@ -1642,32 +2777,34 @@
                                 
                                 <div class="asset-actions-footer mt-auto pt-2 border-top" style="border-color: var(--element-gray) !important;">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <button class="btn btn-action btn-view btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal" 
-                                                data-bs-toggle="tooltip" title="View Details">
+                                        <button class="btn btn-action btn-view btn-sm" data-bs-toggle="modal" 
+                                                data-bs-target="${status === 'ASSIGNED' ? '#assignedAssetModal' : 
+                                                               status === 'IN_MAINTENANCE' ? '#inMaintenanceAssetModal' : 
+                                                               status === 'RETIRED' ? '#retiredAssetModal' : '#detailModal'}" 
+                                                data-bs-toggle="tooltip" title="${status === 'ASSIGNED' ? 'View Assigned Asset Details' : 
+                                                                               status === 'IN_MAINTENANCE' ? 'View Maintenance Details' : 
+                                                                               status === 'RETIRED' ? 'View Retired Asset Details' : 'View Asset Details'}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit btn-sm" data-bs-toggle="tooltip" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        ${status === 'AVAILABLE' ? 
-                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Assign"><i class="fas fa-user-plus"></i></button>' : 
-                                            status === 'ASSIGNED' ? 
-                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Unassign"><i class="fas fa-user-minus"></i></button>' : 
+                                        ${status !== 'IN_MAINTENANCE' && status !== 'RETIRED' ? 
+                                            '<button class="btn btn-action btn-edit btn-sm" data-bs-toggle="tooltip" title="Edit Asset" onclick="window.location.href=\'../form_pages/register-asset.html\'"><i class="fas fa-edit"></i></button>' : 
                                             ''
                                         }
-                                        <button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Maintenance">
-                                            <i class="fas fa-wrench"></i>
+                                        ${status === 'AVAILABLE' ? 
+                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Issue Asset" onclick="window.location.href=\'../form_pages/issue-asset.html\'"><i class="fas fa-user-plus"></i></button>' : 
+                                            status === 'ASSIGNED' ? 
+                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Collect Asset" onclick="window.location.href=\'../form_pages/collect-asset.html\'"><i class="fas fa-user-minus"></i></button>' : 
+                                            ''
+                                        }
+                                        ${status === 'IN_MAINTENANCE' ? 
+                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="View Full Maintenance" onclick="window.location.href=\'../pages/maintenance.html\'"><i class="fas fa-clipboard-list"></i></button><button class="btn btn-action btn-complete btn-sm" data-bs-toggle="modal" data-bs-target="#completeAssetMaintenanceModal" data-bs-toggle="tooltip" title="Complete Maintenance"><i class="fas fa-check"></i></button>' : 
+                                            status === 'RETIRED' ? 
+                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Schedule Restoration" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>' :
+                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Schedule Maintenance" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>'
+                                        }
+                                        <button class="btn btn-action btn-qr btn-sm" data-bs-toggle="tooltip" title="View QR Code">
+                                            <i class="fas fa-qrcode"></i>
                                         </button>
-                                        <div class="btn-group">
-                                            <button class="btn btn-action btn-sm" data-bs-toggle="dropdown" aria-expanded="false" 
-                                                    data-bs-toggle="tooltip" title="More Actions">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="#"><i class="fas fa-qrcode me-2"></i>QR Code</a></li>
-                                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>History</a></li>
-                                            </ul>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1892,6 +3029,283 @@
             // Initialize the table and filters
             populateFilters();
             initializeTable();
+            
+            // Initialize retirement modal functionality
+            initializeRetirementModal();
+        });
+        
+        // Retirement Modal Functions
+        function initializeRetirementModal() {
+            const retirementDate = document.getElementById('retirementDate');
+            const retirementReason = document.getElementById('retirementReason');
+            const confirmRetireBtn = document.getElementById('confirmRetireBtn');
+            const retirementForm = document.getElementById('retireAssetForm');
+            
+            // Set max date to today for retirement date
+            if (retirementDate) {
+                const today = new Date().toISOString().split('T')[0];
+                retirementDate.setAttribute('max', today);
+                retirementDate.value = today; // Default to today
+            }
+            
+            // Character counter for retirement reason
+            if (retirementReason) {
+                retirementReason.addEventListener('input', function() {
+                    updateRetirementReasonCounter(this);
+                });
+                updateRetirementReasonCounter(retirementReason);
+            }
+            
+            // Confirm retirement button
+            if (confirmRetireBtn) {
+                confirmRetireBtn.addEventListener('click', function() {
+                    if (retirementForm.checkValidity()) {
+                        confirmAssetRetirement();
+                    } else {
+                        retirementForm.classList.add('was-validated');
+                        // Find first invalid field and focus
+                        const firstInvalid = retirementForm.querySelector(':invalid');
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateRetirementReasonCounter(textarea) {
+            const counter = document.getElementById('retirementReasonCounter');
+            const maxLength = textarea.getAttribute('maxlength') || 1000;
+            const currentLength = textarea.value.length;
+            
+            if (counter) {
+                const percentage = (currentLength / maxLength) * 100;
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+            }
+        }
+        
+        function confirmAssetRetirement() {
+            const retirementDate = document.getElementById('retirementDate').value;
+            const retirementReason = document.getElementById('retirementReason').value;
+            const retirementCondition = document.getElementById('retirementCondition').value;
+            
+            // Show loading state
+            const confirmBtn = document.getElementById('confirmRetireBtn');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Retiring Asset...';
+            confirmBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Hide retirement modal
+                const retirementModal = bootstrap.Modal.getInstance(document.getElementById('retireAssetModal'));
+                retirementModal.hide();
+                
+                // Reset form
+                document.getElementById('retireAssetForm').reset();
+                document.getElementById('retireAssetForm').classList.remove('was-validated');
+                
+                // Reset button
+                confirmBtn.innerHTML = originalText;
+                confirmBtn.disabled = false;
+                
+                // Show success message
+                showRetirementSuccessToast();
+                
+                // In real app: Update asset status in table, refresh data, etc.
+            }, 2000);
+        }
+        
+        function showRetirementSuccessToast() {
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
+                    <div class="toast-header text-white" style="background-color: var(--secondary-red) !important;">
+                        <i class="fas fa-archive me-2"></i>
+                        <strong class="me-auto">Asset Retired Successfully</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        <strong>AST-001</strong> has been successfully retired and removed from active inventory.
+                    </div>
+                </div>
+            `;
+            
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+        
+        // Asset Maintenance Completion Functions
+        function initializeAssetMaintenanceValidation() {
+            const form = document.getElementById('completeAssetMaintenanceForm');
+            const actualCostInput = document.getElementById('assetActualCost');
+            const conditionSelect = document.getElementById('assetConditionAfterMaintenance');
+            const completionNotesInput = document.getElementById('assetCompletionNotes');
+            
+            if (!form) return; // Exit if form doesn't exist
+            
+            // Real-time validation for actual cost
+            actualCostInput.addEventListener('input', function() {
+                validateAssetActualCost(this);
+            });
+            
+            actualCostInput.addEventListener('blur', function() {
+                validateAssetActualCost(this);
+            });
+            
+            // Validation for condition select
+            conditionSelect.addEventListener('change', function() {
+                validateAssetCondition(this);
+            });
+            
+            // Character counter for completion notes
+            completionNotesInput.addEventListener('input', function() {
+                updateAssetCompletionNotesCounter(this);
+            });
+            
+            // Form submission validation
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                if (form.checkValidity()) {
+                    completeAssetMaintenanceWithValidation();
+                } else {
+                    form.classList.add('was-validated');
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                }
+            });
+        }
+        
+        function validateAssetActualCost(input) {
+            const value = parseFloat(input.value);
+            const min = parseFloat(input.getAttribute('min'));
+            const max = parseFloat(input.getAttribute('max'));
+            
+            input.setCustomValidity('');
+            
+            if (!input.value) {
+                input.setCustomValidity('Actual cost is required to complete maintenance.');
+            } else if (isNaN(value) || value < min) {
+                input.setCustomValidity(`Actual cost must be at least ₹${min}.`);
+            } else if (value > max) {
+                input.setCustomValidity(`Actual cost cannot exceed ₹${max.toLocaleString('en-IN')}.`);
+            }
+            
+            if (input.checkValidity()) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+            }
+        }
+        
+        function validateAssetCondition(select) {
+            if (select.value) {
+                select.classList.remove('is-invalid');
+                select.classList.add('is-valid');
+            } else {
+                select.classList.remove('is-valid');
+                select.classList.add('is-invalid');
+            }
+        }
+        
+        function updateAssetCompletionNotesCounter(textarea) {
+            const counter = document.getElementById('assetCompletionNotesCounter');
+            const maxLength = textarea.getAttribute('maxlength') || 500;
+            const currentLength = textarea.value.length;
+            const percentage = (currentLength / maxLength) * 100;
+            
+            if (counter) {
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+            }
+        }
+        
+        function completeAssetMaintenanceWithValidation() {
+            const form = document.getElementById('completeAssetMaintenanceForm');
+            const actualCost = document.getElementById('assetActualCost').value;
+            const condition = document.getElementById('assetConditionAfterMaintenance').value;
+            const completionNotes = document.getElementById('assetCompletionNotes').value;
+            
+            const submitBtn = document.querySelector('#completeAssetMaintenanceModal .btn-success');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Completing...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                showAssetMaintenanceSuccessToast(actualCost, condition, completionNotes);
+                
+                const completeModal = bootstrap.Modal.getInstance(document.getElementById('completeAssetMaintenanceModal'));
+                const maintenanceModal = bootstrap.Modal.getInstance(document.getElementById('inMaintenanceAssetModal'));
+                
+                if (completeModal) completeModal.hide();
+                if (maintenanceModal) maintenanceModal.hide();
+                
+                form.reset();
+                form.classList.remove('was-validated');
+                document.getElementById('assetActualCost').classList.remove('is-valid', 'is-invalid');
+                document.getElementById('assetConditionAfterMaintenance').classList.remove('is-valid', 'is-invalid');
+                updateAssetCompletionNotesCounter(document.getElementById('assetCompletionNotes'));
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function showAssetMaintenanceSuccessToast(actualCost, condition, notes) {
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
+                    <div class="toast-header text-white" style="background-color: var(--secondary-green) !important;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Maintenance Completed</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        <strong>AST-003</strong> maintenance completed successfully!<br>
+                        <small><strong>Cost:</strong> ₹${parseFloat(actualCost).toFixed(2)} | <strong>Condition:</strong> ${condition}</small>
+                        ${notes ? `<br><small><strong>Notes:</strong> ${notes}</small>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+        
+        // Initialize asset maintenance validation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAssetMaintenanceValidation();
         });
     </script>
 </body>

@@ -109,8 +109,8 @@
                             <div class="progress-bar bg-warning" style="width: 3.4%"></div>
                         </div>
                         <div class="mt-2">
-                            <small class="text-danger">
-                                <i class="fas fa-arrow-down me-1"></i>2.1% increase in last month
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>2.1% increase in last month
                             </small>
                         </div>
                     </div>
@@ -326,8 +326,19 @@
             transition: all 0.2s ease !important;
         }
 
-        .card:hover:not(.stats-card-modern) {
+        .card:hover:not(.stats-card-modern):not(.asset-distribution-item) {
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+        }
+        
+        /* Remove all hover effects from information cards */
+        .asset-distribution-item:hover {
+            background: none !important;
+            transform: none !important;
+        }
+        
+        .asset-distribution-item .asset-type-icon:hover {
+            background: none !important;
+            transform: none !important;
         }
 
         .card-header {
@@ -367,6 +378,49 @@
         .stats-card-modern:hover {
             transform: none !important;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            cursor: default !important;
+            background: none !important;
+            background-color: var(--primary-white) !important;
+        }
+        
+        /* Completely disable all hover effects on stats cards */
+        .stats-card-modern,
+        .stats-card-modern *,
+        .stats-card-modern:hover,
+        .stats-card-modern:hover *,
+        .stats-card-modern:focus,
+        .stats-card-modern:active {
+            transition: none !important;
+            transform: none !important;
+            cursor: default !important;
+            
+        }
+        
+        /* Override Bootstrap card hover effects specifically for stats cards */
+        .card.stats-card-modern:hover {
+            
+            transform: none !important;
+            transition: none !important;
+            cursor: default !important;
+            background: var(--primary-white) !important;
+            border: 1px solid #E0E0E0 !important;
+        }
+        
+      
+        
+        /* Nuclear option - disable all possible hover effects on stats cards */
+        .stats-card-modern:hover,
+        .card.border-0.shadow-sm.h-100.stats-card-modern:hover,
+        .stats-card-modern.card:hover {
+           
+            transform: scale(1) !important;
+            transition: none !important;
+            animation: none !important;
+            cursor: default !important;
+            background-color: #ffffff !important;
+            border: 1px solid #E0E0E0 !important;
+            filter: none !important;
+            opacity: 1 !important;
         }
 
         /* Stats Icons - Solid Colors from Palette */
@@ -406,14 +460,14 @@
             background-color: var(--secondary-pink) !important;
         }
 
-        /* Quick Action Cards - Updated Colors */
+        /* Quick Action Cards - Updated Colors with Consistent Hover Effects */
         .quick-action-card.primary .action-icon {
             background-color: var(--secondary-purple) !important;
             color: white !important;
         }
         
         .quick-action-card.primary:hover .action-icon {
-            background-color: var(--accent-navy) !important;
+            background-color: #2415c7 !important;
         }
         
         .quick-action-card.success .action-icon {
@@ -422,7 +476,7 @@
         }
         
         .quick-action-card.success:hover .action-icon {
-            background-color: var(--primary-dark-gray) !important;
+            background-color: #1e9c5a !important;
         }
         
         .quick-action-card.warning .action-icon {
@@ -431,7 +485,7 @@
         }
         
         .quick-action-card.warning:hover .action-icon {
-            background-color: var(--secondary-red) !important;
+            background-color: #e64d8f !important;
         }
         
         .quick-action-card.danger .action-icon {
@@ -440,7 +494,7 @@
         }
         
         .quick-action-card.danger:hover .action-icon {
-            background-color: var(--secondary-red) !important;
+            background-color: #e67d4d !important;
         }
 
         /* Asset Distribution Progress Bars - Solid Colors */
