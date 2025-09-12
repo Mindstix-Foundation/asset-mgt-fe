@@ -345,7 +345,7 @@ function performSearch(query, type = 'all') {
     
     console.log('Searching for:', query, 'in:', type);
     // In a real application, this would perform the actual search
-    showAlert(`Searching for "${query}"...`, 'info');
+    // showAlert(`Searching for "${query}"...`, 'info'); // Removed toast notification for search
 }
 
 // Add event listeners for search inputs
