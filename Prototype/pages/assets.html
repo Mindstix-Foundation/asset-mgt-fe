@@ -10,6 +10,8 @@
     
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
+    <!-- Include toast CSS -->
+    <link rel="stylesheet" href="../asset/toast.css">
 </head>
 <body style="background-color: var(--primary-white);">
 
@@ -75,26 +77,51 @@
 
         <!-- Filters -->
         <div class="card mb-4 filter-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
                 <div>
                     <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Assets</h6>
                     <small class="text-muted">Use filters to find specific assets or view only available assets for assignment</small>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary" id="toggleAdvancedFilters">
-                    <i class="fas fa-chevron-down me-1"></i>Advanced
-                </button>
             </div>
             <div class="card-body">
-                <!-- Basic Filters -->
+                <!-- All Filters -->
                 <div class="row">
-                    <div class="col-12 col-md-6 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label class="form-label">Search Assets</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, model, serial...">
                         </div>
                     </div>
-                    <div class="col-12 col-md-3 mb-3">
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Asset Type</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="">All Types</option>
+                            <!-- Asset types will be loaded from database -->
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Brand</label>
+                        <select class="form-select" id="brandFilter">
+                            <option value="">All Brands</option>
+                            <!-- Brands will be loaded from database -->
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">
+                            Status 
+                            <i class="fas fa-info-circle text-muted" title="Available = Ready for assignment, Assigned = Currently with employee"></i>
+                        </label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">All Assets</option>
+                            <option value="AVAILABLE">📦 Available</option>
+                            <option value="ASSIGNED">👤 Assigned</option>
+                            <option value="IN_MAINTENANCE">🔧 In Maintenance</option>
+                            <option value="RETIRED">📴 Retired</option>
+                            <option value="LOST">❌ Lost</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
                             <select class="form-select" id="sortBy">
@@ -110,45 +137,10 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Advanced Filters (Collapsible) -->
-                <div class="collapse" id="advancedFilters">
-                    <hr class="my-3">
-                    <div class="row">
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Asset Type</label>
-                            <select class="form-select" id="typeFilter">
-                                <option value="">All Types</option>
-                                <!-- Asset types will be loaded from database -->
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Brand</label>
-                            <select class="form-select" id="brandFilter">
-                                <option value="">All Brands</option>
-                                <!-- Brands will be loaded from database -->
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">
-                                Status 
-                                <i class="fas fa-info-circle text-muted" title="Available = Ready for assignment, Assigned = Currently with employee"></i>
-                            </label>
-                            <select class="form-select" id="statusFilter">
-                                <option value="">All Assets</option>
-                                <option value="AVAILABLE">📦 Available (Ready for assignment)</option>
-                                <option value="ASSIGNED">👤 Assigned (Currently with employee)</option>
-                                <option value="IN_MAINTENANCE">🔧 In Maintenance</option>
-                                <option value="RETIRED">📴 Retired</option>
-                                <option value="LOST">❌ Lost</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
-                                <i class="fas fa-times me-1"></i>Clear Filters
-                            </button>
-                        </div>
+                    <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear Filters">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -157,7 +149,8 @@
         <!-- Assets/Inventory Content -->
         <div id="contentContainer">
             <!-- List View (Default) -->
-           
+            <div class="card" id="listView">
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="mainTable">
                             <thead class="table-light" id="tableHead">
@@ -439,7 +432,8 @@
                             </tbody>
                         </table>
                     </div>
-               
+                </div>
+            </div>
 
             <!-- Grid View (Hidden by default) -->
             <div class="d-none" id="gridView">
@@ -1435,6 +1429,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../asset/navbar.js"></script>
+    <script src="../asset/toast.js"></script>
     <script src="../script.js"></script>
     
     <!-- Styles -->
@@ -2573,7 +2568,6 @@
             const statusFilter = document.getElementById('statusFilter');
             const sortBy = document.getElementById('sortBy');
             const sortOrderBtn = document.getElementById('sortOrder');
-            const toggleViewBtn = document.getElementById('toggleView');
             const listView = document.getElementById('listView');
             const gridView = document.getElementById('gridView');
             const listViewPagination = document.getElementById('listViewPagination');
@@ -3003,19 +2997,7 @@
                 }
             });
             
-            // Advanced filters functionality
-            document.getElementById('toggleAdvancedFilters').addEventListener('click', function() {
-                const advancedFilters = document.getElementById('advancedFilters');
-                const icon = this.querySelector('i');
-                
-                if (advancedFilters.classList.contains('show')) {
-                    advancedFilters.classList.remove('show');
-                    icon.className = 'fas fa-chevron-down me-1';
-                } else {
-                    advancedFilters.classList.add('show');
-                    icon.className = 'fas fa-chevron-up me-1';
-                }
-            });
+
 
             // Clear filters functionality
             document.getElementById('clearFilters').addEventListener('click', function() {
@@ -3117,35 +3099,7 @@
         }
         
         function showRetirementSuccessToast() {
-            const toastHtml = `
-                <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
-                    <div class="toast-header text-white" style="background-color: var(--secondary-red) !important;">
-                        <i class="fas fa-archive me-2"></i>
-                        <strong class="me-auto">Asset Retired Successfully</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        <strong>AST-001</strong> has been successfully retired and removed from active inventory.
-                    </div>
-                </div>
-            `;
-            
-            let toastContainer = document.querySelector('.toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
-                toastContainer.style.zIndex = '9999';
-                document.body.appendChild(toastContainer);
-            }
-            
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            toastElement.addEventListener('hidden.bs.toast', () => {
-                toastElement.remove();
-            });
+            showToast('Asset has been successfully retired and removed from active inventory.', 'success');
         }
         
         // Asset Maintenance Completion Functions
@@ -3270,37 +3224,8 @@
         }
         
         function showAssetMaintenanceSuccessToast(actualCost, condition, notes) {
-            const toastHtml = `
-                <div class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
-                    <div class="toast-header text-white" style="background-color: var(--secondary-green) !important;">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <strong class="me-auto">Maintenance Completed</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        <strong>AST-003</strong> maintenance completed successfully!<br>
-                        <small><strong>Cost:</strong> ₹${parseFloat(actualCost).toFixed(2)} | <strong>Condition:</strong> ${condition}</small>
-                        ${notes ? `<br><small><strong>Notes:</strong> ${notes}</small>` : ''}
-                    </div>
-                </div>
-            `;
-            
-            let toastContainer = document.querySelector('.toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
-                toastContainer.style.zIndex = '9999';
-                document.body.appendChild(toastContainer);
-            }
-            
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            toastElement.addEventListener('hidden.bs.toast', () => {
-                toastElement.remove();
-            });
+            const message = `<strong>AST-003</strong> maintenance completed successfully!<br><strong>Cost:</strong> ₹${parseFloat(actualCost).toFixed(2)} | <strong>Condition:</strong> ${condition}${notes ? `<br><strong>Notes:</strong> ${notes}` : ''}`;
+            showToast(message, 'success');
         }
         
         // Initialize asset maintenance validation when DOM is loaded
@@ -3308,5 +3233,7 @@
             initializeAssetMaintenanceValidation();
         });
     </script>
+
+
 </body>
 </html> 

@@ -97,10 +97,10 @@
                                 <!-- Phone -->
                                 <div class="col-md-6">
                                         <label for="phone" class="form-label">Phone Number <span class="text-muted">(Optional)</span></label>
-                                        <input type="tel" class="form-control" id="phone" placeholder="+91 98765 43210" 
+                                        <input type="tel" class="form-control" id="phone" placeholder="+91 9876543210" 
                                                pattern="[\+]?[0-9\s\-\(\)]{10,20}"
                                                title="Please enter a valid phone number">
-                                        <div class="form-text">Include country code (e.g., +91-98765-43210)</div>
+                                        <div class="form-text">Include country code (e.g., +91 9876543210)</div>
                                 </div>
 
                                 <!-- Address -->
@@ -758,7 +758,7 @@
                 if (phone) {
                     phone.addEventListener('blur', function() {
                         if (this.value && this.value.length < 10) {
-                            setFieldError(this, 'Indian phone number must be at least 10 digits (e.g., +91-98765-43210)');
+                            setFieldError(this, 'Indian phone number must be at least 10 digits (e.g., +91 9876543210)');
                         }
                     });
                 }

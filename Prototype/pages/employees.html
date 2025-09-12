@@ -44,26 +44,50 @@
 
         <!-- Filters -->
         <div class="card mb-4 filter-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
                 <div>
                     <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Employees</h6>
                     <small class="text-muted">Search and filter employees by various criteria</small>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary" id="toggleAdvancedFilters">
-                    <i class="fas fa-chevron-down me-1"></i>Advanced
-                </button>
             </div>
             <div class="card-body">
-                <!-- Basic Filters -->
+                <!-- All Filters in One Row -->
                 <div class="row">
-                    <div class="col-12 col-md-6 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label class="form-label">Search Employees</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by name, ID, email...">
                         </div>
                     </div>
-                    <div class="col-12 col-md-3 mb-3">
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="filterDepartment">
+                            <option value="">All Departments</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Asset Count</label>
+                        <select class="form-select" id="filterAssets">
+                            <option value="">All</option>
+                            <option value="0">No Assets</option>
+                            <option value="1-2">1-2 Assets</option>
+                            <option value="3+">3+ Assets</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
                             <select class="form-select" id="sortBy">
@@ -76,44 +100,10 @@
                             </button>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Advanced Filters (Collapsible) -->
-                <div class="collapse" id="advancedFilters">
-                    <hr class="my-3">
-                    <div class="row">
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Department</label>
-                            <select class="form-select" id="filterDepartment">
-                                <option value="">All Departments</option>
-                                <option value="IT">IT</option>
-                                <option value="HR">HR</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Marketing">Marketing</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Asset Count</label>
-                            <select class="form-select" id="filterAssets">
-                                <option value="">All</option>
-                                <option value="0">No Assets</option>
-                                <option value="1-2">1-2 Assets</option>
-                                <option value="3+">3+ Assets</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="filterStatus">
-                                <option value="">All Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
-                                <i class="fas fa-times me-1"></i>Clear Filters
-                            </button>
-                        </div>
+                    <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear Filters">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -152,7 +142,7 @@
                                     <td>3 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -179,7 +169,7 @@
                                     <td>2 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -206,7 +196,7 @@
                                     <td>1 Asset</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -233,7 +223,7 @@
                                     <td>4 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -260,7 +250,7 @@
                                     <td>2 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -287,7 +277,7 @@
                                     <td>1 Asset</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -314,7 +304,7 @@
                                     <td>3 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -341,7 +331,7 @@
                                     <td>2 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -368,7 +358,7 @@
                                     <td>4 Assets</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -395,7 +385,7 @@
                                     <td>1 Asset</td>
                                     <td>
                                         <div class="btn-group btn-group-sm employee-actions">
-                                            <button class="btn btn-action btn-view" data-bs-toggle="modal">
+                                            <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#employeeDetailModal">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit Employee" onclick="window.location.href='../form_pages/add-employee.html'">
@@ -596,7 +586,7 @@
                     <button type="button" class="btn btn-success" onclick="window.location.href='../form_pages/issue-asset.html'">
                         <i class="fas fa-laptop me-1"></i>Issue Asset
                     </button>
-                    <button type="button" class="btn btn-primary-blue">
+                    <button type="button" class="btn btn-primary-blue" onclick="window.location.href='../form_pages/add-employee.html'">
                         <i class="fas fa-edit me-1"></i>Edit Employee
                     </button>
                 </div>
@@ -853,19 +843,7 @@
                 sortEmployees();
             });
 
-            // Advanced filters functionality
-            document.getElementById('toggleAdvancedFilters').addEventListener('click', function() {
-                const advancedFilters = document.getElementById('advancedFilters');
-                const icon = this.querySelector('i');
-                
-                if (advancedFilters.classList.contains('show')) {
-                    advancedFilters.classList.remove('show');
-                    icon.className = 'fas fa-chevron-down me-1';
-                } else {
-                    advancedFilters.classList.add('show');
-                    icon.className = 'fas fa-chevron-up me-1';
-                }
-            });
+
 
             // Clear filters functionality
             document.getElementById('clearFilters').addEventListener('click', function() {

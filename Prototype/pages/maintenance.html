@@ -11,6 +11,8 @@
     
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
+    <!-- Include toast CSS -->
+    <link rel="stylesheet" href="../asset/toast.css">
 </head>
 <body style="background-color: var(--primary-white);">
 
@@ -144,7 +146,7 @@
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label class="form-label">Search Maintenance</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -196,6 +198,11 @@
                             </button>
                         </div>
                     </div>
+                    <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear Filters">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,7 +232,7 @@
                                 <td><strong>₹299.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Corrective', 'IN_PROGRESS', 'TechFix Solutions', 'John Smith', 'Mar 10, 2024', '₹299.00', 'Screen repair due to physical damage', 'Device received at service center - Mar 10, 2024|Initial diagnosis completed - Mar 11, 2024|Parts ordered - Mar 12, 2024|Screen replacement in progress - Mar 20, 2024')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Corrective', 'IN_PROGRESS', 'TechFix Solutions', 'John Smith', 'Mar 10, 2024', '₹299.00', 'Screen repair due to physical damage', 'Device received at service center - Mar 10, 2024|Initial diagnosis completed - Mar 11, 2024|Parts ordered - Mar 12, 2024|Screen replacement in progress - Mar 20, 2024')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-complete" title="Complete Maintenance" onclick="openCompleteMaintenanceModal('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Screen repair due to physical damage', '₹299.00')">
@@ -246,7 +253,7 @@
                                 <td><strong>₹150.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-012', 'AST-012', 'Dell Laptop', 'Preventive', 'SCHEDULED', 'Internal Team', 'Sarah Wilson', 'Mar 25, 2024', '₹150.00', 'Battery replacement for improved performance', 'Maintenance scheduled for next week|Parts already in stock|Estimated completion time: 2 hours')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-012', 'AST-012', 'Dell Laptop', 'Preventive', 'SCHEDULED', 'Internal Team', 'Sarah Wilson', 'Mar 25, 2024', '₹150.00', 'Battery replacement for improved performance', 'Maintenance scheduled for next week|Parts already in stock|Estimated completion time: 2 hours')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
@@ -267,7 +274,7 @@
                                 <td><strong>₹200.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-015', 'AST-015', 'Monitor', 'Emergency', 'CANCELLED', 'Dell Support', 'Mike Johnson', 'Mar 15, 2024', '₹200.00', 'Display flickering repair', 'Cancelled on: Mar 15, 2024|Notes: The required display panel is out of stock globally and expected delivery is 3+ months. Customer opted to replace the monitor instead of waiting.')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-015', 'AST-015', 'Monitor', 'Emergency', 'CANCELLED', 'Dell Support', 'Mike Johnson', 'Mar 15, 2024', '₹200.00', 'Display flickering repair', 'Cancelled on: Mar 15, 2024|Notes: The required display panel is out of stock globally and expected delivery is 3+ months. Customer opted to replace the monitor instead of waiting.')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-reschedule" title="Reschedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
@@ -285,7 +292,7 @@
                                 <td><strong>₹85.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-045', 'AST-045', 'Dell Monitor', 'Corrective', 'COMPLETED', 'Dell Support', 'David Brown', 'Mar 18, 2024', '₹85.00', 'Power supply repair', 'Issue diagnosed - Mar 16, 2024|Power supply replaced - Mar 17, 2024|Testing completed - Mar 18, 2024|Maintenance completed successfully')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-045', 'AST-045', 'Dell Monitor', 'Corrective', 'COMPLETED', 'Dell Support', 'David Brown', 'Mar 18, 2024', '₹85.00', 'Power supply repair', 'Issue diagnosed - Mar 16, 2024|Power supply replaced - Mar 17, 2024|Testing completed - Mar 18, 2024|Maintenance completed successfully')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-045', 'AST-045', 'Dell Monitor', 'Power supply repair', 'Mar 18, 2024', '₹85.00')">
@@ -303,7 +310,7 @@
                                 <td><strong>₹349.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-032', 'AST-032', 'MacBook Pro', 'Corrective', 'COMPLETED', 'Apple Service', 'Lisa Garcia', 'Mar 16, 2024', '₹349.00', 'Keyboard replacement', 'Device received - Mar 14, 2024|Keyboard diagnosed faulty - Mar 15, 2024|New keyboard installed - Mar 16, 2024|Quality testing passed')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-032', 'AST-032', 'MacBook Pro', 'Corrective', 'COMPLETED', 'Apple Service', 'Lisa Garcia', 'Mar 16, 2024', '₹349.00', 'Keyboard replacement', 'Device received - Mar 14, 2024|Keyboard diagnosed faulty - Mar 15, 2024|New keyboard installed - Mar 16, 2024|Quality testing passed')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-032', 'AST-032', 'MacBook Pro', 'Keyboard replacement', 'Mar 16, 2024', '₹349.00')">
@@ -321,7 +328,7 @@
                                 <td><strong>₹0.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-028', 'AST-028', 'Surface Tablet', 'Preventive', 'COMPLETED', 'Internal Team', 'IT Admin', 'Mar 14, 2024', '₹0.00', 'Software update', 'Software backup created - Mar 14, 2024|Windows updates installed - Mar 14, 2024|Security patches applied - Mar 14, 2024|System restart and verification completed')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-028', 'AST-028', 'Surface Tablet', 'Preventive', 'COMPLETED', 'Internal Team', 'IT Admin', 'Mar 14, 2024', '₹0.00', 'Software update', 'Software backup created - Mar 14, 2024|Windows updates installed - Mar 14, 2024|Security patches applied - Mar 14, 2024|System restart and verification completed')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-028', 'AST-028', 'Surface Tablet', 'Software update', 'Mar 14, 2024', '₹0.00')">
@@ -339,7 +346,7 @@
                                 <td><strong>₹75.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-056', 'AST-056', 'Printer', 'Emergency', 'SCHEDULED', 'TechFix Solutions', 'Alex Johnson', 'Mar 26, 2024', '₹75.00', 'Toner replacement - urgent print job pending', 'Emergency toner replacement scheduled|High priority - customer presentation tomorrow|Toner cartridge ordered - same day delivery')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-056', 'AST-056', 'Printer', 'Emergency', 'SCHEDULED', 'TechFix Solutions', 'Alex Johnson', 'Mar 26, 2024', '₹75.00', 'Toner replacement - urgent print job pending', 'Emergency toner replacement scheduled|High priority - customer presentation tomorrow|Toner cartridge ordered - same day delivery')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
@@ -360,7 +367,7 @@
                                 <td><strong>₹450.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-041', 'AST-041', 'Workstation', 'Preventive', 'IN_PROGRESS', 'Dell Support', 'Robert Chen', 'Mar 22, 2024', '₹450.00', 'Hardware upgrade - RAM and SSD installation', 'Hardware compatibility verified - Mar 22, 2024|RAM installation completed - Mar 23, 2024|SSD installation in progress - Mar 24, 2024|Final testing pending')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-041', 'AST-041', 'Workstation', 'Preventive', 'IN_PROGRESS', 'Dell Support', 'Robert Chen', 'Mar 22, 2024', '₹450.00', 'Hardware upgrade - RAM and SSD installation', 'Hardware compatibility verified - Mar 22, 2024|RAM installation completed - Mar 23, 2024|SSD installation in progress - Mar 24, 2024|Final testing pending')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-complete" title="Complete Maintenance" onclick="openCompleteMaintenanceModal('MNT-041', 'AST-041', 'Workstation', 'Hardware upgrade - RAM and SSD installation', '₹450.00')">
@@ -381,7 +388,7 @@
                                 <td><strong>₹199.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-067', 'AST-067', 'iPad', 'Corrective', 'COMPLETED', 'Apple Service', 'Emma Davis', 'Mar 19, 2024', '₹199.00', 'Battery replacement due to poor performance', 'Battery diagnostics completed - Mar 17, 2024|Genuine battery replacement - Mar 18, 2024|Performance testing passed - Mar 19, 2024|Device returned to user')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-067', 'AST-067', 'iPad', 'Corrective', 'COMPLETED', 'Apple Service', 'Emma Davis', 'Mar 19, 2024', '₹199.00', 'Battery replacement due to poor performance', 'Battery diagnostics completed - Mar 17, 2024|Genuine battery replacement - Mar 18, 2024|Performance testing passed - Mar 19, 2024|Device returned to user')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-067', 'AST-067', 'iPad', 'Battery replacement due to poor performance', 'Mar 19, 2024', '₹199.00')">
@@ -399,7 +406,7 @@
                                 <td><strong>₹0.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-073', 'AST-073', 'Router', 'Preventive', 'SCHEDULED', 'Internal Team', 'Network Admin', 'Mar 28, 2024', '₹0.00', 'Firmware update for security patches', 'Scheduled during off-peak hours|Latest firmware downloaded and verified|Backup configuration created|Maintenance window: 11 PM - 1 AM')">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" onclick="showMaintenanceDetails('MNT-073', 'AST-073', 'Router', 'Preventive', 'SCHEDULED', 'Internal Team', 'Network Admin', 'Mar 28, 2024', '₹0.00', 'Firmware update for security patches', 'Scheduled during off-peak hours|Latest firmware downloaded and verified|Backup configuration created|Maintenance window: 11 PM - 1 AM')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
@@ -752,6 +759,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../asset/navbar.js"></script>
+    <script src="../asset/toast.js"></script>
     <script src="../script.js"></script>
     
     <!-- Override dull badge colors with bright Bootstrap colors -->
@@ -923,10 +931,6 @@
         
         .text-danger {
             color: var(--secondary-red) !important;
-        }
-        
-        .stats-icon {
-            /* No transitions or hover effects */
         }
         
         .badge {
@@ -1197,7 +1201,7 @@
             // Simulate processing time
             setTimeout(() => {
                 // In a real application, this would submit to the backend
-                showSuccessMessage(`Maintenance completed successfully!\nActual Cost: ₹${parseFloat(actualCost).toFixed(2)}${completionNotes ? '\nNotes: ' + completionNotes : ''}`);
+                showToast(`Maintenance completed successfully!<br>Actual Cost: ₹${parseFloat(actualCost).toFixed(2)}${completionNotes ? '<br>Notes: ' + completionNotes : ''}`, 'success');
                 
                 // Close both modals
                 const completeModal = bootstrap.Modal.getInstance(document.getElementById('completeMaintenanceModal'));
@@ -1218,28 +1222,7 @@
             }, 1500);
         }
         
-        // Show success message
-        function showSuccessMessage(message) {
-            // Create a simple success alert (you could replace with toast)
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
-            alertDiv.innerHTML = `
-                <i class="fas fa-check-circle me-2"></i>
-                <strong>Success!</strong><br>
-                ${message.replace(/\n/g, '<br>')}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            document.body.appendChild(alertDiv);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-        }
+
         
         // Show maintenance details in modal (dynamic content)
         function showMaintenanceDetails(maintenanceId, assetId, assetName, type, status, vendor, assignedTo, date, cost, description, progressNotes) {
@@ -1455,7 +1438,7 @@
             
             // Simulate processing time
             setTimeout(() => {
-                showSuccessMessage(`Maintenance cancelled successfully!\nDate: ${cancelDate}\nNotes: ${cancelNotes}`);
+                showToast(`Maintenance cancelled successfully!<br>Date: ${cancelDate}<br>Notes: ${cancelNotes}`, 'success');
                 
                 // Close modal
                 const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelMaintenanceModal'));
@@ -1541,7 +1524,7 @@
             
             // Simulate processing time
             setTimeout(() => {
-                showSuccessMessage(`Report generated successfully!\nType: ${reportType}\nFormat: ${reportFormat.toUpperCase()}\nDownload started automatically.`);
+                showToast(`Report generated successfully!<br>Type: ${reportType}<br>Format: ${reportFormat.toUpperCase()}<br>Download started automatically.`, 'success');
                 
                 // Close modal
                 const reportModal = bootstrap.Modal.getInstance(document.getElementById('generateReportModal'));
@@ -1715,6 +1698,15 @@
             typeFilter.addEventListener('change', filterMaintenance);
             vendorFilter.addEventListener('change', filterMaintenance);
             showCompletedCheckbox.addEventListener('change', filterMaintenance);
+            
+            // Clear filters functionality
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                searchInput.value = '';
+                statusFilter.value = '';
+                typeFilter.value = '';
+                vendorFilter.value = '';
+                filterMaintenance();
+            });
             
             // Sort event listeners
             sortBy.addEventListener('change', sortMaintenance);
@@ -2234,18 +2226,7 @@
              cursor: not-allowed;
          }
 
-         /* Success Alert Styling */
-         .alert-success {
-             background-color: var(--secondary-green) !important;
-             border-color: var(--secondary-green) !important;
-             color: white !important;
-             border-radius: 0.75rem !important;
-             box-shadow: 0 4px 12px rgba(33, 175, 101, 0.3) !important;
-         }
 
-         .alert-success .btn-close {
-             filter: brightness(0) invert(1);
-         }
     </style>
 </body>
 </html> 

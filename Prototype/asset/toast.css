@@ -1,0 +1,54 @@
+/**
+ * Toast Notification Styles
+ * Standardized animations and styling for toast notifications
+ */
+
+/* Toast Notification Animations - Bottom Right */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Custom toast notification styles */
+.custom-toast-notification {
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.custom-toast-notification .btn-close-custom:hover {
+    opacity: 1 !important;
+    transform: scale(1.1);
+}
+
+/* Ensure toast appears above all other elements */
+.custom-toast-notification {
+    z-index: 9999 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .custom-toast-notification {
+        max-width: 90vw !important;
+        min-width: 280px !important;
+        right: 10px !important;
+        left: 10px !important;
+        margin: 0 auto;
+    }
+} 

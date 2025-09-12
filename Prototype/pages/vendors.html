@@ -10,6 +10,8 @@
     
     <!-- Include navbar CSS -->
     <link rel="stylesheet" href="../asset/navbar.css">
+    <!-- Include toast CSS -->
+    <link rel="stylesheet" href="../asset/toast.css">
 </head>
 <body style="background-color: var(--primary-white);">
 
@@ -44,26 +46,40 @@
 
         <!-- Filters -->
         <div class="card mb-4 filter-card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
                 <div>
                 <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Vendors</h6>
                 <small class="text-muted">Search and filter vendors by various criteria</small>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary" id="toggleAdvancedFilters">
-                    <i class="fas fa-chevron-down me-1"></i>Advanced
-                </button>
             </div>
             <div class="card-body">
-                <!-- Basic Filters -->
+                <!-- All Filters -->
                 <div class="row">
-                    <div class="col-12 col-md-6 mb-3">
+                    <div class="col-12 col-md-5 mb-3">
                         <label class="form-label">Search Vendors</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" class="form-control" id="searchInput" placeholder="Search by name, contact, email...">
                         </div>
                     </div>
-                    <div class="col-12 col-md-3 mb-3">
+                    <div class="col-12 col-md-2 mb-3">
+                            <label class="form-label">Vendor Type</label>
+                            <select class="form-select" id="filterType">
+                                <option value="">All Types</option>
+                                <option value="supplier">Supplier</option>
+                                <option value="service">Service Provider</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                    <div class="col-12 col-md-2 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    <div class="col-12 col-md-2 mb-3">
                         <label class="form-label">Sort By</label>
                         <div class="d-flex gap-2">
                             <select class="form-select" id="sortBy">
@@ -76,45 +92,10 @@
                             </button>
                         </div>
                     </div>
-
-                </div>
-                
-                <!-- Advanced Filters (Collapsible) -->
-                <div class="collapse" id="advancedFilters">
-                    <hr class="my-3">
-                    <div class="row">
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Vendor Type</label>
-                            <select class="form-select" id="filterType">
-                                <option value="">All Types</option>
-                                <option value="supplier">Supplier</option>
-                                <option value="service">Service Provider</option>
-                                <option value="both">Both</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="filterStatus">
-                                <option value="">All Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3">
-                            <label class="form-label">Region</label>
-                            <select class="form-select" id="filterRegion">
-                                <option value="">All Regions</option>
-                                <option value="north-america">North America</option>
-                                <option value="europe">Europe</option>
-                                <option value="asia">Asia</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-3 mb-3 d-flex align-items-end">
-                            <button class="btn btn-outline-secondary w-100" id="clearFilters">
-                                <i class="fas fa-times me-1"></i>Clear Filters
+                    <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear Filters">
+                                <i class="fas fa-times"></i>
                             </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -139,7 +120,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-name="Apple Store" data-type="supplier" data-status="active" data-search="Apple Store John Smith procurement@apple.com +91-80-4567-8901">
+                                <tr data-name="Apple Store" data-type="supplier" data-status="active" data-search="Apple Store John Smith procurement@apple.com +91 8045678901">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-primary me-3"></i>
@@ -151,7 +132,7 @@
                                     </td>
                                     <td>John Smith</td>
                                     <td>procurement@apple.com</td>
-                                    <td>+91-80-4567-8901</td>
+                                    <td>+91 8045678901</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -162,14 +143,11 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <tr data-name="TechFix Solutions" data-type="service" data-status="active" data-search="TechFix Solutions Rajesh Kumar support@techfix.in +91-9876543210">
+                                <tr data-name="TechFix Solutions" data-type="service" data-status="active" data-search="TechFix Solutions Rajesh Kumar support@techfix.in +91 9876543210">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-tools fa-2x text-warning me-3"></i>
@@ -181,7 +159,7 @@
                                     </td>
                                     <td>Rajesh Kumar</td>
                                     <td>support@techfix.in</td>
-                                    <td>+91-9876543210</td>
+                                    <td>+91 9876543210</td>
                                     <td><span class="badge badge-service-provider">Service Provider</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -192,14 +170,11 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <tr data-name="Dell Direct" data-type="supplier" data-status="active" data-search="Dell Direct Michael Johnson sales@dell.com +91-80-2345-6789">
+                                <tr data-name="Dell Direct" data-type="supplier" data-status="active" data-search="Dell Direct Michael Johnson sales@dell.com +91 8023456789">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-primary me-3"></i>
@@ -211,7 +186,7 @@
                                     </td>
                                     <td>Michael Johnson</td>
                                     <td>sales@dell.com</td>
-                                    <td>+91-80-2345-6789</td>
+                                    <td>+91 8023456789</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -222,14 +197,11 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <tr data-name="Amazon Business" data-type="both" data-status="active" data-search="Amazon Business Sarah Wilson business@amazon.com +91-80-1234-5678">
+                                <tr data-name="Amazon Business" data-type="both" data-status="active" data-search="Amazon Business Sarah Wilson business@amazon.com +91 8012345678">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-shopping-cart fa-2x text-success me-3"></i>
@@ -241,7 +213,7 @@
                                     </td>
                                     <td>Sarah Wilson</td>
                                     <td>business@amazon.com</td>
-                                    <td>+91-80-1234-5678</td>
+                                    <td>+91 8012345678</td>
                                     <td><span class="badge badge-both">Both</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -252,14 +224,11 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
 
-                                <tr data-name="Office Solutions Inc" data-type="supplier" data-status="inactive" data-search="Office Solutions Inc David Lee contact@officesolutions.com +91-80-9876-5432">
+                                <tr data-name="Office Solutions Inc" data-type="supplier" data-status="inactive" data-search="Office Solutions Inc David Lee contact@officesolutions.com +91 8098765432">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-secondary me-3"></i>
@@ -271,7 +240,7 @@
                                     </td>
                                     <td>David Lee</td>
                                     <td>contact@officesolutions.com</td>
-                                    <td>+91-80-9876-5432</td>
+                                    <td>+91 8098765432</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-inactive">Inactive</span></td>
                                     <td>
@@ -282,13 +251,10 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Activate">
-                                                <i class="fas fa-check"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="HP Enterprise" data-type="supplier" data-status="active" data-search="HP Enterprise Mark Thompson enterprise@hp.com +91-80-3456-7890">
+                                <tr data-name="HP Enterprise" data-type="supplier" data-status="active" data-search="HP Enterprise Mark Thompson enterprise@hp.com +91 8034567890">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-primary me-3"></i>
@@ -300,7 +266,7 @@
                                     </td>
                                     <td>Mark Thompson</td>
                                     <td>enterprise@hp.com</td>
-                                    <td>+91-80-3456-7890</td>
+                                    <td>+91 8034567890</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -311,13 +277,10 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Lenovo Business" data-type="supplier" data-status="active" data-search="Lenovo Business Jennifer Chen business@lenovo.com +91-80-4567-8901">
+                                <tr data-name="Lenovo Business" data-type="supplier" data-status="active" data-search="Lenovo Business Jennifer Chen business@lenovo.com +91 8045678901">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-success me-3"></i>
@@ -329,7 +292,7 @@
                                     </td>
                                     <td>Jennifer Chen</td>
                                     <td>business@lenovo.com</td>
-                                    <td>+91-80-4567-8901</td>
+                                    <td>+91 8045678901</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -340,13 +303,10 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Microsoft Partners" data-type="both" data-status="active" data-search="Microsoft Partners Robert Kim partners@microsoft.com +91-80-5678-9012">
+                                <tr data-name="Microsoft Partners" data-type="both" data-status="active" data-search="Microsoft Partners Robert Kim partners@microsoft.com +91 8056789012">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-info me-3"></i>
@@ -358,7 +318,7 @@
                                     </td>
                                     <td>Robert Kim</td>
                                     <td>partners@microsoft.com</td>
-                                    <td>+91-80-5678-9012</td>
+                                    <td>+91 8056789012</td>
                                     <td><span class="badge badge-both">Both</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -369,13 +329,10 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Canon Service Center" data-type="service" data-status="active" data-search="Canon Service Center Lisa Park service@canon.in +91-80-6789-0123">
+                                <tr data-name="Canon Service Center" data-type="service" data-status="active" data-search="Canon Service Center Lisa Park service@canon.in +91 8067890123">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-tools fa-2x text-warning me-3"></i>
@@ -387,7 +344,7 @@
                                     </td>
                                     <td>Lisa Park</td>
                                     <td>service@canon.in</td>
-                                    <td>+91-80-6789-0123</td>
+                                    <td>+91 8067890123</td>
                                     <td><span class="badge badge-service">Service</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -398,13 +355,10 @@
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-name="Samsung Enterprise" data-type="supplier" data-status="active" data-search="Samsung Enterprise Kevin Wong enterprise@samsung.com +91-80-7890-1234">
+                                <tr data-name="Samsung Enterprise" data-type="supplier" data-status="active" data-search="Samsung Enterprise Kevin Wong enterprise@samsung.com +91 8078901234">
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store fa-2x text-danger me-3"></i>
@@ -416,7 +370,7 @@
                                     </td>
                                     <td>Kevin Wong</td>
                                     <td>enterprise@samsung.com</td>
-                                    <td>+91-80-7890-1234</td>
+                                    <td>+91 8078901234</td>
                                     <td><span class="badge badge-supplier">Supplier</span></td>
                                     <td><span class="badge badge-active">Active</span></td>
                                     <td>
@@ -426,9 +380,6 @@
                                             </button>
                                             <button class="btn btn-action btn-edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-action btn-contact" title="Contact">
-                                                <i class="fas fa-phone"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -515,7 +466,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;">Vendor Details - Apple Store</h5>
+                    <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;" id="modalTitle">Vendor Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -528,23 +479,23 @@
                                 <div class="info-grid">
                                     <div class="info-item">
                                         <label class="info-label">Vendor ID</label>
-                                        <div class="info-value fw-bold">VEN-001</div>
+                                        <div class="info-value fw-bold" id="modalVendorId">VEN-001</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Vendor Name</label>
-                                        <div class="info-value fw-bold">Apple Store</div>
+                                        <div class="info-value fw-bold" id="modalVendorName">Apple Store</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Vendor Type</label>
-                                        <div class="info-value"><span class="badge badge-supplier">Supplier</span></div>
+                                        <div class="info-value" id="modalVendorType"><span class="badge badge-supplier">Supplier</span></div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Contact Person</label>
-                                        <div class="info-value">John Smith</div>
+                                        <div class="info-value" id="modalContactPerson">John Smith</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Status</label>
-                                        <div class="info-value"><span class="badge badge-active">Active</span></div>
+                                        <div class="info-value" id="modalVendorStatus"><span class="badge badge-active">Active</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -557,23 +508,23 @@
                                 <div class="info-grid">
                                     <div class="info-item">
                                         <label class="info-label">Email Address</label>
-                                        <div class="info-value">procurement@apple.com</div>
+                                        <div class="info-value" id="modalEmail">procurement@apple.com</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Phone Number</label>
-                                        <div class="info-value">+91-80-4567-8901</div>
+                                        <div class="info-value" id="modalPhone">+91 8045678901</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Address</label>
-                                        <div class="info-value">1 Apple Park Way, Cupertino, CA 95014</div>
+                                        <div class="info-value" id="modalAddress">1 Apple Park Way, Cupertino, CA 95014</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">Tax ID</label>
-                                        <div class="info-value font-monospace">94-2404110</div>
+                                        <div class="info-value font-monospace" id="modalTaxId">94-2404110</div>
                                     </div>
                                     <div class="info-item">
                                         <label class="info-label">PAN Number</label>
-                                        <div class="info-value font-monospace">AAAPL1234C</div>
+                                        <div class="info-value font-monospace" id="modalPanNumber">AAAPL1234C</div>
                                     </div>
                                 </div>
                             </div>
@@ -587,7 +538,7 @@
                                 <h6 class="section-title"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
                                 <div class="info-grid">
                                     <div class="info-item">
-                                        <div class="info-value">Premium electronics supplier with excellent service record. Preferred vendor for Apple products and accessories. Maintains consistent quality and delivery standards.</div>
+                                        <div class="info-value" id="modalNotes">Premium electronics supplier with excellent service record. Preferred vendor for Apple products and accessories. Maintains consistent quality and delivery standards.</div>
                                     </div>
                                 </div>
                             </div>
@@ -596,12 +547,20 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-info" onclick="window.location.href='assets.html'">
+                        <i class="fas fa-boxes me-1"></i>Show Assets
+                    </button>
                     <button type="button" class="btn btn-success" onclick="window.location.href='../form_pages/register-asset.html'">
                         <i class="fas fa-plus me-1"></i>Register New Asset
                     </button>
+                    <div class="d-flex gap-2">
                     <button type="button" class="btn btn-primary-blue" onclick="window.location.href='../form_pages/add-vendor.html'">
                         <i class="fas fa-edit me-1"></i>Edit Vendor
                     </button>
+                        <button type="button" class="btn btn-status-toggle" id="statusToggleBtn">
+                            <i class="fas fa-power-off me-1"></i><span id="statusToggleText">Deactivate</span>
+                    </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -746,8 +705,51 @@
         </div>
     </div>
 
+    <!-- Status Confirmation Modal -->
+    <div class="modal fade" id="statusConfirmationModal" tabindex="-1" aria-labelledby="statusConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusConfirmationModalLabel" style="color: var(--primary-black);">
+                        <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+                        <span id="confirmationTitle">Confirm Status Change</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-3">
+                        <div class="confirmation-icon mb-3">
+                            <i id="confirmationIcon" class="fas fa-power-off fa-3x" style="color: var(--secondary-red);"></i>
+                        </div>
+                        <h6 class="mb-3" style="color: var(--primary-black);" id="confirmationMessage">
+                            Are you sure you want to deactivate this vendor?
+                        </h6>
+                        <p class="text-muted mb-0" id="confirmationDetails">
+                            <strong id="vendorNameConfirm">Apple Store</strong> will be <span id="actionText">deactivated</span> and will no longer be available for new transactions.
+                        </p>
+                        <div class="mt-3 p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border-left: 4px solid var(--secondary-orange);">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                You can reverse this action at any time by changing the vendor status again.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-cancel-confirm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-confirm-action" id="confirmStatusChangeBtn">
+                        <i class="fas fa-check me-1"></i><span id="confirmButtonText">Confirm Deactivate</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../asset/navbar.js"></script>
+    <script src="../asset/toast.js"></script>
     <script src="../script.js"></script>
     
     <script>
@@ -994,20 +996,6 @@
                                                 <button class="btn btn-sm btn-action btn-edit vendor-edit-btn" title="Edit Vendor" data-bs-toggle="tooltip">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-action btn-contact vendor-contact-btn" title="Contact Vendor" data-bs-toggle="tooltip">
-                                                    <i class="fas fa-phone"></i>
-                                                </button>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-action btn-more" type="button" data-bs-toggle="dropdown" title="More Actions" data-bs-toggle="tooltip">
-                                                        <i class="fas fa-ellipsis-h"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-file-contract me-2"></i>View Contracts</a></li>
-                                                        <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Order History</a></li>
-                                                        <li><hr class="dropdown-divider"></li>
-                                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i>Delete</a></li>
-                                                    </ul>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -1023,6 +1011,18 @@
                 // View Details buttons - Open modal
                 document.querySelectorAll('.vendor-view-btn, .btn[title="View Details"]').forEach(btn => {
                     btn.addEventListener('click', function() {
+                        // Get vendor data from the row
+                        const row = this.closest('tr');
+                        if (row) {
+                            populateVendorModal(row);
+                        } else {
+                            // For grid view, get data from card
+                            const card = this.closest('.vendor-card');
+                            if (card) {
+                                populateVendorModalFromCard(card);
+                            }
+                        }
+                        
                         const modal = new bootstrap.Modal(document.getElementById('vendorDetailModal'));
                         modal.show();
                     });
@@ -1031,17 +1031,274 @@
                 // Edit buttons  
                 document.querySelectorAll('.vendor-edit-btn, .btn[title="Edit"]').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        showNotification('Edit vendor functionality - redirect to edit form', 'success');
+                        // Redirect to add vendor page for editing
+                        window.location.href = '../form_pages/add-vendor.html';
                     });
                 });
+            }
 
-                // Contact/Activate buttons
-                document.querySelectorAll('.vendor-contact-btn, .btn[title="Contact"], .btn[title="Activate"]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const action = btn.title === 'Activate' ? 'Vendor activated successfully' : 'Contact vendor functionality';
-                        showNotification(action, 'success');
-                    });
+            // Populate modal with vendor data from table row
+            function populateVendorModal(row) {
+                const vendorName = row.querySelector('td:nth-child(1) .fw-bold').textContent;
+                const description = row.querySelector('td:nth-child(1) small').textContent;
+                const contactPerson = row.querySelector('td:nth-child(2)').textContent;
+                const email = row.querySelector('td:nth-child(3)').textContent;
+                const phone = row.querySelector('td:nth-child(4)').textContent;
+                const typeText = row.querySelector('td:nth-child(5) .badge').textContent;
+                const statusText = row.querySelector('td:nth-child(6) .badge').textContent;
+                const statusClass = row.querySelector('td:nth-child(6) .badge').className;
+                const isActive = statusText.toLowerCase() === 'active';
+
+                // Update modal content
+                document.getElementById('modalTitle').textContent = `Vendor Details - ${vendorName}`;
+                document.getElementById('modalVendorName').textContent = vendorName;
+                document.getElementById('modalContactPerson').textContent = contactPerson;
+                document.getElementById('modalEmail').textContent = email;
+                document.getElementById('modalPhone').textContent = phone;
+                
+                // Update vendor type badge
+                const typeMapping = {
+                    'Supplier': 'badge-supplier',
+                    'Service Provider': 'badge-service-provider',
+                    'Service': 'badge-service',
+                    'Both': 'badge-both'
+                };
+                const typeBadgeClass = typeMapping[typeText] || 'badge-supplier';
+                document.getElementById('modalVendorType').innerHTML = `<span class="badge ${typeBadgeClass}">${typeText}</span>`;
+                
+                // Update status badge dynamically
+                const statusBadgeClass = isActive ? 'badge-active' : 'badge-inactive';
+                document.getElementById('modalVendorStatus').innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
+                
+                // Update status toggle button
+                updateStatusToggleButton(isActive, vendorName);
+                
+                // Set sample data for other fields (in real app, this would come from API)
+                document.getElementById('modalVendorId').textContent = generateVendorId(vendorName);
+                document.getElementById('modalAddress').textContent = generateSampleAddress(vendorName);
+                document.getElementById('modalTaxId').textContent = generateSampleTaxId();
+                document.getElementById('modalPanNumber').textContent = generateSamplePAN();
+                document.getElementById('modalNotes').textContent = generateSampleNotes(vendorName, description);
+            }
+
+            // Populate modal from grid card
+            function populateVendorModalFromCard(card) {
+                const vendorName = card.querySelector('.card-title').textContent;
+                const description = card.querySelector('.text-muted.small').textContent;
+                const contactPerson = card.querySelector('.fa-user').parentElement.textContent.trim();
+                const email = card.querySelector('.fa-envelope').parentElement.textContent.trim();
+                const phone = card.querySelector('.fa-phone').parentElement.textContent.trim();
+                const typeText = card.querySelector('.badge-supplier, .badge-service-provider, .badge-service, .badge-both').textContent;
+                const statusText = card.querySelector('.badge-active, .badge-inactive').textContent;
+                const isActive = statusText.toLowerCase() === 'active';
+
+                // Update modal content (same as table version)
+                document.getElementById('modalTitle').textContent = `Vendor Details - ${vendorName}`;
+                document.getElementById('modalVendorName').textContent = vendorName;
+                document.getElementById('modalContactPerson').textContent = contactPerson;
+                document.getElementById('modalEmail').textContent = email;
+                document.getElementById('modalPhone').textContent = phone;
+                
+                // Update vendor type badge
+                const typeMapping = {
+                    'Supplier': 'badge-supplier',
+                    'Service Provider': 'badge-service-provider',
+                    'Service': 'badge-service',
+                    'Both': 'badge-both'
+                };
+                const typeBadgeClass = typeMapping[typeText] || 'badge-supplier';
+                document.getElementById('modalVendorType').innerHTML = `<span class="badge ${typeBadgeClass}">${typeText}</span>`;
+                
+                // Update status badge dynamically
+                const statusBadgeClass = isActive ? 'badge-active' : 'badge-inactive';
+                document.getElementById('modalVendorStatus').innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
+                
+                // Update status toggle button
+                updateStatusToggleButton(isActive, vendorName);
+                
+                // Set sample data for other fields
+                document.getElementById('modalVendorId').textContent = generateVendorId(vendorName);
+                document.getElementById('modalAddress').textContent = generateSampleAddress(vendorName);
+                document.getElementById('modalTaxId').textContent = generateSampleTaxId();
+                document.getElementById('modalPanNumber').textContent = generateSamplePAN();
+                document.getElementById('modalNotes').textContent = generateSampleNotes(vendorName, description);
+            }
+
+            // Update status toggle button based on current status
+            function updateStatusToggleButton(isActive, vendorName) {
+                const statusToggleBtn = document.getElementById('statusToggleBtn');
+                const statusToggleText = document.getElementById('statusToggleText');
+                
+                if (isActive) {
+                    statusToggleBtn.className = 'btn btn-status-deactivate';
+                    statusToggleText.textContent = 'Deactivate';
+                    statusToggleBtn.innerHTML = '<i class="fas fa-power-off me-1"></i><span id="statusToggleText">Deactivate</span>';
+                } else {
+                    statusToggleBtn.className = 'btn btn-status-activate';
+                    statusToggleText.textContent = 'Activate';
+                    statusToggleBtn.innerHTML = '<i class="fas fa-check-circle me-1"></i><span id="statusToggleText">Activate</span>';
+                }
+                
+                // Remove existing event listeners and add new one
+                const newBtn = statusToggleBtn.cloneNode(true);
+                statusToggleBtn.parentNode.replaceChild(newBtn, statusToggleBtn);
+                
+                newBtn.addEventListener('click', function() {
+                    showStatusConfirmationModal(vendorName, !isActive);
                 });
+            }
+
+            // Show status confirmation modal
+            function showStatusConfirmationModal(vendorName, newActiveStatus) {
+                // First, close the vendor detail modal
+                const vendorDetailModal = bootstrap.Modal.getInstance(document.getElementById('vendorDetailModal'));
+                if (vendorDetailModal) {
+                    vendorDetailModal.hide();
+                }
+                
+                // Wait for the vendor detail modal to fully close before showing confirmation modal
+                setTimeout(() => {
+                    const isActivating = newActiveStatus;
+                    const action = isActivating ? 'activate' : 'deactivate';
+                    const actionPast = isActivating ? 'activated' : 'deactivated';
+                    const actionText = isActivating ? 'activated' : 'deactivated';
+                    
+                    // Update modal content
+                    document.getElementById('vendorNameConfirm').textContent = vendorName;
+                    document.getElementById('actionText').textContent = actionText;
+                    
+                    // Update confirmation message
+                    const confirmationMessage = document.getElementById('confirmationMessage');
+                    confirmationMessage.textContent = `Are you sure you want to ${action} this vendor?`;
+                    
+                    // Update confirmation details
+                    const confirmationDetails = document.getElementById('confirmationDetails');
+                    if (isActivating) {
+                        confirmationDetails.innerHTML = `<strong id="vendorNameConfirm">${vendorName}</strong> will be <span id="actionText">activated</span> and will be available for new transactions.`;
+                    } else {
+                        confirmationDetails.innerHTML = `<strong id="vendorNameConfirm">${vendorName}</strong> will be <span id="actionText">deactivated</span> and will no longer be available for new transactions.`;
+                    }
+                    
+                    // Update icon and colors
+                    const confirmationIcon = document.getElementById('confirmationIcon');
+                    const confirmButton = document.getElementById('confirmStatusChangeBtn');
+                    const confirmButtonText = document.getElementById('confirmButtonText');
+                    
+                    if (isActivating) {
+                        confirmationIcon.className = 'fas fa-check-circle fa-3x';
+                        confirmationIcon.style.color = 'var(--secondary-green)';
+                        confirmButton.className = 'btn btn-confirm-activate';
+                        confirmButtonText.textContent = 'Confirm Activate';
+                    } else {
+                        confirmationIcon.className = 'fas fa-power-off fa-3x';
+                        confirmationIcon.style.color = 'var(--secondary-red)';
+                        confirmButton.className = 'btn btn-confirm-deactivate';
+                        confirmButtonText.textContent = 'Confirm Deactivate';
+                    }
+                    
+                    // Remove existing event listeners and add new one
+                    const newConfirmBtn = confirmButton.cloneNode(true);
+                    confirmButton.parentNode.replaceChild(newConfirmBtn, confirmButton);
+                    
+                    newConfirmBtn.addEventListener('click', function() {
+                        // Hide confirmation modal
+                        const confirmationModal = bootstrap.Modal.getInstance(document.getElementById('statusConfirmationModal'));
+                        confirmationModal.hide();
+                        
+                        // Execute the status change after confirmation modal closes
+                        setTimeout(() => {
+                            toggleVendorStatus(vendorName, newActiveStatus);
+                        }, 300);
+                    });
+                    
+                    // Show confirmation modal
+                    const confirmationModal = new bootstrap.Modal(document.getElementById('statusConfirmationModal'));
+                    confirmationModal.show();
+                }, 300); // Wait for vendor detail modal to close
+            }
+
+            // Toggle vendor status (after confirmation)
+            function toggleVendorStatus(vendorName, newActiveStatus) {
+                const action = newActiveStatus ? 'activated' : 'deactivated';
+                showNotification(`${vendorName} has been ${action} successfully!`, 'success');
+                
+                // Update the table/grid view status immediately
+                updateVendorStatusInView(vendorName, newActiveStatus);
+            }
+
+            // Update vendor status in the current view
+            function updateVendorStatusInView(vendorName, isActive) {
+                const statusText = isActive ? 'Active' : 'Inactive';
+                const statusClass = isActive ? 'badge-active' : 'badge-inactive';
+                
+                // Update in table view
+                const tableRows = document.querySelectorAll('#vendorsTable tbody tr');
+                tableRows.forEach(row => {
+                    const nameCell = row.querySelector('td:nth-child(1) .fw-bold');
+                    if (nameCell && nameCell.textContent === vendorName) {
+                        const statusBadge = row.querySelector('td:nth-child(6) .badge');
+                        if (statusBadge) {
+                            statusBadge.className = `badge ${statusClass}`;
+                            statusBadge.textContent = statusText;
+                            row.setAttribute('data-status', statusText.toLowerCase());
+                        }
+                    }
+                });
+                
+                // Update in grid view if active
+                if (isGridView) {
+                    generateGridView();
+                }
+            }
+
+            // Helper functions to generate sample data
+            function generateVendorId(vendorName) {
+                const prefix = 'VEN-';
+                const hash = vendorName.split('').reduce((a, b) => {
+                    a = ((a << 5) - a) + b.charCodeAt(0);
+                    return a & a;
+                }, 0);
+                return prefix + String(Math.abs(hash)).padStart(3, '0').slice(0, 3);
+            }
+
+            function generateSampleAddress(vendorName) {
+                const addresses = {
+                    'Apple Store': '1 Apple Park Way, Cupertino, CA 95014',
+                    'Dell Direct': 'One Dell Way, Round Rock, TX 78682',
+                    'HP Enterprise': '1501 Page Mill Road, Palo Alto, CA 94304',
+                    'Samsung Enterprise': '129 Samsung-ro, Yeongtong-gu, Suwon-si, South Korea',
+                    'Microsoft Partners': 'One Microsoft Way, Redmond, WA 98052',
+                    'Lenovo Business': '8001 Development Drive, Morrisville, NC 27560',
+                    'Amazon Business': '410 Terry Avenue North, Seattle, WA 98109'
+                };
+                return addresses[vendorName] || '123 Business Street, City, State 12345';
+            }
+
+            function generateSampleTaxId() {
+                return Math.floor(Math.random() * 90000000) + 10000000 + '-' + Math.floor(Math.random() * 9000) + 1000;
+            }
+
+            function generateSamplePAN() {
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const numbers = '0123456789';
+                let pan = '';
+                for (let i = 0; i < 5; i++) {
+                    pan += letters.charAt(Math.floor(Math.random() * letters.length));
+                }
+                for (let i = 0; i < 4; i++) {
+                    pan += numbers.charAt(Math.floor(Math.random() * numbers.length));
+                }
+                pan += letters.charAt(Math.floor(Math.random() * letters.length));
+                return pan;
+            }
+
+            function generateSampleNotes(vendorName, description) {
+                const templates = [
+                    `Reliable ${description.toLowerCase()} vendor with excellent service record. Maintains consistent quality and delivery standards.`,
+                    `Preferred vendor for ${description.toLowerCase()}. Strong partnership with competitive pricing and timely deliveries.`,
+                    `Established ${description.toLowerCase()} supplier with comprehensive support services. Good track record for quality assurance.`
+                ];
+                return templates[Math.floor(Math.random() * templates.length)];
             }
 
             // Initialize action button listeners
@@ -1054,19 +1311,7 @@
                 addActionButtonListeners();
             };
 
-            // Advanced filters functionality
-            document.getElementById('toggleAdvancedFilters').addEventListener('click', function() {
-                const advancedFilters = document.getElementById('advancedFilters');
-                const icon = this.querySelector('i');
-                
-                if (advancedFilters.classList.contains('show')) {
-                    advancedFilters.classList.remove('show');
-                    icon.className = 'fas fa-chevron-down me-1';
-                } else {
-                    advancedFilters.classList.add('show');
-                    icon.className = 'fas fa-chevron-up me-1';
-                }
-            });
+
 
 
 
@@ -1075,7 +1320,6 @@
                 document.getElementById('searchInput').value = '';
                 document.getElementById('filterType').value = '';
                 document.getElementById('filterStatus').value = '';
-                document.getElementById('filterRegion').value = '';
                 filterVendors();
             });
 
@@ -1258,8 +1502,8 @@
             function downloadTemplate() {
                 // Create a simple CSV template
                 const csvContent = "Vendor Name,Contact Person,Email,Phone,Address,Type\n" +
-                                                 "Example Vendor,John Doe,john@example.com,+91-98765-43210,123 Main St,Supplier\n" +
-                "Sample Service Provider,Jane Smith,jane@sample.com,+91-87654-32109,456 Oak Ave,Service Provider";
+                                                 "Example Vendor,John Doe,john@example.com,+91 9876543210,123 Main St,Supplier\n" +
+                "Sample Service Provider,Jane Smith,jane@sample.com,+91 8765432109,456 Oak Ave,Service Provider";
                 
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
@@ -1275,40 +1519,10 @@
             }
         }
 
-        // Helper function to show notifications
-        function showNotification(message, type = 'success') {
-            // Create and show a toast notification
-            const toastHtml = `
-                <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-            
-            let toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.id = 'toastContainer';
-                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
-                toastContainer.style.zIndex = '9999';
-                document.body.appendChild(toastContainer);
-            }
-            
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
-            
-            toastElement.addEventListener('hidden.bs.toast', () => {
-                toastElement.remove();
-            });
-        }
+
     </script>
+
+
 
     <!-- Modern Button Styles -->
     <style>
@@ -1476,15 +1690,7 @@
             border-color: var(--secondary-orange) !important;
         }
         
-        .btn-contact:hover {
-            color: var(--secondary-green) !important;
-            border-color: var(--secondary-green) !important;
-        }
         
-        .btn-more:hover {
-            color: var(--primary-dark-gray) !important;
-            border-color: var(--primary-dark-gray) !important;
-        }
 
         /* Card improvements */
         .vendor-card {
@@ -1540,10 +1746,7 @@
             border-color: var(--secondary-orange) !important;
         }
         
-        .vendor-actions .btn-contact:hover {
-            color: var(--secondary-green) !important;
-            border-color: var(--secondary-green) !important;
-        }
+
 
         /* Filter card styling */
         .filter-card {
@@ -2095,6 +2298,167 @@
             background-color: var(--secondary-red) !important;
             border-color: var(--secondary-red) !important;
             color: white !important;
+        }
+
+        .modal-footer .btn-info {
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-info:hover {
+            background-color: #e67e22 !important;
+            border-color: #e67e22 !important;
+            color: white !important;
+        }
+
+        /* Status Toggle Buttons */
+        .btn-status-activate {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .btn-status-activate:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(33, 175, 101, 0.25) !important;
+        }
+
+        .btn-status-deactivate {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .btn-status-deactivate:hover {
+            background-color: #d63447 !important;
+            border-color: #d63447 !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(233, 118, 118, 0.25) !important;
+        }
+
+        /* Modal Footer Button Group */
+        .modal-footer .d-flex {
+            gap: 0.5rem !important;
+        }
+
+        /* Confirmation Modal Styles */
+        #statusConfirmationModal .modal-content {
+            border: none !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+            border-radius: 0.75rem !important;
+        }
+
+        #statusConfirmationModal .modal-header {
+            background-color: var(--primary-light-gray) !important;
+            border-bottom: 1px solid var(--element-gray) !important;
+            border-radius: 0.75rem 0.75rem 0 0 !important;
+        }
+
+        #statusConfirmationModal .modal-body {
+            background-color: var(--primary-white) !important;
+            padding: 2rem !important;
+        }
+
+        #statusConfirmationModal .modal-footer {
+            background-color: var(--primary-light-gray) !important;
+            border-top: 1px solid var(--element-gray) !important;
+            border-radius: 0 0 0.75rem 0.75rem !important;
+            padding: 1.25rem 2rem !important;
+        }
+
+        .confirmation-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Confirmation Modal Buttons */
+        .btn-cancel-confirm {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+        }
+
+        .btn-cancel-confirm:hover {
+            background-color: var(--element-gray) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .btn-confirm-activate {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+            box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
+        }
+
+        .btn-confirm-activate:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
+        }
+
+        .btn-confirm-deactivate {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+            box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
+        }
+
+        .btn-confirm-deactivate:hover {
+            background-color: #d63447 !important;
+            border-color: #d63447 !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+        }
+
+        /* Confirmation Modal Info Box */
+        #statusConfirmationModal .modal-body .mt-3 {
+            background-color: var(--primary-light-gray) !important;
+            border-radius: 0.5rem !important;
+            border-left: 4px solid var(--secondary-orange) !important;
+        }
+
+        /* Modal Backdrop for Confirmation */
+        #statusConfirmationModal .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6) !important;
         }
     </style>
 </body>
