@@ -225,17 +225,14 @@
                                 <td><strong>₹299.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Corrective', 'IN_PROGRESS', 'TechFix Solutions', 'John Smith', 'Mar 10, 2024', '₹299.00', 'Screen repair due to physical damage', 'Device received at service center - Mar 10, 2024|Initial diagnosis completed - Mar 11, 2024|Parts ordered - Mar 12, 2024|Screen replacement in progress - Mar 20, 2024')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-complete" title="Complete Maintenance" data-bs-toggle="tooltip" data-bs-toggle="modal" data-bs-target="#completeMaintenanceModal">
+                                        <button class="btn btn-action btn-complete" title="Complete Maintenance" onclick="openCompleteMaintenanceModal('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Screen repair due to physical damage', '₹299.00')">
                                             <i class="fas fa-check"></i>
                                         </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
+                                        <button class="btn btn-action btn-cancel" title="Cancel Maintenance" onclick="openCancelMaintenanceModal('MNT-003', 'AST-003', 'iPhone 14 Pro', 'Screen repair due to physical damage')">
+                                            <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -249,17 +246,14 @@
                                 <td><strong>₹150.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-012', 'AST-012', 'Dell Laptop', 'Preventive', 'SCHEDULED', 'Internal Team', 'Sarah Wilson', 'Mar 25, 2024', '₹150.00', 'Battery replacement for improved performance', 'Maintenance scheduled for next week|Parts already in stock|Estimated completion time: 2 hours')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                                        <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-action btn-start" title="Start Maintenance" data-bs-toggle="tooltip">
-                                            <i class="fas fa-play"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
+                                        <button class="btn btn-action btn-cancel" title="Cancel Maintenance" onclick="openCancelMaintenanceModal('MNT-012', 'AST-012', 'Dell Laptop', 'Battery replacement for improved performance')">
+                                            <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -273,17 +267,11 @@
                                 <td><strong>₹200.00</strong><br><small class="text-muted">Estimated</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-015', 'AST-015', 'Monitor', 'Emergency', 'CANCELLED', 'Dell Support', 'Mike Johnson', 'Mar 15, 2024', '₹200.00', 'Display flickering repair', 'Cancelled on: Mar 15, 2024|Notes: The required display panel is out of stock globally and expected delivery is 3+ months. Customer opted to replace the monitor instead of waiting.')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-reschedule" title="Reschedule Maintenance" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-reschedule" title="Reschedule Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
                                             <i class="fas fa-calendar-plus"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -297,17 +285,11 @@
                                 <td><strong>₹85.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-045', 'AST-045', 'Dell Monitor', 'Corrective', 'COMPLETED', 'Dell Support', 'David Brown', 'Mar 18, 2024', '₹85.00', 'Power supply repair', 'Issue diagnosed - Mar 16, 2024|Power supply replaced - Mar 17, 2024|Testing completed - Mar 18, 2024|Maintenance completed successfully')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-report" title="Generate Report" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-045', 'AST-045', 'Dell Monitor', 'Power supply repair', 'Mar 18, 2024', '₹85.00')">
                                             <i class="fas fa-file-alt"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -321,17 +303,11 @@
                                 <td><strong>₹349.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-032', 'AST-032', 'MacBook Pro', 'Corrective', 'COMPLETED', 'Apple Service', 'Lisa Garcia', 'Mar 16, 2024', '₹349.00', 'Keyboard replacement', 'Device received - Mar 14, 2024|Keyboard diagnosed faulty - Mar 15, 2024|New keyboard installed - Mar 16, 2024|Quality testing passed')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-report" title="Generate Report" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-032', 'AST-032', 'MacBook Pro', 'Keyboard replacement', 'Mar 16, 2024', '₹349.00')">
                                             <i class="fas fa-file-alt"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -345,17 +321,92 @@
                                 <td><strong>₹0.00</strong><br><small class="text-muted">Actual</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm maintenance-actions">
-                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" data-bs-target="#maintenanceDetailModal" title="View Maintenance Details" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-028', 'AST-028', 'Surface Tablet', 'Preventive', 'COMPLETED', 'Internal Team', 'IT Admin', 'Mar 14, 2024', '₹0.00', 'Software update', 'Software backup created - Mar 14, 2024|Windows updates installed - Mar 14, 2024|Security patches applied - Mar 14, 2024|System restart and verification completed')">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-action btn-edit" title="Update Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-action btn-report" title="Generate Report" data-bs-toggle="tooltip">
+                                        <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-028', 'AST-028', 'Surface Tablet', 'Software update', 'Mar 14, 2024', '₹0.00')">
                                             <i class="fas fa-file-alt"></i>
                                         </button>
-                                        <button class="btn btn-action btn-schedule" title="Schedule New Maintenance" data-bs-toggle="tooltip" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
-                                            <i class="fas fa-plus"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-maintenance-id="MNT-056" data-asset-id="AST-056" data-status="SCHEDULED" data-type="Emergency" data-vendor="TechFix Solutions" data-search="MNT-056 AST-056 Printer Toner replacement Emergency TechFix Solutions SCHEDULED">
+                                <td><strong>AST-056</strong><br><small class="text-muted">Printer</small></td>
+                                <td><span class="badge badge-type-emergency">Emergency</span></td>
+                                <td><span class="badge badge-scheduled">Scheduled</span></td>
+                                <td><strong>TechFix Solutions</strong><br><small class="text-muted">Alex Johnson</small></td>
+                                <td>Mar 26, 2024</td>
+                                <td><strong>₹75.00</strong><br><small class="text-muted">Estimated</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm maintenance-actions">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-056', 'AST-056', 'Printer', 'Emergency', 'SCHEDULED', 'TechFix Solutions', 'Alex Johnson', 'Mar 26, 2024', '₹75.00', 'Toner replacement - urgent print job pending', 'Emergency toner replacement scheduled|High priority - customer presentation tomorrow|Toner cartridge ordered - same day delivery')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-cancel" title="Cancel Maintenance" onclick="openCancelMaintenanceModal('MNT-056', 'AST-056', 'Printer', 'Toner replacement - urgent print job pending')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-maintenance-id="MNT-041" data-asset-id="AST-041" data-status="IN_PROGRESS" data-type="Preventive" data-vendor="Dell Support" data-search="MNT-041 AST-041 Workstation Hardware upgrade Preventive Dell Support IN_PROGRESS">
+                                <td><strong>AST-041</strong><br><small class="text-muted">Workstation</small></td>
+                                <td><span class="badge badge-type-preventive">Preventive</span></td>
+                                <td><span class="badge badge-in-progress">In Progress</span></td>
+                                <td><strong>Dell Support</strong><br><small class="text-muted">Robert Chen</small></td>
+                                <td>Mar 22, 2024</td>
+                                <td><strong>₹450.00</strong><br><small class="text-muted">Estimated</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm maintenance-actions">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-041', 'AST-041', 'Workstation', 'Preventive', 'IN_PROGRESS', 'Dell Support', 'Robert Chen', 'Mar 22, 2024', '₹450.00', 'Hardware upgrade - RAM and SSD installation', 'Hardware compatibility verified - Mar 22, 2024|RAM installation completed - Mar 23, 2024|SSD installation in progress - Mar 24, 2024|Final testing pending')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-complete" title="Complete Maintenance" onclick="openCompleteMaintenanceModal('MNT-041', 'AST-041', 'Workstation', 'Hardware upgrade - RAM and SSD installation', '₹450.00')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-cancel" title="Cancel Maintenance" onclick="openCancelMaintenanceModal('MNT-041', 'AST-041', 'Workstation', 'Hardware upgrade - RAM and SSD installation')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-maintenance-id="MNT-067" data-asset-id="AST-067" data-status="COMPLETED" data-type="Corrective" data-vendor="Apple Service" data-search="MNT-067 AST-067 iPad Battery replacement Corrective Apple Service COMPLETED">
+                                <td><strong>AST-067</strong><br><small class="text-muted">iPad</small></td>
+                                <td><span class="badge badge-type-corrective">Corrective</span></td>
+                                <td><span class="badge badge-completed">Completed</span></td>
+                                <td><strong>Apple Service</strong><br><small class="text-muted">Emma Davis</small></td>
+                                <td>Mar 19, 2024</td>
+                                <td><strong>₹199.00</strong><br><small class="text-muted">Actual</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm maintenance-actions">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-067', 'AST-067', 'iPad', 'Corrective', 'COMPLETED', 'Apple Service', 'Emma Davis', 'Mar 19, 2024', '₹199.00', 'Battery replacement due to poor performance', 'Battery diagnostics completed - Mar 17, 2024|Genuine battery replacement - Mar 18, 2024|Performance testing passed - Mar 19, 2024|Device returned to user')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-report" title="Generate Report" onclick="openGenerateReportModal('MNT-067', 'AST-067', 'iPad', 'Battery replacement due to poor performance', 'Mar 19, 2024', '₹199.00')">
+                                            <i class="fas fa-file-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-maintenance-id="MNT-073" data-asset-id="AST-073" data-status="SCHEDULED" data-type="Preventive" data-vendor="Internal Team" data-search="MNT-073 AST-073 Router Firmware update Preventive Internal Team SCHEDULED">
+                                <td><strong>AST-073</strong><br><small class="text-muted">Router</small></td>
+                                <td><span class="badge badge-type-preventive">Preventive</span></td>
+                                <td><span class="badge badge-scheduled">Scheduled</span></td>
+                                <td><strong>Internal Team</strong><br><small class="text-muted">Network Admin</small></td>
+                                <td>Mar 28, 2024</td>
+                                <td><strong>₹0.00</strong><br><small class="text-muted">Estimated</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm maintenance-actions">
+                                        <button class="btn btn-action btn-view" data-bs-toggle="modal" onclick="showMaintenanceDetails('MNT-073', 'AST-073', 'Router', 'Preventive', 'SCHEDULED', 'Internal Team', 'Network Admin', 'Mar 28, 2024', '₹0.00', 'Firmware update for security patches', 'Scheduled during off-peak hours|Latest firmware downloaded and verified|Backup configuration created|Maintenance window: 11 PM - 1 AM')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-edit" title="Edit Maintenance" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-action btn-cancel" title="Cancel Maintenance" onclick="openCancelMaintenanceModal('MNT-073', 'AST-073', 'Router', 'Firmware update for security patches')">
+                                            <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -368,7 +419,7 @@
         <!-- Pagination -->
         <div class="d-flex justify-content-between align-items-center mt-4">
             <div class="text-muted">
-                <small>Showing <span>1</span>-<span>10</span> of <span>156</span> maintenance records</small>
+                <small>Showing <span>1</span>-<span>10</span> of <span>70</span> maintenance records</small>
             </div>
             <nav aria-label="Maintenance pagination">
                 <ul class="pagination pagination-modern mb-0">
@@ -390,7 +441,7 @@
                         <span class="page-link page-dots">...</span>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="#">156</a>
+                        <a class="page-link" href="#">7</a>
                     </li>
                     <li class="page-item">
                         <a class="page-link" href="#" aria-label="Next">
@@ -498,7 +549,7 @@
         </div>
     </div>
 
-    <!-- Complete Maintenance Modal -->
+    <!-- Complete Maintenance Modal (In Progress Status) -->
     <div class="modal fade" id="completeMaintenanceModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -545,6 +596,154 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-success" onclick="completeMaintenanceWithCost()">
                         <i class="fas fa-check me-1"></i>Complete Maintenance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Maintenance Modal (In Progress & Scheduled Status) -->
+    <div class="modal fade" id="cancelMaintenanceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title d-flex align-items-center" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+                        <i class="fas fa-times-circle me-2 text-danger"></i>Cancel Maintenance - AST-003
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <div class="cancel-maintenance-form">
+                        <!-- Warning Alert -->
+                        <div class="alert alert-warning d-flex align-items-start mb-4" style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px;">
+                            <i class="fas fa-exclamation-triangle me-3 mt-1" style="color: #f39c12; font-size: 1.1rem;"></i>
+                            <div>
+                                <strong>Warning:</strong> This action will permanently cancel the maintenance. It cannot be assigned to vendors after cancellation.
+                            </div>
+                        </div>
+                        
+                        <!-- Maintenance Summary -->
+                        <div class="maintenance-summary mb-4 p-3" style="background-color: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                            <h6 class="mb-3 d-flex align-items-center" style="color: var(--primary-black); font-weight: 600;">
+                                <i class="fas fa-tools me-2"></i>Maintenance Summary
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <small class="text-muted d-block" style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Asset ID</small>
+                                        <span class="fw-semibold" style="color: var(--primary-black);">AST-003</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <small class="text-muted d-block" style="font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Asset Type</small>
+                                        <span class="fw-semibold" style="color: var(--primary-black);">iPhone 14 Pro</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cancellation Date -->
+                        <div class="mb-3">
+                            <label for="cancelDate" class="form-label fw-semibold" style="color: var(--primary-black);">
+                                Cancellation Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control" id="cancelDate" required 
+                                   style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem;">
+                            <small class="form-text text-muted">Date when maintenance is being cancelled</small>
+                        </div>
+                        
+                        <!-- Cancellation Notes -->
+                        <div class="mb-3">
+                            <label for="cancelNotes" class="form-label fw-semibold" style="color: var(--primary-black);">
+                                Cancellation Notes <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="cancelNotes" rows="4" required
+                                      placeholder="Please describe the reason for cancelling this maintenance..." 
+                                      maxlength="1000"
+                                      style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem; resize: vertical;"></textarea>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <small class="form-text text-muted">Describe why this maintenance is being cancelled (max 1000 characters)</small>
+                                <small class="text-muted character-counter">
+                                    <span id="cancelNotesCount">0</span>/1000 characters
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0" style="background-color: #f8f9fa;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" 
+                            style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+                        Keep Maintenance
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="cancelMaintenance()"
+                            style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+                        <i class="fas fa-times me-1"></i>Confirm Cancellation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Generate Report Modal (Completed Status) -->
+    <div class="modal fade" id="generateReportModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">Generate Maintenance Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="generate-report-form">
+                        <div class="mb-3">
+                            <p><strong>Asset:</strong> Dell Monitor (AST-045)</p>
+                            <p><strong>Maintenance:</strong> Power supply repair</p>
+                            <p><strong>Completed:</strong> Mar 18, 2024</p>
+                            <p><strong>Cost:</strong> ₹85.00</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="reportType" class="form-label">Report Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="reportType" required>
+                                <option value="">Select report type</option>
+                                <option value="summary">Summary Report</option>
+                                <option value="detailed">Detailed Report</option>
+                                <option value="cost-analysis">Cost Analysis</option>
+                                <option value="warranty">Warranty Report</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="reportFormat" class="form-label">Format</label>
+                            <select class="form-select" id="reportFormat">
+                                <option value="pdf" selected>PDF Document</option>
+                                <option value="excel">Excel Spreadsheet</option>
+                                <option value="word">Word Document</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="includeImages" checked>
+                                <label class="form-check-label" for="includeImages">
+                                    Include maintenance images (if available)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="includeTimeline" checked>
+                                <label class="form-check-label" for="includeTimeline">
+                                    Include maintenance timeline
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="generateMaintenanceReport()">
+                        <i class="fas fa-download me-1"></i>Generate & Download
                     </button>
                 </div>
             </div>
@@ -749,6 +948,11 @@
             padding: 0 !important;
         }
         
+        /* Better table spacing */
+        .table-responsive .table {
+            margin-bottom: 0 !important;
+        }
+        
         /* Table cell padding adjustments for balanced spacing */
         .table td, .table th {
             padding: 0.75rem !important;
@@ -762,6 +966,7 @@
         /* Table column width optimization */
         .table {
             table-layout: fixed !important;
+            width: 100% !important;
         }
         
         /* Prevent text wrapping in table headers */
@@ -771,58 +976,53 @@
             text-overflow: ellipsis !important;
         }
         
-        /* Column width distribution for optimal space usage - 7 columns */
+        /* Column width distribution for optimal layout - 7 columns */
         .table th:nth-child(1), .table td:nth-child(1) { /* Asset ID */
-            width: 180px !important;
-            min-width: 180px !important;
+            width: 13% !important;
             padding-left: 1.5rem !important;
         }
         
         .table th:nth-child(2), .table td:nth-child(2) { /* Type */
-            width: 150px !important;
-            min-width: 150px !important;
+            width: 11% !important;
         }
         
         .table th:nth-child(3), .table td:nth-child(3) { /* Status */
-            width: 150px !important;
-            min-width: 150px !important;
+            width: 12% !important;
         }
         
         .table th:nth-child(4), .table td:nth-child(4) { /* Vendor/Assigned */
-            width: 220px !important;
-            min-width: 220px !important;
+            width: 19% !important;
         }
         
         .table th:nth-child(5), .table td:nth-child(5) { /* Date */
-            width: 150px !important;
-            min-width: 150px !important;
+            width: 14% !important;
         }
         
         .table th:nth-child(6), .table td:nth-child(6) { /* Est./Actual Cost */
-            width: 160px !important;
-            min-width: 160px !important;
+            width: 17% !important;
         }
         
-        /* Actions column (last column) - exact width for 4 buttons */
+        /* Actions column (last column) - match employees table width */
         .table td:last-child, .table th:last-child {
             padding-right: 1.5rem !important;
             padding-left: 1rem !important;
             text-align: left !important;
-            width: 170px !important; /* Exact width for 4 action buttons with no extra space */
-            min-width: 170px !important;
-            max-width: 170px !important;
+            width: 130px !important;
+            min-width: 130px !important;
+            max-width: 130px !important;
         }
         
         /* Maintenance actions button group spacing */
         .maintenance-actions {
             justify-content: flex-start !important;
-            gap: 0.25rem !important;
+            gap: 0.375rem !important;
         }
         
         .maintenance-actions .btn {
             padding: 0.375rem 0.5rem !important;
-            min-width: 34px !important;
-            min-height: 34px !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
+            font-size: 0.875rem !important;
         }
         
         /* Card improvements */
@@ -1041,15 +1241,330 @@
             }, 5000);
         }
         
+        // Show maintenance details in modal (dynamic content)
+        function showMaintenanceDetails(maintenanceId, assetId, assetName, type, status, vendor, assignedTo, date, cost, description, progressNotes) {
+            // Update modal title
+            document.querySelector('#maintenanceDetailModal .modal-title').textContent = `Maintenance Details - ${assetId}`;
+            
+            // Update asset & maintenance info
+            document.querySelector('#maintenanceDetailModal .maintenance-info-section .row .col-md-6:nth-child(1) .info-value').textContent = assetId;
+            document.querySelector('#maintenanceDetailModal .maintenance-info-section .row .col-md-6:nth-child(2) .info-value').textContent = assetName;
+            
+            // Update maintenance type badge
+            const typeBadge = document.querySelector('#maintenanceDetailModal .maintenance-info-section .row .col-md-6:nth-child(3) .info-value .badge');
+            typeBadge.textContent = type;
+            typeBadge.className = `badge badge-type-${type.toLowerCase()}`;
+            
+            // Update status badge
+            const statusBadge = document.querySelector('#maintenanceDetailModal .maintenance-info-section .row .col-md-6:nth-child(4) .info-value .badge');
+            statusBadge.textContent = status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            statusBadge.className = `badge badge-${status.toLowerCase().replace('_', '-')}`;
+            
+            // Update timeline info
+            document.querySelector('#maintenanceDetailModal .timeline-info-section .row .col-md-6:nth-child(1) .info-value').textContent = date;
+            document.querySelector('#maintenanceDetailModal .timeline-info-section .row .col-md-12 .info-value').textContent = `${assignedTo} (${vendor})`;
+            
+            // Update cost info
+            const costLabel = cost.includes('Actual') ? 'Actual Cost' : 'Estimated Cost';
+            const costValue = cost.replace(/\s*\(.*?\)/, ''); // Remove (Estimated/Actual) text
+            document.querySelector('#maintenanceDetailModal .cost-info-section .row .col-md-6:nth-child(1) .info-label').textContent = costLabel;
+            document.querySelector('#maintenanceDetailModal .cost-info-section .row .col-md-6:nth-child(1) .info-value').textContent = costValue;
+            
+            // Update actual cost based on status
+            const actualCostDiv = document.querySelector('#maintenanceDetailModal .cost-info-section .row .col-md-6:nth-child(2) .info-value');
+            if (status === 'COMPLETED') {
+                actualCostDiv.textContent = costValue;
+                actualCostDiv.className = 'info-value';
+            } else {
+                actualCostDiv.textContent = status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion';
+                actualCostDiv.className = 'info-value text-muted';
+            }
+            
+            // Update description
+            document.querySelector('#maintenanceDetailModal .description-section .description-content p:first-child').innerHTML = `<strong>Description:</strong> ${description}`;
+            
+            // Update progress notes based on status
+            const notesList = document.querySelector('#maintenanceDetailModal .description-section .service-notes');
+            const progressNotesTitle = document.querySelector('#maintenanceDetailModal .description-section .description-content p:nth-child(2)');
+            
+            notesList.innerHTML = '';
+            
+            if (status === 'CANCELLED') {
+                // For cancelled maintenance, show cancellation details
+                progressNotesTitle.innerHTML = '<strong>Cancellation Details:</strong>';
+                if (progressNotes) {
+                    const notes = progressNotes.split('|');
+                    notes.forEach(note => {
+                        const li = document.createElement('li');
+                        li.textContent = note;
+                        li.style.color = 'var(--secondary-red)';
+                        notesList.appendChild(li);
+                    });
+                }
+            } else {
+                // For other statuses, show progress notes
+                progressNotesTitle.innerHTML = '<strong>Progress Notes:</strong>';
+                if (progressNotes) {
+                    const notes = progressNotes.split('|');
+                    notes.forEach(note => {
+                        const li = document.createElement('li');
+                        li.textContent = note;
+                        notesList.appendChild(li);
+                    });
+                }
+            }
+            
+            // Update modal footer based on status
+            const modalFooter = document.querySelector('#maintenanceDetailModal .modal-footer');
+            
+            // Clear existing action buttons (keep Close button)
+            const closeBtn = modalFooter.querySelector('.btn-secondary');
+            modalFooter.innerHTML = '';
+            modalFooter.appendChild(closeBtn);
+            
+            // Add status-specific action buttons
+            if (status === 'IN_PROGRESS') {
+                // In Progress: Complete + Cancel buttons
+                const completeBtn = document.createElement('button');
+                completeBtn.type = 'button';
+                completeBtn.className = 'btn btn-success';
+                completeBtn.onclick = () => openCompleteMaintenanceModal(maintenanceId, assetId, assetName, description, cost);
+                completeBtn.innerHTML = '<i class="fas fa-check me-1"></i>Complete Maintenance';
+                
+                const cancelBtn = document.createElement('button');
+                cancelBtn.type = 'button';
+                cancelBtn.className = 'btn btn-danger';
+                cancelBtn.onclick = () => openCancelMaintenanceModal(maintenanceId, assetId, assetName, description);
+                cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>Cancel Maintenance';
+                
+                modalFooter.appendChild(completeBtn);
+                modalFooter.appendChild(cancelBtn);
+                
+            } else if (status === 'SCHEDULED') {
+                // Scheduled: Edit + Cancel buttons
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'btn btn-warning';
+                editBtn.onclick = () => window.location.href = '../form_pages/schedule-maintenance.html';
+                editBtn.innerHTML = '<i class="fas fa-edit me-1"></i>Edit Maintenance';
+                
+                const cancelBtn = document.createElement('button');
+                cancelBtn.type = 'button';
+                cancelBtn.className = 'btn btn-danger';
+                cancelBtn.onclick = () => openCancelMaintenanceModal(maintenanceId, assetId, assetName, description);
+                cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>Cancel Maintenance';
+                
+                modalFooter.appendChild(editBtn);
+                modalFooter.appendChild(cancelBtn);
+                
+            } else if (status === 'CANCELLED') {
+                // Cancelled: Reschedule button (redirect to edit page)
+                const rescheduleBtn = document.createElement('button');
+                rescheduleBtn.type = 'button';
+                rescheduleBtn.className = 'btn btn-warning';
+                rescheduleBtn.onclick = () => window.location.href = '../form_pages/schedule-maintenance.html';
+                rescheduleBtn.innerHTML = '<i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance';
+                
+                modalFooter.appendChild(rescheduleBtn);
+                
+            } else if (status === 'COMPLETED') {
+                // Completed: Generate Report button
+                const reportBtn = document.createElement('button');
+                reportBtn.type = 'button';
+                reportBtn.className = 'btn btn-primary';
+                reportBtn.onclick = () => openGenerateReportModal(maintenanceId, assetId, assetName, description, date, cost);
+                reportBtn.innerHTML = '<i class="fas fa-file-alt me-1"></i>Generate Report';
+                
+                modalFooter.appendChild(reportBtn);
+            }
+        }
+
+        // Open complete maintenance modal with dynamic data
+        function openCompleteMaintenanceModal(maintenanceId, assetId, assetName, description, estimatedCost) {
+            // Update modal title
+            document.querySelector('#completeMaintenanceModal .modal-title').textContent = `Complete Maintenance - ${assetId}`;
+            
+            // Update maintenance info in modal
+            const maintenanceInfo = document.querySelector('#completeMaintenanceModal .complete-maintenance-form .mb-3');
+            maintenanceInfo.innerHTML = `
+                <p><strong>Maintenance:</strong> ${description}</p>
+                <p><strong>Estimated Cost:</strong> ${estimatedCost}</p>
+            `;
+            
+            // Clear form
+            document.getElementById('actualCost').value = '';
+            document.getElementById('completionNotes').value = '';
+            document.getElementById('actualCost').classList.remove('is-valid', 'is-invalid');
+            document.getElementById('completeMaintenanceForm').classList.remove('was-validated');
+            updateCompletionNotesCounter(document.getElementById('completionNotes'));
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('completeMaintenanceModal'));
+            modal.show();
+        }
+
+        // Open cancel maintenance modal with dynamic data
+        function openCancelMaintenanceModal(maintenanceId, assetId, assetName, description) {
+            // Update modal title
+            document.querySelector('#cancelMaintenanceModal .modal-title').innerHTML = `
+                <i class="fas fa-times-circle me-2 text-danger"></i>Cancel Maintenance - ${assetId}
+            `;
+            
+            // Update maintenance summary
+            document.querySelector('#cancelMaintenanceModal .maintenance-summary .row .col-md-6:nth-child(1) span').textContent = assetId;
+            document.querySelector('#cancelMaintenanceModal .maintenance-summary .row .col-md-6:nth-child(2) span').textContent = assetName;
+            
+            // Reset form
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('cancelDate').value = today;
+            document.getElementById('cancelNotes').value = '';
+            document.getElementById('cancelNotesCount').textContent = '0';
+            document.getElementById('cancelNotesCount').className = 'text-muted';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('cancelMaintenanceModal'));
+            modal.show();
+        }
+
         // Updated complete maintenance function (called by button)
         function completeMaintenanceWithCost() {
             const form = document.getElementById('completeMaintenanceForm');
             form.dispatchEvent(new Event('submit', { cancelable: true }));
         }
 
+        // Cancel maintenance function
+        function cancelMaintenance() {
+            const cancelDate = document.getElementById('cancelDate').value;
+            const cancelNotes = document.getElementById('cancelNotes').value;
+            
+            if (!cancelDate) {
+                alert('Please select a cancellation date.');
+                return;
+            }
+            
+            if (!cancelNotes.trim()) {
+                alert('Please provide cancellation notes.');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#cancelMaintenanceModal .btn-danger');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Cancelling...';
+            submitBtn.disabled = true;
+            
+            // Simulate processing time
+            setTimeout(() => {
+                showSuccessMessage(`Maintenance cancelled successfully!\nDate: ${cancelDate}\nNotes: ${cancelNotes}`);
+                
+                // Close modal
+                const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelMaintenanceModal'));
+                if (cancelModal) cancelModal.hide();
+                
+                // Reset form
+                document.getElementById('cancelDate').value = '';
+                document.getElementById('cancelNotes').value = '';
+                document.getElementById('cancelNotesCount').textContent = '0';
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        }
+
+        // Initialize cancel maintenance modal
+        function initializeCancelMaintenanceModal() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('cancelDate').value = today;
+            
+            // Character counter for cancellation notes
+            const cancelNotesTextarea = document.getElementById('cancelNotes');
+            const cancelNotesCounter = document.getElementById('cancelNotesCount');
+            
+            cancelNotesTextarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                cancelNotesCounter.textContent = currentLength;
+                
+                // Change color based on character count
+                if (currentLength > 900) {
+                    cancelNotesCounter.className = 'text-danger fw-bold';
+                } else if (currentLength > 700) {
+                    cancelNotesCounter.className = 'text-warning fw-semibold';
+                } else {
+                    cancelNotesCounter.className = 'text-muted';
+                }
+            });
+        }
+
+
+
+        // Open generate report modal with dynamic data
+        function openGenerateReportModal(maintenanceId, assetId, assetName, description, completedDate, actualCost) {
+            // Update modal content with specific maintenance data
+            const modalBody = document.querySelector('#generateReportModal .generate-report-form .mb-3:first-child');
+            modalBody.innerHTML = `
+                <p><strong>Asset:</strong> ${assetName} (${assetId})</p>
+                <p><strong>Maintenance:</strong> ${description}</p>
+                <p><strong>Completed:</strong> ${completedDate}</p>
+                <p><strong>Cost:</strong> ${actualCost}</p>
+            `;
+            
+            // Reset form
+            document.getElementById('reportType').value = '';
+            document.getElementById('reportFormat').value = 'pdf';
+            document.getElementById('includeImages').checked = true;
+            document.getElementById('includeTimeline').checked = true;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('generateReportModal'));
+            modal.show();
+        }
+
+        // Generate maintenance report function
+        function generateMaintenanceReport() {
+            const reportType = document.getElementById('reportType').value;
+            const reportFormat = document.getElementById('reportFormat').value;
+            const includeImages = document.getElementById('includeImages').checked;
+            const includeTimeline = document.getElementById('includeTimeline').checked;
+            
+            if (!reportType) {
+                alert('Please select a report type.');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#generateReportModal .btn-primary');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+            submitBtn.disabled = true;
+            
+            // Simulate processing time
+            setTimeout(() => {
+                showSuccessMessage(`Report generated successfully!\nType: ${reportType}\nFormat: ${reportFormat.toUpperCase()}\nDownload started automatically.`);
+                
+                // Close modal
+                const reportModal = bootstrap.Modal.getInstance(document.getElementById('generateReportModal'));
+                if (reportModal) reportModal.hide();
+                
+                // Reset form
+                document.getElementById('reportType').value = '';
+                document.getElementById('reportFormat').value = 'pdf';
+                document.getElementById('includeImages').checked = true;
+                document.getElementById('includeTimeline').checked = true;
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize complete maintenance form validation
             initializeCompleteMaintenanceValidation();
+            
+            // Initialize cancel maintenance modal
+            initializeCancelMaintenanceModal();
             
             // Get DOM elements
             const searchInput = document.getElementById('searchInput');
@@ -1312,9 +1827,9 @@
             border-color: var(--secondary-green) !important;
         }
         
-        .btn-action.btn-schedule:hover {
-            color: var(--secondary-pink) !important;
-            border-color: var(--secondary-pink) !important;
+        .btn-action.btn-cancel:hover {
+            color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
         }
         
         .btn-action.btn-reschedule:hover,
@@ -1573,6 +2088,54 @@
          /* Complete Maintenance Modal Styling */
          .complete-maintenance-form {
              background-color: var(--primary-white) !important;
+         }
+
+         /* Cancel Maintenance Modal Styling */
+         .cancel-maintenance-form {
+             background-color: var(--primary-white) !important;
+         }
+
+         .cancel-maintenance-form .alert-warning {
+             background-color: rgba(255, 193, 7, 0.1) !important;
+             border: 1px solid var(--secondary-orange) !important;
+             color: var(--primary-black) !important;
+         }
+
+
+
+         /* Generate Report Modal Styling */
+         .generate-report-form {
+             background-color: var(--primary-white) !important;
+         }
+
+         .generate-report-form .form-label {
+             font-weight: 600 !important;
+             color: var(--primary-black) !important;
+             margin-bottom: 0.5rem !important;
+         }
+
+         .generate-report-form .form-control,
+         .generate-report-form .form-select {
+             border: 2px solid var(--primary-mid-light) !important;
+             border-radius: 0.5rem !important;
+             padding: 0.75rem !important;
+             font-size: 0.9rem !important;
+         }
+
+         .generate-report-form .form-control:focus,
+         .generate-report-form .form-select:focus {
+             border-color: var(--secondary-purple) !important;
+             box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+         }
+
+         .generate-report-form .form-check-input:checked {
+             background-color: var(--secondary-purple) !important;
+             border-color: var(--secondary-purple) !important;
+         }
+
+         .generate-report-form .form-check-label {
+             color: var(--primary-black) !important;
+             font-weight: 500 !important;
          }
 
          .complete-maintenance-form .form-label {

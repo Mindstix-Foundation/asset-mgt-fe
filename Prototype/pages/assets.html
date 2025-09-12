@@ -2781,28 +2781,28 @@
                                                 data-bs-target="${status === 'ASSIGNED' ? '#assignedAssetModal' : 
                                                                status === 'IN_MAINTENANCE' ? '#inMaintenanceAssetModal' : 
                                                                status === 'RETIRED' ? '#retiredAssetModal' : '#detailModal'}" 
-                                                data-bs-toggle="tooltip" title="${status === 'ASSIGNED' ? 'View Assigned Asset Details' : 
+                                                title="${status === 'ASSIGNED' ? 'View Assigned Asset Details' : 
                                                                                status === 'IN_MAINTENANCE' ? 'View Maintenance Details' : 
                                                                                status === 'RETIRED' ? 'View Retired Asset Details' : 'View Asset Details'}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         ${status !== 'IN_MAINTENANCE' && status !== 'RETIRED' ? 
-                                            '<button class="btn btn-action btn-edit btn-sm" data-bs-toggle="tooltip" title="Edit Asset" onclick="window.location.href=\'../form_pages/register-asset.html\'"><i class="fas fa-edit"></i></button>' : 
+                                            '<button class="btn btn-action btn-edit btn-sm" title="Edit Asset" onclick="window.location.href=\'../form_pages/register-asset.html\'"><i class="fas fa-edit"></i></button>' : 
                                             ''
                                         }
                                         ${status === 'AVAILABLE' ? 
-                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Issue Asset" onclick="window.location.href=\'../form_pages/issue-asset.html\'"><i class="fas fa-user-plus"></i></button>' : 
+                                            '<button class="btn btn-action btn-assign btn-sm" title="Issue Asset" onclick="window.location.href=\'../form_pages/issue-asset.html\'"><i class="fas fa-user-plus"></i></button>' : 
                                             status === 'ASSIGNED' ? 
-                                            '<button class="btn btn-action btn-assign btn-sm" data-bs-toggle="tooltip" title="Collect Asset" onclick="window.location.href=\'../form_pages/collect-asset.html\'"><i class="fas fa-user-minus"></i></button>' : 
+                                            '<button class="btn btn-action btn-assign btn-sm" title="Collect Asset" onclick="window.location.href=\'../form_pages/collect-asset.html\'"><i class="fas fa-user-minus"></i></button>' : 
                                             ''
                                         }
                                         ${status === 'IN_MAINTENANCE' ? 
-                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="View Full Maintenance" onclick="window.location.href=\'../pages/maintenance.html\'"><i class="fas fa-clipboard-list"></i></button><button class="btn btn-action btn-complete btn-sm" data-bs-toggle="modal" data-bs-target="#completeAssetMaintenanceModal" data-bs-toggle="tooltip" title="Complete Maintenance"><i class="fas fa-check"></i></button>' : 
+                                            '<button class="btn btn-action btn-maintenance btn-sm" title="View Full Maintenance" onclick="window.location.href=\'../pages/maintenance.html\'"><i class="fas fa-clipboard-list"></i></button><button class="btn btn-action btn-complete btn-sm" data-bs-toggle="modal" title="Complete Maintenance"><i class="fas fa-check"></i></button>' : 
                                             status === 'RETIRED' ? 
-                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Schedule Restoration" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>' :
-                                            '<button class="btn btn-action btn-maintenance btn-sm" data-bs-toggle="tooltip" title="Schedule Maintenance" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>'
+                                            '<button class="btn btn-action btn-maintenance btn-sm" title="Schedule Restoration" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>' :
+                                            '<button class="btn btn-action btn-maintenance btn-sm" title="Schedule Maintenance" onclick="window.location.href=\'../form_pages/schedule-maintenance.html\'"><i class="fas fa-wrench"></i></button>'
                                         }
-                                        <button class="btn btn-action btn-qr btn-sm" data-bs-toggle="tooltip" title="View QR Code">
+                                        <button class="btn btn-action btn-qr btn-sm" title="View QR Code">
                                             <i class="fas fa-qrcode"></i>
                                         </button>
                                     </div>
