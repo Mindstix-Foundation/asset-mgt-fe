@@ -14,8 +14,9 @@ Project asset_management_system {
     CREATE TYPE asset_condition AS ENUM ('NEW', 'GOOD', 'FAIR', 'POOR', 'DAMAGED');
     CREATE TYPE asset_status AS ENUM ('AVAILABLE', 'ASSIGNED', 'IN_MAINTENANCE', 'RETIRED', 'LOST');
     CREATE TYPE maintenance_status AS ENUM ('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED');
-    CREATE TYPE notification_priority AS ENUM ('LOW', 'NORMAL', 'HIGH', 'URGENT');
     CREATE TYPE return_condition AS ENUM ('GOOD', 'FAIR', 'POOR', 'DAMAGED');
+    CREATE TYPE employee_status AS ENUM ('ACTIVE', 'INACTIVE');
+    CREATE TYPE vendor_status AS ENUM ('ACTIVE', 'INACTIVE', 'PENDING', 'SUSPENDED');
   '''
 }
 
@@ -87,16 +88,18 @@ Table employees {
   phone varchar(15) [note: 'Phone number with country code (e.g., +91-9876543210)']
   date_of_birth date
   address text [note: 'Home address']
+  status employee_status [not null, default: 'ACTIVE', note: 'ENUM: ACTIVE, INACTIVE']
   created_by int [ref: > users.id, not null]
   created_at timestamptz [default: `now()`]
   updated_by int [ref: > users.id, not null]
   updated_at timestamptz [default: `now()`]
   
-  Note: 'Employee information. Email field serves dual purpose for user authentication when linked.'
+  Note: 'Employee information with status tracking. Email field serves dual purpose for user authentication when linked.'
   
   indexes {
     employee_id [unique]
     email [unique]
+    status
     (first_name, last_name)
   }
 }
@@ -184,8 +187,9 @@ Table models {
 
 Table vendors {
   id serial [pk, increment]
+  vendor_id varchar(20) [not null, unique, note: 'VEN-001, etc. - String format for flexibility']
   name varchar(100) [not null]
-  vendor_type varchar(20) [not null, default: 'supplier', note: 'supplier, service_provider, both']
+  vendor_type varchar(20) [not null, default: 'supplier', note: 'supplier, service, manufacturer, distributor, contractor, both']
   contact_person varchar(100)
   email varchar(255)
   phone varchar(15) [note: 'Phone number with country code (e.g., +91-9876543210)']
@@ -194,22 +198,23 @@ Table vendors {
   pan_number varchar(10) [note: 'Permanent Account Number (India)']
   notes text [note: 'Additional notes about the vendor']
   user_id int [ref: - users.id, note: 'Optional: If vendor needs system access for maintenance updates']
-  is_active boolean [not null, default: true]
+  status vendor_status [not null, default: 'ACTIVE', note: 'ENUM: ACTIVE, INACTIVE, PENDING, SUSPENDED']
   created_by int [ref: > users.id, not null]
   created_at timestamptz [default: `now()`]
   updated_by int [ref: > users.id, not null]
   updated_at timestamptz [default: `now()`]
   
-  Note: 'Suppliers and vendors. user_id links vendor to system access if needed.'
+  Note: 'Suppliers and vendors with status tracking. user_id links vendor to system access if needed.'
   
   indexes {
+    vendor_id [unique]
     name
     vendor_type
     email
     tax_id
     pan_number
     user_id [unique]
-    is_active
+    status
   }
 }
 
@@ -264,19 +269,19 @@ Table asset_assignments {
   employee_id int [ref: > employees.id, not null]
   assigned_by int [ref: > users.id, not null]
   assigned_date date [not null]
-  expected_return_date date
+  assignment_condition asset_condition [note: 'ENUM: NEW, GOOD, FAIR, POOR, DAMAGED - Asset condition at assignment']
   return_date date
-  return_condition return_condition [note: 'ENUM: GOOD, FAIR, POOR, DAMAGED']
+  return_condition return_condition [note: 'ENUM: GOOD, FAIR, POOR, DAMAGED - Asset condition at return']
   assignment_reason varchar(100)
   return_reason varchar(100)
-  notes text
+  notes text [note: 'Assignment notes and comments']
   is_active boolean [not null, default: true]
   created_by int [ref: > users.id, not null]
   created_at timestamptz [default: `now()`]
   updated_by int [ref: > users.id, not null]
   updated_at timestamptz [default: `now()`]
   
-  Note: 'Asset assignment tracking to employees'
+  Note: 'Asset assignment tracking to employees with condition tracking at assignment and return'
   
   indexes {
     asset_id
@@ -286,6 +291,8 @@ Table asset_assignments {
     (asset_id, is_active)
     (employee_id, is_active)
     assigned_date
+    assignment_condition
+    return_condition
   }
 }
 
@@ -418,32 +425,6 @@ Table audit_logs {
   }
 }
 
-Table notifications {
-  id serial [pk, increment]
-  user_id int [ref: > users.id, not null]
-  type varchar(50) [not null, note: 'ASSET_ASSIGNED, MAINTENANCE_DUE, etc.']
-  title varchar(255) [not null]
-  message text [not null]
-  related_table varchar(50)
-  related_id int
-  is_read boolean [not null, default: false]
-  priority notification_priority [not null, default: 'NORMAL', note: 'ENUM: LOW, NORMAL, HIGH, URGENT']
-  expires_at timestamptz
-  created_at timestamptz [default: `now()`]
-  read_at timestamptz
-  
-  Note: 'System notifications to users (read-only after creation, no updated_by needed)'
-  
-  indexes {
-    user_id
-    is_read
-    priority
-    type
-    expires_at
-    (user_id, is_read)
-    (related_table, related_id)
-  }
-}
 
 Table system_settings {
   id serial [pk, increment]
@@ -465,32 +446,10 @@ Table system_settings {
   }
 }
 
-Table report_templates {
-  id serial [pk, increment]
-  name varchar(100) [not null]
-  description text
-  template_type varchar(50) [not null, note: 'ASSET_INVENTORY, EMPLOYEE_ASSETS, MAINTENANCE, etc.']
-  sql_query text [note: 'SQL query for generating report']
-  parameters jsonb [note: 'Report parameters configuration']
-  output_format varchar(10) [not null, default: 'CSV', note: 'CSV, PDF, XLSX']
-  is_active boolean [not null, default: true]
-  created_by int [ref: > users.id, not null]
-  created_at timestamptz [default: `now()`]
-  updated_by int [ref: > users.id, not null]
-  updated_at timestamptz [default: `now()`]
-  
-  Note: 'Report generation templates'
-  
-  indexes {
-    template_type
-    is_active
-    (name, template_type)
-  }
-}
 
 Table file_attachments {
   id serial [pk, increment]
-  related_table varchar(50) [not null, note: 'Valid tables: assets, maintenance_records, maintenance_schedules, employees, vendors, maintenance_reports']
+  related_table varchar(50) [not null, note: 'Valid tables: assets, maintenance_records, maintenance_schedules, employees, vendors']
   related_id int [not null]
   file_name varchar(255) [not null]
   file_path varchar(500) [not null]
@@ -508,7 +467,9 @@ Table file_attachments {
     Usage Examples:
     - Asset photos: related_table='assets', related_id=asset.id
     - Maintenance receipts: related_table='maintenance_records', related_id=record.id
+    - Maintenance images: related_table='maintenance_schedules', related_id=schedule.id
     - Employee documents: related_table='employees', related_id=employee.id
+    - Vendor contracts: related_table='vendors', related_id=vendor.id
     
     Application must validate related_table values against allowed list
   '''
