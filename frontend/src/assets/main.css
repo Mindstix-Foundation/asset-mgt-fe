@@ -1,8 +1,37 @@
 @import "tailwindcss";
 
+/* TrackStix Color Palette - Global CSS Variables */
+:root {
+  /* Primary Palette */
+  --primary-white: #FFFFFF;
+  --primary-light-gray: #F3F3F3;
+  --primary-mid-light: #B7B7B7;
+  --primary-mid-gray: #999999;
+  --primary-dark-gray: #666666;
+  --primary-black: #0A0A0A;
+  
+  /* Secondary Palette */
+  --secondary-purple: #331FEA;
+  --secondary-pink: #FF579F;
+  --secondary-yellow: #FF8C61;
+  --secondary-green: #21AF65;
+  --secondary-orange: #FF8C61;
+  --secondary-red: #E97676;
+  
+  /* Role-based Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #0A0A0A;
+  --text-secondary: #222222;
+  --accent-navy: #1A2A43;
+  --element-gray: #E0E0E0;
+  --element-light-gray: #CCCCCC;
+}
+
 /* Custom styles for Asset Management System */
 body {
   @apply bg-gray-50 text-gray-900;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 html {
@@ -11,11 +40,11 @@ html {
 
 /* Custom component classes using standard Tailwind utilities */
 .btn-primary {
-  @apply inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors;
+  @apply inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 text-sm font-medium rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors;
+  @apply inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 text-sm font-medium rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors;
 }
 
 .card {
@@ -23,9 +52,14 @@ html {
 }
 
 .form-input {
-  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500;
+  @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500;
 }
 
 .form-label {
   @apply block text-sm font-medium text-gray-700;
+}
+
+/* Font Awesome icons color inheritance */
+.fas, .far, .fab, .fa {
+  color: inherit;
 }
