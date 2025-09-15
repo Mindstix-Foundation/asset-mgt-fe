@@ -1,0 +1,23 @@
+7.maintenance_record,,,,
+Purpose:Records all maintenance activities performed on assets including costs parts and condition tracking,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for maintenance record
+asset_id,FK NOT NULL,INT,1-M,Asset ID (Foreign Key referencing asset.id)
+maintenance_type_id,FK NOT NULL,INT,1-M,Maintenance type ID (Foreign Key referencing maintenance_type.id)
+schedule_id,FK NULL,INT,1-1,Related schedule ID (Foreign Key referencing maintenance_schedule.id)
+maintenance_date,NOT NULL,DATE,,Date maintenance was performed
+performed_by,FK NOT NULL,INT,1-M,Employee who performed maintenance (Foreign Key referencing employee.id)
+vendor_id,FK NULL,INT,1-M,External vendor if applicable (Foreign Key referencing vendor.id)
+description,NOT NULL,TEXT,,Description of work performed
+cost,NULL,DECIMAL(10,2),,Cost of maintenance
+parts_replaced,NULL,TEXT,,List of parts replaced
+next_maintenance_date,NULL,DATE,,Suggested next maintenance date
+before_condition,NULL,VARCHAR(20),,Asset condition before maintenance
+after_condition,NULL,VARCHAR(20),,Asset condition after maintenance
+downtime_hours,NULL,DECIMAL(5,2),,Hours asset was out of service
+attachments,NULL,JSONB,,File attachments (receipts photos etc.)
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated 
