@@ -1,129 +1,89 @@
-# Asset Management Frontend
+# Vue.js + Bootstrap 5 Project
 
-A modern Vue.js 3 application for managing organizational assets, built with TypeScript, Vite, and Tailwind CSS.
+A fresh Vue.js 3 project with Vite, TypeScript, and Bootstrap 5 integration.
 
-## Features
+## 🚀 Features
 
-- 🎯 **Modern Dashboard** - Clean and intuitive asset management interface
-- 📊 **Real-time Statistics** - Monitor asset metrics and status
-- 🔍 **Advanced Search** - Find assets quickly with powerful filters
-- 📱 **Responsive Design** - Works perfectly on desktop and mobile
-- 🎨 **Beautiful UI** - Built with Tailwind CSS and Lucide icons
-- ⚡ **Fast Development** - Powered by Vite for lightning-fast builds
-- 🔒 **Type Safety** - Full TypeScript support
-- 🧪 **Testing Ready** - Configured with Vitest and Cypress
+- **Vue.js 3** - The Progressive JavaScript Framework
+- **TypeScript** - Type-safe JavaScript development
+- **Vite** - Lightning-fast build tool and dev server
+- **Bootstrap 5** - Modern CSS framework with responsive design
+- **Vue Router** - Official router for Vue.js
+- **Pinia** - State management for Vue.js
+- **Vitest** - Unit testing framework
+- **Playwright** - End-to-end testing
+- **ESLint + Prettier** - Code linting and formatting
 
-## Tech Stack
+## 🛠️ Project Setup
 
-- **Framework**: Vue.js 3 with Composition API
-- **Build Tool**: Vite
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide Vue Next
-- **State Management**: Pinia
-- **Routing**: Vue Router
-- **HTTP Client**: Axios
-- **Testing**: Vitest (unit) + Cypress (e2e)
-- **Code Quality**: ESLint + Prettier
-
-## Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- Backend API server running (see asset-mgt-be)
-
-## Getting Started
-
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-3. **Open browser**
-   Navigate to `http://localhost:5173`
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run test:unit` - Run unit tests
-- `npm run test:e2e` - Run e2e tests
-- `npm run lint` - Lint code
-- `npm run format` - Format code with Prettier
-
-## Project Structure
-
-```
-src/
-├── assets/          # Static assets and styles
-├── components/      # Reusable Vue components
-├── router/          # Vue Router configuration
-├── services/        # API services and utilities
-├── stores/          # Pinia stores for state management
-├── views/           # Page components
-└── main.ts         # Application entry point
+### Install Dependencies
+```bash
+npm install
 ```
 
-## Configuration
-
-The application can be configured through environment variables:
-
-- `VITE_API_BASE_URL` - Backend API base URL (default: http://localhost:3000/api)
-- `VITE_APP_TITLE` - Application title
-- `VITE_APP_VERSION` - Application version
-
-## API Integration
-
-The frontend communicates with the backend through RESTful APIs. The API service is configured in `src/services/api.ts` with:
-
-- Automatic request/response interceptors
-- Authentication token handling
-- Error handling and logging
-- Typed API endpoints
-
-## Development
-
-### Code Style
-
-- Use TypeScript for type safety
-- Follow Vue 3 Composition API patterns
-- Use Tailwind CSS utility classes
-- Follow ESLint and Prettier configurations
-
-### Component Structure
-
-```vue
-<template>
-  <!-- Template with Tailwind classes -->
-</template>
-
-<script setup lang="ts">
-// Composition API with TypeScript
-</script>
-
-<style scoped>
-/* Component-specific styles if needed */
-</style>
+### Development Server
+```bash
+npm run dev
 ```
 
-## Building for Production
-
+### Build for Production
 ```bash
 npm run build
 ```
 
-The build artifacts will be stored in the `dist/` directory.
+### Run Unit Tests
+```bash
+npm run test:unit
+```
 
-## Related Projects
+### Run E2E Tests
+```bash
+npm run test:e2e
+```
 
-- [Asset Management Backend](../asset-mgt-be) - Node.js API server
+### Lint and Format
+```bash
+npm run lint
+npm run format
+```
 
-## License
+## 📁 Project Structure
 
-This project is part of the Mindstix Foundation Asset Management System.
+```
+frontend/
+├── src/
+│   ├── components/     # Vue components
+│   ├── views/         # Page components
+│   ├── router/        # Vue Router configuration
+│   ├── stores/        # Pinia stores
+│   ├── assets/        # Static assets
+│   ├── App.vue        # Root component
+│   └── main.ts        # Application entry point
+├── public/            # Public static files
+├── e2e/              # End-to-end tests
+└── package.json      # Dependencies and scripts
+```
+
+## 🎨 Bootstrap Integration
+
+Bootstrap 5 is fully integrated with:
+- CSS framework imported in `main.ts`
+- JavaScript components available globally
+- Responsive navigation bar
+- Cards, buttons, forms, and other components
+- Utility classes for rapid development
+
+## 🌟 Getting Started
+
+1. The development server should be running on `http://localhost:5173`
+2. Navigate between Home and About pages to see Bootstrap components
+3. Start building your application by modifying components in `src/`
+
+## 🔧 Customization
+
+- Modify Bootstrap variables by creating a custom SCSS file
+- Add new components in the `src/components/` directory
+- Create new pages in `src/views/` and add routes in `src/router/`
+- Manage global state with Pinia stores in `src/stores/`
+
+Happy coding! 🎉
