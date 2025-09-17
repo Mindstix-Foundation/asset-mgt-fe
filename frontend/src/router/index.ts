@@ -17,34 +17,45 @@ const router = createRouter({
     {
       path: '/app',
       component: MainLayout,
+      redirect: '/app/dashboard',
       children: [
         {
-          path: '/dashboard',
+          path: 'dashboard',
           name: 'dashboard',
           component: () => import('../views/dashboard/DashboardView.vue'),
         },
         {
-          path: '/assets',
+          path: 'assets',
           name: 'assets',
           component: () => import('../views/assets/AssetsView.vue'),
         },
         {
-          path: '/employees',
+          path: 'employees',
           name: 'employees',
           component: () => import('../views/employees/EmployeesView.vue'),
         },
         {
-          path: '/maintenance',
+          path: 'maintenance',
           name: 'maintenance',
           component: () => import('../views/maintenance/MaintenanceView.vue'),
         },
         {
-          path: '/vendors',
+          path: 'vendors',
           name: 'vendors',
           component: () => import('../views/vendors/VendorsView.vue'),
         },
         {
-          path: '/reports',
+          path: 'vendors/add',
+          name: 'add-vendor',
+          component: () => import('../views/vendors/AddVendorView.vue'),
+        },
+        {
+          path: 'vendors/edit/:id',
+          name: 'edit-vendor',
+          component: () => import('../views/vendors/AddVendorView.vue'),
+        },
+        {
+          path: 'reports',
           name: 'reports',
           component: () => import('../views/reports/ReportsView.vue'),
         },

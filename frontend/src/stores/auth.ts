@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       console.log('Attempting login with backend API...')
       
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         return { 
           success: false, 
-          error: 'Unable to connect to server. Please make sure the backend is running on http://localhost:3000' 
+          error: 'Unable to connect to server. Please make sure the backend is running on http://localhost:3000/api' 
         }
       }
       
