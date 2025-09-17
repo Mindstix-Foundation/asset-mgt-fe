@@ -159,7 +159,7 @@ const handleLogin = async () => {
     
     if (result.success) {
       // Redirect to dashboard
-      router.push('/dashboard')
+      router.push('/app/dashboard')
     } else {
       loginError.value = result.error || 'Login failed'
       

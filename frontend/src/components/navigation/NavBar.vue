@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
     <div class="container-fluid">
       <!-- Logo and Brand -->
-      <RouterLink to="/dashboard" class="navbar-brand fw-bold">
+      <RouterLink to="/app/dashboard" class="navbar-brand fw-bold">
         Track<span class="brand-s">S</span>ti<span class="brand-x">x</span>
       </RouterLink>
       
@@ -73,32 +73,32 @@ const mobileMenuOpen = ref(false)
 const navigationItems = [
   {
     name: 'Dashboard',
-    path: '/dashboard',
+    path: '/app/dashboard',
     icon: 'fas fa-tachometer-alt'
   },
   {
     name: 'Assets & Inventory',
-    path: '/assets',
+    path: '/app/assets',
     icon: 'fas fa-laptop'
   },
   {
     name: 'Employees',
-    path: '/employees',
+    path: '/app/employees',
     icon: 'fas fa-users'
   },
   {
     name: 'Maintenance',
-    path: '/maintenance',
+    path: '/app/maintenance',
     icon: 'fas fa-tools'
   },
   {
     name: 'Vendors',
-    path: '/vendors',
+    path: '/app/vendors',
     icon: 'fas fa-store'
   },
   {
     name: 'Reports',
-    path: '/reports',
+    path: '/app/reports',
     icon: 'fas fa-chart-bar'
   }
 ]
