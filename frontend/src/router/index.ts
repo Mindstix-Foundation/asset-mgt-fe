@@ -35,6 +35,16 @@ const router = createRouter({
           component: () => import('../views/employees/EmployeesView.vue'),
         },
         {
+          path: 'employees/add',
+          name: 'add-employee',
+          component: () => import('../views/employees/AddEmployeeView.vue'),
+        },
+        {
+          path: 'employees/edit/:id',
+          name: 'edit-employee',
+          component: () => import('../views/employees/EditEmployeeView.vue'),
+        },
+        {
           path: 'maintenance',
           name: 'maintenance',
           component: () => import('../views/maintenance/MaintenanceView.vue'),
