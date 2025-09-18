@@ -384,9 +384,9 @@ border-color: var(--secondary-green);
 }
 
 .btn-outline-secondary:hover {
-  background-color: var(--element-light-gray);
-  border-color: var(--element-gray);
-  color: var(--text-primary);
+  background-color: var(--element-light-gray) !important;
+  border-color: var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
 }
 
 /* Input Group Styling - Professional Theme with rounded corners */
@@ -1385,9 +1385,7 @@ body .btn-primary:active,
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-  background-color: var(--accent-navy) !important;
-  border-color: var(--accent-navy) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 .btn-secondary {
@@ -1399,9 +1397,7 @@ body .btn-primary:active,
 .btn-secondary:hover,
 .btn-secondary:focus,
 .btn-secondary:active {
-  background-color: var(--primary-dark-gray) !important;
-  border-color: var(--primary-dark-gray) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 .btn-success {
@@ -1413,9 +1409,7 @@ body .btn-primary:active,
 .btn-success:hover,
 .btn-success:focus,
 .btn-success:active {
-  background-color: var(--primary-dark-gray) !important;
-  border-color: var(--primary-dark-gray) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 .btn-danger {
@@ -1427,9 +1421,7 @@ body .btn-primary:active,
 .btn-danger:hover,
 .btn-danger:focus,
 .btn-danger:active {
-  background-color: var(--primary-dark-gray) !important;
-  border-color: var(--primary-dark-gray) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 .btn-warning {
@@ -1441,9 +1433,7 @@ body .btn-primary:active,
 .btn-warning:hover,
 .btn-warning:focus,
 .btn-warning:active {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 .btn-info {
@@ -1455,9 +1445,7 @@ body .btn-primary:active,
 .btn-info:hover,
 .btn-info:focus,
 .btn-info:active {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: var(--primary-white) !important;
+  filter: brightness(0.92);
 }
 
 /* Responsive Design for Login */
@@ -2110,7 +2098,7 @@ i.text-muted {
 }
 
 .btn-cancel:hover {
-  background-color: var(--element-gray) !important;
+  background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
   color: var(--primary-black) !important;
 }
@@ -2276,6 +2264,7 @@ i.text-muted {
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
   color: var(--primary-black) !important;
+  filter: none !important;
 }
 
 .modal-footer .btn-success {
@@ -2590,8 +2579,7 @@ i.text-muted {
 }
 
 .btn-modern:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.95);
 }
 
 /* Add Employee - Primary Color */

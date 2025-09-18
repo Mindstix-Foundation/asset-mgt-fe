@@ -151,8 +151,8 @@ export const showToastWithButtons = (message: string, type: ToastType = 'success
   document.body.appendChild(notification)
   
   // Auto dismiss with pause on hover functionality
-  let timeoutId: NodeJS.Timeout
-  let intervalId: NodeJS.Timeout
+  let timeoutId: number
+  let intervalId: number
   let remainingTime = duration
   let startTime = Date.now()
   let isPaused = false
@@ -288,6 +288,33 @@ export const showVendorSuccessToast = (vendorName: string, isEdit: boolean = fal
 }
 
 /**
+ * Show a success toast for employee operations with action buttons
+ * @param employeeName - Name of the employee that was created/updated
+ * @param isEdit - Whether this is an edit operation
+ */
+export const showEmployeeSuccessToast = (employeeName: string, isEdit: boolean = false) => {
+  const message = `<div class="mb-3">
+    <strong>${employeeName}</strong> has been ${isEdit ? 'updated' : 'added'} successfully!
+  </div>
+  <div class="d-flex gap-2 justify-content-center">
+    ${!isEdit ? `
+    <button type="button" class="btn btn-sm btn-primary" onclick="addAnotherEmployee()">
+      Add Another
+    </button>
+    ` : ''}
+    <button type="button" class="btn btn-sm btn-outline-primary" onclick="window.location.href='/app/employees'">
+      View Employees
+    </button>
+  </div>
+  <div class="mt-2 text-center">
+    <small class="text-muted">Auto-redirecting to employees page...</small>
+  </div>`
+  
+  // Use custom toast with redirect functionality
+  showEmployeeSuccessToastWithRedirect(message)
+}
+
+/**
  * Show a vendor success toast with integrated redirect functionality
  * This is a specialized version of showToastWithButtons that redirects when timer expires
  * @param message - HTML message content
@@ -400,8 +427,8 @@ const showVendorSuccessToastWithRedirect = (message: string) => {
   
   document.body.appendChild(notification)
   
-  let timeoutId: NodeJS.Timeout
-  let intervalId: NodeJS.Timeout
+  let timeoutId: number
+  let intervalId: number
   let remainingTime = duration
   let startTime = Date.now()
   let isPaused = false
@@ -454,6 +481,200 @@ const showVendorSuccessToastWithRedirect = (message: string) => {
           // Redirect after toast is fully removed, but only if not cancelled
           if (!(window as any).vendorToastRedirectCancelled) {
             window.location.href = '/app/vendors'
+          }
+        }, 300)
+      }
+    }, remainingTime)
+  }
+  
+  const pauseTimer = () => {
+    isPaused = true
+    clearTimeout(timeoutId)
+    clearInterval(intervalId)
+    remainingTime -= Date.now() - startTime
+    if (remainingTime < 0) remainingTime = 0
+  }
+  
+  const resumeTimer = () => {
+    if (remainingTime > 0) {
+      isPaused = false
+      startTimer()
+    }
+  }
+  
+  notification.addEventListener('mouseenter', pauseTimer)
+  notification.addEventListener('mouseleave', resumeTimer)
+  
+  startTimer()
+}
+
+/**
+ * Show an employee success toast with integrated redirect functionality
+ * This is a specialized version of showToastWithButtons that redirects when timer expires
+ * @param message - HTML message content
+ */
+const showEmployeeSuccessToastWithRedirect = (message: string) => {
+  // Remove existing toasts
+  const existingToasts = document.querySelectorAll('.custom-toast-notification')
+  existingToasts.forEach(toast => toast.remove())
+
+  const duration = 5000 // 5 seconds
+  const notification = document.createElement('div')
+  notification.className = 'custom-toast-notification'
+  
+  // Success toast styling
+  const headerColor = '#21AF65' // Green
+  const headerText = 'Success'
+  const icon = 'check-circle'
+  const textColor = '#ffffff'
+  
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    max-width: 450px;
+    min-width: 350px;
+    overflow: hidden;
+    animation: slideInDown 0.3s ease-out;
+    border: 2px solid #e2e8f0;
+  `
+  
+  notification.innerHTML = `
+    <div style="
+      background-color: ${headerColor};
+      color: ${textColor};
+      padding: 12px 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    ">
+      <div style="display: flex; align-items: center;">
+        <i class="fas fa-${icon} me-2" style="color: ${textColor}; font-size: 16px;"></i>
+        <span>${headerText}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="toast-timer" style="
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 2px solid rgba(255,255,255,0.2);
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.1);
+        ">
+          <svg width="28" height="28" style="position: absolute; top: -2px; left: -2px; transform: rotate(-90deg);">
+            <circle
+              cx="14"
+              cy="14"
+              r="12"
+              fill="none"
+              stroke="${textColor}"
+              stroke-width="2"
+              stroke-dasharray="75.4"
+              stroke-dashoffset="0"
+              class="timer-circle"
+              style="
+                animation: toast-timer-${duration}ms ${duration}ms linear forwards;
+                opacity: 0.9;
+              "
+            />
+          </svg>
+          <span class="timer-seconds" style="
+            color: ${textColor};
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            opacity: 0.9;
+          ">${Math.ceil(duration / 1000)}</span>
+        </div>
+        <button type="button" class="btn-close-custom" onclick="this.parentElement.parentElement.parentElement.remove(); window.employeeToastRedirectCancelled = true;" style="
+          background: none;
+          border: none;
+          color: ${textColor};
+          font-size: 20px;
+          cursor: pointer;
+          padding: 0;
+          opacity: 0.8;
+          line-height: 1;
+          font-weight: bold;
+        ">&times;</button>
+      </div>
+    </div>
+    <div style="
+      background-color: #ffffff;
+      color: #1f2937;
+      padding: 16px;
+      font-weight: 400;
+    ">
+      ${message}
+    </div>
+  `
+  
+  document.body.appendChild(notification)
+  
+  let timeoutId: number
+  let intervalId: number
+  let remainingTime = duration
+  let startTime = Date.now()
+  let isPaused = false
+  
+  // Flag to track if redirect was cancelled
+  ;(window as any).employeeToastRedirectCancelled = false
+  
+  const timerSecondsElement = notification.querySelector('.timer-seconds')
+  
+  const startTimer = () => {
+    startTime = Date.now()
+    
+    intervalId = setInterval(() => {
+      if (!isPaused) {
+        const elapsed = Date.now() - startTime
+        const currentRemaining = remainingTime - elapsed
+        if (currentRemaining <= 0) {
+          clearInterval(intervalId)
+          clearTimeout(timeoutId)
+          if (notification.parentNode) {
+            notification.style.animation = 'slideOutUp 0.3s ease-in forwards'
+            setTimeout(() => {
+              if (notification.parentNode) {
+                notification.remove()
+              }
+              // Redirect after toast is fully removed, but only if not cancelled
+              if (!(window as any).employeeToastRedirectCancelled) {
+                window.location.href = '/app/employees'
+              }
+            }, 300)
+          }
+          return
+        }
+        
+        if (timerSecondsElement) {
+          const seconds = Math.ceil(currentRemaining / 1000)
+          timerSecondsElement.textContent = seconds.toString()
+        }
+      }
+    }, 100)
+    
+    timeoutId = setTimeout(() => {
+      clearInterval(intervalId)
+      if (notification.parentNode) {
+        notification.style.animation = 'slideOutUp 0.3s ease-in forwards'
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove()
+          }
+          // Redirect after toast is fully removed, but only if not cancelled
+          if (!(window as any).employeeToastRedirectCancelled) {
+            window.location.href = '/app/employees'
           }
         }, 300)
       }
