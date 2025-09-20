@@ -1,0 +1,10 @@
+3.user_role,,,,
+Purpose:Junction table for mapping users to their assigned roles with audit tracking,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for user-role mapping
+user_id,FK NOT NULL,INT,1-M,User ID (Foreign Key referencing user.id)
+role_id,FK NOT NULL,INT,1-M,Role ID (Foreign Key referencing role.id)
+assigned_by,FK NOT NULL,INT,1-M,User ID who assigned this role (Foreign Key referencing user.id)
+assigned_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when role was assigned
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Assignment status 

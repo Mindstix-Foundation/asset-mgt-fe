@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Register New Asset</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="../asset/navbar.css">
+    <link rel="stylesheet" href="unified-form-styles.css">
+</head>
+<body>
+    
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+                <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
+                    <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
+                        <div style="display: block;">
+                            <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">Add New Asset</h4>
+                            <p class="text-muted mb-0 small" style="display: block;">Register a new asset in the system</p>
+                        </div>
+                    </div>
+                    <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+                        <form id="assetForm" class="needs-validation" novalidate>
+                            
+                            <!-- Section 1: Basic Asset Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Basic Asset Information</legend>
+                                <div class="row g-4">
+                                <!-- Asset ID -->
+                                <div class="col-md-6">
+                                        <label for="assetId" class="form-label">Asset ID</label>
+                                        <input type="text" class="form-control" id="assetId" value="AST-001" readonly style="background-color: #F3F3F3;">
+                                    </div>
+
+                                    <!-- Serial Number -->
+                                    <div class="col-md-6">
+                                        <label for="serialNumber" class="form-label">Serial Number <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="serialNumber" placeholder="Enter serial number" 
+                                               required pattern="[A-Za-z0-9\-_]{3,50}" 
+                                               title="Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)">
+                                        <div class="form-text">3-50 characters (letters, numbers, hyphens, underscores only)</div>
+                                </div>
+
+                                <!-- Asset Category -->
+                                <div class="col-md-6">
+                                        <label for="assetCategory" class="form-label">Asset Category <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="assetCategory" required>
+                                            <option value="" selected>Choose Category...</option>
+                                            <option value="1">Electronics</option>
+                                            <option value="2">Furniture</option>
+                                            <option value="3">Vehicles</option>
+                                            <option value="4">Equipment</option>
+                                            <option value="add_new" style="color: #331FEA; font-weight: 600;">
+                                                ➕ Other (Add New Category)
+                                            </option>
+                                        </select>
+                                        <div class="form-text">Select the high-level category first</div>
+                                </div>
+
+                                <!-- Asset Type -->
+                                <div class="col-md-6">
+                                        <label for="assetType" class="form-label">Asset Type <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="assetType" required disabled>
+                                            <option value="" selected>Select category first...</option>
+                                        </select>
+                                        <div class="form-text">
+                                            Select category above to unlock asset type options
+                                    </div>
+                                </div>
+
+                                <!-- Brand -->
+                                <div class="col-md-6">
+                                        <label for="brand" class="form-label">Brand <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="brand" required disabled>
+                                            <option value="" selected>Select asset type first...</option>
+                                        </select>
+                                        <div class="form-text">
+                                            Select asset type above to unlock brand options
+                                    </div>
+                                </div>
+
+                                <!-- Model -->
+                                <div class="col-md-6">
+                                        <label for="model" class="form-label">Model <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="model" required disabled>
+                                            <option value="" selected>Select brand first...</option>
+                                        </select>
+                                        <div class="form-text">
+                                            Select brand above to unlock model options
+                                    </div>
+                                </div>
+                                    </div>
+                                
+                            </fieldset>
+
+                            <!-- Section 2: Purchase & Financial Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Purchase & Financial Information</legend>
+                                <div class="row g-4">
+                                <!-- Purchase Date -->
+                                <div class="col-md-6">
+                                        <label for="purchaseDate" class="form-label">Purchase Date <span class="text-muted">(Optional)</span></label>
+                                        <input type="date" class="form-control" id="purchaseDate">
+                                        <div class="form-text">Cannot be future date</div>
+                                </div>
+
+                                <!-- Purchase Cost -->
+                                <div class="col-md-6">
+                                        <label for="purchaseCost" class="form-label">Purchase Cost <span class="text-muted">(Optional)</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                        <input type="number" class="form-control" id="purchaseCost" placeholder="0.00" 
+                                               step="0.01" min="0" max="1000000" 
+                                               title="Purchase cost cannot exceed ₹10,00,000">
+                                    </div>
+                                        <div class="form-text">Enter amount in Indian Rupees (max ₹10,00,000)</div>
+                                </div>
+
+                                <!-- Vendor -->
+                                    <div class="col-12">
+                                        <label for="vendor" class="form-label">Vendor <span class="text-muted">(Optional)</span></label>
+                                        <select class="form-select" id="vendor">
+                                            <option value="" selected>No Vendor Selected</option>
+                                            <option value="1">Apple Store</option>
+                                            <option value="2">Dell Direct</option>
+                                            <option value="3">Amazon Business</option>
+                                            <option value="4">Best Buy Business</option>
+                                            <option value="5">Office Depot</option>
+                                            <option value="6">Staples Business</option>
+                                            <option value="7">CDW Corporation</option>
+                                            <option value="8">Newegg Business</option>
+                                        </select>
+                                        <div class="form-text">Select the vendor or supplier for this asset</div>
+                                    </div>
+                                    </div>
+                               
+                            </fieldset>
+
+                            <!-- Section 3: Warranty Information -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Warranty Information</legend>
+                                <div class="row g-4">
+                                <!-- Warranty Start Date -->
+                                <div class="col-md-6">
+                                        <label for="warrantyStartDate" class="form-label">Warranty Start Date <span class="text-muted">(Optional)</span></label>
+                                        <input type="date" class="form-control" id="warrantyStartDate">
+                                        <div class="form-text">When warranty coverage begins</div>
+                                </div>
+
+                                <!-- Warranty End Date -->
+                                <div class="col-md-6">
+                                        <label for="warrantyEndDate" class="form-label">Warranty End Date <span class="text-muted">(Optional)</span></label>
+                                        <input type="date" class="form-control" id="warrantyEndDate">
+                                        <div class="form-text">When warranty coverage expires</div>
+                                    </div>
+                                    </div>
+                               
+                            </fieldset>
+
+                            <!-- Section 4: Location & Status -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Location & Status</legend>
+                                <div class="row g-4">
+                                <!-- Location -->
+                                <div class="col-md-6">
+                                        <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="location" placeholder="e.g., Warehouse A, Shelf B2" 
+                                               required minlength="2" maxlength="100" 
+                                               title="Location must be 2-100 characters">
+                                        <div class="form-text">Physical location where asset is stored (2-100 characters)</div>
+                                </div>
+
+                                <!-- Condition -->
+                                <div class="col-md-6">
+                                        <label for="condition" class="form-label">Condition <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="condition" required>
+                                            <option value="NEW" selected>NEW</option>
+                                            <option value="GOOD">GOOD</option>
+                                            <option value="FAIR">FAIR</option>
+                                            <option value="POOR">POOR</option>
+                                            <option value="DAMAGED">DAMAGED</option>
+                                        </select>
+                                        <div class="form-text">Physical condition of the asset</div>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-6">
+                                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="status" required>
+                                            <option value="AVAILABLE" selected>AVAILABLE</option>
+                                            <option value="ASSIGNED">ASSIGNED</option>
+                                            <option value="IN_MAINTENANCE">IN_MAINTENANCE</option>
+                                            <option value="LOST">LOST</option>
+                                        </select>
+                                        <div class="form-text">Current availability status</div>
+                                </div>
+
+                                <!-- Notes -->
+                                <div class="col-12">
+                                        <label for="notes" class="form-label">
+                                            Additional Notes <span class="text-muted">(Optional)</span>
+                                        </label>
+                                        <textarea class="form-control expandable-notes" id="notes" rows="3" placeholder="Click to expand and add detailed notes..." onclick="expandNotesField(this)" maxlength="1000"></textarea>
+                                        <div class="form-text">
+                                            Click to expand for more space. Include special handling instructions, known issues, or other relevant information
+                                        </div>
+                                        <div class="character-count text-end" id="notesCounter">
+                                            <small class="text-muted">0/1000 characters</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="card-footer bg-light border-top">
+                        <div class="form-actions">
+                            <div class="d-flex justify-content-center gap-3">
+                                <button type="button" class="btn btn-outline-secondary px-4 py-2" onclick="history.back()">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary px-5 py-2" form="assetForm">
+                                    Register Asset
+                                </button>
+                            </div>
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    Fields marked with <span class="text-danger">*</span> are required
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Success Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast" role="alert" aria-live="polite" aria-atomic="true" data-bs-delay="8000">
+            <div class="toast-header text-white" style="background-color: #21AF65 !important;">
+                <strong class="me-auto">Asset Registered Successfully</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="successMessage" class="mb-3">
+                    <strong id="assetDetails"></strong> has been registered successfully!
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="addAnotherAsset()">
+                        Add Another Asset
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewAssetList()">
+                        View Assets
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+            <div class="toast-header text-white" style="background-color: #E97676 !important;">
+                <strong class="me-auto">Registration Failed</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div id="errorMessage" class="mb-3">
+                    Please check all required fields and try again.
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="scrollToFirstError()">
+                        Find Errors
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">
+                        Add New Asset Category
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label for="newCategoryName" class="form-label">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="newCategoryName" placeholder="e.g., Software, Medical Equipment" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newCategoryDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="newCategoryDescription" rows="3" placeholder="Brief description of this category"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewCategory()">
+                        Add Category
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Asset Type Modal -->
+    <div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTypeModalLabel">
+                        Add New Asset Type
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTypeForm">
+                        <div class="mb-3">
+                            <label for="typeCategory" class="form-label">Category</label>
+                            <select class="form-select" id="typeCategory" disabled>
+                                <option value="">Will be auto-filled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newTypeName" class="form-label">Asset Type Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="newTypeName" placeholder="e.g., Smartphone, Office Chair" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newTypeDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="newTypeDescription" rows="3" placeholder="Brief description of this asset type"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewType()">
+                        Add Type
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Brand Modal -->
+    <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBrandModalLabel">
+                        Add New Brand
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBrandForm">
+                        <div class="mb-3">
+                            <label for="brandAssetType" class="form-label">Asset Type</label>
+                            <select class="form-select" id="brandAssetType" disabled>
+                                <option value="">Will be auto-filled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newBrandName" class="form-label">Brand Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="newBrandName" placeholder="e.g., Apple, Herman Miller" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newBrandWebsite" class="form-label">Website (Optional)</label>
+                            <input type="url" class="form-control" id="newBrandWebsite" placeholder="https://www.example.com">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewBrand()">
+                        Add Brand
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Model Modal -->
+    <div class="modal fade" id="addModelModal" tabindex="-1" aria-labelledby="addModelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModelModalLabel">
+                        Add New Model
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addModelForm">
+                        <div class="mb-3">
+                            <label for="modelBrand" class="form-label">Brand</label>
+                            <select class="form-select" id="modelBrand" disabled>
+                                <option value="">Will be auto-filled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newModelName" class="form-label">Model Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="newModelName" placeholder="e.g., iPhone 15 Pro, Aeron Chair" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newModelNumber" class="form-label">Model Number (Optional)</label>
+                            <input type="text" class="form-control" id="newModelNumber" placeholder="e.g., A2848, AER-12345">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newModelSpecs" class="form-label">Specifications</label>
+                            <textarea class="form-control" id="newModelSpecs" rows="3" placeholder="Key specifications or features"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewModel()">
+                        Add Model
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../asset/navbar.js"></script>
+    <script src="../script.js"></script>
+    
+    <!-- Clean Bootstrap 5 Styles -->
+    <style>
+        /* Dynamic Card Sizing */
+        .card {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+        
+        .card-body {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+        
+        /* Consistent Fieldset Styling */
+        .form-fieldset {
+            border: 1px solid #B7B7B7 !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+            background: rgba(243, 243, 243, 0.3);
+            position: relative;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        .form-fieldset:hover {
+            border-color: #B7B7B7 !important;
+            background: rgba(243, 243, 243, 0.5);
+            transition: all 0.2s ease;
+        }
+        
+        .form-legend {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            color: #666666 !important;
+            background-color: #FFFFFF !important;
+            padding: 0.375rem 0.75rem !important;
+            border: 1px solid #B7B7B7 !important;
+            border-radius: 0.375rem !important;
+            margin-bottom: 1rem !important;
+            box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+            width: auto !important;
+            float: none !important;
+        }
+        
+        /* Form Container */
+        .needs-validation {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
+            color: #666666;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* WCAG AA Compliant Form Controls */
+        .form-control, .form-select {
+            border: 2px solid #999999; /* Darker border for better visibility */
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            color: #0A0A0A; /* High contrast text */
+        }
+        
+        /* Enhanced placeholder contrast - WCAG AA compliant */
+        .form-control::placeholder {
+            color: #666666 !important; /* Much darker grey for better contrast */
+            opacity: 1;
+        }
+        
+        .form-select option {
+            color: #0A0A0A; /* High contrast for dropdown options */
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #331FEA;
+            box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+            outline: 2px solid transparent; /* Maintain focus visibility */
+        }
+        
+        .form-control:hover, .form-select:hover {
+            border-color: #666666; /* Darker hover state for better visibility */
+        }
+        
+        /* Enhanced dropdown styling with better visibility */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 0.75rem center !important;
+            background-size: 16px 12px !important;
+        }
+
+        .form-select:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* WCAG AA Compliant Disabled Fields */
+        .form-select:disabled {
+            background-color: #F3F3F3;
+            border-color: #999999; /* Better contrast for disabled border */
+            color: #666666; /* Improved contrast for disabled text */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* High Contrast Form Text - WCAG AA Compliant */
+        .form-text {
+            font-size: 0.875rem;
+            color: #666666 !important; /* Much darker for better contrast */
+            margin-top: 0.25rem;
+            font-weight: 500; /* Slightly bolder for better readability */
+        }
+        
+        /* Enhanced Required Field Indicator */
+        .text-danger {
+            color: #E97676 !important;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+         /* WCAG AA Compliant Optional Field Indicator */
+         .text-muted {
+             color: #666666 !important; /* Darker grey for better contrast */
+             font-weight: 600; /* Bolder for better readability */
+             font-size: 0.9em;
+         }
+        
+        /* Action Buttons */
+        .form-actions {
+            padding: 1.5rem;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .card-footer {
+            background: #F3F3F3 !important;
+            border-top: 2px solid #B7B7B7 !important;
+            border-radius: 0 0 1.5rem 1.5rem !important;
+        }
+        
+        .btn {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+
+        .btn-primary {
+            background-color: #331FEA !important;
+            border-color: #331FEA !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+        }
+
+        /* WCAG AA Compliant Cancel Button */
+        .btn-outline-secondary {
+            background-color: #f8f9fa !important;
+            border: 2px solid #6c757d !important;
+            color: #495057 !important; /* High contrast text */
+            font-weight: 600;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #e9ecef !important;
+            border-color: #5a6268 !important;
+            color: #343a40 !important; /* Even higher contrast on hover */
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-secondary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+            border-color: #5a6268 !important;
+        }
+        
+        /* Card Styling */
+        .card {
+            border-radius: 1.5rem !important;
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(10, 10, 10, 0.1) !important;
+        }
+        
+        .stats-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+        
+        /* Validation States */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #21AF65;
+            box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25);
+        }
+
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #E97676;
+            box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25);
+        }
+        
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #E97676;
+            font-weight: 500;
+        }
+        
+        /* WCAG AA Compliant Input Group Styling */
+        .input-group-text {
+            background-color: #F3F3F3;
+            border: 2px solid #999999; /* Darker border for consistency */
+            border-right: none;
+            color: #666666; /* High contrast text */
+            font-weight: 600;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+        }
+        
+        .input-group:focus-within .input-group-text {
+            border-color: #331FEA;
+            background-color: #F3F3F3;
+        }
+        
+        .input-group:hover .input-group-text {
+            border-color: #666666;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem !important;
+            }
+            
+            .form-actions {
+                padding: 1rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 1rem 1rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+                border-radius: 0.375rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.9rem !important;
+                padding: 0.25rem 0.5rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0 !important;
+            }
+        }
+    </style>
+    
+    <script>
+        // Form validation and enhancement
+        (function() {
+            'use strict';
+            
+            // Bootstrap form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    if (form.checkValidity()) {
+                    // Generate specific success message
+                    const assetDetails = generateAssetDetails();
+                    document.getElementById('assetDetails').textContent = assetDetails;
+                    
+                        // Show success toast
+                        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                        toast.show();
+                        
+                        // Reset form after a delay
+                        setTimeout(() => {
+                            form.reset();
+                            form.classList.remove('was-validated');
+                            // Keep Asset ID readonly value
+                            document.getElementById('assetId').value = 'AST-001';
+                            // Reset default values
+                            document.getElementById('condition').value = 'NEW';
+                            document.getElementById('status').value = 'AVAILABLE';
+                        // Reset cascading dropdowns
+                        resetCascadingDropdowns();
+                        }, 2000);
+                } else {
+                    // Show error toast for invalid form
+                    showErrorToast('Please check all required fields and try again.');
+                    }
+                    
+                    // Show validation styling only after form submission attempt
+                    form.classList.add('was-validated');
+                }, false);
+            });
+            
+            // Schema-compliant cascading dropdowns
+            const categorySelect = document.getElementById('assetCategory');
+            const typeSelect = document.getElementById('assetType');
+            const brandSelect = document.getElementById('brand');
+            const modelSelect = document.getElementById('model');
+            
+            // Mock schema data - same as original
+            const schemaData = {
+                categories: {
+                    '1': { name: 'Electronics', types: ['1', '2', '3'] },
+                    '2': { name: 'Furniture', types: ['4', '5'] },
+                    '3': { name: 'Vehicles', types: ['6'] },
+                    '4': { name: 'Equipment', types: ['7', '8'] }
+                },
+                types: {
+                    '1': { name: 'Laptop', category_id: '1', brands: ['1', '2', '3'] },
+                    '2': { name: 'Monitor', category_id: '1', brands: ['1', '2', '4'] },
+                    '3': { name: 'Mobile Device', category_id: '1', brands: ['1', '5'] },
+                    '4': { name: 'Desk', category_id: '2', brands: ['6'] },
+                    '5': { name: 'Chair', category_id: '2', brands: ['7'] },
+                    '6': { name: 'Vehicle', category_id: '3', brands: ['8'] },
+                    '7': { name: 'Printer', category_id: '4', brands: ['2', '3'] },
+                    '8': { name: 'Scanner', category_id: '4', brands: ['2', '9'] }
+                },
+                brands: {
+                    '1': { name: 'Apple', models: ['1', '2', '3'] },
+                    '2': { name: 'Dell', models: ['4', '5'] },
+                    '3': { name: 'HP', models: ['6', '7'] },
+                    '4': { name: 'LG', models: ['8'] },
+                    '5': { name: 'Samsung', models: ['9'] },
+                    '6': { name: 'IKEA', models: ['10'] },
+                    '7': { name: 'Herman Miller', models: ['11'] },
+                    '8': { name: 'Toyota', models: ['12'] },
+                    '9': { name: 'Canon', models: ['13'] }
+                },
+                models: {
+                    '1': { name: 'MacBook Pro 16"', brand_id: '1' },
+                    '2': { name: 'MacBook Air 13"', brand_id: '1' },
+                    '3': { name: 'iPhone 15', brand_id: '1' },
+                    '4': { name: 'XPS 15', brand_id: '2' },
+                    '5': { name: 'Inspiron 14', brand_id: '2' },
+                    '6': { name: 'EliteBook 840', brand_id: '3' },
+                    '7': { name: 'Pavilion 15', brand_id: '3' },
+                    '8': { name: 'UltraWide 34"', brand_id: '4' },
+                    '9': { name: 'Galaxy S24', brand_id: '5' },
+                    '10': { name: 'BEKANT Desk', brand_id: '6' },
+                    '11': { name: 'Aeron Chair', brand_id: '7' },
+                    '12': { name: 'Prius', brand_id: '8' },
+                    '13': { name: 'PIXMA Pro', brand_id: '9' }
+                }
+            };
+            
+            // Category change handler
+            categorySelect.addEventListener('change', function() {
+                const categoryId = this.value;
+                
+                if (categoryId === 'add_new') {
+                    const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+                    modal.show();
+                    this.value = '';
+                    return;
+                }
+                
+                typeSelect.disabled = !categoryId;
+                brandSelect.disabled = true;
+                modelSelect.disabled = true;
+                
+                typeSelect.innerHTML = '<option value="" selected>Select category first...</option>';
+                brandSelect.innerHTML = '<option value="" selected>Select asset type first...</option>';
+                modelSelect.innerHTML = '<option value="" selected>Select brand first...</option>';
+                
+                if (categoryId && schemaData.categories[categoryId]) {
+                    typeSelect.innerHTML = '<option value="" selected>Choose Asset Type...</option>';
+                    schemaData.categories[categoryId].types.forEach(typeId => {
+                        if (schemaData.types[typeId]) {
+                            const option = document.createElement('option');
+                            option.value = typeId;
+                            option.textContent = schemaData.types[typeId].name;
+                            typeSelect.appendChild(option);
+                        }
+                    });
+                    
+                    const addNewOption = document.createElement('option');
+                    addNewOption.value = 'add_new';
+                    addNewOption.innerHTML = '➕ Other (Add New Type)';
+                    addNewOption.style.color = '#331FEA';
+                    addNewOption.style.fontWeight = '600';
+                    typeSelect.appendChild(addNewOption);
+                }
+            });
+            
+            // Type change handler
+            typeSelect.addEventListener('change', function() {
+                const typeId = this.value;
+                
+                if (typeId === 'add_new') {
+                    const selectedCategory = document.getElementById('assetCategory').value;
+                    document.getElementById('typeCategory').value = selectedCategory;
+                    document.getElementById('typeCategory').innerHTML = `<option value="${selectedCategory}">${schemaData.categories[selectedCategory].name}</option>`;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('addTypeModal'));
+                    modal.show();
+                    this.value = '';
+                    return;
+                }
+                
+                brandSelect.disabled = !typeId;
+                modelSelect.disabled = true;
+                
+                brandSelect.innerHTML = '<option value="" selected>Select asset type first...</option>';
+                modelSelect.innerHTML = '<option value="" selected>Select brand first...</option>';
+                
+                if (typeId && schemaData.types[typeId]) {
+                    brandSelect.innerHTML = '<option value="" selected>Choose Brand...</option>';
+                    schemaData.types[typeId].brands.forEach(brandId => {
+                        if (schemaData.brands[brandId]) {
+                            const option = document.createElement('option');
+                            option.value = brandId;
+                            option.textContent = schemaData.brands[brandId].name;
+                            brandSelect.appendChild(option);
+                        }
+                    });
+                    
+                    const addNewOption = document.createElement('option');
+                    addNewOption.value = 'add_new';
+                    addNewOption.innerHTML = '➕ Other (Add New Brand)';
+                    addNewOption.style.color = '#331FEA';
+                    addNewOption.style.fontWeight = '600';
+                    brandSelect.appendChild(addNewOption);
+                }
+            });
+            
+            // Brand change handler
+            brandSelect.addEventListener('change', function() {
+                const brandId = this.value;
+                
+                if (brandId === 'add_new') {
+                    const selectedType = document.getElementById('assetType').value;
+                    document.getElementById('brandAssetType').value = selectedType;
+                    document.getElementById('brandAssetType').innerHTML = `<option value="${selectedType}">${schemaData.types[selectedType].name}</option>`;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('addBrandModal'));
+                    modal.show();
+                    this.value = '';
+                    return;
+                }
+                
+                modelSelect.disabled = !brandId;
+                modelSelect.innerHTML = '<option value="" selected>Select brand first...</option>';
+                
+                if (brandId && schemaData.brands[brandId]) {
+                    modelSelect.innerHTML = '<option value="" selected>Choose Model...</option>';
+                    schemaData.brands[brandId].models.forEach(modelId => {
+                        if (schemaData.models[modelId]) {
+                            const option = document.createElement('option');
+                            option.value = modelId;
+                            option.textContent = schemaData.models[modelId].name;
+                            modelSelect.appendChild(option);
+                        }
+                    });
+                    
+                    const addNewOption = document.createElement('option');
+                    addNewOption.value = 'add_new';
+                    addNewOption.innerHTML = '➕ Other (Add New Model)';
+                    addNewOption.style.color = '#331FEA';
+                    addNewOption.style.fontWeight = '600';
+                    modelSelect.appendChild(addNewOption);
+                }
+            });
+            
+            // Model change handler
+            modelSelect.addEventListener('change', function() {
+                const modelId = this.value;
+                
+                if (modelId === 'add_new') {
+                    const selectedBrand = document.getElementById('brand').value;
+                    document.getElementById('modelBrand').value = selectedBrand;
+                    document.getElementById('modelBrand').innerHTML = `<option value="${selectedBrand}">${schemaData.brands[selectedBrand].name}</option>`;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('addModelModal'));
+                    modal.show();
+                    this.value = '';
+                    return;
+                }
+            });
+            
+            // Enhanced Validation System
+            initializeFormValidation();
+            
+            function initializeFormValidation() {
+                setupDateValidation();
+                setupRealTimeValidation();
+                setupCustomValidationRules();
+            }
+            
+            function setupDateValidation() {
+                const purchaseDate = document.getElementById('purchaseDate');
+                const warrantyStartDate = document.getElementById('warrantyStartDate');
+                const warrantyEndDate = document.getElementById('warrantyEndDate');
+                
+                const today = new Date().toISOString().split('T')[0];
+                purchaseDate.setAttribute('max', today);
+                
+                purchaseDate.addEventListener('change', () => validatePurchaseDate(purchaseDate));
+                purchaseDate.addEventListener('blur', () => validatePurchaseDate(purchaseDate));
+                
+                warrantyStartDate.addEventListener('change', validateWarrantyDates);
+                warrantyEndDate.addEventListener('change', validateWarrantyDates);
+                warrantyStartDate.addEventListener('blur', validateWarrantyDates);
+                warrantyEndDate.addEventListener('blur', validateWarrantyDates);
+            }
+            
+            function validatePurchaseDate(input) {
+                const today = new Date().toISOString().split('T')[0];
+                if (input.value && input.value > today) {
+                    setFieldError(input, 'Purchase date cannot be in the future');
+                    return false;
+                } else {
+                    setFieldValid(input);
+                    return true;
+                }
+            }
+            
+            function validateWarrantyDates() {
+                const startDate = document.getElementById('warrantyStartDate');
+                const endDate = document.getElementById('warrantyEndDate');
+                
+                if (startDate.value && endDate.value && endDate.value < startDate.value) {
+                    setFieldError(endDate, 'Warranty end date must be after start date');
+                    return false;
+                } else {
+                    setFieldValid(endDate);
+                    setFieldValid(startDate);
+                    return true;
+                }
+            }
+            
+            function setupRealTimeValidation() {
+                // CSS handles preventing automatic validation styling
+                // Just ensure clean page load
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.remove('is-valid', 'is-invalid');
+                    input.setCustomValidity('');
+                });
+                
+                // Add inline validation for required fields
+                const requiredFields = document.querySelectorAll('[required]');
+                requiredFields.forEach(field => {
+                    // Add validation on blur for better UX
+                    field.addEventListener('blur', function() {
+                        validateFieldInline(this);
+                    });
+                    
+                    // Clear validation on focus to reduce anxiety
+                    field.addEventListener('focus', function() {
+                        if (this.classList.contains('is-invalid')) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    // Validate on input for immediate feedback
+                    field.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid') && this.value.trim()) {
+                            validateFieldInline(this);
+                        }
+                    });
+                });
+            }
+            
+            function validateFieldInline(field) {
+                if (field.disabled) return;
+                
+                // Check if required field is empty
+                if (field.hasAttribute('required') && (!field.value || field.value.trim() === '')) {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+                
+                // Check specific field validation
+                if (field.checkValidity()) {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                    return true;
+                } else {
+                    field.classList.add('is-invalid');
+                    field.classList.remove('is-valid');
+                    return false;
+                }
+            }
+            
+            function setupCustomValidationRules() {
+                // Simplified for prototype - only basic HTML5 validation
+                const serialNumber = document.getElementById('serialNumber');
+                const purchaseCost = document.getElementById('purchaseCost');
+                const location = document.getElementById('location');
+                
+                // Add basic HTML5 validation patterns
+                if (serialNumber) {
+                    serialNumber.pattern = '[A-Za-z0-9\\-_]{3,50}';
+                    serialNumber.title = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)';
+                }
+                
+                if (purchaseCost) {
+                    purchaseCost.max = '1000000';
+                    purchaseCost.title = 'Purchase cost cannot exceed ₹10,00,000';
+                }
+                
+                if (location) {
+                    location.minLength = '2';
+                    location.maxLength = '100';
+                    location.title = 'Location must be 2-100 characters';
+                }
+            }
+            
+            // CSS handles validation styling consistency
+        })();
+
+        // Enhanced notification and utility functions
+        function generateAssetDetails() {
+            const category = document.getElementById('assetCategory');
+            const type = document.getElementById('assetType');
+            const brand = document.getElementById('brand');
+            const model = document.getElementById('model');
+            const serialNumber = document.getElementById('serialNumber').value;
+            
+            let assetDescription = '';
+            
+            // Build description from selected options
+            if (type.selectedOptions.length > 0 && type.value) {
+                assetDescription += type.selectedOptions[0].text;
+            } else if (category.selectedOptions.length > 0 && category.value) {
+                assetDescription += category.selectedOptions[0].text;
+            } else {
+                assetDescription += 'Asset';
+            }
+            
+            if (brand.selectedOptions.length > 0 && brand.value) {
+                assetDescription += ' (' + brand.selectedOptions[0].text;
+                if (model.selectedOptions.length > 0 && model.value) {
+                    assetDescription += ' ' + model.selectedOptions[0].text;
+                }
+                assetDescription += ')';
+            }
+            
+            if (serialNumber) {
+                assetDescription += ' - SN: ' + serialNumber;
+            }
+            
+            return assetDescription;
+        }
+        
+        function showErrorToast(message) {
+            document.getElementById('errorMessage').textContent = message;
+            const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+            toast.show();
+        }
+        
+        function addAnotherAsset() {
+            // Dismiss the success toast
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            // Reset the form for another entry
+            const form = document.querySelector('.needs-validation');
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Reset values and dropdowns
+            document.getElementById('assetId').value = 'AST-001';
+            document.getElementById('condition').value = 'NEW';
+            document.getElementById('status').value = 'AVAILABLE';
+            resetCascadingDropdowns();
+            
+            // Focus on first field
+            document.getElementById('serialNumber').focus();
+            
+            // Show brief confirmation
+            showToast('Ready to add another asset!', 'info');
+        }
+        
+        function viewAssetList() {
+            // Dismiss the success toast
+            const successToast = bootstrap.Toast.getInstance(document.getElementById('successToast'));
+            if (successToast) successToast.hide();
+            
+            // In a real app, this would navigate to the assets list
+            // For prototype, show a message
+            showToast('Redirecting to Assets & Inventory...', 'info');
+            
+            // Simulate navigation after delay
+            setTimeout(() => {
+                // window.location.href = '../pages/assets.html';
+                alert('In a real application, this would navigate to the Assets & Inventory page.');
+            }, 1500);
+        }
+        
+        function scrollToFirstError() {
+            // Dismiss error toast
+            const errorToast = bootstrap.Toast.getInstance(document.getElementById('errorToast'));
+            if (errorToast) errorToast.hide();
+            
+            // Find first invalid field
+            const firstInvalid = document.querySelector('.is-invalid, :invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Focus and highlight the field
+                setTimeout(() => {
+                    firstInvalid.focus();
+                    firstInvalid.style.boxShadow = '0 0 0 0.2rem rgba(233, 118, 118, 0.5)';
+                    setTimeout(() => {
+                        firstInvalid.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            }
+        }
+
+        // Simplified validation for prototype
+        function validateFormBeforeSubmit() {
+            const form = document.querySelector('.needs-validation');
+            
+            // Simple cascading dropdown validation
+            const category = document.getElementById('assetCategory').value;
+            const type = document.getElementById('assetType').value;
+            const brand = document.getElementById('brand').value;
+            const model = document.getElementById('model').value;
+            
+            // Check cascading dependencies only
+            if (category && !type) {
+                document.getElementById('assetType').setCustomValidity('Please select an asset type');
+                return false;
+            }
+            
+            if (type && !brand) {
+                document.getElementById('brand').setCustomValidity('Please select a brand');
+                return false;
+            }
+            
+            if (brand && !model) {
+                document.getElementById('model').setCustomValidity('Please select a model');
+                return false;
+            }
+            
+            // Clear custom validities if all dependencies are met
+            document.getElementById('assetType').setCustomValidity('');
+            document.getElementById('brand').setCustomValidity('');
+            document.getElementById('model').setCustomValidity('');
+            
+            return true;
+        }
+        
+        function resetCascadingDropdowns() {
+            const typeSelect = document.getElementById('assetType');
+            const brandSelect = document.getElementById('brand');
+            const modelSelect = document.getElementById('model');
+            
+            typeSelect.disabled = true;
+            brandSelect.disabled = true;
+            modelSelect.disabled = true;
+            
+            typeSelect.innerHTML = '<option value="" selected>Select category first...</option>';
+            brandSelect.innerHTML = '<option value="" selected>Select asset type first...</option>';
+            modelSelect.innerHTML = '<option value="" selected>Select brand first...</option>';
+        }
+
+        // Add New Category Function
+        function addNewCategory() {
+            const categoryName = document.getElementById('newCategoryName').value.trim();
+            
+            if (!categoryName) {
+                alert('Please enter a category name');
+                return;
+            }
+            
+            // Generate new ID and add to dropdown
+            const newId = (Object.keys(schemaData.categories).length + 1).toString();
+            schemaData.categories[newId] = { name: categoryName, types: [] };
+            
+            const categorySelect = document.getElementById('assetCategory');
+            const newOption = document.createElement('option');
+            newOption.value = newId;
+            newOption.textContent = categoryName;
+            
+            const lastOption = categorySelect.lastElementChild;
+            categorySelect.insertBefore(newOption, lastOption);
+            categorySelect.value = newId;
+            categorySelect.dispatchEvent(new Event('change'));
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+            modal.hide();
+            document.getElementById('addCategoryForm').reset();
+            
+            showToast('Category added successfully!', 'success');
+        }
+
+        // Add New Asset Type Function
+        function addNewType() {
+            const typeName = document.getElementById('newTypeName').value.trim();
+            const selectedCategory = document.getElementById('assetCategory').value;
+            
+            if (!typeName || !selectedCategory) {
+                alert('Please enter an asset type name and select a category');
+                return;
+            }
+            
+            const newId = (Object.keys(schemaData.types).length + 1).toString();
+            schemaData.types[newId] = { name: typeName, category_id: selectedCategory, brands: [] };
+            schemaData.categories[selectedCategory].types.push(newId);
+            
+            const categorySelect = document.getElementById('assetCategory');
+            categorySelect.dispatchEvent(new Event('change'));
+            
+            document.getElementById('assetType').value = newId;
+            document.getElementById('assetType').dispatchEvent(new Event('change'));
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTypeModal'));
+            modal.hide();
+            document.getElementById('addTypeForm').reset();
+            
+            showToast('Asset type added successfully!', 'success');
+        }
+
+        // Add New Brand Function
+        function addNewBrand() {
+            const brandName = document.getElementById('newBrandName').value.trim();
+            const selectedType = document.getElementById('assetType').value;
+            
+            if (!brandName || !selectedType) {
+                alert('Please enter a brand name and select an asset type');
+                return;
+            }
+            
+            const newId = (Object.keys(schemaData.brands).length + 1).toString();
+            schemaData.brands[newId] = { name: brandName, models: [] };
+            
+            if (!schemaData.types[selectedType].brands) {
+                schemaData.types[selectedType].brands = [];
+            }
+            schemaData.types[selectedType].brands.push(newId);
+            
+            const typeSelect = document.getElementById('assetType');
+            typeSelect.dispatchEvent(new Event('change'));
+            
+            document.getElementById('brand').value = newId;
+            document.getElementById('brand').dispatchEvent(new Event('change'));
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addBrandModal'));
+            modal.hide();
+            document.getElementById('addBrandForm').reset();
+            
+            showToast('Brand added successfully!', 'success');
+        }
+
+        // Add New Model Function
+        function addNewModel() {
+            const modelName = document.getElementById('newModelName').value.trim();
+            const selectedBrand = document.getElementById('brand').value;
+            
+            if (!modelName || !selectedBrand) {
+                alert('Please enter a model name and select a brand');
+                return;
+            }
+            
+            const newId = (Object.keys(schemaData.models).length + 1).toString();
+            schemaData.models[newId] = { name: modelName, brand_id: selectedBrand };
+            
+            if (!schemaData.brands[selectedBrand].models) {
+                schemaData.brands[selectedBrand].models = [];
+            }
+            schemaData.brands[selectedBrand].models.push(newId);
+            
+            const brandSelect = document.getElementById('brand');
+            brandSelect.dispatchEvent(new Event('change'));
+            
+            document.getElementById('model').value = newId;
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addModelModal'));
+            modal.hide();
+            document.getElementById('addModelForm').reset();
+            
+            showToast('Model added successfully!', 'success');
+        }
+
+        // Enhanced helper function to show toast messages
+        function showToast(message, type = 'success') {
+            let bgStyle = '';
+            let headerText = '';
+            let iconClass = '';
+            let textColor = 'text-white'; // Default text color for toast headers
+
+            const config = {
+                duration: '6000',
+                ariaLive: 'polite',
+                bgStyle: '',
+                headerText: 'Notification',
+                iconClass: ''
+            };
+
+            switch (type) {
+                case 'success':
+                    config.bgStyle = 'background-color: #21AF65 !important;'; // Green
+                    config.headerText = 'Success';
+                    config.iconClass = 'fa-check-circle';
+                    break;
+                case 'error':
+                case 'danger':
+                    config.bgStyle = 'background-color: #E97676 !important;'; // Red
+                    config.headerText = 'Error';
+                    config.iconClass = 'fa-times-circle';
+                    config.duration = '10000';
+                    config.ariaLive = 'assertive';
+                    break;
+                case 'warning':
+                    config.bgStyle = 'background-color: #FFC000 !important;'; // Yellow
+                    config.headerText = 'Warning';
+                    config.iconClass = 'fa-exclamation-triangle';
+                    textColor = 'text-dark'; // Black text for yellow background
+                    break;
+                case 'info':
+                    config.bgStyle = 'background-color: #331FEA !important;'; // Purple
+                    config.headerText = 'Info';
+                    config.iconClass = 'fa-info-circle';
+                    break;
+                default:
+                    config.bgStyle = 'background-color: #331FEA !important;'; // Default to purple
+                    config.headerText = 'Notification';
+                    config.iconClass = 'fa-bell';
+            }
+            
+            // Create toast element with consistent design
+            const toastHtml = `
+                <div class="toast" role="alert" aria-live="${config.ariaLive}" aria-atomic="true" data-bs-delay="${config.duration}">
+                    <div class="toast-header ${textColor}" style="${config.bgStyle}">
+                        <i class="fas ${config.iconClass} me-2"></i>
+                        <strong class="me-auto">${config.headerText}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                        <div class="toast-body">
+                            ${message}
+                    </div>
+                </div>
+            `;
+            
+            // Add to toast container (create if doesn't exist)
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 start-50 translate-middle-x p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            // Initialize and show toast
+            const toastElement = toastContainer.lastElementChild;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            // Remove toast element after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        // Expandable notes functionality with character counter
+        function expandNotesField(textarea) {
+            if (!textarea.classList.contains('expanded')) {
+                textarea.classList.add('expanded');
+                textarea.style.height = '120px';
+                textarea.rows = 6;
+                textarea.placeholder = 'Enter detailed notes about the asset...';
+                textarea.focus();
+                
+                // Update the helper text
+                const helpText = textarea.nextElementSibling;
+                helpText.innerHTML = '<i class="fas fa-check text-success me-1"></i>Expanded! Enter detailed information about this asset.';
+            }
+            
+            // Initialize character counter
+            updateCharacterCount(textarea);
+        }
+        
+        // Character counter functionality
+        function updateCharacterCount(textarea) {
+            const counter = document.getElementById('notesCounter');
+            const maxLength = textarea.getAttribute('maxlength') || 1000;
+            const currentLength = textarea.value.length;
+            
+            if (counter) {
+                const remaining = maxLength - currentLength;
+                const percentage = (currentLength / maxLength) * 100;
+                
+                counter.innerHTML = `<small class="text-${percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : 'muted'}">${currentLength}/${maxLength} characters</small>`;
+                
+                if (percentage > 90) {
+                    counter.classList.add('text-danger');
+                    counter.classList.remove('text-warning', 'text-muted');
+                } else if (percentage > 75) {
+                    counter.classList.add('text-warning');
+                    counter.classList.remove('text-danger', 'text-muted');
+                } else {
+                    counter.classList.add('text-muted');
+                    counter.classList.remove('text-danger', 'text-warning');
+                }
+            }
+        }
+        
+        // Initialize character counter on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const notesField = document.getElementById('notes');
+            if (notesField) {
+                notesField.addEventListener('input', function() {
+                    updateCharacterCount(this);
+                });
+                // Initialize counter
+                updateCharacterCount(notesField);
+            }
+        });
+
+        // Enhanced date validation with format hints
+        function initializeDateValidation() {
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            
+            dateInputs.forEach(input => {
+                // Add better visual feedback for date inputs
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = '#331FEA';
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.style.borderColor = '#B7B7B7';
+                    }
+                });
+                
+                // Show date format hint on hover
+                input.title = 'Click to open date picker (DD/MM/YYYY format)';
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDateValidation();
+            
+            // Ensure submit button works properly
+            const submitButton = document.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('assetForm');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                });
+            }
+        });
+    </script>
+    
+    <!-- Enhanced Styles for UX Improvements -->
+    <style>
+        /* Expandable Notes Styling */
+        .expandable-notes {
+            transition: height 0.3s ease, border-color 0.2s ease;
+            cursor: pointer;
+            resize: none;
+        }
+        
+        .expandable-notes:hover {
+            border-color: #999999;
+        }
+        
+        .expandable-notes.expanded {
+            cursor: text;
+            resize: vertical;
+        }
+        
+        .expandable-notes:focus {
+            cursor: text;
+        }
+        
+        /* Enhanced Date Input Styling */
+        input[type="date"] {
+            position: relative;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0.6;
+            cursor: pointer;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+        
+        /* Enhanced Required Field Styling */
+        .form-label .text-danger {
+            font-size: 1.1em;
+            margin-left: 2px;
+        }
+        
+        /* Improved Disabled Field Feedback */
+        .form-select:disabled + .form-text {
+            color: #666666; /* Better contrast for disabled field text */
+            font-style: italic;
+            font-weight: 500;
+        }
+        
+        
+        
+        /* Character Counter Styling */
+        .character-count {
+            margin-top: 0.25rem;
+            transition: color 0.3s ease;
+        }
+        
+        .character-count .text-warning {
+            color: #FFC000 !important;
+        }
+        
+        .character-count .text-danger {
+            color: #E97676 !important;
+            font-weight: 600;
+        }
+        
+        /* Disable automatic validation styling - only show on form submission */
+        
+        /* Prevent any automatic validation colors until form is submitted */
+        .form-control:valid,
+        .form-select:valid {
+            border-color: #999999 !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        .form-control:invalid,
+        .form-select:invalid {
+            border-color: #999999 !important;
+            box-shadow: none !important;
+            background-image: none !important;
+        }
+        
+        /* Only show validation styling when form has been submitted */
+        .was-validated .form-control:valid,
+        .was-validated .form-select:valid {
+            border-color: #21AF65 !important;
+            box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+        }
+        
+        .was-validated .form-control:invalid,
+        .was-validated .form-select:invalid {
+            border-color: #E97676 !important;
+            box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+            animation: subtle-shake 0.3s ease-in-out;
+        }
+        
+         @keyframes subtle-shake {
+             0%, 100% { transform: translateX(0); }
+             25% { transform: translateX(-2px); }
+             75% { transform: translateX(2px); }
+         }
+         
+         /* WCAG AA Compliant Toast Styling */
+         .toast-header.bg-success {
+             background: #21AF65 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
+         }
+         
+         .toast-header.bg-danger {
+             background: #E97676 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
+         }
+         
+         .toast-header.bg-info {
+             background: #331FEA !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
+         }
+         
+         .toast-header.bg-warning {
+             background: #FF8C61 !important; /* Solid color for better contrast */
+             color: #FFFFFF !important;
+         }
+         
+         .toast {
+             border-radius: 0.75rem !important;
+             box-shadow: 0 8px 32px rgba(10, 10, 10, 0.15) !important;
+             border: 2px solid #B7B7B7 !important; /* Visible border for better definition */
+             min-width: 350px;
+             max-width: 500px;
+         }
+         
+         .toast-body {
+             padding: 1rem 1.25rem;
+             background-color: #FFFFFF;
+             color: #0A0A0A; /* High contrast text */
+             font-weight: 500;
+         }
+         
+         .toast .btn-sm {
+             padding: 0.375rem 0.75rem;
+             font-size: 0.875rem;
+             border-radius: 0.375rem;
+            font-weight: 600;
+             margin: 0 0.25rem;
+         }
+         
+         /* Enhanced toast button styling */
+         .toast .btn-primary {
+             background-color: #331FEA;
+             border-color: #331FEA;
+             color: #FFFFFF;
+         }
+         
+         .toast .btn-outline-primary {
+             background-color: #FFFFFF;
+             border: 2px solid #331FEA;
+             color: #331FEA;
+         }
+         
+         .toast .btn-danger {
+             background-color: #E97676;
+             border-color: #E97676;
+             color: #FFFFFF;
+         }
+        
+        /* Enhanced Button Accessibility */
+        .btn:focus-visible {
+            outline: 2px solid #331FEA;
+            outline-offset: 2px;
+        }
+        
+        /* Responsive Enhancements */
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+            
+            .form-actions {
+                padding: 0.75rem;
+            }
+            
+            .card-footer {
+                border-radius: 0 0 0.75rem 0.75rem !important;
+            }
+            
+            .form-fieldset {
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+                border-radius: 0.25rem !important;
+            }
+            
+            .form-legend {
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .expandable-notes.expanded {
+                height: 100px !important;
+            }
+        }
+    </style>
+</body>
+</html> 

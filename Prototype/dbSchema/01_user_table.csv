@@ -1,0 +1,15 @@
+1.user,,,,
+Purpose:Stores user information including credentials and authentication details with audit tracking,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for the user
+employee_id,FK,INT,1-1,Reference to employee record (Foreign Key referencing employee.id)
+username,NOT NULL UNIQUE,VARCHAR(50),,Unique username for login
+email,NOT NULL UNIQUE,VARCHAR(255),,Email address of the user
+password_hash,NOT NULL,VARCHAR(255),,Hashed password for authentication
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,User account status
+last_login,NULL,TIMESTAMPTZ,,Last login timestamp
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated 

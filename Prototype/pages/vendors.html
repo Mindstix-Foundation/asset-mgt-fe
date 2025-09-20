@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Vendor Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    
+    <!-- Include navbar CSS -->
+    <link rel="stylesheet" href="../asset/navbar.css">
+    <!-- Include toast CSS -->
+    <link rel="stylesheet" href="../asset/toast.css">
+</head>
+<body style="background-color: var(--primary-white);">
+
+    <!-- Main Content -->
+    <div class="container-fluid px-3 py-4">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-0" style="color: var(--primary-black);">Vendor Management</h2>
+                <p class="text-muted mb-0">Manage suppliers and service providers</p>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <!-- View Toggle (List/Grid) -->
+                <div class="btn-group" role="group" aria-label="View toggle">
+                    <button class="btn btn-outline-secondary btn-modern view-toggle active" data-view="list" id="listToggle">
+                        <i class="fas fa-list"></i>
+                </button>
+                    <button class="btn btn-outline-secondary btn-modern view-toggle" data-view="grid" id="gridToggle">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <button class="btn btn-outline-secondary btn-modern" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
+                    <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                </button>
+                <a href="../form_pages/add-vendor.html" class="btn btn-primary btn-modern">
+                    <i class="fas fa-plus me-1"></i>Add Vendor
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4 filter-card">
+            <div class="card-header">
+                <div>
+                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Vendors</h6>
+                <small class="text-muted">Search and filter vendors by various criteria</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- All Filters -->
+                <div class="row">
+                    <div class="col-12 col-md-5 mb-3">
+                        <label class="form-label">Search Vendors</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name, contact, email...">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2 mb-3">
+                            <label class="form-label">Vendor Type</label>
+                            <select class="form-select" id="filterType">
+                                <option value="">All Types</option>
+                                <option value="supplier">Supplier</option>
+                                <option value="service">Service Provider</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                    <div class="col-12 col-md-2 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    <div class="col-12 col-md-2 mb-3">
+                        <label class="form-label">Sort By</label>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="sortBy">
+                                <option value="name">Name</option>
+                                <option value="type">Type</option>
+                                <option value="status">Status</option>
+                            </select>
+                            <button class="btn btn-outline-secondary" id="sortOrder" title="Toggle Sort Order">
+                                <i class="fas fa-sort-amount-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters" title="Clear Filters">
+                                <i class="fas fa-times"></i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendors Content -->
+        <div id="vendorsContainer">
+            <!-- List View (Default) -->
+            <div class="card" id="listView">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="vendorsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Vendor Name</th>
+                                    <th>Contact Person</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-name="Apple Store" data-type="supplier" data-status="active" data-search="Apple Store John Smith procurement@apple.com +91 8045678901">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Apple Store</div>
+                                                <small class="text-muted">Premium Electronics</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>John Smith</td>
+                                    <td>procurement@apple.com</td>
+                                    <td>+91 8045678901</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr data-name="TechFix Solutions" data-type="service" data-status="active" data-search="TechFix Solutions Rajesh Kumar support@techfix.in +91 9876543210">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tools fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">TechFix Solutions</div>
+                                                <small class="text-muted">IT Maintenance & Support</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Rajesh Kumar</td>
+                                    <td>support@techfix.in</td>
+                                    <td>+91 9876543210</td>
+                                    <td><span class="badge badge-service-provider">Service Provider</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr data-name="Dell Direct" data-type="supplier" data-status="active" data-search="Dell Direct Michael Johnson sales@dell.com +91 8023456789">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Dell Direct</div>
+                                                <small class="text-muted">Computer Hardware</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Michael Johnson</td>
+                                    <td>sales@dell.com</td>
+                                    <td>+91 8023456789</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr data-name="Amazon Business" data-type="both" data-status="active" data-search="Amazon Business Sarah Wilson business@amazon.com +91 8012345678">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-shopping-cart fa-2x text-success me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Amazon Business</div>
+                                                <small class="text-muted">E-commerce Platform</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Sarah Wilson</td>
+                                    <td>business@amazon.com</td>
+                                    <td>+91 8012345678</td>
+                                    <td><span class="badge badge-both">Both</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr data-name="Office Solutions Inc" data-type="supplier" data-status="inactive" data-search="Office Solutions Inc David Lee contact@officesolutions.com +91 8098765432">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-secondary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Office Solutions Inc</div>
+                                                <small class="text-muted">Office Supplies</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>David Lee</td>
+                                    <td>contact@officesolutions.com</td>
+                                    <td>+91 8098765432</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-inactive">Inactive</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="HP Enterprise" data-type="supplier" data-status="active" data-search="HP Enterprise Mark Thompson enterprise@hp.com +91 8034567890">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">HP Enterprise</div>
+                                                <small class="text-muted">Hardware & Software</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Mark Thompson</td>
+                                    <td>enterprise@hp.com</td>
+                                    <td>+91 8034567890</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Lenovo Business" data-type="supplier" data-status="active" data-search="Lenovo Business Jennifer Chen business@lenovo.com +91 8045678901">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-success me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Lenovo Business</div>
+                                                <small class="text-muted">Laptops & Desktops</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Jennifer Chen</td>
+                                    <td>business@lenovo.com</td>
+                                    <td>+91 8045678901</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Microsoft Partners" data-type="both" data-status="active" data-search="Microsoft Partners Robert Kim partners@microsoft.com +91 8056789012">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-info me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Microsoft Partners</div>
+                                                <small class="text-muted">Software & Services</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Robert Kim</td>
+                                    <td>partners@microsoft.com</td>
+                                    <td>+91 8056789012</td>
+                                    <td><span class="badge badge-both">Both</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Canon Service Center" data-type="service" data-status="active" data-search="Canon Service Center Lisa Park service@canon.in +91 8067890123">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tools fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Canon Service Center</div>
+                                                <small class="text-muted">Printer Maintenance</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Lisa Park</td>
+                                    <td>service@canon.in</td>
+                                    <td>+91 8067890123</td>
+                                    <td><span class="badge badge-service">Service</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-name="Samsung Enterprise" data-type="supplier" data-status="active" data-search="Samsung Enterprise Kevin Wong enterprise@samsung.com +91 8078901234">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store fa-2x text-danger me-3"></i>
+                                            <div>
+                                                <div class="fw-bold">Samsung Enterprise</div>
+                                                <small class="text-muted">Mobile & Displays</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Kevin Wong</td>
+                                    <td>enterprise@samsung.com</td>
+                                    <td>+91 8078901234</td>
+                                    <td><span class="badge badge-supplier">Supplier</span></td>
+                                    <td><span class="badge badge-active">Active</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm vendor-actions">
+                                            <button class="btn btn-action btn-view" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination for List View -->
+            <div class="d-flex justify-content-between align-items-center mt-4" id="listViewPagination">
+                <div class="text-muted">
+                    <small>Showing <span>1</span>-<span>10</span> of <span>30</span> vendors</small>
+                </div>
+                <nav aria-label="Vendor pagination">
+                    <ul class="pagination pagination-modern mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active">
+                            <a class="page-link" href="#">1</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Grid View (Hidden by default) -->
+            <div class="d-none" id="gridView">
+                <div class="row" id="gridContainer">
+                <!-- Vendor Cards will be generated here -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        <small>Showing <span id="showingStart">1</span>-<span id="showingEnd">10</span> of <span id="totalVendors">30</span> vendors</small>
+                    </div>
+                    <nav aria-label="Vendor pagination">
+                        <ul class="pagination pagination-modern mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Vendor Detail Modal -->
+    <div class="modal fade" id="vendorDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;" id="modalTitle">Vendor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Compact Vendor Information -->
+                    <div class="row g-3">
+                        <!-- Left Column: Basic Info -->
+                        <div class="col-md-6">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor ID</label>
+                                        <div class="info-value fw-bold" id="modalVendorId">VEN-001</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor Name</label>
+                                        <div class="info-value fw-bold" id="modalVendorName">Apple Store</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Vendor Type</label>
+                                        <div class="info-value" id="modalVendorType"><span class="badge badge-supplier">Supplier</span></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Contact Person</label>
+                                        <div class="info-value" id="modalContactPerson">John Smith</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Status</label>
+                                        <div class="info-value" id="modalVendorStatus"><span class="badge badge-active">Active</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Contact & Legal -->
+                        <div class="col-md-6">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-address-book me-2"></i>Contact & Legal Details</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label class="info-label">Email Address</label>
+                                        <div class="info-value" id="modalEmail">procurement@apple.com</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Phone Number</label>
+                                        <div class="info-value" id="modalPhone">+91 8045678901</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Address</label>
+                                        <div class="info-value" id="modalAddress">1 Apple Park Way, Cupertino, CA 95014</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">Tax ID</label>
+                                        <div class="info-value font-monospace" id="modalTaxId">94-2404110</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <label class="info-label">PAN Number</label>
+                                        <div class="info-value font-monospace" id="modalPanNumber">AAAPL1234C</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes Section -->
+                    <div class="row g-3 mt-2">
+                        <div class="col-12">
+                            <div class="vendor-info-section">
+                                <h6 class="section-title"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-value" id="modalNotes">Premium electronics supplier with excellent service record. Preferred vendor for Apple products and accessories. Maintains consistent quality and delivery standards.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-info" onclick="window.location.href='assets.html'">
+                        <i class="fas fa-boxes me-1"></i>Show Assets
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="window.location.href='../form_pages/register-asset.html'">
+                        <i class="fas fa-plus me-1"></i>Register New Asset
+                    </button>
+                    <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary-blue" onclick="window.location.href='../form_pages/add-vendor.html'">
+                        <i class="fas fa-edit me-1"></i>Edit Vendor
+                    </button>
+                        <button type="button" class="btn btn-status-toggle" id="statusToggleBtn">
+                            <i class="fas fa-power-off me-1"></i><span id="statusToggleText">Deactivate</span>
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div class="modal fade" id="bulkUploadModal" tabindex="-1" aria-labelledby="bulkUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bulk-upload-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkUploadModalLabel" style="color: var(--primary-black);">
+                        <i class="fas fa-file-excel me-2" style="color: var(--secondary-purple);"></i>Bulk Upload Vendors
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Step 1: Instructions and Template -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0" style="color: var(--primary-black);">
+                                <i class="fas fa-download me-2" style="color: var(--secondary-purple);"></i>Step 1: Download Template
+                            </h6>
+                            <button class="btn btn-template-download" id="downloadVendorTemplate" data-bs-toggle="tooltip" title="Download the Excel template with correct column format">
+                                <i class="fas fa-download me-2"></i>Download Template
+                            </button>
+                        </div>
+                        <p class="text-muted small mb-0">Download our template to ensure your data is formatted correctly before uploading.</p>
+                    </div>
+
+                    <!-- Required Columns Info -->
+                    <div class="required-columns-section mb-4">
+                        <h6 class="mb-3" style="color: var(--primary-black);">
+                            <i class="fas fa-list-check me-2" style="color: var(--secondary-green);"></i>Required Columns (in this order)
+                        </h6>
+                        <div class="columns-sequence">
+                            <div class="column-item">
+                                <div class="column-number">1</div>
+                                <div class="column-name">Vendor Name</div>
+                            </div>
+                            <div class="column-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="column-item">
+                                <div class="column-number">2</div>
+                                <div class="column-name">Contact Person</div>
+                            </div>
+                            <div class="column-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="column-item">
+                                <div class="column-number">3</div>
+                                <div class="column-name">Email</div>
+                            </div>
+                            <div class="column-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="column-item">
+                                <div class="column-number">4</div>
+                                <div class="column-name">Phone</div>
+                            </div>
+                            <div class="column-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="column-item">
+                                <div class="column-number">5</div>
+                                <div class="column-name">Address</div>
+                            </div>
+                            <div class="column-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="column-item">
+                                <div class="column-number">6</div>
+                                <div class="column-name">Type</div>
+                            </div>
+                        </div>
+                        <p class="sequence-note mt-2">
+                            <i class="fas fa-info-circle me-1" style="color: var(--secondary-purple);"></i>
+                            <small class="text-muted">Make sure your spreadsheet columns follow this exact sequence</small>
+                        </p>
+                    </div>
+
+                    <!-- Step 2: File Upload -->
+                    <div class="mb-4">
+                        <h6 class="mb-3" style="color: var(--primary-black);">
+                            <i class="fas fa-upload me-2" style="color: var(--secondary-purple);"></i>Step 2: Upload File
+                        </h6>
+                        
+                        <!-- Drag and Drop Upload Area -->
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-content">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <h6 class="upload-title">Drag & drop your file here</h6>
+                                <p class="upload-subtitle">or click to browse</p>
+                                <div class="supported-formats">
+                                    <span class="format-badge">Excel (.xlsx)</span>
+                                    <span class="format-badge">CSV (.csv)</span>
+                                </div>
+                            </div>
+                            <input type="file" id="vendorFile" class="file-input" accept=".xlsx,.xls,.csv" aria-label="Choose vendor file">
+                        </div>
+
+                        <!-- File Info Display -->
+                        <div class="file-info d-none" id="fileInfo">
+                            <div class="d-flex align-items-center justify-content-between p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border: 1px solid var(--element-gray);">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-excel me-2" style="color: var(--secondary-green);"></i>
+                                    <div>
+                                        <div class="fw-semibold" id="fileName" style="color: var(--primary-black);"></div>
+                                        <small class="text-muted" id="fileSize"></small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile" data-bs-toggle="tooltip" title="Remove file">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Validation Messages -->
+                        <div class="validation-messages mt-3" id="validationMessages"></div>
+                    </div>
+
+                    <!-- Upload Progress -->
+                    <div class="upload-progress d-none" id="uploadProgress">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-spinner fa-spin me-2" style="color: var(--secondary-purple);"></i>
+                            <span style="color: var(--primary-black);">Processing your file...</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0%; background-color: var(--secondary-purple);" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-upload-primary" id="uploadVendorsBtn" disabled data-bs-toggle="tooltip" title="Upload vendors from selected file">
+                        <i class="fas fa-upload me-2"></i>Upload Vendors
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Confirmation Modal -->
+    <div class="modal fade" id="statusConfirmationModal" tabindex="-1" aria-labelledby="statusConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusConfirmationModalLabel" style="color: var(--primary-black);">
+                        <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+                        <span id="confirmationTitle">Confirm Status Change</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-3">
+                        <div class="confirmation-icon mb-3">
+                            <i id="confirmationIcon" class="fas fa-power-off fa-3x" style="color: var(--secondary-red);"></i>
+                        </div>
+                        <h6 class="mb-3" style="color: var(--primary-black);" id="confirmationMessage">
+                            Are you sure you want to deactivate this vendor?
+                        </h6>
+                        <p class="text-muted mb-0" id="confirmationDetails">
+                            <strong id="vendorNameConfirm">Apple Store</strong> will be <span id="actionText">deactivated</span> and will no longer be available for new transactions.
+                        </p>
+                        <div class="mt-3 p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border-left: 4px solid var(--secondary-orange);">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                You can reverse this action at any time by changing the vendor status again.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-cancel-confirm" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-confirm-action" id="confirmStatusChangeBtn">
+                        <i class="fas fa-check me-1"></i><span id="confirmButtonText">Confirm Deactivate</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../asset/navbar.js"></script>
+    <script src="../asset/toast.js"></script>
+    <script src="../script.js"></script>
+    
+    <script>
+        // Vendor page functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const clearFilters = document.getElementById('clearFilters');
+            const sortBy = document.getElementById('sortBy');
+            const sortOrderBtn = document.getElementById('sortOrder');
+            const gridToggle = document.getElementById('gridToggle');
+            const listToggle = document.getElementById('listToggle');
+            const listView = document.getElementById('listView');
+            const gridView = document.getElementById('gridView');
+            const listViewPagination = document.getElementById('listViewPagination');
+            
+            // View and sort variables
+            let isGridView = false; // Default to list view
+            let sortAscending = true;
+            
+            // Initialize with list view
+            listView.classList.remove('d-none');
+            gridView.classList.add('d-none');
+            listViewPagination.classList.remove('d-none');
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#vendorsTable tbody tr');
+                
+                rows.forEach(row => {
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    if (searchData.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+
+            // Sort function
+            function sortVendors() {
+                const tbody = document.querySelector('#vendorsTable tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'noResultsRow');
+                const sortField = sortBy.value;
+                
+                rows.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortField) {
+                        case 'name':
+                            aValue = a.getAttribute('data-name');
+                            bValue = b.getAttribute('data-name');
+                            break;
+                        case 'type':
+                            aValue = a.getAttribute('data-type');
+                            bValue = b.getAttribute('data-type');
+                            break;
+                        case 'status':
+                            aValue = a.getAttribute('data-status');
+                            bValue = b.getAttribute('data-status');
+                            break;
+                        default:
+                            return 0;
+                    }
+                    
+                    if (aValue < bValue) return sortAscending ? -1 : 1;
+                    if (aValue > bValue) return sortAscending ? 1 : -1;
+                    return 0;
+                });
+                
+                // Clear tbody and re-append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Update sort order icon
+                sortOrderBtn.innerHTML = sortAscending ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                // Reapply filters after sorting
+                filterVendors();
+            }
+            
+            // Filter function
+            function filterVendors() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const rows = document.querySelectorAll('#vendorsTable tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.id === 'noResultsRow') return;
+                    
+                    const searchData = row.getAttribute('data-search').toLowerCase();
+                    
+                    // Check if row matches search
+                    const matchesSearch = searchData.includes(searchTerm);
+                    
+                    if (matchesSearch) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "no results" message
+                updateNoResultsMessage(visibleCount);
+                
+                // Update grid view if currently active
+                if (isGridView) {
+                    generateGridView();
+                }
+            }
+            
+            // Add "no results" message functionality
+            function updateNoResultsMessage(count) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                
+                if (count === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.id = 'noResultsRow';
+                        noResultsRow.innerHTML = `
+                            <td colspan="7" class="text-center py-4">
+                                <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+                                <h6 class="text-muted">No vendors found</h6>
+                                <p class="text-muted mb-0">Try adjusting your search criteria</p>
+                            </td>
+                        `;
+                        document.querySelector('#vendorsTable tbody').appendChild(noResultsRow);
+                    }
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.remove();
+                    }
+                }
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterVendors);
+            
+            // Sort event listeners
+            sortBy.addEventListener('change', sortVendors);
+            sortOrderBtn.addEventListener('click', function() {
+                sortAscending = !sortAscending;
+                sortVendors();
+            });
+
+            // View toggle functionality
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const viewType = this.getAttribute('data-view');
+                    
+                    // Remove active class from all toggle buttons
+                    document.querySelectorAll('.view-toggle').forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    if (viewType === 'grid') {
+                    // Switch to Grid View
+                    generateGridView();
+                    listView.classList.add('d-none');
+                    listViewPagination.classList.add('d-none');
+                    gridView.classList.remove('d-none');
+                    isGridView = true;
+                    } else {
+                        // Switch to List View
+                        listView.classList.remove('d-none');
+                        listViewPagination.classList.remove('d-none');
+                        gridView.classList.add('d-none');
+                        isGridView = false;
+                }
+                });
+            });
+
+            // Generate grid view
+            function generateGridView() {
+                const visibleRows = Array.from(document.querySelectorAll('#vendorsTable tbody tr')).filter(row => 
+                    row.style.display !== 'none' && row.id !== 'noResultsRow'
+                );
+                const gridContainer = document.getElementById('gridContainer');
+                gridContainer.innerHTML = '';
+
+                if (visibleRows.length === 0) {
+                    gridContainer.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No vendors found</h5>
+                            <p class="text-muted">Try adjusting your search criteria</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                visibleRows.forEach(row => {
+                        const name = row.querySelector('td:nth-child(1) .fw-bold').textContent;
+                        const description = row.querySelector('td:nth-child(1) small').textContent;
+                        const contact = row.querySelector('td:nth-child(2)').textContent;
+                        const email = row.querySelector('td:nth-child(3)').textContent;
+                        const phone = row.querySelector('td:nth-child(4)').textContent;
+                        const type = row.querySelector('td:nth-child(5) .badge').textContent;
+                        const status = row.querySelector('td:nth-child(6) .badge').textContent;
+
+                        const cardHtml = `
+                            <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                                <div class="card h-100 vendor-card">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="vendor-header mb-2">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="flex-grow-1 me-2">
+                                                    <h6 class="card-title fw-bold mb-1 text-truncate">${name}</h6>
+                                                    <p class="text-muted small mb-0">${description}</p>
+                                                </div>
+                                                <div class="d-flex flex-column gap-2 align-items-end">
+                                                    <span class="badge badge-${type === 'Supplier' ? 'supplier' : type === 'Service Provider' ? 'service-provider' : type === 'Service' ? 'service' : 'both'} badge-sm">${type}</span>
+                                                    <span class="badge badge-${status === 'Active' ? 'active' : 'inactive'} badge-sm">${status}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="vendor-details flex-grow-1 mb-3">
+                                            <div class="mb-1">
+                                                <i class="fas fa-user text-muted me-2" style="width: 14px;"></i>
+                                                <small class="text-truncate">${contact}</small>
+                                            </div>
+                                            <div class="mb-1">
+                                                <i class="fas fa-envelope text-muted me-2" style="width: 14px;"></i>
+                                                <small class="text-truncate">${email}</small>
+                                            </div>
+                                            <div class="mb-0">
+                                                <i class="fas fa-phone text-muted me-2" style="width: 14px;"></i>
+                                                <small class="text-truncate">${phone}</small>
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="vendor-actions-footer mt-auto pt-2 border-top">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-action btn-view vendor-view-btn" title="View Vendor Details" data-bs-toggle="tooltip">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-action btn-edit vendor-edit-btn" title="Edit Vendor" data-bs-toggle="tooltip">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        gridContainer.insertAdjacentHTML('beforeend', cardHtml);
+                });
+            }
+
+            // Add event listeners for action buttons
+            function addActionButtonListeners() {
+                // View Details buttons - Open modal
+                document.querySelectorAll('.vendor-view-btn, .btn[title="View Details"]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Get vendor data from the row
+                        const row = this.closest('tr');
+                        if (row) {
+                            populateVendorModal(row);
+                        } else {
+                            // For grid view, get data from card
+                            const card = this.closest('.vendor-card');
+                            if (card) {
+                                populateVendorModalFromCard(card);
+                            }
+                        }
+                        
+                        const modal = new bootstrap.Modal(document.getElementById('vendorDetailModal'));
+                        modal.show();
+                    });
+                });
+
+                // Edit buttons  
+                document.querySelectorAll('.vendor-edit-btn, .btn[title="Edit"]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Redirect to add vendor page for editing
+                        window.location.href = '../form_pages/add-vendor.html';
+                    });
+                });
+            }
+
+            // Populate modal with vendor data from table row
+            function populateVendorModal(row) {
+                const vendorName = row.querySelector('td:nth-child(1) .fw-bold').textContent;
+                const description = row.querySelector('td:nth-child(1) small').textContent;
+                const contactPerson = row.querySelector('td:nth-child(2)').textContent;
+                const email = row.querySelector('td:nth-child(3)').textContent;
+                const phone = row.querySelector('td:nth-child(4)').textContent;
+                const typeText = row.querySelector('td:nth-child(5) .badge').textContent;
+                const statusText = row.querySelector('td:nth-child(6) .badge').textContent;
+                const statusClass = row.querySelector('td:nth-child(6) .badge').className;
+                const isActive = statusText.toLowerCase() === 'active';
+
+                // Update modal content
+                document.getElementById('modalTitle').textContent = `Vendor Details - ${vendorName}`;
+                document.getElementById('modalVendorName').textContent = vendorName;
+                document.getElementById('modalContactPerson').textContent = contactPerson;
+                document.getElementById('modalEmail').textContent = email;
+                document.getElementById('modalPhone').textContent = phone;
+                
+                // Update vendor type badge
+                const typeMapping = {
+                    'Supplier': 'badge-supplier',
+                    'Service Provider': 'badge-service-provider',
+                    'Service': 'badge-service',
+                    'Both': 'badge-both'
+                };
+                const typeBadgeClass = typeMapping[typeText] || 'badge-supplier';
+                document.getElementById('modalVendorType').innerHTML = `<span class="badge ${typeBadgeClass}">${typeText}</span>`;
+                
+                // Update status badge dynamically
+                const statusBadgeClass = isActive ? 'badge-active' : 'badge-inactive';
+                document.getElementById('modalVendorStatus').innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
+                
+                // Update status toggle button
+                updateStatusToggleButton(isActive, vendorName);
+                
+                // Set sample data for other fields (in real app, this would come from API)
+                document.getElementById('modalVendorId').textContent = generateVendorId(vendorName);
+                document.getElementById('modalAddress').textContent = generateSampleAddress(vendorName);
+                document.getElementById('modalTaxId').textContent = generateSampleTaxId();
+                document.getElementById('modalPanNumber').textContent = generateSamplePAN();
+                document.getElementById('modalNotes').textContent = generateSampleNotes(vendorName, description);
+            }
+
+            // Populate modal from grid card
+            function populateVendorModalFromCard(card) {
+                const vendorName = card.querySelector('.card-title').textContent;
+                const description = card.querySelector('.text-muted.small').textContent;
+                const contactPerson = card.querySelector('.fa-user').parentElement.textContent.trim();
+                const email = card.querySelector('.fa-envelope').parentElement.textContent.trim();
+                const phone = card.querySelector('.fa-phone').parentElement.textContent.trim();
+                const typeText = card.querySelector('.badge-supplier, .badge-service-provider, .badge-service, .badge-both').textContent;
+                const statusText = card.querySelector('.badge-active, .badge-inactive').textContent;
+                const isActive = statusText.toLowerCase() === 'active';
+
+                // Update modal content (same as table version)
+                document.getElementById('modalTitle').textContent = `Vendor Details - ${vendorName}`;
+                document.getElementById('modalVendorName').textContent = vendorName;
+                document.getElementById('modalContactPerson').textContent = contactPerson;
+                document.getElementById('modalEmail').textContent = email;
+                document.getElementById('modalPhone').textContent = phone;
+                
+                // Update vendor type badge
+                const typeMapping = {
+                    'Supplier': 'badge-supplier',
+                    'Service Provider': 'badge-service-provider',
+                    'Service': 'badge-service',
+                    'Both': 'badge-both'
+                };
+                const typeBadgeClass = typeMapping[typeText] || 'badge-supplier';
+                document.getElementById('modalVendorType').innerHTML = `<span class="badge ${typeBadgeClass}">${typeText}</span>`;
+                
+                // Update status badge dynamically
+                const statusBadgeClass = isActive ? 'badge-active' : 'badge-inactive';
+                document.getElementById('modalVendorStatus').innerHTML = `<span class="badge ${statusBadgeClass}">${statusText}</span>`;
+                
+                // Update status toggle button
+                updateStatusToggleButton(isActive, vendorName);
+                
+                // Set sample data for other fields
+                document.getElementById('modalVendorId').textContent = generateVendorId(vendorName);
+                document.getElementById('modalAddress').textContent = generateSampleAddress(vendorName);
+                document.getElementById('modalTaxId').textContent = generateSampleTaxId();
+                document.getElementById('modalPanNumber').textContent = generateSamplePAN();
+                document.getElementById('modalNotes').textContent = generateSampleNotes(vendorName, description);
+            }
+
+            // Update status toggle button based on current status
+            function updateStatusToggleButton(isActive, vendorName) {
+                const statusToggleBtn = document.getElementById('statusToggleBtn');
+                const statusToggleText = document.getElementById('statusToggleText');
+                
+                if (isActive) {
+                    statusToggleBtn.className = 'btn btn-status-deactivate';
+                    statusToggleText.textContent = 'Deactivate';
+                    statusToggleBtn.innerHTML = '<i class="fas fa-power-off me-1"></i><span id="statusToggleText">Deactivate</span>';
+                } else {
+                    statusToggleBtn.className = 'btn btn-status-activate';
+                    statusToggleText.textContent = 'Activate';
+                    statusToggleBtn.innerHTML = '<i class="fas fa-check-circle me-1"></i><span id="statusToggleText">Activate</span>';
+                }
+                
+                // Remove existing event listeners and add new one
+                const newBtn = statusToggleBtn.cloneNode(true);
+                statusToggleBtn.parentNode.replaceChild(newBtn, statusToggleBtn);
+                
+                newBtn.addEventListener('click', function() {
+                    showStatusConfirmationModal(vendorName, !isActive);
+                });
+            }
+
+            // Show status confirmation modal
+            function showStatusConfirmationModal(vendorName, newActiveStatus) {
+                // First, close the vendor detail modal
+                const vendorDetailModal = bootstrap.Modal.getInstance(document.getElementById('vendorDetailModal'));
+                if (vendorDetailModal) {
+                    vendorDetailModal.hide();
+                }
+                
+                // Wait for the vendor detail modal to fully close before showing confirmation modal
+                setTimeout(() => {
+                    const isActivating = newActiveStatus;
+                    const action = isActivating ? 'activate' : 'deactivate';
+                    const actionPast = isActivating ? 'activated' : 'deactivated';
+                    const actionText = isActivating ? 'activated' : 'deactivated';
+                    
+                    // Update modal content
+                    document.getElementById('vendorNameConfirm').textContent = vendorName;
+                    document.getElementById('actionText').textContent = actionText;
+                    
+                    // Update confirmation message
+                    const confirmationMessage = document.getElementById('confirmationMessage');
+                    confirmationMessage.textContent = `Are you sure you want to ${action} this vendor?`;
+                    
+                    // Update confirmation details
+                    const confirmationDetails = document.getElementById('confirmationDetails');
+                    if (isActivating) {
+                        confirmationDetails.innerHTML = `<strong id="vendorNameConfirm">${vendorName}</strong> will be <span id="actionText">activated</span> and will be available for new transactions.`;
+                    } else {
+                        confirmationDetails.innerHTML = `<strong id="vendorNameConfirm">${vendorName}</strong> will be <span id="actionText">deactivated</span> and will no longer be available for new transactions.`;
+                    }
+                    
+                    // Update icon and colors
+                    const confirmationIcon = document.getElementById('confirmationIcon');
+                    const confirmButton = document.getElementById('confirmStatusChangeBtn');
+                    const confirmButtonText = document.getElementById('confirmButtonText');
+                    
+                    if (isActivating) {
+                        confirmationIcon.className = 'fas fa-check-circle fa-3x';
+                        confirmationIcon.style.color = 'var(--secondary-green)';
+                        confirmButton.className = 'btn btn-confirm-activate';
+                        confirmButtonText.textContent = 'Confirm Activate';
+                    } else {
+                        confirmationIcon.className = 'fas fa-power-off fa-3x';
+                        confirmationIcon.style.color = 'var(--secondary-red)';
+                        confirmButton.className = 'btn btn-confirm-deactivate';
+                        confirmButtonText.textContent = 'Confirm Deactivate';
+                    }
+                    
+                    // Remove existing event listeners and add new one
+                    const newConfirmBtn = confirmButton.cloneNode(true);
+                    confirmButton.parentNode.replaceChild(newConfirmBtn, confirmButton);
+                    
+                    newConfirmBtn.addEventListener('click', function() {
+                        // Hide confirmation modal
+                        const confirmationModal = bootstrap.Modal.getInstance(document.getElementById('statusConfirmationModal'));
+                        confirmationModal.hide();
+                        
+                        // Execute the status change after confirmation modal closes
+                        setTimeout(() => {
+                            toggleVendorStatus(vendorName, newActiveStatus);
+                        }, 300);
+                    });
+                    
+                    // Show confirmation modal
+                    const confirmationModal = new bootstrap.Modal(document.getElementById('statusConfirmationModal'));
+                    confirmationModal.show();
+                }, 300); // Wait for vendor detail modal to close
+            }
+
+            // Toggle vendor status (after confirmation)
+            function toggleVendorStatus(vendorName, newActiveStatus) {
+                const action = newActiveStatus ? 'activated' : 'deactivated';
+                showNotification(`${vendorName} has been ${action} successfully!`, 'success');
+                
+                // Update the table/grid view status immediately
+                updateVendorStatusInView(vendorName, newActiveStatus);
+            }
+
+            // Update vendor status in the current view
+            function updateVendorStatusInView(vendorName, isActive) {
+                const statusText = isActive ? 'Active' : 'Inactive';
+                const statusClass = isActive ? 'badge-active' : 'badge-inactive';
+                
+                // Update in table view
+                const tableRows = document.querySelectorAll('#vendorsTable tbody tr');
+                tableRows.forEach(row => {
+                    const nameCell = row.querySelector('td:nth-child(1) .fw-bold');
+                    if (nameCell && nameCell.textContent === vendorName) {
+                        const statusBadge = row.querySelector('td:nth-child(6) .badge');
+                        if (statusBadge) {
+                            statusBadge.className = `badge ${statusClass}`;
+                            statusBadge.textContent = statusText;
+                            row.setAttribute('data-status', statusText.toLowerCase());
+                        }
+                    }
+                });
+                
+                // Update in grid view if active
+                if (isGridView) {
+                    generateGridView();
+                }
+            }
+
+            // Helper functions to generate sample data
+            function generateVendorId(vendorName) {
+                const prefix = 'VEN-';
+                const hash = vendorName.split('').reduce((a, b) => {
+                    a = ((a << 5) - a) + b.charCodeAt(0);
+                    return a & a;
+                }, 0);
+                return prefix + String(Math.abs(hash)).padStart(3, '0').slice(0, 3);
+            }
+
+            function generateSampleAddress(vendorName) {
+                const addresses = {
+                    'Apple Store': '1 Apple Park Way, Cupertino, CA 95014',
+                    'Dell Direct': 'One Dell Way, Round Rock, TX 78682',
+                    'HP Enterprise': '1501 Page Mill Road, Palo Alto, CA 94304',
+                    'Samsung Enterprise': '129 Samsung-ro, Yeongtong-gu, Suwon-si, South Korea',
+                    'Microsoft Partners': 'One Microsoft Way, Redmond, WA 98052',
+                    'Lenovo Business': '8001 Development Drive, Morrisville, NC 27560',
+                    'Amazon Business': '410 Terry Avenue North, Seattle, WA 98109'
+                };
+                return addresses[vendorName] || '123 Business Street, City, State 12345';
+            }
+
+            function generateSampleTaxId() {
+                return Math.floor(Math.random() * 90000000) + 10000000 + '-' + Math.floor(Math.random() * 9000) + 1000;
+            }
+
+            function generateSamplePAN() {
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const numbers = '0123456789';
+                let pan = '';
+                for (let i = 0; i < 5; i++) {
+                    pan += letters.charAt(Math.floor(Math.random() * letters.length));
+                }
+                for (let i = 0; i < 4; i++) {
+                    pan += numbers.charAt(Math.floor(Math.random() * numbers.length));
+                }
+                pan += letters.charAt(Math.floor(Math.random() * letters.length));
+                return pan;
+            }
+
+            function generateSampleNotes(vendorName, description) {
+                const templates = [
+                    `Reliable ${description.toLowerCase()} vendor with excellent service record. Maintains consistent quality and delivery standards.`,
+                    `Preferred vendor for ${description.toLowerCase()}. Strong partnership with competitive pricing and timely deliveries.`,
+                    `Established ${description.toLowerCase()} supplier with comprehensive support services. Good track record for quality assurance.`
+                ];
+                return templates[Math.floor(Math.random() * templates.length)];
+            }
+
+            // Initialize action button listeners
+            addActionButtonListeners();
+
+            // Re-add listeners after grid view generation
+            const originalGenerateGridView = generateGridView;
+            generateGridView = function() {
+                originalGenerateGridView();
+                addActionButtonListeners();
+            };
+
+
+
+
+
+            // Clear filters functionality
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('filterType').value = '';
+                document.getElementById('filterStatus').value = '';
+                filterVendors();
+            });
+
+            // Initialize tooltips
+            setTimeout(() => {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }, 100);
+
+            // Bulk Upload Modal Functionality
+            initializeBulkUploadModal();
+        });
+
+        // Bulk Upload Modal Functions
+        function initializeBulkUploadModal() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('vendorFile');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const removeFileBtn = document.getElementById('removeFile');
+            const uploadBtn = document.getElementById('uploadVendorsBtn');
+            const validationMessages = document.getElementById('validationMessages');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const downloadTemplateBtn = document.getElementById('downloadVendorTemplate');
+
+            // File input change
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleFileDrop);
+
+            // Remove file functionality
+            removeFileBtn.addEventListener('click', removeFile);
+
+            // Upload functionality
+            uploadBtn.addEventListener('click', uploadVendors);
+
+            // Download template functionality
+            downloadTemplateBtn.addEventListener('click', downloadTemplate);
+
+            function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    displayFileInfo(file);
+                    validateFile(file);
+                }
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            }
+
+            function handleDragLeave(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            }
+
+            function handleFileDrop(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    fileInput.files = e.dataTransfer.files;
+                    displayFileInfo(file);
+                    validateFile(file);
+                }
+            }
+
+            function displayFileInfo(file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.remove('d-none');
+                uploadArea.style.display = 'none';
+            }
+
+            function removeFile() {
+                fileInput.value = '';
+                fileInfo.classList.add('d-none');
+                uploadArea.style.display = 'block';
+                uploadBtn.disabled = true;
+                clearValidationMessages();
+            }
+
+            function validateFile(file) {
+                clearValidationMessages();
+                
+                const allowedTypes = [
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel',
+                    'text/csv'
+                ];
+                
+                if (!allowedTypes.includes(file.type)) {
+                    showValidationError('Invalid file type. Please upload an Excel (.xlsx) or CSV (.csv) file.');
+                    uploadBtn.disabled = true;
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    showValidationError('File size too large. Please upload a file smaller than 10MB.');
+                    uploadBtn.disabled = true;
+                    return;
+                }
+
+                showValidationSuccess('File looks good! Ready to upload.');
+                uploadBtn.disabled = false;
+            }
+
+            function showValidationError(message) {
+                validationMessages.innerHTML = `
+                    <div class="validation-error">
+                        <i class="fas fa-exclamation-triangle me-2"></i>${message}
+                    </div>
+                `;
+            }
+
+            function showValidationSuccess(message) {
+                validationMessages.innerHTML = `
+                    <div class="validation-success">
+                        <i class="fas fa-check-circle me-2"></i>${message}
+                    </div>
+                `;
+            }
+
+            function clearValidationMessages() {
+                validationMessages.innerHTML = '';
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function uploadVendors() {
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                // Show progress
+                uploadProgress.classList.remove('d-none');
+                uploadBtn.disabled = true;
+                
+                // Simulate upload progress
+                let progress = 0;
+                const progressBar = uploadProgress.querySelector('.progress-bar');
+                
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    progressBar.setAttribute('aria-valuenow', progress);
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            // Hide progress and show success
+                            uploadProgress.classList.add('d-none');
+                            showNotification('Vendors uploaded successfully! The page will refresh to show the new data.', 'success');
+                            
+                            // Reset modal after delay
+                            setTimeout(() => {
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('bulkUploadModal'));
+                                modal.hide();
+                                removeFile();
+                                progressBar.style.width = '0%';
+                                uploadBtn.disabled = false;
+                            }, 2000);
+                        }, 500);
+                    }
+                }, 200);
+            }
+
+            function downloadTemplate() {
+                // Create a simple CSV template
+                const csvContent = "Vendor Name,Contact Person,Email,Phone,Address,Type\n" +
+                                                 "Example Vendor,John Doe,john@example.com,+91 9876543210,123 Main St,Supplier\n" +
+                "Sample Service Provider,Jane Smith,jane@sample.com,+91 8765432109,456 Oak Ave,Service Provider";
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'vendor_upload_template.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Template downloaded successfully!', 'success');
+            }
+        }
+
+
+    </script>
+
+
+
+    <!-- Modern Button Styles -->
+    <style>
+        /* Modern Button Styling - Unified Compact Design */
+        .btn-modern {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: 0.025em;
+            transition: all 0.2s ease;
+            border: 1.5px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Consistent Button Color System - Same as Other Pages */
+        
+        /* Add Vendor - Purple (Primary Action) */
+        .btn-modern.btn-primary {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+        
+        .btn-modern.btn-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+        
+        /* Bulk Upload - Secondary */
+        .btn-modern.btn-outline-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+        
+        .btn-modern.btn-outline-secondary:hover {
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+        
+        /* Custom Badge Styles - Updated Color Palette */
+        .badge.badge-supplier {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge.badge-service-provider {
+            background-color: var(--secondary-pink) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge.badge-service {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge.badge-both {
+            background-color: var(--primary-dark-gray) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge.badge-active {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        .badge.badge-inactive {
+            background-color: var(--secondary-red) !important;
+            color: white !important;
+            border: none !important;
+            font-size: 0.75rem !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.375rem !important;
+        }
+
+        /* Small badge variant */
+        .badge.badge-sm {
+            font-size: 0.65rem !important;
+            padding: 0.25rem 0.5rem !important;
+        }
+
+        /* New Action Button Styles - Updated Design */
+        .btn-action {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            min-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 36px !important;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+        }
+        
+        /* Specific action button hover colors */
+        .btn-view:hover {
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+        }
+        
+        .btn-edit:hover {
+            color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+        }
+        
+        
+
+        /* Card improvements */
+        .vendor-card {
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .vendor-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .vendor-actions-footer {
+            border-top: 1px solid var(--primary-light-gray) !important;
+            background-color: var(--primary-white) !important;
+        }
+
+        /* Vendor action buttons - Updated Design to match Assets page */
+        .vendor-actions .btn {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            min-height: 32px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 36px !important;
+        }
+        
+        .vendor-actions .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+        }
+        
+        /* Specific vendor action button hover colors */
+        .vendor-actions .btn-view:hover {
+            color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+        }
+        
+        .vendor-actions .btn-edit:hover {
+            color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+        }
+        
+
+
+        /* Filter card styling */
+        .filter-card {
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+        }
+        
+        /* Table responsive container - no padding to avoid white border */
+        .table-responsive {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* Table cell padding adjustments for balanced spacing */
+        .table td, .table th {
+            padding: 0.75rem !important;
+        }
+        
+        /* First column padding adjustments */
+        .table td:first-child, .table th:first-child {
+            padding-left: 1.5rem !important;
+        }
+        
+        /* Actions column (last column) padding adjustments */
+        .table td:last-child, .table th:last-child {
+            padding-right: 1.5rem !important;
+            text-align: center !important;
+        }
+        
+        /* Vendor actions button group spacing */
+        .vendor-actions {
+            justify-content: center !important;
+            gap: 0.25rem !important;
+        }
+        
+        .vendor-actions .btn {
+            padding: 0.25rem 0.5rem !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
+        }
+
+        /* View toggle buttons */
+        .view-toggle {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .view-toggle.active {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+                 .view-toggle:hover:not(.active) {
+             background-color: var(--primary-white) !important;
+             border-color: var(--primary-mid-light) !important;
+         }
+
+         /* Bulk Upload Modal Styles */
+         .bulk-upload-modal .modal-header {
+             background-color: var(--primary-light-gray) !important;
+             border-bottom: 1px solid var(--element-gray) !important;
+         }
+
+         .bulk-upload-modal .modal-body {
+             background-color: var(--primary-white) !important;
+         }
+
+         .bulk-upload-modal .modal-footer {
+             background-color: var(--primary-light-gray) !important;
+             border-top: 1px solid var(--element-gray) !important;
+         }
+
+         /* Template Download Button */
+         .btn-template-download {
+             background-color: var(--primary-light-gray) !important;
+             border: 1px solid var(--element-gray) !important;
+             color: var(--secondary-purple) !important;
+             border-radius: 0.5rem !important;
+             padding: 0.5rem 1rem !important;
+             font-size: 0.875rem !important;
+             font-weight: 500 !important;
+             transition: all 0.2s ease !important;
+         }
+
+         .btn-template-download:hover {
+             background-color: var(--secondary-purple) !important;
+             border-color: var(--secondary-purple) !important;
+             color: white !important;
+             transform: translateY(-1px) !important;
+             box-shadow: 0 3px 8px rgba(51, 31, 234, 0.15) !important;
+         }
+
+         /* Required Columns Section */
+         .required-columns-section {
+             background-color: var(--primary-light-gray) !important;
+             border: 1px solid var(--element-gray) !important;
+             border-radius: 0.75rem !important;
+             padding: 1.25rem !important;
+         }
+
+         /* Horizontal Column Sequence */
+         .columns-sequence {
+             display: flex !important;
+             align-items: center !important;
+             justify-content: center !important;
+             flex-wrap: wrap !important;
+             gap: 0.75rem !important;
+             padding: 1rem 0 !important;
+         }
+
+         .column-item {
+             display: flex !important;
+             flex-direction: column !important;
+             align-items: center !important;
+             text-align: center !important;
+             min-width: 80px !important;
+         }
+
+         .column-number {
+             width: 28px !important;
+             height: 28px !important;
+             border-radius: 50% !important;
+             background-color: var(--secondary-purple) !important;
+             color: white !important;
+             display: flex !important;
+             align-items: center !important;
+             justify-content: center !important;
+             font-size: 0.75rem !important;
+             font-weight: 600 !important;
+             margin-bottom: 0.5rem !important;
+         }
+
+         .column-name {
+             font-size: 0.75rem !important;
+             font-weight: 500 !important;
+             color: var(--primary-black) !important;
+             line-height: 1.2 !important;
+         }
+
+         .column-arrow {
+             color: var(--primary-mid-light) !important;
+             font-size: 0.875rem !important;
+             margin: 0 0.25rem !important;
+         }
+
+         .sequence-note {
+             text-align: center !important;
+             margin-bottom: 0 !important;
+         }
+
+         /* Responsive adjustments */
+         @media (max-width: 768px) {
+             .columns-sequence {
+                 flex-direction: column !important;
+                 gap: 1rem !important;
+             }
+             
+             .column-arrow {
+                 transform: rotate(90deg) !important;
+                 margin: 0.25rem 0 !important;
+             }
+             
+             .column-item {
+                 min-width: 120px !important;
+             }
+         }
+
+         /* Upload Area */
+         .upload-area {
+             border: 2px dashed var(--primary-mid-light) !important;
+             border-radius: 0.75rem !important;
+             padding: 2rem !important;
+             text-align: center !important;
+             background-color: var(--primary-white) !important;
+             transition: all 0.3s ease !important;
+             cursor: pointer !important;
+             position: relative !important;
+         }
+
+         .upload-area:hover {
+             border-color: var(--secondary-purple) !important;
+             background-color: var(--primary-light-gray) !important;
+         }
+
+         .upload-area.dragover {
+             border-color: var(--secondary-purple) !important;
+             background-color: rgba(51, 31, 234, 0.05) !important;
+         }
+
+         .upload-content {
+             pointer-events: none !important;
+         }
+
+         .upload-icon {
+             font-size: 2.5rem !important;
+             color: var(--primary-mid-light) !important;
+             margin-bottom: 1rem !important;
+         }
+
+         .upload-area:hover .upload-icon {
+             color: var(--secondary-purple) !important;
+         }
+
+         .upload-title {
+             color: var(--primary-black) !important;
+             font-weight: 600 !important;
+             margin-bottom: 0.5rem !important;
+         }
+
+         .upload-subtitle {
+             color: var(--primary-dark-gray) !important;
+             font-size: 0.875rem !important;
+             margin-bottom: 1rem !important;
+         }
+
+         .supported-formats {
+             display: flex !important;
+             justify-content: center !important;
+             gap: 0.5rem !important;
+         }
+
+         .format-badge {
+             background-color: var(--element-gray) !important;
+             color: var(--primary-dark-gray) !important;
+             padding: 0.25rem 0.5rem !important;
+             border-radius: 0.375rem !important;
+             font-size: 0.75rem !important;
+             font-weight: 500 !important;
+         }
+
+         .file-input {
+             position: absolute !important;
+             top: 0 !important;
+             left: 0 !important;
+             width: 100% !important;
+             height: 100% !important;
+             opacity: 0 !important;
+             cursor: pointer !important;
+         }
+
+         /* Action Buttons */
+         .btn-cancel {
+             background-color: var(--primary-light-gray) !important;
+             border: 1px solid var(--element-gray) !important;
+             color: var(--primary-dark-gray) !important;
+             border-radius: 0.5rem !important;
+             font-weight: 500 !important;
+             transition: all 0.2s ease !important;
+         }
+
+         .btn-cancel:hover {
+             background-color: var(--element-gray) !important;
+             border-color: var(--primary-mid-light) !important;
+             color: var(--primary-black) !important;
+         }
+
+         .btn-upload-primary {
+             background-color: var(--secondary-purple) !important;
+             border: 1px solid var(--secondary-purple) !important;
+             color: white !important;
+             border-radius: 0.5rem !important;
+             font-weight: 500 !important;
+             transition: all 0.2s ease !important;
+             box-shadow: 0 2px 8px rgba(51, 31, 234, 0.15) !important;
+         }
+
+         .btn-upload-primary:hover:not(:disabled) {
+             background-color: #2415c7 !important;
+             border-color: #2415c7 !important;
+             color: white !important;
+             transform: translateY(-1px) !important;
+             box-shadow: 0 4px 12px rgba(51, 31, 234, 0.25) !important;
+         }
+
+         .btn-upload-primary:disabled {
+             background-color: var(--element-gray) !important;
+             border-color: var(--element-gray) !important;
+             color: var(--primary-mid-gray) !important;
+             cursor: not-allowed !important;
+             box-shadow: none !important;
+         }
+
+         /* Validation Messages */
+         .validation-error {
+             background-color: rgba(233, 118, 118, 0.1) !important;
+             border: 1px solid var(--secondary-red) !important;
+             color: var(--secondary-red) !important;
+             padding: 0.75rem !important;
+             border-radius: 0.5rem !important;
+             font-size: 0.875rem !important;
+         }
+
+         .validation-success {
+             background-color: rgba(33, 175, 101, 0.1) !important;
+             border: 1px solid var(--secondary-green) !important;
+             color: var(--secondary-green) !important;
+             padding: 0.75rem !important;
+             border-radius: 0.5rem !important;
+             font-size: 0.875rem !important;
+         }
+
+         /* Upload Progress */
+         .upload-progress {
+             background-color: var(--primary-light-gray) !important;
+             border: 1px solid var(--element-gray) !important;
+             border-radius: 0.5rem !important;
+             padding: 1rem !important;
+         }
+
+                 .progress {
+            height: 0.5rem !important;
+            background-color: var(--element-gray) !important;
+            border-radius: 0.25rem !important;
+        }
+
+        /* Modern Pagination Styles */
+        .pagination-modern {
+            --bs-pagination-padding-x: 0.75rem;
+            --bs-pagination-padding-y: 0.5rem;
+            --bs-pagination-font-size: 0.875rem;
+            --bs-pagination-color: var(--primary-dark-gray);
+            --bs-pagination-bg: var(--primary-white);
+            --bs-pagination-border-width: 1px;
+            --bs-pagination-border-color: var(--element-gray);
+            --bs-pagination-border-radius: 0.5rem;
+            --bs-pagination-hover-color: var(--secondary-purple);
+            --bs-pagination-hover-bg: var(--primary-light-gray);
+            --bs-pagination-hover-border-color: var(--primary-mid-light);
+            --bs-pagination-focus-color: var(--secondary-purple);
+            --bs-pagination-focus-bg: var(--primary-light-gray);
+            --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
+            --bs-pagination-active-color: var(--primary-white);
+            --bs-pagination-active-bg: var(--secondary-purple);
+            --bs-pagination-active-border-color: var(--secondary-purple);
+            --bs-pagination-disabled-color: var(--primary-mid-gray);
+            --bs-pagination-disabled-bg: var(--primary-light-gray);
+            --bs-pagination-disabled-border-color: var(--element-gray);
+        }
+
+        .pagination-modern .page-link {
+            border-radius: 0.5rem !important;
+            margin: 0 0.125rem !important;
+            min-width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .pagination-modern .page-item.active .page-link {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+            box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
+        }
+
+        .pagination-modern .page-item:not(.active) .page-link:hover {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--secondary-purple) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .pagination-modern .page-item.disabled .page-link {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-mid-gray) !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Special styling for ellipsis dots */
+        .pagination-modern .page-dots {
+            cursor: default !important;
+            background-color: transparent !important;
+            border: none !important;
+            color: var(--primary-mid-gray) !important;
+        }
+
+        .pagination-modern .page-dots:hover {
+            background-color: transparent !important;
+            border: none !important;
+            transform: none !important;
+        }
+
+        /* Modal Footer Button Styling */
+        .modal-footer {
+            background-color: var(--primary-light-gray) !important;
+            border-top: 1px solid var(--element-gray) !important;
+            padding: 1rem 1.5rem !important;
+        }
+
+        .modal-footer .btn {
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .modal-footer .btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+
+        .modal-footer .btn-success {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-success:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-outline-primary {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--secondary-purple) !important;
+            color: var(--secondary-purple) !important;
+        }
+
+        .modal-footer .btn-outline-primary:hover {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-cancel {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-cancel:hover {
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+
+        .modal-footer .btn-upload-primary {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-upload-primary:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        /* Vendor Detail Modal Styling - Consistent with Assets/Employees Modals */
+        .vendor-info-section {
+            background-color: var(--primary-white) !important;
+            border: 1px solid var(--element-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 1.25rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .vendor-info-section .section-title {
+            color: var(--primary-black) !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+            border-bottom: 1px solid var(--element-gray) !important;
+        }
+
+        .vendor-info-section .info-label {
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            color: var(--primary-dark-gray) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        .vendor-info-section .info-value {
+            font-size: 0.9rem !important;
+            color: var(--primary-black) !important;
+            font-weight: 500 !important;
+        }
+
+        .vendor-info-section .info-item {
+            margin-bottom: 1rem !important;
+        }
+
+        .vendor-info-section .info-item:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        /* Vendor Status Badges */
+        .badge-supplier {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 1rem !important;
+        }
+
+        .badge-active {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+            font-size: 0.75rem !important;
+            padding: 0.375rem 0.75rem !important;
+            border-radius: 1rem !important;
+        }
+
+        /* Button Styling for Vendor Modal */
+        .modal-footer .btn-primary-blue {
+            background-color: var(--secondary-purple) !important;
+            border-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-primary-blue:hover {
+            background-color: #2415c7 !important;
+            border-color: #2415c7 !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-info {
+            background-color: var(--secondary-orange) !important;
+            border-color: var(--secondary-orange) !important;
+            color: white !important;
+        }
+
+        .modal-footer .btn-info:hover {
+            background-color: #e67e22 !important;
+            border-color: #e67e22 !important;
+            color: white !important;
+        }
+
+        /* Status Toggle Buttons */
+        .btn-status-activate {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .btn-status-activate:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(33, 175, 101, 0.25) !important;
+        }
+
+        .btn-status-deactivate {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .btn-status-deactivate:hover {
+            background-color: #d63447 !important;
+            border-color: #d63447 !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(233, 118, 118, 0.25) !important;
+        }
+
+        /* Modal Footer Button Group */
+        .modal-footer .d-flex {
+            gap: 0.5rem !important;
+        }
+
+        /* Confirmation Modal Styles */
+        #statusConfirmationModal .modal-content {
+            border: none !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+            border-radius: 0.75rem !important;
+        }
+
+        #statusConfirmationModal .modal-header {
+            background-color: var(--primary-light-gray) !important;
+            border-bottom: 1px solid var(--element-gray) !important;
+            border-radius: 0.75rem 0.75rem 0 0 !important;
+        }
+
+        #statusConfirmationModal .modal-body {
+            background-color: var(--primary-white) !important;
+            padding: 2rem !important;
+        }
+
+        #statusConfirmationModal .modal-footer {
+            background-color: var(--primary-light-gray) !important;
+            border-top: 1px solid var(--element-gray) !important;
+            border-radius: 0 0 0.75rem 0.75rem !important;
+            padding: 1.25rem 2rem !important;
+        }
+
+        .confirmation-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Confirmation Modal Buttons */
+        .btn-cancel-confirm {
+            background-color: var(--primary-light-gray) !important;
+            border: 1px solid var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+        }
+
+        .btn-cancel-confirm:hover {
+            background-color: var(--element-gray) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .btn-confirm-activate {
+            background-color: var(--secondary-green) !important;
+            border-color: var(--secondary-green) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+            box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
+        }
+
+        .btn-confirm-activate:hover {
+            background-color: #1e9c5a !important;
+            border-color: #1e9c5a !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
+        }
+
+        .btn-confirm-deactivate {
+            background-color: var(--secondary-red) !important;
+            border-color: var(--secondary-red) !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+            padding: 0.625rem 1.5rem !important;
+            box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
+        }
+
+        .btn-confirm-deactivate:hover {
+            background-color: #d63447 !important;
+            border-color: #d63447 !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+        }
+
+        /* Confirmation Modal Info Box */
+        #statusConfirmationModal .modal-body .mt-3 {
+            background-color: var(--primary-light-gray) !important;
+            border-radius: 0.5rem !important;
+            border-left: 4px solid var(--secondary-orange) !important;
+        }
+
+        /* Modal Backdrop for Confirmation */
+        #statusConfirmationModal .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.6) !important;
+        }
+    </style>
+</body>
+</html>

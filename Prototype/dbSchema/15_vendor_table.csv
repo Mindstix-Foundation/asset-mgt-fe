@@ -1,0 +1,16 @@
+15.vendor,,,,
+Purpose:Suppliers and vendors for asset procurement and maintenance services,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for vendor
+name,NOT NULL,VARCHAR(100),,Vendor/Supplier name
+contact_person,NULL,VARCHAR(100),,Primary contact person
+email,NULL,VARCHAR(255),,Vendor email address
+phone,NULL,VARCHAR(20),,Vendor phone number
+address_id,FK NULL,INT,1-1,Vendor address ID (Foreign Key referencing address.id)
+tax_id,NULL,VARCHAR(50),,Tax identification number
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Vendor status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated

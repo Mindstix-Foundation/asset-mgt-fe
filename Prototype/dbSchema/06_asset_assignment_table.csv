@@ -1,0 +1,20 @@
+6.asset_assignment,,,,
+Purpose:Tracks assignment of assets to employees including assignment and return details with complete audit trail,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for asset assignment
+asset_id,FK NOT NULL,INT,1-M,Asset ID (Foreign Key referencing asset.id)
+employee_id,FK NOT NULL,INT,1-M,Employee ID (Foreign Key referencing employee.id)
+assigned_by,FK NOT NULL,INT,1-M,User ID who assigned the asset (Foreign Key referencing user.id)
+assigned_date,NOT NULL,DATE,,Date when asset was assigned
+expected_return_date,NULL,DATE,,Expected return date
+return_date,NULL,DATE,,Actual return date
+return_condition,NULL,VARCHAR(20),,Condition when returned: GOOD FAIR POOR DAMAGED
+assignment_reason,NULL,VARCHAR(100),,Reason for assignment
+return_reason,NULL,VARCHAR(100),,Reason for return
+notes,NULL,TEXT,,Assignment notes
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Assignment status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated 

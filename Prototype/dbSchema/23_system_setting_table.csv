@@ -1,0 +1,14 @@
+23.system_setting,,,,
+Purpose:System configuration settings for application behavior and user preferences,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for system setting
+setting_key,NOT NULL UNIQUE,VARCHAR(100),,Setting key/name
+setting_value,NULL,TEXT,,Setting value
+data_type,NOT NULL DEFAULT 'STRING',VARCHAR(20),,Data type: STRING INTEGER BOOLEAN JSON
+description,NULL,TEXT,,Setting description
+is_user_configurable,NOT NULL DEFAULT FALSE,BOOLEAN,,Can users modify this setting
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated
