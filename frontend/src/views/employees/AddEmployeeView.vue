@@ -502,19 +502,23 @@ const submitForm = async (event?: Event) => {
   if (isEditMode.value) requiredFields.push('status')
   const allFields = Object.keys(formData)
 
-  allFields.forEach(fieldName => {
-    if (!validateFieldInline(fieldName)) {
-      isFormValid = false
-    }
-  })
+  // Run all validations and await results so we can accurately find first error
+  const validationResults = await Promise.all(
+    allFields.map((fieldName) => validateFieldInline(fieldName))
+  )
+  isFormValid = validationResults.every(Boolean)
 
   if (!isFormValid) {
-    // Don't show error toast for validation errors - instead scroll to first error
-    scrollToFirstError()
     // Add 'was-validated' class to show validation styling
     if (employeeForm.value) {
       employeeForm.value.classList.add('was-validated')
     }
+
+    // Ensure DOM/classes are updated before scrolling
+    await nextTick()
+
+    // Scroll/focus to first error like the vendor form
+    scrollToFirstError()
     return
   }
 

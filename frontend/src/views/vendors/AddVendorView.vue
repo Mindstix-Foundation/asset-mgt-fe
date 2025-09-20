@@ -676,12 +676,17 @@ const generateVendorDetails = () => {
 
 const resetForm = () => {
   // Reset form data
-  Object.keys(formData).forEach(key => {
-    if (key === 'status') {
-      formData[key as keyof typeof formData] = 'ACTIVE' as VendorStatus
-    } else {
-      formData[key as keyof typeof formData] = ''
-    }
+  Object.assign(formData, {
+    vendorName: '',
+    vendorType: '' as VendorType | '',
+    status: 'ACTIVE' as VendorStatus,
+    contactPerson: '',
+    email: '',
+    phone: '',
+    address: '',
+    taxId: '',
+    panNumber: '',
+    notes: ''
   })
   
   // Clear validation state
@@ -764,8 +769,9 @@ const addAnotherVendor = () => {
   // Hide any existing toasts
   const existingToasts = document.querySelectorAll('.toast')
   existingToasts.forEach(toast => {
-    if (window.bootstrap) {
-      const toastInstance = window.bootstrap.Toast.getInstance(toast)
+    const bs = (window as any).bootstrap
+    if (bs) {
+      const toastInstance = bs.Toast.getInstance(toast as any)
       if (toastInstance) toastInstance.hide()
     }
   })
@@ -784,8 +790,9 @@ const viewVendorList = () => {
   // Hide any existing toasts
   const existingToasts = document.querySelectorAll('.toast')
   existingToasts.forEach(toast => {
-    if (window.bootstrap) {
-      const toastInstance = window.bootstrap.Toast.getInstance(toast)
+    const bs = (window as any).bootstrap
+    if (bs) {
+      const toastInstance = bs.Toast.getInstance(toast as any)
       if (toastInstance) toastInstance.hide()
     }
   })
