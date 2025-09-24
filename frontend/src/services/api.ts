@@ -18,6 +18,10 @@ class ApiService {
     this.baseURL = baseURL
   }
 
+  getBaseURL(): string {
+    return this.baseURL
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -35,18 +39,44 @@ class ApiService {
       ...options,
     }
 
-    const response = await fetch(url, config)
+    try {
+      const response = await fetch(url, config)
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          message: 'Request failed',
+          error: `HTTP ${response.status}: ${response.statusText}`
+        }))
+        
+        // Create an error object that mimics axios structure for compatibility
+        const error = new Error(errorData.error || errorData.message || 'Request failed') as any
+        error.response = {
+          status: response.status,
+          statusText: response.statusText,
+          data: errorData
+        }
+        throw error
+      }
 
-    if (!response.ok) {
-      let details
-      try { details = await response.json() } catch (_) {}
-      throw { status: response.status, ...(details || {}) }
+      // Some endpoints might return no content
+      if (response.status === 204) return {} as T
+
+      return response.json()
+    } catch (error) {
+      // Re-throw the error if it's already our custom error
+      if (error && typeof error === 'object' && 'response' in error) {
+        throw error
+      }
+      
+      // Handle network or other errors
+      const networkError = new Error('Network error or request failed') as any
+      networkError.response = {
+        status: 0,
+        statusText: 'Network Error',
+        data: { message: 'Network error or request failed' }
+      }
+      throw networkError
     }
-
-    // Some endpoints might return no content
-    if (response.status === 204) return {} as T
-
-    return response.json()
   }
 
   get<T>(endpoint: string): Promise<T> {
