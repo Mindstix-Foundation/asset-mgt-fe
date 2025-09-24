@@ -50,6 +50,16 @@ const router = createRouter({
           component: () => import('../views/maintenance/MaintenanceView.vue'),
         },
         {
+          path: 'maintenance/schedule',
+          name: 'schedule-maintenance',
+          component: () => import('../views/maintenance/ScheduleMaintenanceView.vue'),
+        },
+        {
+          path: 'maintenance/edit/:id',
+          name: 'edit-maintenance',
+          component: () => import('../views/maintenance/EditMaintenanceView.vue'),
+        },
+        {
           path: 'vendors',
           name: 'vendors',
           component: () => import('../views/vendors/VendorsView.vue'),

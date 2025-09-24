@@ -30,54 +30,54 @@ class ApiService {
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       ...options,
     }
 
-    try {
-      const response = await fetch(url, config)
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({
-          message: 'Request failed',
-          error: `HTTP ${response.status}: ${response.statusText}`
-        }))
-        throw new Error(errorData.error || errorData.message || 'Request failed')
-      }
+    const response = await fetch(url, config)
 
-      return await response.json()
-    } catch (error) {
-      console.error('API Request failed:', error)
-      throw error
+    if (!response.ok) {
+      let details
+      try { details = await response.json() } catch (_) {}
+      throw { status: response.status, ...(details || {}) }
     }
+
+    // Some endpoints might return no content
+    if (response.status === 204) return {} as T
+
+    return response.json()
   }
 
-  async get<T>(endpoint: string): Promise<T> {
+  get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET' })
   }
 
-  async post<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+  post<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.request<T>(endpoint, { method: 'POST', body: JSON.stringify(body) })
   }
 
-  async put<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+  put<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.request<T>(endpoint, { method: 'PUT', body: JSON.stringify(body) })
   }
 
-  async delete<T>(endpoint: string, data?: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'DELETE',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+  patch<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.request<T>(endpoint, { method: 'PATCH', body: JSON.stringify(body) })
+  }
+
+  delete<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.request<T>(endpoint, { method: 'DELETE', body: body ? JSON.stringify(body) : undefined })
   }
 }
 
-export const apiService = new ApiService() 
+export const apiService = new ApiService()
+
+// Lightweight stats client
+export interface DashboardStats {
+  totalAssets: number
+  available: number
+  assigned: number
+  maintenance: number
+}
+
+export const fetchDashboardStats = () => apiService.get<ApiResponse<DashboardStats>>('/dashboard/stats') 

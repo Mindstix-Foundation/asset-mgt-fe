@@ -1179,17 +1179,6 @@
     border-color: #2415c7 !important;
     color: white !important;
 }
-
-/* Compact Employee Modal Styling - legacy rules retained for safety */
-.employee-info-section { /* already overridden above */ }
-.assigned-assets-section { /* already overridden above */ }
-.section-title { /* already overridden above */ }
-.info-label { /* already overridden above */ }
-.info-value { /* already overridden above */ }
-
-/* Assets list spacing remains the same */
-.assets-list { /* already defined above */ }
-
 /* Badge Styling for Employee Modal */
 .badge-active {
     background-color: var(--secondary-green) !important;
