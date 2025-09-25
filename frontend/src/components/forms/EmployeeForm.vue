@@ -4,14 +4,27 @@
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
         <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
           <!-- Card Header -->
-          <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
-            <div style="display: block;">
-              <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">
-                {{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}
-              </h4>
-              <p class="text-muted mb-0 small" style="display: block;">
-                {{ isEditMode ? 'Update employee information in your system' : 'Register a new employee in your system' }}
-              </p>
+          <div class="card-header bg-light border-bottom py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="text-center flex-grow-1">
+                <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">
+                  {{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}
+                </h4>
+                <p class="text-muted mb-0 small" style="display: block;">
+                  {{ isEditMode ? 'Update employee information in your system' : 'Register a new employee in your system' }}
+                </p>
+              </div>
+              <!-- Bulk Upload Button (only show when not in edit mode) -->
+              <div v-if="!isEditMode" class="ms-3">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary btn-sm" 
+                  @click="openBulkUpload"
+                  title="Bulk Upload Employees"
+                >
+                  <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                </button>
+              </div>
             </div>
           </div>
           
@@ -214,12 +227,26 @@
         </div>
       </div>
     </div>
+    
+    <!-- Bulk Upload Modal -->
+    <BulkUploadModal
+      ref="bulkUploadModal"
+      modal-id="employeeFormBulkUploadModal"
+      title="Bulk Upload Employees"
+      entity-name="employee"
+      :columns="employeeColumns"
+      :template-data="employeeTemplateData"
+      upload-button-text="Upload Employees"
+      @upload="handleBulkUpload"
+      @template-download="handleTemplateDownload"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { employeeService } from '@/services/employeeService'
+import BulkUploadModal from '@/components/BulkUploadModal.vue'
 
 // Props
 interface Props {
@@ -260,6 +287,7 @@ const errors = reactive({
 const wasValidated = ref(false)
 const isSubmitting = ref(false)
 const addressExpanded = ref(false)
+const bulkUploadModal = ref()
 
 // Computed properties
 const addressCharCount = computed(() => formData.address.length)
@@ -270,6 +298,70 @@ const characterCountClass = computed(() => {
   if (percentage > 75) return 'warning'
   return 'muted'
 })
+
+// Bulk upload computed properties
+const employeeColumns = computed(() => [
+  { 
+    key: 'firstName', 
+    label: 'First Name', 
+    required: true,
+    validation: (value: string) => {
+      if (!value || value.trim() === '') return 'First name is required'
+      if (value.length < 2 || value.length > 50) return 'First name must be 2-50 characters'
+      if (!/^[A-Za-z\s]+$/.test(value)) return 'First name can only contain letters and spaces'
+      return null
+    }
+  },
+  { 
+    key: 'lastName', 
+    label: 'Last Name', 
+    required: true,
+    validation: (value: string) => {
+      if (!value || value.trim() === '') return 'Last name is required'
+      if (value.length < 2 || value.length > 50) return 'Last name must be 2-50 characters'
+      if (!/^[A-Za-z\s]+$/.test(value)) return 'Last name can only contain letters and spaces'
+      return null
+    }
+  },
+  { 
+    key: 'email', 
+    label: 'Email', 
+    required: true,
+    validation: (value: string) => {
+      if (!value || value.trim() === '') return 'Email is required'
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format'
+      return null
+    }
+  },
+  { 
+    key: 'phone', 
+    label: 'Phone',
+    validation: (value: string) => {
+      if (value && !value.startsWith('+91')) return 'Phone should start with +91'
+      return null
+    }
+  },
+  { 
+    key: 'dateOfBirth', 
+    label: 'Date of Birth (YYYY-MM-DD)',
+    validation: (value: string) => {
+      if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Date of Birth must be YYYY-MM-DD'
+      return null
+    }
+  },
+  { key: 'address', label: 'Address' }
+])
+
+const employeeTemplateData = computed(() => [
+  {
+    firstName: 'Aarav',
+    lastName: 'Sharma',
+    email: 'aarav.sharma@example.com',
+    phone: '+91 9123456789',
+    dateOfBirth: '1992-05-21',
+    address: '123 MG Road Pune'
+  }
+])
 
 // Watchers
 watch(() => [formData.firstName, formData.lastName], () => {
@@ -455,6 +547,24 @@ const handleSubmit = async (event: Event) => {
 
 const handleCancel = () => {
   emit('cancel')
+}
+
+// Bulk upload methods
+const openBulkUpload = () => {
+  if (bulkUploadModal.value) {
+    bulkUploadModal.value.openModal()
+  }
+}
+
+const handleBulkUpload = (data: any[]) => {
+  console.log('Bulk upload data received:', data)
+  // Here you could emit the bulk upload data to parent component
+  // or handle the bulk upload logic directly
+  emit('submit', data)
+}
+
+const handleTemplateDownload = (type: string) => {
+  console.log(`Template downloaded: ${type}`)
 }
 
 // Initialize form data if editing

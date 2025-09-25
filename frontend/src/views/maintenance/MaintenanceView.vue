@@ -30,11 +30,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-warning" :style="`width: ${stats.underMaintenancePercent}%`"></div>
               </div>
-              <div class="mt-2">
-                <small class="text-success">
-                  <i class="fas fa-arrow-up me-1"></i>3.2% increase this month
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -54,11 +49,6 @@
               </div>
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-info" :style="`width: ${stats.scheduledPercent}%`"></div>
-              </div>
-              <div class="mt-2">
-                <small class="text-info">
-                  <i class="fas fa-calendar me-1"></i>Next: Tomorrow
-                </small>
               </div>
             </div>
           </div>
@@ -80,11 +70,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-success" :style="`width: ${stats.completedPercent}%`"></div>
               </div>
-              <div class="mt-2">
-                <small class="text-success">
-                  <i class="fas fa-arrow-up me-1"></i>15.2% this month
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -104,11 +89,6 @@
               </div>
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-secondary" :style="`width: ${stats.cancelledPercent}%`"></div>
-              </div>
-              <div class="mt-2">
-                <small class="text-danger">
-                  Cancelled this month
-                </small>
               </div>
             </div>
           </div>
@@ -425,6 +405,65 @@
                     {{ note }}
                   </li>
                 </ul>
+              </div>
+            </div>
+
+            <!-- Maintenance History Section -->
+            <div class="maintenance-history-section" v-if="maintenanceHistory.length > 0">
+              <h6 class="section-title">
+                <i class="fas fa-history me-2"></i>Maintenance History
+                <span class="badge bg-primary ms-2">{{ maintenanceHistory.length }} records</span>
+              </h6>
+              <div class="history-timeline">
+                <div 
+                  v-for="(history, index) in maintenanceHistory" 
+                  :key="history.id"
+                  class="timeline-item"
+                  :class="`timeline-${history.status.toLowerCase().replace('_', '-')}`"
+                >
+                  <div class="timeline-marker"></div>
+                  <div class="timeline-content">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <div>
+                        <h6 class="timeline-title mb-1">{{ history.description }}</h6>
+                        <div class="timeline-meta">
+                          <span class="badge" :class="`badge-${history.status.toLowerCase().replace('_', '-')}`">
+                            {{ formatStatus(history.status) }}
+                          </span>
+                          <span class="badge" :class="`badge-type-${history.maintenanceTypeName.toLowerCase()}`">
+                            {{ history.maintenanceTypeName }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="timeline-date">
+                        {{ formatDate(history.scheduledDate) }}
+                      </div>
+                    </div>
+                    <div class="timeline-details">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <small class="text-muted">Vendor:</small>
+                          <div>{{ history.vendorName || 'Internal Team' }}</div>
+                        </div>
+                        <div class="col-md-6">
+                          <small class="text-muted">Cost:</small>
+                          <div>
+                            {{ history.actualCost 
+                              ? `₹${history.actualCost.toFixed(2)} (Actual)` 
+                              : history.estimatedCost 
+                                ? `₹${history.estimatedCost.toFixed(2)} (Estimated)` 
+                                : 'N/A' 
+                            }}
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="history.completionNotes || history.cancellationNotes" class="mt-2">
+                        <small class="text-muted">Notes:</small>
+                        <div class="timeline-notes">{{ history.completionNotes || history.cancellationNotes }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -910,6 +949,7 @@ const completeFormElement = ref<HTMLFormElement>()
 
 // Selected maintenance for modals
 const selectedMaintenance = ref<MaintenanceRow | null>(null)
+const maintenanceHistory = ref<MaintenanceRow[]>([])
 
 // Form data
 const completeForm = reactive({
@@ -1182,8 +1222,49 @@ const sortMaintenances = () => {
 }
 
 // Modal methods
-const showMaintenanceDetails = (maintenance: MaintenanceRow) => {
+const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
   selectedMaintenance.value = maintenance
+  maintenanceHistory.value = []
+  
+  // Fetch maintenance history for this asset
+  try {
+    const response = await maintenanceService.getMaintenanceHistory(maintenance.assetId)
+    if (response.data && response.data.maintenanceHistory) {
+      // Transform the history data to match our local interface
+      maintenanceHistory.value = response.data.maintenanceHistory.map(history => ({
+        id: parseInt(history.id),
+        assetId: history.assetId,
+        assetName: history.assetName,
+        assetType: '', 
+        assetBrand: '', 
+        assetModel: '', 
+        maintenanceTypeId: history.maintenanceTypeId,
+        maintenanceTypeName: history.maintenanceTypeName,
+        type: history.maintenanceTypeName,
+        status: history.status,
+        vendor: history.vendorName || 'Internal Team',
+        vendorName: history.vendorName || null,
+        assignedTo: history.assignedTo || 'Not Assigned',
+        scheduledDate: history.scheduledDate,
+        cost: history.actualCost 
+          ? `₹${history.actualCost.toFixed(2)}` 
+          : history.estimatedCost
+            ? `₹${history.estimatedCost.toFixed(2)}`
+            : '₹0.00',
+        costType: history.actualCost ? 'Actual' : 'Estimated',
+        estimatedCost: history.estimatedCost || null,
+        actualCost: history.actualCost || null,
+        description: history.description,
+        completionNotes: history.completionNotes || null,
+        cancellationNotes: history.cancellationNotes || null,
+        progressNotes: generateProgressNotes(history)
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching maintenance history:', error)
+    // Continue showing the modal even if history fails to load
+  }
+  
   const modal = new Modal(detailModal.value!)
   modal.show()
 }
@@ -1537,6 +1618,7 @@ onMounted(() => {
 .progress-bar.bg-warning {
   background-color: var(--secondary-orange) !important;
 }
+
 
 .stats-icon.bg-info {
   background-color: var(--secondary-purple) !important;
@@ -2054,5 +2136,115 @@ onMounted(() => {
 
 .text-danger {
   color: var(--secondary-red) !important;
+}
+
+/* Maintenance History Timeline */
+.maintenance-history-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.history-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--primary-mid-gray);
+}
+
+.timeline-scheduled .timeline-marker {
+  background: var(--secondary-purple);
+}
+
+.timeline-in-progress .timeline-marker {
+  background: var(--secondary-orange);
+}
+
+.timeline-completed .timeline-marker {
+  background: var(--secondary-green);
+}
+
+.timeline-cancelled .timeline-marker {
+  background: var(--secondary-red);
+}
+
+.timeline-content {
+  background: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.timeline-title {
+  color: var(--primary-black);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.timeline-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.timeline-meta .badge {
+  font-size: 0.7rem;
+}
+
+.timeline-date {
+  font-size: 0.8rem;
+  color: var(--primary-mid-gray);
+  font-weight: 500;
+}
+
+.timeline-details {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.timeline-details .text-muted {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-weight: 500;
+}
+
+.timeline-notes {
+  font-style: italic;
+  color: var(--primary-dark-gray);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 </style> 

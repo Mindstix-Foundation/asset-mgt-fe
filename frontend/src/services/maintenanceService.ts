@@ -39,6 +39,8 @@ export interface Maintenance {
   assignedTo?: string
   actualCost?: number
   completionDate?: string
+  completionNotes?: string
+  cancellationNotes?: string
   createdAt: string
   updatedAt: string
 }
@@ -161,6 +163,15 @@ class MaintenanceService {
   // Cancel maintenance
   async cancelMaintenance(maintenanceId: string, data: { cancelDate: string, cancelNotes: string }): Promise<ApiResponse<{ maintenance: Maintenance }>> {
     return apiService.put(`/maintenance/${maintenanceId}/cancel`, data)
+  }
+
+  // Get maintenance history for a specific asset
+  async getMaintenanceHistory(assetId: string): Promise<ApiResponse<{ 
+    asset: { id: number, assetId: string, name: string }, 
+    maintenanceHistory: Maintenance[], 
+    totalRecords: number 
+  }>> {
+    return apiService.get(`/maintenance/asset/${assetId}/history`)
   }
 }
 
