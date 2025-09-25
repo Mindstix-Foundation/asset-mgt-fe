@@ -1,52 +1,208 @@
-// Asset management types
+// Asset related types for the frontend application
+
+export interface AssetCategory {
+  id: number
+  name: string
+  description?: string
+}
+
+export interface AssetType {
+  id: number
+  name: string
+  description?: string
+  category: AssetCategory
+}
+
+export interface Brand {
+  id: number
+  name: string
+  description?: string
+}
+
+export interface Model {
+  id: number
+  name: string
+  specifications?: Record<string, any>
+  brand?: Brand
+  assetType?: AssetType
+}
+
+export interface Vendor {
+  id: number
+  name: string
+}
+
+export interface User {
+  id: number
+  username: string
+}
+
+export interface AssetIssue {
+  id: number
+  issueDate: string
+  employee: {
+    id: number
+    employeeId: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+}
 
 export interface Asset {
-  id: string
+  id: number
   assetId: string
   serialNumber: string
-  brand: string
-  model: string
-  category: AssetCategory
-  specifications: AssetSpecifications
-  purchaseDate?: string
-  warrantyEndDate?: string
   status: AssetStatus
-  assignedTo?: string
-  assignedDate?: string
-  location?: string
-  qrCode?: string
+  condition: AssetCondition
+  location: string
+  purchaseDate?: string
+  purchaseCost?: number
+  warrantyStartDate?: string
+  warrantyEndDate?: string
+  notes?: string
   createdAt: string
   updatedAt: string
+  assetType: AssetType
+  brand: Brand
+  model: Model
+  vendor?: Vendor
+  createdByUser: User
+  assetIssues?: AssetIssue[]
+  _count: {
+    assetIssues: number
+  }
 }
 
-export type AssetCategory = 'laptop' | 'monitor' | 'mobile' | 'tablet' | 'ipad' | 'accessories'
+export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+export type AssetCondition = 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
 
-export type AssetStatus = 'available' | 'assigned' | 'under_maintenance' | 'retired' | 'lost'
-
-export interface AssetSpecifications {
-  ram?: string
-  storage?: string
-  processor?: string
-  operatingSystem?: string
-  screenSize?: string
-  other?: Record<string, string>
+export interface AssetQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+  assetTypeId?: number
+  brandId?: number
+  modelId?: number
+  vendorId?: number
+  status?: AssetStatus
+  condition?: AssetCondition
+  location?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
-export interface AssetAssignment {
-  id: string
-  assetId: string
-  employeeId: string
-  assignedDate: string
-  returnDate?: string
+export interface CreateAssetDto {
+  assetId?: string
+  serialNumber: string
+  assetTypeId: number
+  brandId: number
+  modelId: number
+  vendorId?: number
+  status: AssetStatus
+  condition: AssetCondition
+  location: string
+  purchaseDate?: string
+  purchaseCost?: number
+  warrantyStartDate?: string
+  warrantyEndDate?: string
   notes?: string
-  status: 'active' | 'returned'
 }
 
-export interface AssetHistory {
+export interface UpdateAssetDto extends Partial<CreateAssetDto> {}
+
+export interface AssetStats {
+  totalAssets: number
+  available: number
+  assigned: number
+  inMaintenance: number
+  retired: number
+  lost: number
+}
+
+export interface PaginationInfo {
+  totalCount: number
+  currentPage: number
+  totalPages: number
+  hasNext: boolean
+  hasPrevious: boolean
+}
+
+export interface AssetListResponse {
+  message: string
+  data: {
+    assets: Asset[]
+    pagination: PaginationInfo
+  }
+}
+
+export interface AssetResponse {
+  message: string
+  data: {
+    asset: Asset
+  }
+}
+
+export interface AssetStatsResponse {
+  message: string
+  data: AssetStats
+}
+
+export interface SearchResult {
+  searchResults: Asset[]
+  searchQuery: string
+  totalFound: number
+  pagination: PaginationInfo
+}
+
+export interface SearchResponse {
+  message: string
+  data: SearchResult
+}
+
+// For the frontend display - computed properties
+export interface AssetDisplayItem {
   id: string
-  assetId: string
-  action: 'assigned' | 'returned' | 'repaired' | 'retired'
-  performedBy: string
-  performedAt: string
-  details: string
+  type: string
+  brand: string
+  brandModel: string
+  serialNumber: string
+  status: AssetStatus
+  assignedTo?: string
+  purchaseDate: string
+  location: string
+  category: string
+  condition: AssetCondition
+  purchaseCost?: number
+  vendor: string
+  warrantyUntil: string
+}
+
+// Filter options for dropdowns
+export interface FilterOptions {
+  assetTypes: Array<{ id: number; name: string }>
+  brands: Array<{ id: number; name: string }>
+  models: Array<{ id: number; name: string }>
+  vendors: Array<{ id: number; name: string }>
+}
+
+// Bulk upload types
+export interface BulkUploadResult {
+  imported: number
+  errors: Array<{
+    row: number
+    field: string
+    message: string
+  }>
+  summary: {
+    totalRows: number
+    successfulImports: number
+    failedImports: number
+    validationErrors: number
+  }
+}
+
+export interface BulkUploadResponse {
+  message: string
+  data: BulkUploadResult
 } 

@@ -1058,7 +1058,7 @@ label {
 
 .form-control:focus {
   border-color: var(--secondary-purple) !important;
-  box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
+  box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25) !important;
   background-color: var(--primary-white) !important;
   background-image: none !important;
 }
@@ -2766,4 +2766,710 @@ i.text-muted {
   align-items: center !important;
   justify-content: center !important;
   min-width: 36px !important;
+}
+
+/* =================================
+   ASSET MANAGEMENT STYLES
+   Matching Prototype Design Exactly
+================================= */
+
+/* Modern Button Styling - Updated Color Palette */
+.btn-modern {
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  text-transform: none !important;
+  letter-spacing: 0.025em !important;
+  transition: all 0.2s ease !important;
+  border: 1.5px solid !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  min-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.btn-modern:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Primary Actions - Add/Create */
+.btn-modern.btn-primary {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+/* Issue/Assign Actions - Green */
+.btn-modern.btn-success {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-success:hover {
+  background-color: #1e9c5a !important;
+  border-color: #1e9c5a !important;
+  color: white !important;
+}
+
+/* Schedule/Maintenance Actions - Orange */
+.btn-modern.btn-warning {
+  background-color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-warning:hover {
+  background-color: #e67d4d !important;
+  border-color: #e67d4d !important;
+  color: white !important;
+}
+
+/* Collect/Return Actions - Pink */
+.btn-modern.btn-outline-warning {
+  background-color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-outline-warning:hover {
+  background-color: #e64d8f !important;
+  border-color: #e64d8f !important;
+  color: white !important;
+}
+
+/* Export/Download Actions - Green */
+.btn-modern.btn-outline-success {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-outline-success:hover {
+  background-color: #1e9c5a !important;
+  border-color: #1e9c5a !important;
+  color: white !important;
+}
+
+/* Bulk/Upload Actions - Blue */
+.btn-modern.btn-outline-primary {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.btn-modern.btn-outline-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+/* View Toggle/Secondary Actions - Gray */
+.btn-modern.btn-outline-secondary,
+.btn-modern.btn-secondary {
+  background-color: var(--primary-light-gray) !important;
+  border-color: var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.btn-modern.btn-outline-secondary:hover,
+.btn-modern.btn-secondary:hover {
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+  color: var(--primary-black) !important;
+}
+
+/* View toggle buttons */
+.view-toggle {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.view-toggle.active {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.view-toggle:hover:not(.active) {
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+}
+
+/* Individual asset action buttons - Updated Design */
+.asset-actions .btn {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 36px !important;
+}
+
+.asset-actions .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+}
+
+/* Specific action button hover colors */
+.asset-actions .btn-outline-primary:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+}
+
+.asset-actions .btn-outline-secondary:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+}
+
+.asset-actions .btn-outline-success:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+}
+
+.asset-actions .btn-outline-warning:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+}
+
+.asset-actions .btn-outline-info:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+}
+
+/* Modern Badge Styles - Updated Color Palette */
+.badge.badge-available {
+  background-color: var(--secondary-green) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-assigned {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-reserved {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-under-repair {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-low-stock {
+  background-color: var(--secondary-pink) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-retired {
+  background-color: var(--secondary-red) !important;
+  color: white !important;
+  border: none !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+/* Enhanced table styling */
+.table-hover tbody tr:hover {
+  background-color: var(--primary-light-gray) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Table responsive container - no padding to avoid white border */
+.table-responsive {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Table cell padding adjustments for balanced spacing */
+.table td, .table th {
+  padding: 0.75rem !important;
+}
+
+/* Table column width optimization */
+.table {
+  table-layout: fixed !important;
+}
+
+/* Prevent text wrapping in table headers */
+.table th {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Column width distribution for optimal space usage */
+.table th:nth-child(1), .table td:nth-child(1) { /* Asset ID */
+  width: 110px !important;
+  min-width: 110px !important;
+  padding-left: 1.5rem !important;
+}
+
+.table th:nth-child(2), .table td:nth-child(2) { /* Type */
+  width: 120px !important;
+  min-width: 120px !important;
+}
+
+.table th:nth-child(3), .table td:nth-child(3) { /* Brand/Model */
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+.table th:nth-child(4), .table td:nth-child(4) { /* Serial Number */
+  width: 130px !important;
+  min-width: 130px !important;
+}
+
+.table th:nth-child(5), .table td:nth-child(5) { /* Status */
+  width: 120px !important;
+  min-width: 120px !important;
+}
+
+.table th:nth-child(6), .table td:nth-child(6) { /* Assigned To */
+  width: 140px !important;
+  min-width: 140px !important;
+}
+
+.table th:nth-child(7), .table td:nth-child(7) { /* Purchase Date */
+  width: 130px !important;
+  min-width: 130px !important;
+}
+
+/* Actions column (last column) - exact width for 5 buttons */
+.table td:last-child, .table th:last-child {
+  padding-right: 1.5rem !important;
+  padding-left: 1rem !important;
+  text-align: left !important;
+  width: 200px !important; /* Exact width for 5 action buttons with no extra space */
+  min-width: 200px !important;
+  max-width: 200px !important;
+}
+
+/* Asset actions button group spacing */
+.asset-actions {
+  justify-content: flex-start !important;
+  gap: 0.25rem !important;
+}
+
+.asset-actions .btn {
+  padding: 0.375rem 0.5rem !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+}
+
+/* Grid View Card Styles */
+.asset-card-modern {
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+  background: #fff;
+  transition: none !important;
+  cursor: default !important;
+}
+
+/* Remove all hover effects from grid view cards */
+.asset-card-modern:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Remove hover effects from badges in grid view */
+.asset-card-modern .badge:hover {
+  box-shadow: none !important;
+  transform: none !important;
+  filter: none !important;
+  cursor: default !important;
+}
+
+/* Asset Actions Footer */
+.asset-actions-footer {
+  border-top: 1px solid var(--element-gray) !important;
+  padding-top: 0.75rem !important;
+  margin-top: auto !important;
+}
+
+/* Action Button Styles for Grid View */
+.btn-action {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 36px !important;
+}
+
+.btn-action:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+}
+
+/* Specific action button hover colors */
+.btn-action.btn-view:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+}
+
+.btn-action.btn-edit:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+}
+
+.btn-action.btn-assign:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+}
+
+.btn-action.btn-maintenance:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+}
+
+/* Badge sizing */
+.badge-sm {
+  font-size: 0.7rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+/* Grid view icon colors - ensure icons are white */
+.asset-card-modern .rounded-circle i {
+  color: white !important;
+}
+
+/* Modal Footer Button Styling */
+.modal-footer {
+  background-color: var(--primary-light-gray) !important;
+  border-top: 1px solid var(--element-gray) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.modal-footer .btn {
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modal-footer .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.modal-footer .btn-secondary {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-primary {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+.modal-footer .btn-outline-primary {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--secondary-purple) !important;
+  color: var(--secondary-purple) !important;
+}
+
+.modal-footer .btn-outline-primary:hover {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-success {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-success:hover {
+  background-color: #1e9c5a !important;
+  border-color: #1e9c5a !important;
+  color: white !important;
+}
+
+.modal-footer .btn-warning {
+  background-color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-warning:hover {
+  background-color: #e67d4d !important;
+  border-color: #e67d4d !important;
+  color: white !important;
+}
+
+.modal-footer .btn-outline-secondary {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--primary-mid-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+  background-color: var(--primary-light-gray) !important;
+  border-color: var(--primary-dark-gray) !important;
+  color: var(--primary-black) !important;
+}
+
+.modal-footer .btn-primary-blue {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-primary-blue:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+.modal-footer .btn-pink {
+  background-color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-pink:hover {
+  background-color: #e6478a !important;
+  border-color: #e6478a !important;
+  color: white !important;
+}
+
+/* Compact Modal Styling */
+.asset-info-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  height: 100% !important;
+}
+
+.section-title {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+}
+
+.info-grid {
+  display: grid !important;
+  gap: 0.75rem !important;
+}
+
+.info-item {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+.info-label {
+  font-size: 0.875rem !important;
+  color: var(--primary-mid-gray) !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.info-value {
+  color: var(--primary-black) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+}
+
+.info-value.fw-bold {
+  font-weight: 600 !important;
+}
+
+.font-monospace {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+  font-size: 0.875rem !important;
+  background-color: var(--primary-light-gray) !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  display: inline-block !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+/* Badge Styling for Modal - Consistent with main page */
+.badge-condition-good {
+  background-color: var(--secondary-green) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge-condition-new {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge-condition-fair {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge-condition-poor {
+  background-color: var(--secondary-red) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+/* Assignment Status Compact */
+.assignment-status-compact {
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  background-color: var(--primary-white) !important;
+}
+
+.assignment-status-compact .bg-light {
+  background-color: var(--primary-light-gray) !important;
+}
+
+.assignment-icon {
+  width: 50px !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: rgba(33, 175, 101, 0.1) !important;
+  border-radius: 50% !important;
+}
+
+.qr-code-mini {
+  opacity: 0.6 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.qr-code-mini:hover {
+  opacity: 1 !important;
+  cursor: pointer !important;
+}
+
+/* Warranty Progress Indicator */
+.warranty-indicator .progress {
+  border-radius: 2px !important;
+  background-color: var(--element-gray) !important;
+}
+
+.warranty-indicator .progress-bar {
+  border-radius: 2px !important;
+}
+
+/* Modal Size Adjustments */
+.modal-lg .modal-body {
+  padding: 1.5rem !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .info-grid {
+    gap: 0.5rem !important;
+  }
+  
+  .asset-info-section {
+    padding: 0.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .assignment-status-compact .d-flex {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 1rem !important;
+  }
+  
+  .assignment-icon {
+    align-self: center !important;
+  }
 }

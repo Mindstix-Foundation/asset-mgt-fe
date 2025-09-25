@@ -30,7 +30,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-warning" :style="`width: ${stats.underMaintenancePercent}%`"></div>
               </div>
-
             </div>
           </div>
         </div>
@@ -51,7 +50,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-info" :style="`width: ${stats.scheduledPercent}%`"></div>
               </div>
-
             </div>
           </div>
         </div>
@@ -72,7 +70,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-success" :style="`width: ${stats.completedPercent}%`"></div>
               </div>
-
             </div>
           </div>
         </div>
@@ -93,7 +90,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-secondary" :style="`width: ${stats.cancelledPercent}%`"></div>
               </div>
-
             </div>
           </div>
         </div>
@@ -1622,6 +1618,7 @@ onMounted(() => {
 .progress-bar.bg-warning {
   background-color: var(--secondary-orange) !important;
 }
+
 
 .stats-icon.bg-info {
   background-color: var(--secondary-purple) !important;

@@ -1,0 +1,194 @@
+import axios from 'axios'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+
+// Types for employee API
+export interface EmployeeQueryDto {
+  page?: number
+  limit?: number
+  search?: string
+  status?: 'ACTIVE' | 'INACTIVE'
+  hasAssets?: boolean
+  assetCountRange?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+export interface Employee {
+  id: string
+  employeeId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone?: string
+  dateOfBirth?: string
+  address?: string
+  status: string
+  createdAt: string
+  assignedAssetsCount?: number
+  assignedAssets?: Array<{
+    assetId: string
+    assetName: string
+    assignedDate: string
+    status: string
+  }>
+}
+
+export interface EmployeeResponse {
+  message: string
+  data: {
+    employee: Employee
+  }
+}
+
+export interface EmployeeListResponse {
+  message: string
+  data: {
+    employees: Employee[]
+    pagination: {
+      totalCount: number
+      currentPage: number
+      totalPages: number
+      hasNext: boolean
+      hasPrevious: boolean
+    }
+  }
+}
+
+class EmployeeApiService {
+  private baseURL = `${API_BASE_URL}/employees`
+
+  // Get auth token from localStorage
+  private getAuthToken(): string | null {
+    return localStorage.getItem('auth_token')
+  }
+
+  // Get all employees with filtering
+  async getEmployees(query?: EmployeeQueryDto): Promise<EmployeeListResponse> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.get(this.baseURL, {
+        params: query,
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching employees:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get active employees (for issue asset page) - NO LIMIT to show all employees
+  async getActiveEmployees(query?: Omit<EmployeeQueryDto, 'status' | 'limit'>): Promise<EmployeeListResponse> {
+    try {
+      const token = this.getAuthToken()
+      // Remove limit to get all active employees
+      const activeQuery = { ...query, status: 'ACTIVE' as const }
+      const response = await axios.get(this.baseURL, {
+        params: activeQuery,
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching active employees:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get employee by ID
+  async getEmployeeById(id: string, includeAssets: boolean = true): Promise<EmployeeResponse> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.get(`${this.baseURL}/${id}`, {
+        params: { include_assets: includeAssets },
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching employee:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Check if email is available
+  async isEmailAvailable(email: string, excludeEmployeeId?: string): Promise<{ available: boolean }> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.get(`${this.baseURL}/check-email`, {
+        params: { email, exclude_employee_id: excludeEmployeeId },
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error checking email availability:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Search employees
+  async searchEmployees(query: string, limit: number = 10, includeInactive: boolean = false): Promise<EmployeeListResponse> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.get(`${this.baseURL}/search`, {
+        params: { q: query, limit, include_inactive: includeInactive },
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error searching employees:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Error handling
+  private handleError(error: any): Error {
+    if (error.response) {
+      // Server responded with error status
+      const message = error.response.data?.message || 'An error occurred'
+      const status = error.response.status
+      
+      switch (status) {
+        case 400:
+          return new Error(`Bad Request: ${message}`)
+        case 401:
+          // Clear invalid token and redirect to login
+          localStorage.removeItem('auth_token')
+          localStorage.removeItem('user')
+          window.location.href = '/login'
+          return new Error('Session expired. Please log in again.')
+        case 403:
+          return new Error('Forbidden: You do not have permission to perform this action')
+        case 404:
+          return new Error('Not Found: The requested resource was not found')
+        case 409:
+          return new Error(`Conflict: ${message}`)
+        case 422:
+          return new Error(`Validation Error: ${message}`)
+        case 500:
+          return new Error('Server Error: Please try again later')
+        default:
+          return new Error(`Error ${status}: ${message}`)
+      }
+    } else if (error.request) {
+      // Request was made but no response received
+      return new Error('Network Error: Please check your internet connection')
+    } else {
+      // Something else happened
+      return new Error(error.message || 'An unexpected error occurred')
+    }
+  }
+}
+
+// Export singleton instance
+export const employeeApiService = new EmployeeApiService()
+export default employeeApiService
