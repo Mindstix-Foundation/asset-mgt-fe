@@ -383,173 +383,29 @@
     </div>
 
     <!-- Bulk Upload Employees Modal -->
-    <div class="modal fade" id="employeeBulkUploadModal" tabindex="-1" aria-labelledby="employeeBulkUploadModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bulk-upload-modal">
-          <div class="modal-header">
-            <h5 class="modal-title" id="employeeBulkUploadModalLabel" style="color: var(--text-primary);">
-              <i class="fas fa-file-excel me-2" style="color: var(--secondary-purple);"></i>Bulk Upload Employees
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <!-- Step 1: Template Download -->
-            <div class="mb-4">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0" style="color: var(--primary-black);">
-                  <i class="fas fa-download me-2" style="color: var(--secondary-purple);"></i>Step 1: Download Template
-                </h6>
-                <div class="d-flex gap-2">
-                  <button class="btn btn-modern btn-outline-secondary" @click="downloadEmployeeTemplate" data-bs-toggle="tooltip" title="Download the CSV template with correct column format">
-                    <i class="fas fa-file-csv me-2"></i>CSV Template
-                  </button>
-                  <button class="btn btn-modern btn-success" @click="downloadEmployeeTemplateExcel" data-bs-toggle="tooltip" title="Download the Excel (.xlsx) template with correct column format">
-                    <i class="fas fa-file-excel me-2"></i>Excel Template
-                  </button>
-                </div>
-              </div>
-              <p class="text-muted small mb-0">Download our template to ensure your data is formatted correctly before uploading.</p>
-            </div>
-
-            <!-- Required Columns Info -->
-            <div class="required-columns-section mb-4">
-              <h6 class="mb-3" style="color: var(--text-primary);">
-                <i class="fas fa-list-check me-2" style="color: var(--secondary-green);"></i>Required Columns (in this order)
-              </h6>
-              <div class="columns-sequence columns-excel">
-                <div class="excel-cell">First Name</div>
-                <div class="excel-cell">Last Name</div>
-                <div class="excel-cell">Email</div>
-                <div class="excel-cell">Phone</div>
-                <div class="excel-cell">Date of Birth (YYYY-MM-DD)</div>
-                <div class="excel-cell">Address</div>
-              </div>
-              <p class="sequence-note mt-2">
-                <i class="fas fa-info-circle me-1" style="color: var(--secondary-purple);"></i>
-                <small class="text-muted">Make sure your spreadsheet columns follow this exact sequence</small>
-              </p>
-            </div>
-
-            <!-- Step 2: Upload File -->
-            <div class="mb-4">
-              <h6 class="mb-3" style="color: var(--text-primary);">
-                <i class="fas fa-upload me-2" style="color: var(--secondary-purple);"></i>Step 2: Upload File
-              </h6>
-
-              <div class="upload-area" id="empUploadArea" @click="triggerEmpBrowse" @dragover.prevent="onEmpDragOver" @dragleave.prevent="onEmpDragLeave" @drop.prevent="onEmpFileDrop">
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <h6 class="upload-title">Drag & drop your file here</h6>
-                  <p class="upload-subtitle">or click to browse</p>
-                  <div class="supported-formats">
-                    <span class="format-badge">CSV (.csv)</span>
-                    <span class="format-badge">Excel (.xlsx)</span>
-                  </div>
-                </div>
-                <input type="file" id="empFile" class="file-input" accept=".csv,.xlsx" aria-label="Choose employee file" @change="onEmpFileSelect">
-              </div>
-
-              <!-- File Info -->
-              <div class="file-info" v-if="empFileName" style="margin-top: 0.75rem;">
-                <div class="d-flex align-items-center justify-content-between p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border: 1px solid var(--element-gray);">
-                  <div class="d-flex align-items-center">
-                    <i class="fas fa-file-csv me-2" style="color: var(--secondary-green);"></i>
-                    <div>
-                      <div class="fw-semibold" style="color: var(--primary-black);">{{ empFileName }}</div>
-                      <small class="text-muted">{{ empFileSize }}</small>
-                    </div>
-                  </div>
-                  <button type="button" class="btn btn-sm btn-outline-danger" @click="removeEmpFile" data-bs-toggle="tooltip" title="Remove file">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Validation Messages -->
-              <div class="validation-messages mt-3" v-if="empValidationMessages.length">
-                <div 
-                  v-for="(msg, i) in empValidationMessages" 
-                  :key="i" 
-                  :class="[msg.toLowerCase().startsWith('no errors') ? 'validation-success' : 'validation-error', 'mb-2']"
-                >
-                  <i :class="msg.toLowerCase().startsWith('no errors') ? 'fas fa-check-circle me-2' : 'fas fa-exclamation-triangle me-2'"></i>{{ msg }}
-                </div>
-              </div>
-
-              <!-- Preview Table (first 5 rows) -->
-              <div class="mt-3" v-if="empPreview.length">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h6 class="mb-0" style="color: var(--primary-black);">Preview (first 5 rows)</h6>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="badge badge-preview">
-                      <i class="fas fa-eye me-1"></i>Showing {{ Math.min(5, empRows.length) }} of {{ empRows.length }}
-                    </span>
-                  </div>
-                </div>
-                <div class="table-responsive">
-                  <table class="table table-sm mb-0">
-                    <thead class="table-light">
-                      <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Date of Birth</th>
-                        <th>Address</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(r, idx) in empPreview" :key="idx">
-                        <td>{{ r._row }}</td>
-                        <td>{{ r.firstName }}</td>
-                        <td>{{ r.lastName }}</td>
-                        <td>{{ r.email }}</td>
-                        <td>{{ r.phone }}</td>
-                        <td>{{ r.dateOfBirth }}</td>
-                        <td>{{ r.address }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Upload Progress -->
-              <div class="upload-progress mt-3" v-if="empUploading">
-                <div class="d-flex align-items-center mb-2">
-                  <i class="fas fa-spinner fa-spin me-2" style="color: var(--secondary-purple);"></i>
-                  <span style="color: var(--primary-black);">Processing your file...</span>
-                </div>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" :style="{ width: empProgress + '%' , backgroundColor: 'var(--secondary-purple)'}" :aria-valuenow="empProgress" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button type="button" class="btn btn-modern btn-primary" :disabled="!empRows.length || hasPreviewErrors" @click="uploadEmployees">
-              <i class="fas fa-upload me-2"></i>Upload Employees
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <BulkUploadModal
+      ref="bulkUploadModal"
+      modal-id="employeeBulkUploadModal"
+      title="Bulk Upload Employees"
+      entity-name="employee"
+      :columns="employeeColumns"
+      :template-data="employeeTemplateData"
+      upload-button-text="Upload Employees"
+      @upload="handleBulkUpload"
+      @template-download="handleTemplateDownload"
+    />
   </div>
 </template>
   
 <script>
   import { Modal } from 'bootstrap'
   import { employeeService } from '@/services/employeeService'
-  import * as XLSX from 'xlsx'
   import AppPagination from '@/components/pagination/AppPagination.vue'
+  import BulkUploadModal from '@/components/BulkUploadModal.vue'
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination },
+    components: { AppPagination, BulkUploadModal },
     data() {
       return {
         isGridView: false,
@@ -566,15 +422,7 @@
         employees: [],
         totalEmployees: 0,
         serverTotalPages: 1,
-        confirmPayload: { current: false },
-        // Bulk upload state
-        empFileName: '',
-        empFileSize: '',
-        empValidationMessages: [],
-        empRows: [],
-        empPreview: [],
-        empUploading: false,
-        empProgress: 0
+        confirmPayload: { current: false }
       }
     },
     computed: {
@@ -636,8 +484,70 @@
         
         return { start, end, total }
       },
-      hasPreviewErrors() {
-        return this.empValidationMessages.some(m => !m.toLowerCase().startsWith('no errors'))
+      employeeColumns() {
+        return [
+          { 
+            key: 'firstName', 
+            label: 'First Name', 
+            required: true,
+            validation: (value) => {
+              if (!value || value.trim() === '') return 'First name is required'
+              if (value.length < 2 || value.length > 50) return 'First name must be 2-50 characters'
+              if (!/^[A-Za-z\s]+$/.test(value)) return 'First name can only contain letters and spaces'
+              return null
+            }
+          },
+          { 
+            key: 'lastName', 
+            label: 'Last Name', 
+            required: true,
+            validation: (value) => {
+              if (!value || value.trim() === '') return 'Last name is required'
+              if (value.length < 2 || value.length > 50) return 'Last name must be 2-50 characters'
+              if (!/^[A-Za-z\s]+$/.test(value)) return 'Last name can only contain letters and spaces'
+              return null
+            }
+          },
+          { 
+            key: 'email', 
+            label: 'Email', 
+            required: true,
+            validation: (value) => {
+              if (!value || value.trim() === '') return 'Email is required'
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format'
+              return null
+            }
+          },
+          { 
+            key: 'phone', 
+            label: 'Phone',
+            validation: (value) => {
+              if (value && !value.startsWith('+91')) return 'Phone should start with +91'
+              return null
+            }
+          },
+          { 
+            key: 'dateOfBirth', 
+            label: 'Date of Birth (YYYY-MM-DD)',
+            validation: (value) => {
+              if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Date of Birth must be YYYY-MM-DD'
+              return null
+            }
+          },
+          { key: 'address', label: 'Address' }
+        ]
+      },
+      employeeTemplateData() {
+        return [
+          {
+            firstName: 'Aarav',
+            lastName: 'Sharma',
+            email: 'aarav.sharma@example.com',
+            phone: '+91 9123456789',
+            dateOfBirth: '1992-05-21',
+            address: '123 MG Road Pune'
+          }
+        ]
       }
     },
     created() {
@@ -763,200 +673,37 @@
         this.confirmingStatus = false
       },
       openBulkUploadModal() {
-        // reset state each time
-        this.removeEmpFile()
-        this.empValidationMessages = []
-        this.empUploading = false
-        this.empProgress = 0
-        const el = document.getElementById('employeeBulkUploadModal')
-        if (el) {
-          const m = Modal.getInstance(el) || new Modal(el)
-          m.show()
-        }
+        this.$refs.bulkUploadModal.openModal()
       },
-      // Bulk upload helpers
-      downloadEmployeeTemplate() {
-        const csv = 'First Name,Last Name,Email,Phone,Date of Birth,Address\n' +
-                    'Aarav,Sharma,aarav.sharma@example.com,+91 9123456789,1992-05-21,123 MG Road Pune\n';
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-        const link = document.createElement('a')
-        link.href = URL.createObjectURL(blob)
-        link.download = 'employee_upload_template.csv'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+      // Bulk upload event handlers
+      handleBulkUpload(data) {
+        this.uploadEmployeesData(data)
       },
-             downloadEmployeeTemplateExcel() {
-         try {
-           const headers = [
-             ["First Name","Last Name","Email","Phone","Date of Birth","Address"],
-             ["Aarav","Sharma","aarav.sharma@example.com","+91 9123456789","1992-05-21","123 MG Road Pune"]
-           ];
-           const worksheet = XLSX.utils.aoa_to_sheet(headers);
-           const workbook = XLSX.utils.book_new();
-           XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-           // Set column widths for readability
-           worksheet['!cols'] = [
-             { wch: 12 }, { wch: 12 }, { wch: 28 }, { wch: 16 }, { wch: 18 }, { wch: 24 }
-           ];
-           const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-           const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-           const link = document.createElement('a');
-           link.href = URL.createObjectURL(blob);
-           link.download = 'employee_upload_template.xlsx';
-           document.body.appendChild(link);
-           link.click();
-           document.body.removeChild(link);
-         } catch (e) {
-           console.warn('Excel template generation failed', e)
-         }
-       },
-      onEmpDragOver(e) {
-        document.getElementById('empUploadArea')?.classList.add('dragover')
+      handleTemplateDownload(type) {
+        console.log(`Template downloaded: ${type}`)
       },
-      onEmpDragLeave(e) {
-        document.getElementById('empUploadArea')?.classList.remove('dragover')
-      },
-      onEmpFileDrop(e) {
-        const file = e.dataTransfer.files[0]
-        if (file) this.handleEmpFile(file)
-      },
-      triggerEmpBrowse() {
-        const input = document.getElementById('empFile')
-        input && input.click()
-      },
-      onEmpFileSelect(e) {
-        const file = e.target.files[0]
-        if (file) this.handleEmpFile(file)
-      },
-      removeEmpFile() {
-        this.empFileName = ''
-        this.empFileSize = ''
-        this.empValidationMessages = []
-        this.empRows = []
-        this.empPreview = []
-        const input = document.getElementById('empFile')
-        if (input) input.value = ''
-        document.getElementById('empUploadArea')?.classList.remove('dragover')
-      },
-      handleEmpFile(file) {
-        this.empValidationMessages = []
-        if (file.type !== 'text/csv' && !file.name.endsWith('.csv') && file.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' && !file.name.endsWith('.xlsx')) {
-          this.empValidationMessages.push('Invalid file type. Please upload a CSV (.csv) or Excel (.xlsx) file.')
-          return
-        }
-        this.empFileName = file.name
-        this.empFileSize = (file.size / 1024).toFixed(1) + ' KB'
-
-        const reader = new FileReader()
-        if (file.name.endsWith('.xlsx') || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-          reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result)
-            const workbook = XLSX.read(data, { type: 'array' })
-            const firstSheetName = workbook.SheetNames[0]
-            const worksheet = workbook.Sheets[firstSheetName]
-            const csv = XLSX.utils.sheet_to_csv(worksheet)
-            this.parseEmpCsv(csv)
-          }
-          reader.readAsArrayBuffer(file)
-        } else {
-          reader.onload = () => {
-            const text = reader.result
-            this.parseEmpCsv(String(text))
-          }
-          reader.readAsText(file)
-        }
-      },
-      parseEmpCsv(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim().length)
-        if (lines.length < 2) {
-          this.empValidationMessages.push('No data rows found in file.')
-          return
-        }
-        const header = lines[0].split(',').map(h => h.trim().toLowerCase())
-        const expected = ['first name','last name','email','phone','date of birth','address']
-        if (expected.some((h, i) => (header[i] || '') !== h)) {
-          this.empValidationMessages.push('Invalid header order. Expected: First Name, Last Name, Email, Phone, Date of Birth, Address')
-        }
-        const rows = lines.slice(1).map((line, idx) => {
-          const cols = line.split(',')
-          const row = {
-            _row: idx + 1,
-            firstName: (cols[0] || '').trim(),
-            lastName: (cols[1] || '').trim(),
-            email: (cols[2] || '').trim(),
-            phone: (cols[3] || '').trim(),
-            dateOfBirth: (cols[4] || '').trim(),
-            address: (cols[5] || '').trim(),
-            _errors: []
-          }
-          // Basic validations
-          if (!row.firstName) row._errors.push('First Name required')
-          if (!row.lastName) row._errors.push('Last Name required')
-          if (!row.email || !row.email.includes('@')) row._errors.push('Invalid Email')
-          if (row.phone && !row.phone.startsWith('+91')) row._errors.push('Phone should start with +91')
-          if (row.dateOfBirth && !/^\d{4}-\d{2}-\d{2}$/.test(row.dateOfBirth)) row._errors.push('Date of Birth must be YYYY-MM-DD')
-          return row
-        })
-        this.empRows = rows
-        this.empPreview = rows.slice(0, 5)
-        // Aggregate all errors across the entire file
-        const allErrors = []
-        rows.forEach(r => {
-          if (r._errors && r._errors.length) {
-            allErrors.push(`Row ${r._row}: ${r._errors.join('; ')}`)
-          }
-        })
-        // Reset and show aggregated messages (keep header issues too)
-        const headerMsgs = this.empValidationMessages.filter(m => m.toLowerCase().startsWith('invalid header') || m.toLowerCase().startsWith('no data rows'))
-        if (allErrors.length) {
-          this.empValidationMessages = headerMsgs.concat(allErrors)
-        } else {
-          this.empValidationMessages = ['No errors found in the file. You can proceed to upload.']
-        }
-      },
-      async uploadEmployees() {
-        this.empUploading = true
-        this.empProgress = 15
+      async uploadEmployeesData(employeeData) {
         try {
-          // Simulate progressive upload
-          const step = () => new Promise(r => setTimeout(r, 250))
-          for (let p = 15; p <= 90; p += 15) { await step(); this.empProgress = p }
-          // Send valid rows to backend (only rows without errors)
-          const valid = this.empRows.filter(r => !r._errors || r._errors.length === 0)
-          if (!valid.length) {
-            this.empValidationMessages.push('No valid rows to upload. Please fix errors and try again.')
-            return
-          }
           // Map to API payloads
-          const payloads = valid.map(r => ({
-            firstName: r.firstName,
-            lastName: r.lastName,
-            email: r.email,
-            phone: r.phone || undefined,
-            dateOfBirth: r.dateOfBirth || undefined,
-            address: r.address || undefined
+          const payloads = employeeData.map(emp => ({
+            firstName: emp.firstName,
+            lastName: emp.lastName,
+            email: emp.email,
+            phone: emp.phone || undefined,
+            dateOfBirth: emp.dateOfBirth || undefined,
+            address: emp.address || undefined
           }))
-          // Naive sequential create
+          
+          // Create employees sequentially
           for (const data of payloads) {
             await employeeService.createEmployee(data)
           }
-          this.empProgress = 100
-          // Refresh list
+          
+          // Refresh the employee list
           await this.loadEmployees()
-          // Close modal
-          const modalEl = document.getElementById('employeeBulkUploadModal')
-          if (modalEl) {
-            const m = Modal.getInstance(modalEl) || new Modal(modalEl)
-            m.hide()
-          }
-          // Reset
-          this.removeEmpFile()
+          
         } catch (e) {
-          this.empValidationMessages.push('Upload failed. Please try again.')
-        } finally {
-          this.empUploading = false
-          this.empProgress = 0
+          console.error('Failed to upload employees:', e)
         }
       },
       issueAsset(employee) {
@@ -1179,17 +926,6 @@
     border-color: #2415c7 !important;
     color: white !important;
 }
-
-/* Compact Employee Modal Styling - legacy rules retained for safety */
-.employee-info-section { /* already overridden above */ }
-.assigned-assets-section { /* already overridden above */ }
-.section-title { /* already overridden above */ }
-.info-label { /* already overridden above */ }
-.info-value { /* already overridden above */ }
-
-/* Assets list spacing remains the same */
-.assets-list { /* already defined above */ }
-
 /* Badge Styling for Employee Modal */
 .badge-active {
     background-color: var(--secondary-green) !important;
@@ -1240,14 +976,7 @@
     border-radius: 0.375rem !important;
 }
 
-.badge-preview {
-    background-color: var(--secondary-green) !important;
-    color: white !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    padding: 0.35rem 0.65rem !important;
-    border-radius: 0.375rem !important;
-}
+
 
 /* Assets List Styling */
 .assets-list {
@@ -1409,153 +1138,7 @@
     padding: 0.25rem !important;
 }
 
-/* Bulk Upload - Drag and Drop area styled with theme */
-.upload-area {
-    position: relative !important;
-    border: 2px dashed var(--element-gray) !important;
-    background-color: var(--primary-light-gray) !important;
-    border-radius: 0.75rem !important;
-    padding: 1.25rem !important;
-    text-align: center !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-}
-.upload-area:hover, .upload-area.dragover {
-    background-color: var(--primary-white) !important;
-    border-color: var(--secondary-purple) !important;
-    box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.12) !important;
-}
-.upload-content .upload-icon {
-    font-size: 2rem !important;
-    color: var(--secondary-purple) !important;
-    margin-bottom: 0.5rem !important;
-}
-.upload-title {
-    color: var(--text-primary) !important;
-    margin-bottom: 0.25rem !important;
-    font-weight: 600 !important;
-}
-.upload-subtitle {
-    color: var(--primary-mid-gray) !important;
-    margin-bottom: 0.5rem !important;
-}
-.supported-formats .format-badge {
-    display: inline-block !important;
-    background-color: var(--primary-white) !important;
-    border: 1px solid var(--element-gray) !important;
-    color: var(--primary-dark-gray) !important;
-    border-radius: 0.5rem !important;
-    padding: 0.25rem 0.5rem !important;
-    margin-right: 0.25rem !important;
-    font-size: 0.8rem !important;
-    font-weight: 500 !important;
-}
-.file-input {
-    position: absolute !important;
-    inset: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
 
-/* Validation message colors using palette */
-.validation-error {
-    color: var(--secondary-red) !important;
-    background-color: rgba(233, 118, 118, 0.08) !important;
-    border: 1px solid rgba(233, 118, 118, 0.25) !important;
-    border-radius: 0.5rem !important;
-    padding: 0.5rem 0.75rem !important;
-    font-weight: 500 !important;
-}
-.validation-success {
-    color: var(--secondary-green) !important;
-    background-color: rgba(33, 175, 101, 0.08) !important;
-    border: 1px solid rgba(33, 175, 101, 0.25) !important;
-    border-radius: 0.5rem !important;
-    padding: 0.5rem 0.75rem !important;
-    font-weight: 500 !important;
-}
-
-/* Required Columns sequence: horizontal boxed items like Excel headers */
-.columns-sequence {
-    display: flex !important;
-    align-items: stretch !important;
-    gap: 0.5rem !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    padding: 0.25rem 0 !important;
-    scrollbar-width: thin !important;
-}
-
-.columns-sequence .column-item {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 150px !important;
-    background-color: var(--primary-white) !important;
-    border: 1px solid var(--element-gray) !important;
-    border-radius: 0.5rem !important;
-    padding: 0.75rem !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
-}
-
-.columns-sequence .column-number {
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 999px !important;
-    background-color: var(--primary-light-gray) !important;
-    border: 1px solid var(--element-gray) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    color: var(--primary-black) !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-.columns-sequence .column-name {
-    font-size: 0.9rem !important;
-    font-weight: 600 !important;
-    color: var(--primary-black) !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-}
-
-.columns-sequence .column-arrow {
-    display: none !important;
-}
-
-/* Excel-like header cells */
-.columns-excel {
-    gap: 0 !important;
-    border: 1px solid var(--element-gray) !important;
-    border-radius: 0.375rem !important;
-    overflow: hidden !important;
-    width: 100% !important;
-}
-.columns-excel .excel-cell {
-    background-color: #f8fafc !important; /* subtle header gray */
-    border-right: 1px solid var(--element-gray) !important;
-    padding: 0.5rem 0.75rem !important;
-    font-weight: 600 !important;
-    color: var(--primary-black) !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    min-width: 120px !important;
-    flex: 1 1 0 !important;
-    display: flex !important;
-    align-items: center !important;
-}
-.columns-excel .excel-cell:last-child {
-    border-right: none !important;
-}
-/* Give the longer header a bit more space */
-.columns-excel .excel-cell:nth-child(5) {
-    min-width: 200px !important;
-    flex: 2 1 0 !important;
-}
 
 /* Align activate/deactivate hover with 'Issue Asset' (simple darken, no extra effects) */
 .btn-status-activate:hover,

@@ -778,7 +778,7 @@ const fetchVendors = async () => {
       limit: itemsPerPage.value,
       search: searchTerm.value || undefined,
       vendorType: filterType.value || undefined,
-      status: filterStatus.value || undefined,
+      status: (filterStatus.value || undefined) as VendorStatus | undefined,
       sortBy: sortBy.value,
       sortOrder: sortAscending.value ? 'asc' : 'desc'
     }
@@ -947,10 +947,6 @@ const getStatusBadgeClass = (status: VendorStatus) => {
       return 'badge badge-active'
     case VendorStatus.INACTIVE:
       return 'badge badge-inactive'
-    case VendorStatus.PENDING:
-      return 'badge badge-warning'
-    case VendorStatus.SUSPENDED:
-      return 'badge badge-danger'
     default:
       return 'badge badge-secondary'
   }
@@ -962,10 +958,6 @@ const getStatusLabel = (status: VendorStatus) => {
       return 'Active'
     case VendorStatus.INACTIVE:
       return 'Inactive'
-    case VendorStatus.PENDING:
-      return 'Pending'
-    case VendorStatus.SUSPENDED:
-      return 'Suspended'
     default:
       return 'Unknown'
   }
@@ -989,42 +981,41 @@ const showVendorDetails = async (vendor: Vendor) => {
     console.log('Response data:', response.data)
     console.log('Response structure:', JSON.stringify(response, null, 2))
     
-    // Handle different possible response structures
-    let vendorData = null
-    if (response) {
-      // The API service already returns response.data, so response is the actual data
-      // Check if data is nested in a 'data.vendor' property (API response structure)
-      if (response.data && response.data.vendor) {
-        vendorData = response.data.vendor
-      } else if (response.data) {
-        vendorData = response.data
-      } else {
-        vendorData = response
-      }
+    // Normalize response into a Vendor object
+    let vendorData: Vendor | null = null
+    const anyResp: any = response
+    if (anyResp?.data?.vendor) {
+      vendorData = anyResp.data.vendor as Vendor
+    } else if (anyResp?.data) {
+      vendorData = anyResp.data as Vendor
+    } else if (anyResp) {
+      vendorData = anyResp as Vendor
     }
-    
+
     console.log('Final vendor data from API:', vendorData)
-    console.log('Vendor data fields:', {
-      name: vendorData?.name,
-      email: vendorData?.email,
-      phone: vendorData?.phone,
-      address: vendorData?.address,
-      contactPerson: vendorData?.contactPerson,
-      taxId: vendorData?.taxId,
-      panNumber: vendorData?.panNumber,
-      notes: vendorData?.notes,
-      vendorType: vendorData?.vendorType,
-      status: vendorData?.status
-    })
-    
+    if (vendorData) {
+      console.log('Vendor data fields:', {
+        name: vendorData.name,
+        email: vendorData.email,
+        phone: vendorData.phone,
+        address: vendorData.address,
+        contactPerson: vendorData.contactPerson,
+        taxId: vendorData.taxId,
+        panNumber: vendorData.panNumber,
+        notes: vendorData.notes,
+        vendorType: vendorData.vendorType,
+        status: vendorData.status
+      })
+    }
+
     // Update with API data if available, otherwise keep the list data
     if (vendorData) {
       selectedVendor.value = vendorData
       console.log('Updated selectedVendor.value:', selectedVendor.value)
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching vendor details:', error)
-    console.error('Error details:', error.response?.data)
+    console.error('Error details:', error?.response?.data)
     showToast('error', 'Failed to load vendor details from API, showing cached data')
     
     // Keep the vendor data we already have (this should already be set)
