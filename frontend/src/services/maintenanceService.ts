@@ -16,7 +16,9 @@ export interface MaintenanceType {
   description: string
 }
 
-export interface Vendor {
+// Use central Vendor type if needed
+// (Kept local interface minimal to avoid conflicts)
+export interface MaintenanceVendor {
   id: string
   name: string
   contactEmail: string
@@ -142,7 +144,7 @@ class MaintenanceService {
   }
 
   // Get all vendors for dropdown
-  async getVendors(): Promise<ApiResponse<{ vendors: Vendor[] }>> {
+  async getVendors(): Promise<ApiResponse<{ vendors: MaintenanceVendor[] }>> {
     return apiService.get('/vendors')
   }
 

@@ -73,20 +73,6 @@ class ApiService {
   delete<T>(endpoint: string, body?: unknown): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', body: body ? JSON.stringify(body) : undefined })
   }
-
-  delete<T>(endpoint: string, body?: unknown): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE', body: body ? JSON.stringify(body) : undefined })
-  }
-}
-
-export const apiService = new ApiService()
-
-// Lightweight stats client
-export interface DashboardStats {
-  totalAssets: number
-  available: number
-  assigned: number
-  maintenance: number
 }
 
 export const apiService = new ApiService()

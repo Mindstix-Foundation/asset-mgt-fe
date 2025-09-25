@@ -514,9 +514,9 @@ const setEntityType = async (type: 'category' | 'type' | 'brand' | 'model') => {
 const resetForm = () => {
   Object.keys(formData).forEach(key => {
     if (key === 'id') {
-      formData[key] = null
+      (formData as any)[key] = null
     } else {
-      formData[key] = ''
+      (formData as any)[key] = ''
     }
   })
 }
@@ -689,8 +689,8 @@ const analyzeDeletionImpact = async (item: any) => {
         impact.assetTypes = category._count?.assetTypes || 0
         
         // Count assets through asset types
-        if (category.assetTypes) {
-          impact.assets = category.assetTypes.reduce((total: number, type: any) => {
+        if ((category as any).assetTypes) {
+          impact.assets = (category as any).assetTypes.reduce((total: number, type: any) => {
             return total + (type._count?.assets || 0)
           }, 0)
         }

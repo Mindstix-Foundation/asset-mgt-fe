@@ -1,5 +1,8 @@
 // Asset related types for the frontend application
 
+import type { Vendor } from './vendor.types'
+import type { User as AppUser } from './common.types'
+
 export interface AssetCategory {
   id: number
   name: string
@@ -25,16 +28,6 @@ export interface Model {
   specifications?: Record<string, any>
   brand?: Brand
   assetType?: AssetType
-}
-
-export interface Vendor {
-  id: number
-  name: string
-}
-
-export interface User {
-  id: number
-  username: string
 }
 
 export interface AssetIssue {
@@ -67,7 +60,7 @@ export interface Asset {
   brand: Brand
   model: Model
   vendor?: Vendor
-  createdByUser: User
+  createdByUser: AppUser
   assetIssues?: AssetIssue[]
   _count: {
     assetIssues: number
@@ -186,8 +179,8 @@ export interface FilterOptions {
   vendors: Array<{ id: number; name: string }>
 }
 
-// Bulk upload types
-export interface BulkUploadResult {
+// Bulk upload types (renamed to avoid conflict with vendor bulk upload)
+export interface AssetBulkUploadResult {
   imported: number
   errors: Array<{
     row: number
@@ -202,7 +195,7 @@ export interface BulkUploadResult {
   }
 }
 
-export interface BulkUploadResponse {
+export interface AssetBulkUploadResponse {
   message: string
-  data: BulkUploadResult
+  data: AssetBulkUploadResult
 } 

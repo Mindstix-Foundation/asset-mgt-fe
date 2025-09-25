@@ -6,7 +6,7 @@ import type {
   AssetResponse,
   AssetStatsResponse,
   SearchResponse,
-  BulkUploadResponse,
+  AssetBulkUploadResponse,
   CreateAssetDto,
   UpdateAssetDto,
   AssetQueryParams,
@@ -14,9 +14,9 @@ import type {
   FilterOptions,
   AssetType,
   Brand,
-  Model,
-  Vendor
+  Model
 } from '../types/asset.types'
+import type { Vendor } from '../types/vendor.types'
 
 class AssetService {
   private readonly baseEndpoint = '/assets'
@@ -101,7 +101,7 @@ class AssetService {
   }
 
   // Bulk upload assets
-  async bulkUploadAssets(file: File, validateOnly: boolean = false): Promise<BulkUploadResponse> {
+  async bulkUploadAssets(file: File, validateOnly: boolean = false): Promise<AssetBulkUploadResponse> {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('validate_only', validateOnly.toString())
@@ -164,17 +164,17 @@ class AssetService {
       ])
 
       // Handle different response structures safely
-      const assetTypesData = Array.isArray(assetTypesRes.data) 
-        ? assetTypesRes.data 
-        : assetTypesRes.data?.assetTypes || []
+      const assetTypesData = Array.isArray((assetTypesRes as any).data)
+        ? (assetTypesRes as any).data
+        : (assetTypesRes as any).data?.assetTypes || []
       
-      const brandsData = Array.isArray(brandsRes.data) 
-        ? brandsRes.data 
-        : brandsRes.data?.brands || []
+      const brandsData = Array.isArray((brandsRes as any).data)
+        ? (brandsRes as any).data
+        : (brandsRes as any).data?.brands || []
         
-      const vendorsData = Array.isArray(vendorsRes.data) 
-        ? vendorsRes.data 
-        : vendorsRes.data?.vendors || []
+      const vendorsData = Array.isArray((vendorsRes as any).data)
+        ? (vendorsRes as any).data
+        : (vendorsRes as any).data?.vendors || []
 
       return {
         assetTypes: assetTypesData.map((type: any) => ({ id: type.id, name: type.name })),
