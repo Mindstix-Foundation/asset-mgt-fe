@@ -274,7 +274,7 @@
             <button type="button" class="btn btn-outline-secondary px-4" @click="closeConfirmationModal">
               Cancel
             </button>
-            <button type="button" class="btn btn-danger px-4" @click="confirmCollection">
+            <button type="button" class="btn btn-pink px-4" @click="confirmCollection">
               Confirm Collection
             </button>
           </div>
@@ -1264,14 +1264,14 @@ onMounted(async () => {
 }
 
 .btn-pink {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
+  background-color: #FF579F !important;
+  border-color: #FF579F !important;
   color: #FFFFFF !important;
 }
 
 .btn-pink:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
+  background-color: #e04a8a !important;
+  border-color: #e04a8a !important;
 }
 
 .btn-outline-secondary {
@@ -1389,15 +1389,15 @@ onMounted(async () => {
   color: #ffffff !important;
 }
 
-.modal-footer .btn-danger {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
+.modal-footer .btn-pink {
+  background-color: #FF579F !important;
+  border-color: #FF579F !important;
   color: #ffffff !important;
 }
 
-.modal-footer .btn-danger:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
+.modal-footer .btn-pink:hover {
+  background-color: #e04a8a !important;
+  border-color: #e04a8a !important;
 }
 
 /* Close Button */
