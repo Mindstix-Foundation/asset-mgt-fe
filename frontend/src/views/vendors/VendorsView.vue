@@ -435,7 +435,7 @@
               :disabled="true"
               title="Feature coming soon"
             >
-              <i class="fas fa-plus me-1"></i>Register New Asset
+              <i class="fas fa-plus me-1"></i>Add New Asset
             </button>
             
             <!-- Vendor Management Buttons -->

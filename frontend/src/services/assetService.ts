@@ -220,7 +220,12 @@ class AssetService {
       vendor: asset.vendor?.name || 'N/A',
       warrantyUntil: asset.warrantyEndDate || '',
       warrantyStartDate: asset.warrantyStartDate || '',
-      notes: asset.notes || ''
+      notes: asset.notes || '',
+      // Assignment details
+      assignmentReason: currentAssignment?.issueReason || '',
+      assignmentNotes: currentAssignment?.notes || '',
+      assignmentDate: currentAssignment?.issueDate || '',
+      assignedBy: currentAssignment?.issuedByUser?.username || ''
     }
   }
 

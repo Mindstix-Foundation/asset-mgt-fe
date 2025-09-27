@@ -1,0 +1,1730 @@
+<template>
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+        <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
+          <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
+            <div style="display: block;">
+              <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">
+                {{ isEditMode ? 'Edit Asset' : 'Add New Asset' }}
+              </h4>
+              <p class="text-muted mb-0 small" style="display: block;">
+                {{ isEditMode ? 'Update asset information in your system' : 'Register a new asset in your system' }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Card Body -->
+          <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+            <!-- Loading State -->
+            <div v-if="isLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-3 text-muted">Loading asset data...</p>
+            </div>
+            
+            <!-- Form -->
+            <form v-else @submit.prevent="handleSubmit" class="needs-validation" :class="{ 'was-validated': wasValidated }" novalidate>
+              
+              <!-- Section 1: Basic Asset Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Basic Asset Information</legend>
+                <div class="row g-4">
+                  <!-- Asset ID -->
+                  <div class="col-md-6">
+                    <label for="assetId" class="form-label">
+                      Asset ID 
+                      <span class="text-muted" v-if="!isEditMode">(Auto-generated)</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="assetId" 
+                      v-model="formData.assetId"
+                      :placeholder="isEditMode ? 'Asset ID' : 'AST-XXX'"
+                      :readonly="!isEditMode"
+                      style="background-color: #F3F3F3;"
+                    >
+                    <div class="form-text">
+                      {{ isEditMode ? 'Asset identification number' : 'Automatically generated when form is submitted' }}
+                    </div>
+                  </div>
+
+                  <!-- Serial Number -->
+                  <div class="col-md-6">
+                    <label for="serialNumber" class="form-label">
+                      Serial Number <span class="text-danger">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="serialNumber" 
+                      v-model="formData.serialNumber"
+                      placeholder="Enter serial number" 
+                      required 
+                      minlength="3" 
+                      maxlength="50" 
+                      pattern="[A-Za-z0-9\-_]{3,50}"
+                      title="Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)"
+                      @blur="validateField('serialNumber')"
+                      @input="clearFieldError('serialNumber')"
+                    >
+                    <div class="form-text">3-50 characters (letters, numbers, hyphens, underscores only)</div>
+                  </div>
+
+                  <!-- Asset Category -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="assetCategory"
+                        label="Asset Category"
+                        placeholder="Search categories..."
+                        :items="categoryItems"
+                        v-model="selectedCategory"
+                        required
+                        @change="onCategoryChange"
+                      />
+                    </div>
+                    <div class="form-text">
+                      Select the high-level category first. 
+                      <router-link to="/app/assets/manage-categories" class="text-primary">
+                        <i class="fas fa-cogs me-1"></i>Manage Categories
+                      </router-link>
+                    </div>
+                  </div>
+
+                  <!-- Asset Type -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="assetType"
+                        label="Asset Type"
+                        :placeholder="selectedCategory ? 'Search asset types...' : 'Select category first...'"
+                        :items="typeItems"
+                        v-model="selectedType"
+                        :disabled="!selectedCategory"
+                        required
+                        @change="onTypeChange"
+                      />
+                    </div>
+                    <div class="form-text">
+                      Select category above to unlock asset type options.
+                      <span v-if="typeItems.length === 0 && selectedCategory">
+                        <router-link to="/app/assets/manage-categories" class="text-primary">
+                          <i class="fas fa-plus me-1"></i>Add asset types
+                        </router-link>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Brand -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="brand"
+                        label="Brand"
+                        :placeholder="selectedType ? 'Search brands...' : 'Select asset type first...'"
+                        :items="brandItems"
+                        v-model="selectedBrand"
+                        :disabled="!selectedType"
+                        required
+                        @change="onBrandChange"
+                      />
+                    </div>
+                    <div class="form-text">
+                      Select asset type above to unlock brand options.
+                      <span v-if="brandItems.length === 0 && selectedType">
+                        <router-link to="/app/assets/manage-categories" class="text-primary">
+                          <i class="fas fa-plus me-1"></i>Add brands
+                        </router-link>
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Model -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="model"
+                        label="Model"
+                        :placeholder="selectedBrand ? 'Search models...' : 'Select brand first...'"
+                        :items="modelItems"
+                        v-model="selectedModel"
+                        :disabled="!selectedBrand"
+                        required
+                        @change="onModelChange"
+                      />
+                    </div>
+                    <div class="form-text">
+                      Select brand above to unlock model options.
+                      <span v-if="modelItems.length === 0 && selectedBrand">
+                        <router-link to="/app/assets/manage-categories" class="text-primary">
+                          <i class="fas fa-plus me-1"></i>Add models
+                        </router-link>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 2: Purchase & Financial Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Purchase & Financial Information</legend>
+                <div class="row g-4">
+                  <!-- Purchase Date -->
+                  <div class="col-md-6">
+                    <label for="purchaseDate" class="form-label">
+                      Purchase Date <span class="text-muted">(Optional)</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      class="form-control" 
+                      id="purchaseDate" 
+                      v-model="formData.purchaseDate"
+                      :max="todayDate"
+                      @blur="validateField('purchaseDate')"
+                      @input="clearFieldError('purchaseDate')"
+                    >
+                    <div class="form-text">Cannot be future date</div>
+                  </div>
+
+                  <!-- Purchase Cost -->
+                  <div class="col-md-6">
+                    <label for="purchaseCost" class="form-label">
+                      Purchase Cost <span class="text-muted">(Optional)</span>
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">₹</span>
+                      <input 
+                        type="number" 
+                        class="form-control" 
+                        id="purchaseCost" 
+                        v-model="formData.purchaseCost"
+                        placeholder="0.00" 
+                        step="0.01" 
+                        min="0" 
+                        max="1000000"
+                        title="Purchase cost cannot exceed ₹10,00,000"
+                        @blur="validateField('purchaseCost')"
+                        @input="clearFieldError('purchaseCost')"
+                      >
+                    </div>
+                    <div class="form-text">Enter amount in Indian Rupees (max ₹10,00,000)</div>
+                  </div>
+
+                  <!-- Vendor -->
+                  <div class="col-12">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="vendor"
+                        label="Vendor (Optional)"
+                        placeholder="Search vendors..."
+                        :items="vendorItems"
+                        v-model="selectedVendor"
+                        :required="false"
+                        @change="onVendorChange"
+                      />
+                    </div>
+                    <div class="form-text">Select the vendor or supplier for this asset</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 3: Warranty Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Warranty Information</legend>
+                <div class="row g-4">
+                  <!-- Warranty Start Date -->
+                  <div class="col-md-6">
+                    <label for="warrantyStartDate" class="form-label">
+                      Warranty Start Date <span class="text-muted">(Optional)</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      class="form-control" 
+                      id="warrantyStartDate" 
+                      v-model="formData.warrantyStartDate"
+                      @blur="validateWarrantyDates"
+                      @input="clearFieldError('warrantyStartDate')"
+                    >
+                    <div class="form-text">When warranty coverage begins</div>
+                    <div class="invalid-feedback">{{ errors.warrantyStartDate }}</div>
+                  </div>
+
+                  <!-- Warranty End Date -->
+                  <div class="col-md-6">
+                    <label for="warrantyEndDate" class="form-label">
+                      Warranty End Date <span class="text-muted">(Optional)</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      class="form-control" 
+                      id="warrantyEndDate" 
+                      v-model="formData.warrantyEndDate"
+                      @blur="validateWarrantyDates"
+                      @input="clearFieldError('warrantyEndDate')"
+                    >
+                    <div class="form-text">When warranty coverage expires</div>
+                    <div class="invalid-feedback">{{ errors.warrantyEndDate }}</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 4: Location & Status -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Location & Status</legend>
+                <div class="row g-4">
+                  <!-- Location -->
+                  <div class="col-md-6">
+                    <label for="location" class="form-label">
+                      Location <span class="text-danger">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="location" 
+                      v-model="formData.location"
+                      placeholder="e.g., Warehouse A, Shelf B2" 
+                      required 
+                      minlength="2" 
+                      maxlength="100"
+                      title="Location must be 2-100 characters"
+                      @blur="validateField('location')"
+                      @input="clearFieldError('location')"
+                    >
+                    <div class="form-text">Physical location where asset is stored (2-100 characters)</div>
+                  </div>
+
+                  <!-- Condition -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="condition"
+                        label="Condition"
+                        placeholder="Select condition..."
+                        :items="conditionItems"
+                        v-model="selectedCondition"
+                        required
+                        @change="onConditionChange"
+                      />
+                    </div>
+                    <div class="form-text">Physical condition of the asset</div>
+                  </div>
+
+                  <!-- Status -->
+                  <div class="col-md-6">
+                    <div v-if="isEditMode">
+                      <!-- Edit Mode: Dynamic status options based on current status -->
+                      <div class="form-searchable-dropdown">
+                        <SearchableDropdown
+                          id="status"
+                          label="Status"
+                          placeholder="Select status..."
+                          :items="statusItems"
+                          v-model="selectedStatus"
+                          @change="onStatusChange"
+                        />
+                      </div>
+                      <div class="form-text">Status changes for active assets should go through proper workflows (Issue/Collect/Maintenance)</div>
+                    </div>
+                    <div v-else>
+                      <!-- New Asset Mode: Fixed AVAILABLE status -->
+                      <label for="status" class="form-label">Status</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="status" 
+                        value="AVAILABLE"
+                        readonly 
+                        style="background-color: #F3F3F3;"
+                      >
+                      <div class="form-text">New assets are automatically set to AVAILABLE status</div>
+                    </div>
+                    <div class="invalid-feedback">{{ errors.status }}</div>
+                  </div>
+
+                  <!-- Notes -->
+                  <div class="col-12">
+                    <NotesTextarea 
+                      v-model="formData.notes"
+                      label="Additional Notes"
+                      placeholder="Enter special handling instructions, known issues, or other relevant information..."
+                      help-text="Include special handling instructions, known issues, or other relevant information. Textarea expands automatically as you type."
+                      :max-length="1000"
+                      :required="false"
+                      :show-label="true"
+                      input-id="notes"
+                      @validation="handleNotesValidation"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="card-footer bg-light border-top">
+            <div class="form-actions">
+              <div class="d-flex justify-content-center gap-3">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary px-4 py-2" 
+                  @click="handleCancel"
+                  :disabled="isSubmitting"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary px-5 py-2" 
+                  @click="handleSubmit"
+                  :disabled="isSubmitting"
+                >
+                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
+                  {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Registering...') : (isEditMode ? 'Update Asset' : 'Register Asset') }}
+                </button>
+              </div>
+              <div class="text-center mt-3">
+                <small class="text-muted">
+                  Fields marked with <span class="text-danger">*</span> are required
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { assetService } from '@/services/assetService'
+import NotesTextarea from '../common/NotesTextarea.vue'
+import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
+import { assetCategoryService } from '@/services/assetCategoryService'
+import { assetTypeService } from '@/services/assetTypeService'
+import { brandService } from '@/services/brandService'
+import { modelService } from '@/services/modelService'
+import { VendorApiService } from '@/services/vendorApi'
+import type { AssetCategory } from '@/services/assetCategoryService'
+import type { AssetType } from '@/services/assetTypeService'
+import type { Brand } from '@/services/brandService'
+import type { Model } from '@/services/modelService'
+import type { Vendor } from '@/types/vendor.types'
+
+// Props
+interface Props {
+  asset?: any
+  isEditMode?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isEditMode: false,
+  asset: null
+})
+
+// Emits
+const emit = defineEmits<{
+  submit: [data: any]
+  cancel: []
+}>()
+
+// Reactive data
+const formData = reactive({
+  assetId: '',
+  serialNumber: '',
+  assetTypeId: '',
+  brandId: '',
+  modelId: '',
+  vendorId: '',
+  purchaseDate: '',
+  purchaseCost: '',
+  warrantyStartDate: '',
+  warrantyEndDate: '',
+  location: '',
+  condition: 'NEW',
+  status: 'AVAILABLE',
+  notes: ''
+})
+
+// UI form data for dropdowns (separate from API data)
+const uiFormData = reactive({
+  assetCategory: '',
+  assetType: '',
+  brand: '',
+  model: '',
+  vendor: ''
+})
+
+// Selected items for SearchableDropdown components
+const selectedCategory = ref<Item | null>(null)
+const selectedType = ref<Item | null>(null)
+const selectedBrand = ref<Item | null>(null)
+const selectedModel = ref<Item | null>(null)
+const selectedVendor = ref<Item | null>(null)
+const selectedCondition = ref<Item | null>(null)
+const selectedStatus = ref<Item | null>(null)
+
+const errors = reactive({
+  serialNumber: '',
+  assetCategory: '',
+  assetType: '',
+  brand: '',
+  model: '',
+  purchaseDate: '',
+  purchaseCost: '',
+  vendor: '',
+  warrantyStartDate: '',
+  warrantyEndDate: '',
+  location: '',
+  condition: '',
+  status: '',
+  notes: ''
+})
+
+const wasValidated = ref(false)
+const isSubmitting = ref(false)
+const isLoading = ref(false)
+const notesExpanded = ref(false)
+
+// API Data
+const categories = ref<AssetCategory[]>([])
+const assetTypes = ref<AssetType[]>([])
+const brands = ref<Brand[]>([])
+const models = ref<Model[]>([])
+const vendors = ref<Vendor[]>([])
+
+// Computed properties
+const notesCharCount = computed(() => formData.notes.length)
+
+const characterCountClass = computed(() => {
+  const percentage = (notesCharCount.value / 1000) * 100
+  if (percentage > 90) return 'danger'
+  if (percentage > 75) return 'warning'
+  return 'muted'
+})
+
+// Today's date for date validation
+const todayDate = computed(() => new Date().toISOString().split('T')[0])
+
+// Transform API data to SearchableDropdown format
+const categoryItems = computed(() => {
+  return categories.value.map(category => ({
+    id: category.id,
+    name: category.name,
+    value: category.id.toString()
+  }))
+})
+
+const typeItems = computed(() => {
+  if (!selectedCategory.value) return []
+  return assetTypes.value.map(type => ({
+    id: type.id,
+    name: type.name,
+    value: type.id.toString()
+  }))
+})
+
+const brandItems = computed(() => {
+  if (!selectedType.value) return []
+  return brands.value.map(brand => ({
+    id: brand.id,
+    name: brand.name,
+    value: brand.id.toString()
+  }))
+})
+
+const modelItems = computed(() => {
+  if (!selectedBrand.value) return []
+  return models.value.map(model => ({
+    id: model.id,
+    name: model.name,
+    value: model.id.toString()
+  }))
+})
+
+const vendorItems = computed(() => {
+  return vendors.value.map(vendor => ({
+    id: vendor.id,
+    name: vendor.name,
+    value: vendor.id.toString()
+  }))
+})
+
+const conditionItems = computed(() => [
+  { id: 'NEW', name: 'New', value: 'NEW' },
+  { id: 'GOOD', name: 'Good', value: 'GOOD' },
+  { id: 'FAIR', name: 'Fair', value: 'FAIR' },
+  { id: 'POOR', name: 'Poor', value: 'POOR' },
+  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
+])
+
+const statusItems = computed(() => {
+  return availableStatusOptions.value.map(option => ({
+    id: option.value,
+    name: option.label,
+    value: option.value
+  }))
+})
+
+// Computed properties for cascading dropdowns (keeping for backward compatibility)
+const availableTypes = computed(() => {
+  if (!uiFormData.assetCategory || uiFormData.assetCategory === 'add_new') {
+    return []
+  }
+  return assetTypes.value
+})
+
+const availableBrands = computed(() => {
+  if (!uiFormData.assetType || uiFormData.assetType === 'add_new') {
+    return []
+  }
+  return brands.value
+})
+
+const availableModels = computed(() => {
+  if (!uiFormData.brand || uiFormData.brand === 'add_new') return []
+  return models.value
+})
+
+// Available status options based on current status (Edit mode only)
+const availableStatusOptions = computed(() => {
+  if (!props.isEditMode) return []
+  
+  const currentStatus = formData.status
+  
+  switch (currentStatus) {
+    case 'AVAILABLE':
+      return [
+        { value: 'AVAILABLE', label: 'AVAILABLE (Current)' },
+        { value: 'RETIRED', label: 'RETIRED' },
+        { value: 'LOST', label: 'LOST' }
+      ]
+    case 'ASSIGNED':
+      return [
+        { value: 'ASSIGNED', label: 'ASSIGNED (Current)' },
+        { value: 'RETIRED', label: 'RETIRED' },
+        { value: 'LOST', label: 'LOST' }
+      ]
+    case 'IN_MAINTENANCE':
+      return [
+        { value: 'IN_MAINTENANCE', label: 'IN_MAINTENANCE (Current)' },
+        { value: 'RETIRED', label: 'RETIRED' }
+      ]
+    case 'RETIRED':
+      return [
+        { value: 'RETIRED', label: 'RETIRED (Current - No changes allowed)' }
+      ]
+    case 'LOST':
+      return [
+        { value: 'LOST', label: 'LOST (Current - No changes allowed)' }
+      ]
+    default:
+      return [
+        { value: 'AVAILABLE', label: 'AVAILABLE' },
+        { value: 'RETIRED', label: 'RETIRED' },
+        { value: 'LOST', label: 'LOST' }
+      ]
+  }
+})
+
+// Methods
+const validateField = (fieldName: string) => {
+  const field = document.getElementById(fieldName) as HTMLInputElement
+  if (!field) return
+
+  // Get value from either formData or uiFormData
+  let value = (formData as any)[fieldName] || (uiFormData as any)[fieldName]
+
+  switch (fieldName) {
+    case 'serialNumber':
+      if (!formData.serialNumber || formData.serialNumber.trim() === '') {
+        errors.serialNumber = 'Serial number is required'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else if (formData.serialNumber.length < 3 || formData.serialNumber.length > 50) {
+        errors.serialNumber = 'Serial number must be 3-50 characters'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else if (!/^[A-Za-z0-9\-_]{3,50}$/.test(formData.serialNumber)) {
+        errors.serialNumber = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else {
+        errors.serialNumber = ''
+        field.classList.remove('is-invalid')
+        field.classList.add('is-valid')
+      }
+      break
+
+    case 'assetCategory':
+      if (!selectedCategory.value) {
+        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      } else {
+        errors[fieldName] = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+      }
+      break
+
+    case 'assetType':
+      if (!selectedType.value) {
+        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      } else {
+        errors[fieldName] = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+      }
+      break
+
+    case 'brand':
+      if (!selectedBrand.value) {
+        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      } else {
+        errors[fieldName] = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+      }
+      break
+
+    case 'model':
+      if (!selectedModel.value) {
+        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      } else {
+        errors[fieldName] = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+      }
+      break
+
+    case 'location':
+      if (!formData.location || formData.location.trim() === '') {
+        errors.location = 'Location is required'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else if (formData.location.length < 2 || formData.location.length > 100) {
+        errors.location = 'Location must be 2-100 characters'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else {
+        errors.location = ''
+        field.classList.remove('is-invalid')
+        field.classList.add('is-valid')
+      }
+      break
+
+    case 'condition':
+      if (!selectedCondition.value) {
+        errors.condition = 'Condition is required'
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      } else {
+        errors.condition = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+      }
+      break
+
+    case 'vendor':
+      // Vendor is optional, so always valid
+      errors.vendor = ''
+      applyValidationToSearchableDropdown(fieldName, 'valid')
+      break
+
+    case 'notes':
+      // Notes are optional, so always valid
+      errors.notes = ''
+      const textarea = document.getElementById('notes') as HTMLTextAreaElement
+      if (textarea) {
+        textarea.classList.add('is-valid')
+        textarea.classList.remove('is-invalid')
+      } else {
+        console.warn('Could not find notes textarea element')
+      }
+      break
+
+    case 'purchaseDate':
+      if (formData.purchaseDate && formData.purchaseDate > todayDate.value) {
+        errors.purchaseDate = 'Purchase date cannot be in the future'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+      } else {
+        errors.purchaseDate = ''
+        field.classList.remove('is-invalid')
+        if (formData.purchaseDate) field.classList.add('is-valid')
+      }
+      break
+
+    case 'purchaseCost':
+      if (formData.purchaseCost && parseFloat(formData.purchaseCost) > 1000000) {
+        errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
+        field.classList.add('is-invalid')
+        field.classList.remove('is-valid')
+        // Also add validation class to input group
+        const inputGroup = field.closest('.input-group')
+        if (inputGroup) {
+          inputGroup.classList.add('is-invalid')
+          inputGroup.classList.remove('is-valid')
+        }
+      } else {
+        errors.purchaseCost = ''
+        field.classList.remove('is-invalid')
+        // Purchase cost is optional, so always show as valid during validation
+        field.classList.add('is-valid')
+        // Also add validation class to input group
+        const inputGroup = field.closest('.input-group')
+        if (inputGroup) {
+          inputGroup.classList.add('is-valid')
+          inputGroup.classList.remove('is-invalid')
+        }
+      }
+      break
+  }
+}
+
+// Helper function to apply validation classes to SearchableDropdown components
+const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Try multiple ways to find the SearchableDropdown input
+  let input: HTMLInputElement | null = null
+  
+  // Method 1: Find by ID and then look for form-control in parent wrapper
+  const element = document.getElementById(fieldName)
+  if (element) {
+    const wrapper = element.closest('.form-searchable-dropdown')
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  // Method 2: If not found, try direct selector
+  if (!input) {
+    input = document.querySelector(`#${fieldName} .form-control`) as HTMLInputElement
+  }
+  
+  // Method 3: If still not found, try finding by wrapper and then input
+  if (!input) {
+    const wrapper = document.querySelector(`#${fieldName}`)?.parentElement?.querySelector('.form-searchable-dropdown')
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  if (!input) {
+    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+  }
+}
+
+const clearFieldError = (fieldName: string) => {
+  if (errors[fieldName as keyof typeof errors]) {
+    const field = document.getElementById(fieldName) as HTMLInputElement
+    if (field && ((formData as any)[fieldName] || (uiFormData as any)[fieldName])) {
+      field.classList.remove('is-invalid')
+    }
+    
+    // Also clear validation for SearchableDropdown components
+    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+    if (searchableDropdownFields.includes(fieldName)) {
+      const wrapper = document.querySelector(`#${fieldName}`)?.closest('.form-searchable-dropdown')
+      if (wrapper) {
+        const input = wrapper.querySelector('.form-control') as HTMLInputElement
+        if (input) {
+          input.classList.remove('is-invalid')
+        }
+      }
+    }
+  }
+}
+
+const getFieldDisplayName = (fieldName: string): string => {
+  const displayNames: Record<string, string> = {
+    serialNumber: 'Serial Number',
+    assetCategory: 'Asset Category',
+    assetType: 'Asset Type',
+    brand: 'Brand',
+    model: 'Model',
+    purchaseDate: 'Purchase Date',
+    purchaseCost: 'Purchase Cost',
+    vendor: 'Vendor',
+    warrantyStartDate: 'Warranty Start Date',
+    warrantyEndDate: 'Warranty End Date',
+    location: 'Location',
+    condition: 'Condition',
+    status: 'Status',
+    notes: 'Additional Notes'
+  }
+  return displayNames[fieldName] || fieldName
+}
+
+// SearchableDropdown change handlers
+const onCategoryChange = async (item: Item | null) => {
+  selectedCategory.value = item
+  
+  // Reset dependent fields
+  selectedType.value = null
+  selectedBrand.value = null
+  selectedModel.value = null
+  uiFormData.assetType = ''
+  uiFormData.brand = ''
+  uiFormData.model = ''
+  formData.assetTypeId = ''
+  formData.brandId = ''
+  formData.modelId = ''
+  
+  // Clear dependent arrays
+  assetTypes.value = []
+  brands.value = []
+  models.value = []
+  
+  // Update UI form data
+  uiFormData.assetCategory = item && item.value ? item.value.toString() : ''
+  
+  // Load asset types for selected category
+  if (item && item.value) {
+    await loadAssetTypes(parseInt(item.value.toString()))
+  }
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('assetCategory')
+  }
+  
+  validateField('assetCategory')
+}
+
+const onTypeChange = async (item: Item | null) => {
+  selectedType.value = item
+  
+  // Reset dependent fields
+  selectedBrand.value = null
+  selectedModel.value = null
+  uiFormData.brand = ''
+  uiFormData.model = ''
+  formData.brandId = ''
+  formData.modelId = ''
+  
+  // Clear dependent arrays
+  brands.value = []
+  models.value = []
+  
+  // Update UI form data
+  uiFormData.assetType = item && item.value ? item.value.toString() : ''
+  formData.assetTypeId = item && item.value ? item.value.toString() : ''
+  
+  // Load ALL brands (not filtered by asset type)
+  if (item) {
+    await loadBrands()
+  }
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('assetType')
+  }
+  
+  validateField('assetType')
+}
+
+const onBrandChange = async (item: Item | null) => {
+  selectedBrand.value = item
+  
+  // Reset dependent fields
+  selectedModel.value = null
+  uiFormData.model = ''
+  formData.modelId = ''
+  
+  // Clear models array
+  models.value = []
+  
+  // Update UI form data
+  uiFormData.brand = item && item.value ? item.value.toString() : ''
+  formData.brandId = item && item.value ? item.value.toString() : ''
+  
+  // Load models for selected brand AND asset type
+  if (item && item.value && selectedType.value && selectedType.value.value) {
+    await loadModelsByBrandAndAssetType(parseInt(item.value.toString()), parseInt(selectedType.value.value.toString()))
+  }
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('brand')
+  }
+  
+  validateField('brand')
+}
+
+const onModelChange = async (item: Item | null) => {
+  selectedModel.value = item
+  
+  // Update UI form data
+  uiFormData.model = item && item.value ? item.value.toString() : ''
+  formData.modelId = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('model')
+  }
+  
+  validateField('model')
+}
+
+const onVendorChange = (item: Item | null) => {
+  selectedVendor.value = item
+  formData.vendorId = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection (vendor is optional)
+  if (item) {
+    clearFieldError('vendor')
+  }
+  
+  validateField('vendor')
+}
+
+const onConditionChange = (item: Item | null) => {
+  selectedCondition.value = item
+  formData.condition = item && item.value ? item.value.toString() : 'NEW'
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('condition')
+  }
+  
+  validateField('condition')
+}
+
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  formData.status = item && item.value ? item.value.toString() : 'AVAILABLE'
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('status')
+  }
+  
+  validateField('status')
+}
+
+// Warranty date validation
+const validateWarrantyDates = () => {
+  if (formData.warrantyStartDate && formData.warrantyEndDate && formData.warrantyEndDate < formData.warrantyStartDate) {
+    errors.warrantyEndDate = 'Warranty end date must be after start date'
+    const field = document.getElementById('warrantyEndDate') as HTMLInputElement
+    if (field) {
+      field.classList.add('is-invalid')
+      field.classList.remove('is-valid')
+    }
+    return false
+  } else {
+    errors.warrantyEndDate = ''
+    errors.warrantyStartDate = ''
+    const endField = document.getElementById('warrantyEndDate') as HTMLInputElement
+    const startField = document.getElementById('warrantyStartDate') as HTMLInputElement
+    if (endField) {
+      endField.classList.remove('is-invalid')
+      if (formData.warrantyEndDate) endField.classList.add('is-valid')
+    }
+    if (startField) {
+      startField.classList.remove('is-invalid')
+      if (formData.warrantyStartDate) startField.classList.add('is-valid')
+    }
+    return true
+  }
+}
+
+const expandNotesField = () => {
+  if (!notesExpanded.value) {
+    notesExpanded.value = true
+    const textarea = document.getElementById('notes') as HTMLTextAreaElement
+    if (textarea) {
+      textarea.placeholder = 'Enter detailed notes about the asset...'
+      textarea.focus()
+    }
+  }
+}
+
+const updateCharacterCount = () => {
+  // Character count is computed automatically
+}
+
+const validateForm = (): boolean => {
+  let isValid = true
+  
+  // Validate required fields
+  const requiredFields = ['serialNumber', 'assetCategory', 'assetType', 'brand', 'model', 'location', 'condition']
+  
+  requiredFields.forEach(fieldName => {
+    validateField(fieldName)
+    if (errors[fieldName as keyof typeof errors]) {
+      isValid = false
+    }
+  })
+
+  // Also validate optional fields to show green borders
+  const optionalFields = ['vendor', 'notes', 'purchaseDate', 'purchaseCost']
+  optionalFields.forEach(fieldName => {
+    validateField(fieldName)
+  })
+
+  // Validate warranty dates
+  if (!validateWarrantyDates()) {
+    isValid = false
+  }
+
+  return isValid
+}
+
+const handleSubmit = async (event: Event) => {
+  event.preventDefault()
+  wasValidated.value = true
+
+  if (!validateForm()) {
+    // Scroll to first error
+    const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
+    if (firstInvalid) {
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setTimeout(() => firstInvalid.focus(), 300)
+    }
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    // Ensure all required fields are populated in formData from uiFormData
+    if (!formData.assetTypeId && uiFormData.assetType) {
+      formData.assetTypeId = uiFormData.assetType
+    }
+    if (!formData.brandId && uiFormData.brand) {
+      formData.brandId = uiFormData.brand
+    }
+    if (!formData.modelId && uiFormData.model) {
+      formData.modelId = uiFormData.model
+    }
+    
+    // Prepare asset data for API
+    const assetData = {
+      assetId: formData.assetId,
+      serialNumber: formData.serialNumber,
+      assetTypeId: parseInt(formData.assetTypeId),
+      brandId: parseInt(formData.brandId),
+      modelId: parseInt(formData.modelId),
+      vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
+      status: props.isEditMode ? (formData.status as any) : 'AVAILABLE',
+      condition: formData.condition as any,
+      location: formData.location,
+      purchaseDate: formData.purchaseDate || undefined,
+      purchaseCost: formData.purchaseCost ? parseFloat(formData.purchaseCost) : undefined,
+      warrantyStartDate: formData.warrantyStartDate || undefined,
+      warrantyEndDate: formData.warrantyEndDate || undefined,
+      notes: formData.notes || undefined
+    }
+
+    // Emit the form data
+    emit('submit', assetData)
+  } catch (error) {
+    console.error('Form submission error:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handleCancel = () => {
+  emit('cancel')
+}
+
+// API Loading Functions
+const loadCategories = async () => {
+  try {
+    const response = await assetCategoryService.getAssetCategories({ limit: 100 })
+    categories.value = response.data.assetCategories
+  } catch (error) {
+    console.error('Error loading categories:', error)
+  }
+}
+
+const loadAssetTypes = async (categoryId?: number) => {
+  try {
+    if (categoryId) {
+      const response = await assetTypeService.getAssetTypesByCategory(categoryId)
+      
+      if (response.data.assetTypes) {
+        assetTypes.value = response.data.assetTypes
+      } else if (Array.isArray(response.data)) {
+        assetTypes.value = response.data
+      } else {
+        assetTypes.value = []
+      }
+    } else {
+      const response = await assetTypeService.getAssetTypes({ limit: 100 })
+      assetTypes.value = response.data.assetTypes
+    }
+  } catch (error) {
+    console.error('Error loading asset types:', error)
+  }
+}
+
+const loadBrands = async () => {
+  try {
+    const response = await brandService.getBrands({ limit: 100 })
+    brands.value = response.data.brands
+  } catch (error) {
+    console.error('Error loading brands:', error)
+  }
+}
+
+const loadModelsByBrandAndAssetType = async (brandId: number, assetTypeId: number) => {
+  try {
+    const response = await modelService.getModelsByBrandAndAssetType(brandId, assetTypeId)
+    
+    if (response.data.models) {
+      models.value = response.data.models
+    } else {
+      models.value = []
+    }
+  } catch (error) {
+    console.error('Error loading models by brand and asset type:', error)
+  }
+}
+
+const loadVendors = async () => {
+  try {
+    const response = await VendorApiService.getVendors({ 
+      limit: 100,
+      status: 'ACTIVE' as any
+    })
+    
+    if (response.data.vendors) {
+      vendors.value = response.data.vendors
+    } else {
+      vendors.value = []
+    }
+  } catch (error) {
+    console.error('Error loading vendors:', error)
+  }
+}
+
+const generateAssetId = async () => {
+  try {
+    formData.assetId = await assetService.generateAssetId()
+  } catch (error) {
+    console.error('Error generating asset ID:', error)
+    // Fallback to timestamp-based ID if backend fails
+    const timestamp = Date.now().toString().slice(-6)
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+    formData.assetId = `AST-${timestamp}${random}`
+  }
+}
+
+// Initialize form data if editing
+onMounted(async () => {
+  // Load initial data
+  isLoading.value = true
+  try {
+    await Promise.all([
+      loadCategories(),
+      loadVendors()
+    ])
+
+    if (props.isEditMode && props.asset) {
+      // Populate form with existing data
+      Object.assign(formData, props.asset)
+      
+      // Format dates for HTML date input (convert from ISO to yyyy-MM-dd)
+      if (formData.purchaseDate) {
+        const date = new Date(formData.purchaseDate)
+        if (!isNaN(date.getTime())) {
+          formData.purchaseDate = date.toISOString().split('T')[0]
+        }
+      }
+      
+      // Format warranty dates for HTML date input
+      if (formData.warrantyStartDate) {
+        const date = new Date(formData.warrantyStartDate)
+        if (!isNaN(date.getTime())) {
+          formData.warrantyStartDate = date.toISOString().split('T')[0]
+        }
+      }
+      
+      if (formData.warrantyEndDate) {
+        const date = new Date(formData.warrantyEndDate)
+        if (!isNaN(date.getTime())) {
+          formData.warrantyEndDate = date.toISOString().split('T')[0]
+        }
+      }
+      
+      // Set UI form data for cascading dropdowns
+      uiFormData.assetCategory = props.asset.assetType?.category?.id?.toString() || ''
+      uiFormData.assetType = props.asset.assetType?.id?.toString() || ''
+      uiFormData.brand = props.asset.brand?.id?.toString() || ''
+      uiFormData.model = props.asset.model?.id?.toString() || ''
+
+      // Set selected items for SearchableDropdown components
+      if (props.asset.assetType?.category) {
+        selectedCategory.value = {
+          id: props.asset.assetType.category.id,
+          name: props.asset.assetType.category.name,
+          value: props.asset.assetType.category.id.toString()
+        }
+      }
+
+      if (props.asset.assetType) {
+        selectedType.value = {
+          id: props.asset.assetType.id,
+          name: props.asset.assetType.name,
+          value: props.asset.assetType.id.toString()
+        }
+      }
+
+      if (props.asset.brand) {
+        selectedBrand.value = {
+          id: props.asset.brand.id,
+          name: props.asset.brand.name,
+          value: props.asset.brand.id.toString()
+        }
+      }
+
+      if (props.asset.model) {
+        selectedModel.value = {
+          id: props.asset.model.id,
+          name: props.asset.model.name,
+          value: props.asset.model.id.toString()
+        }
+      }
+
+      if (props.asset.vendor) {
+        selectedVendor.value = {
+          id: props.asset.vendor.id,
+          name: props.asset.vendor.name,
+          value: props.asset.vendor.id.toString()
+        }
+      }
+
+      if (props.asset.condition) {
+        selectedCondition.value = {
+          id: props.asset.condition,
+          name: props.asset.condition.charAt(0).toUpperCase() + props.asset.condition.slice(1).toLowerCase(),
+          value: props.asset.condition
+        }
+      }
+
+      if (props.asset.status && props.isEditMode) {
+        const statusOption = availableStatusOptions.value.find(opt => opt.value === props.asset.status)
+        if (statusOption) {
+          selectedStatus.value = {
+            id: statusOption.value,
+            name: statusOption.label,
+            value: statusOption.value
+          }
+        }
+      }
+
+      // Load dependent data in sequence
+      const categoryId = props.asset.assetType?.category?.id
+      if (categoryId) {
+        await loadAssetTypes(categoryId)
+      }
+      await loadBrands()
+      if (props.asset.brand?.id && props.asset.assetType?.id) {
+        await loadModelsByBrandAndAssetType(props.asset.brand.id, props.asset.assetType.id)
+      }
+    } else {
+      // Generate asset ID for new assets
+      await generateAssetId()
+      
+      // Set default condition for new assets
+      selectedCondition.value = {
+        id: 'NEW',
+        name: 'New',
+        value: 'NEW'
+      }
+    }
+  } catch (error) {
+    console.error('Error loading initial data:', error)
+  } finally {
+    isLoading.value = false
+  }
+})
+
+// Handle notes validation
+const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
+  if (!isValid && errorMessage) {
+    errors.notes = errorMessage
+    // Apply invalid class to notes textarea
+    const textarea = document.getElementById('notes') as HTMLTextAreaElement
+    if (textarea) {
+      textarea.classList.add('is-invalid')
+      textarea.classList.remove('is-valid')
+    }
+  } else {
+    errors.notes = ''
+    // Apply valid class to notes textarea
+    const textarea = document.getElementById('notes') as HTMLTextAreaElement
+    if (textarea) {
+      textarea.classList.add('is-valid')
+      textarea.classList.remove('is-invalid')
+    }
+  }
+}
+</script>
+
+<style scoped>
+/* Import the unified form styles */
+@import url('../../assets/unified-form-styles.css');
+
+/* Additional component-specific styles */
+.expandable-notes {
+  transition: height 0.3s ease, border-color 0.2s ease;
+  cursor: pointer;
+  resize: none;
+}
+
+.expandable-notes:hover {
+  border-color: #999999;
+}
+
+.expandable-notes:focus {
+  cursor: text;
+  resize: vertical;
+}
+
+.character-count {
+  margin-top: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.character-count .text-warning {
+  color: #FFC000 !important;
+}
+
+.character-count .text-danger {
+  color: #E97676 !important;
+  font-weight: 600;
+}
+
+/* Form fieldset styling */
+.form-fieldset {
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  background: rgba(243, 243, 243, 0.3);
+  position: relative;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-fieldset:hover {
+  border-color: #B7B7B7 !important;
+  background: rgba(243, 243, 243, 0.5);
+  transition: all 0.2s ease;
+}
+
+.form-legend {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  background-color: #FFFFFF !important;
+  padding: 0.375rem 0.75rem !important;
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+  width: auto !important;
+  float: none !important;
+}
+
+/* Enhanced form controls */
+.form-control, .form-select {
+  border: 2px solid #E0E0E0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+  color: #0A0A0A;
+}
+
+.form-control::placeholder {
+  color: #999999 !important;
+  opacity: 1;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #331FEA;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+  outline: 2px solid transparent;
+}
+
+.form-control:hover, .form-select:hover {
+  border-color: #E0E0E0;
+}
+
+/* Enhanced validation styling */
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out;
+}
+
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #E97676;
+  font-weight: 500;
+}
+
+/* Form labels */
+.form-label {
+  font-weight: 600;
+  color: #666666;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #666666 !important;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.text-danger {
+  color: #E97676 !important;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.text-muted {
+  color: #666666 !important;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* Input group styling */
+.input-group {
+  align-items: stretch;
+}
+
+.input-group-text {
+  background-color: #F3F3F3;
+  border: 2px solid #E0E0E0;
+  border-right: none;
+  border-radius: 0.5rem 0 0 0.5rem;
+  color: #666666;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(0.75rem * 2 + 1.5rem + 4px); /* Match form-control height */
+}
+
+.input-group .form-control {
+  border-left: none;
+  border-radius: 0 0.5rem 0.5rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.input-group:focus-within .input-group-text {
+  border-color: #331FEA;
+  background-color: #F3F3F3;
+}
+
+.input-group:hover .input-group-text {
+  border-color: #E0E0E0;
+}
+
+/* Input group validation styling */
+/* When input-group has validation classes */
+.input-group.is-valid .input-group-text {
+  border-color: #21AF65 !important;
+  border: 2px solid #21AF65 !important;
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
+}
+
+.input-group.is-invalid .input-group-text {
+  border-color: #E97676 !important;
+  border: 2px solid #E97676 !important;
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
+}
+
+/* Ensure the form-control border connects properly */
+.input-group.is-valid .form-control {
+  border-color: #21AF65 !important;
+  border: 2px solid #21AF65 !important;
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.input-group.is-invalid .form-control {
+  border-color: #E97676 !important;
+  border: 2px solid #E97676 !important;
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Action buttons */
+.form-actions {
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.card-footer {
+  background: #F3F3F3 !important;
+  border-top: 2px solid #B7B7B7 !important;
+  border-radius: 0 0 1.5rem 1.5rem !important;
+}
+
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #331FEA !important;
+  border-color: #331FEA !important;
+  color: #FFFFFF !important;
+}
+
+.btn-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+}
+
+.btn-outline-secondary {
+  background-color: #f8f9fa !important;
+  border: 2px solid #6c757d !important;
+  color: #495057 !important;
+  font-weight: 600;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #E97676 !important;
+  border-color: #E97676 !important;
+  color: #FFFFFF !important;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #331FEA;
+  outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .form-actions {
+    padding: 1rem;
+  }
+  
+  .form-fieldset {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.9rem !important;
+    padding: 0.25rem 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+  
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  .form-actions {
+    padding: 0.75rem;
+  }
+  
+  .form-fieldset {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.85rem !important;
+    padding: 0.2rem 0.4rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+/* 
+  SearchableDropdown Form Integration:
+  
+  To use SearchableDropdown in any form with consistent styling:
+  1. Import: @import url('../../assets/unified-form-styles.css');
+  2. Wrap SearchableDropdown with: <div class="form-searchable-dropdown">
+  3. The wrapper will automatically match form input styling
+  
+  Example:
+  <div class="form-searchable-dropdown">
+    <SearchableDropdown 
+      id="example"
+      label="Example Field"
+      placeholder="Search..."
+      :items="items"
+      v-model="selectedItem"
+      @change="onChange"
+    />
+  </div>
+*/
+</style>

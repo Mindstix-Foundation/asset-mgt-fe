@@ -27,23 +27,18 @@
                 <div class="row g-4">
                   <!-- Asset ID -->
                   <div class="col-md-6">
-                    <label for="assetId" class="form-label">Asset ID <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="assetId" 
-                      v-model="formData.assetId"
-                      :class="getFieldClass('assetId')"
-                      required
-                      @change="validateFieldInline('assetId')"
-                      @focus="clearFieldValidation('assetId')"
-                    >
-                      <option value="">Choose an asset...</option>
-                      <option v-for="asset in availableAssets" :key="asset.id" :value="asset.id">
-                        {{ asset.assetId }} - {{ asset.serialNumber }}
-                      </option>
-                    </select>
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="assetId"
+                        label="Asset ID"
+                        placeholder="Search assets..."
+                        :items="assetItems"
+                        v-model="selectedAsset"
+                        required
+                        @change="onAssetChange"
+                      />
+                    </div>
                     <div class="form-text">Select from available assets only (required)</div>
-                    <div v-if="fieldErrors.assetId" class="invalid-feedback">{{ fieldErrors.assetId }}</div>
                   </div>
 
                   <!-- Asset Brand-Model -->
@@ -64,15 +59,19 @@
                 
                 <!-- Asset Specifications -->
                 <div v-if="selectedAssetSpecs" class="mt-4">
-                  <div class="card border-0" style="background-color: #f8f9fa;">
-                    <div class="card-body p-3">
-                      <h6 class="card-title mb-3 text-dark fw-bold">
-                        Asset Specifications
-                      </h6>
-                      <div class="specifications-content">
-                        <pre class="spec-text">{{ selectedAssetSpecs }}</pre>
-                      </div>
-                    </div>
+                  <div class="asset-specifications-wrapper">
+                    <NotesTextarea 
+                      :model-value="selectedAssetSpecs"
+                      label="Asset Specifications"
+                      placeholder="No specifications available"
+                      help-text=""
+                      :max-length="1000"
+                      :required="false"
+                      :show-label="true"
+                      :readonly="true"
+                      input-id="assetSpecifications"
+                      @validation="() => {}"
+                    />
                   </div>
                 </div>
               </fieldset>
@@ -83,23 +82,18 @@
                 <div class="row g-4">
                   <!-- Employee ID - Name -->
                   <div class="col-12">
-                    <label for="employeeId" class="form-label">Employee ID - Name <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="employeeId" 
-                      v-model="formData.employeeId"
-                      :class="getFieldClass('employeeId')"
-                      required
-                      @change="validateFieldInline('employeeId')"
-                      @focus="clearFieldValidation('employeeId')"
-                    >
-                      <option value="">Choose an employee...</option>
-                      <option v-for="employee in activeEmployees" :key="employee.id" :value="employee.id">
-                        {{ employee.employeeId }} - {{ employee.firstName }} {{ employee.lastName }}
-                      </option>
-                    </select>
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="employeeId"
+                        label="Employee ID - Name"
+                        placeholder="Search employees..."
+                        :items="employeeItems"
+                        v-model="selectedEmployee"
+                        required
+                        @change="onEmployeeChange"
+                      />
+                    </div>
                     <div class="form-text">Select active employee from the list (required)</div>
-                    <div v-if="fieldErrors.employeeId" class="invalid-feedback">{{ fieldErrors.employeeId }}</div>
                   </div>
                 </div>
               </fieldset>
@@ -121,12 +115,12 @@
                       required 
                       minlength="5" 
                       maxlength="100" 
-                      title="Assignment reason must be 5-100 characters"
+                      title="Assignment reason must be 5-100 characters and start with a capital letter"
                       @blur="validateFieldInline('assignmentReason')"
                       @focus="clearFieldValidation('assignmentReason')"
-                      @input="handleFieldInput('assignmentReason')"
+                      @input="handleAssignmentReasonInput"
                     >
-                    <div class="form-text">Specify the reason for this assignment - 5-100 characters (required)</div>
+                    <div class="form-text">Specify the reason for this assignment - 5-100 characters</div>
                     <div v-if="fieldErrors.assignmentReason" class="invalid-feedback">{{ fieldErrors.assignmentReason }}</div>
                   </div>
 
@@ -143,39 +137,23 @@
                       @change="validateFieldInline('assignmentDate')"
                       @focus="clearFieldValidation('assignmentDate')"
                     >
-                    <div class="form-text">Date when the asset will be assigned (required)</div>
+                    <div class="form-text">Date when the asset will be assigned</div>
                     <div v-if="fieldErrors.assignmentDate" class="invalid-feedback">{{ fieldErrors.assignmentDate }}</div>
                   </div>
 
                   <!-- Assignment Notes -->
                   <div class="col-12">
-                    <label for="assignmentNotes" class="form-label">
-                      Assignment Notes <span class="text-muted">(Optional)</span>
-                    </label>
-                    <textarea 
-                      class="form-control auto-expand-textarea" 
-                      id="assignmentNotes" 
+                    <NotesTextarea 
                       v-model="formData.assignmentNotes"
-                      :class="getFieldClass('assignmentNotes')"
-                      rows="3" 
-                      placeholder="Click to expand and add assignment notes..." 
-                      @click="expandNotesField"
-                      @input="autoExpandTextarea"
-                      @blur="validateFieldInline('assignmentNotes')"
-                      @focus="clearFieldValidation('assignmentNotes')"
-                      maxlength="500"
-                      title="Assignment notes cannot exceed 500 characters"
-                      style="white-space: pre-wrap; overflow-wrap: break-word;"
-                    ></textarea>
-                    <div class="form-text">
-                      Click to expand for more space. Include special instructions, conditions, or other relevant information
-                    </div>
-                    <div class="character-count text-end">
-                      <small :class="getCounterClass(formData.assignmentNotes?.length || 0, 500)">
-                        {{ formData.assignmentNotes?.length || 0 }}/500 characters
-                      </small>
-                    </div>
-                    <div v-if="fieldErrors.assignmentNotes" class="invalid-feedback">{{ fieldErrors.assignmentNotes }}</div>
+                      label="Assignment Notes"
+                      placeholder="Enter assignment notes..."
+                      help-text="Include special instructions, conditions, or other relevant information."
+                      :max-length="500"
+                      :required="false"
+                      :show-label="true"
+                      input-id="assignmentNotes"
+                      @validation="handleNotesValidation"
+                    />
                   </div>
                 </div>
               </fieldset>
@@ -219,6 +197,9 @@ import { showToast, showErrorToast } from '../../utils/toast'
 import { assignmentApiService, type CreateAssignmentDto } from '../../services/assignmentApi'
 import { assetApiService, type Asset } from '../../services/assetApi'
 import { employeeApiService, type Employee } from '../../services/employeeApi'
+import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
+import NotesDisplay from '../../components/common/NotesDisplay.vue'
+import NotesTextarea from '../../components/common/NotesTextarea.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -232,6 +213,10 @@ const formData = reactive({
   assignmentDate: '',
   assignmentNotes: ''
 })
+
+// Selected items for SearchableDropdown components
+const selectedAsset = ref<Item | null>(null)
+const selectedEmployee = ref<Item | null>(null)
 
 // Computed property for selected asset specifications
 const selectedAssetSpecs = computed(() => {
@@ -283,6 +268,23 @@ const activeEmployees = ref<Employee[]>([])
 const isLoadingAssets = ref(false)
 const isLoadingEmployees = ref(false)
 
+// Transform API data to SearchableDropdown format
+const assetItems = computed(() => {
+  return availableAssets.value.map(asset => ({
+    id: asset.id,
+    name: `${asset.assetId} - ${asset.serialNumber}`,
+    value: asset.id.toString()
+  }))
+})
+
+const employeeItems = computed(() => {
+  return activeEmployees.value.map(employee => ({
+    id: employee.id,
+    name: `${employee.employeeId} - ${employee.firstName} ${employee.lastName}`,
+    value: employee.id.toString()
+  }))
+})
+
 
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
@@ -293,6 +295,51 @@ const getFieldClass = (fieldName: string) => {
   return {
     'is-valid': fieldValidation[fieldName] === true,
     'is-invalid': fieldValidation[fieldName] === false || fieldErrors[fieldName]
+  }
+}
+
+// SearchableDropdown change handlers
+const onAssetChange = (item: Item | null) => {
+  selectedAsset.value = item
+  formData.assetId = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldValidation('assetId')
+  }
+  
+  validateFieldInline('assetId')
+}
+
+const onEmployeeChange = (item: Item | null) => {
+  selectedEmployee.value = item
+  formData.employeeId = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldValidation('employeeId')
+  }
+  
+  validateFieldInline('employeeId')
+}
+
+// Helper function to apply validation classes to SearchableDropdown components
+const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Find the SearchableDropdown input by ID
+  const input = document.getElementById(fieldName) as HTMLInputElement
+  
+  if (!input) {
+    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
   }
 }
 
@@ -315,6 +362,28 @@ const validateFieldInline = (fieldName: string) => {
 
   // Additional custom validations based on field type
   switch (fieldName) {
+    case 'assetId':
+      if (!selectedAsset.value) {
+        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        return false
+      } else {
+        setFieldValid(fieldName)
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+        return true
+      }
+      
+    case 'employeeId':
+      if (!selectedEmployee.value) {
+        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        return false
+      } else {
+        setFieldValid(fieldName)
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+        return true
+      }
+      
     case 'assignmentReason':
       if (value && value.length < 5) {
         setFieldError(fieldName, 'Assignment reason must be at least 5 characters')
@@ -322,6 +391,16 @@ const validateFieldInline = (fieldName: string) => {
       }
       if (value && value.length > 100) {
         setFieldError(fieldName, 'Assignment reason cannot exceed 100 characters')
+        return false
+      }
+      // Check if first letter is capitalized
+      if (value && value.length > 0 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+        setFieldError(fieldName, 'Assignment reason must start with a capital letter')
+        return false
+      }
+      // Check for valid characters (letters, numbers, spaces, common punctuation)
+      if (value && !/^[A-Za-z0-9\s.,!?()-]+$/.test(value)) {
+        setFieldError(fieldName, 'Assignment reason contains invalid characters')
         return false
       }
       break
@@ -337,7 +416,13 @@ const validateFieldInline = (fieldName: string) => {
       break
   }
 
-  // Use native validation
+  // For SearchableDropdown fields, we've already handled validation above
+  const searchableDropdownFields = ['assetId', 'employeeId']
+  if (searchableDropdownFields.includes(fieldName)) {
+    return true // Already validated above
+  }
+
+  // Use native validation for other fields
   if (element.checkValidity()) {
     setFieldValid(fieldName)
     return true
@@ -355,6 +440,12 @@ const setFieldError = (fieldName: string, message: string) => {
   if (element) {
     element.setCustomValidity(message)
   }
+  
+  // Apply validation classes to SearchableDropdown fields
+  const searchableDropdownFields = ['assetId', 'employeeId']
+  if (searchableDropdownFields.includes(fieldName)) {
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+  }
 }
 
 const setFieldValid = (fieldName: string) => {
@@ -365,6 +456,12 @@ const setFieldValid = (fieldName: string) => {
   if (element) {
     element.setCustomValidity('')
   }
+  
+  // Apply validation classes to SearchableDropdown fields
+  const searchableDropdownFields = ['assetId', 'employeeId']
+  if (searchableDropdownFields.includes(fieldName)) {
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+  }
 }
 
 const clearFieldValidation = (fieldName: string) => {
@@ -372,12 +469,49 @@ const clearFieldValidation = (fieldName: string) => {
     fieldValidation[fieldName] = null
     delete fieldErrors[fieldName]
   }
+  
+  // Also clear validation for SearchableDropdown components
+  const searchableDropdownFields = ['assetId', 'employeeId']
+  if (searchableDropdownFields.includes(fieldName)) {
+    const input = document.getElementById(fieldName) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid', 'is-valid')
+    }
+  }
 }
 
 const handleFieldInput = (fieldName: string) => {
   // Clear error state on input if field was invalid
   if (fieldValidation[fieldName] === false && formData[fieldName as keyof typeof formData]?.toString().trim()) {
     validateFieldInline(fieldName)
+  }
+}
+
+// Special handler for Assignment Reason with formatting
+const handleAssignmentReasonInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  let value = target.value
+  
+  // Auto-capitalize first letter
+  if (value.length > 0) {
+    value = value.charAt(0).toUpperCase() + value.slice(1)
+    formData.assignmentReason = value
+  }
+  
+  // Clear error state on input if field was invalid
+  if (fieldValidation.assignmentReason === false && value.trim()) {
+    validateFieldInline('assignmentReason')
+  }
+}
+
+// Handle notes validation
+const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
+  if (!isValid && errorMessage) {
+    fieldErrors.assignmentNotes = errorMessage
+    fieldValidation.assignmentNotes = false
+  } else {
+    fieldErrors.assignmentNotes = ''
+    fieldValidation.assignmentNotes = true
   }
 }
 
@@ -486,64 +620,15 @@ const resetForm = () => {
     issueAssetForm.value.classList.remove('was-validated')
   }
 
-  // Clear all validation classes from DOM elements and reset textarea heights
+  // Clear all validation classes from DOM elements
   nextTick(() => {
     const fields = document.querySelectorAll('.is-valid, .is-invalid')
     fields.forEach(field => {
       field.classList.remove('is-valid', 'is-invalid')
     })
-    
-    // Reset textarea heights to minimum
-    const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-    textareas.forEach(textarea => {
-      textarea.style.height = '72px' // Reset to 3 rows
-    })
   })
 }
 
-// Auto-expanding textarea functionality
-const autoExpandTextarea = (event: Event) => {
-  const textarea = event.target as HTMLTextAreaElement
-  resizeTextarea(textarea)
-}
-
-// Helper function to resize a specific textarea
-const resizeTextarea = (textarea: HTMLTextAreaElement) => {
-  if (!textarea) return
-  
-  // Reset height to auto to get the correct scrollHeight
-  textarea.style.height = 'auto'
-  
-  // Set the height to match the content
-  const newHeight = Math.max(textarea.scrollHeight, 72) // Minimum 3 rows (24px per row)
-  textarea.style.height = newHeight + 'px'
-}
-
-// Expandable notes functionality with character counter
-const expandNotesField = (event: Event) => {
-  const textarea = event.target as HTMLTextAreaElement
-  if (!textarea.classList.contains('expanded')) {
-    textarea.classList.add('expanded')
-    textarea.style.height = '120px'
-    textarea.rows = 6
-    textarea.placeholder = 'Enter detailed assignment notes...'
-    textarea.focus()
-    
-    // Update the helper text
-    const helpText = textarea.nextElementSibling as HTMLElement
-    if (helpText) {
-      helpText.innerHTML = 'Expanded! Enter detailed assignment information, special conditions, or instructions.'
-    }
-  }
-}
-
-// Character counters
-const getCounterClass = (length: number, maxLength: number) => {
-  const percentage = (length / maxLength) * 100
-  if (percentage > 90) return 'text-danger'
-  if (percentage > 75) return 'text-warning'
-  return 'text-muted'
-}
 
 // Navigation methods
 const goBack = () => {
@@ -628,29 +713,17 @@ const showIssueAssetSuccessToast = (assignmentDetails: string) => {
   showToast(message, 'success')
 }
 
-// Watchers for textarea auto-expansion
-watch(() => formData.assignmentNotes, (newValue) => {
-  if (newValue) {
-    nextTick(() => {
-      const textarea = document.getElementById('assignmentNotes') as HTMLTextAreaElement
-      if (textarea) {
-        resizeTextarea(textarea)
-      }
-    })
-  }
-})
 
 // Asset and Employee selection handlers
-watch(() => formData.assetId, (newValue) => {
-  if (newValue) {
-    const selectedAsset = availableAssets.value.find(asset => 
-      asset.id.toString() === newValue || asset.id === parseInt(newValue)
-    )
+watch(() => selectedAsset.value, (newValue) => {
+  if (newValue && newValue.value) {
+    const assetId = parseInt(newValue.value.toString())
+    const asset = availableAssets.value.find(asset => asset.id === assetId)
     
-    if (selectedAsset) {
+    if (asset) {
       // Check if brand and model exist
-      if (selectedAsset.brand && selectedAsset.model) {
-        const brandModel = `${selectedAsset.brand.name} ${selectedAsset.model.name}`
+      if (asset.brand && asset.model) {
+        const brandModel = `${asset.brand.name} ${asset.model.name}`
         formData.assetBrandModel = brandModel
       } else {
         formData.assetBrandModel = 'Brand/Model not available'
@@ -666,13 +739,14 @@ watch(() => formData.assetId, (newValue) => {
 
 // Watch for when availableAssets are loaded to update brand-model if assetId is already set
 watch(() => availableAssets.value, (newAssets) => {
-  if (newAssets.length > 0 && formData.assetId) {
-    const selectedAsset = newAssets.find(asset => 
-      asset.id.toString() === formData.assetId || asset.id === parseInt(formData.assetId)
-    )
-    if (selectedAsset && selectedAsset.brand && selectedAsset.model) {
-      const brandModel = `${selectedAsset.brand.name} ${selectedAsset.model.name}`
-      formData.assetBrandModel = brandModel
+  if (newAssets.length > 0 && selectedAsset.value) {
+    const assetId = selectedAsset.value.value ? parseInt(selectedAsset.value.value.toString()) : null
+    if (assetId) {
+      const asset = newAssets.find(asset => asset.id === assetId)
+      if (asset && asset.brand && asset.model) {
+        const brandModel = `${asset.brand.name} ${asset.model.name}`
+        formData.assetBrandModel = brandModel
+      }
     }
   }
 }, { deep: true })
@@ -737,10 +811,16 @@ onMounted(async () => {
   
   if (selectedAssetId && selectedAssetType) {
     // Find the asset by assetId (not database ID)
-    const selectedAsset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
-    if (selectedAsset) {
-      formData.assetId = selectedAsset.id.toString()
-      formData.assetBrandModel = `${selectedAsset.brand.name} ${selectedAsset.model.name}`
+    const asset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
+    if (asset) {
+      // Set the selected asset for SearchableDropdown
+      selectedAsset.value = {
+        id: asset.id,
+        name: `${asset.assetId} - ${asset.serialNumber}`,
+        value: asset.id.toString()
+      }
+      formData.assetId = asset.id.toString()
+      formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
       
       // Show success message for pre-selection
       showToast(`Asset ${selectedAssetId} pre-selected for issuing`, 'info')
@@ -768,38 +848,34 @@ onMounted(async () => {
 @import url('../../assets/unified-form-styles.css');
 
 /* Additional component-specific styles */
-.auto-expand-textarea {
-  transition: height 0.2s ease, border-color 0.2s ease;
-  resize: none;
-  overflow: hidden;
-  min-height: 72px; /* 3 rows minimum */
+
+/* Asset Specifications - Make it look like a non-editable input */
+.asset-specifications-wrapper :deep(.form-control) {
+  background-color: #F3F3F3 !important;
+  border: 2px solid #E0E0E0 !important;
+  color: #0A0A0A !important;
+  cursor: default !important;
+  resize: none !important;
 }
 
-.auto-expand-textarea:hover {
-  border-color: #999999;
+.asset-specifications-wrapper :deep(.form-control:hover) {
+  border-color: #E0E0E0 !important;
+  background-color: #F3F3F3 !important;
 }
 
-.auto-expand-textarea.expanded {
-  cursor: text;
-  resize: vertical;
+.asset-specifications-wrapper :deep(.form-control:focus) {
+  border-color: #E0E0E0 !important;
+  box-shadow: none !important;
+  background-color: #F3F3F3 !important;
+  outline: none !important;
 }
 
-.auto-expand-textarea:focus {
-  cursor: text;
+.asset-specifications-wrapper :deep(.form-control::placeholder) {
+  color: #999999 !important;
 }
 
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-.character-count .text-warning {
-  color: #f59e0b !important;
-}
-
-.character-count .text-danger {
-  color: #dc2626 !important;
-  font-weight: 600;
+.asset-specifications-wrapper :deep(.character-count) {
+  display: none !important;
 }
 
 /* Form fieldset styling */
@@ -963,26 +1039,6 @@ onMounted(async () => {
   outline-offset: 2px;
 }
 
-/* Asset Specifications Styling */
-.specifications-content {
-  background-color: #ffffff;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 1rem;
-}
-
-.spec-text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.875rem;
-  color: #212529;
-  margin: 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  line-height: 1.6;
-  background: transparent;
-  border: none;
-  padding: 0;
-}
 
 /* Responsive design */
 @media (max-width: 768px) {
@@ -1016,14 +1072,6 @@ onMounted(async () => {
     gap: 0 !important;
   }
   
-  /* Specifications responsive */
-  .specifications-content {
-    padding: 0.75rem;
-  }
-  
-  .spec-text {
-    font-size: 0.8rem;
-  }
 }
 
 @media (max-width: 576px) {
