@@ -313,6 +313,16 @@ const showSelectedValues = () => {
   height: 100%;
 }
 
+/* Ensure proper spacing for the new label structure */
+.demo-section :deep(.searchable-dropdown-wrapper) {
+  margin-bottom: 1rem;
+}
+
+.demo-section :deep(.form-label) {
+  font-weight: 600;
+  color: #495057;
+}
+
 pre {
   background-color: rgba(0, 0, 0, 0.05);
   padding: 0.5rem;

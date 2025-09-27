@@ -30,14 +30,14 @@ const router = createRouter({
           component: () => import('../views/assets/AssetsView.vue'),
         },
         {
-          path: 'assets/register',
-          name: 'register-asset',
-          component: () => import('../views/assets/RegisterAssetView.vue'),
+          path: 'assets/add',
+          name: 'add-asset',
+          component: () => import('../views/assets/AddAssetView.vue'),
         },
         {
           path: 'assets/edit/:id',
           name: 'edit-asset',
-          component: () => import('../views/assets/RegisterAssetView.vue'),
+          component: () => import('../views/assets/EditAssetView.vue'),
         },
         {
           path: 'assets/manage-categories',

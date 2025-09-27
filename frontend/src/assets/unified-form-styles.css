@@ -4,6 +4,118 @@
    ONLY FOR FORM PAGES
 ================================= */
 
+/* =================================
+   SEARCHABLE DROPDOWN FORM INTEGRATION
+   Use .form-searchable-dropdown wrapper
+   to match SearchableDropdown with form styling
+================================= */
+
+/* Form-specific SearchableDropdown styling */
+.form-searchable-dropdown {
+  /* This wrapper ensures the SearchableDropdown matches form styling */
+}
+
+/* High specificity override to ensure borders match exactly */
+.form-searchable-dropdown :deep(.searchable-dropdown-wrapper .form-control),
+.form-searchable-dropdown :deep(.dropdown .form-control) {
+  border: 2px solid #E0E0E0 !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Override SearchableDropdown styles to match form controls */
+.form-searchable-dropdown :deep(.form-control),
+.form-searchable-dropdown :deep(input.form-control),
+.form-searchable-dropdown :deep(input[type="text"]) {
+  /* Match the form's input styling exactly */
+  border: 2px solid #E0E0E0 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  transition: all 0.2s ease !important;
+  color: #0A0A0A !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+}
+
+.form-searchable-dropdown :deep(.form-control::placeholder),
+.form-searchable-dropdown :deep(input.form-control::placeholder),
+.form-searchable-dropdown :deep(input[type="text"]::placeholder) {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+.form-searchable-dropdown :deep(.form-control:focus),
+.form-searchable-dropdown :deep(input.form-control:focus),
+.form-searchable-dropdown :deep(input[type="text"]:focus) {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Removed hover border override to preserve focus state */
+
+.form-searchable-dropdown :deep(.form-control:disabled) {
+  background-color: #e9ecef !important;
+  opacity: 1 !important;
+  border-color: #ced4da !important;
+  color: #6c757d !important;
+}
+
+/* Match form validation styling */
+.form-searchable-dropdown :deep(.form-control.is-valid),
+.form-searchable-dropdown :deep(input.form-control.is-valid),
+.form-searchable-dropdown :deep(input[type="text"].is-valid) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-invalid),
+.form-searchable-dropdown :deep(input.form-control.is-invalid),
+.form-searchable-dropdown :deep(input[type="text"].is-invalid) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-valid:focus),
+.form-searchable-dropdown :deep(input.form-control.is-valid:focus),
+.form-searchable-dropdown :deep(input[type="text"].is-valid:focus) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-invalid:focus),
+.form-searchable-dropdown :deep(input.form-control.is-invalid:focus),
+.form-searchable-dropdown :deep(input[type="text"].is-invalid:focus) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+}
+
+/* Match form label styling */
+.form-searchable-dropdown :deep(.form-label) {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* Ensure dropdown menu matches the form's styling context */
+.form-searchable-dropdown :deep(.dropdown-menu) {
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  z-index: 1050 !important;
+}
+
+/* Validation animation for SearchableDropdown */
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
 /* TrackStix Color Variables - Updated from Recommended Palette */
 :root {
     /* Primary Palette - Exact colors from palette */

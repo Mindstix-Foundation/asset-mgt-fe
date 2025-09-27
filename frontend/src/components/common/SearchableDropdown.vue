@@ -1,71 +1,81 @@
 <template>
-  <div class="form-floating dropdown" ref="dropdownRef">
-    <input
-      type="text"
-      class="form-control"
-      :class="$attrs.class"
-      :id="id"
-      :placeholder="placeholder"
-      v-model="searchText"
-      @input="handleInput"
-      @focus="handleClick"
-      @click="handleClick"
-      @blur="handleBlur"
-      autocomplete="new-password"
-      autocorrect="off"
-      autocapitalize="off"
-      spellcheck="false"
-      :name="`no-autofill-${Date.now()}-${id}`"
-      :data-form-type="'other'"
-      :data-lpignore="true"
-      aria-autocomplete="none"
-      data-ms-editor="false"
-      data-address-field="no"
-      data-1p-ignore="true"
-      data-bwignore="true"
-      data-dashlane-ignore="true"
-      role="combobox"
-      aria-expanded="false"
-      aria-haspopup="listbox"
-      readonly
-      onfocus="this.removeAttribute('readonly')"
-      required
-      :disabled="disabled"
-      @keydown="handleKeydown"
-    />
-    <div
-      class="dropdown-menu"
-      :class="{ show: showDropdown }"
-      style="position: absolute; width: 100%; z-index: 1000"
-      role="listbox"
-    >
-      <!-- Show "No data available" message when there are no items -->
-      <div v-if="processedItems.length === 0" class="dropdown-item no-data-item">
-        No data available
-      </div>
-      <!-- Show "No results found" when there are items but none match the search -->
-      <div v-else-if="filteredItems.length === 0" class="dropdown-item no-data-item">
-        No results found
-      </div>
-      <!-- Show filtered items when available -->
-      <button
-        v-else
-        v-for="(item, index) in filteredItems"
-        :key="getItemKey(item)"
-        class="dropdown-item"
-        :class="{ active: index === selectedIndex }"
-        @click="selectItem(item)"
-        @mousedown.prevent
-        type="button"
-        role="option"
-        :aria-selected="index === selectedIndex"
+  <div class="searchable-dropdown-wrapper">
+    <label :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
+    <div class="dropdown" ref="dropdownRef">
+      <input
+        type="text"
+        class="form-control"
+        :class="$attrs.class"
+        :id="id"
+        :placeholder="placeholder"
+        v-model="searchText"
+        @input="handleInput"
+        @focus="handleClick"
+        @click="handleClick"
+        @blur="handleBlur"
+        autocomplete="new-password"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        :name="`no-autofill-${Date.now()}-${id}`"
+        :data-form-type="'other'"
+        :data-lpignore="true"
+        aria-autocomplete="none"
+        data-ms-editor="false"
+        data-address-field="no"
+        data-1p-ignore="true"
+        data-bwignore="true"
+        data-dashlane-ignore="true"
+        role="combobox"
+        aria-expanded="false"
+        aria-haspopup="listbox"
+        readonly
+        onfocus="this.removeAttribute('readonly')"
+        :required="required"
+        :disabled="disabled"
+        @keydown="handleKeydown"
+      />
+      <div
+        class="dropdown-menu"
+        :class="{ 
+          show: showDropdown,
+          'needs-scroll': needsScroll
+        }"
+        :style="{ 
+          position: 'absolute', 
+          width: '100%', 
+          'z-index': '1000',
+          'max-height': dropdownMaxHeight
+        }"
+        role="listbox"
       >
-        <slot name="item" :item="item">
-          {{ getItemLabel(item) }}
-        </slot>
-      </button>
+        <!-- Show "No data available" message when there are no items -->
+        <div v-if="processedItems.length === 0" class="dropdown-item no-data-item">
+          No data available
+        </div>
+        <!-- Show "No results found" when there are items but none match the search -->
+        <div v-else-if="filteredItems.length === 0" class="dropdown-item no-data-item">
+          No results found
+        </div>
+        <!-- Show filtered items when available -->
+        <button
+          v-else
+          v-for="(item, index) in filteredItems"
+          :key="getItemKey(item)"
+          class="dropdown-item"
+          :class="{ active: index === selectedIndex }"
+          @click="selectItem(item)"
+          @mousedown.prevent
+          type="button"
+          role="option"
+          :aria-selected="index === selectedIndex"
+        >
+          <slot name="item" :item="item">
+            {{ getItemLabel(item) }}
+          </slot>
+        </button>
+      </div>
     </div>
-    <label :for="id">{{ label }} <span v-if="required" class="text-danger">*</span></label>
   </div>
 </template>
 
@@ -121,6 +131,7 @@ const searchText = ref('')
 const showDropdown = ref(false)
 const selectedIndex = ref(-1)
 const dropdownRef = ref<HTMLElement | null>(null)
+const isFirstOpen = ref(true)
 
 const getNestedValue = (obj: Record<string, unknown> | null | undefined, path: string): unknown => {
   if (!obj) return undefined
@@ -217,7 +228,9 @@ const processedItems = computed(() => {
 
 const filteredItems = computed(() => {
   const search = searchText.value.toLowerCase()
-  if (!search) return processedItems.value
+  
+  // If no search text or it's the first time opening, return all items
+  if (!search || isFirstOpen.value) return processedItems.value
 
   return processedItems.value.filter((item) => {
     // First try the configured search keys
@@ -237,10 +250,39 @@ const filteredItems = computed(() => {
   })
 })
 
+// Compute dropdown max height and overflow behavior
+const dropdownMaxHeight = computed(() => {
+  const itemCount = filteredItems.value.length
+  const itemHeight = 40 // 2.5rem = 40px
+  const maxItems = 5 // Changed from 10 to 5
+  const padding = 16 // 0.5rem top + 0.5rem bottom = 16px
+  
+  // Handle empty states (no data or no results)
+  if (processedItems.value.length === 0 || filteredItems.value.length === 0) {
+    return `${itemHeight + padding}px` // Height for "No data" or "No results" message
+  }
+  
+  if (itemCount <= maxItems) {
+    // Show all items without scroll - exact height to fit items
+    return `${itemCount * itemHeight + padding}px`
+  } else {
+    // Show max 5 items with scroll
+    return `${maxItems * itemHeight + padding}px`
+  }
+})
+
+// Compute whether scrolling is needed
+const needsScroll = computed(() => {
+  const itemCount = filteredItems.value.length
+  const maxItems = 5
+  return itemCount > maxItems
+})
+
 const handleInput = () => {
   showDropdown.value = true
   selectedIndex.value = -1
   emit('update:modelValue', null)
+  isFirstOpen.value = false // User is now typing, so disable first open behavior
   
   // Update aria-expanded attribute
   nextTick(() => {
@@ -305,6 +347,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     case 'Escape':
       showDropdown.value = false
       selectedIndex.value = -1
+      isFirstOpen.value = true // Reset for next open
       break
   }
 }
@@ -350,6 +393,7 @@ const selectItem = (item: Item) => {
   searchText.value = getItemLabel(item)
   showDropdown.value = false
   selectedIndex.value = -1
+  isFirstOpen.value = true // Reset for next open
 
   // Update aria-expanded attribute
   nextTick(() => {
@@ -399,6 +443,7 @@ const handleClickOutside = (event: MouseEvent) => {
     if (input !== target) {
       showDropdown.value = false
       selectedIndex.value = -1
+      isFirstOpen.value = true // Reset for next open
       // Update aria-expanded attribute
       input?.setAttribute('aria-expanded', 'false')
     }
@@ -413,6 +458,7 @@ const handleBlur = (event: FocusEvent) => {
     if (!dropdownRef.value?.contains(relatedTarget)) {
       showDropdown.value = false
       selectedIndex.value = -1
+      isFirstOpen.value = true // Reset for next open
       // Update aria-expanded attribute
       const input = dropdownRef.value?.querySelector('input')
       input?.setAttribute('aria-expanded', 'false')
@@ -493,18 +539,97 @@ const handleClick = () => {
 </script>
 
 <style scoped>
+/* Wrapper for the entire searchable dropdown */
+.searchable-dropdown-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Form label styling */
+.form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #212529;
+}
+
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+/* Form control styling */
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control:disabled {
+  background-color: #e9ecef;
+  opacity: 1;
+}
+
+.form-control::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+/* Dropdown menu styling */
 .dropdown-menu {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  min-width: 10rem;
   padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  overflow-y: hidden; /* Hide scroll by default */
+  overflow-x: hidden; /* Hide horizontal scroll */
+  width: 100%;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: #6c757d transparent;
+  word-wrap: break-word;
+  white-space: nowrap;
+}
+
+/* Only show vertical scroll when needed */
+.dropdown-menu.needs-scroll {
+  overflow-y: auto;
+}
+
+.dropdown-menu.show {
+  display: block;
+  z-index: 9999 !important;
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -525,41 +650,53 @@ const handleClick = () => {
   background-color: #495057;
 }
 
+/* Dropdown item styling */
 .dropdown-item {
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border: none;
-  background: none;
+  display: flex;
+  align-items: center;
   width: 100%;
-  text-align: left;
-  display: block;
+  padding: 0.5rem 1rem;
+  clear: both;
+  font-weight: 400;
   color: #212529;
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.5rem; /* Consistent item height */
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.active {
+  color: #1e2125;
+  background-color: #e9ecef;
+}
+
+.dropdown-item:active {
+  color: #fff;
+  background-color: #0d6efd;
 }
 
 .no-data-item {
   color: #6c757d;
   font-style: italic;
   cursor: default;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem; /* Consistent height with other items */
+  padding: 0.5rem 1rem;
 }
 
 .no-data-item:hover {
   background-color: transparent;
   color: #6c757d;
-}
-
-.dropdown-item:hover,
-.dropdown-item.active {
-  background-color: #212529;
-  color: #fff;
-}
-
-.form-floating > .form-control {
-  height: calc(3.5rem + 2px);
-  line-height: 1.25;
-}
-
-.form-floating > label {
-  padding: 1rem 0.75rem;
 }
 
 /* Prevent browser autofill styling */
@@ -590,13 +727,8 @@ input::-webkit-credentials-auto-fill-button {
   margin: 0;
 }
 
-/* Ensure our dropdown appears above browser suggestions */
-.dropdown-menu.show {
-  z-index: 9999 !important;
-}
-
 /* Add validation styling */
-:deep(.form-control.is-valid) {
+.form-control.is-valid {
   border-color: #198754;
   padding-right: calc(1.5em + 0.75rem);
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
@@ -605,8 +737,27 @@ input::-webkit-credentials-auto-fill-button {
   background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
-:deep(.form-control.is-valid:focus) {
+.form-control.is-valid:focus {
   border-color: #198754;
   box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 1.4 1.4M7.2 4.6l-1.4 1.4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Required field styling */
+.text-danger {
+  color: #dc3545 !important;
 }
 </style> 
