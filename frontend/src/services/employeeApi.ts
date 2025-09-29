@@ -1,6 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+import apiClient from './apiClient'
 
 // Types for employee API
 export interface EmployeeQueryDto {
@@ -56,22 +54,13 @@ export interface EmployeeListResponse {
 }
 
 class EmployeeApiService {
-  private baseURL = `${API_BASE_URL}/employees`
-
-  // Get auth token from localStorage
-  private getAuthToken(): string | null {
-    return localStorage.getItem('auth_token')
-  }
+  private baseURL = '/employees'
 
   // Get all employees with filtering
   async getEmployees(query?: EmployeeQueryDto): Promise<EmployeeListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(this.baseURL, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
+      const response = await apiClient.get(this.baseURL, {
+        params: query
       })
       return response.data
     } catch (error: any) {
@@ -83,18 +72,32 @@ class EmployeeApiService {
   // Get active employees (for issue asset page) - NO LIMIT to show all employees
   async getActiveEmployees(query?: Omit<EmployeeQueryDto, 'status' | 'limit'>): Promise<EmployeeListResponse> {
     try {
-      const token = this.getAuthToken()
       // Remove limit to get all active employees
       const activeQuery = { ...query, status: 'ACTIVE' as const }
-      const response = await axios.get(this.baseURL, {
-        params: activeQuery,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
+      const response = await apiClient.get(this.baseURL, {
+        params: activeQuery
       })
       return response.data
     } catch (error: any) {
       console.error('Error fetching active employees:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get all employees for dropdown selection (minimal data, no pagination)
+  async getEmployeesForDropdowns(status?: 'ACTIVE' | 'INACTIVE'): Promise<EmployeeListResponse> {
+    try {
+      const params: any = {}
+      if (status) {
+        params.status = status
+      }
+      
+      const response = await apiClient.get(`${this.baseURL}/dropdowns`, {
+        params
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching employees for dropdowns:', error)
       throw this.handleError(error)
     }
   }
@@ -161,10 +164,6 @@ class EmployeeApiService {
         case 400:
           return new Error(`Bad Request: ${message}`)
         case 401:
-          // Clear invalid token and redirect to login
-          localStorage.removeItem('auth_token')
-          localStorage.removeItem('user')
-          window.location.href = '/login'
           return new Error('Session expired. Please log in again.')
         case 403:
           return new Error('Forbidden: You do not have permission to perform this action')

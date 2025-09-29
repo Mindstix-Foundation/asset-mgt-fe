@@ -2,19 +2,18 @@
   <div class="reports-page">
     <div class="container-fluid py-4">
       <!-- Page Header -->
-          <div class="page-header">
-            <h1 class="page-title">
-              <i class="fas fa-chart-bar me-3"></i>
-              Reports & Analytics
-            </h1>
-        <p class="page-subtitle">Generate and export comprehensive asset reports</p>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-0" style="color: var(--primary-black);">Reports & Analytics</h2>
+          <p class="text-muted mb-0">Generate and export comprehensive asset reports</p>
+        </div>
       </div>
 
       <!-- Quick Report Cards -->
       <div class="row mb-5">
         <div class="col-12 col-md-6 col-lg-3 mb-3">
-          <div class="card h-100 report-card">
-            <div class="card-body text-center">
+          <div class="card border-0 shadow-sm h-100 stats-card-modern">
+            <div class="card-body text-center p-4">
               <i class="fas fa-file-excel fa-3x mb-3" style="color: var(--secondary-purple) !important;"></i>
               <h5 class="card-title">Asset Inventory Report</h5>
               <p class="card-text text-muted">Complete list of all assets with details</p>
@@ -32,8 +31,8 @@
         </div>
         
         <div class="col-12 col-md-6 col-lg-3 mb-3">
-          <div class="card h-100 report-card">
-            <div class="card-body text-center">
+          <div class="card border-0 shadow-sm h-100 stats-card-modern">
+            <div class="card-body text-center p-4">
               <i class="fas fa-users fa-3x mb-3" style="color: var(--secondary-green) !important;"></i>
               <h5 class="card-title">Employee Asset Report</h5>
               <p class="card-text text-muted">Assets assigned to each employee</p>
@@ -51,8 +50,8 @@
         </div>
         
         <div class="col-12 col-md-6 col-lg-3 mb-3">
-          <div class="card h-100 report-card">
-            <div class="card-body text-center">
+          <div class="card border-0 shadow-sm h-100 stats-card-modern">
+            <div class="card-body text-center p-4">
               <i class="fas fa-tools fa-3x mb-3" style="color: var(--secondary-orange) !important;"></i>
               <h5 class="card-title">Maintenance Report</h5>
               <p class="card-text text-muted">Maintenance history and costs</p>
@@ -70,8 +69,8 @@
         </div>
         
         <div class="col-12 col-md-6 col-lg-3 mb-3">
-          <div class="card h-100 report-card">
-            <div class="card-body text-center">
+          <div class="card border-0 shadow-sm h-100 stats-card-modern">
+            <div class="card-body text-center p-4">
               <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--secondary-pink) !important;"></i>
               <h5 class="card-title">Audit Log Report</h5>
               <p class="card-text text-muted">Complete audit trail of all activities</p>
@@ -779,36 +778,10 @@ onMounted(() => {
 .reports-page {
   background: var(--primary-white);
   min-height: calc(100vh - 60px);
-  padding: 2rem 0;
+  padding: 0;
 }
 
-.page-header {
-  background: var(--bg-primary);
-  border-radius: 1rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--element-gray);
-}
 
-.page-title {
-  color: var(--text-primary);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-}
-
-.page-title i {
-  color: var(--accent-navy);
-}
-
-.page-subtitle {
-  color: var(--primary-dark-gray);
-  font-size: 1.1rem;
-  margin: 0;
-}
 
 /* Include all the styles from the prototype */
 .report-card {
@@ -1299,4 +1272,28 @@ onMounted(() => {
     margin-bottom: 1.5rem;
   }
 }
+
+/* Dashboard-like stats cards for quick reports */
+.stats-card-modern {
+  border-radius: 0.75rem !important;
+  border: 1px solid var(--element-gray) !important;
+  background-color: var(--primary-white) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: none !important;
+  overflow: hidden;
+  background-clip: padding-box;
+}
+
+.stats-card-modern .card-body {
+  border-radius: inherit;
+}
+
+/* Color variants for icons to match dashboard */
+.stats-icon.bg-warning { background-color: var(--secondary-orange) !important; color: white !important; }
+.stats-icon.bg-info { background-color: var(--secondary-purple) !important; color: white !important; }
+.stats-icon.bg-success { background-color: var(--secondary-green) !important; color: white !important; }
+.stats-icon.bg-secondary { background-color: var(--secondary-red) !important; color: white !important; }
+.stats-icon.bg-primary { background-color: var(--secondary-purple) !important; color: white !important; }
+
+/* Keep buttons interactive; do not disable pointer events here */
 </style> 

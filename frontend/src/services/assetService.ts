@@ -111,7 +111,7 @@ class AssetService {
       method: 'POST',
       headers: {
         // Don't set Content-Type, let browser set it with boundary for multipart/form-data
-        Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       },
       body: formData,
     })

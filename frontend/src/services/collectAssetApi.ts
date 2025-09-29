@@ -76,7 +76,7 @@ class CollectAssetApiService {
 
   // Get auth token from localStorage
   private getAuthToken(): string | null {
-    return localStorage.getItem('auth_token')
+    return localStorage.getItem('access_token')
   }
 
   // Get all active assignments (assigned assets) - NO LIMIT to show all
@@ -142,10 +142,7 @@ class CollectAssetApiService {
         case 400:
           return new Error(`Bad Request: ${message}`)
         case 401:
-          // Clear invalid token and redirect to login
-          localStorage.removeItem('auth_token')
-          localStorage.removeItem('user')
-          window.location.href = '/login'
+          // Auth handling is now done globally by AuthService
           return new Error('Session expired. Please log in again.')
         case 403:
           return new Error('Forbidden: You do not have permission to perform this action')

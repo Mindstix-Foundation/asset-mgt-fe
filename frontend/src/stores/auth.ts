@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import authService from '@/services/authService'
 
 export interface LoginCredentials {
   username: string
@@ -21,35 +22,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (credentials: LoginCredentials): Promise<LoginResult> => {
     try {
-      console.log('Attempting login with backend API...')
+      console.log('Attempting login with authService...')
       
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(credentials),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        return { 
-          success: false, 
-          error: errorData.message || `Server error: ${response.status}` 
-        }
-      }
-
-      const data = await response.json()
+      // Use the authService for consistent authentication
+      const data = await authService.login(credentials)
       
       if (data.success && data.access_token) {
         user.value = data.user
         isAuthenticated.value = true
         token.value = data.access_token
-        
-        // Store in localStorage for persistence
-        localStorage.setItem('auth_token', token.value!)
-        localStorage.setItem('user', JSON.stringify(data.user))
         
         console.log('Login successful:', data.user)
         return { success: true, user: data.user }
@@ -76,19 +57,25 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false
     token.value = null
     
-    // Clear localStorage
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('user')
+    // Use authService for consistent logout
+    authService.logout()
   }
 
   const checkAuthStatus = () => {
-    const storedToken = localStorage.getItem('auth_token')
-    const storedUser = localStorage.getItem('user')
-    
-    if (storedToken && storedUser) {
-      token.value = storedToken
-      user.value = JSON.parse(storedUser)
-      isAuthenticated.value = true
+    // Use authService to check authentication status
+    if (authService.isAuthenticated()) {
+      const userData = authService.getUserData()
+      const authToken = authService.getToken()
+      
+      if (userData && authToken) {
+        user.value = userData
+        token.value = authToken
+        isAuthenticated.value = true
+      }
+    } else {
+      user.value = null
+      token.value = null
+      isAuthenticated.value = false
     }
   }
 

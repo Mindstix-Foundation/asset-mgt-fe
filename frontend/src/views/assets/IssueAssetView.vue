@@ -56,6 +56,37 @@
                     <div class="form-text">Automatically populated based on asset selection</div>
                   </div>
                 </div>
+
+                <!-- Additional Asset Details -->
+                <div v-if="formData.assetId" class="row mt-3">
+                  <div class="col-12">
+                    <div class="card bg-light">
+                      <div class="card-header">
+                        <h6 class="mb-0">Asset Details</h6>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <label class="form-label fw-bold">Serial Number</label>
+                            <p class="form-text">{{ formData.serialNumber }}</p>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label fw-bold">Condition</label>
+                            <p class="form-text">{{ formData.condition }}</p>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label fw-bold">Location</label>
+                            <p class="form-text">{{ formData.location }}</p>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label fw-bold">Notes</label>
+                            <p class="form-text">{{ formData.notes }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 
                 <!-- Asset Specifications -->
                 <div v-if="selectedAssetSpecs" class="mt-4">
@@ -211,7 +242,19 @@ const formData = reactive({
   employeeId: '',
   assignmentReason: '',
   assignmentDate: '',
-  assignmentNotes: ''
+  assignmentNotes: '',
+  // Additional asset details for display
+  serialNumber: '',
+  condition: '',
+  location: '',
+  notes: '',
+  assetType: '',
+  assetCategory: '',
+  vendor: '',
+  purchaseDate: '',
+  purchaseCost: '',
+  warrantyStartDate: '',
+  warrantyUntil: ''
 })
 
 // Selected items for SearchableDropdown components
@@ -535,44 +578,64 @@ const submitForm = async (event?: Event) => {
     event.stopPropagation()
   }
 
+  console.log('Form submission started')
+  console.log('Selected asset:', selectedAsset.value)
+  console.log('Selected employee:', selectedEmployee.value)
+  console.log('Form data:', formData)
+
   formSubmitted.value = true
 
-  // Validate all fields
-  let isFormValid = true
-  const requiredFields = ['assetId', 'employeeId', 'assignmentReason', 'assignmentDate']
-  const allFields = Object.keys(formData)
+  // Check if both asset and employee are selected
+  if (!selectedAsset.value || !selectedEmployee.value) {
+    console.error('Missing selections:', { 
+      hasAsset: !!selectedAsset.value, 
+      hasEmployee: !!selectedEmployee.value 
+    })
+    showErrorToast('Please select both an asset and an employee')
+    return
+  }
 
-  allFields.forEach(fieldName => {
-    if (!validateFieldInline(fieldName)) {
-      isFormValid = false
-    }
-  })
+  // Validate required fields
+  if (!formData.assignmentReason || formData.assignmentReason.trim() === '') {
+    showErrorToast('Please provide an assignment reason')
+    return
+  }
 
-  if (!isFormValid) {
-    // Don't show error toast for validation errors - instead scroll to first error
-    scrollToFirstError()
-    // Add 'was-validated' class to show validation styling
-    if (issueAssetForm.value) {
-      issueAssetForm.value.classList.add('was-validated')
-    }
+  if (!formData.assignmentDate) {
+    showErrorToast('Please select an assignment date')
     return
   }
 
   isSubmitting.value = true
 
   try {
+    // Get the selected asset and employee IDs from the dropdown selections
+    const selectedAssetId = selectedAsset.value?.value ? parseInt(selectedAsset.value.value.toString()) : null
+    const selectedEmployeeId = selectedEmployee.value?.value ? parseInt(selectedEmployee.value.value.toString()) : null
+
+    console.log('Selected asset ID:', selectedAssetId)
+    console.log('Selected employee ID:', selectedEmployeeId)
+
+    if (!selectedAssetId || !selectedEmployeeId) {
+      throw new Error('Please select both an asset and an employee')
+    }
+
     // Prepare assignment data for API
     const assignmentData: CreateAssignmentDto = {
-      assetId: parseInt(formData.assetId),
-      employeeId: parseInt(formData.employeeId),
+      assetId: selectedAssetId,
+      employeeId: selectedEmployeeId,
       issueDate: formData.assignmentDate,
       issueCondition: 'GOOD', // Default condition, could be made configurable
       issueReason: formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
 
+    console.log('Submitting assignment data:', assignmentData)
+
     // Call the API to create assignment
     const response = await assignmentApiService.createAssignment(assignmentData)
+    
+    console.log('Assignment created successfully:', response)
     
     const assignmentDetails = generateAssignmentDetails()
     
@@ -589,12 +652,23 @@ const submitForm = async (event?: Event) => {
 
 // Helper methods
 const generateAssignmentDetails = () => {
-  const selectedAsset = availableAssets.value.find(asset => asset.id.toString() === formData.assetId)
-  const selectedEmployee = activeEmployees.value.find(emp => emp.id === formData.employeeId)
+  // Get the selected asset and employee from the dropdown selections
+  const selectedAssetId = selectedAsset.value?.value ? parseInt(selectedAsset.value.value.toString()) : null
+  const selectedEmployeeId = selectedEmployee.value?.value ? parseInt(selectedEmployee.value.value.toString()) : null
+  
+  if (!selectedAssetId || !selectedEmployeeId) {
+    return 'Asset assignment'
+  }
+
+  // Find the selected asset and employee
+  const selectedAssetData = availableAssets.value.find(asset => asset.id === selectedAssetId)
+  const selectedEmployeeData = activeEmployees.value.find(emp => emp.id === selectedEmployeeId.toString())
   
   let details = ''
-  if (selectedAsset && selectedEmployee) {
-    details = `${selectedAsset.assetId} - ${selectedAsset.model.name} to ${selectedEmployee.firstName} ${selectedEmployee.lastName}`
+  if (selectedAssetData && selectedEmployeeData) {
+    const assetName = selectedAssetData.model?.name || 'Unknown Asset'
+    const employeeName = `${selectedEmployeeData.firstName} ${selectedEmployeeData.lastName}`
+    details = `${selectedAssetData.assetId} - ${assetName} to ${employeeName}`
   }
   return details || 'Asset assignment'
 }
@@ -715,24 +789,91 @@ const showIssueAssetSuccessToast = (assignmentDetails: string) => {
 
 
 // Asset and Employee selection handlers
-watch(() => selectedAsset.value, (newValue) => {
+watch(() => selectedAsset.value, async (newValue) => {
   if (newValue && newValue.value) {
     const assetId = parseInt(newValue.value.toString())
-    const asset = availableAssets.value.find(asset => asset.id === assetId)
     
-    if (asset) {
-      // Check if brand and model exist
-      if (asset.brand && asset.model) {
-        const brandModel = `${asset.brand.name} ${asset.model.name}`
-        formData.assetBrandModel = brandModel
-      } else {
-        formData.assetBrandModel = 'Brand/Model not available'
+    try {
+      // Fetch complete asset details
+      const response = await assetApiService.getAssetById(assetId)
+      const asset = response.data.asset
+      
+      if (asset) {
+        // Update form data with complete asset information
+        formData.assetId = asset.assetId
+        formData.serialNumber = asset.serialNumber
+        formData.condition = asset.condition
+        formData.location = asset.location || ''
+        formData.notes = asset.notes || ''
+        
+        // Check if brand and model exist
+        if (asset.brand && asset.model) {
+          const brandModel = `${asset.brand.name} ${asset.model.name}`
+          formData.assetBrandModel = brandModel
+        } else {
+          formData.assetBrandModel = 'Brand/Model not available'
+        }
+        
+        // Update asset type information
+        if (asset.assetType) {
+          formData.assetType = asset.assetType.name
+          if (asset.assetType.category) {
+            formData.assetCategory = asset.assetType.category.name
+          }
+        }
+        
+        // Update vendor information if available
+        if (asset.vendor) {
+          formData.vendor = asset.vendor.name
+        }
+        
+        // Update purchase information if available
+        if (asset.purchaseDate) {
+          formData.purchaseDate = asset.purchaseDate
+        }
+        if (asset.purchaseCost) {
+          formData.purchaseCost = asset.purchaseCost.toString()
+        }
+        if (asset.warrantyStartDate) {
+          formData.warrantyStartDate = asset.warrantyStartDate
+        }
+        if (asset.warrantyUntil) {
+          formData.warrantyUntil = asset.warrantyUntil
+        }
       }
-    } else {
-      formData.assetBrandModel = ''
+    } catch (error) {
+      console.error('Error fetching asset details:', error)
+      // Fallback to basic information from dropdown data
+      const asset = availableAssets.value.find(asset => asset.id === assetId)
+      if (asset) {
+        formData.assetId = asset.assetId
+        formData.serialNumber = asset.serialNumber
+        formData.condition = asset.condition
+        formData.location = asset.location || ''
+        
+        if (asset.brand && asset.model) {
+          const brandModel = `${asset.brand.name} ${asset.model.name}`
+          formData.assetBrandModel = brandModel
+        } else {
+          formData.assetBrandModel = 'Brand/Model not available'
+        }
+      }
     }
   } else {
+    // Clear form data when no asset is selected
+    formData.assetId = ''
+    formData.serialNumber = ''
+    formData.condition = ''
+    formData.location = ''
+    formData.notes = ''
     formData.assetBrandModel = ''
+    formData.assetType = ''
+    formData.assetCategory = ''
+    formData.vendor = ''
+    formData.purchaseDate = ''
+    formData.purchaseCost = ''
+    formData.warrantyStartDate = ''
+    formData.warrantyUntil = ''
   }
 }, { immediate: true })
 
@@ -755,9 +896,11 @@ watch(() => availableAssets.value, (newAssets) => {
 const loadAvailableAssets = async () => {
   try {
     isLoadingAssets.value = true
-    // No limit - get all available assets
-    const response = await assetApiService.getAvailableAssets()
+    // Use the new dropdown API to get all available assets without pagination
+    const response = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
+    console.log('Loaded assets response:', response)
     availableAssets.value = response.data.assets
+    console.log('Set availableAssets to:', availableAssets.value.length, 'assets')
   } catch (error: any) {
     console.error('Error loading available assets:', error)
     showErrorToast('Failed to load available assets. Please try again.')
@@ -769,9 +912,11 @@ const loadAvailableAssets = async () => {
 const loadActiveEmployees = async () => {
   try {
     isLoadingEmployees.value = true
-    // No limit - get all active employees
-    const response = await employeeApiService.getActiveEmployees()
+    // Use the new dropdown API to get all employees without pagination
+    const response = await employeeApiService.getEmployeesForDropdowns('ACTIVE')
+    console.log('Loaded employees response:', response)
     activeEmployees.value = response.data.employees
+    console.log('Set activeEmployees to:', activeEmployees.value.length, 'employees')
   } catch (error: any) {
     console.error('Error loading active employees:', error)
     showErrorToast('Failed to load active employees. Please try again.')
@@ -796,6 +941,10 @@ onMounted(async () => {
       loadAvailableAssets(),
       loadActiveEmployees()
     ])
+    
+    // Now that data is loaded, check for pre-selections
+    await checkForPreSelections()
+    
   } catch (error) {
     console.error('Error loading form data:', error)
   } finally {
@@ -805,6 +954,24 @@ onMounted(async () => {
   // Set today's date as default
   formData.assignmentDate = new Date().toISOString().split('T')[0]
   
+  // Focus on appropriate field
+  nextTick(() => {
+    // If asset was pre-selected, focus on employee field, otherwise focus on asset field
+    // If employee was pre-selected, focus on asset field
+    let focusField = 'assetId'
+    if (selectedAsset.value) {
+      focusField = 'employeeId'
+    } else if (selectedEmployee.value) {
+      focusField = 'assetId'
+    }
+    
+    const field = document.getElementById(focusField)
+    if (field) field.focus()
+  })
+})
+
+// Extract pre-selection logic into a separate function
+const checkForPreSelections = async () => {
   // Check if asset was pre-selected from assets page
   const selectedAssetId = localStorage.getItem('selectedAssetId')
   const selectedAssetType = localStorage.getItem('selectedAssetType')
@@ -833,14 +1000,50 @@ onMounted(async () => {
     localStorage.removeItem('selectedAssetType')
   }
   
-  // Focus on appropriate field
-  nextTick(() => {
-    // If asset was pre-selected, focus on employee field, otherwise focus on asset field
-    const focusField = (selectedAssetId && selectedAssetType) ? 'employeeId' : 'assetId'
-    const field = document.getElementById(focusField)
-    if (field) field.focus()
-  })
-})
+  // Check if employee was pre-selected from employees page
+  const employeeIdFromQuery = route.query.employeeId as string
+  if (employeeIdFromQuery) {
+    console.log('Looking for employee with ID:', employeeIdFromQuery, 'Type:', typeof employeeIdFromQuery)
+    console.log('Available employees count:', activeEmployees.value.length)
+    console.log('First few employees:', activeEmployees.value.slice(0, 3).map(e => ({ 
+      id: e.id, 
+      employeeId: e.employeeId, 
+      name: e.firstName + ' ' + e.lastName,
+      idType: typeof e.id
+    })))
+    
+    // Find the employee by ID (try multiple approaches)
+    let employee = activeEmployees.value.find(emp => emp.id === employeeIdFromQuery)
+    
+    if (!employee) {
+      employee = activeEmployees.value.find(emp => emp.id.toString() === employeeIdFromQuery)
+    }
+    
+    if (!employee) {
+      employee = activeEmployees.value.find(emp => emp.employeeId === employeeIdFromQuery)
+    }
+    
+    if (employee) {
+      console.log('Found employee:', employee)
+      // Set the selected employee for SearchableDropdown
+      selectedEmployee.value = {
+        id: employee.id,
+        name: `${employee.employeeId} - ${employee.firstName} ${employee.lastName}`,
+        value: employee.id.toString()
+      }
+      formData.employeeId = employee.id.toString()
+      
+      // Show success message for pre-selection
+      showToast(`Employee ${employee.firstName} ${employee.lastName} pre-selected for asset assignment`, 'info')
+    } else {
+      console.error('Employee not found:', employeeIdFromQuery)
+      console.error('Available employee IDs:', activeEmployees.value.map(e => e.id))
+      console.error('Available employee IDs (string):', activeEmployees.value.map(e => e.id.toString()))
+      console.error('Available employeeIds:', activeEmployees.value.map(e => e.employeeId))
+      showErrorToast(`Employee with ID ${employeeIdFromQuery} not found in active employees`)
+    }
+  }
+}
 </script>
 
 <style scoped>

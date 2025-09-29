@@ -82,7 +82,7 @@ class AssetApiService {
 
   // Get auth token from localStorage
   private getAuthToken(): string | null {
-    return localStorage.getItem('auth_token')
+    return localStorage.getItem('access_token')
   }
 
   // Get all assets with filtering
@@ -184,6 +184,28 @@ class AssetApiService {
     }
   }
 
+  // Get assets for dropdown selection (minimal data)
+  async getAssetsForDropdowns(params: {
+    status?: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+    assetTypeId?: number
+    brandId?: number
+    modelId?: number
+  } = {}): Promise<{ message: string; data: { assets: Asset[] } }> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.get(`${this.baseURL}/dropdowns`, {
+        params,
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error getting assets for dropdowns:', error)
+      throw this.handleError(error)
+    }
+  }
+
   // Error handling
   private handleError(error: any): Error {
     if (error.response) {
@@ -195,10 +217,7 @@ class AssetApiService {
         case 400:
           return new Error(`Bad Request: ${message}`)
         case 401:
-          // Clear invalid token and redirect to login
-          localStorage.removeItem('auth_token')
-          localStorage.removeItem('user')
-          window.location.href = '/login'
+          // Auth handling is now done globally by AuthService
           return new Error('Session expired. Please log in again.')
         case 403:
           return new Error('Forbidden: You do not have permission to perform this action')

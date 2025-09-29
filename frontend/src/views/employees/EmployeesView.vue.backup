@@ -57,14 +57,14 @@
           
           <!-- Sort By -->
           <div class="col-12 col-lg-3 mb-3">
-            <SearchableDropdown
-              id="sort-by-filter"
-              label="Sort By"
-              placeholder="Select sort option..."
-              :items="sortOptions"
-              v-model="selectedSortBy"
-              @change="onSortByChange"
-            />
+            <label class="form-label">Sort By</label>
+            <select class="form-select" v-model="sortBy" @change="sortEmployees">
+              <option value="name">Name</option>
+              <option value="employeeId">Employee ID</option>
+              <option value="email">Email</option>
+              <option value="status">Status</option>
+              <option value="createdAt">Created Date</option>
+            </select>
           </div>
           
           <!-- Toggle Sort Order and Filter Button -->
@@ -99,26 +99,23 @@
               <div class="d-flex flex-column flex-md-row gap-2">
                 <!-- Asset Count Filter -->
                 <div class="flex-fill">
-                  <SearchableDropdown
-                    id="asset-count-filter"
-                    label="Asset Count"
-                    placeholder="Search asset counts..."
-                    :items="assetCountOptions"
-                    v-model="selectedAssetCount"
-                    @change="onAssetCountChange"
-                  />
+                  <label class="form-label">Asset Count</label>
+                  <select class="form-select" v-model="assetCountFilter" @change="filterEmployees">
+                    <option value="">All</option>
+                    <option value="0">No Assets</option>
+                    <option value="1-2">1-2 Assets</option>
+                    <option value="3+">3+ Assets</option>
+                  </select>
                 </div>
                 
                 <!-- Status Filter -->
                 <div class="flex-fill">
-                  <SearchableDropdown
-                    id="status-filter"
-                    label="Status"
-                    placeholder="Search status..."
-                    :items="statusOptions"
-                    v-model="selectedStatus"
-                    @change="onStatusChange"
-                  />
+                  <label class="form-label">Status</label>
+                  <select class="form-select" v-model="statusFilter" @change="filterEmployees">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
                 </div>
                 
                 <!-- Clear Button: fixed width -->
@@ -314,120 +311,74 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <!-- Employee Information - Compact Layout -->
-            <div class="row g-2">
-              <!-- Left Column: Basic Info -->
-              <div class="col-md-6">
-                <div class="employee-info-section-compact">
-                  <h6 class="section-title-compact"><i class="fas fa-user me-2"></i>Basic Information</h6>
-                  <div class="info-grid-compact">
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Employee ID</label>
-                      <div class="info-value-compact fw-bold">{{ selectedEmployee.id }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Full Name</label>
-                      <div class="info-value-compact fw-bold">{{ selectedEmployee.name }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Email Address</label>
-                      <div class="info-value-compact">{{ selectedEmployee.email }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Phone Number</label>
-                      <div class="info-value-compact">{{ selectedEmployee.phone || 'Not specified' }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Date of Birth</label>
-                      <div class="info-value-compact">{{ selectedEmployee.dateOfBirth || 'Not specified' }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Status</label>
-                      <div class="info-value-compact">
-                        <span :class="['badge', selectedEmployee && selectedEmployee.status === 'active' ? 'badge-active' : 'badge-inactive']">
-                          {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Active' : 'Inactive' }}
-                        </span>
-                      </div>
+            <!-- Employee Information Section -->
+            <div class="employee-info-section">
+              <h6 class="section-title"><i class="fas fa-user me-2"></i>Employee Information</h6>
+              <div class="row g-3 info-grid">
+                <div class="col-md-4 info-item">
+                  <label class="info-label">Employee ID</label>
+                  <div class="info-value font-monospace">{{ selectedEmployee.id }}</div>
+                </div>
+                <div class="col-md-4 info-item">
+                  <label class="info-label">Full Name</label>
+                  <div class="info-value fw-bold">{{ selectedEmployee.name }}</div>
+                </div>
+                <div class="col-md-4 info-item">
+                  <label class="info-label">Email Address</label>
+                  <div class="info-value">{{ selectedEmployee.email }}</div>
+                </div>
+                <div class="col-md-4 info-item">
+                  <label class="info-label">Phone Number</label>
+                  <div class="info-value">{{ selectedEmployee.phone || 'Not specified' }}</div>
+                </div>
+                <div class="col-md-4 info-item">
+                  <label class="info-label">Date of Birth</label>
+                  <div class="info-value">{{ selectedEmployee.dateOfBirth || 'Not specified' }}</div>
+                </div>
+                <div class="col-md-4 info-item d-flex align-items-end">
+                  <div>
+                    <label class="info-label">Status</label>
+                    <div class="info-value">
+                      <span :class="['badge', selectedEmployee && selectedEmployee.status === 'active' ? 'badge-active' : 'badge-inactive']">
+                        {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Active' : 'Inactive' }}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- Right Column: Location & Assets -->
-              <div class="col-md-6">
-                <div class="employee-info-section-compact">
-                  <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Assets</h6>
-                  <div class="info-grid-compact">
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Address</label>
-                      <div class="info-value-compact" style="white-space: pre-wrap; overflow-wrap: break-word;">{{ selectedEmployee.address || 'Not specified' }}</div>
-                    </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Assigned Assets</label>
-                      <div class="info-value-compact">
-                        <span class="badge badge-count">{{ selectedEmployee.assetsCount }} Assets</span>
-                      </div>
-                    </div>
-                  </div>
+                <div class="col-12 info-item">
+                  <label class="info-label">Address</label>
+                  <div class="info-value" style="white-space: pre-wrap; overflow-wrap: break-word; max-width: 100%;">{{ selectedEmployee.address || 'Not specified' }}</div>
                 </div>
               </div>
             </div>
 
             <!-- Assigned Assets Section -->
-            <div class="row mt-2" v-if="selectedEmployee.assets && selectedEmployee.assets.length > 0">
-              <div class="col-12">
-                <div class="assigned-assets-combined">
-                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                      @click="toggleAssetsDetails" 
-                      style="cursor: pointer;">
-                    <span><i class="fas fa-laptop me-2"></i>Assigned Assets Details</span>
-                    <i class="fas fa-chevron-down assets-chevron" 
-                       :class="{ 'rotated': isAssetsDetailsExpanded }"
-                       ></i>
-                  </h6>
-                  
-                  <!-- Basic Assets Info -->
-                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="assets-icon">
-                        <i class="fas fa-laptop fa-lg text-primary"></i>
-                      </div>
-                      <div class="assets-summary">
-                        <div class="d-flex align-items-center gap-3 mb-1">
-                          <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Total Assets:</span>
-                            <span class="badge badge-count ms-1">{{ selectedEmployee.assetsCount }}</span>
-                          </div>
-                        </div>
-                        <div class="text-muted" style="font-size: 0.8rem;">{{ getAssetsStatusDescription(selectedEmployee.assetsCount) }}</div>
-                      </div>
+            <div class="assigned-assets-section">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="section-title mb-0"><i class="fas fa-laptop me-2"></i>Assigned Assets</h6>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge badge-count">{{ selectedEmployee.assetsCount }} Assets</span>
+                </div>
+              </div>
+              <div class="assets-list">
+                <div class="asset-item" v-for="asset in selectedEmployee.assets" :key="asset.id">
+                  <div class="d-flex align-items-center">
+                    <div class="asset-icon" :style="{ backgroundColor: asset.iconColor }">
+                      <i :class="asset.iconClass"></i>
+                    </div>
+                    <div class="asset-details flex-grow-1">
+                      <div class="asset-name">{{ asset.name }}</div>
+                      <div class="asset-meta">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
+                    </div>
+                    <div class="asset-actions">
+                      <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                        <i class="fas fa-user-minus me-1"></i>Collect
+                      </button>
                     </div>
                   </div>
-                  
-                  <!-- Assets Details (expandable) -->
-                  <div v-if="selectedEmployee.assets && selectedEmployee.assets.length > 0" 
-                       v-show="isAssetsDetailsExpanded" 
-                       class="assets-details-expanded">
-                    <div class="assets-list">
-                      <div class="asset-item-compact" v-for="asset in selectedEmployee.assets" :key="asset.id">
-                        <div class="d-flex align-items-center">
-                          <div class="asset-icon-compact" :style="{ backgroundColor: asset.iconColor }">
-                            <i :class="asset.iconClass"></i>
-                          </div>
-                          <div class="asset-details-compact flex-grow-1">
-                            <div class="asset-name-compact">{{ asset.name }}</div>
-                            <div class="asset-meta-compact">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
-                          </div>
-                          <div class="asset-actions-compact">
-                            <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
-                              <i class="fas fa-user-minus me-1"></i>Collect
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
+                </div>
+                <div v-if="!selectedEmployee.assets || selectedEmployee.assets.length === 0" class="text-center text-muted py-3">
+                  <small>No assets assigned.</small>
                 </div>
               </div>
             </div>
@@ -481,18 +432,17 @@
   import { employeeService } from '@/services/employeeService'
   import AppPagination from '@/components/pagination/AppPagination.vue'
   import BulkUploadModal from '@/components/BulkUploadModal.vue'
-  import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination, BulkUploadModal, SearchableDropdown },
+    components: { AppPagination, BulkUploadModal },
     data() {
       return {
         isGridView: false,
         searchTerm: '',
-        selectedAssetCount: null,
-        selectedStatus: null,
-        selectedSortBy: null,
+        assetCountFilter: '',
+        statusFilter: '',
+        sortBy: 'name',
         sortAscending: true,
         currentPage: 1,
         itemsPerPage: 10,
@@ -503,41 +453,10 @@
         totalEmployees: 0,
         serverTotalPages: 1,
         confirmPayload: { current: false },
-        showFilterDropdown: false,
-        isAssetsDetailsExpanded: false
+        showFilterDropdown: false
       }
     },
     computed: {
-      // Sort options for dropdown
-      sortOptions() {
-        return [
-          { id: 'name', name: 'Name', value: 'name' },
-          { id: 'employeeId', name: 'Employee ID', value: 'employeeId' },
-          { id: 'email', name: 'Email', value: 'email' },
-          { id: 'status', name: 'Status', value: 'status' },
-          { id: 'createdAt', name: 'Created Date', value: 'createdAt' }
-        ]
-      },
-      
-      // Asset count options for dropdown
-      assetCountOptions() {
-        return [
-          { id: '', name: 'All', value: '' },
-          { id: '0', name: 'No Assets', value: '0' },
-          { id: '1-2', name: '1-2 Assets', value: '1-2' },
-          { id: '3+', name: '3+ Assets', value: '3+' }
-        ]
-      },
-      
-      // Status options for dropdown
-      statusOptions() {
-        return [
-          { id: '', name: 'All Status', value: '' },
-          { id: 'active', name: 'Active', value: 'active' },
-          { id: 'inactive', name: 'Inactive', value: 'inactive' }
-        ]
-      },
-      
       filteredEmployees() {
         // With server-side pagination, we just return the employees from the current page
         return this.employees
@@ -664,8 +583,6 @@
     },
     created() {
       this.loadEmployees()
-      // Initialize default sort option
-      this.selectedSortBy = this.sortOptions.find(option => option.value === 'name') || null
     },
     methods: {
       showStatusConfirmation({ title, message, details, isActivating, onConfirm, onCancel }) {
@@ -738,21 +655,13 @@
       },
       clearFilters() {
         this.searchTerm = ''
-        this.selectedAssetCount = null
-        this.selectedStatus = null
+        this.assetCountFilter = ''
+        this.statusFilter = ''
         this.currentPage = 1
         this.loadEmployees()
       },
       toggleFilterDropdown() {
         this.showFilterDropdown = !this.showFilterDropdown
-      },
-      toggleAssetsDetails() {
-        this.isAssetsDetailsExpanded = !this.isAssetsDetailsExpanded
-      },
-      getAssetsStatusDescription(count) {
-        if (count === 0) return 'No assets currently assigned'
-        if (count === 1) return '1 asset assigned to this employee'
-        return `${count} assets assigned to this employee`
       },
       changePage(page) {
         if (page >= 1 && page <= this.totalPages) {
@@ -762,7 +671,6 @@
       },
       viewEmployee(employee) {
         this.selectedEmployee = employee
-        this.isAssetsDetailsExpanded = false // Reset collapse state
         this.$nextTick(() => {
           const modal = new Modal(document.getElementById('employeeDetailModal'))
           modal.show()
@@ -834,7 +742,7 @@
       },
       issueAsset(employee) {
         // Navigate to issue asset page
-        this.$router.push(`/app/assets/issue?employeeId=${employee.id}`)
+        this.$router.push(`/assets/issue?employeeId=${employee.id}`)
       },
       collectAsset(asset) {
         // Navigate to collect asset page
@@ -847,9 +755,9 @@
             page: this.currentPage, 
             limit: this.itemsPerPage,
             search: this.searchTerm || undefined,
-            status: this.selectedStatus?.value || undefined,
-            assetCountRange: this.selectedAssetCount?.value || undefined,
-            sortBy: this.selectedSortBy?.value || 'name',
+            status: this.statusFilter ? this.statusFilter.toUpperCase() : undefined,
+            assetCountRange: this.assetCountFilter || undefined,
+            sortBy: this.sortBy || 'name',
             sortOrder: this.sortAscending ? 'asc' : 'desc'
           })
           
@@ -886,21 +794,6 @@
           this.totalEmployees = 0
           this.serverTotalPages = 1
         }
-      },
-      // Change handlers for searchable dropdowns
-      onSortByChange(item) {
-        this.selectedSortBy = item
-        this.sortEmployees()
-      },
-      
-      onAssetCountChange(item) {
-        this.selectedAssetCount = item
-        this.filterEmployees()
-      },
-      
-      onStatusChange(item) {
-        this.selectedStatus = item
-        this.filterEmployees()
       }
     }
   }
@@ -923,167 +816,43 @@
     padding: 2rem !important;
 }
 
-/* Employee Info Sections - Compact Design */
-.employee-info-section-compact {
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
+/* Employee Info Sections - match vendor modal */
+.employee-info-section {
+    background-color: var(--primary-white) !important;
+    border: 1px solid var(--element-gray) !important;
+    border-radius: 0.5rem !important;
+    padding: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
 }
-
-.employee-info-section-compact .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
+.assigned-assets-section {
+    background-color: var(--primary-white) !important;
+    border: 1px solid var(--element-gray) !important;
+    border-radius: 0.5rem !important;
+    padding: 1.25rem !important;
 }
-
-.employee-info-section-compact .info-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+.section-title {
+    color: var(--primary-black) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 1px solid var(--element-gray) !important;
 }
-
-.employee-info-section-compact .info-item-compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #f8f9fa;
+.info-grid .info-item { margin-bottom: 0.5rem !important; }
+.info-label {
+    font-size: 0.8rem !important;
+    color: var(--primary-mid-gray) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 0.25rem !important;
+    display: block !important;
 }
-
-.employee-info-section-compact .info-item-compact:last-child {
-  border-bottom: none;
-}
-
-.employee-info-section-compact .info-label-compact {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0 !important;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.employee-info-section-compact .info-value-compact {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: #212529 !important;
-  margin-bottom: 0 !important;
-  text-align: right;
-  flex-grow: 1;
-}
-
-/* Assets Details Combined */
-.assigned-assets-combined {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.assigned-assets-combined .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.assigned-assets-combined .assets-summary {
-  flex-grow: 1;
-}
-
-.assigned-assets-combined .assets-icon {
-  flex-shrink: 0;
-}
-
-/* Assets Details Expanded */
-.assets-details-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-/* Assets Chevron */
-.assets-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.assets-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-/* Compact Asset Items */
-.asset-item-compact {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.asset-item-compact:last-child {
-  margin-bottom: 0 !important;
-}
-
-.asset-icon-compact {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 0.375rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-right: 0.75rem !important;
-  flex-shrink: 0 !important;
-}
-
-.asset-icon-compact i {
-  color: white !important;
-  font-size: 0.9rem !important;
-}
-
-.asset-details-compact {
-  min-width: 0 !important;
-}
-
-.asset-name-compact {
-  color: var(--primary-black) !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.2rem !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.asset-meta-compact {
-  color: var(--primary-mid-gray) !important;
-  font-size: 0.7rem !important;
-  font-weight: 500 !important;
-}
-
-.asset-actions-compact {
-  display: flex !important;
-  align-items: center !important;
-  flex-shrink: 0 !important;
-}
-
-.asset-actions-compact .btn-sm {
-  font-size: 0.7rem !important;
-  padding: 0.2rem 0.4rem !important;
-  border-radius: 0.25rem !important;
+.info-value {
+    color: var(--primary-black) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
 }
 
 /* Assets List Styling (unchanged with minor tweaks) */

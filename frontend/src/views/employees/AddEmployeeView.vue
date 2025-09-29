@@ -23,7 +23,7 @@
             </div>
             
             <!-- Form -->
-            <form v-else ref="employeeForm" class="needs-validation" @submit.prevent="submitForm" novalidate>
+            <form v-else ref="employeeForm" class="needs-validation" @submit.prevent="submitForm" novalidate autocomplete="off">
               
               <!-- Section 1: Basic Information -->
               <fieldset class="form-fieldset">
@@ -58,9 +58,13 @@
                       maxlength="50"
                       pattern="[A-Za-z\s]{2,50}"
                       title="First name must be 2-50 characters (letters and spaces only)"
+                      autocomplete="off"
+                      autocapitalize="words"
+                      autocorrect="off"
+                      spellcheck="false"
                       @blur="validateFieldInline('firstName')"
                       @focus="clearFieldValidation('firstName')"
-                      @input="handleFieldInput('firstName')"
+                      @input="formatNameField('firstName')"
                     >
                     <div class="form-text">2-50 characters (letters and spaces only)</div>
                     <div v-if="fieldErrors.firstName" class="invalid-feedback">{{ fieldErrors.firstName }}</div>
@@ -81,9 +85,13 @@
                       maxlength="50"
                       pattern="[A-Za-z\s]{2,50}"
                       title="Last name must be 2-50 characters (letters and spaces only)"
+                      autocomplete="off"
+                      autocapitalize="words"
+                      autocorrect="off"
+                      spellcheck="false"
                       @blur="validateFieldInline('lastName')"
                       @focus="clearFieldValidation('lastName')"
-                      @input="handleFieldInput('lastName')"
+                      @input="formatNameField('lastName')"
                     >
                     <div class="form-text">2-50 characters (letters and spaces only)</div>
                     <div v-if="fieldErrors.lastName" class="invalid-feedback">{{ fieldErrors.lastName }}</div>
@@ -102,6 +110,10 @@
                       required 
                       maxlength="100"
                       title="Please enter a valid email address"
+                      autocomplete="off"
+                      autocapitalize="none"
+                      autocorrect="off"
+                      spellcheck="false"
                       @blur="validateFieldInline('email')"
                       @focus="clearFieldValidation('email')"
                       @input="handleFieldInput('email')"
@@ -119,14 +131,19 @@
                       id="phone" 
                       v-model="formData.phone"
                       :class="getFieldClass('phone')"
-                      placeholder="+91 98765 43210"
-                      pattern="[\+]?[0-9\s\-\(\)]{10,20}"
-                      title="Please enter a valid phone number"
+                      placeholder="+91 9999999999"
+                      pattern="^\+91\s[0-9]{10}$"
+                      title="Enter a 10-digit number with '+91' prefix (e.g., +91 9876543210)"
+                      autocomplete="off"
+                      autocapitalize="none"
+                      autocorrect="off"
+                      spellcheck="false"
+                      inputmode="numeric"
                       @blur="validateFieldInline('phone')"
-                      @focus="clearFieldValidation('phone')"
+                      @focus="onPhoneFocus"
                       @input="formatPhoneNumber"
                     >
-                    <div class="form-text">Include country code (e.g., +91 9876543210)</div>
+                    <div class="form-text">Format: +91 9999999999 (exactly 10 digits)</div>
                     <div v-if="fieldErrors.phone" class="invalid-feedback">{{ fieldErrors.phone }}</div>
                   </div>
                 </div>
@@ -146,6 +163,7 @@
                       v-model="formData.dateOfBirth"
                       :class="getFieldClass('dateOfBirth')"
                       title="Employee date of birth"
+                      autocomplete="off"
                       @blur="validateFieldInline('dateOfBirth')"
                       @focus="clearFieldValidation('dateOfBirth')"
                       @input="handleFieldInput('dateOfBirth')"
@@ -185,6 +203,10 @@
                       :class="getFieldClass('address')"
                       rows="3"
                       placeholder="Enter complete address with street, city, state, and country..."
+                      autocomplete="off"
+                      autocapitalize="words"
+                      autocorrect="off"
+                      spellcheck="false"
                       @input="autoExpandTextarea"
                       @blur="validateFieldInline('address')"
                       @focus="clearFieldValidation('address')"
@@ -335,7 +357,9 @@ const validateFieldInline = async (fieldName: string) => {
         isCheckingEmail.value = true
         emailCheckTimer = window.setTimeout(async () => {
           try {
-                         const resp = await employeeService.checkEmailAvailability(String(value))
+            const emailToCheck = String(value).trim()
+            const excludeId = isEditMode.value ? (employeeId.value as string) : undefined
+            const resp = await employeeService.checkEmailAvailability(emailToCheck, excludeId)
             const available = (resp as any)?.data?.available ?? (resp as any)?.available
             if (!available) {
               setFieldError('email', 'An employee with this email already exists')
@@ -352,9 +376,29 @@ const validateFieldInline = async (fieldName: string) => {
       break
     
     case 'phone':
-      if (value && String(value).length < 10) {
-        setFieldError(fieldName, 'Phone number must be at least 10 digits (e.g., +91 9876543210)')
-        return false
+      if (value) {
+        const strVal = String(value)
+        // Treat bare prefix as empty (optional field)
+        if (/^\+91\s?$/.test(strVal)) {
+          formData.phone = '' as any
+          const el = document.getElementById('phone') as HTMLInputElement
+          if (el) el.value = ''
+          setFieldValid(fieldName)
+          return true
+        }
+        if (!strVal.startsWith('+91')) {
+          setFieldError(fieldName, "Phone number must start with '+91'")
+          return false
+        }
+        const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+        if (digits.length < 10) {
+          setFieldError(fieldName, 'Phone number must be exactly 10 digits after +91')
+          return false
+        }
+        if (digits.length > 10) {
+          setFieldError(fieldName, 'Phone number cannot exceed 10 digits after +91')
+          return false
+        }
       }
       break
     
@@ -425,6 +469,24 @@ const handleFieldInput = (fieldName: string) => {
   }
 }
 
+const formatNameField = (fieldName: string) => {
+  const value = formData[fieldName as keyof typeof formData] as string
+  if (value && typeof value === 'string') {
+    // Format: trim, remove extra spaces, capitalize first letter of each word
+    const formatted = value
+      .trim()
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .toLowerCase() // Convert to lowercase first
+      .replace(/^\w/, (c) => c.toUpperCase()) // Capitalize first letter
+      .replace(/\s\w/g, (match) => match.toUpperCase()) // Capitalize first letter after space
+    
+    ;(formData as any)[fieldName] = formatted
+  }
+  
+  // Call the original field input handler for validation
+  handleFieldInput(fieldName)
+}
+
 const getFieldDisplayName = (fieldName: string): string => {
   const displayNames: Record<string, string> = {
     firstName: 'First Name',
@@ -441,10 +503,38 @@ const getFieldDisplayName = (fieldName: string): string => {
 // Input formatters matching the vendor form
 const formatPhoneNumber = (event: Event) => {
   const target = event.target as HTMLInputElement
-  // Allow only numbers, +, -, spaces, and parentheses
-  target.value = target.value.replace(/[^0-9+\-\s\(\)]/g, '')
-  formData.phone = target.value
+  const prefix = '+91 '
+  let raw = target.value || ''
+
+  // Always enforce prefix
+  if (!raw.startsWith('+91')) {
+    raw = prefix + raw.replace(/^[^0-9+]*/, '')
+  }
+
+  // Keep only digits after the prefix, max 10
+  let digits = raw.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  if (digits.length > 10) digits = digits.slice(0, 10)
+
+  // Recompose
+  const composed = digits.length ? `${prefix}${digits}` : prefix
+  target.value = composed
+  formData.phone = composed
+
   handleFieldInput('phone')
+}
+
+// Ensure prefix when focusing the phone field
+const onPhoneFocus = (event: FocusEvent) => {
+  clearFieldValidation('phone')
+  const target = event.target as HTMLInputElement
+  const prefix = '+91 '
+  if (!target.value) {
+    target.value = prefix
+    formData.phone = prefix
+  } else if (!target.value.startsWith('+91')) {
+    target.value = prefix
+    formData.phone = prefix
+  }
 }
 
 // Load employee data for editing
@@ -461,7 +551,7 @@ const loadEmployeeData = async () => {
     formData.firstName = employee.firstName
     formData.lastName = employee.lastName
     formData.email = employee.email
-    formData.phone = employee.phone || ''
+    formData.phone = formatPhoneFromApi(employee.phone)
     formData.dateOfBirth = employee.dateOfBirth || ''
     formData.address = employee.address || ''
     formData.status = employee.status || 'ACTIVE'
@@ -531,7 +621,7 @@ const submitForm = async (event?: Event) => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        phone: formData.phone || undefined,
+        phone: normalizePhoneForSubmit(formData.phone),
         dateOfBirth: formData.dateOfBirth || undefined,
         address: formData.address || undefined,
         status: formData.status
@@ -539,6 +629,9 @@ const submitForm = async (event?: Event) => {
 
       await employeeService.updateEmployee(employeeId.value, employeeData)
       successMessage.value = generateEmployeeDetails()
+      
+      // Clear form immediately after successful update
+      resetForm()
       
       // Show success toast for edit mode with integrated redirect
       showEmployeeSuccessToast(successMessage.value, true)
@@ -548,13 +641,16 @@ const submitForm = async (event?: Event) => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        phone: formData.phone || undefined,
+        phone: normalizePhoneForSubmit(formData.phone),
         dateOfBirth: formData.dateOfBirth || undefined,
         address: formData.address || undefined
       }
 
       await employeeService.createEmployee(employeeData)
       successMessage.value = generateEmployeeDetails()
+      
+      // Clear form immediately after successful creation
+      resetForm()
       
       // Show success toast for create mode with integrated redirect
       showEmployeeSuccessToast(successMessage.value, false)
@@ -592,7 +688,36 @@ const generateEmployeeDetails = () => {
   return details || 'Employee'
 }
 
+// Normalize phone to '+91 9999999999' or undefined
+const normalizePhoneForSubmit = (val: string) => {
+  if (!val) return undefined
+  const match = val.match(/^\+91\s(\d{10})$/)
+  if (match) return `+91 ${match[1]}`
+  return undefined
+}
+
+// Format incoming API value to '+91 9999999999' or ''
+const formatPhoneFromApi = (val?: string) => {
+  if (!val) return ''
+  const onlyDigits = val.replace(/\D/g, '')
+  // If already in +91XXXXXXXXXX
+  const match = val.match(/^\+91\s?(\d{10})$/)
+  if (match) return `+91 ${match[1]}`
+  // If 10 digits only, assume India code
+  if (onlyDigits.length === 10) return `+91 ${onlyDigits}`
+  // If 12 digits starting with 91, coerce
+  if (onlyDigits.length === 12 && onlyDigits.startsWith('91')) return `+91 ${onlyDigits.slice(2)}`
+  return ''
+}
+
 const resetForm = () => {
+  // Cancel any pending email validation
+  if (emailCheckTimer) {
+    window.clearTimeout(emailCheckTimer)
+    emailCheckTimer = undefined
+  }
+  isCheckingEmail.value = false
+  
   // Reset form data
   Object.keys(formData).forEach(key => {
     if (key === 'status') {
@@ -604,7 +729,9 @@ const resetForm = () => {
   
   // Clear validation state
   Object.keys(fieldErrors).forEach(key => delete fieldErrors[key])
-  Object.keys(fieldValidation).forEach(key => delete fieldValidation[key])
+  Object.keys(fieldValidation).forEach(key => {
+    fieldValidation[key] = null
+  })
   
   // Reset form state
   formSubmitted.value = false
@@ -618,6 +745,10 @@ const resetForm = () => {
     const fields = document.querySelectorAll('.is-valid, .is-invalid')
     fields.forEach(field => {
       field.classList.remove('is-valid', 'is-invalid')
+      // Also clear any custom validity messages
+      if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
+        field.setCustomValidity('')
+      }
     })
     
     // Reset textarea heights to minimum

@@ -103,12 +103,16 @@ class EmployeeService {
 
   /** Check if an email is available */
   async checkEmailAvailability(email: string, excludeId?: string): Promise<ApiResponse<{ available: boolean }>> {
-    const params = new URLSearchParams()
-    params.append('email', email)
-    if (excludeId) {
-      params.append('excludeId', excludeId)
+    // Build query manually to avoid encoding '@' as %40
+    const queryParts: string[] = []
+    if (email !== undefined && email !== null) {
+      queryParts.push(`email=${email}`)
     }
-    return apiService.get(`/employees/check-email?${params.toString()}`)
+    if (excludeId) {
+      queryParts.push(`excludeId=${excludeId}`)
+    }
+    const query = queryParts.join('&')
+    return apiService.get(`/employees/check-email?${query}`)
   }
 
   /**
@@ -176,6 +180,21 @@ class EmployeeService {
     }
 
     return apiService.get(`/employees/search?${searchParams.toString()}`)
+  }
+
+  /**
+   * Get all employees for dropdown selection (minimal data)
+   */
+  async getEmployeesForDropdowns(status?: 'ACTIVE' | 'INACTIVE'): Promise<ApiResponse<{ employees: Employee[] }>> {
+    const params = new URLSearchParams()
+    if (status) {
+      params.append('status', status)
+    }
+    
+    const queryString = params.toString()
+    const url = queryString ? `/employees/dropdowns?${queryString}` : '/employees/dropdowns'
+    
+    return apiService.get(url)
   }
 
   /**

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 import MainLayout from '../layouts/MainLayout.vue'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +108,29 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+// Navigation guards
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  
+  // Check if user is authenticated
+  const isAuthenticated = authStore.isAuthenticated
+  
+  // If going to login page but already authenticated, redirect to dashboard
+  if (to.path === '/' && isAuthenticated) {
+    next('/app/dashboard')
+    return
+  }
+  
+  // If going to protected routes but not authenticated, redirect to login
+  if (to.path.startsWith('/app') && !isAuthenticated) {
+    next('/')
+    return
+  }
+  
+  // Otherwise, allow navigation
+  next()
 })
 
 export default router

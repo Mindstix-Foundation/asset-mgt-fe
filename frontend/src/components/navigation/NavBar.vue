@@ -27,13 +27,11 @@
               :class="{ 'active': isActiveRoute(item.path) }"
               @click="closeMobileMenu"
             >
-              <i :class="item.icon" class="me-2"></i>
               {{ item.name }}
             </RouterLink>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="handleQRScanner">
-              <i class="fas fa-qrcode me-2"></i>
               QR Scanner
             </a>
           </li>
@@ -73,33 +71,27 @@ const mobileMenuOpen = ref(false)
 const navigationItems = [
   {
     name: 'Dashboard',
-    path: '/app/dashboard',
-    icon: 'fas fa-tachometer-alt'
+    path: '/app/dashboard'
   },
   {
     name: 'Assets & Inventory',
-    path: '/app/assets',
-    icon: 'fas fa-laptop'
+    path: '/app/assets'
   },
   {
     name: 'Employees',
-    path: '/app/employees',
-    icon: 'fas fa-users'
+    path: '/app/employees'
   },
   {
     name: 'Maintenance',
-    path: '/app/maintenance',
-    icon: 'fas fa-tools'
+    path: '/app/maintenance'
   },
   {
     name: 'Vendors',
-    path: '/app/vendors',
-    icon: 'fas fa-store'
+    path: '/app/vendors'
   },
   {
     name: 'Reports',
-    path: '/app/reports',
-    icon: 'fas fa-chart-bar'
+    path: '/app/reports'
   }
 ]
 
