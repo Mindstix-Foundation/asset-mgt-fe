@@ -326,7 +326,6 @@
                           @change="onStatusChange"
                         />
                       </div>
-                      <div class="form-text">Status changes for active assets should go through proper workflows (Issue/Collect/Maintenance)</div>
                     </div>
                     <div v-else>
                       <!-- New Asset Mode: Fixed AVAILABLE status -->
@@ -553,13 +552,40 @@ const vendorItems = computed(() => {
   }))
 })
 
-const conditionItems = computed(() => [
-  { id: 'NEW', name: 'New', value: 'NEW' },
-  { id: 'GOOD', name: 'Good', value: 'GOOD' },
-  { id: 'FAIR', name: 'Fair', value: 'FAIR' },
-  { id: 'POOR', name: 'Poor', value: 'POOR' },
-  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
-])
+const conditionItems = computed(() => {
+  const baseConditions = [
+    { id: 'GOOD', name: 'Good', value: 'GOOD' },
+    { id: 'FAIR', name: 'Fair', value: 'FAIR' },
+    { id: 'POOR', name: 'Poor', value: 'POOR' },
+    { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' },
+    { id: 'REFURBISHED', name: 'Refurbished', value: 'REFURBISHED' }
+  ]
+  
+  // Check if asset has assignment history
+  const assetIssues = props.asset?.assetIssues || []
+  
+  // If asset has never been assigned, include NEW option
+  if (assetIssues.length === 0) {
+    return [
+      { id: 'NEW', name: 'New', value: 'NEW' },
+      ...baseConditions
+    ]
+  }
+  
+  // Check if asset is currently assigned to its first employee
+  const hasReturnedAssignments = assetIssues.some((issue: any) => issue.returnDate !== null)
+  
+  // If asset has been returned from any employee, exclude NEW option
+  if (hasReturnedAssignments) {
+    return baseConditions
+  }
+  
+  // If asset is currently assigned to its first employee, include NEW option
+  return [
+    { id: 'NEW', name: 'New', value: 'NEW' },
+    ...baseConditions
+  ]
+})
 
 const statusItems = computed(() => {
   return availableStatusOptions.value.map(option => ({
@@ -599,32 +625,32 @@ const availableStatusOptions = computed(() => {
     case 'AVAILABLE':
       return [
         { value: 'AVAILABLE', label: 'AVAILABLE (Current)' },
-        { value: 'RETIRED', label: 'RETIRED' },
         { value: 'LOST', label: 'LOST' }
       ]
     case 'ASSIGNED':
       return [
         { value: 'ASSIGNED', label: 'ASSIGNED (Current)' },
-        { value: 'RETIRED', label: 'RETIRED' },
         { value: 'LOST', label: 'LOST' }
       ]
     case 'IN_MAINTENANCE':
       return [
         { value: 'IN_MAINTENANCE', label: 'IN_MAINTENANCE (Current)' },
-        { value: 'RETIRED', label: 'RETIRED' }
+        { value: 'AVAILABLE', label: 'AVAILABLE (Maintenance Complete)' },
+        { value: 'ASSIGNED', label: 'ASSIGNED (Return to Employee)' }
       ]
     case 'RETIRED':
       return [
-        { value: 'RETIRED', label: 'RETIRED (Current - No changes allowed)' }
+        { value: 'RETIRED', label: 'RETIRED (Current)' },
+        { value: 'AVAILABLE', label: 'AVAILABLE (Reactivated)' }
       ]
     case 'LOST':
       return [
-        { value: 'LOST', label: 'LOST (Current - No changes allowed)' }
+        { value: 'LOST', label: 'LOST (Current)' },
+        { value: 'AVAILABLE', label: 'AVAILABLE (Found)' }
       ]
     default:
       return [
         { value: 'AVAILABLE', label: 'AVAILABLE' },
-        { value: 'RETIRED', label: 'RETIRED' },
         { value: 'LOST', label: 'LOST' }
       ]
   }

@@ -41,7 +41,6 @@
                 <button 
                   class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
                   type="button" 
-                  data-bs-toggle="dropdown"
                   aria-expanded="false"
                   id="moreActionsDropdownSm"
                   @click="handleDropdownClick"
@@ -50,18 +49,18 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm" style="min-width: 200px;">
                   <li>
-                    <button class="dropdown-item" @click="showBulkUploadModal = true">
+                    <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item" @click="exportAssets">
+                    <button class="dropdown-item" @click="() => { exportAssets(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-download me-2 text-success"></i>Export Assets
                     </button>
                   </li>
                   <li><hr class="dropdown-divider"></li>
                   <li>
-                    <button class="dropdown-item" @click="navigateToManageCategories">
+                    <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
                     </button>
                   </li>
@@ -128,7 +127,6 @@
                   <button 
                     class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
                     type="button" 
-                    data-bs-toggle="dropdown"
                     aria-expanded="false"
                     id="moreActionsDropdown"
                     @click="handleDropdownClick"
@@ -137,18 +135,18 @@
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown" style="min-width: 200px; max-width: 90vw;">
                     <li>
-                      <button class="dropdown-item" @click="showBulkUploadModal = true">
+                      <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
                       </button>
                     </li>
                     <li>
-                      <button class="dropdown-item" @click="exportAssets">
+                      <button class="dropdown-item" @click="() => { exportAssets(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-download me-2 text-success"></i>Export Assets
                       </button>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                      <button class="dropdown-item" @click="navigateToManageCategories">
+                      <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
                       </button>
                     </li>
@@ -325,7 +323,7 @@
                   <th>Serial Number</th>
                   <th>Status</th>
                   <th>Assigned To</th>
-                  <th>Purchase Date</th>
+                  <th>Condition</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -348,7 +346,7 @@
                     <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
                   </td>
                   <td>{{ asset.assignedTo || '-' }}</td>
-                  <td>{{ formatDate(asset.purchaseDate) }}</td>
+                  <td>{{ getConditionText(asset.condition) }}</td>
                   <td>
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
@@ -566,10 +564,10 @@
           </div>
           <div class="modal-body">
             <!-- Asset Information - Compact Layout -->
-            <div class="row g-2">
+            <div class="row g-2 equal-height-columns">
               <!-- Left Column: Basic Info -->
               <div class="col-md-6">
-                <div class="asset-info-section-compact">
+                <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
@@ -604,7 +602,7 @@
 
               <!-- Right Column: Location & Financial -->
               <div class="col-md-6">
-                <div class="asset-info-section-compact">
+                <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Financial</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
@@ -648,7 +646,7 @@
             </div>
 
             <!-- Assignment Status & Information - Combined -->
-            <div class="row mt-2">
+            <div v-if="selectedAsset.status !== 'RETIRED'" class="row ">
               <div class="col-12">
                 <div class="assignment-status-combined">
                   <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
@@ -741,6 +739,145 @@
               </div>
             </div>
 
+            <!-- Retirement Information (if asset is retired) -->
+            <div v-if="selectedAsset.status === 'RETIRED'" class="row">
+              <div class="col-12">
+                <div class="retirement-status-combined">
+                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                      @click="toggleRetirementDetails" 
+                      style="cursor: pointer;">
+                    <span><i class="fas fa-archive me-2"></i>Retirement Information</span>
+                    <i class="fas fa-chevron-down retirement-chevron" 
+                       :class="{ 'rotated': isRetirementDetailsExpanded }"
+                       v-if="selectedAsset.retirementNotes"></i>
+                  </h6>
+                  
+                  <!-- Basic Retirement Info -->
+                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="retirement-icon">
+                        <i class="fas fa-archive fa-lg text-muted"></i>
+                      </div>
+                      <div class="retirement-details">
+                        <div class="d-flex align-items-center gap-3 mb-1">
+                          <div>
+                            <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
+                          </div>
+                          <div>
+                            <span class="text-muted" style="font-size: 0.8rem;">Retirement Date:</span>
+                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Retirement Details (only show if retirement notes exist) -->
+                  <div v-if="selectedAsset.retirementNotes" 
+                       v-show="isRetirementDetailsExpanded" 
+                       class="retirement-details-expanded">
+                    <div class="row g-2">
+                      <!-- Retirement Reason -->
+                      <div class="col-md-6" v-if="selectedAsset.retirementReason">
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Retirement Reason</label>
+                          <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
+                        </div>
+                      </div>
+                      
+                      <!-- Divider between retirement details and notes -->
+                      <div class="col-12" v-if="selectedAsset.retirementNotes">
+                        <hr class="retirement-divider">
+                      </div>
+                      
+                      <!-- Retirement Notes -->
+                      <div class="col-12" v-if="selectedAsset.retirementNotes">
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Retirement Notes</label>
+                          <div class="info-value-compact">
+                            <NotesDisplay 
+                              :notes="selectedAsset.retirementNotes"
+                              :fallback-text="'No retirement notes provided.'"
+                              :show-label="false"
+                              :show-icon="false"
+                              :show-empty-icon="true"
+                              :preserve-formatting="true"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Refurbishment Information (if condition is REFURBISHED) -->
+            <div v-if="selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
+              <div class="col-12">
+                <div class="retirement-status-combined">
+                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                        @click="toggleRefurbishmentDetails" 
+                        style="cursor: pointer;">
+                      <span><i class="fas fa-tools me-2"></i>Refurbishment Information</span>
+                      <i class="fas fa-chevron-down assignment-chevron" 
+                         :class="{ 'rotated': isRefurbishmentDetailsExpanded }"></i>
+                    </h6>
+                    
+                    <!-- Basic Refurbishment Info (always visible) -->
+                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="retirement-icon">
+                          <i class="fas fa-tools fa-lg text-muted"></i>
+                        </div>
+                        <div class="retirement-details">
+                          <div class="d-flex gap-4">
+                            <div v-if="selectedAsset.retirementDate">
+                              <small class="text-muted">Retirement Date</small>
+                              <div class="fw-semibold">{{ formatDate(selectedAsset.retirementDate) }}</div>
+                            </div>
+                            <div v-if="selectedAsset.reactivationDate">
+                              <small class="text-muted">Reactivation Date</small>
+                              <div class="fw-semibold">{{ formatDate(selectedAsset.reactivationDate) }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Refurbishment Details (collapsible) -->
+                    <div v-show="isRefurbishmentDetailsExpanded" 
+                         class="assignment-details-expanded">
+                      
+                      <!-- Retirement Information -->
+                      <div v-if="selectedAsset.retirementReason">
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Retirement Reason</label>
+                          <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
+                        </div>
+                      </div>
+                      
+                      <!-- Divider Line -->
+                      <hr class="my-3" style="border-color: #e9ecef; border-width: 1px;" v-if="selectedAsset.retirementReason && selectedAsset.reactivationReason">
+                      
+                      <!-- Reactivation Information -->
+                      <div v-if="selectedAsset.reactivationReason">
+                        <NotesDisplay 
+                          :notes="selectedAsset.reactivationReason"
+                          :label="'Reactivation Reason'"
+                          :fallback-text="'No reactivation reason provided.'"
+                          :show-label="true"
+                          :show-icon="false"
+                          :show-empty-icon="false"
+                          :preserve-formatting="true"
+                        />
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
             <!-- Additional Notes - Full Width -->
             <div class="row mt-2">
               <div class="col-12">
@@ -759,95 +896,432 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeDetailModal">Close</button>
-            <div class="d-flex gap-2">
-              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-success" @click="issueAsset(selectedAsset!)">
-                <i class="fas fa-user-plus me-1"></i>Issue Asset
-              </button>
-              <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
-                <i class="fas fa-user-minus me-1"></i>Collect Asset
-              </button>
-              <button type="button" class="btn btn-warning">
-                <i class="fas fa-wrench me-1"></i>Schedule Maintenance
+            <div class="d-flex justify-content-between w-100">
+              <div>
+                <button type="button" class="btn btn-brown" @click="viewAssetHistory(selectedAsset!)">
+                  <i class="fas fa-history me-1"></i>History
+                </button>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary" @click="closeDetailModal">Close</button>
+                <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-success" @click="issueAsset(selectedAsset!)">
+                  <i class="fas fa-user-plus me-1"></i>Issue Asset
+                </button>
+                <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
+                  <i class="fas fa-user-minus me-1"></i>Collect Asset
+                </button>
+                <button type="button" class="btn btn-warning">
+                  <i class="fas fa-wrench me-1"></i>Schedule Maintenance
               </button>
               <button type="button" class="btn btn-primary-blue" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
-              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-danger">
+              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-danger" @click="openRetireAssetModal">
                 <i class="fas fa-archive me-1"></i>Retire Asset
               </button>
+              <button v-if="selectedAsset.status === 'RETIRED'" type="button" class="btn btn-success" @click="openReactivateAssetModal">
+                <i class="fas fa-power-off me-1"></i>Reactivate Asset
+              </button>
             </div>
+          </div>
+          
           </div>
         </div>
       </div>
     </div>
 
     <!-- Bulk Upload Modal -->
+    <BulkAssetUpload
+      ref="bulkAssetUploadRef"
+      @upload-success="handleBulkUploadSuccess"
+    />
+
+    <!-- Retire Asset Modal -->
     <div 
-      class="modal fade bulk-upload-modal" 
-      :class="{ show: showBulkUploadModal }" 
-      :style="{ display: showBulkUploadModal ? 'block' : 'none' }"
+      class="modal fade" 
+      :class="{ show: showRetireAssetModal }" 
+      :style="{ display: showRetireAssetModal ? 'block' : 'none' }"
       tabindex="-1"
+      v-if="showRetireAssetModal"
     >
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-file-excel me-2"></i>Bulk Upload Assets
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              <i class="fas fa-archive me-2" style="color: var(--secondary-red);"></i>Retire Asset - {{ assetToRetire?.id }}
             </h5>
-            <button type="button" class="btn-close" @click="showBulkUploadModal = false"></button>
+            <button type="button" class="btn-close" @click="closeRetireAssetModal"></button>
           </div>
           <div class="modal-body">
-            <div class="row">
-              <div class="col-12 mb-4">
-                <div class="alert alert-info">
-                  <i class="fas fa-info-circle me-2"></i>
-                  <strong>Upload Instructions:</strong>
-                  <ul class="mb-0 mt-2">
-                    <li>Download the template file and fill in asset details</li>
-                    <li>Required fields: Asset ID, Asset Type, Brand, Model, Serial Number</li>
-                    <li>Optional fields: Purchase Date, Warranty Date, Location, Notes</li>
-                    <li>Supported format: Excel (.xlsx)</li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div class="col-12 mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h6 class="mb-0">Step 1: Download Template</h6>
-                  <button class="btn btn-outline-success btn-sm" @click="downloadTemplate">
-                    <i class="fas fa-download me-1"></i>Download Template
-                  </button>
-                </div>
-              </div>
-              
-              <div class="col-12 mb-3">
-                <h6 class="mb-3">Step 2: Upload Filled Template</h6>
-                <div class="upload-area" @click="fileInput?.click()">
-                  <div class="upload-content">
-                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                    <p class="upload-title">Drag and drop your Excel file here, or click to browse</p>
-                    <p class="upload-subtitle">{{ selectedFile ? selectedFile.name : 'No file selected' }}</p>
-                    <div class="supported-formats">
-                      <span class="format-badge">.xlsx</span>
-                      <span class="format-badge">.xls</span>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Warning:</strong> This action will permanently retire the asset. It cannot be assigned to employees after retirement.
+            </div>
+            
+            <form @submit.prevent="retireAsset" class="needs-validation" novalidate>
+              <!-- Asset Summary -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="asset-info-section-compact">
+                    <h6 class="section-title-compact"><i class="fas fa-laptop me-2"></i>Asset Summary</h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Asset ID</label>
+                          <div class="info-value-compact fw-bold">{{ assetToRetire?.id }}</div>
+                        </div>
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Asset Type</label>
+                          <div class="info-value-compact">{{ assetToRetire?.type }}</div>
+                        </div>
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Brand & Model</label>
+                          <div class="info-value-compact">{{ assetToRetire?.brandModel }}</div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Serial Number</label>
+                          <div class="info-value-compact font-monospace">{{ assetToRetire?.serialNumber }}</div>
+                        </div>
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Current Status</label>
+                          <div class="info-value-compact">
+                            <span :class="getStatusBadgeClass(assetToRetire?.status || '')">{{ getStatusText(assetToRetire?.status || '') }}</span>
+                          </div>
+                        </div>
+                        <div class="info-item-compact">
+                          <label class="info-label-compact">Current Location</label>
+                          <div class="info-value-compact">{{ assetToRetire?.location }}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <input 
-                    ref="fileInput"
-                    type="file" 
-                    class="file-input" 
-                    accept=".xlsx,.xls"
-                    @change="handleFileSelect"
-                  >
                 </div>
               </div>
-            </div>
+
+              <!-- Retirement Details -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="asset-info-section-compact">
+                    <h6 class="section-title-compact"><i class="fas fa-calendar me-2"></i>Retirement Details</h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="retirementDate" class="form-label">Retirement Date <span class="text-danger">*</span></label>
+                          <input 
+                            type="date" 
+                            class="form-control" 
+                            :class="{ 
+                              'is-invalid': !retireFormValidation.retirementDate.isValid,
+                              'is-valid': retireFormValidation.retirementDate.isValid && retireFormData.retirementDate
+                            }"
+                            id="retirementDate" 
+                            v-model="retireFormData.retirementDate"
+                            @blur="validateRetirementDate"
+                            @change="validateRetirementDate"
+                            required
+                          >
+                          <div v-if="!retireFormValidation.retirementDate.isValid" class="invalid-feedback">
+                            {{ retireFormValidation.retirementDate.message }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6 form-searchable-dropdown">
+                        <SearchableDropdown
+                          id="retirementReason"
+                          label="Retirement Reason"
+                          placeholder="Select retirement reason..."
+                          :items="retirementReasons"
+                          v-model="selectedRetirementReason"
+                          :class="{ 
+                            'is-invalid': !retireFormValidation.retirementReason.isValid,
+                            'is-valid': retireFormValidation.retirementReason.isValid && retireFormData.retirementReason
+                          }"
+                          required
+                          @change="onRetirementReasonChange"
+                        />
+                        <div v-if="!retireFormValidation.retirementReason.isValid" class="invalid-feedback d-block">
+                          {{ retireFormValidation.retirementReason.message }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 notes-no-validation">
+                        <NotesTextarea
+                          v-model="retireFormData.retirementNotes"
+                          label="Additional Notes"
+                          placeholder="Enter any additional notes about the retirement..."
+                          help-text="Include details about the asset's condition, disposal method, or any other relevant information."
+                          :max-length="1000"
+                          :min-rows="3"
+                          input-id="retirementNotes"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-cancel" @click="showBulkUploadModal = false">Cancel</button>
-            <button type="button" class="btn btn-upload-primary" :disabled="!selectedFile" @click="uploadFile">
-              <i class="fas fa-upload me-1"></i>Upload Assets
+            <button type="button" class="btn btn-secondary" @click="closeRetireAssetModal">Cancel</button>
+            <button 
+              type="button" 
+              class="btn btn-danger" 
+              @click="retireAsset" 
+              :disabled="isRetiringAsset || !retireFormData.retirementDate || !retireFormData.retirementReason"
+            >
+              <i class="fas fa-archive me-1"></i>
+              {{ isRetiringAsset ? 'Retiring...' : 'Confirm Retirement' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reactivate Asset Modal -->
+    <div 
+      class="modal fade" 
+      :class="{ show: showReactivateAssetModal }" 
+      :style="{ display: showReactivateAssetModal ? 'block' : 'none' }"
+      tabindex="-1"
+      v-if="showReactivateAssetModal"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              <i class="fas fa-power-off me-2" style="color: var(--secondary-green);"></i>Reactivate Asset - {{ assetToReactivate?.id }}
+            </h5>
+            <button type="button" class="btn-close" @click="closeReactivateAssetModal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>
+              <strong>Asset Reactivation:</strong> This will restore the asset to active inventory and make it available for assignment.
+            </div>
+            
+            <form @submit.prevent="reactivateAsset" class="needs-validation" novalidate>
+              <!-- Asset Summary -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="retirement-status-combined">
+                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                        @click="toggleReactivateAssetSummary" 
+                        style="cursor: pointer;">
+                      <span><i class="fas fa-laptop me-2"></i>Asset Summary</span>
+                      <i class="fas fa-chevron-down assignment-chevron" 
+                         :class="{ 'rotated': isReactivateAssetSummaryExpanded }"></i>
+                    </h6>
+                    
+                    <!-- Basic Asset Info -->
+                    <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
+                      <div class="d-flex align-items-center gap-3">
+                        <div class="retirement-icon">
+                          <i class="fas fa-laptop fa-lg text-muted"></i>
+                        </div>
+                        <div class="retirement-details">
+                          <div class="d-flex align-items-center gap-3 mb-1">
+                            <div>
+                              <span class="text-muted" style="font-size: 0.8rem;">Asset ID:</span>
+                              <span class="ms-1 fw-bold" style="font-size: 0.9rem;">{{ assetToReactivate?.id }}</span>
+                            </div>
+                            <div>
+                              <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                              <span :class="getStatusBadgeClass(assetToReactivate?.status || 'RETIRED')" class="ms-1">{{ getStatusText(assetToReactivate?.status || 'RETIRED') }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Asset Details -->
+                    <div class="retirement-details-expanded" v-show="isReactivateAssetSummaryExpanded">
+                      <div class="row g-2">
+                        <!-- Asset Type -->
+                        <div class="col-md-6">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Asset Type</label>
+                            <div class="info-value-compact">{{ assetToReactivate?.type }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Brand & Model -->
+                        <div class="col-md-6">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Brand & Model</label>
+                            <div class="info-value-compact">{{ assetToReactivate?.brandModel }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Serial Number -->
+                        <div class="col-md-6">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Serial Number</label>
+                            <div class="info-value-compact font-monospace">{{ assetToReactivate?.serialNumber }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Current Condition -->
+                        <div class="col-md-6">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Current Condition</label>
+                            <div class="info-value-compact">
+                              <span :class="getConditionBadgeClass(assetToReactivate?.condition || 'POOR')">{{ assetToReactivate?.condition || 'POOR' }}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- Divider -->
+                        <div class="col-12">
+                          <hr class="retirement-divider">
+                        </div>
+                        
+                        <!-- Retirement Reason -->
+                        <div class="col-md-6" v-if="assetToReactivate?.retirementReason">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Retirement Reason</label>
+                            <div class="info-value-compact">{{ assetToReactivate?.retirementReason }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Retirement Date -->
+                        <div class="col-md-6" v-if="assetToReactivate?.retirementDate">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Retirement Date</label>
+                            <div class="info-value-compact">{{ formatDate(assetToReactivate?.retirementDate) }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Retirement Notes -->
+                        <div class="col-12" v-if="assetToReactivate?.retirementNotes">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Retirement Notes</label>
+                            <div class="info-value-compact">
+                              <NotesDisplay 
+                                :notes="assetToReactivate?.retirementNotes"
+                                :fallback-text="'No retirement notes provided.'"
+                                :show-label="false"
+                                :show-icon="false"
+                                :show-empty-icon="true"
+                                :preserve-formatting="true"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reactivation Details -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <div class="asset-info-section-compact">
+                    <h6 class="section-title-compact"><i class="fas fa-power-off me-2"></i>Reactivation Details</h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="reactivationDate" class="form-label">Reactivation Date <span class="text-danger">*</span></label>
+                          <input 
+                            type="date" 
+                            class="form-control" 
+                            id="reactivationDate"
+                            v-model="reactivateFormData.reactivationDate"
+                            :class="{ 'is-invalid': reactivateFormValidation.reactivationDate === 'invalid', 'is-valid': reactivateFormValidation.reactivationDate === 'valid' }"
+                            required
+                          >
+                          <div class="form-text">Date when asset returns to active status</div>
+                          <div v-if="reactivateFormValidation.reactivationDate === 'invalid'" class="invalid-feedback">
+                            Please select a valid reactivation date.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="newLocation" class="form-label">New Location <span class="text-danger">*</span></label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="newLocation"
+                            v-model="reactivateFormData.location"
+                            :class="{ 'is-invalid': reactivateFormValidation.location === 'invalid', 'is-valid': reactivateFormValidation.location === 'valid' }"
+                            placeholder="e.g., Warehouse A, Shelf B2"
+                            required
+                          >
+                          <div class="form-text">Where the asset will be stored/used</div>
+                          <div v-if="reactivateFormValidation.location === 'invalid'" class="invalid-feedback">
+                            Please specify the new location.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="newCondition" class="form-label">Current Condition <span class="text-danger">*</span></label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="newCondition"
+                            value="REFURBISHED"
+                            readonly
+                            style="background-color: #f8f9fa; color: #6c757d;"
+                          >
+                          <div class="form-text">Asset condition after refurbishment and repairs</div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label for="newStatus" class="form-label">New Status <span class="text-danger">*</span></label>
+                          <input 
+                            type="text" 
+                            class="form-control" 
+                            id="newStatus"
+                            value="AVAILABLE"
+                            readonly
+                            style="background-color: #f8f9fa; color: #6c757d;"
+                          >
+                          <div class="form-text">Status after reactivation</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 notes-no-validation">
+                        <NotesTextarea
+                          ref="reactivationReasonTextarea"
+                          v-model="reactivateFormData.reactivationReason"
+                          label="Reactivation Reason"
+                          placeholder="Describe why this asset is being reactivated and what repairs/improvements were made..."
+                          help-text="Explain why the asset is being reactivated (max 1000 characters)"
+                          :max-length="1000"
+                          :min-rows="3"
+                          input-id="reactivationReason"
+                          :required="true"
+                        />
+                        <div v-if="reactivateFormValidation.reactivationReason === 'invalid'" class="invalid-feedback d-block">
+                          Please provide a reactivation reason.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeReactivateAssetModal">Cancel</button>
+            <button 
+              type="button" 
+              class="btn btn-success" 
+              @click="reactivateAsset"
+              :disabled="isReactivatingAsset || !reactivateFormData.reactivationDate || !reactivateFormData.location || !reactivateFormData.reactivationReason"
+            >
+              <i v-if="isReactivatingAsset" class="fas fa-spinner fa-spin me-1"></i>
+              <i v-else class="fas fa-power-off me-1"></i>
+              {{ isReactivatingAsset ? 'Reactivating...' : 'Confirm Reactivation' }}
             </button>
           </div>
         </div>
@@ -856,7 +1330,7 @@
 
     <!-- Modal Backdrop -->
     <div 
-      v-if="showDetailModal || showBulkUploadModal" 
+      v-if="showDetailModal || showRetireAssetModal || showReactivateAssetModal" 
       class="modal-backdrop fade show"
       @click="closeModals"
     ></div>
@@ -864,13 +1338,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
 import { assetService } from '../../services/assetService'
 import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
+import NotesTextarea from '@/components/common/NotesTextarea.vue'
+import BulkAssetUpload from './BulkAssetUpload.vue'
 
 const router = useRouter()
 
@@ -897,6 +1373,13 @@ interface AssetDisplayItem {
   assignmentNotes?: string
   assignmentDate?: string
   assignedBy?: string
+  // Retirement details
+  retirementDate?: string
+  retirementReason?: string
+  retirementNotes?: string
+  // Reactivation details
+  reactivationDate?: string
+  reactivationReason?: string
 }
 
 // Reactive data
@@ -909,14 +1392,72 @@ const selectedCondition = ref<Item | null>(null)
 const selectedSortBy = ref<Item | null>(null)
 const sortAscending = ref(true)
 const currentPage = ref(1)
-const itemsPerPage = ref(15)
+const itemsPerPage = ref(10)
 const showDetailModal = ref(false)
-const showBulkUploadModal = ref(false)
+const showRetireAssetModal = ref(false)
 const showFilterDropdown = ref(false)
 const isAssignmentDetailsExpanded = ref(false)
+const isRetirementDetailsExpanded = ref(false)
+const isReactivateAssetSummaryExpanded = ref(false)
+const isRefurbishmentDetailsExpanded = ref(false)
 const selectedAsset = ref<AssetDisplayItem | null>(null)
-const selectedFile = ref<File | null>(null)
-const fileInput = ref<HTMLInputElement | null>(null)
+const assetToRetire = ref<AssetDisplayItem | null>(null)
+const isRetiringAsset = ref(false)
+const bulkAssetUploadRef = ref<InstanceType<typeof BulkAssetUpload> | null>(null)
+
+// Bulk upload is now handled by BulkAssetUpload component
+
+// Retire asset form data
+const retireFormData = ref({
+  retirementDate: '',
+  retirementReason: '',
+  retirementNotes: ''
+})
+
+// Retirement reasons for dropdown
+const retirementReasons = ref<Item[]>([
+  { id: 'END_OF_LIFE', name: 'End of Life' },
+  { id: 'DAMAGED_BEYOND_REPAIR', name: 'Damaged Beyond Repair' },
+  { id: 'OBSOLETE', name: 'Obsolete Technology' },
+  { id: 'COST_INEFFECTIVE', name: 'Cost Ineffective to Maintain' },
+  { id: 'SECURITY_CONCERNS', name: 'Security Concerns' },
+  { id: 'OTHER', name: 'Other' }
+])
+
+const selectedRetirementReason = ref<Item | null>(null)
+
+// Validation state for retire form
+const retireFormValidation = ref({
+  retirementDate: { isValid: true, message: '' },
+  retirementReason: { isValid: true, message: '' },
+  isFormValid: true
+})
+
+// Reactivate asset modal
+const showReactivateAssetModal = ref(false)
+const assetToReactivate = ref<AssetDisplayItem | null>(null)
+const isReactivatingAsset = ref(false)
+
+// Reactivate asset form data
+const reactivateFormData = ref({
+  reactivationDate: '',
+  condition: '',
+  status: 'AVAILABLE',
+  location: '',
+  reactivationReason: ''
+})
+
+// Note: Condition and Status are now fixed values (REFURBISHED and AVAILABLE)
+// No dropdown selections needed for reactivation modal
+
+// Reactivate form validation
+const reactivateFormValidation = ref({
+  reactivationDate: 'valid',
+  condition: 'valid',
+  status: 'valid',
+  location: 'valid',
+  reactivationReason: 'valid'
+})
 
 // API data
 const assets = ref<Asset[]>([])
@@ -967,7 +1508,8 @@ const conditionOptions = ref<Item[]>([
   { id: 'GOOD', name: 'Good', value: 'GOOD' },
   { id: 'FAIR', name: 'Fair', value: 'FAIR' },
   { id: 'POOR', name: 'Poor', value: 'POOR' },
-  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
+  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' },
+  { id: 'REFURBISHED', name: 'Refurbished', value: 'REFURBISHED' }
 ])
 
 // Sort options for dropdown
@@ -1133,6 +1675,21 @@ const toggleAssignmentDetails = () => {
   isAssignmentDetailsExpanded.value = !isAssignmentDetailsExpanded.value
 }
 
+// Retirement details toggle method
+const toggleRetirementDetails = () => {
+  isRetirementDetailsExpanded.value = !isRetirementDetailsExpanded.value
+}
+
+// Reactivate asset summary toggle method
+const toggleReactivateAssetSummary = () => {
+  isReactivateAssetSummaryExpanded.value = !isReactivateAssetSummaryExpanded.value
+}
+
+// Refurbishment details toggle method
+const toggleRefurbishmentDetails = () => {
+  isRefurbishmentDetailsExpanded.value = !isRefurbishmentDetailsExpanded.value
+}
+
 
 
 const goToPage = (page: number) => {
@@ -1157,6 +1714,8 @@ const nextPage = () => {
 const viewAssetDetails = (asset: AssetDisplayItem) => {
   selectedAsset.value = asset
   isAssignmentDetailsExpanded.value = false // Reset collapse state
+  isRetirementDetailsExpanded.value = false // Reset retirement collapse state
+  isRefurbishmentDetailsExpanded.value = false // Reset refurbishment collapse state
   showDetailModal.value = true
 }
 
@@ -1167,16 +1726,121 @@ const closeDetailModal = () => {
 
 const closeModals = () => {
   showDetailModal.value = false
-  showBulkUploadModal.value = false
+  showRetireAssetModal.value = false
   selectedAsset.value = null
+}
+
+const openRetireAssetModal = () => {
+  // Store the asset data before closing the detail modal
+  assetToRetire.value = selectedAsset.value
+  
+  // Close the detail modal first to avoid modal over modal issue
+  closeDetailModal()
+  
+  // Set default retirement date to today
+  retireFormData.value.retirementDate = new Date().toISOString().split('T')[0]
+  retireFormData.value.retirementReason = ''
+  retireFormData.value.retirementNotes = ''
+  selectedRetirementReason.value = null
+  clearRetireFormValidation()
+  showRetireAssetModal.value = true
+}
+
+const closeRetireAssetModal = () => {
+  showRetireAssetModal.value = false
+  assetToRetire.value = null
+  selectedRetirementReason.value = null
+  clearRetireFormValidation()
+  retireFormData.value = {
+    retirementDate: '',
+    retirementReason: '',
+    retirementNotes: ''
+  }
+}
+
+const onRetirementReasonChange = (reason: Item | null) => {
+  selectedRetirementReason.value = reason
+  retireFormData.value.retirementReason = reason?.id as string || ''
+  
+  // Clear validation error when user selects a reason
+  if (reason) {
+    retireFormValidation.value.retirementReason.isValid = true
+    retireFormValidation.value.retirementReason.message = ''
+  }
+}
+
+// Validation functions for retire form
+const validateRetirementDate = () => {
+  const date = retireFormData.value.retirementDate
+  if (!date) {
+    retireFormValidation.value.retirementDate.isValid = false
+    retireFormValidation.value.retirementDate.message = 'Retirement date is required'
+    return false
+  }
+  
+  const selectedDate = new Date(date)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  if (selectedDate > today) {
+    retireFormValidation.value.retirementDate.isValid = false
+    retireFormValidation.value.retirementDate.message = 'Retirement date cannot be in the future'
+    return false
+  }
+  
+  retireFormValidation.value.retirementDate.isValid = true
+  retireFormValidation.value.retirementDate.message = ''
+  return true
+}
+
+const validateRetirementReason = () => {
+  const reason = retireFormData.value.retirementReason
+  if (!reason) {
+    retireFormValidation.value.retirementReason.isValid = false
+    retireFormValidation.value.retirementReason.message = 'Retirement reason is required'
+    return false
+  }
+  
+  retireFormValidation.value.retirementReason.isValid = true
+  retireFormValidation.value.retirementReason.message = ''
+  return true
+}
+
+const validateRetireForm = () => {
+  const isDateValid = validateRetirementDate()
+  const isReasonValid = validateRetirementReason()
+  
+  retireFormValidation.value.isFormValid = isDateValid && isReasonValid
+  return retireFormValidation.value.isFormValid
+}
+
+const clearRetireFormValidation = () => {
+  retireFormValidation.value = {
+    retirementDate: { isValid: true, message: '' },
+    retirementReason: { isValid: true, message: '' },
+    isFormValid: true
+  }
 }
 
 const exportAssets = async () => {
   try {
     isLoading.value = true
-    // Get all assets for export (without pagination)
-    const response = await assetService.getAssets({ limit: 1000 })
-    assetService.exportAssetsToCsv(response.data.assets)
+    
+    // Build export parameters from current filters
+    const exportParams: any = {
+      // Include current search and filter values
+      search: searchTerm.value || undefined,
+      assetTypeId: selectedType.value ? parseInt(selectedType.value.value as string) : undefined,
+      brandId: selectedBrand.value ? parseInt(selectedBrand.value.value as string) : undefined,
+      status: selectedStatus.value?.value as any || undefined,
+      condition: selectedCondition.value?.value as any || undefined,
+      sortBy: selectedSortBy.value?.value as string || 'assetId',
+      sortOrder: sortAscending.value ? 'asc' : 'desc'
+    }
+    
+    // Use server-side Excel export
+    await assetService.exportAssetsToExcel(exportParams)
+    
   } catch (error) {
     console.error('Error exporting assets:', error)
     alert('Error exporting assets. Please try again.')
@@ -1189,36 +1853,90 @@ const downloadTemplate = () => {
   assetService.downloadBulkUploadTemplate()
 }
 
-const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    selectedFile.value = target.files[0]
-  }
-}
-
-const uploadFile = async () => {
-  if (!selectedFile.value) return
-
+// Bulk upload event handlers
+const handleBulkUpload = async (data: any[]) => {
   try {
     isLoading.value = true
-    const response = await assetService.bulkUploadAssets(selectedFile.value, false)
+    
+    let successCount = 0
+    let errorCount = 0
+    const errors: string[] = []
+    
+    // Process each asset individually
+    for (const assetData of data) {
+      try {
+        // Transform the data to match CreateAssetDto format
+        const createAssetDto = {
+          assetId: assetData.assetId,
+          serialNumber: assetData.serialNumber,
+          assetTypeId: parseInt(assetData.assetTypeId) || 1, // Default to 1 if not provided
+          brandId: parseInt(assetData.brandId) || 1, // Default to 1 if not provided
+          modelId: parseInt(assetData.modelId) || 1, // Default to 1 if not provided
+          vendorId: parseInt(assetData.vendorId) || 1, // Default to 1 if not provided
+          status: assetData.status || 'AVAILABLE',
+          condition: assetData.condition || 'NEW',
+          location: assetData.location || 'Warehouse',
+          purchaseDate: assetData.purchaseDate || undefined,
+          purchaseCost: parseFloat(assetData.purchaseCost) || undefined,
+          warrantyStartDate: assetData.warrantyStartDate || undefined,
+          warrantyEndDate: assetData.warrantyEndDate || undefined,
+          notes: assetData.notes || undefined
+        }
+        
+        await assetService.createAsset(createAssetDto)
+        successCount++
+      } catch (error: any) {
+        errorCount++
+        errors.push(`Asset ${assetData.assetId}: ${error.message || 'Unknown error'}`)
+      }
+    }
     
     // Show success message with results
-    const { imported, summary } = response.data
-    alert(`Upload completed!\nSuccessfully imported: ${imported} assets\nTotal processed: ${summary.totalRows}\nErrors: ${summary.failedImports}`)
+    if (errorCount === 0) {
+      alert(`Upload completed successfully!\nSuccessfully imported: ${successCount} assets`)
+    } else {
+      alert(`Upload completed with some errors!\nSuccessfully imported: ${successCount} assets\nErrors: ${errorCount}\n\nError details:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? '\n...' : ''}`)
+    }
     
     // Reload assets to show new data
     await loadAssets()
     
-    showBulkUploadModal.value = false
-    selectedFile.value = null
   } catch (error) {
-    console.error('Error uploading file:', error)
-    alert('Error uploading file. Please check the format and try again.')
+    console.error('Error uploading assets:', error)
+    alert('Error uploading assets. Please check the data and try again.')
   } finally {
     isLoading.value = false
   }
 }
+
+const handleTemplateDownload = (type: 'csv' | 'excel') => {
+  if (type === 'csv') {
+    assetService.downloadBulkUploadTemplate()
+  } else {
+    // For Excel template, we can use the same method or create a separate one
+    assetService.downloadBulkUploadTemplate()
+  }
+}
+
+const openBulkUploadModal = () => {
+  bulkAssetUploadRef.value?.openModal()
+}
+
+const handleBulkUploadSuccess = (result: any) => {
+  // Refresh the assets list after successful bulk upload
+  loadAssets()
+}
+
+const closeDropdown = (dropdownId: string) => {
+  const button = document.getElementById(dropdownId)
+  const dropdown = button?.nextElementSibling as HTMLElement
+  
+  if (dropdown) {
+    dropdown.classList.remove('show')
+    button?.setAttribute('aria-expanded', 'false')
+  }
+}
+
 
 const navigateToAddAsset = () => {
   router.push('/app/assets/add')
@@ -1256,7 +1974,10 @@ const collectAsset = (asset: AssetDisplayItem) => {
 
 // Handle dropdown click with proper positioning
 const handleDropdownClick = (event: Event) => {
-  const button = event.target as HTMLButtonElement
+  event.preventDefault()
+  event.stopPropagation()
+  
+  const button = event.currentTarget as HTMLButtonElement
   const dropdown = button.nextElementSibling as HTMLElement
   
   if (dropdown) {
@@ -1274,6 +1995,7 @@ const handleDropdownClick = (event: Event) => {
     
     // Toggle current dropdown
     const isShown = dropdown.classList.contains('show')
+    
     if (isShown) {
       dropdown.classList.remove('show')
       button.setAttribute('aria-expanded', 'false')
@@ -1320,6 +2042,143 @@ const editAsset = (asset: AssetDisplayItem) => {
   closeDetailModal()
 }
 
+const viewAssetHistory = (asset: AssetDisplayItem) => {
+  // Navigate to asset history page using the asset ID
+  router.push(`/app/assets/${asset.id}/history`)
+}
+
+const retireAsset = async () => {
+  if (!assetToRetire.value) return
+
+  // Validate form
+  if (!validateRetireForm()) {
+    return
+  }
+
+  try {
+    isRetiringAsset.value = true
+
+    // Find the original asset by matching the display asset ID (which is the assetId field)
+    const originalAsset = assets.value.find(a => a.assetId === assetToRetire.value!.id)
+    if (!originalAsset) {
+      console.error('Could not find original asset with assetId:', assetToRetire.value.id)
+      return
+    }
+
+    // Call the dedicated retire asset API
+    await assetService.retireAsset(originalAsset.id, {
+      retirementDate: retireFormData.value.retirementDate,
+      retirementReason: retireFormData.value.retirementReason,
+      retirementNotes: retireFormData.value.retirementNotes || undefined
+    })
+
+    // Show success message
+    alert(`Asset ${assetToRetire.value.id} has been successfully retired.`)
+
+    // Close modal and refresh data
+    closeRetireAssetModal()
+    await loadAssets()
+
+  } catch (error) {
+    console.error('Error retiring asset:', error)
+    alert('Error retiring asset. Please try again.')
+  } finally {
+    isRetiringAsset.value = false
+  }
+}
+
+// Reactivate asset modal methods
+const openReactivateAssetModal = () => {
+  // Store the asset data before closing the detail modal
+  assetToReactivate.value = selectedAsset.value
+  
+  // Close the detail modal first to avoid modal over modal issue
+  closeDetailModal()
+  
+  // Set default reactivation date to today
+  reactivateFormData.value.reactivationDate = new Date().toISOString().split('T')[0]
+  reactivateFormData.value.condition = 'REFURBISHED' // Fixed value
+  reactivateFormData.value.status = 'AVAILABLE' // Fixed value
+  reactivateFormData.value.location = ''
+  reactivateFormData.value.reactivationReason = ''
+  
+  // Clear validation
+  clearReactivateFormValidation()
+  
+  // Reset expansion state
+  isReactivateAssetSummaryExpanded.value = false
+  
+  // Show the reactivate modal
+  showReactivateAssetModal.value = true
+}
+
+const closeReactivateAssetModal = () => {
+  showReactivateAssetModal.value = false
+  assetToReactivate.value = null
+  clearReactivateFormValidation()
+  reactivateFormData.value = {
+    reactivationDate: '',
+    condition: 'REFURBISHED', // Fixed value
+    status: 'AVAILABLE', // Fixed value
+    location: '',
+    reactivationReason: ''
+  }
+}
+
+const clearReactivateFormValidation = () => {
+  reactivateFormValidation.value = {
+    reactivationDate: 'valid',
+    condition: 'valid',
+    status: 'valid',
+    location: 'valid',
+    reactivationReason: 'valid'
+  }
+}
+
+const reactivateAsset = async () => {
+  if (!assetToReactivate.value) return
+
+  // Validate form
+  if (!reactivateFormData.value.reactivationDate || 
+      !reactivateFormData.value.location || 
+      !reactivateFormData.value.reactivationReason) {
+    return
+  }
+
+  try {
+    isReactivatingAsset.value = true
+
+    // Find the original asset by matching the display asset ID (which is the assetId field)
+    const originalAsset = assets.value.find(a => a.assetId === assetToReactivate.value!.id)
+    if (!originalAsset) {
+      console.error('Could not find original asset with assetId:', assetToReactivate.value.id)
+      return
+    }
+
+    // Call the dedicated reactivate asset API
+    await assetService.reactivateAsset(originalAsset.id, {
+      reactivationDate: reactivateFormData.value.reactivationDate,
+      condition: reactivateFormData.value.condition,
+      status: reactivateFormData.value.status,
+      location: reactivateFormData.value.location,
+      reactivationReason: reactivateFormData.value.reactivationReason
+    })
+
+    // Show success message
+    alert(`Asset ${assetToReactivate.value.id} has been successfully reactivated.`)
+
+    // Close modal and refresh data
+    closeReactivateAssetModal()
+    await loadAssets()
+
+  } catch (error) {
+    console.error('Error reactivating asset:', error)
+    alert('Error reactivating asset. Please try again.')
+  } finally {
+    isReactivatingAsset.value = false
+  }
+}
+
 // Utility functions
 const getAssetTypeIcon = (type: string) => {
   const icons = {
@@ -1360,7 +2219,8 @@ const getConditionBadgeClass = (condition: string) => {
     'New': 'badge badge-condition-new',
     'Fair': 'badge badge-condition-fair',
     'Poor': 'badge badge-condition-poor',
-    'Damaged': 'badge badge-condition-poor'
+    'Damaged': 'badge badge-condition-poor',
+    'Refurbished': 'badge badge-condition-refurbished'
   }
   return classes[condition as keyof typeof classes] || 'badge badge-condition-good'
 }
@@ -1374,6 +2234,18 @@ const getStatusText = (status: string) => {
     'LOST': 'Lost'
   }
   return texts[status as keyof typeof texts] || status
+}
+
+const getConditionText = (condition: string) => {
+  const texts = {
+    'NEW': 'New',
+    'GOOD': 'Good',
+    'FAIR': 'Fair',
+    'POOR': 'Poor',
+    'DAMAGED': 'Damaged',
+    'REFURBISHED': 'Refurbished'
+  }
+  return texts[condition as keyof typeof texts] || condition
 }
 
 const getViewButtonTitle = (status: string) => {
@@ -1409,6 +2281,21 @@ const getAssignmentStatusText = (status: string) => {
 const getAssignmentStatusDescription = (status: string) => {
   if (status === 'ASSIGNED') return 'Currently with employee'
   return 'Ready to be assigned to an employee'
+}
+
+const getRetirementStatusDescription = (retirementReason: string) => {
+  if (!retirementReason) return 'Asset has been retired'
+  
+  const reasonMap: Record<string, string> = {
+    'END_OF_LIFE': 'Asset has reached end of life',
+    'DAMAGED_BEYOND_REPAIR': 'Asset is damaged beyond repair',
+    'OBSOLETE': 'Asset technology is obsolete',
+    'COST_INEFFECTIVE': 'Asset maintenance is cost ineffective',
+    'SECURITY_CONCERNS': 'Asset poses security concerns',
+    'OTHER': 'Asset retired for other reasons'
+  }
+  
+  return reasonMap[retirementReason] || 'Asset has been retired'
 }
 
 const formatDate = (dateString: string) => {
@@ -1533,6 +2420,37 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Form validation styles */
+.form-searchable-dropdown.is-invalid :deep(.form-control) {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.form-searchable-dropdown.is-valid :deep(.form-control) {
+  border-color: #198754 !important;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+/* Remove validation styling from optional notes textarea */
+.notes-no-validation :deep(.form-control.is-valid) {
+  border-color: #999999 !important;
+  box-shadow: none !important;
+}
+
+.notes-no-validation :deep(.form-control:focus) {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
 /* Dropdown improvements */
 .dropdown-menu {
   border: none;
@@ -1541,6 +2459,10 @@ onUnmounted(() => {
   padding: 0.5rem 0;
   min-width: 200px;
   z-index: 1050;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
 }
 
 .dropdown-item {
@@ -1679,12 +2601,24 @@ onUnmounted(() => {
 }
 
 /* Asset Details Modal - Reduced Spacing and Better Warranty Display */
+.equal-height-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.equal-height-columns > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+
 .asset-info-section-compact {
   margin-bottom: 0.5rem;
   padding: 0.75rem;
   border: 1px solid #e9ecef;
   border-radius: 0.5rem;
   background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
 }
 
 .asset-info-section-compact .section-title-compact {
@@ -1700,6 +2634,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex-grow: 1;
 }
 
 .asset-info-section-compact .info-item-compact {
@@ -1829,7 +2764,6 @@ onUnmounted(() => {
 
 /* Assignment status combined */
 .assignment-status-combined {
-  margin-top: 0.5rem;
   padding: 0.75rem;
   border: 1px solid #e9ecef;
   border-radius: 0.5rem;
@@ -1873,6 +2807,94 @@ onUnmounted(() => {
   border-radius: 0.375rem;
   padding: 0.75rem;
   margin-top: 0.5rem;
+}
+
+/* Retirement status combined */
+.retirement-status-combined {
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.retirement-status-combined .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.retirement-status-combined .retirement-details {
+  flex-grow: 1;
+}
+
+.retirement-status-combined .retirement-icon {
+  flex-shrink: 0;
+}
+
+
+.retirement-status-combined .retirement-details span {
+  font-size: 0.95rem !important;
+}
+
+.retirement-status-combined .retirement-details .fw-medium {
+  font-size: 1rem !important;
+}
+
+/* Retirement Details Expanded */
+.retirement-details-expanded {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Retirement Divider */
+.retirement-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Retirement Details Collapsible */
+.retirement-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.retirement-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Retirement Notes Display Override */
+.retirement-details-expanded .info-value-compact :deep(.notes-display-container) {
+  margin: 0;
+  padding: 0;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-content) {
+  padding: 0;
+  min-height: auto;
+  align-items: flex-start;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-text) {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-empty) {
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.7;
 }
 
 

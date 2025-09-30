@@ -24,6 +24,8 @@ body {
   --secondary-orange: #FF8C61;
   --secondary-red: #E97676;
   --secondary-blue: #4A90E2;
+  --secondary-brown: #967259;
+  ;
   
   /* Role-based Colors */
   --bg-primary: #FFFFFF;
@@ -387,6 +389,17 @@ border-color: var(--secondary-green);
   background-color: var(--element-light-gray) !important;
   border-color: var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
+}
+
+.btn-outline-brown {
+  color: var(--secondary-brown);
+  border-color: var(--secondary-brown);
+}
+
+.btn-outline-brown:hover {
+  background-color: var(--secondary-brown);
+  border-color: var(--secondary-brown);
+  color: var(--bg-primary);
 }
 
 /* Input Group Styling - Professional Theme with rounded corners */
@@ -1313,6 +1326,11 @@ body .text-info,
   color: var(--secondary-pink) !important;
 }
 
+body .text-brown,
+.text-brown {
+  color: var(--secondary-brown) !important;
+}
+
 body .text-light,
 .text-light {
   color: var(--primary-light-gray) !important;
@@ -1358,6 +1376,11 @@ body .bg-warning,
 body .bg-info,
 .bg-info {
   background-color: var(--secondary-pink) !important;
+}
+
+body .bg-brown,
+.bg-brown {
+  background-color: var(--secondary-brown) !important;
 }
 
 body .bg-light,
@@ -1445,6 +1468,18 @@ body .btn-primary:active,
 .btn-info:hover,
 .btn-info:focus,
 .btn-info:active {
+  filter: brightness(0.92);
+}
+
+.btn-brown {
+  background-color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-brown:hover,
+.btn-brown:focus,
+.btn-brown:active {
   filter: brightness(0.92);
 }
 
@@ -3399,6 +3434,15 @@ i.text-muted {
 
 .badge-condition-poor {
   background-color: var(--secondary-red) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge-condition-refurbished {
+  background-color: var(--secondary-brown) !important;
   color: white !important;
   font-size: 0.75rem !important;
   font-weight: 500 !important;

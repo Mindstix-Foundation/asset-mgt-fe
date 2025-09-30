@@ -116,6 +116,22 @@
                   </div>
                 </div>
                 
+                <!-- Asset Condition When Assigned -->
+                <div v-if="selectedAssetCondition" class="mt-4">
+                  <div class="asset-specifications-wrapper">
+                    <label for="assetConditionWhenAssigned" class="form-label">Asset Condition When Assigned</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="assetConditionWhenAssigned" 
+                      :value="selectedAssetCondition"
+                      disabled 
+                      placeholder="No condition information available"
+                    >
+                    <div class="form-text">Condition of the asset when it was originally assigned</div>
+                  </div>
+                </div>
+
                 <!-- Asset Specifications -->
                 <div v-if="selectedAssetSpecs" class="mt-4">
                   <div class="asset-specifications-wrapper">
@@ -179,6 +195,22 @@
                     </select>
                     <div class="form-text">Select the reason for collecting this asset (required)</div>
                     <div v-if="fieldErrors.collectionReason" class="invalid-feedback">{{ fieldErrors.collectionReason }}</div>
+                  </div>
+
+                  <!-- Asset Condition -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="assetCondition"
+                        label="Asset Condition"
+                        placeholder="Choose condition..."
+                        :items="conditionItems"
+                        v-model="selectedCondition"
+                        required
+                        @change="onConditionChange"
+                      />
+                    </div>
+                    <div class="form-text">Select the current condition of the asset (required)</div>
                   </div>
 
                   <!-- Collection Notes -->
@@ -264,9 +296,13 @@
                 <div class="col-4 fw-semibold text-muted">Collection Date:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.date }}</div>
               </div>
-              <div class="row">
+              <div class="row mb-2">
                 <div class="col-4 fw-semibold text-muted">Reason:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.reason }}</div>
+              </div>
+              <div class="row">
+                <div class="col-4 fw-semibold text-muted">Condition:</div>
+                <div class="col-8 fw-medium">{{ confirmationDetails.condition }}</div>
               </div>
             </div>
           </div>
@@ -311,12 +347,14 @@ const formData = reactive({
   assetBrandModel: '',
   collectionDate: '',
   collectionReason: '',
+  assetCondition: '',
   collectionNotes: ''
 })
 
 // Selected items for SearchableDropdown components
 const selectedEmployee = ref<Item | null>(null)
 const selectedAsset = ref<Item | null>(null)
+const selectedCondition = ref<Item | null>(null)
 
 // Form state - Enhanced validation system like the prototype
 const fieldErrors = reactive<Record<string, string>>({})
@@ -353,6 +391,13 @@ const assetItems = computed(() => {
   }))
 })
 
+const conditionItems = computed(() => [
+  { id: 'GOOD', name: 'Good', value: 'GOOD' },
+  { id: 'FAIR', name: 'Fair', value: 'FAIR' },
+  { id: 'POOR', name: 'Poor', value: 'POOR' },
+  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
+])
+
 const reasonLabels = {
   'employee-left': 'Employee Left Company',
   'reassignment': 'Asset Reassignment',
@@ -360,6 +405,14 @@ const reasonLabels = {
   'upgrade': 'Equipment Upgrade',
   'return-request': 'Employee Return Request',
   'other': 'Other Reason'
+}
+
+const conditionLabels = {
+  'NEW': 'New',
+  'GOOD': 'Good',
+  'FAIR': 'Fair',
+  'POOR': 'Poor',
+  'DAMAGED': 'Damaged'
 }
 
 // Computed properties
@@ -395,6 +448,7 @@ const confirmationDetails = computed(() => {
     emp.id.toString() === formData.employeeId.toString()
   )
   const reasonLabel = reasonLabels[formData.collectionReason as keyof typeof reasonLabels] || formData.collectionReason
+  const conditionLabel = conditionLabels[formData.assetCondition as keyof typeof conditionLabels] || formData.assetCondition
   
   // Build asset display with serial number
   let assetDisplay = '-'
@@ -412,7 +466,8 @@ const confirmationDetails = computed(() => {
       month: 'long', 
       day: 'numeric' 
     }) : '-',
-    reason: reasonLabel || '-'
+    reason: reasonLabel || '-',
+    condition: conditionLabel || '-'
   }
 })
 
@@ -472,6 +527,23 @@ const selectedAssignmentNotes = computed(() => {
   return selectedAssignment?.notes || null
 })
 
+// Computed property for selected asset condition when assigned
+const selectedAssetCondition = computed(() => {
+  if (!formData.assetId) return null
+  
+  const selectedAssignment = assignedAssets.value.find(assignment => 
+    assignment.id.toString() === formData.assetId.toString()
+  )
+  
+  if (!selectedAssignment?.issueCondition) return null
+  
+  // Format the condition for display
+  const condition = selectedAssignment.issueCondition
+  const conditionLabel = conditionLabels[condition as keyof typeof conditionLabels] || condition
+  
+  return conditionLabel
+})
+
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
@@ -513,6 +585,18 @@ const onAssetChange = (item: Item | null) => {
   }
   
   validateFieldInline('assetId')
+}
+
+const onConditionChange = (item: Item | null) => {
+  selectedCondition.value = item
+  formData.assetCondition = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldValidation('assetCondition')
+  }
+  
+  validateFieldInline('assetCondition')
 }
 
 // Helper function to apply validation classes to SearchableDropdown components
@@ -576,6 +660,17 @@ const validateFieldInline = (fieldName: string) => {
         return true
       }
       
+    case 'assetCondition':
+      if (!selectedCondition.value) {
+        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        return false
+      } else {
+        setFieldValid(fieldName)
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+        return true
+      }
+      
     case 'collectionDate':
       if (value) {
         const today = new Date().toISOString().split('T')[0]
@@ -592,7 +687,7 @@ const validateFieldInline = (fieldName: string) => {
   }
 
   // For SearchableDropdown fields, we've already handled validation above
-  const searchableDropdownFields = ['employeeId', 'assetId']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
   if (searchableDropdownFields.includes(fieldName)) {
     return true // Already validated above
   }
@@ -617,7 +712,7 @@ const setFieldError = (fieldName: string, message: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['employeeId', 'assetId']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
@@ -633,7 +728,7 @@ const setFieldValid = (fieldName: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['employeeId', 'assetId']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'valid')
   }
@@ -646,7 +741,7 @@ const clearFieldValidation = (fieldName: string) => {
   }
   
   // Also clear validation for SearchableDropdown components
-  const searchableDropdownFields = ['employeeId', 'assetId']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
   if (searchableDropdownFields.includes(fieldName)) {
     const input = document.getElementById(fieldName) as HTMLInputElement
     if (input) {
@@ -680,6 +775,7 @@ const getFieldDisplayName = (fieldName: string): string => {
     assetBrandModel: 'Asset Brand-Model',
     collectionDate: 'Collection Date',
     collectionReason: 'Collection Reason',
+    assetCondition: 'Asset Condition',
     collectionNotes: 'Collection Notes'
   }
   return displayNames[fieldName] || fieldName
@@ -696,7 +792,7 @@ const submitForm = async (event?: Event) => {
 
   // Validate all fields
   let isFormValid = true
-  const requiredFields = ['employeeId', 'assetId', 'collectionDate', 'collectionReason']
+  const requiredFields = ['employeeId', 'assetId', 'collectionDate', 'collectionReason', 'assetCondition']
   const allFields = Object.keys(formData)
 
   allFields.forEach(fieldName => {
@@ -732,7 +828,7 @@ const confirmCollection = async () => {
     // Prepare return data for API
     const returnData: ReturnAssignmentDto = {
       returnDate: formData.collectionDate,
-      returnCondition: 'GOOD', // Default condition, could be made configurable
+      returnCondition: formData.assetCondition, // Already uppercase from SearchableDropdown
       returnReason: formData.collectionReason,
       notes: formData.collectionNotes || undefined
     }

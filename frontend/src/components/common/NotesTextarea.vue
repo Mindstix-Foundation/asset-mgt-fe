@@ -61,7 +61,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   label: 'Additional Notes',
   placeholder: 'Enter additional notes...',
-  helpText: 'Include payment terms, special requirements, or other relevant information. Textarea expands automatically as you type. Use Shift+Enter for new lines. First letter of each line is auto-capitalized.',
+  helpText: 'Include payment terms, special requirements, or other relevant information.',
   maxLength: 1000,
   minRows: 3,
   required: false,

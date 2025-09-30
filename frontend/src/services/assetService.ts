@@ -53,6 +53,26 @@ class AssetService {
     return apiService.put<AssetResponse>(`${this.baseEndpoint}/${id}`, assetData)
   }
 
+  // Retire asset
+  async retireAsset(id: number, retirementData: {
+    retirementDate: string;
+    retirementReason: string;
+    retirementNotes?: string;
+  }): Promise<AssetResponse> {
+    return apiService.put<AssetResponse>(`${this.baseEndpoint}/${id}/retire`, retirementData)
+  }
+
+  // Reactivate asset
+  async reactivateAsset(id: number, reactivationData: {
+    reactivationDate: string;
+    condition: string;
+    status: string;
+    location: string;
+    reactivationReason: string;
+  }): Promise<AssetResponse> {
+    return apiService.put<AssetResponse>(`${this.baseEndpoint}/${id}/reactivate`, reactivationData)
+  }
+
   // Delete asset
   async deleteAsset(id: number): Promise<ApiResponse<any>> {
     return apiService.delete<ApiResponse<any>>(`${this.baseEndpoint}/${id}`)
@@ -98,6 +118,42 @@ class AssetService {
     const endpoint = queryString ? `${this.baseEndpoint}/available?${queryString}` : `${this.baseEndpoint}/available`
     
     return apiService.get<AssetListResponse>(endpoint)
+  }
+
+  // Validate bulk upload file
+  async validateBulkUpload(file: File): Promise<AssetBulkUploadResponse> {
+    console.log('assetService.validateBulkUpload: Starting validation for file:', file.name)
+    
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const url = `${apiService.getBaseURL()}${this.baseEndpoint}/validate-bulk-upload`
+    console.log('assetService.validateBulkUpload: Making request to:', url)
+
+    // Override the default JSON content type for file upload
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        // Don't set Content-Type, let browser set it with boundary for multipart/form-data
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+      },
+      body: formData,
+    })
+
+    console.log('assetService.validateBulkUpload: Response status:', response.status)
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        message: 'Validation failed',
+        error: `HTTP ${response.status}: ${response.statusText}`
+      }))
+      console.error('assetService.validateBulkUpload: Error response:', errorData)
+      throw new Error(errorData.error || errorData.message || 'Validation failed')
+    }
+
+    const result = await response.json()
+    console.log('assetService.validateBulkUpload: Success response:', result)
+    return result
   }
 
   // Bulk upload assets
@@ -225,7 +281,14 @@ class AssetService {
       assignmentReason: currentAssignment?.issueReason || '',
       assignmentNotes: currentAssignment?.notes || '',
       assignmentDate: currentAssignment?.issueDate || '',
-      assignedBy: currentAssignment?.issuedByUser?.username || ''
+      assignedBy: currentAssignment?.issuedByUser?.username || '',
+      // Retirement details
+      retirementDate: asset.retirementDate || '',
+      retirementReason: asset.retirementReason || '',
+      retirementNotes: asset.retirementNotes || '',
+      // Reactivation details
+      reactivationDate: asset.reactivationDate || '',
+      reactivationReason: asset.reactivationReason || ''
     }
   }
 
@@ -293,6 +356,65 @@ class AssetService {
     }
 
     return errors
+  }
+
+  // Export assets to Excel (server-side)
+  async exportAssetsToExcel(params: AssetQueryParams = {}): Promise<void> {
+    const searchParams = new URLSearchParams()
+    
+    // Add all query parameters
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, value.toString())
+      }
+    })
+
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `${this.baseEndpoint}/export?${queryString}` : `${this.baseEndpoint}/export`
+    
+    try {
+      const token = localStorage.getItem('access_token')
+      const apiUrl = `${import.meta.env.VITE_API_BASE_URL}${endpoint}`
+      
+      console.log('Export request:', { apiUrl, hasToken: !!token })
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Export failed:', { status: response.status, statusText: response.statusText, error: errorText })
+        throw new Error(`Export failed: ${response.statusText}`)
+      }
+
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = 'assets_export.xlsx'
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      // Create blob and download
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Export error:', error)
+      throw error
+    }
   }
 
   // Export assets to CSV (client-side)
