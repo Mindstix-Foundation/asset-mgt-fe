@@ -54,6 +54,11 @@ export interface Asset {
   warrantyStartDate?: string
   warrantyEndDate?: string
   notes?: string
+  retirementDate?: string
+  retirementReason?: string
+  retirementNotes?: string
+  reactivationDate?: string
+  reactivationReason?: string
   createdAt: string
   updatedAt: string
   assetType: AssetType
@@ -68,7 +73,7 @@ export interface Asset {
 }
 
 export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
-export type AssetCondition = 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
+export type AssetCondition = 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
 
 export interface AssetQueryParams {
   page?: number
@@ -186,6 +191,7 @@ export interface AssetBulkUploadResult {
     row: number
     field: string
     message: string
+    value?: string
   }>
   summary: {
     totalRows: number
@@ -193,6 +199,11 @@ export interface AssetBulkUploadResult {
     failedImports: number
     validationErrors: number
   }
+  // For validation-only responses
+  totalRows?: number
+  validRows?: number
+  invalidRows?: number
+  validationOnly?: boolean
 }
 
 export interface AssetBulkUploadResponse {

@@ -620,12 +620,16 @@ const submitForm = async (event?: Event) => {
       throw new Error('Please select both an asset and an employee')
     }
 
+    // Get the current condition of the selected asset
+    const currentAsset = availableAssets.value.find(asset => asset.id === selectedAssetId)
+    const currentCondition = currentAsset?.condition || 'GOOD' // Fallback to GOOD if condition is not available
+
     // Prepare assignment data for API
     const assignmentData: CreateAssignmentDto = {
       assetId: selectedAssetId,
       employeeId: selectedEmployeeId,
       issueDate: formData.assignmentDate,
-      issueCondition: 'GOOD', // Default condition, could be made configurable
+      issueCondition: currentCondition, // Use the asset's current condition
       issueReason: formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }

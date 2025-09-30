@@ -19,7 +19,7 @@
                 <button class="btn btn-modern btn-outline-secondary" @click="downloadTemplate('csv')" data-bs-toggle="tooltip" title="Download the CSV template with correct column format">
                   <i class="fas fa-file-csv me-2"></i>CSV Template
                 </button>
-                <button class="btn btn-modern btn-success" @click="downloadTemplate('excel')" data-bs-toggle="tooltip" title="Download the Excel (.xlsx) template with correct column format">
+                <button class="btn btn-modern btn-outline-secondary" @click="downloadTemplate('excel')" data-bs-toggle="tooltip" title="Download the Excel (.xlsx) template with correct column format">
                   <i class="fas fa-file-excel me-2"></i>Excel Template
                 </button>
               </div>
@@ -28,23 +28,25 @@
           </div>
 
           <!-- Required Columns Info -->
-          <div class="required-columns-section mb-4">
-            <h6 class="mb-3" style="color: var(--text-primary);">
-              <i class="fas fa-list-check me-2" style="color: var(--secondary-green);"></i>Required Columns (in this order)
+          <div class="asset-info-section-compact mb-4">
+            <h6 class="section-title-compact">
+              <i class="fas fa-list-check me-2"></i>Required Columns (in this order)
             </h6>
-            <div class="columns-sequence columns-excel">
-              <div class="excel-cell" v-for="column in columns" :key="column.key">{{ column.label }}</div>
+            <div class="columns-chips">
+              <div class="column-chip" v-for="column in columns" :key="column.key" :class="{ required: column.required }">
+                <span class="column-label">{{ column.label }}<span v-if="column.required">*</span></span>
+              </div>
             </div>
             <p class="sequence-note mt-2">
-              <i class="fas fa-info-circle me-1" style="color: var(--secondary-purple);"></i>
+              <i class="fas fa-info-circle me-1"></i>
               <small class="text-muted">Make sure your spreadsheet columns follow this exact sequence</small>
             </p>
           </div>
 
           <!-- Step 2: Upload File -->
-          <div class="mb-4">
-            <h6 class="mb-3" style="color: var(--text-primary);">
-              <i class="fas fa-upload me-2" style="color: var(--secondary-purple);"></i>Step 2: Upload File
+          <div class="asset-info-section-compact mb-4">
+            <h6 class="section-title-compact">
+              <i class="fas fa-upload me-2"></i>Step 2: Upload File
             </h6>
 
             <div 
@@ -92,12 +94,46 @@
 
             <!-- Validation Messages -->
             <div class="validation-messages mt-3" v-if="validationMessages.length">
+              <!-- Summary Line (Red Info Tag) -->
               <div 
-                v-for="(msg, i) in validationMessages" 
-                :key="i" 
-                :class="[msg.toLowerCase().startsWith('no errors') ? 'validation-success' : 'validation-error', 'mb-2']"
+                v-if="validationMessages[0] && validationMessages[0].toLowerCase().includes('validation failed')"
+                class="validation-summary mb-3"
               >
-                <i :class="msg.toLowerCase().startsWith('no errors') ? 'fas fa-check-circle me-2' : 'fas fa-exclamation-triangle me-2'"></i>{{ msg }}
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ validationMessages[0] }}
+              </div>
+              
+              <!-- Success Message -->
+              <div 
+                v-else-if="validationMessages[0] && (validationMessages[0].toLowerCase().includes('no errors') || validationMessages[0].includes('✅'))"
+                class="validation-success mb-2"
+              >
+                <i class="fas fa-check-circle me-2"></i>{{ validationMessages[0] }}
+              </div>
+              
+              <!-- Detailed Error Messages (Normal Text) -->
+              <div 
+                v-if="validationMessages.length > 1"
+                class="validation-details"
+              >
+                <div 
+                  v-for="(msg, i) in validationMessages.slice(1)" 
+                  :key="i" 
+                  class="validation-detail-item"
+                >
+                  {{ msg }}
+                </div>
+              </div>
+              
+              <!-- View All Errors Button -->
+              <div v-if="validationComplete && hasValidationErrors && allValidationErrors.length > 5" class="mt-2">
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-outline-danger" 
+                  @click="toggleShowAllErrors"
+                >
+                  <i :class="showAllErrors ? 'fas fa-eye-slash me-1' : 'fas fa-eye me-1'"></i>
+                  {{ showAllErrors ? 'Show First 5 Errors' : `View All ${allValidationErrors.length} Errors` }}
+                </button>
               </div>
             </div>
 
@@ -111,18 +147,31 @@
                   </span>
                 </div>
               </div>
-              <div class="table-responsive">
-                <table class="table table-sm mb-0">
+              <div class="table-responsive preview-table-container">
+                <table class="table table-sm mb-0 preview-table" style="min-width: 1200px;">
                   <thead class="table-light">
                     <tr>
-                      <th>#</th>
-                      <th v-for="column in columns" :key="column.key">{{ column.label }}</th>
+                      <th class="row-number-col">#</th>
+                      <th 
+                        v-for="column in columns" 
+                        :key="column.key"
+                        :class="getColumnClass(column.key)"
+                      >
+                        {{ column.label }}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(row, idx) in preview" :key="idx">
-                      <td>{{ row._row }}</td>
-                      <td v-for="column in columns" :key="column.key">{{ row[column.key] }}</td>
+                      <td class="row-number-col">{{ row._row }}</td>
+                      <td 
+                        v-for="column in columns" 
+                        :key="column.key"
+                        :class="getColumnClass(column.key)"
+                        :title="row[column.key]"
+                      >
+                        {{ formatCellValue(row[column.key], column.key) }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -145,8 +194,20 @@
           <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
             Cancel
           </button>
-          <button type="button" class="btn btn-modern btn-primary" :disabled="!rows.length || hasPreviewErrors" @click="handleUpload">
-            <i class="fas fa-upload me-2"></i>{{ uploadButtonText }}
+          <button 
+            type="button" 
+            class="btn btn-modern btn-primary" 
+            :disabled="!rows.length || isValidating || (validationComplete && hasValidationErrors)" 
+            @click="handleUpload"
+          >
+            <i v-if="isValidating" class="fas fa-spinner fa-spin me-2"></i>
+            <i v-else class="fas fa-upload me-2"></i>
+            {{ 
+              isValidating ? 'Validating...' : 
+              validationComplete && hasValidationErrors ? 'Fix Errors First' :
+              validationComplete && !hasValidationErrors ? 'Upload Assets' :
+              uploadButtonText 
+            }}
           </button>
         </div>
       </div>
@@ -183,8 +244,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Emits
 const emit = defineEmits<{
-  upload: [data: any[]]
+  upload: [file: File]
   templateDownload: [type: 'csv' | 'excel']
+  validate: [file: File]
 }>()
 
 // Reactive data
@@ -195,11 +257,14 @@ const rows = ref<any[]>([])
 const preview = ref<any[]>([])
 const uploading = ref(false)
 const progress = ref(0)
+const selectedFile = ref<File | null>(null)
+const isValidating = ref(false)
+const validationComplete = ref(false)
+const hasValidationErrors = ref(false)
+const allValidationErrors = ref<any[]>([])
+const showAllErrors = ref(false)
 
-// Computed
-const hasPreviewErrors = computed(() => {
-  return validationMessages.value.some(m => !m.toLowerCase().startsWith('no errors'))
-})
+// Computed properties can be added here if needed
 
 // Methods
 const downloadTemplate = (type: 'csv' | 'excel') => {
@@ -284,6 +349,12 @@ const removeFile = () => {
   validationMessages.value = []
   rows.value = []
   preview.value = []
+  selectedFile.value = null
+  isValidating.value = false
+  validationComplete.value = false
+  hasValidationErrors.value = false
+  allValidationErrors.value = []
+  showAllErrors.value = false
   const input = document.getElementById(`${props.modalId}File`) as HTMLInputElement
   if (input) input.value = ''
   document.getElementById(`${props.modalId}UploadArea`)?.classList.remove('dragover')
@@ -299,30 +370,31 @@ const handleFile = (file: File) => {
     return
   }
   
+  selectedFile.value = file
   fileName.value = file.name
   fileSize.value = (file.size / 1024).toFixed(1) + ' KB'
 
   const reader = new FileReader()
   if (file.name.endsWith('.xlsx') || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const data = new Uint8Array(e.target?.result as ArrayBuffer)
       const workbook = XLSX.read(data, { type: 'array' })
       const firstSheetName = workbook.SheetNames[0]
       const worksheet = workbook.Sheets[firstSheetName]
       const csv = XLSX.utils.sheet_to_csv(worksheet)
-      parseCsv(csv)
+      await parseCsv(csv)
     }
     reader.readAsArrayBuffer(file)
   } else {
-    reader.onload = () => {
+    reader.onload = async () => {
       const text = reader.result as string
-      parseCsv(text)
+      await parseCsv(text)
     }
     reader.readAsText(file)
   }
 }
 
-const parseCsv = (text: string) => {
+const parseCsv = async (text: string) => {
   const lines = text.split(/\r?\n/).filter(l => l.trim().length)
   if (lines.length < 2) {
     validationMessages.value.push('No data rows found in file.')
@@ -332,7 +404,12 @@ const parseCsv = (text: string) => {
   const header = lines[0].split(',').map(h => h.trim().toLowerCase())
   const expected = props.columns.map(col => col.label.toLowerCase())
   
-  if (expected.some((h, i) => (header[i] || '') !== h)) {
+  // Check if headers match exactly (case-insensitive)
+  const headerMatches = expected.every((expectedHeader, i) => 
+    (header[i] || '').toLowerCase() === expectedHeader.toLowerCase()
+  )
+  
+  if (!headerMatches) {
     validationMessages.value.push(`Invalid header order. Expected: ${props.columns.map(col => col.label).join(', ')}`)
   }
   
@@ -372,7 +449,10 @@ const parseCsv = (text: string) => {
   rows.value = parsedRows
   preview.value = parsedRows.slice(0, 5)
   
-  // Aggregate all errors across the entire file
+  // Generic duplicate checking (no asset-specific logic)
+  checkDuplicates(parsedRows)
+  
+  // Show basic validation results
   const allErrors: string[] = []
   parsedRows.forEach(r => {
     if (r._errors && r._errors.length) {
@@ -389,7 +469,159 @@ const parseCsv = (text: string) => {
   if (allErrors.length) {
     validationMessages.value = headerMsgs.concat(allErrors)
   } else {
-    validationMessages.value = ['No errors found in the file. You can proceed to upload.']
+    // If basic validation passes, trigger comprehensive validation immediately
+    validationMessages.value = ['File format is valid. Running comprehensive validation...']
+    triggerComprehensiveValidation()
+  }
+}
+
+// Trigger comprehensive validation via parent component
+const triggerComprehensiveValidation = async () => {
+  if (!selectedFile.value) return
+  
+  isValidating.value = true
+  validationComplete.value = false
+  hasValidationErrors.value = false
+  
+  try {
+    // Emit validation event to parent component
+    emit('validate', selectedFile.value)
+  } catch (error) {
+    console.error('Validation trigger error:', error)
+    validationMessages.value = ['Error triggering validation. Please try again.']
+    isValidating.value = false
+  }
+}
+
+// Method to handle validation results from parent component
+const handleValidationResult = (result: any) => {
+  isValidating.value = false
+  validationComplete.value = true
+  
+  if (result.errors && result.errors.length > 0) {
+    hasValidationErrors.value = true
+    allValidationErrors.value = result.errors
+    showAllErrors.value = false
+    
+    const errorMessages = result.errors.slice(0, 5).map((error: any) => 
+      `Row ${error.row} (${error.field}): ${error.message}`
+    )
+    
+    validationMessages.value = [
+      `Validation failed: Found ${result.errors.length} error${result.errors.length > 1 ? 's' : ''} in ${result.totalRows || 0} row${result.totalRows > 1 ? 's' : ''}`,
+      ...errorMessages
+    ]
+  } else {
+    hasValidationErrors.value = false
+    allValidationErrors.value = []
+    showAllErrors.value = false
+    validationMessages.value = ['No errors found in file and data. Click "Upload Assets" to proceed.']
+  }
+}
+
+// Toggle showing all errors
+const toggleShowAllErrors = () => {
+  showAllErrors.value = !showAllErrors.value
+  
+  // Always keep the summary line as the first message
+  const summaryLine = `Validation failed: Found ${allValidationErrors.value.length} error${allValidationErrors.value.length > 1 ? 's' : ''} in ${allValidationErrors.value.length} row${allValidationErrors.value.length > 1 ? 's' : ''}`
+  
+  if (showAllErrors.value) {
+    // Show all errors
+    const allErrorMessages = allValidationErrors.value.map((error: any) => 
+      `Row ${error.row} (${error.field}): ${error.message}`
+    )
+    
+    validationMessages.value = [
+      summaryLine,
+      ...allErrorMessages
+    ]
+  } else {
+    // Show only first 5 errors
+    const errorMessages = allValidationErrors.value.slice(0, 5).map((error: any) => 
+      `Row ${error.row} (${error.field}): ${error.message}`
+    )
+    
+    validationMessages.value = [
+      summaryLine,
+      ...errorMessages
+    ]
+  }
+}
+
+// Get column CSS class for dynamic styling
+const getColumnClass = (columnKey: string) => {
+  const baseClass = 'text-truncate'
+  
+  // Define column-specific classes for better layout
+  const columnClasses: Record<string, string> = {
+    'assetId': 'col-asset-id',
+    'serialNumber': 'col-serial-number', 
+    'assetTypeId': 'col-asset-type',
+    'brandId': 'col-brand',
+    'modelId': 'col-model',
+    'vendorId': 'col-vendor',
+    'status': 'col-status',
+    'condition': 'col-condition',
+    'location': 'col-location',
+    'purchaseDate': 'col-date',
+    'purchaseCost': 'col-cost',
+    'warrantyStartDate': 'col-date',
+    'warrantyEndDate': 'col-date',
+    'notes': 'col-notes'
+  }
+  
+  return `${baseClass} ${columnClasses[columnKey] || 'col-default'}`
+}
+
+// Format cell values for better display
+const formatCellValue = (value: any, columnKey: string) => {
+  if (value === null || value === undefined || value === '') {
+    return '-'
+  }
+  
+  // Format specific column types
+  switch (columnKey) {
+    case 'purchaseCost':
+      return typeof value === 'number' ? `₹${value.toLocaleString()}` : value
+    case 'purchaseDate':
+    case 'warrantyStartDate':
+    case 'warrantyEndDate':
+      return value // Already formatted as DD-MM-YYYY
+    default:
+      return value
+  }
+}
+
+// Check for duplicate values within the file (generic)
+const checkDuplicates = (rows: any[]) => {
+  // This is a generic duplicate checker - specific implementations can be added by parent components
+  const duplicates: string[] = []
+  
+  // Check for duplicate values in any field that might be unique
+  const fieldSets: Record<string, Set<string>> = {}
+  
+  rows.forEach(row => {
+    // Check common unique fields
+    const uniqueFields = ['assetId', 'serialNumber', 'id', 'code', 'name']
+    
+    uniqueFields.forEach(field => {
+      if (row[field]) {
+        if (!fieldSets[field]) {
+          fieldSets[field] = new Set()
+        }
+        
+        if (fieldSets[field].has(row[field])) {
+          duplicates.push(`Row ${row._row}: Duplicate ${field} '${row[field]}'`)
+        } else {
+          fieldSets[field].add(row[field])
+        }
+      }
+    })
+  })
+  
+  if (duplicates.length > 0) {
+    validationMessages.value.push(...duplicates)
   }
 }
 
@@ -405,23 +637,18 @@ const handleUpload = async () => {
       progress.value = p 
     }
     
-    // Send valid rows (only rows without errors)
-    const validRows = rows.value.filter(r => !r._errors || r._errors.length === 0)
-    if (!validRows.length) {
-      validationMessages.value.push('No valid rows to upload. Please fix errors and try again.')
+    // Always emit the file for comprehensive validation
+    // The parent component (BulkAssetUpload) will handle detailed validation
+    if (!selectedFile.value) {
+      validationMessages.value.push('No file selected for upload.')
       return
     }
     
-    // Clean up data - remove internal fields
-    const cleanData = validRows.map(row => {
-      const { _row, _errors, ...cleanRow } = row
-      return cleanRow
-    })
-    
     progress.value = 100
     
-    // Emit the upload event
-    emit('upload', cleanData)
+    // Emit the upload event with the original file
+    console.log('BulkUploadModal: Emitting file:', selectedFile.value.name, selectedFile.value.size)
+    emit('upload', selectedFile.value)
     
     // Close modal
     const modalEl = document.getElementById(props.modalId)
@@ -443,6 +670,7 @@ const handleUpload = async () => {
 
 // Public methods for parent component
 const openModal = () => {
+  console.log('BulkUploadModal: openModal called for modalId:', props.modalId)
   removeFile()
   validationMessages.value = []
   uploading.value = false
@@ -452,12 +680,16 @@ const openModal = () => {
   if (el) {
     const modal = Modal.getInstance(el) || new Modal(el)
     modal.show()
+    console.log('BulkUploadModal: Modal shown')
+  } else {
+    console.error('BulkUploadModal: Modal element not found:', props.modalId)
   }
 }
 
 // Expose methods to parent
 defineExpose({
-  openModal
+  openModal,
+  handleValidationResult
 })
 </script>
 
@@ -535,6 +767,38 @@ defineExpose({
   font-weight: 500 !important;
 }
 
+/* Validation Summary (Red Info Tag) */
+.validation-summary {
+  color: var(--secondary-red) !important;
+  background-color: rgba(233, 118, 118, 0.08) !important;
+  border: 1px solid rgba(233, 118, 118, 0.25) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 0.75rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Validation Details (Normal Text) */
+.validation-details {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.75rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.validation-detail-item {
+  color: var(--primary-dark-gray) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4 !important;
+  margin-bottom: 0.25rem !important;
+  padding: 0.125rem 0 !important;
+}
+
+.validation-detail-item:last-child {
+  margin-bottom: 0 !important;
+}
+
 /* Required Columns sequence: horizontal boxed items like Excel headers */
 .columns-sequence {
   display: flex !important;
@@ -559,38 +823,78 @@ defineExpose({
   box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
 }
 
-/* Excel-like header cells */
-.columns-excel {
-  gap: 0 !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.375rem !important;
-  overflow: hidden !important;
-  width: 100% !important;
+/* Asset info section compact - matching AssetsView modal design */
+.asset-info-section-compact {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  background-color: var(--primary-light-gray);
+  display: flex;
+  flex-direction: column;
 }
 
-.columns-excel .excel-cell {
-  background-color: #f8fafc !important; /* subtle header gray */
-  border-right: 1px solid var(--element-gray) !important;
-  padding: 0.5rem 0.75rem !important;
+.asset-info-section-compact .section-title-compact {
+  font-size: 1.1rem !important;
   font-weight: 600 !important;
+  color: var(--primary-dark-gray) !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--element-gray);
+}
+
+/* Chip-based layout for columns */
+.columns-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.column-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.25rem 0.5rem !important;
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
   color: var(--primary-black) !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  min-width: 120px !important;
-  flex: 1 1 0 !important;
-  display: flex !important;
-  align-items: center !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 0.25rem !important;
 }
 
-.columns-excel .excel-cell:last-child {
-  border-right: none !important;
+.column-chip:hover {
+  background-color: var(--element-light-gray) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Give the longer header a bit more space */
-.columns-excel .excel-cell:nth-child(5) {
-  min-width: 200px !important;
-  flex: 2 1 0 !important;
+.column-label {
+  font-weight: 500 !important;
+  margin: 0 !important;
+}
+
+.column-label span {
+  color: var(--secondary-red) !important;
+  font-weight: bold !important;
+  margin-left: 0.125rem !important;
+}
+
+/* Sequence note styling - matching AssetsView modal design */
+.sequence-note {
+  font-size: 0.875rem !important;
+  color: var(--primary-mid-gray) !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0 !important;
+}
+
+.sequence-note i {
+  color: var(--primary-mid-gray) !important;
 }
 
 .badge-preview {
@@ -602,11 +906,190 @@ defineExpose({
   border-radius: 0.375rem !important;
 }
 
+.badge-scroll-hint {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.375rem !important;
+  animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Dynamic Preview Table Styling */
+.preview-table-container {
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  max-width: 100% !important;
+}
+
+.preview-table {
+  margin-bottom: 0 !important;
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 0.5rem 0.75rem !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+  vertical-align: middle !important;
+}
+
+.preview-table th {
+  background-color: var(--primary-light-gray) !important;
+  font-weight: 600 !important;
+  color: var(--primary-black) !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.preview-table td {
+  font-size: 0.8rem !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+/* Row number column */
+.row-number-col {
+  width: 50px !important;
+  min-width: 50px !important;
+  max-width: 50px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  background-color: var(--primary-light-gray) !important;
+}
+
+/* Dynamic column widths based on content type */
+.col-asset-id {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  font-family: monospace !important;
+  font-weight: 600 !important;
+}
+
+.col-serial-number {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  font-family: monospace !important;
+}
+
+.col-asset-type,
+.col-brand,
+.col-model,
+.col-vendor {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+
+.col-status,
+.col-condition {
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+  text-align: center !important;
+}
+
+.col-location {
+  width: 150px !important;
+  min-width: 150px !important;
+  max-width: 150px !important;
+}
+
+.col-date {
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+  font-family: monospace !important;
+  text-align: center !important;
+}
+
+.col-cost {
+  width: 100px !important;
+  min-width: 100px !important;
+  max-width: 100px !important;
+  text-align: right !important;
+  font-family: monospace !important;
+  font-weight: 600 !important;
+}
+
+.col-notes {
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+}
+
+.col-default {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+/* Text truncation for all columns */
+.text-truncate {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .preview-table-container {
+    font-size: 0.75rem !important;
+  }
+  
+  .preview-table th,
+  .preview-table td {
+    padding: 0.375rem 0.5rem !important;
+  }
+  
+  .row-number-col {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+  }
+  
+  .col-asset-id,
+  .col-serial-number,
+  .col-location,
+  .col-notes {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+  }
+  
+  .col-asset-type,
+  .col-brand,
+  .col-model,
+  .col-vendor,
+  .col-status,
+  .col-condition,
+  .col-date,
+  .col-cost {
+    width: 80px !important;
+    min-width: 80px !important;
+    max-width: 80px !important;
+  }
+}
+
 /* Modal styling */
 .modal-content {
   border: none !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
   border-radius: 0.75rem !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
 }
 
 .modal-header {
@@ -618,6 +1101,8 @@ defineExpose({
 .modal-body {
   background-color: var(--primary-white) !important;
   padding: 2rem !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }
 
 .modal-footer {
