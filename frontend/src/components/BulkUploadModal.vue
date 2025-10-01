@@ -235,11 +235,13 @@ interface Props {
   columns: Column[]
   templateData?: any[]
   uploadButtonText?: string
+  alwaysValidate?: boolean // New prop to always trigger comprehensive validation
 }
 
 const props = withDefaults(defineProps<Props>(), {
   uploadButtonText: 'Upload Data',
-  templateData: () => []
+  templateData: () => [],
+  alwaysValidate: false
 })
 
 // Emits
@@ -404,13 +406,23 @@ const parseCsv = async (text: string) => {
   const header = lines[0].split(',').map(h => h.trim().toLowerCase())
   const expected = props.columns.map(col => col.label.toLowerCase())
   
+  console.log('BulkUploadModal: Header validation debug:')
+  console.log('  File headers:', header)
+  console.log('  Expected headers:', expected)
+  console.log('  Headers match:', header.length === expected.length && header.every((h, i) => h === expected[i]))
+  
   // Check if headers match exactly (case-insensitive)
   const headerMatches = expected.every((expectedHeader, i) => 
     (header[i] || '').toLowerCase() === expectedHeader.toLowerCase()
   )
   
+  console.log('  Header matches result:', headerMatches)
+  
   if (!headerMatches) {
     validationMessages.value.push(`Invalid header order. Expected: ${props.columns.map(col => col.label).join(', ')}`)
+    console.log('BulkUploadModal: Header validation failed, not triggering comprehensive validation')
+  } else {
+    console.log('BulkUploadModal: Header validation passed, will trigger comprehensive validation')
   }
   
   const parsedRows = lines.slice(1).map((line, idx) => {
@@ -460,6 +472,11 @@ const parseCsv = async (text: string) => {
     }
   })
   
+  console.log('BulkUploadModal: Basic validation results:')
+  console.log('  Total rows:', parsedRows.length)
+  console.log('  Rows with errors:', allErrors.length)
+  console.log('  Basic errors:', allErrors)
+  
   // Reset and show aggregated messages (keep header issues too)
   const headerMsgs = validationMessages.value.filter(m => 
     m.toLowerCase().startsWith('invalid header') || 
@@ -468,6 +485,13 @@ const parseCsv = async (text: string) => {
   
   if (allErrors.length) {
     validationMessages.value = headerMsgs.concat(allErrors)
+    
+    // If alwaysValidate is true, still trigger comprehensive validation even with basic errors
+    if (props.alwaysValidate) {
+      console.log('BulkUploadModal: Basic errors found but alwaysValidate=true, triggering comprehensive validation')
+      validationMessages.value = ['File format issues detected. Running comprehensive validation...']
+      triggerComprehensiveValidation()
+    }
   } else {
     // If basic validation passes, trigger comprehensive validation immediately
     validationMessages.value = ['File format is valid. Running comprehensive validation...']
@@ -477,17 +501,23 @@ const parseCsv = async (text: string) => {
 
 // Trigger comprehensive validation via parent component
 const triggerComprehensiveValidation = async () => {
-  if (!selectedFile.value) return
+  console.log('BulkUploadModal: triggerComprehensiveValidation called')
+  if (!selectedFile.value) {
+    console.log('BulkUploadModal: No selected file, returning')
+    return
+  }
   
+  console.log('BulkUploadModal: Starting comprehensive validation for file:', selectedFile.value.name)
   isValidating.value = true
   validationComplete.value = false
   hasValidationErrors.value = false
   
   try {
     // Emit validation event to parent component
+    console.log('BulkUploadModal: Emitting validate event to parent component')
     emit('validate', selectedFile.value)
   } catch (error) {
-    console.error('Validation trigger error:', error)
+    console.error('BulkUploadModal: Validation trigger error:', error)
     validationMessages.value = ['Error triggering validation. Please try again.']
     isValidating.value = false
   }

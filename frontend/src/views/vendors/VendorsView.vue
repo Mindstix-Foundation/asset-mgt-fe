@@ -1,120 +1,200 @@
 `<template>
-  <div class="vendors-page" style="background-color: var(--primary-white);">
-    <!-- Main Content -->
-    <div class="container-fluid px-3 py-4">
-      <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 class="mb-0" style="color: var(--primary-black);">Vendor Management</h2>
-          <p class="text-muted mb-0">Manage suppliers and service providers</p>
-        </div>
-        <div class="d-flex gap-2 align-items-center">
-          <!-- View Toggle (List/Grid) -->
-          <div class="btn-group" role="group" aria-label="View toggle">
-            <button 
-              class="btn btn-outline-secondary btn-modern view-toggle" 
-              :class="{ active: !isGridView }" 
-              data-view="list" 
-              @click="toggleView('list')"
-            >
-              <i class="fas fa-list"></i>
-            </button>
-            <button 
-              class="btn btn-outline-secondary btn-modern view-toggle" 
-              :class="{ active: isGridView }" 
-              data-view="grid"
-              @click="toggleView('grid')"
-            >
-              <i class="fas fa-th-large"></i>
-            </button>
-          </div>
-          
-          <!-- Action Buttons -->
-          <button 
-            class="btn btn-outline-secondary btn-modern" 
-            @click="openBulkUploadModal"
-          >
-            <i class="fas fa-file-excel me-1"></i>Bulk Upload
-          </button>
-          <RouterLink to="/app/vendors/add" class="btn btn-primary btn-modern">
-            <i class="fas fa-plus me-1"></i>Add Vendor
-          </RouterLink>
-        </div>
+  <div class="container-fluid px-3 py-4">
+    <!-- Page Header -->
+    <div class="row align-items-center mb-4">
+      <!-- Title Section -->
+      <div class="col-12 col-md-6 col-lg-3 mb-3 mb-lg-0">
+        <h2 class="mb-0" style="color: var(--primary-black); white-space: nowrap;">Vendor Management</h2>
+        <p class="text-muted mb-0">Manage suppliers and service providers</p>
       </div>
-
-      <!-- Filters -->
-      <div class="card mb-4 filter-card">
-        <div class="card-header">
-          <div>
-            <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Vendors</h6>
-            <small class="text-muted">Search and filter vendors by various criteria</small>
-          </div>
-        </div>
-        <div class="card-body">
-          <!-- All Filters -->
-          <div class="row">
-            <div class="col-12 col-md-5 mb-3">
-              <label class="form-label">Search Vendors</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="searchTerm" 
-                  placeholder="Search by name, contact, email..."
-                  @input="filterVendors"
-                >
+      
+      <!-- Actions Section -->
+      <div class="col-12 col-md-6 col-lg-9">
+        <!-- Small screens: Custom layout -->
+        <div class="d-md-none">
+          <div class="row g-2 mb-2">
+            <!-- Row 1: View Toggle + More Actions -->
+            <div class="col-6">
+              <div class="d-flex gap-1 w-100 justify-content-center">
+                <!-- View Toggle -->
+                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                  <button 
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                    @click="toggleView('list')"
+                    style="min-width: 35px; padding: 0.375rem 0.5rem;"
+                  >
+                    <i class="fas fa-list"></i>
+                  </button>
+                  <button 
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                    @click="toggleView('grid')"
+                    style="min-width: 35px; padding: 0.375rem 0.5rem;"
+                  >
+                    <i class="fas fa-th-large"></i>
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Vendor Type</label>
-              <select class="form-select" v-model="filterType" @change="filterVendors">
-                <option value="">All Types</option>
-                <option value="SUPPLIER">Supplier</option>
-                <option value="SERVICE">Service Provider</option>
-                <option value="MANUFACTURER">Manufacturer</option>
-                <option value="DISTRIBUTOR">Distributor</option>
-                <option value="CONTRACTOR">Contractor</option>
-                <option value="BOTH">Both</option>
-              </select>
+            <div class="col-6">
+              <button 
+                class="btn btn-outline-secondary btn-modern w-100" 
+                @click="openBulkUploadModal"
+              >
+                <i class="fas fa-file-excel me-1"></i>Bulk Upload
+              </button>
             </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Status</label>
-              <select class="form-select" v-model="filterStatus" @change="filterVendors">
-                <option value="">All Status</option>
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-              </select>
+          </div>
+          
+          <div class="row g-2">
+            <!-- Row 2: Add Vendor -->
+            <div class="col-12">
+              <RouterLink to="/app/vendors/add" class="btn btn-primary btn-modern w-100">
+                <i class="fas fa-plus me-1"></i>Add Vendor
+              </RouterLink>
             </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Sort By</label>
-              <div class="d-flex gap-2">
-                <select class="form-select" v-model="sortBy" @change="fetchVendors">
-                  <option value="name">Name</option>
-                  <option value="type">Type</option>
-                  <option value="status">Status</option>
-                </select>
+          </div>
+        </div>
+        
+        <!-- Medium+ screens: Original layout -->
+        <div class="d-none d-md-block">
+          <div class="row g-2 justify-content-md-end">
+            <!-- View Toggle + Bulk Upload -->
+            <div class="col-md-12 col-lg-auto">
+              <div class="d-flex gap-2 w-100">
+                <!-- View Toggle -->
+                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                  <button 
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                    @click="toggleView('list')"
+                    style="min-width: 40px;"
+                  >
+                    <i class="fas fa-list"></i>
+                  </button>
+                  <button 
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                    @click="toggleView('grid')"
+                    style="min-width: 40px;"
+                  >
+                    <i class="fas fa-th-large"></i>
+                  </button>
+                </div>
+                
+                <!-- Bulk Upload Button -->
                 <button 
-                  class="btn btn-outline-secondary" 
-                  @click="toggleSortOrder" 
-                  title="Toggle Sort Order"
+                  class="btn btn-outline-secondary btn-modern flex-fill" 
+                  @click="openBulkUploadModal"
                 >
-                  <i :class="sortAscending ? 'fas fa-sort-amount-down' : 'fas fa-sort-amount-up'"></i>
+                  <i class="fas fa-file-excel me-1"></i>Bulk Upload
                 </button>
               </div>
             </div>
-            <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
+            
+            <!-- Add Vendor -->
+            <div class="col-md-12 col-lg-auto">
+              <RouterLink to="/app/vendors/add" class="btn btn-primary btn-modern w-100">
+                <i class="fas fa-plus me-1"></i>Add Vendor
+              </RouterLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Sort Bar -->
+    <div class="mb-4">
+      <div class="row align-items-end">
+        <!-- Search Vendors -->
+        <div class="col-12 col-lg-7 mb-3">
+          <label class="form-label">Search Vendors</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input 
+              type="text" 
+              class="form-control" 
+              v-model="searchTerm" 
+              placeholder="Search by name, contact, email..."
+              @input="debouncedFetchVendors"
+            >
+          </div>
+        </div>
+        
+        <!-- Sort By -->
+        <div class="col-12 col-lg-3 mb-3">
+          <SearchableDropdown
+            id="sort-by-filter"
+            label="Sort By"
+            placeholder="Select sort option..."
+            :items="sortOptions"
+            v-model="selectedSortBy"
+            @change="onSortByChange"
+          />
+        </div>
+        
+        <!-- Toggle Sort Order and Filter Button -->
+        <div class="col-12 col-lg-2 mb-3">
+          <div class="row g-3">
+            <!-- Toggle Sort Order -->
+            <div class="col-4">
+              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
+              </button>
+            </div>
+            
+            <!-- Filter Button -->
+            <div class="col-8">
               <button 
-                class="btn btn-outline-secondary w-100" 
-                @click="clearFilters" 
-                title="Clear Filters"
+                class="btn btn-outline-secondary btn-modern w-100" 
+                @click="toggleFilterDropdown"
+                :class="{ active: showFilterDropdown }"
               >
-                <i class="fas fa-times"></i>
+                <i class="fas fa-filter me-1"></i>Filters
               </button>
             </div>
           </div>
         </div>
       </div>
+        
+      <!-- Filter Dropdown -->
+      <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+        <div class="row">
+          <div class="col-12">
+            <!-- Bootstrap Flexbox for exact proportions -->
+            <div class="d-flex flex-column flex-md-row gap-2">
+              <!-- 2 Filter Dropdowns: equal width -->
+              <div class="flex-fill">
+                <SearchableDropdown
+                  id="vendor-type-filter"
+                  label="Vendor Type"
+                  placeholder="Search vendor types..."
+                  :items="vendorTypeOptions"
+                  v-model="selectedType"
+                  @change="onVendorTypeChange"
+                />
+              </div>
+              <div class="flex-fill">
+                <SearchableDropdown
+                  id="status-filter"
+                  label="Status"
+                  placeholder="Search status..."
+                  :items="statusOptions"
+                  v-model="selectedStatus"
+                  @change="onStatusChange"
+                />
+              </div>
+              
+              <!-- Clear Button: fixed width -->
+              <div class="flex-shrink-0" style="width: 20%;">
+                <div class="d-flex align-items-end h-100">
+                  <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                    <i class="fas fa-times me-1"></i>Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-5">
@@ -139,16 +219,16 @@
         <div class="card" v-show="!isGridView">
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table table-hover mb-0" id="vendorsTable">
+              <table class="table table-hover mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>Vendor Name</th>
-                    <th>Contact Person</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th style="width: 27%;">Vendor Name</th>
+                    <th style="width: 15%;">Contact Person</th>
+                    <th style="width: 24%;">Email</th>
+                    <th style="width: 14%;">Phone</th>
+                    <th style="width: 13%;">Type</th>
+                    <th style="width: 8%;">Status</th>
+                    <th style="width: 9%;">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -158,34 +238,39 @@
                     :data-name="vendor.name"
                     :data-type="vendor.vendorType"
                     :data-status="vendor.status"
-                    :data-search="`${vendor.name} ${vendor.contactPerson} ${vendor.email} ${vendor.phone}`"
+                    :data-contact="vendor.contactPerson"
+                    :data-email="vendor.email"
+                    :data-phone="vendor.phone"
                   >
                     <td>
                       <div class="d-flex align-items-center">
-                        <i :class="getVendorIcon(vendor.vendorType)" class="fa-2x text-primary me-3"></i>
+                        <i :class="getVendorIconWithColor(vendor.vendorType)" class="fa-2x me-3"></i>
                         <div>
                           <div class="fw-bold">{{ vendor.name }}</div>
-                          <small class="text-muted">{{ getVendorDescription(vendor.vendorType) }}</small>
                         </div>
                       </div>
                     </td>
-                    <td>{{ vendor.contactPerson }}</td>
+                    <td>{{ vendor.contactPerson || '-' }}</td>
                     <td>{{ vendor.email }}</td>
-                    <td>{{ vendor.phone }}</td>
-                    <td><span :class="getTypeBadgeClass(vendor.vendorType)">{{ getTypeLabel(vendor.vendorType) }}</span></td>
-                    <td><span :class="getStatusBadgeClass(vendor.status)">{{ getStatusLabel(vendor.status) }}</span></td>
+                    <td>{{ vendor.phone || '-' }}</td>
+                    <td>
+                      <span :class="getTypeBadgeClass(vendor.vendorType)">{{ getTypeLabel(vendor.vendorType) }}</span>
+                    </td>
+                    <td>
+                      <span :class="getStatusBadgeClass(vendor.status)">{{ getStatusLabel(vendor.status) }}</span>
+                    </td>
                     <td>
                       <div class="btn-group btn-group-sm vendor-actions">
                         <button 
-                          class="btn btn-action btn-view" 
-                          title="View Details"
+                          class="btn btn-outline-primary" 
                           @click="showVendorDetails(vendor)"
+                          title="View Vendor Details"
                         >
                           <i class="fas fa-eye"></i>
                         </button>
                         <button 
-                          class="btn btn-action btn-edit" 
-                          title="Edit"
+                          class="btn btn-outline-secondary" 
+                          title="Edit Vendor"
                           @click="editVendor(vendor)"
                         >
                           <i class="fas fa-edit"></i>
@@ -193,10 +278,11 @@
                       </div>
                     </td>
                   </tr>
-                  <tr v-if="filteredVendors.length === 0" id="noResultsRow">
+                  <!-- No results row -->
+                  <tr v-if="filteredVendors.length === 0">
                     <td colspan="7" class="text-center py-4">
                       <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
-                      <h6 class="text-muted">No vendors found</h6>
+                      <h6 class="text-muted">No items found</h6>
                       <p class="text-muted mb-0">Try adjusting your search criteria</p>
                     </td>
                   </tr>
@@ -211,52 +297,67 @@
           <div class="row" id="gridContainer" v-if="filteredVendors.length > 0">
             <div 
               v-for="vendor in filteredVendors" 
-              :key="vendor.id" 
-              class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3"
+              :key="vendor.id"
+              class="col-12 col-sm-12 col-md-6 col-lg-4 mb-4"
             >
-              <div class="card h-100 vendor-card">
-                <div class="card-body d-flex flex-column">
-                  <div class="vendor-header mb-2">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <div class="flex-grow-1 me-2">
-                        <h6 class="card-title fw-bold mb-1 text-truncate">{{ vendor.name }}</h6>
-                        <p class="text-muted small mb-0">{{ getVendorDescription(vendor.vendorType) }}</p>
-                      </div>
-                      <div class="d-flex flex-column gap-2 align-items-end">
-                        <span :class="getTypeBadgeClass(vendor.vendorType) + ' badge-sm'">{{ getTypeLabel(vendor.vendorType) }}</span>
-                        <span :class="getStatusBadgeClass(vendor.status) + ' badge-sm'">{{ getStatusLabel(vendor.status) }}</span>
-                      </div>
+              <div class="card h-100 vendor-card-modern">
+                <div class="card-body p-2">
+                  <!-- Header with icon, vendor name and status -->
+                  <div class="d-flex align-items-center mb-2">
+                    <div 
+                      class="rounded-circle d-flex align-items-center justify-content-center me-2" 
+                      :style="{ width: '36px', height: '36px', backgroundColor: getVendorTypeColor(vendor.vendorType), flexShrink: 0 }"
+                    >
+                      <i :class="getVendorTypeIcon(vendor.vendorType)" class="text-white" style="font-size: 0.9rem; color: white !important;"></i>
                     </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ vendor.name }}</h6>
+                      <small class="text-muted text-truncate d-block">{{ getTypeLabel(vendor.vendorType) }}</small>
+                    </div>
+                    <span :class="[getStatusBadgeClass(vendor.status), 'badge-sm']" style="font-size: 0.7rem;">
+                      {{ getStatusLabel(vendor.status) }}
+                    </span>
                   </div>
                   
-                  <div class="vendor-details flex-grow-1 mb-3">
-                    <div class="mb-1">
-                      <i class="fas fa-user text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ vendor.contactPerson }}</small>
-                    </div>
-                    <div class="mb-1">
-                      <i class="fas fa-envelope text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ vendor.email }}</small>
-                    </div>
-                    <div class="mb-0">
-                      <i class="fas fa-phone text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ vendor.phone }}</small>
+                  <!-- Vendor Details Grid - 2 columns for better space usage -->
+                  <div class="mb-2">
+                    <div class="row g-1">
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Contact Person</small>
+                        <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.contactPerson || 'Not specified' }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Email</small>
+                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.email || 'Not specified' }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Phone</small>
+                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.phone || 'Not specified' }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Type</small>
+                        <div class="text-truncate">
+                          <span :class="getTypeBadgeClass(vendor.vendorType) + ' badge-sm'" style="font-size: 0.65rem;">{{ getTypeLabel(vendor.vendorType) }}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
                   <div class="vendor-actions-footer mt-auto pt-2 border-top">
-                    <div class="d-flex justify-content-center gap-2">
+                    <div class="d-flex justify-content-center gap-1">
                       <button 
-                        class="btn btn-sm btn-action btn-view vendor-view-btn" 
-                        title="View Vendor Details"
+                        class="btn btn-action btn-view btn-sm" 
                         @click="showVendorDetails(vendor)"
+                        title="View Vendor Details"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-eye"></i>
                       </button>
                       <button 
-                        class="btn btn-sm btn-action btn-edit vendor-edit-btn" 
+                        class="btn btn-action btn-edit btn-sm" 
                         title="Edit Vendor"
                         @click="editVendor(vendor)"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-edit"></i>
                       </button>
@@ -267,8 +368,8 @@
             </div>
           </div>
           
-          <!-- No Results for Grid View -->
-          <div v-else class="col-12 text-center py-5">
+          <!-- No results for grid view -->
+          <div v-if="filteredVendors.length === 0" class="col-12 text-center py-5">
             <i class="fas fa-store fa-3x text-muted mb-3"></i>
             <h5 class="text-muted">No vendors found</h5>
             <p class="text-muted">Try adjusting your search criteria</p>
@@ -307,13 +408,17 @@
     </div>
 
     <!-- Vendor Detail Modal -->
-    <div v-if="showVendorModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+    <div 
+      class="modal fade" 
+      :class="{ show: showVendorModal }" 
+      :style="{ display: showVendorModal ? 'block' : 'none' }"
+      tabindex="-1"
+      v-if="selectedVendor"
+    >
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;">
-              {{ selectedVendor ? `Vendor Details - ${selectedVendor.name}` : 'Vendor Details' }}
-            </h5>
+            <h5 class="modal-title">Vendor Details - {{ selectedVendor.name }}</h5>
             <button type="button" class="btn-close" @click="closeVendorModal"></button>
           </div>
           <div class="modal-body">
@@ -325,118 +430,99 @@
               <p class="mt-2 text-muted">Loading vendor details...</p>
             </div>
 
-            <!-- Vendor Details -->
-            <div v-else class="row g-3">
-              <!-- Basic Information Section -->
+            <!-- Vendor Information - Compact Layout -->
+            <div v-else class="row g-2 equal-height-columns">
+              <!-- Left Column: Basic Info -->
               <div class="col-md-6">
-                <div class="vendor-info-section">
-                  <h6 class="section-title"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
-                  <div class="info-grid">
-                    <div class="info-item">
-                      <label class="info-label">Vendor Name</label>
-                      <div class="info-value fw-bold">{{ selectedVendor.name }}</div>
+                <div class="vendor-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Vendor Name</label>
+                      <div class="info-value-compact fw-bold">{{ selectedVendor.name }}</div>
                     </div>
-                    <div class="info-item">
-                      <label class="info-label">Contact Person</label>
-                      <div class="info-value">{{ selectedVendor.contactPerson }}</div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Contact Person</label>
+                      <div class="info-value-compact">{{ selectedVendor.contactPerson || 'Not specified' }}</div>
                     </div>
-                    <div class="row g-3">
-                      <div class="col-6">
-                        <div class="info-item">
-                          <label class="info-label">Vendor Type</label>
-                          <div class="info-value">
-                            <span :class="getTypeBadgeClass(selectedVendor.vendorType)">{{ getTypeLabel(selectedVendor.vendorType) }}</span>
-                          </div>
-                        </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Vendor Type</label>
+                      <div class="info-value-compact">
+                        <span :class="getTypeBadgeClass(selectedVendor.vendorType)">{{ getTypeLabel(selectedVendor.vendorType) }}</span>
                       </div>
-                      <div class="col-6">
-                        <div class="info-item">
-                          <label class="info-label">Status</label>
-                          <div class="info-value">
-                            <span :class="getStatusBadgeClass(selectedVendor.status)">{{ getStatusLabel(selectedVendor.status) }}</span>
-                          </div>
-                        </div>
+                    </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Status</label>
+                      <div class="info-value-compact">
+                        <span :class="getStatusBadgeClass(selectedVendor.status)">{{ getStatusLabel(selectedVendor.status) }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Contact Details Section -->
+              <!-- Right Column: Contact & Legal -->
               <div class="col-md-6">
-                <div class="vendor-info-section">
-                  <h6 class="section-title"><i class="fas fa-address-book me-2"></i>Contact Details</h6>
-                  <div class="info-grid">
-                    <div class="info-item">
-                      <label class="info-label">Email Address</label>
-                      <div class="info-value">{{ selectedVendor.email }}</div>
+                <div class="vendor-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-address-book me-2"></i>Contact & Legal</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Email Address</label>
+                      <div class="info-value-compact">{{ selectedVendor.email }}</div>
                     </div>
-                    <div class="info-item">
-                      <label class="info-label">Phone Number</label>
-                      <div class="info-value">{{ selectedVendor.phone }}</div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Phone Number</label>
+                      <div class="info-value-compact">{{ selectedVendor.phone || 'Not specified' }}</div>
                     </div>
-                    <div class="info-item">
-                      <label class="info-label">Address</label>
-                      <div class="info-value" style="white-space: pre-wrap; overflow-wrap: break-word;">{{ selectedVendor.address }}</div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Tax ID</label>
+                      <div class="info-value-compact font-monospace">{{ selectedVendor.taxId || 'Not specified' }}</div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Legal Details Section -->
-              <div class="col-12">
-                <div class="vendor-info-section">
-                  <h6 class="section-title"><i class="fas fa-file-contract me-2"></i>Legal Details</h6>
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="info-item">
-                        <label class="info-label">Tax ID</label>
-                        <div class="info-value font-monospace">{{ selectedVendor.taxId || 'N/A' }}</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="info-item">
-                        <label class="info-label">PAN Number</label>
-                        <div class="info-value font-monospace">{{ selectedVendor.panNumber }}</div>
-                      </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">PAN Number</label>
+                      <div class="info-value-compact font-monospace">{{ selectedVendor.panNumber || 'Not specified' }}</div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Additional Notes Section -->
+            <!-- Address Information - Full Width -->
+            <div class="row mt-2">
               <div class="col-12">
-                <div class="vendor-info-section">
-                  <h6 class="section-title"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
-                  <div class="info-grid">
-                    <div class="info-item">
-                      <div class="info-value" style="white-space: pre-wrap; overflow-wrap: break-word;">{{ selectedVendor.notes || 'No additional notes provided.' }}</div>
-                    </div>
-                  </div>
+                <div class="vendor-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Address Information</h6>
+                  <NotesDisplay 
+                    :notes="selectedVendor.address"
+                    :fallback-text="'No address provided.'"
+                    :show-label="false"
+                    :show-icon="false"
+                    :show-empty-icon="true"
+                    :preserve-formatting="true"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Notes - Full Width -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <div class="vendor-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
+                  <NotesDisplay 
+                    :notes="selectedVendor.notes"
+                    :fallback-text="'No additional notes provided.'"
+                    :show-label="false"
+                    :show-icon="false"
+                    :show-empty-icon="true"
+                    :preserve-formatting="true"
+                  />
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeVendorModal">Close</button>
-            
-            <!-- Asset Management Buttons -->
-            <button 
-              type="button" 
-              class="btn btn-info" 
-              :disabled="true"
-              title="Feature coming soon"
-            >
-              <i class="fas fa-boxes me-1"></i>Show Assets
-            </button>
-            <button 
-              type="button" 
-              class="btn btn-success" 
-              :disabled="true"
-              title="Feature coming soon"
-            >
-              <i class="fas fa-plus me-1"></i>Add New Asset
-            </button>
             
             <!-- Vendor Management Buttons -->
             <div class="d-flex gap-2">
@@ -464,177 +550,10 @@
     </div>
 
     <!-- Bulk Upload Modal -->
-    <div v-if="showBulkUploadModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bulk-upload-modal">
-          <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black);">
-              <i class="fas fa-file-excel me-2" style="color: var(--secondary-purple);"></i>Bulk Upload Vendors
-            </h5>
-            <button type="button" class="btn-close" @click="closeBulkUploadModal"></button>
-          </div>
-          <div class="modal-body">
-            <!-- Step 1: Instructions and Template -->
-            <div class="mb-4">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0" style="color: var(--primary-black);">
-                  <i class="fas fa-download me-2" style="color: var(--secondary-purple);"></i>Step 1: Download Template
-                </h6>
-                <button class="btn btn-template-download" @click="downloadTemplate">
-                  <i class="fas fa-download me-2"></i>Download Template
-                </button>
-              </div>
-              <p class="text-muted small mb-0">Download our template to ensure your data is formatted correctly before uploading.</p>
-            </div>
-
-            <!-- Required Columns Info -->
-            <div class="required-columns-section mb-4">
-              <h6 class="mb-3" style="color: var(--primary-black);">
-                <i class="fas fa-list-check me-2" style="color: var(--secondary-green);"></i>Required Columns (in this order)
-              </h6>
-              <div class="columns-sequence">
-                <div class="column-item">
-                  <div class="column-number">1</div>
-                  <div class="column-name">Vendor Name</div>
-                </div>
-                <div class="column-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="column-item">
-                  <div class="column-number">2</div>
-                  <div class="column-name">Contact Person</div>
-                </div>
-                <div class="column-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="column-item">
-                  <div class="column-number">3</div>
-                  <div class="column-name">Email</div>
-                </div>
-                <div class="column-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="column-item">
-                  <div class="column-number">4</div>
-                  <div class="column-name">Phone</div>
-                </div>
-                <div class="column-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="column-item">
-                  <div class="column-number">5</div>
-                  <div class="column-name">Address</div>
-                </div>
-                <div class="column-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-                <div class="column-item">
-                  <div class="column-number">6</div>
-                  <div class="column-name">Type</div>
-                </div>
-              </div>
-              <p class="sequence-note mt-2">
-                <i class="fas fa-info-circle me-1" style="color: var(--secondary-purple);"></i>
-                <small class="text-muted">Make sure your spreadsheet columns follow this exact sequence</small>
-              </p>
-            </div>
-
-            <!-- Step 2: File Upload -->
-            <div class="mb-4">
-              <h6 class="mb-3" style="color: var(--primary-black);">
-                <i class="fas fa-upload me-2" style="color: var(--secondary-purple);"></i>Step 2: Upload File
-              </h6>
-              
-              <!-- Drag and Drop Upload Area -->
-              <div 
-                class="upload-area" 
-                :class="{ dragover: isDragOver }"
-                @click="triggerFileInput"
-                @dragover.prevent="isDragOver = true"
-                @dragleave.prevent="isDragOver = false"
-                @drop.prevent="handleFileDrop"
-              >
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <h6 class="upload-title">Drag & drop your file here</h6>
-                  <p class="upload-subtitle">or click to browse</p>
-                  <div class="supported-formats">
-                    <span class="format-badge">Excel (.xlsx)</span>
-                    <span class="format-badge">CSV (.csv)</span>
-                  </div>
-                </div>
-                <input 
-                  ref="fileInput" 
-                  type="file" 
-                  class="file-input" 
-                  accept=".xlsx,.xls,.csv" 
-                  @change="handleFileSelect"
-                >
-              </div>
-
-              <!-- File Info Display -->
-              <div v-if="selectedFile" class="file-info">
-                <div class="d-flex align-items-center justify-content-between p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border: 1px solid var(--element-gray);">
-                  <div class="d-flex align-items-center">
-                    <i class="fas fa-file-excel me-2" style="color: var(--secondary-green);"></i>
-                    <div>
-                      <div class="fw-semibold" style="color: var(--primary-black);">{{ selectedFile.name }}</div>
-                      <small class="text-muted">{{ formatFileSize(selectedFile.size) }}</small>
-                    </div>
-                  </div>
-                  <button type="button" class="btn btn-sm btn-outline-danger" @click="removeFile">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Validation Messages -->
-              <div v-if="uploadError" class="validation-messages mt-3">
-                <div class="validation-error">
-                  <i class="fas fa-exclamation-triangle me-2"></i>{{ uploadError }}
-                </div>
-              </div>
-              <div v-if="uploadSuccess" class="validation-messages mt-3">
-                <div class="validation-success">
-                  <i class="fas fa-check-circle me-2"></i>{{ uploadSuccess }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Upload Progress -->
-            <div v-if="isUploading" class="upload-progress">
-              <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-spinner fa-spin me-2" style="color: var(--secondary-purple);"></i>
-                <span style="color: var(--primary-black);">Processing your file...</span>
-              </div>
-              <div class="progress">
-                <div 
-                  class="progress-bar" 
-                  role="progressbar" 
-                  :style="`width: ${uploadProgress}%; background-color: var(--secondary-purple);`"
-                  :aria-valuenow="uploadProgress" 
-                  aria-valuemin="0" 
-                  aria-valuemax="100"
-                ></div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-cancel" @click="closeBulkUploadModal">
-              Cancel
-            </button>
-            <button 
-              type="button" 
-              class="btn btn-upload-primary" 
-              :disabled="!selectedFile || isUploading"
-              @click="uploadVendors"
-            >
-              <i class="fas fa-upload me-2"></i>Upload Vendors
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <BulkVendorUpload
+      ref="bulkVendorUploadRef"
+      @upload-success="handleBulkUploadSuccess"
+    />
 
     <!-- Status Confirmation Modal -->
     <div v-if="showStatusModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
@@ -706,7 +625,6 @@
           {{ toast.message }}
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -716,6 +634,9 @@ import { useRouter } from 'vue-router'
 import VendorApiService from '../../services/vendorApi'
 import { VendorStatus } from '../../types/vendor.types'
 import type { Vendor, VendorQueryParams } from '../../types/vendor.types'
+import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
+import NotesDisplay from '@/components/common/NotesDisplay.vue'
+import BulkVendorUpload from './BulkVendorUpload.vue'
 
 const router = useRouter()
 
@@ -738,27 +659,23 @@ const totalPages = ref(1)
 // No mock data - using real API data only
 
 const searchTerm = ref('')
-const filterType = ref('')
-const filterStatus = ref('')
-const sortBy = ref('name')
 const sortAscending = ref(true)
 const isGridView = ref(false)
 
+// Filter state variables
+const selectedType = ref<Item | null>(null)
+const selectedStatus = ref<Item | null>(null)
+const selectedSortBy = ref<Item | null>(null)
+const showFilterDropdown = ref(false)
+
 // Modal states
 const showVendorModal = ref(false)
-const showBulkUploadModal = ref(false)
 const showStatusModal = ref(false)
 const selectedVendor = ref<Vendor | null>(null)
 const statusChangeVendor = ref<Vendor | null>(null)
+const bulkVendorUploadRef = ref<InstanceType<typeof BulkVendorUpload> | null>(null)
 
-// Bulk upload states
-const selectedFile = ref<File | null>(null)
-const isDragOver = ref(false)
-const isUploading = ref(false)
-const uploadProgress = ref(0)
-const uploadError = ref('')
-const uploadSuccess = ref('')
-const fileInput = ref<HTMLInputElement>()
+// Bulk upload is now handled by BulkVendorUpload component
 
 // Pagination
 const currentPage = ref(1)
@@ -777,9 +694,9 @@ const fetchVendors = async () => {
       page: currentPage.value,
       limit: itemsPerPage.value,
       search: searchTerm.value || undefined,
-      vendorType: filterType.value || undefined,
-      status: (filterStatus.value || undefined) as VendorStatus | undefined,
-      sortBy: sortBy.value,
+      vendorType: selectedType.value?.value as string || undefined,
+      status: (selectedStatus.value?.value as string || undefined) as VendorStatus | undefined,
+      sortBy: selectedSortBy.value?.value as string || 'name',
       sortOrder: sortAscending.value ? 'asc' : 'desc'
     }
 
@@ -826,6 +743,28 @@ const filteredVendors = computed(() => vendors.value)
 const paginationStart = computed(() => (currentPage.value - 1) * itemsPerPage.value + 1)
 const paginationEnd = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalVendors.value))
 
+// Filter options
+const vendorTypeOptions = computed(() => [
+  { id: 'SUPPLIER', name: 'Supplier', value: 'SUPPLIER' },
+  { id: 'SERVICE', name: 'Service Provider', value: 'SERVICE' },
+  { id: 'MANUFACTURER', name: 'Manufacturer', value: 'MANUFACTURER' },
+  { id: 'DISTRIBUTOR', name: 'Distributor', value: 'DISTRIBUTOR' },
+  { id: 'CONTRACTOR', name: 'Contractor', value: 'CONTRACTOR' },
+  { id: 'BOTH', name: 'Both', value: 'BOTH' }
+])
+
+const statusOptions = computed(() => [
+  { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' },
+  { id: 'INACTIVE', name: 'Inactive', value: 'INACTIVE' }
+])
+
+const sortOptions = computed(() => [
+  { id: 'name', name: 'Name', value: 'name' },
+  { id: 'type', name: 'Type', value: 'vendorType' },
+  { id: 'status', name: 'Status', value: 'status' },
+  { id: 'createdAt', name: 'Created Date', value: 'createdAt' }
+])
+
 const visiblePages = computed(() => {
   const pages = []
   const start = Math.max(1, currentPage.value - 2)
@@ -842,23 +781,54 @@ const toggleView = (view: 'list' | 'grid') => {
   isGridView.value = view === 'grid'
 }
 
-const filterVendors = () => {
-  currentPage.value = 1
-  fetchVendors()
-}
-
 const toggleSortOrder = () => {
   sortAscending.value = !sortAscending.value
-  fetchVendors()
+  debouncedFetchVendors()
 }
 
 const clearFilters = () => {
   searchTerm.value = ''
-  filterType.value = ''
-  filterStatus.value = ''
+  selectedType.value = null
+  selectedStatus.value = null
+  selectedSortBy.value = null
   currentPage.value = 1
   fetchVendors()
 }
+
+// Debounced fetch function
+const debounceTimeout = ref<number | null>(null)
+
+const debouncedFetchVendors = () => {
+  if (debounceTimeout.value) {
+    clearTimeout(debounceTimeout.value)
+  }
+  debounceTimeout.value = setTimeout(() => {
+    currentPage.value = 1 // Reset to first page when filtering
+    fetchVendors()
+  }, 500) // 500ms debounce
+}
+
+// Filter change handlers
+const onVendorTypeChange = (item: Item | null) => {
+  selectedType.value = item
+  debouncedFetchVendors()
+}
+
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  debouncedFetchVendors()
+}
+
+const onSortByChange = (item: Item | null) => {
+  selectedSortBy.value = item
+  debouncedFetchVendors()
+}
+
+// Filter dropdown methods
+const toggleFilterDropdown = () => {
+  showFilterDropdown.value = !showFilterDropdown.value
+}
+
 
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -882,6 +852,25 @@ const getVendorIcon = (type: string) => {
     case 'SUPPLIER':
     default:
       return 'fas fa-store'
+  }
+}
+
+const getVendorIconWithColor = (type: string) => {
+  switch (type) {
+    case 'SUPPLIER':
+      return 'fas fa-store text-primary'
+    case 'SERVICE':
+      return 'fas fa-tools text-success'
+    case 'MANUFACTURER':
+      return 'fas fa-industry text-secondary'
+    case 'DISTRIBUTOR':
+      return 'fas fa-truck text-warning'
+    case 'CONTRACTOR':
+      return 'fas fa-hammer text-brown'
+    case 'BOTH':
+      return 'fas fa-shopping-cart text-info'
+    default:
+      return 'fas fa-store text-primary'
   }
 }
 
@@ -960,6 +949,45 @@ const getStatusLabel = (status: VendorStatus) => {
       return 'Inactive'
     default:
       return 'Unknown'
+  }
+}
+
+// New functions for modern grid design (matching AssetsView)
+const getVendorTypeIcon = (type: string) => {
+  switch (type) {
+    case 'SUPPLIER':
+      return 'fas fa-store'
+    case 'SERVICE':
+      return 'fas fa-tools'
+    case 'MANUFACTURER':
+      return 'fas fa-industry'
+    case 'DISTRIBUTOR':
+      return 'fas fa-truck'
+    case 'CONTRACTOR':
+      return 'fas fa-hammer'
+    case 'BOTH':
+      return 'fas fa-building'
+    default:
+      return 'fas fa-store'
+  }
+}
+
+const getVendorTypeColor = (type: string) => {
+  switch (type) {
+    case 'SUPPLIER':
+      return 'var(--secondary-purple)'
+    case 'SERVICE':
+      return 'var(--secondary-green)'
+    case 'MANUFACTURER':
+      return 'var(--secondary-blue)'
+    case 'DISTRIBUTOR':
+      return 'var(--secondary-orange)'
+    case 'CONTRACTOR':
+      return 'var(--secondary-red)'
+    case 'BOTH':
+      return 'var(--secondary-pink)'
+    default:
+      return 'var(--secondary-purple)'
   }
 }
 
@@ -1056,165 +1084,13 @@ const confirmStatusChange = async () => {
 
 // Bulk upload methods
 const openBulkUploadModal = () => {
-  showBulkUploadModal.value = true
-  resetUploadState()
+  bulkVendorUploadRef.value?.openModal()
 }
 
-const closeBulkUploadModal = () => {
-  showBulkUploadModal.value = false
-  resetUploadState()
-}
-
-const resetUploadState = () => {
-  selectedFile.value = null
-  isDragOver.value = false
-  isUploading.value = false
-  uploadProgress.value = 0
-  uploadError.value = ''
-  uploadSuccess.value = ''
-}
-
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
-const handleFileSelect = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (file) {
-    validateAndSetFile(file)
-  }
-}
-
-const handleFileDrop = (event: DragEvent) => {
-  isDragOver.value = false
-  const file = event.dataTransfer?.files?.[0]
-  if (file) {
-    validateAndSetFile(file)
-  }
-}
-
-const validateAndSetFile = (file: File) => {
-  uploadError.value = ''
-  uploadSuccess.value = ''
-  
-  // Validate file type
-  const allowedTypes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel',
-    'text/csv'
-  ]
-  
-  if (!allowedTypes.includes(file.type)) {
-    uploadError.value = 'Invalid file type. Please upload an Excel (.xlsx) or CSV (.csv) file.'
-    return
-  }
-  
-  // Validate file size (10MB limit)
-  const maxSize = 10 * 1024 * 1024 // 10MB
-  if (file.size > maxSize) {
-    uploadError.value = 'File size too large. Maximum 10MB allowed.'
-    return
-  }
-  
-  selectedFile.value = file
-  uploadSuccess.value = 'File looks good! Ready to upload.'
-}
-
-const removeFile = () => {
-  selectedFile.value = null
-  uploadError.value = ''
-  uploadSuccess.value = ''
-  if (fileInput.value) {
-    fileInput.value.value = ''
-  }
-}
-
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes'
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-}
-
-const downloadTemplate = () => {
-  // Create a simple CSV template
-  const csvContent = "Vendor Name,Contact Person,Email,Phone,Address,Type\n" +
-                    "Example Vendor,John Doe,john@example.com,+91 9876543210,123 Main St,SUPPLIER\n" +
-                    "Sample Service Provider,Jane Smith,jane@sample.com,+91 8765432109,456 Oak Ave,SERVICE"
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  const link = document.createElement('a')
-  const url = URL.createObjectURL(blob)
-  link.setAttribute('href', url)
-  link.setAttribute('download', 'vendor_upload_template.csv')
-  link.style.visibility = 'hidden'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  
-  showToast('success', 'Template downloaded successfully!')
-}
-
-const uploadVendors = async () => {
-  if (!selectedFile.value) return
-  
-  isUploading.value = true
-  uploadProgress.value = 0
-  uploadError.value = ''
-  uploadSuccess.value = ''
-  
-  try {
-    // Simulate progress
-    const progressInterval = setInterval(() => {
-      if (uploadProgress.value < 90) {
-        uploadProgress.value += 10
-      }
-    }, 200)
-    
-    const response = await VendorApiService.bulkUploadVendors(selectedFile.value, false)
-    
-    clearInterval(progressInterval)
-    uploadProgress.value = 100
-    
-    setTimeout(() => {
-      isUploading.value = false
-      showToast('success', `Successfully uploaded ${response.data.imported} vendors!`)
-      
-      if (response.data.errors.length > 0) {
-        console.warn('Upload errors:', response.data.errors)
-        showToast('error', `${response.data.errors.length} rows had errors. Check console for details.`)
-      }
-      
+const handleBulkUploadSuccess = (result: any) => {
+  showToast('success', 'Vendors uploaded successfully!')
       // Refresh vendor list
       fetchVendors()
-      
-      // Close modal after delay
-      setTimeout(() => {
-        closeBulkUploadModal()
-      }, 2000)
-    }, 500)
-    
-  } catch (error: any) {
-    console.error('Error uploading vendors:', error)
-    isUploading.value = false
-    uploadProgress.value = 0
-    
-    let errorMessage = 'Failed to upload vendors. Please try again.'
-    
-    if (error.response?.status === 400) {
-      errorMessage = 'Invalid file format or data. Please check your file and try again.'
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message
-    }
-    
-    uploadError.value = errorMessage
-  }
-}
-
-const handleUploadSuccess = () => {
-  showToast('success', 'Vendors uploaded successfully!')
 }
 
 // Toast methods
@@ -1236,6 +1112,7 @@ const editVendor = (vendor: Vendor) => {
   router.push(`/app/vendors/edit/${vendor.id}`)
   closeVendorModal()
 }
+
 
 
 const updateVendorStatus = async (vendor: Vendor, newStatus: VendorStatus) => {
@@ -1263,70 +1140,130 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Modern Button Styling - Unified Compact Design */
-.btn-modern {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+/* Form styling consistency */
+:deep(.form-label) {
   font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: none;
-  letter-spacing: 0.025em;
-  transition: all 0.2s ease;
-  border: 1.5px solid;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: relative;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+:deep(.form-control) {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Make button corners match input field corners for consistency */
+.btn {
+  border-radius: 0.375rem !important;
+}
+
+/* Fix search input group border-radius consistency */
+.input-group .input-group-text {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+}
+
+.input-group .form-control:not(:last-child) {
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+:deep(.form-control:focus) {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+:deep(.dropdown-menu) {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  z-index: 1050;
+}
+
+:deep(.dropdown-item:hover),
+:deep(.dropdown-item.active) {
+  background-color: #e9ecef;
+  color: #1e2125;
+}
+
+/* Filter dropdown styling */
+.filter-dropdown {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Active filter button styling */
+.btn.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn.active:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+
+/* Table Layout Optimization */
+.table {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+
+.table th {
   overflow: hidden;
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.btn-modern:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.btn-modern:hover:before {
-  left: 100%;
+/* Allow text wrapping only for Vendor Name and Contact Person */
+.table td:nth-child(1), /* Vendor Name */
+.table td:nth-child(2) { /* Contact Person */
+  white-space: normal !important;
+  word-wrap: break-word;
 }
 
-.btn-modern:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Keep email on single line with ellipsis if too long */
+.table td:nth-child(3) { /* Email */
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-/* Add Vendor - Purple (Primary Action) */
-.btn-modern.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
+/* Force column widths to be respected */
+.table th:nth-child(1) { width: 27% !important; }
+.table th:nth-child(2) { width: 15% !important; }
+.table th:nth-child(3) { width: 24% !important; }
+.table th:nth-child(4) { width: 14% !important; }
+.table th:nth-child(5) { width: 13% !important; }
+.table th:nth-child(6) { width: 8% !important; }
+.table th:nth-child(7) { width: 9% !important; }
 
-.btn-modern.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-/* Bulk Upload - Secondary */
-.btn-modern.btn-outline-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.btn-modern.btn-outline-secondary:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
+.table td:nth-child(1) { width: 27% !important; }
+.table td:nth-child(2) { width: 15% !important; }
+.table td:nth-child(3) { width: 24% !important; }
+.table td:nth-child(4) { width: 14% !important; }
+.table td:nth-child(5) { width: 13% !important; }
+.table td:nth-child(6) { width: 8% !important; }
+.table td:nth-child(7) { width: 9% !important; }
 
 /* Custom Badge Styles - Updated Color Palette - Matching main.css */
 .badge.badge-supplier {
@@ -1357,7 +1294,7 @@ onMounted(() => {
 }
 
 .badge.badge-manufacturer {
-  background-color: var(--secondary-blue) !important;
+  background-color: var(--secondary-gray) !important;
   color: white !important;
   border: none !important;
   font-size: 0.75rem !important;
@@ -1375,7 +1312,7 @@ onMounted(() => {
 }
 
 .badge.badge-contractor {
-  background-color: var(--secondary-red) !important;
+  background-color: var(--secondary-brown) !important;
   color: white !important;
   border: none !important;
   font-size: 0.75rem !important;
@@ -1511,12 +1448,6 @@ onMounted(() => {
   border-color: var(--secondary-orange) !important;
 }
 
-/* Filter card styling */
-.filter-card {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Table responsive container - no padding to avoid white border */
 .table-responsive {
@@ -1649,7 +1580,76 @@ onMounted(() => {
   color: var(--primary-black);
 }
 
-/* Vendor Detail Modal Styling - Consistent with prototype */
+/* Vendor Detail Modal Styling - Matching AssetsView Design */
+
+/* Equal height columns for consistent layout */
+.equal-height-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.equal-height-columns > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Compact vendor info section - matching AssetsView */
+.vendor-info-section-compact {
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+.vendor-info-section-compact .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.vendor-info-section-compact .info-grid-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-grow: 1;
+}
+
+.vendor-info-section-compact .info-item-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.vendor-info-section-compact .info-item-compact:last-child {
+  border-bottom: none;
+}
+
+.vendor-info-section-compact .info-label-compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.vendor-info-section-compact .info-value-compact {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: #212529 !important;
+  margin-bottom: 0 !important;
+  text-align: right;
+  flex-grow: 1;
+}
+
+/* Legacy vendor info section - keeping for backward compatibility */
 .vendor-info-section {
   background-color: var(--primary-white) !important;
   border: 1px solid var(--element-gray) !important;
@@ -1847,263 +1847,7 @@ onMounted(() => {
   100% { transform: scale(1); }
 }
 
-/* Bulk Upload Modal Styles */
-.bulk-upload-modal .modal-header {
-  background-color: var(--primary-light-gray) !important;
-  border-bottom: 1px solid var(--element-gray) !important;
-}
-
-.bulk-upload-modal .modal-body {
-  background-color: var(--primary-white) !important;
-}
-
-.bulk-upload-modal .modal-footer {
-  background-color: var(--primary-light-gray) !important;
-  border-top: 1px solid var(--element-gray) !important;
-}
-
-/* Template Download Button */
-.btn-template-download {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--secondary-purple) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-template-download:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(51, 31, 234, 0.15) !important;
-}
-
-/* Required Columns Section */
-.required-columns-section {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  padding: 1.25rem !important;
-}
-
-/* Horizontal Column Sequence */
-.columns-sequence {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-wrap: wrap !important;
-  gap: 0.75rem !important;
-  padding: 1rem 0 !important;
-}
-
-.column-item {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
-  min-width: 80px !important;
-}
-
-.column-number {
-  width: 28px !important;
-  height: 28px !important;
-  border-radius: 50% !important;
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.column-name {
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  color: var(--primary-black) !important;
-  line-height: 1.2 !important;
-}
-
-.column-arrow {
-  color: var(--primary-mid-light) !important;
-  font-size: 0.875rem !important;
-  margin: 0 0.25rem !important;
-}
-
-.sequence-note {
-  text-align: center !important;
-  margin-bottom: 0 !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .columns-sequence {
-    flex-direction: column !important;
-    gap: 1rem !important;
-  }
-  
-  .column-arrow {
-    transform: rotate(90deg) !important;
-    margin: 0.25rem 0 !important;
-  }
-  
-  .column-item {
-    min-width: 120px !important;
-  }
-}
-
-/* Upload Area */
-.upload-area {
-  border: 2px dashed var(--primary-mid-light) !important;
-  border-radius: 0.75rem !important;
-  padding: 2rem !important;
-  text-align: center !important;
-  background-color: var(--primary-white) !important;
-  transition: all 0.3s ease !important;
-  cursor: pointer !important;
-  position: relative !important;
-}
-
-.upload-area:hover {
-  border-color: var(--secondary-purple) !important;
-  background-color: var(--primary-light-gray) !important;
-}
-
-.upload-area.dragover {
-  border-color: var(--secondary-purple) !important;
-  background-color: rgba(51, 31, 234, 0.05) !important;
-}
-
-.upload-content {
-  pointer-events: none !important;
-}
-
-.upload-icon {
-  font-size: 2.5rem !important;
-  color: var(--primary-mid-light) !important;
-  margin-bottom: 1rem !important;
-}
-
-.upload-area:hover .upload-icon {
-  color: var(--secondary-purple) !important;
-}
-
-.upload-title {
-  color: var(--primary-black) !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.upload-subtitle {
-  color: var(--primary-dark-gray) !important;
-  font-size: 0.875rem !important;
-  margin-bottom: 1rem !important;
-}
-
-.supported-formats {
-  display: flex !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-}
-
-.format-badge {
-  background-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  padding: 0.25rem 0.5rem !important;
-  border-radius: 0.375rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-}
-
-.file-input {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  opacity: 0 !important;
-  cursor: pointer !important;
-}
-
-/* Action Buttons */
-.btn-cancel {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-cancel:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-.btn-upload-primary {
-  background-color: var(--secondary-purple) !important;
-  border: 1px solid var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.15) !important;
-}
-
-.btn-upload-primary:hover:not(:disabled) {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(51, 31, 234, 0.25) !important;
-}
-
-.btn-upload-primary:disabled {
-  background-color: var(--element-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-}
-
-/* Validation Messages */
-.validation-error {
-  background-color: rgba(233, 118, 118, 0.1) !important;
-  border: 1px solid var(--secondary-red) !important;
-  color: var(--secondary-red) !important;
-  padding: 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.875rem !important;
-}
-
-.validation-success {
-  background-color: rgba(33, 175, 101, 0.1) !important;
-  border: 1px solid var(--secondary-green) !important;
-  color: var(--secondary-green) !important;
-  padding: 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.875rem !important;
-}
-
-/* Upload Progress */
-.upload-progress {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1rem !important;
-}
-
-.progress {
-  height: 0.5rem !important;
-  background-color: var(--element-gray) !important;
-  border-radius: 0.25rem !important;
-}
+/* Bulk upload is now handled by BulkVendorUpload component */
 
 /* Disabled Button Styles */
 .btn:disabled {

@@ -1,0 +1,1336 @@
+<template>
+  <div class="container-fluid py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
+        <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
+          <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
+            <div style="display: block;">
+              <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">
+                {{ isEditMode ? 'Edit Vendor' : 'Add New Vendor' }}
+              </h4>
+              <p class="text-muted mb-0 small" style="display: block;">
+                {{ isEditMode ? 'Update vendor information' : 'Register a new supplier or service provider' }}
+              </p>
+            </div>
+          </div>
+          
+          <!-- Card Body -->
+          <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+            <!-- Loading State -->
+            <div v-if="isLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-3 text-muted">Loading vendor data...</p>
+            </div>
+            
+            <!-- Form -->
+            <form v-else @submit.prevent="handleSubmit" class="needs-validation" :class="{ 'was-validated': wasValidated }" novalidate>
+              
+              <!-- Section 1: Basic Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Basic Information</legend>
+                <div class="row g-4">
+                  <!-- Vendor Name -->
+                  <div class="col-md-6">
+                    <label for="vendorName" class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                    <div class="position-relative">
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="vendorName" 
+                        v-model="formData.vendorName"
+                        placeholder="Enter vendor name" 
+                        required 
+                        minlength="2" 
+                        maxlength="100"
+                        pattern="[A-Za-z0-9\s\.\-&]{2,100}"
+                        title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands only)"
+                        @blur="validateField('vendorName')"
+                        @focus="clearFieldError('vendorName')"
+                        @input="formatToTitleCase"
+                      >
+                      <!-- Loading spinner for name checking -->
+                      <div v-if="isCheckingName" class="position-absolute top-50 end-0 translate-middle-y me-3">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                          <span class="visually-hidden">Checking...</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-text">
+                      Company or organization name (2-100 characters)
+                      <span v-if="isCheckingName" class="text-muted ms-2">
+                        <i class="fas fa-spinner fa-spin me-1"></i>Checking availability...
+                      </span>
+                    </div>
+                    <div v-if="errors.vendorName" class="invalid-feedback">{{ errors.vendorName }}</div>
+                  </div>
+
+                  <!-- Vendor Type -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="vendorType"
+                        label="Vendor Type"
+                        placeholder="Select vendor type..."
+                        :items="vendorTypeItems"
+                        v-model="selectedVendorType"
+                        required
+                        @change="onVendorTypeChange"
+                      />
+                    </div>
+                    <div class="form-text">Select the primary type of vendor/service they provide (required)</div>
+                    <!-- Error message hidden - red border is sufficient visual indication -->
+                  </div>
+
+                  <!-- Status -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="status"
+                        label="Status"
+                        placeholder="Select status..."
+                        :items="statusItems"
+                        v-model="selectedStatus"
+                        required
+                        @change="onStatusChange"
+                      />
+                    </div>
+                    <div class="form-text">Current status of the vendor relationship (required)</div>
+                    <!-- Error message hidden - red border is sufficient visual indication -->
+                  </div>
+
+                  <!-- Contact Person -->
+                  <div class="col-md-6">
+                    <label for="contactPerson" class="form-label">Contact Person <span class="text-muted">(Optional)</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="contactPerson" 
+                      v-model="formData.contactPerson"
+                      placeholder="Enter contact person name" 
+                      maxlength="100"
+                      pattern="[A-Za-z\s]{2,100}"
+                      title="Contact person name must be 2-100 characters (letters and spaces only)"
+                      @blur="validateField('contactPerson')"
+                      @focus="clearFieldError('contactPerson')"
+                      @input="formatContactPersonToTitleCase"
+                    >
+                    <div class="form-text">Primary contact person at the vendor</div>
+                    <div v-if="errors.contactPerson" class="invalid-feedback">{{ errors.contactPerson }}</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 2: Contact Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Contact Information</legend>
+                <div class="row g-4">
+                  <!-- Email -->
+                  <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address <span class="text-muted">(Optional)</span></label>
+                    <input 
+                      type="email" 
+                      class="form-control" 
+                      id="email" 
+                      v-model="formData.email"
+                      placeholder="vendor@company.com" 
+                      maxlength="100"
+                      title="Please enter a valid email address"
+                      @blur="validateField('email')"
+                      @focus="clearFieldError('email')"
+                      @input="handleFieldInput('email')"
+                    >
+                    <div class="form-text">Primary email address for communication</div>
+                    <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
+                  </div>
+
+                  <!-- Phone -->
+                  <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number <span class="text-muted">(Optional)</span></label>
+                    <input 
+                      type="tel" 
+                      class="form-control" 
+                      id="phone" 
+                      v-model="formData.phone"
+                      placeholder="+91 9999999999"
+                      pattern="^\+91\s[0-9]{10}$"
+                      title="Enter a 10-digit number with '+91' prefix (e.g., +91 9876543210)"
+                      autocomplete="off"
+                      autocapitalize="none"
+                      autocorrect="off"
+                      spellcheck="false"
+                      inputmode="numeric"
+                      @blur="validateField('phone')"
+                      @focus="onPhoneFocus"
+                      @input="formatPhoneNumber"
+                    >
+                    <div class="form-text">Format: +91 9999999999 (exactly 10 digits)</div>
+                    <div v-if="errors.phone" class="invalid-feedback">{{ errors.phone }}</div>
+                  </div>
+
+                  <!-- Address -->
+                  <div class="col-12">
+                    <label for="address" class="form-label">
+                      Address <span class="text-muted">(Optional)</span>
+                    </label>
+                    <textarea 
+                      class="form-control auto-expand-textarea" 
+                      id="address" 
+                      v-model="formData.address"
+                      rows="3"
+                      placeholder="Enter complete address with street, city, state, and country..."
+                      @input="autoExpandTextarea"
+                      @blur="validateField('address')"
+                      @focus="clearFieldError('address')"
+                      maxlength="500"
+                      title="Address cannot exceed 500 characters"
+                      style="white-space: pre-wrap; overflow-wrap: break-word;"
+                    ></textarea>
+                    <div class="form-text">
+                      Include street address, city, state, and country. Textarea expands automatically as you type.
+                    </div>
+                    <div class="character-count text-end">
+                      <small :class="getCounterClass(formData.address?.length || 0, 500)">
+                        {{ formData.address?.length || 0 }}/500 characters
+                      </small>
+                    </div>
+                    <div v-if="errors.address" class="invalid-feedback">{{ errors.address }}</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 3: Tax & Legal Information -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Tax & Legal Information</legend>
+                <div class="row g-4">
+                  <!-- Tax ID -->
+                  <div class="col-md-6">
+                    <label for="taxId" class="form-label">Tax ID <span class="text-muted">(Optional)</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="taxId" 
+                      v-model="formData.taxId"
+                      placeholder="Enter tax identification number" 
+                      maxlength="50"
+                      pattern="[A-Za-z0-9\-]{5,50}"
+                      title="Tax ID must be 5-50 characters (letters, numbers, hyphens only)"
+                      @blur="validateField('taxId')"
+                      @focus="clearFieldError('taxId')"
+                      @input="formatTaxId"
+                    >
+                    <div class="form-text">Tax identification number for your country</div>
+                    <div v-if="errors.taxId" class="invalid-feedback">{{ errors.taxId }}</div>
+                  </div>
+
+                  <!-- PAN Number (India specific) -->
+                  <div class="col-md-6">
+                    <label for="panNumber" class="form-label">PAN Number <span class="text-muted">(India - Optional)</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="panNumber" 
+                      v-model="formData.panNumber"
+                      placeholder="ABCDE1234F" 
+                      maxlength="10"
+                      pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                      title="PAN must be in format: ABCDE1234F (5 letters, 4 digits, 1 letter)"
+                      @blur="validateField('panNumber')"
+                      @focus="clearFieldError('panNumber')"
+                      @input="formatPAN"
+                    >
+                    <div class="form-text">Permanent Account Number for Indian vendors (format: ABCDE1234F)</div>
+                    <div v-if="errors.panNumber" class="invalid-feedback">{{ errors.panNumber }}</div>
+                  </div>
+
+                  <!-- Notes -->
+                  <div class="col-12">
+                    <NotesTextarea 
+                      v-model="formData.notes"
+                      label="Additional Notes"
+                      placeholder="Enter payment terms, special requirements, or other vendor information..."
+                      help-text="Include payment terms, special requirements, or other relevant information. Textarea expands automatically as you type."
+                      :max-length="1000"
+                      :required="false"
+                      :show-label="true"
+                      input-id="notes"
+                      @validation="handleNotesValidation"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="card-footer bg-light border-top">
+            <div class="form-actions">
+              <div class="d-flex justify-content-center gap-3">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary px-4 py-2" 
+                  @click="handleCancel"
+                  :disabled="isSubmitting"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary px-5 py-2" 
+                  @click="handleSubmit"
+                  :disabled="isSubmitting"
+                >
+                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
+                  {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Vendor' : 'Add Vendor') }}
+                </button>
+              </div>
+              <div class="text-center mt-3">
+                <small class="text-muted">
+                  Fields marked with <span class="text-danger">*</span> are required
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import type { CreateVendorDto, UpdateVendorDto, VendorStatus, VendorType, Vendor } from '@/types/vendor.types'
+import NotesTextarea from '../common/NotesTextarea.vue'
+import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
+import VendorApiService from '@/services/vendorApi'
+
+// Props
+interface Props {
+  vendor?: Vendor
+  isEditMode?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isEditMode: false,
+  vendor: undefined
+})
+
+// Emits
+const emit = defineEmits<{
+  submit: [data: any]
+  cancel: []
+}>()
+
+// Reactive data
+const formData = reactive({
+  vendorName: '',
+  vendorType: '' as VendorType | '',
+  status: 'ACTIVE' as VendorStatus,
+  contactPerson: '',
+  email: '',
+  phone: '',
+  address: '',
+  taxId: '',
+  panNumber: '',
+  notes: ''
+})
+
+const errors = reactive({
+  vendorName: '',
+  vendorType: '',
+  status: '',
+  contactPerson: '',
+  email: '',
+  phone: '',
+  address: '',
+  taxId: '',
+  panNumber: '',
+  notes: ''
+})
+
+const wasValidated = ref(false)
+const isSubmitting = ref(false)
+const isLoading = ref(false)
+const isCheckingName = ref(false)
+const nameCheckTimeout = ref<number | null>(null)
+
+// Selected items for SearchableDropdown components
+const selectedVendorType = ref<Item | null>(null)
+const selectedStatus = ref<Item | null>(null)
+
+// Computed properties for SearchableDropdown items
+const vendorTypeItems = computed(() => [
+  { id: 'SUPPLIER', name: 'Supplier', value: 'SUPPLIER' },
+  { id: 'SERVICE', name: 'Service Provider', value: 'SERVICE' },
+  { id: 'MANUFACTURER', name: 'Manufacturer', value: 'MANUFACTURER' },
+  { id: 'DISTRIBUTOR', name: 'Distributor', value: 'DISTRIBUTOR' },
+  { id: 'CONTRACTOR', name: 'Contractor', value: 'CONTRACTOR' },
+  { id: 'BOTH', name: 'Supplier & Service Provider', value: 'BOTH' }
+])
+
+const statusItems = computed(() => [
+  { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' },
+  { id: 'INACTIVE', name: 'Inactive', value: 'INACTIVE' }
+])
+
+// SearchableDropdown change handlers
+const onVendorTypeChange = (item: Item | null) => {
+  selectedVendorType.value = item
+  formData.vendorType = item && item.value ? item.value.toString() as VendorType : '' as VendorType
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('vendorType')
+  }
+  
+  validateField('vendorType')
+}
+
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  formData.status = item && item.value ? item.value.toString() as VendorStatus : '' as VendorStatus
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldError('status')
+  }
+  
+  validateField('status')
+}
+
+
+const validateField = (fieldName: string) => {
+  const value = formData[fieldName as keyof typeof formData]
+  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  
+  if (!element) return false
+
+  // Clear previous custom validity
+  element.setCustomValidity('')
+
+
+  // Additional custom validations based on field type
+  switch (fieldName) {
+    case 'vendorName':
+      if (!formData.vendorName || formData.vendorName.trim() === '') {
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else if (formData.vendorName.length < 2) {
+        errors.vendorName = 'Vendor name must be at least 2 characters'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else if (!/^[A-Za-z0-9\s\.\-&]{2,100}$/.test(formData.vendorName)) {
+        errors.vendorName = 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands only)'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else {
+        errors.vendorName = ''
+        element.classList.remove('is-invalid')
+        element.classList.add('is-valid')
+      }
+      break
+    
+    case 'contactPerson':
+      if (value && value.length < 2) {
+        errors.contactPerson = 'Contact person name must be at least 2 characters'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else if (value && !/^[A-Za-z\s]{2,100}$/.test(value)) {
+        errors.contactPerson = 'Contact person name must be 2-100 characters (letters and spaces only)'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else {
+        errors.contactPerson = ''
+        element.classList.remove('is-invalid')
+        if (value) element.classList.add('is-valid')
+      }
+      break
+    
+    case 'email':
+      if (value && !value.includes('@')) {
+        errors.email = 'Please enter a valid email address'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else {
+        errors.email = ''
+        element.classList.remove('is-invalid')
+        if (value) element.classList.add('is-valid')
+      }
+      break
+    
+    case 'phone':
+      if (formData.phone) {
+        const strVal = String(formData.phone)
+        // Treat bare prefix as empty (optional field)
+        if (/^\+91\s?$/.test(strVal)) {
+          formData.phone = '' as any
+          const el = document.getElementById('phone') as HTMLInputElement
+          if (el) el.value = ''
+          element.classList.remove('is-invalid')
+          element.classList.add('is-valid')
+          errors.phone = ''
+          return true
+        }
+        if (!strVal.startsWith('+91')) {
+          errors.phone = "Phone number must start with '+91'"
+          element.classList.add('is-invalid')
+          element.classList.remove('is-valid')
+          return false
+        }
+        const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+        if (digits.length < 10) {
+          errors.phone = 'Phone number must be exactly 10 digits after +91'
+          element.classList.add('is-invalid')
+          element.classList.remove('is-valid')
+          return false
+        }
+        if (digits.length > 10) {
+          errors.phone = 'Phone number cannot exceed 10 digits after +91'
+          element.classList.add('is-invalid')
+          element.classList.remove('is-valid')
+          return false
+        }
+        errors.phone = ''
+        element.classList.remove('is-invalid')
+        element.classList.add('is-valid')
+      } else {
+        errors.phone = ''
+        element.classList.remove('is-invalid')
+      }
+      break
+    
+    case 'taxId':
+      if (value && value.length < 5) {
+        errors.taxId = 'Tax ID must be at least 5 characters'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else {
+        errors.taxId = ''
+        element.classList.remove('is-invalid')
+        if (value) element.classList.add('is-valid')
+      }
+      break
+    
+    case 'panNumber':
+      if (value && value.length === 10) {
+        const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
+        if (!panPattern.test(value)) {
+          errors.panNumber = 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)'
+          element.classList.add('is-invalid')
+          element.classList.remove('is-valid')
+        } else {
+          errors.panNumber = ''
+          element.classList.remove('is-invalid')
+          element.classList.add('is-valid')
+        }
+      } else {
+        errors.panNumber = ''
+        element.classList.remove('is-invalid')
+        if (value) element.classList.add('is-valid')
+      }
+      break
+    
+    case 'address':
+      if (value && value.length > 500) {
+        errors.address = 'Address cannot exceed 500 characters'
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      } else {
+        errors.address = ''
+        element.classList.remove('is-invalid')
+        if (value) element.classList.add('is-valid')
+      }
+      break
+    
+    case 'vendorType':
+      if (!selectedVendorType.value) {
+        errors.vendorType = '' // No error message needed - red border is sufficient
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        console.log('VendorType validation: INVALID - no selection')
+      } else {
+        errors.vendorType = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+        console.log('VendorType validation: VALID - selection made')
+      }
+      break
+
+    case 'status':
+      if (!selectedStatus.value) {
+        errors.status = '' // No error message needed - red border is sufficient
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        console.log('Status validation: INVALID - no selection')
+      } else {
+        errors.status = ''
+        applyValidationToSearchableDropdown(fieldName, 'valid')
+        console.log('Status validation: VALID - selection made')
+      }
+      break
+
+    case 'notes':
+      // Notes are optional, so always valid
+      errors.notes = ''
+      const textarea = document.getElementById('notes') as HTMLTextAreaElement
+      if (textarea) {
+        textarea.classList.add('is-valid')
+        textarea.classList.remove('is-invalid')
+      } else {
+        console.warn('Could not find notes textarea element')
+      }
+      break
+  }
+}
+
+// Helper function to apply validation classes to SearchableDropdown components
+const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Try multiple ways to find the SearchableDropdown input
+  let input: HTMLInputElement | null = null
+  
+  // Method 1: Find by ID and then look for form-control in parent wrapper
+  const element = document.getElementById(fieldName)
+  if (element) {
+    const wrapper = element.closest('.form-searchable-dropdown')
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  // Method 2: If not found, try direct selector
+  if (!input) {
+    input = document.querySelector(`#${fieldName} .form-control`) as HTMLInputElement
+  }
+  
+  // Method 3: If still not found, try finding by wrapper and then input
+  if (!input) {
+    const wrapper = document.querySelector(`#${fieldName}`)?.parentElement?.querySelector('.form-searchable-dropdown')
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  // Method 4: Try finding by the wrapper that contains the fieldName
+  if (!input) {
+    const wrapper = document.querySelector(`.form-searchable-dropdown:has(#${fieldName})`)
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  if (!input) {
+    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+    console.log(`Applied INVALID class to ${fieldName} SearchableDropdown`)
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+    console.log(`Applied VALID class to ${fieldName} SearchableDropdown`)
+  }
+}
+
+const clearFieldError = (fieldName: string) => {
+  errors[fieldName as keyof typeof errors] = ''
+  
+  // Handle SearchableDropdown components
+  const searchableDropdownFields = ['vendorType', 'status']
+  if (searchableDropdownFields.includes(fieldName)) {
+    const element = document.getElementById(fieldName)
+    if (element) {
+      const wrapper = element.closest('.form-searchable-dropdown')
+      if (wrapper) {
+        const input = wrapper.querySelector('.form-control') as HTMLInputElement
+        if (input) {
+          input.classList.remove('is-invalid')
+        }
+      }
+    }
+  } else if (fieldName === 'notes') {
+    // Handle NotesTextarea component
+    const textarea = document.getElementById('notes') as HTMLTextAreaElement
+    if (textarea) {
+      textarea.classList.remove('is-invalid')
+    }
+  } else {
+    const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    if (element) {
+      element.classList.remove('is-invalid')
+    }
+  }
+}
+
+const handleFieldInput = (fieldName: string) => {
+  // Clear error state on input if field was invalid and now has content
+  if (errors[fieldName as keyof typeof errors] && formData[fieldName as keyof typeof formData]?.toString().trim()) {
+    clearFieldError(fieldName)
+  }
+}
+
+const getFieldDisplayName = (fieldName: string): string => {
+  const displayNames: Record<string, string> = {
+    vendorName: 'Vendor Name',
+    vendorType: 'Vendor Type',
+    status: 'Status',
+    contactPerson: 'Contact Person',
+    email: 'Email Address',
+    phone: 'Phone Number',
+    address: 'Address',
+    taxId: 'Tax ID',
+    panNumber: 'PAN Number',
+    notes: 'Additional Notes'
+  }
+  return displayNames[fieldName] || fieldName
+}
+
+// Input formatters
+const formatPhoneNumber = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const prefix = '+91 '
+  let raw = target.value || ''
+
+  // Always enforce prefix
+  if (!raw.startsWith('+91')) {
+    raw = prefix + raw.replace(/^[^0-9+]*/, '')
+  }
+
+  // Keep only digits after the prefix, max 10
+  let digits = raw.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  if (digits.length > 10) digits = digits.slice(0, 10)
+
+  // Recompose
+  const composed = digits.length ? `${prefix}${digits}` : prefix
+  target.value = composed
+  formData.phone = composed
+
+  handleFieldInput('phone')
+}
+
+// Ensure prefix when focusing the phone field
+const onPhoneFocus = (event: FocusEvent) => {
+  clearFieldError('phone')
+  const target = event.target as HTMLInputElement
+  const prefix = '+91 '
+  if (!target.value) {
+    target.value = prefix
+    formData.phone = prefix
+  } else if (!target.value.startsWith('+91')) {
+    target.value = prefix
+    formData.phone = prefix
+  }
+}
+
+const formatToTitleCase = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const value = target.value
+  
+  // Convert to title case
+  const titleCaseValue = value.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  })
+  
+  target.value = titleCaseValue
+  formData.vendorName = titleCaseValue
+  handleFieldInput('vendorName')
+  
+  // Trigger debounced name check
+  debouncedCheckVendorName(titleCaseValue)
+}
+
+// Debounced vendor name checking
+const debouncedCheckVendorName = (name: string) => {
+  // Clear existing timeout
+  if (nameCheckTimeout.value) {
+    clearTimeout(nameCheckTimeout.value)
+  }
+  
+  // Don't check if name is too short or empty
+  if (!name || name.trim().length < 2) {
+    clearFieldError('vendorName')
+    return
+  }
+  
+  // Set new timeout
+  nameCheckTimeout.value = setTimeout(() => {
+    checkVendorNameExists(name.trim())
+  }, 500) // 500ms delay
+}
+
+// Check if vendor name already exists
+const checkVendorNameExists = async (name: string) => {
+  if (!name || name.trim().length < 2) return
+  
+  isCheckingName.value = true
+  
+  try {
+    const excludeId = props.isEditMode && props.vendor ? props.vendor.id : undefined
+    const result = await VendorApiService.checkVendorNameExists(name, excludeId)
+    
+    if (!result.data.available) {
+      // Name already exists
+      errors.vendorName = 'This vendor name already exists. Please choose a different name.'
+      const element = document.getElementById('vendorName') as HTMLInputElement
+      if (element) {
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
+      }
+    } else {
+      // Name is available
+      errors.vendorName = ''
+      const element = document.getElementById('vendorName') as HTMLInputElement
+      if (element) {
+        element.classList.remove('is-invalid')
+        element.classList.add('is-valid')
+      }
+    }
+  } catch (error) {
+    console.error('Error checking vendor name:', error)
+    // Don't show error to user for API failures, just clear the validation state
+    errors.vendorName = ''
+    const element = document.getElementById('vendorName') as HTMLInputElement
+    if (element) {
+      element.classList.remove('is-invalid')
+    }
+  } finally {
+    isCheckingName.value = false
+  }
+}
+
+const formatContactPersonToTitleCase = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const value = target.value
+  
+  // Convert to title case
+  const titleCaseValue = value.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  })
+  
+  target.value = titleCaseValue
+  formData.contactPerson = titleCaseValue
+  handleFieldInput('contactPerson')
+}
+
+const formatTaxId = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  target.value = target.value.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase()
+  formData.taxId = target.value
+  handleFieldInput('taxId')
+}
+
+const formatPAN = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  target.value = target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+  formData.panNumber = target.value
+  handleFieldInput('panNumber')
+}
+
+// Auto-expanding textarea functionality
+const autoExpandTextarea = (event: Event) => {
+  const textarea = event.target as HTMLTextAreaElement
+  resizeTextarea(textarea)
+}
+
+// Helper function to resize a specific textarea
+const resizeTextarea = (textarea: HTMLTextAreaElement) => {
+  if (!textarea) return
+  
+  // Reset height to auto to get the correct scrollHeight
+  textarea.style.height = 'auto'
+  
+  // Set the height to match the content
+  const newHeight = Math.max(textarea.scrollHeight, 72) // Minimum 3 rows (24px per row)
+  textarea.style.height = newHeight + 'px'
+}
+
+// Function to resize all textareas with content
+const resizeAllTextareas = () => {
+  const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
+  textareas.forEach(textarea => {
+    if (textarea.value.trim()) { // Only resize if there's content
+      resizeTextarea(textarea)
+    }
+  })
+}
+
+// Character counters
+const getCounterClass = (length: number, maxLength: number) => {
+  const percentage = (length / maxLength) * 100
+  if (percentage > 90) return 'text-danger'
+  if (percentage > 75) return 'text-warning'
+  return 'text-muted'
+}
+
+const validateForm = (): boolean => {
+  let isValid = true
+  
+  // Validate required fields
+  const requiredFields = ['vendorName', 'vendorType', 'status']
+  
+  requiredFields.forEach(fieldName => {
+    validateField(fieldName)
+    
+    // Special handling for SearchableDropdown fields
+    if (fieldName === 'vendorType' && !selectedVendorType.value) {
+      isValid = false
+    } else if (fieldName === 'status' && !selectedStatus.value) {
+      isValid = false
+    } else if (errors[fieldName as keyof typeof errors]) {
+      isValid = false
+    }
+  })
+
+  // Also validate optional fields to show green borders
+  const optionalFields = ['contactPerson', 'email', 'phone', 'address', 'taxId', 'panNumber', 'notes']
+  optionalFields.forEach(fieldName => {
+    validateField(fieldName)
+  })
+
+  return isValid
+}
+
+const handleSubmit = async (event: Event) => {
+  event.preventDefault()
+  wasValidated.value = true
+
+  if (!validateForm()) {
+    // Scroll to first error
+    const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
+    if (firstInvalid) {
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setTimeout(() => firstInvalid.focus(), 300)
+    }
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    // Prepare vendor data for API
+    const vendorData = {
+      name: formData.vendorName,
+      vendorType: formData.vendorType as VendorType,
+      contactPerson: formData.contactPerson || undefined,
+      email: formData.email || undefined,
+      phone: normalizePhoneForSubmit(formData.phone),
+      address: formData.address || undefined,
+      taxId: formData.taxId || undefined,
+      panNumber: formData.panNumber || undefined,
+      notes: formData.notes || undefined,
+      status: formData.status
+    }
+
+    // Emit the form data
+    emit('submit', vendorData)
+  } catch (error) {
+    console.error('Form submission error:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handleCancel = () => {
+  emit('cancel')
+}
+
+// Normalize phone to '+91 9999999999' or undefined
+const normalizePhoneForSubmit = (val: string) => {
+  if (!val) return undefined
+  const match = val.match(/^\+91\s(\d{10})$/)
+  if (match) return `+91 ${match[1]}`
+  return undefined
+}
+
+// Handle notes validation
+const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
+  if (!isValid && errorMessage) {
+    errors.notes = errorMessage
+  } else {
+    errors.notes = ''
+  }
+}
+
+// Initialize form data if editing
+onMounted(async () => {
+  isLoading.value = true
+  try {
+    if (props.isEditMode && props.vendor) {
+      // Populate form with existing data
+      formData.vendorName = props.vendor.name
+      formData.vendorType = props.vendor.vendorType || ''
+      formData.status = props.vendor.status
+      formData.contactPerson = props.vendor.contactPerson || ''
+      formData.email = props.vendor.email || ''
+      formData.phone = props.vendor.phone || ''
+      formData.address = props.vendor.address || ''
+      formData.taxId = props.vendor.taxId || ''
+      formData.panNumber = props.vendor.panNumber || ''
+      formData.notes = props.vendor.notes || ''
+
+      // Set selected items for SearchableDropdown components
+      if (props.vendor.vendorType) {
+        const vendorTypeOption = vendorTypeItems.value.find(item => item.value === props.vendor?.vendorType)
+        if (vendorTypeOption) {
+          selectedVendorType.value = vendorTypeOption
+        }
+      }
+      
+      if (props.vendor.status) {
+        const statusOption = statusItems.value.find(item => item.value === props.vendor?.status)
+        if (statusOption) {
+          selectedStatus.value = statusOption
+        }
+      }
+
+      // Auto-expand textareas if they have content
+      nextTick(() => {
+        resizeAllTextareas()
+        
+        // Also try again after a short delay in case Vue hasn't fully updated
+        setTimeout(() => {
+          resizeAllTextareas()
+        }, 100)
+        
+        // Final attempt after a longer delay
+        setTimeout(() => {
+          resizeAllTextareas()
+        }, 300)
+      })
+    } else {
+      // For new vendor, don't set default values - user must make selection
+      // This ensures validation works correctly for required fields
+      formData.status = '' as VendorStatus
+      formData.vendorType = '' as VendorType
+      
+      // Don't set default selected items - let user choose
+      selectedStatus.value = null
+      selectedVendorType.value = null
+    }
+  } catch (error) {
+    console.error('Error loading vendor data:', error)
+  } finally {
+    isLoading.value = false
+  }
+})
+
+// Cleanup timeout on unmount
+onUnmounted(() => {
+  if (nameCheckTimeout.value) {
+    clearTimeout(nameCheckTimeout.value)
+  }
+})
+
+// Watch for vendor prop changes to populate form data
+watch(() => props.vendor, (newVendor) => {
+  if (newVendor && props.isEditMode) {
+    // Populate form with existing data
+    formData.vendorName = newVendor.name
+    formData.vendorType = newVendor.vendorType || ''
+    formData.status = newVendor.status
+    formData.contactPerson = newVendor.contactPerson || ''
+    formData.email = newVendor.email || ''
+    formData.phone = newVendor.phone || ''
+    formData.address = newVendor.address || ''
+    formData.taxId = newVendor.taxId || ''
+    formData.panNumber = newVendor.panNumber || ''
+    formData.notes = newVendor.notes || ''
+
+    // Set selected items for SearchableDropdown components
+    if (newVendor.vendorType) {
+      const vendorTypeOption = vendorTypeItems.value.find(item => item.value === newVendor.vendorType)
+      if (vendorTypeOption) {
+        selectedVendorType.value = vendorTypeOption
+      }
+    }
+    
+    if (newVendor.status) {
+      const statusOption = statusItems.value.find(item => item.value === newVendor.status)
+      if (statusOption) {
+        selectedStatus.value = statusOption
+      }
+    }
+
+    // Auto-expand textareas if they have content
+    nextTick(() => {
+      resizeAllTextareas()
+      
+      // Also try again after a short delay in case Vue hasn't fully updated
+      setTimeout(() => {
+        resizeAllTextareas()
+      }, 300)
+    })
+  }
+}, { immediate: true })
+
+// Watchers for textarea auto-expansion
+watch(() => formData.address, (newValue) => {
+  if (newValue) {
+    nextTick(() => {
+      const textarea = document.getElementById('address') as HTMLTextAreaElement
+      if (textarea) {
+        resizeTextarea(textarea)
+      }
+    })
+  }
+})
+
+watch(() => formData.notes, (newValue) => {
+  if (newValue) {
+    nextTick(() => {
+      const textarea = document.getElementById('notes') as HTMLTextAreaElement
+      if (textarea) {
+        resizeTextarea(textarea)
+      }
+    })
+  }
+})
+</script>
+
+<style scoped>
+/* Import the unified form styles */
+@import url('../../assets/unified-form-styles.css');
+
+/* Additional component-specific styles */
+.auto-expand-textarea {
+  transition: height 0.2s ease, border-color 0.2s ease;
+  resize: none;
+  overflow: hidden;
+  min-height: 72px; /* 3 rows minimum */
+}
+
+.auto-expand-textarea:hover {
+  border-color: #999999;
+}
+
+.character-count {
+  margin-top: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.character-count .text-warning {
+  color: #f59e0b !important;
+}
+
+.character-count .text-danger {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* Form fieldset styling */
+.form-fieldset {
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  background: rgba(243, 243, 243, 0.3);
+  position: relative;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-fieldset:hover {
+  border-color: #B7B7B7 !important;
+  background: rgba(243, 243, 243, 0.5);
+  transition: all 0.2s ease;
+}
+
+.form-legend {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  background-color: #FFFFFF !important;
+  padding: 0.375rem 0.75rem !important;
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+  width: auto !important;
+  float: none !important;
+}
+
+/* Enhanced form controls */
+.form-control, .form-select {
+  border: 2px solid #E0E0E0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+  color: #0A0A0A;
+}
+
+.form-control::placeholder {
+  color: #999999 !important;
+  opacity: 1;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #331FEA;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+  outline: 2px solid transparent;
+}
+
+.form-control:hover, .form-select:hover {
+  border-color: #E0E0E0;
+}
+
+/* Enhanced validation styling */
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out;
+}
+
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #E97676;
+  font-weight: 500;
+}
+
+/* Form labels */
+.form-label {
+  font-weight: 600;
+  color: #666666;
+  margin-bottom: 0.5rem;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #666666 !important;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.text-danger {
+  color: #E97676 !important;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.text-muted {
+  color: #666666 !important;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* Action buttons */
+.form-actions {
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.card-footer {
+  background: #F3F3F3 !important;
+  border-top: 2px solid #B7B7B7 !important;
+  border-radius: 0 0 1.5rem 1.5rem !important;
+}
+
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #331FEA !important;
+  border-color: #331FEA !important;
+  color: #FFFFFF !important;
+}
+
+.btn-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+}
+
+.btn-outline-secondary {
+  background-color: #f8f9fa !important;
+  border: 2px solid #6c757d !important;
+  color: #495057 !important;
+  font-weight: 600;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #E97676 !important;
+  border-color: #E97676 !important;
+  color: #FFFFFF !important;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #331FEA;
+  outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .form-actions {
+    padding: 1rem;
+  }
+  
+  .form-fieldset {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.9rem !important;
+    padding: 0.25rem 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
+  
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  .form-actions {
+    padding: 0.75rem;
+  }
+  
+  .form-fieldset {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.85rem !important;
+    padding: 0.2rem 0.4rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+</style>

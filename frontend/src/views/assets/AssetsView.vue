@@ -450,8 +450,8 @@
                       <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.assignedTo || 'Not Assigned' }}</div>
                     </div>
                     <div class="col-6">
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">Purchase</small>
-                      <div class="text-truncate" style="color: var(--primary-dark-gray); font-size: 0.8rem;">{{ formatDate(asset.purchaseDate) }}</div>
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">Condition</small>
+                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ getConditionText(asset.condition) }}</div>
                     </div>
                   </div>
                 </div>

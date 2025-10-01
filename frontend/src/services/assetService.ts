@@ -148,7 +148,11 @@ class AssetService {
         error: `HTTP ${response.status}: ${response.statusText}`
       }))
       console.error('assetService.validateBulkUpload: Error response:', errorData)
-      throw new Error(errorData.error || errorData.message || 'Validation failed')
+      
+      // Create error object that preserves the response data
+      const error = new Error(errorData.error || errorData.message || 'Validation failed')
+      ;(error as any).response = { data: errorData }
+      throw error
     }
 
     const result = await response.json()

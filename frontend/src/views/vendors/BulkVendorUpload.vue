@@ -1,14 +1,14 @@
 <template>
   <div>
-    <!-- Asset-specific Bulk Upload Modal -->
+    <!-- Vendor-specific Bulk Upload Modal -->
     <BulkUploadModal
       ref="bulkUploadModalRef"
-      modal-id="bulkUploadAssetsModal"
-      title="Bulk Upload Assets"
-      entity-name="Assets"
-      :columns="assetColumns"
+      modal-id="bulkUploadVendorsModal"
+      title="Bulk Upload Vendors"
+      entity-name="Vendors"
+      :columns="vendorColumns"
       :template-data="[]"
-      upload-button-text="Upload Assets"
+      upload-button-text="Upload Vendors"
       :always-validate="true"
       @upload="handleBulkUpload"
       @validate="handleValidation"
@@ -21,41 +21,37 @@
 import { ref } from 'vue'
 import { Modal } from 'bootstrap'
 import BulkUploadModal from '@/components/BulkUploadModal.vue'
-import { assetService } from '@/services/assetService'
+import VendorApiService from '@/services/vendorApi'
 import { useToastStore } from '@/stores/toast'
 
 // Refs
 const bulkUploadModalRef = ref()
 const toastStore = useToastStore()
 
-// Asset columns configuration
-const assetColumns = ref([
-  { key: 'assetId', label: 'Asset ID', required: true },
-  { key: 'serialNumber', label: 'Serial Number', required: true },
-  { key: 'assetTypeId', label: 'Asset Type ID', required: true },
-  { key: 'brandId', label: 'Brand ID', required: true },
-  { key: 'modelId', label: 'Model ID', required: true },
-  { key: 'vendorId', label: 'Vendor ID', required: false },
-  { key: 'status', label: 'Status', required: true },
-  { key: 'condition', label: 'Condition', required: true },
-  { key: 'location', label: 'Location', required: false },
-  { key: 'purchaseDate', label: 'Purchase Date', required: false },
-  { key: 'purchaseCost', label: 'Purchase Cost', required: false },
-  { key: 'warrantyStartDate', label: 'Warranty Start Date', required: false },
-  { key: 'warrantyEndDate', label: 'Warranty End Date', required: false },
+// Vendor columns configuration
+const vendorColumns = ref([
+  { key: 'name', label: 'Vendor Name', required: true },
+  { key: 'contactPerson', label: 'Contact Person', required: false },
+  { key: 'email', label: 'Email', required: false },
+  { key: 'phone', label: 'Phone', required: false },
+  { key: 'address', label: 'Address', required: false },
+  { key: 'vendorType', label: 'Type', required: false },
+  { key: 'status', label: 'Status', required: false },
+  { key: 'taxId', label: 'Tax ID', required: false },
+  { key: 'panNumber', label: 'PAN Number', required: false },
   { key: 'notes', label: 'Notes', required: false }
 ])
 
-// Enhanced asset validation using backend API
-const validateAssetFile = async (file: File) => {
+// Enhanced vendor validation using backend API
+const validateVendorFile = async (file: File) => {
   try {
-    console.log('validateAssetFile: Starting validation for file:', file.name)
-    const result = await assetService.validateBulkUpload(file)
-    console.log('validateAssetFile: API response:', result)
+    console.log('validateVendorFile: Starting validation for file:', file.name)
+    const result = await VendorApiService.validateBulkUpload(file)
+    console.log('validateVendorFile: API response:', result)
     return result
   } catch (error: any) {
-    console.error('validateAssetFile: Validation error:', error)
-    throw new Error(error.message || 'File validation failed')
+    console.error('validateVendorFile: Validation error:', error)
+    throw error // Don't wrap the error, let it bubble up with original response data
   }
 }
 
@@ -66,7 +62,7 @@ const formatValidationErrors = (errors: any[]) => {
   
   const formattedErrors = topErrors.map(error => {
     const rowInfo = `Row ${error.row}`
-    const fieldInfo = error.field !== 'multiple' ? ` (${error.field})` : ''
+    const fieldInfo = error.field !== 'general' ? ` (${error.field})` : ''
     const valueInfo = error.value ? ` - Value: ${error.value}` : ''
     return `${rowInfo}${fieldInfo}: ${error.message}${valueInfo}`
   })
@@ -82,28 +78,44 @@ const formatValidationErrors = (errors: any[]) => {
 // Handle validation request from BulkUploadModal
 const handleValidation = async (file: File) => {
   try {
-    console.log('BulkAssetUpload: Validation requested for file:', file.name)
+    console.log('BulkVendorUpload: handleValidation called with file:', file.name)
+    console.log('BulkVendorUpload: File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    })
     
-    // Always call validation API for comprehensive validation
-    const validationResult = await validateAssetFile(file)
-    console.log('BulkAssetUpload: Validation result:', validationResult)
+    // Call validation API
+    console.log('BulkVendorUpload: Calling validateVendorFile...')
+    const validationResult = await validateVendorFile(file)
+    console.log('BulkVendorUpload: Validation result:', validationResult)
     
-    // Pass result back to BulkUploadModal
-    bulkUploadModalRef.value?.handleValidationResult(validationResult.data)
+    // Transform the result to match BulkUploadModal expectations
+    const transformedResult = {
+      errors: validationResult.data.errors || [],
+      totalRows: validationResult.data.totalRows || 0,
+      validRows: validationResult.data.validRows || 0
+    }
+    
+    console.log('BulkVendorUpload: Transformed result:', transformedResult)
+    
+    // Pass transformed result back to BulkUploadModal
+    console.log('BulkVendorUpload: Calling handleValidationResult on modal...')
+    bulkUploadModalRef.value?.handleValidationResult(transformedResult)
     
   } catch (error: any) {
-    console.error('BulkAssetUpload: Validation error:', error)
-    console.error('BulkAssetUpload: Error response:', error.response)
-    console.error('BulkAssetUpload: Error response data:', error.response?.data)
+    console.error('BulkVendorUpload: Validation error:', error)
+    console.error('BulkVendorUpload: Error response:', error.response)
+    console.error('BulkVendorUpload: Error response data:', error.response?.data)
     
     // Extract the actual error message from the backend response
     let errorMessage = 'Validation failed'
     if (error.response?.data?.message) {
       errorMessage = error.response.data.message
-      console.log('BulkAssetUpload: Using response message:', errorMessage)
+      console.log('BulkVendorUpload: Using response message:', errorMessage)
     } else if (error.message) {
       errorMessage = error.message
-      console.log('BulkAssetUpload: Using error message:', errorMessage)
+      console.log('BulkVendorUpload: Using error message:', errorMessage)
     }
     
     // Make error message more user-friendly
@@ -118,7 +130,7 @@ const handleValidation = async (file: File) => {
       totalRows: 0
     }
     
-    console.log('BulkAssetUpload: Passing error result to modal:', errorResult)
+    console.log('BulkVendorUpload: Passing error result to modal:', errorResult)
     
     // Pass error result back to BulkUploadModal
     bulkUploadModalRef.value?.handleValidationResult(errorResult)
@@ -128,17 +140,17 @@ const handleValidation = async (file: File) => {
 // Handle bulk upload (validation already completed)
 const handleBulkUpload = async (file: File) => {
   try {
-    console.log('BulkAssetUpload: Starting upload for file:', file.name)
+    console.log('BulkVendorUpload: Starting upload for file:', file.name)
     
     // Show loading state
-    toastStore.showInfo('Uploading Assets', 'Please wait while we upload your assets...')
+    toastStore.showInfo('Uploading Vendors', 'Please wait while we upload your vendors...')
     
     // Proceed with actual upload (validation already completed)
-    const result = await assetService.bulkUploadAssets(file, false)
+    const result = await VendorApiService.bulkUploadVendors(file, false) // false for actual upload
     
     toastStore.showSuccess(
       'Bulk Upload Successful', 
-      `Successfully uploaded ${result.data.imported} assets`
+      `Successfully uploaded ${result.data.imported} vendors`
     )
     
     // Emit event to refresh parent component
@@ -164,7 +176,7 @@ const handleTemplateDownload = (type: 'csv' | 'excel') => {
 
 // Public methods
 const openModal = () => {
-  console.log('BulkAssetUpload: openModal called, bulkUploadModalRef:', bulkUploadModalRef.value)
+  console.log('BulkVendorUpload: openModal called, bulkUploadModalRef:', bulkUploadModalRef.value)
   bulkUploadModalRef.value?.openModal()
 }
 
@@ -180,5 +192,5 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Asset-specific styles can be added here */
+/* Vendor-specific styles can be added here */
 </style>

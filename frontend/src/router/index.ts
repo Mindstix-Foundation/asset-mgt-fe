@@ -113,7 +113,7 @@ const router = createRouter({
         {
           path: 'vendors/edit/:id',
           name: 'edit-vendor',
-          component: () => import('../views/vendors/AddVendorView.vue'),
+          component: () => import('../views/vendors/EditVendorView.vue'),
         },
         {
           path: 'reports',

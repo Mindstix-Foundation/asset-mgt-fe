@@ -23,7 +23,7 @@ body {
   --secondary-green: #21AF65;
   --secondary-orange: #FF8C61;
   --secondary-red: #E97676;
-  --secondary-blue: #4A90E2;
+  --secondary-gray: #708090;
   --secondary-brown: #967259;
   ;
   
@@ -1753,7 +1753,7 @@ i.text-muted {
 }
 
 .badge.badge-contractor {
-  background-color: var(--secondary-red) !important;
+  background-color: var(--secondary-brown) !important;
   color: white !important;
   border: none !important;
   font-size: 0.75rem !important;
