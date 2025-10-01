@@ -277,9 +277,9 @@ class AssetService {
       warrantyUntil: asset.warrantyEndDate || '',
       warrantyStartDate: asset.warrantyStartDate || '',
       notes: asset.notes || '',
-      // Assignment details
-      assignmentReason: currentAssignment?.issueReason || '',
-      assignmentNotes: currentAssignment?.notes || '',
+      // Assignment details (from AssetIssue - limited data available)
+      assignmentReason: '',
+      assignmentNotes: '',
       assignmentDate: currentAssignment?.issueDate || '',
       assignedBy: currentAssignment?.issuedByUser?.username || '',
       // Retirement details

@@ -32,6 +32,51 @@ export interface Employee {
   }>
 }
 
+export interface AssetHistoryItem {
+  id: number
+  assetId: string
+  assetName: string
+  assetType: string
+  brand: string
+  model: string
+  action: 'RETURNED' // Only completed assignments (assigned and returned)
+  issueDate: string
+  returnDate: string // Always present for completed assignments
+  issueCondition: string
+  returnCondition?: string
+  issueReason?: string
+  returnReason?: string
+  notes?: string
+  issuedBy: string
+  returnedBy?: string
+  duration: number // Always present for completed assignments
+}
+
+export type AssetEventAction = 'ASSIGNED' | 'RETURNED'
+
+export interface AssetEventItem {
+  id: number
+  assetId: string
+  assetName: string
+  assetType: string
+  brand: string
+  model: string
+  action: AssetEventAction
+  date: string
+  condition?: string
+  reason?: string
+  notes?: string
+  performedBy: string
+}
+
+export interface AssetEventsResponse {
+  message: string
+  data: {
+    assetEvents: AssetEventItem[]
+    pagination: { totalCount: number; currentPage: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }
+  }
+}
+
 export interface EmployeeResponse {
   message: string
   data: {
@@ -50,6 +95,13 @@ export interface EmployeeListResponse {
       hasNext: boolean
       hasPrevious: boolean
     }
+  }
+}
+
+export interface AssetHistoryResponse {
+  message: string
+  data: {
+    assetHistory: AssetHistoryItem[]
   }
 }
 
@@ -105,12 +157,8 @@ class EmployeeApiService {
   // Get employee by ID
   async getEmployeeById(id: string, includeAssets: boolean = true): Promise<EmployeeResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/${id}`, {
-        params: { include_assets: includeAssets },
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
+      const response = await apiClient.get(`${this.baseURL}/${id}`, {
+        params: { include_assets: includeAssets }
       })
       return response.data
     } catch (error: any) {
@@ -122,12 +170,8 @@ class EmployeeApiService {
   // Check if email is available
   async isEmailAvailable(email: string, excludeEmployeeId?: string): Promise<{ available: boolean }> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/check-email`, {
-        params: { email, exclude_employee_id: excludeEmployeeId },
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
+      const response = await apiClient.get(`${this.baseURL}/check-email`, {
+        params: { email, exclude_employee_id: excludeEmployeeId }
       })
       return response.data
     } catch (error: any) {
@@ -139,16 +183,53 @@ class EmployeeApiService {
   // Search employees
   async searchEmployees(query: string, limit: number = 10, includeInactive: boolean = false): Promise<EmployeeListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/search`, {
-        params: { q: query, limit, include_inactive: includeInactive },
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
+      const response = await apiClient.get(`${this.baseURL}/search`, {
+        params: { q: query, limit, include_inactive: includeInactive }
       })
       return response.data
     } catch (error: any) {
       console.error('Error searching employees:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get asset history for an employee
+  async getAssetHistory(employeeId: string): Promise<AssetHistoryResponse> {
+    try {
+      const response = await apiClient.get(`${this.baseURL}/${employeeId}/asset-history`)
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching asset history:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get per-event asset history for an employee
+  async getAssetEvents(
+    employeeId: string,
+    params?: {
+      action?: AssetEventAction
+      assetType?: string
+      dateFrom?: string
+      dateTo?: string
+      search?: string
+      sortBy?: 'date' | 'action' | 'assetType'
+      sortOrder?: 'asc' | 'desc'
+      page?: number
+      limit?: number
+    }
+  ): Promise<AssetEventsResponse> {
+    try {
+      const query = new URLSearchParams()
+      if (params) {
+        Object.entries(params).forEach(([k, v]) => {
+          if (v !== undefined && v !== null && v !== '') query.append(k, String(v))
+        })
+      }
+      const response = await apiClient.get(`${this.baseURL}/${employeeId}/asset-events${query.toString() ? `?${query.toString()}` : ''}`)
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching asset events:', error)
       throw this.handleError(error)
     }
   }

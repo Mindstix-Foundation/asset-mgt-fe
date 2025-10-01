@@ -105,76 +105,91 @@
         </div>
       </div>
 
-      <!-- Filters -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12 col-md-3 mb-3">
-              <label class="form-label">Search Maintenance</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="filters.search"
-                  placeholder="Search by asset ID, vendor, issue..."
-                  @input="filterMaintenances"
-                >
+      <!-- Filters (Assets-style) -->
+      <div class="mb-4">
+        <div class="row align-items-end">
+          <!-- Search -->
+          <div class="col-12 col-lg-7 mb-3">
+            <label class="form-label">Search Maintenance</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input 
+                type="text" 
+                class="form-control" 
+                v-model="filters.search"
+                placeholder="Search by asset ID, issue..."
+                @input="filterMaintenances"
+              >
+            </div>
+          </div>
+
+          <!-- Sort By -->
+          <div class="col-12 col-lg-3 mb-3">
+            <SearchableDropdown
+              id="maintenance-sort-by"
+              label="Sort By"
+              placeholder="Select sort option..."
+              :items="sortOptions"
+              v-model="selectedSortBy"
+              @change="onSortByChange"
+            />
+          </div>
+
+          <!-- Sort Order + Filters Toggle -->
+          <div class="col-12 col-lg-2 mb-3">
+            <div class="row g-3">
+              <div class="col-4">
+                <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                  <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
+                </button>
               </div>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Status</label>
-              <select class="form-select" v-model="filters.status" @change="filterMaintenancesImmediate">
-                <option value="">All Status</option>
-                <option value="SCHEDULED">Scheduled</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="CANCELLED">Cancelled</option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Maintenance Type</label>
-              <select class="form-select" v-model="filters.type" @change="filterMaintenancesImmediate">
-                <option value="">All Types</option>
-                <option value="Preventive">Preventive</option>
-                <option value="Corrective">Corrective</option>
-                <option value="Emergency">Emergency</option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Vendor</label>
-              <select class="form-select" v-model="filters.vendor" @change="filterMaintenancesImmediate" :disabled="vendorsLoading">
-                <option value="">All Vendors</option>
-                <option v-if="vendorsLoading" disabled>Loading vendors...</option>
-                <option 
-                  v-for="vendor in availableVendors" 
-                  :key="vendor.id" 
-                  :value="vendor.name"
+              <div class="col-8">
+                <button 
+                  class="btn btn-outline-secondary btn-modern w-100" 
+                  @click="toggleFilterDropdown"
+                  :class="{ active: showFilterDropdown }"
                 >
-                  {{ vendor.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Sort By</label>
-              <div class="d-flex gap-2">
-                <select class="form-select" v-model="sortBy" @change="sortMaintenances">
-                  <option value="assetId">Asset ID</option>
-                  <option value="status">Status</option>
-                  <option value="type">Maintenance Type</option>
-                  <option value="vendor">Vendor</option>
-                  <option value="scheduledDate">Date</option>
-                  <option value="cost">Cost</option>
-                </select>
-                <button class="btn btn-outline-secondary" @click="toggleSortOrder" title="Toggle Sort Order">
-                  <i :class="sortAscending ? 'fas fa-sort-amount-down' : 'fas fa-sort-amount-up'"></i>
+                  <i class="fas fa-filter me-1"></i>Filters
                 </button>
               </div>
             </div>
-            <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
-              <button class="btn btn-outline-secondary w-100" @click="clearFilters" title="Clear Filters">
-                <i class="fas fa-times"></i>
-              </button>
+          </div>
+        </div>
+
+        <!-- Filter Dropdown -->
+        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex flex-column flex-md-row gap-2">
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="maintenance-type-filter"
+                    label="Maintenance Type"
+                    placeholder="Search types..."
+                    :items="maintenanceTypeOptions"
+                    v-model="selectedType"
+                    @change="onTypeChange"
+                  />
+                </div>
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="maintenance-status-filter"
+                    label="Status"
+                    placeholder="Search status..."
+                    :items="statusOptions"
+                    v-model="selectedStatus"
+                    @change="onStatusChange"
+                  />
+                </div>
+                
+                <div class="flex-shrink-0" style="width: 12.5%;">
+                  <div class="d-flex align-items-end h-100">
+                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                      <i class="fas fa-times me-1"></i>Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +211,6 @@
               <th>Asset ID</th>
               <th>Type</th>
               <th>Status</th>
-              <th>Vendor/Assigned</th>
               <th>Date</th>
               <th>Est./Actual Cost</th>
               <th>Actions</th>
@@ -209,7 +223,7 @@
               :data-asset-id="maintenance.assetId"
               :data-status="maintenance.status"
               :data-type="maintenance.type"
-              :data-vendor="maintenance.vendor"
+              
             >
               <td>
                 <strong>{{ maintenance.assetId }}</strong><br>
@@ -224,10 +238,6 @@
                 <span :class="`badge badge-${maintenance.status.toLowerCase().replace('_', '-')}`">
                   {{ formatStatus(maintenance.status) }}
                 </span>
-              </td>
-              <td>
-                <strong>{{ maintenance.vendor }}</strong><br>
-                <small class="text-muted">{{ maintenance.assignedTo }}</small>
               </td>
               <td>{{ formatDate(maintenance.scheduledDate) }}</td>
               <td>
@@ -262,19 +272,12 @@
                   <button 
                     v-if="maintenance.status === 'CANCELLED'"
                     class="btn btn-action btn-reschedule" 
-                    @click="navigateToSchedule"
+                    @click="navigateToSchedule(maintenance)"
                     title="Reschedule Maintenance"
                   >
                     <i class="fas fa-calendar-plus"></i>
                   </button>
-                  <button 
-                    v-if="maintenance.status === 'COMPLETED'"
-                    class="btn btn-action btn-report" 
-                    @click="openReportModal(maintenance)"
-                    title="Generate Report"
-                  >
-                    <i class="fas fa-file-alt"></i>
-                  </button>
+                  
                   <button 
                     v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
                     class="btn btn-action btn-cancel" 
@@ -312,7 +315,7 @@
 
     <!-- Maintenance Detail Modal -->
     <div class="modal fade" id="maintenanceDetailModal" tabindex="-1" ref="detailModal">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
@@ -321,194 +324,171 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
-            <!-- Asset & Maintenance Info Section -->
-            <div class="maintenance-info-section">
-              <h6 class="section-title"><i class="fas fa-tools me-2"></i>Asset & Maintenance Information</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">Asset ID</div>
-                  <div class="info-value">{{ selectedMaintenance.assetId }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Asset</div>
-                  <div class="info-value">{{ selectedMaintenance.assetName }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Maintenance Type</div>
-                  <div class="info-value">
-                    <span :class="`badge badge-type-${selectedMaintenance.type.toLowerCase()}`">
-                      {{ selectedMaintenance.type }}
-                    </span>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Status</div>
-                  <div class="info-value">
-                    <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replace('_', '-')}`">
-                      {{ formatStatus(selectedMaintenance.status) }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Timeline & Assignment Section -->
-            <div class="timeline-info-section">
-              <h6 class="section-title"><i class="fas fa-calendar-alt me-2"></i>Timeline & Assignment</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">Scheduled Date</div>
-                  <div class="info-value">{{ formatDate(selectedMaintenance.scheduledDate) }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Frequency</div>
-                  <div class="info-value">One-time</div>
-                </div>
-                <div class="col-md-12">
-                  <div class="info-label">Assigned To</div>
-                  <div class="info-value">{{ selectedMaintenance.assignedTo }} ({{ selectedMaintenance.vendor }})</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cost Information Section -->
-            <div class="cost-info-section">
-              <h6 class="section-title"><i class="bi bi-currency-rupee me-2"></i>Cost Information</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
-                  <div class="info-value">{{ selectedMaintenance.cost }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">{{ selectedMaintenance.costType === 'Actual' ? 'Estimated Cost' : 'Actual Cost' }}</div>
-                  <div class="info-value" :class="selectedMaintenance.status === 'COMPLETED' ? '' : 'text-muted'">
-                    {{ selectedMaintenance.status === 'COMPLETED' ? selectedMaintenance.cost : 
-                       selectedMaintenance.status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion' }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Description Section -->
-            <div class="description-section">
-              <h6 class="section-title"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
-              <div class="description-content">
-                <p><strong>Description:</strong> {{ selectedMaintenance.description }}</p>
-                
-                <p><strong>{{ selectedMaintenance.status === 'CANCELLED' ? 'Cancellation Details:' : 'Progress Notes:' }}</strong></p>
-                <ul class="service-notes">
-                  <li 
-                    v-for="note in selectedMaintenance.progressNotes" 
-                    :key="note"
-                    :style="selectedMaintenance.status === 'CANCELLED' ? 'color: var(--secondary-red)' : ''"
-                  >
-                    {{ note }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Maintenance History Section -->
-            <div class="maintenance-history-section" v-if="maintenanceHistory.length > 0">
-              <h6 class="section-title">
-                <i class="fas fa-history me-2"></i>Maintenance History
-                <span class="badge bg-primary ms-2">{{ maintenanceHistory.length }} records</span>
-              </h6>
-              <div class="history-timeline">
-                <div 
-                  v-for="(history, index) in maintenanceHistory" 
-                  :key="history.id"
-                  class="timeline-item"
-                  :class="`timeline-${history.status.toLowerCase().replace('_', '-')}`"
-                >
-                  <div class="timeline-marker"></div>
-                  <div class="timeline-content">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <div>
-                        <h6 class="timeline-title mb-1">{{ history.description }}</h6>
-                        <div class="timeline-meta">
-                          <span class="badge" :class="`badge-${history.status.toLowerCase().replace('_', '-')}`">
-                            {{ formatStatus(history.status) }}
-                          </span>
-                          <span class="badge" :class="`badge-type-${history.maintenanceTypeName.toLowerCase()}`">
-                            {{ history.maintenanceTypeName }}
-                          </span>
-                        </div>
-                      </div>
-                      <div class="timeline-date">
-                        {{ formatDate(history.scheduledDate) }}
+            <!-- 2x2 grid layout to match EmployeesView modal -->
+            <div class="row g-2">
+              <div class="col-12 col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-tools me-2"></i>Asset & Maintenance Information</h6>
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Asset ID</div>
+                      <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetId }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Asset</div>
+                      <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetName }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Maintenance Type</div>
+                      <div class="info-value-compact">
+                        <span :class="`badge badge-type-${selectedMaintenance.type.toLowerCase()}`">{{ selectedMaintenance.type }}</span>
                       </div>
                     </div>
-                    <div class="timeline-details">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <small class="text-muted">Vendor:</small>
-                          <div>{{ history.vendorName || 'Internal Team' }}</div>
-                        </div>
-                        <div class="col-md-6">
-                          <small class="text-muted">Cost:</small>
-                          <div>
-                            {{ history.actualCost 
-                              ? `₹${history.actualCost.toFixed(2)} (Actual)` 
-                              : history.estimatedCost 
-                                ? `₹${history.estimatedCost.toFixed(2)} (Estimated)` 
-                                : 'N/A' 
-                            }}
-                          </div>
-                        </div>
-                      </div>
-                      <div v-if="history.completionNotes || history.cancellationNotes" class="mt-2">
-                        <small class="text-muted">Notes:</small>
-                        <div class="timeline-notes">{{ history.completionNotes || history.cancellationNotes }}</div>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Status</div>
+                      <div class="info-value-compact">
+                        <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replace('_', '-')}`">{{ formatStatus(selectedMaintenance.status) }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div class="col-12 col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-calendar-alt me-2"></i>Timeline & Assignment</h6>
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Scheduled Date</div>
+                      <div class="info-value-compact">{{ formatDate(selectedMaintenance.scheduledDate) }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Frequency</div>
+                      <div class="info-value-compact">One-time</div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="info-label-compact">Assigned To</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.assignedTo || 'Internal Team' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div class="row g-2 mt-2">
+              <div class="col-12 col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="bi bi-currency-rupee me-2"></i>Cost Information</h6>
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.cost }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Estimated Cost' : 'Actual Cost' }}</div>
+                      <div class="info-value-compact" :class="selectedMaintenance.status === 'COMPLETED' ? '' : 'text-muted'">
+                        {{ selectedMaintenance.status === 'COMPLETED' ? selectedMaintenance.cost : selectedMaintenance.status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
+                  <div class="description-content">
+                    <p><strong>Description:</strong> {{ selectedMaintenance.description }}</p>
+                    <p><strong>{{ selectedMaintenance.status === 'CANCELLED' ? 'Cancellation Details:' : 'Progress Notes:' }}</strong></p>
+                    <ul class="service-notes">
+                      <li v-for="note in selectedMaintenance.progressNotes" :key="note" :style="selectedMaintenance.status === 'CANCELLED' ? 'color: var(--secondary-red)' : ''">
+                        {{ note }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maintenance History moved to dedicated page -->
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button 
-              v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
-              type="button" 
-              class="btn btn-success" 
-              @click="closeDetailAndOpenComplete"
-            >
-              <i class="fas fa-check me-1"></i>Complete Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'SCHEDULED'"
-              type="button" 
-              class="btn btn-warning" 
-              @click="navigateToEdit(selectedMaintenance)"
-            >
-              <i class="fas fa-edit me-1"></i>Edit Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'CANCELLED'"
-              type="button" 
-              class="btn btn-warning" 
-              @click="navigateToSchedule"
-            >
-              <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'COMPLETED'"
-              type="button" 
-              class="btn btn-primary" 
-              @click="closeDetailAndOpenReport"
-            >
-              <i class="fas fa-file-alt me-1"></i>Generate Report
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
-              type="button" 
-              class="btn btn-danger" 
-              @click="closeDetailAndOpenCancel"
-            >
-              <i class="fas fa-times me-1"></i>Cancel Maintenance
-            </button>
+            <!-- Mobile: 2x2 grid like EmployeesView -->
+            <div class="mobile-actions-grid d-md-none w-100">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button 
+                v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
+                type="button" 
+                class="btn btn-success" 
+                @click="closeDetailAndOpenComplete"
+              >
+                <i class="fas fa-check me-1"></i>Complete
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status === 'SCHEDULED'"
+                type="button" 
+                class="btn btn-warning" 
+                @click="navigateToEdit(selectedMaintenance)"
+              >
+                <i class="fas fa-edit me-1"></i>Edit
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status === 'CANCELLED'"
+                type="button" 
+                class="btn btn-warning" 
+                @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
+              >
+                <i class="fas fa-calendar-plus me-1"></i>Reschedule
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
+                type="button" 
+                class="btn btn-danger" 
+                @click="closeDetailAndOpenCancel"
+              >
+                <i class="fas fa-times me-1"></i>Cancel
+              </button>
+            </div>
+
+            <!-- Desktop: aligned like EmployeesView -->
+            <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary" @click="openHistory">
+                  <i class="fas fa-history me-1"></i>History
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
+                  type="button" 
+                  class="btn btn-success" 
+                  @click="closeDetailAndOpenComplete"
+                >
+                  <i class="fas fa-check me-1"></i>Complete Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status === 'SCHEDULED'"
+                  type="button" 
+                  class="btn btn-warning" 
+                  @click="navigateToEdit(selectedMaintenance)"
+                >
+                  <i class="fas fa-edit me-1"></i>Edit Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status === 'CANCELLED'"
+                  type="button" 
+                  class="btn btn-warning" 
+                  @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
+                >
+                  <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
+                  type="button" 
+                  class="btn btn-danger" 
+                  @click="closeDetailAndOpenCancel"
+                >
+                  <i class="fas fa-times me-1"></i>Cancel Maintenance
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -628,25 +608,7 @@
                 </div>
               </div>
               
-              <!-- Cancellation Date -->
-              <div class="mb-3">
-                <label for="cancelDate" class="form-label fw-semibold" style="color: var(--primary-black);">
-                  Cancellation Date <span class="text-danger">*</span>
-                </label>
-                <input 
-                  type="date" 
-                  :class="['form-control', { 'is-invalid': cancelFormErrors.cancelDate }]"
-                  id="cancelDate" 
-                  v-model="cancelForm.cancelDate"
-                  required 
-                  style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem;"
-                  @change="cancelFormErrors.cancelDate = ''"
-                >
-                <div class="invalid-feedback" v-if="cancelFormErrors.cancelDate">
-                  {{ cancelFormErrors.cancelDate }}
-                </div>
-                <small class="form-text text-muted">Date when maintenance is being cancelled</small>
-              </div>
+              <!-- Cancellation Date removed: now set by backend to current timestamp -->
               
               <!-- Cancellation Notes -->
               <div class="mb-3">
@@ -691,75 +653,18 @@
       </div>
     </div>
 
-    <!-- Generate Report Modal -->
-    <div class="modal fade" id="generateReportModal" tabindex="-1" ref="reportModal">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">Generate Maintenance Report</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" v-if="selectedMaintenance">
-            <div class="generate-report-form">
-              <div class="mb-3">
-                <p><strong>Asset:</strong> {{ selectedMaintenance.assetName }} ({{ selectedMaintenance.assetId }})</p>
-                <p><strong>Maintenance:</strong> {{ selectedMaintenance.description }}</p>
-                <p><strong>Completed:</strong> {{ formatDate(selectedMaintenance.scheduledDate) }}</p>
-                <p><strong>Cost:</strong> {{ selectedMaintenance.cost }}</p>
-              </div>
-              
-              <div class="mb-3">
-                <label for="reportType" class="form-label">Report Type <span class="text-danger">*</span></label>
-                <select :class="['form-select', { 'is-invalid': reportFormErrors.reportType }]" id="reportType" v-model="reportForm.reportType" required @change="reportFormErrors.reportType = ''">
-                  <option value="">Select report type</option>
-                  <option value="summary">Summary Report</option>
-                  <option value="detailed">Detailed Report</option>
-                  <option value="cost-analysis">Cost Analysis</option>
-                  <option value="warranty">Warranty Report</option>
-                </select>
-                <div class="invalid-feedback" v-if="reportFormErrors.reportType">{{ reportFormErrors.reportType }}</div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="reportFormat" class="form-label">Format</label>
-                <select class="form-select" id="reportFormat" v-model="reportForm.reportFormat">
-                  <option value="pdf">PDF Document</option>
-                  <option value="excel">Excel Spreadsheet</option>
-                  <option value="word">Word Document</option>
-                </select>
-              </div>
-              
-              <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="includeTimeline" v-model="reportForm.includeTimeline">
-                  <label class="form-check-label" for="includeTimeline">
-                    Include maintenance timeline
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" @click="generateReport" :disabled="reportLoading">
-              <i :class="reportLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-download me-1'"></i>
-              {{ reportLoading ? 'Generating...' : 'Generate & Download' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, reactive, type Ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
 import { maintenanceService } from '@/services/maintenanceService'
 import { fetchDashboardStats } from '@/services/api'
 import { showToast, showErrorToast } from '@/utils/toast'
 import AppPagination from '@/components/pagination/AppPagination.vue'
+import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 
 const router = useRouter()
 
@@ -794,8 +699,7 @@ const maintenanceData: Ref<MaintenanceRow[]> = ref([])
 const isLoading = ref(false)
 const totalItems = ref(0)
 const totalPages = ref(1)
-const availableVendors = ref<Array<{id: string, name: string}>>([])
-const vendorsLoading = ref(false)
+// vendor state removed
 
 const filters = reactive({
   search: '',
@@ -809,24 +713,43 @@ const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
 
+// UI state for Assets-style filters
+const showFilterDropdown = ref(false)
+
+// Dropdown selections
+const selectedType = ref<Item | null>(null)
+const selectedStatus = ref<Item | null>(null)
+// vendor selection removed
+const selectedSortBy = ref<Item | null>(null)
+
+// Dropdown items
+const maintenanceTypeOptions = computed<Item[]>(() => [
+  { id: 'Preventive', name: 'Preventive', value: 'Preventive' },
+  { id: 'Corrective', name: 'Corrective', value: 'Corrective' },
+  { id: 'Emergency', name: 'Emergency', value: 'Emergency' },
+  { id: 'Upgrade', name: 'Upgrade', value: 'Upgrade' }
+])
+
+const statusOptions = computed<Item[]>(() => [
+  { id: 'SCHEDULED', name: 'Scheduled', value: 'SCHEDULED' },
+  { id: 'IN_PROGRESS', name: 'In Progress', value: 'IN_PROGRESS' },
+  { id: 'COMPLETED', name: 'Completed', value: 'COMPLETED' },
+  { id: 'CANCELLED', name: 'Cancelled', value: 'CANCELLED' }
+])
+
+// vendor options removed
+
+const sortOptions = ref<Item[]>([
+  { id: 'assetId', name: 'Asset ID', value: 'assetId' },
+  { id: 'status', name: 'Status', value: 'status' },
+  { id: 'type', name: 'Maintenance Type', value: 'type' },
+  { id: 'vendor', name: 'Vendor', value: 'vendor' },
+  { id: 'scheduledDate', name: 'Date', value: 'scheduledDate' },
+  { id: 'cost', name: 'Cost', value: 'cost' }
+])
+
 // API functions
-  const fetchVendors = async () => {
-    try {
-      vendorsLoading.value = true
-      const response = await maintenanceService.getVendors()
-      if (response.data && response.data.vendors) {
-        availableVendors.value = response.data.vendors.map(vendor => ({
-          id: vendor.id,
-          name: vendor.name
-        }))
-      }
-    } catch (error) {
-      console.error('Error fetching vendors:', error)
-      availableVendors.value = []
-    } finally {
-      vendorsLoading.value = false
-    }
-  }
+  // fetchVendors removed
 
   const fetchMaintenances = async () => {
     try {
@@ -836,7 +759,7 @@ const itemsPerPage = 10
       const sortFieldMap: Record<string, string> = {
         'cost': 'estimatedCost',
         'type': 'maintenanceType',
-        'vendor': 'vendorName',
+        
         'assetId': 'scheduledDate' // Asset ID sorting not supported yet, fallback to date
       }
       
@@ -854,7 +777,7 @@ const itemsPerPage = 10
         search: filters.search || undefined,
         status: filters.status || undefined,
         maintenanceType: filters.type ? maintenanceTypeMap[filters.type] || filters.type : undefined,
-        vendorName: filters.vendor || undefined,
+        
         sortBy: sortFieldMap[sortBy.value] || sortBy.value,
         sortOrder: (sortAscending.value ? 'asc' : 'desc') as 'asc' | 'desc'
       }
@@ -944,7 +867,6 @@ const generateProgressNotes = (maintenance: any): string[] => {
 const detailModal = ref<HTMLElement>()
 const completeModal = ref<HTMLElement>()
 const cancelModal = ref<HTMLElement>()
-const reportModal = ref<HTMLElement>()
 const completeFormElement = ref<HTMLFormElement>()
 
 // Selected maintenance for modals
@@ -958,7 +880,6 @@ const completeForm = reactive({
 })
 
 const cancelForm = reactive({
-  cancelDate: new Date().toISOString().split('T')[0],
   cancelNotes: ''
 })
 
@@ -968,7 +889,6 @@ const completeFormErrors = reactive({
 })
 
 const cancelFormErrors = reactive({
-  cancelDate: '',
   cancelNotes: ''
 })
 
@@ -1011,14 +931,7 @@ const validateCancelForm = () => {
   let isValid = true
   
   // Reset errors
-  cancelFormErrors.cancelDate = ''
   cancelFormErrors.cancelNotes = ''
-  
-  // Validate cancel date
-  if (!cancelForm.cancelDate || cancelForm.cancelDate.trim() === '') {
-    cancelFormErrors.cancelDate = 'Please select a cancellation date'
-    isValid = false
-  }
   
   // Validate cancel notes
   if (!cancelForm.cancelNotes || cancelForm.cancelNotes.trim() === '') {
@@ -1032,21 +945,9 @@ const validateCancelForm = () => {
   return isValid
 }
 
-const reportForm = reactive({
-  reportType: '',
-  reportFormat: 'pdf',
-  includeTimeline: true
-})
-
-// Report form validation errors
-const reportFormErrors = reactive({
-  reportType: ''
-})
-
 // Loading states
 const completeLoading = ref(false)
 const cancelLoading = ref(false)
-const reportLoading = ref(false)
 
 // Stats interval for periodic updates
 let statsInterval: number | undefined
@@ -1054,10 +955,11 @@ let statsInterval: number | undefined
 // Initialize data on component mount
 onMounted(() => {
   fetchMaintenances()
-  fetchVendors()
   fetchStats()
   // Refresh every 1 minute
   statsInterval = window.setInterval(fetchStats, 60_000)
+  // Initialize default sort option
+  selectedSortBy.value = sortOptions.value.find(o => o.value === sortBy.value) || null
 })
 
 onUnmounted(() => {
@@ -1167,8 +1069,12 @@ const formatDate = (dateString: string) => {
   })
 }
 
-const navigateToSchedule = () => {
-  // Navigate to schedule maintenance page
+const navigateToSchedule = (maintenance?: any) => {
+  // If a maintenance record (e.g., cancelled) is provided, pass external assetId as query param
+  if (maintenance?.assetId) {
+    router.push({ path: '/app/maintenance/schedule', query: { assetId: maintenance.assetId } })
+    return
+  }
   router.push('/app/maintenance/schedule')
 }
 
@@ -1182,6 +1088,11 @@ const toggleSortOrder = () => {
   fetchMaintenances()
 }
 
+// Ensure API fires whenever sort order changes (in case of event binding issues)
+watch(sortAscending, () => {
+  fetchMaintenances()
+})
+
 const clearFilters = () => {
   filters.search = ''
   filters.status = ''
@@ -1190,6 +1101,12 @@ const clearFilters = () => {
   currentPage.value = 1
   // Clear any pending search timeout
   if (searchTimeout) clearTimeout(searchTimeout)
+  // Reset dropdown selections
+  selectedType.value = null
+  selectedStatus.value = null
+  
+  selectedSortBy.value = sortOptions.value.find(o => o.value === 'scheduledDate') || null
+  sortBy.value = 'scheduledDate'
   fetchMaintenances()
 }
 
@@ -1219,6 +1136,33 @@ const filterMaintenancesImmediate = () => {
 
 const sortMaintenances = () => {
   fetchMaintenances()
+}
+
+// Assets-style filter dropdown handlers
+const toggleFilterDropdown = () => {
+  showFilterDropdown.value = !showFilterDropdown.value
+}
+
+const onTypeChange = (item: Item | null) => {
+  selectedType.value = item
+  filters.type = item?.value as string || ''
+  filterMaintenancesImmediate()
+}
+
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  filters.status = (item?.value as string) || ''
+  filterMaintenancesImmediate()
+}
+
+// vendor change removed
+
+const onSortByChange = (item: Item | null) => {
+  selectedSortBy.value = item
+  if (item?.value) {
+    sortBy.value = item.value as string
+  }
+  sortMaintenances()
 }
 
 // Modal methods
@@ -1280,22 +1224,12 @@ const openCompleteModal = (maintenance: MaintenanceRow) => {
 
 const openCancelModal = (maintenance: MaintenanceRow) => {
   selectedMaintenance.value = maintenance
-  cancelForm.cancelDate = new Date().toISOString().split('T')[0]
   cancelForm.cancelNotes = ''
-  cancelFormErrors.cancelDate = ''
   cancelFormErrors.cancelNotes = ''
   const modal = new Modal(cancelModal.value!)
   modal.show()
 }
 
-const openReportModal = (maintenance: MaintenanceRow) => {
-  selectedMaintenance.value = maintenance
-  reportForm.reportType = ''
-  reportForm.reportFormat = 'pdf'
-  reportForm.includeTimeline = true
-  const modal = new Modal(reportModal.value!)
-  modal.show()
-}
 
 const closeDetailAndOpenComplete = () => {
   const detailModalInstance = Modal.getInstance(detailModal.value!)
@@ -1321,16 +1255,17 @@ const closeDetailAndOpenCancel = () => {
   }, 300)
 }
 
-const closeDetailAndOpenReport = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openReportModal(selectedMaintenance.value)
-    }
-  }, 300)
+
+// Navigate to dedicated maintenance history page
+const viewMaintenanceHistory = (maintenance: MaintenanceRow) => {
+  const instance = Modal.getInstance(detailModal.value!)
+  if (instance) instance.hide()
+  router.push(`/app/maintenance/${maintenance.assetId}/history`)
+}
+
+const openHistory = () => {
+  if (!selectedMaintenance.value) return
+  viewMaintenanceHistory(selectedMaintenance.value)
 }
 
 const completeMaintenance = async () => {
@@ -1396,10 +1331,7 @@ const cancelMaintenance = async () => {
   try {
     const response = await maintenanceService.cancelMaintenance(
       selectedMaintenance.value.id.toString(),
-      {
-        cancelDate: cancelForm.cancelDate,
-        cancelNotes: cancelForm.cancelNotes
-      }
+      { cancelNotes: cancelForm.cancelNotes }
     )
 
     if (response.data && response.data.maintenance) {
@@ -1410,14 +1342,12 @@ const cancelMaintenance = async () => {
         row.cancellationNotes = cancelForm.cancelNotes
       }
 
-      showToast(`Maintenance cancelled successfully!<br>Date: ${cancelForm.cancelDate}<br>Notes: ${cancelForm.cancelNotes}`, 'success')
+      showToast(`Maintenance cancelled successfully!<br>Notes: ${cancelForm.cancelNotes}`, 'success')
       const modal = Modal.getInstance(cancelModal.value!)
       if (modal) modal.hide()
 
       // Reset form
-      cancelForm.cancelDate = ''
       cancelForm.cancelNotes = ''
-      cancelFormErrors.cancelDate = ''
       cancelFormErrors.cancelNotes = ''
     } else {
       showToast(response.message || 'Error cancelling maintenance. Please try again.', 'error')
@@ -1431,128 +1361,20 @@ const cancelMaintenance = async () => {
   }
 }
 
-const generateReport = async () => {
-  if (!reportForm.reportType) {
-    reportFormErrors.reportType = 'Please select a report type'
-    return
-  }
-  if (!selectedMaintenance.value) {
-    showToast('No maintenance selected.', 'error')
-    return
-  }
-
-  reportLoading.value = true
-
-  try {
-    const m = selectedMaintenance.value
-
-    const title = `Maintenance Report - ${m.assetId}`
-    const dateStr = new Date().toLocaleString()
-
-    const html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset=\"utf-8\" />
-  <title>${title}</title>
-  <style>
-    body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 24px; }
-    h1 { font-size: 20px; margin: 0 0 16px; }
-    h2 { font-size: 16px; margin: 24px 0 8px; }
-    .meta { color: #555; font-size: 12px; margin-bottom: 16px; }
-    .section { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
-    .row { display: flex; gap: 16px; }
-    .col { flex: 1; }
-    .label { color: #555; font-size: 12px; margin-bottom: 4px; }
-    .value { font-size: 14px; font-weight: 600; }
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 13px; }
-    .muted { color: #666; }
-    @media print {
-      @page { size: A4; margin: 16mm; }
-      .no-print { display: none !important; }
-    }
-  </style>
-</head>
-<body>
-  <div class=\"no-print\" style=\"text-align:right; margin-bottom: 8px;\">
-    <button onclick=\"window.print()\" style=\"padding:8px 12px; border:1px solid #ccc; border-radius:6px; background:#f9fafb; cursor:pointer;\">Print / Save as PDF</button>
-  </div>
-
-  <h1>${title}</h1>
-  <div class=\"meta\">Generated on ${dateStr} • Type: ${reportForm.reportType} • Format: ${reportForm.reportFormat.toUpperCase()}</div>
-
-  <div class=\"section\">
-    <div class=\"row\">
-      <div class=\"col\">
-        <div class=\"label\">Asset</div>
-        <div class=\"value\">${m.assetName} (${m.assetId})</div>
-      </div>
-      <div class=\"col\">
-        <div class=\"label\">Type / Brand / Model</div>
-        <div class=\"value\">${m.assetType} / ${m.assetBrand} / ${m.assetModel}</div>
-      </div>
-    </div>
-    <div class=\"row\" style=\"margin-top:8px;\">
-      <div class=\"col\">
-        <div class=\"label\">Status</div>
-        <div class=\"value\">${m.status}</div>
-      </div>
-      <div class=\"col\">
-        <div class=\"label\">Scheduled Date</div>
-        <div class=\"value\">${m.scheduledDate}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class=\"section\">
-    <div class=\"label\">Maintenance</div>
-    <div class=\"value\">${m.description}</div>
-    <table>
-      <tr><th>Type</th><td>${m.maintenanceTypeName}</td></tr>
-      <tr><th>Vendor</th><td>${m.vendorName ?? '—'}</td></tr>
-      <tr><th>Estimated Cost</th><td>${m.estimatedCost != null ? '₹' + m.estimatedCost : '—'}</td></tr>
-      <tr><th>Actual Cost</th><td>${m.actualCost != null ? '₹' + m.actualCost : m.cost ? m.cost : '—'}</td></tr>
-      <tr><th>Completion Notes</th><td>${m.completionNotes ?? '—'}</td></tr>
-      <tr><th>Cancellation Notes</th><td>${m.cancellationNotes ?? '—'}</td></tr>
-    </table>
-  </div>
-
-  ${reportForm.includeTimeline ? `<div class=\"section\"><div class=\"label\">Timeline</div><div class=\"muted\">Timeline details not available. This section is included by request.</div></div>` : ''}
-
-  <div class=\"muted\" style=\"margin-top:16px; font-size: 11px;\">This is a system-generated report.</div>
-</body>
-</html>`
-
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) throw new Error('Popup blocked. Please allow popups to download the report.')
-
-    printWindow.document.open()
-    printWindow.document.write(html)
-    printWindow.document.close()
-
-    // Auto-print on load
-    printWindow.onload = () => {
-      try { printWindow.focus(); printWindow.print(); } catch (e) {}
-    }
-
-    showToast('Report is ready. Use the browser dialog to save as PDF.', 'success')
-
-    const modal = Modal.getInstance(reportModal.value!)
-    if (modal) modal.hide()
-
-  } catch (error) {
-    console.error('Error generating report:', error)
-    showToast('Error generating report. Please try again.', 'error')
-  } finally {
-    reportLoading.value = false
-  }
-}
 
 // Toast notification function is now imported from utils
 
 onMounted(() => {
   // Any initialization logic
 })
+
+// New method to toggle history expansion
+const toggleHistory = () => {
+  isHistoryExpanded.value = !isHistoryExpanded.value
+}
+
+// New reactive data for history expansion
+const isHistoryExpanded = ref(true)
 </script>
 
 <style scoped>
@@ -1829,8 +1651,9 @@ onMounted(() => {
 }
 
 .table th:last-child, .table td:last-child {
-  padding-right: 1.75rem !important; /* extra right gutter to mirror left */
+  padding-right: 0.75rem !important; /* tighter like EmployeesView */
   padding-left: 0.5rem !important;
+  text-align: right !important; /* push content to the right edge */
 }
 
 .table-responsive {
@@ -1838,28 +1661,38 @@ onMounted(() => {
   padding: 0 !important;
 }
 
-/* Column width distribution for 7 columns */
+/* Column width distribution for 6 columns (vendor column removed) */
 /* 1: Asset ID */
 .table th:nth-child(1), .table td:nth-child(1) {
-  width: 13% !important;
-  min-width: 160px !important;
+  width: 22% !important;
+  min-width: 220px !important;
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
   overflow: hidden !important;
 }
 /* 2: Type */
-.table th:nth-child(2), .table td:nth-child(2) { width: 11% !important; }
+.table th:nth-child(2), .table td:nth-child(2) { 
+  width: 14% !important; 
+  min-width: 140px !important;
+}
 /* 3: Status */
-.table th:nth-child(3), .table td:nth-child(3) { width: 12% !important; }
-/* 4: Vendor/Assigned */
-.table th:nth-child(4), .table td:nth-child(4) { width: 19% !important; }
-/* 5: Date */
-.table th:nth-child(5), .table td:nth-child(5) { width: 14% !important; }
-/* 6: Cost */
-.table th:nth-child(6), .table td:nth-child(6) { width: 17% !important; }
+.table th:nth-child(3), .table td:nth-child(3) { 
+  width: 14% !important; 
+  min-width: 130px !important;
+}
+/* 4: Date */
+.table th:nth-child(4), .table td:nth-child(4) { 
+  width: 18% !important; 
+  min-width: 170px !important;
+}
+/* 5: Cost */
+.table th:nth-child(5), .table td:nth-child(5) { 
+  width: 21% !important; 
+  min-width: 180px !important;
+}
 
-/* 7: Actions column */
-.table th:nth-child(7), .table td:nth-child(7) {
+/* 6: Actions column */
+.table th:nth-child(6), .table td:nth-child(6) {
   width: 136px !important;
   min-width: 136px !important;
   max-width: 136px !important;
@@ -1868,7 +1701,7 @@ onMounted(() => {
 
 /* Actions button group spacing */
 .maintenance-actions {
-  justify-content: flex-start !important;
+  justify-content: flex-end !important; /* align buttons to the right */
   gap: 0.375rem !important;
 }
 
@@ -1960,40 +1793,38 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-.maintenance-info-section,
-.timeline-info-section,
-.cost-info-section,
-.description-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
+/* Maintenance Info sections */
+.asset-info-section-compact {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
 }
 
-.section-title {
-  color: var(--primary-black) !important;
+.section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.info-label-compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.info-value-compact {
   font-size: 1rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.75rem !important;
-  padding-bottom: 0.5rem !important;
-  border-bottom: 1px solid var(--element-gray) !important;
-}
-
-.info-label {
-  font-size: 0.8rem !important;
-  color: var(--primary-mid-gray) !important;
   font-weight: 500 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.025em !important;
-  margin-bottom: 0.25rem !important;
-}
-
-.info-value {
-  color: var(--primary-black) !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
+  color: #212529 !important;
+  margin-bottom: 0 !important;
 }
 
 .description-content {
@@ -2246,5 +2077,124 @@ onMounted(() => {
   color: var(--primary-dark-gray);
   font-size: 0.8rem;
   margin-top: 0.25rem;
+}
+
+/* Maintenance History Section (Collapsible) */
+.maintenance-history-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.history-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--primary-mid-gray);
+}
+
+.timeline-scheduled .timeline-marker {
+  background: var(--secondary-purple);
+}
+
+.timeline-in-progress .timeline-marker {
+  background: var(--secondary-orange);
+}
+
+.timeline-completed .timeline-marker {
+  background: var(--secondary-green);
+}
+
+.timeline-cancelled .timeline-marker {
+  background: var(--secondary-red);
+}
+
+.timeline-content {
+  background: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.timeline-title {
+  color: var(--primary-black);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.timeline-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.timeline-meta .badge {
+  font-size: 0.7rem;
+}
+
+.timeline-date {
+  font-size: 0.8rem;
+  color: var(--primary-mid-gray);
+  font-weight: 500;
+}
+
+.timeline-details {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.timeline-details .text-muted {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-weight: 500;
+}
+
+.timeline-notes {
+  font-style: italic;
+  color: var(--primary-dark-gray);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Assignment Chevron */
+.assignment-chevron {
+  transition: transform 0.3s ease;
+}
+
+.assignment-chevron.rotated {
+  transform: rotate(180deg);
 }
 </style> 

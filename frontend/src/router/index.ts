@@ -76,9 +76,19 @@ const router = createRouter({
           component: () => import('../views/employees/EditEmployeeView.vue'),
         },
         {
+          path: 'employees/:id/history',
+          name: 'employee-asset-history',
+          component: () => import('../views/employees/EmployeeAssetHistory.vue'),
+        },
+        {
           path: 'maintenance',
           name: 'maintenance',
           component: () => import('../views/maintenance/MaintenanceView.vue'),
+        },
+        {
+          path: 'maintenance/:assetId/history',
+          name: 'maintenance-history',
+          component: () => import('../views/maintenance/MaintenanceHistoryView.vue'),
         },
         {
           path: 'maintenance/schedule',

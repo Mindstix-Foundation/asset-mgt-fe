@@ -1137,9 +1137,11 @@ onMounted(async () => {
   // Set today's date as default
   formData.collectionDate = new Date().toISOString().split('T')[0]
   
-  // Check if asset was pre-selected from assets page
-  const selectedAssetId = localStorage.getItem('selectedAssetId')
-  const currentEmployee = localStorage.getItem('currentEmployee')
+  // Query parameter based preselect (preferred)
+  const qpAssetId = route.query.assetId ? route.query.assetId.toString() : ''
+  const qpEmployeeId = route.query.employeeId ? route.query.employeeId.toString() : ''
+  let selectedAssetId = qpAssetId || localStorage.getItem('selectedAssetId') || ''
+  let currentEmployee = qpEmployeeId || localStorage.getItem('currentEmployee') || ''
   
   if (selectedAssetId) {
     // Find the assignment by asset ID
@@ -1178,14 +1180,25 @@ onMounted(async () => {
       showErrorToast(`Asset ${selectedAssetId} not found in assigned assets`)
     }
     
-    localStorage.removeItem('selectedAssetId')
-    localStorage.removeItem('currentEmployee')
+    // Clear only if they were from localStorage, keep query params intact
+    if (!qpAssetId) localStorage.removeItem('selectedAssetId')
+    if (!qpEmployeeId) localStorage.removeItem('currentEmployee')
   }
   
   // Focus on appropriate field
   nextTick(() => {
-    // If asset was pre-selected, focus on collection details, otherwise focus on employee field
-    const focusField = selectedAssetId ? 'collectionDate' : 'employeeId'
+    // If both employee and asset are preselected, focus next required unselected field.
+    // If asset is selected but employee isn't, focus employee; if employee selected but asset isn't, focus asset.
+    let focusField = 'employeeId'
+    const hasEmployee = !!formData.employeeId
+    const hasAsset = !!formData.assetId
+    if (hasEmployee && hasAsset) {
+      focusField = 'collectionReason'
+    } else if (hasEmployee && !hasAsset) {
+      focusField = 'assetId'
+    } else if (!hasEmployee && hasAsset) {
+      focusField = 'employeeId'
+    }
     const field = document.getElementById(focusField)
     if (field) field.focus()
   })

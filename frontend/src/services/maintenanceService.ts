@@ -18,12 +18,8 @@ export interface MaintenanceType {
 
 // Use central Vendor type if needed
 // (Kept local interface minimal to avoid conflicts)
-export interface MaintenanceVendor {
-  id: string
-  name: string
-  contactEmail: string
-  contactPhone: string
-}
+// Vendor support removed from UI; keep server type optional if API still returns
+export interface MaintenanceVendor { id: string; name: string; contactEmail: string; contactPhone: string }
 
 export interface Maintenance {
   id: string
@@ -143,10 +139,7 @@ class MaintenanceService {
     return apiService.get('/maintenance-types')
   }
 
-  // Get all vendors for dropdown
-  async getVendors(): Promise<ApiResponse<{ vendors: MaintenanceVendor[] }>> {
-    return apiService.get('/vendors')
-  }
+  // Vendors endpoint no longer used in UI
 
   // Check asset availability for maintenance scheduling
   async checkAssetAvailability(assetId: string, scheduledDate: string, excludeMaintenanceId?: string): Promise<ApiResponse<{ available: boolean }>> {
@@ -163,7 +156,7 @@ class MaintenanceService {
   }
 
   // Cancel maintenance
-  async cancelMaintenance(maintenanceId: string, data: { cancelDate: string, cancelNotes: string }): Promise<ApiResponse<{ maintenance: Maintenance }>> {
+  async cancelMaintenance(maintenanceId: string, data: { cancelNotes: string }): Promise<ApiResponse<{ maintenance: Maintenance }>> {
     return apiService.put(`/maintenance/${maintenanceId}/cancel`, data)
   }
 
@@ -174,6 +167,22 @@ class MaintenanceService {
     totalRecords: number 
   }>> {
     return apiService.get(`/maintenance/asset/${assetId}/history`)
+  }
+
+  async getMaintenanceEvents(assetId: string, params: {
+    status?: string
+    type?: string
+    search?: string
+    dateFrom?: string
+    dateTo?: string
+    sortBy?: 'date' | 'status' | 'type'
+    sortOrder?: 'asc' | 'desc'
+    page?: number
+    limit?: number
+  }): Promise<ApiResponse<{ events: any[], pagination: { totalCount: number, currentPage: number, totalPages: number, hasNext: boolean, hasPrevious: boolean } }>> {
+    const query = new URLSearchParams()
+    Object.entries(params || {}).forEach(([k,v]) => { if (v !== undefined && v !== null && v !== '') query.append(k, String(v)) })
+    return apiService.get(`/maintenance/asset/${assetId}/history-events${query.toString() ? `?${query.toString()}` : ''}`)
   }
 }
 

@@ -3,37 +3,92 @@
     <!-- Main Content -->
     <div class="container-fluid py-4">
       <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
+      <div class="row align-items-center mb-4">
+        <!-- Title Section -->
+        <div class="col-12 col-sm-12 col-md-6 col-lg-3 mb-3 mb-lg-0">
           <h2 class="mb-0" style="color: var(--primary-black);">Employee Management</h2>
           <p class="text-muted mb-0">Manage employee information and asset assignments</p>
         </div>
-        <div class="d-flex gap-2 align-items-center">
-          <!-- View Toggle (List/Grid) -->
-          <div class="btn-group" role="group" aria-label="View toggle">
-            <button 
-              class="btn btn-outline-secondary btn-modern view-toggle"
-              :class="{ active: !isGridView }"
-              @click="switchToListView"
-            >
-              <i class="fas fa-list"></i>
-            </button>
-            <button 
-              class="btn btn-outline-secondary btn-modern view-toggle"
-              :class="{ active: isGridView }"
-              @click="switchToGridView"
-            >
-              <i class="fas fa-th-large"></i>
-            </button>
+        
+        <!-- Actions Section -->
+        <div class="col-12 col-md-6 col-lg-9">
+          <!-- Small screens: Custom layout -->
+          <div class="d-md-none">
+            <div class="row g-2 mb-2">
+              <!-- Row 1: View Toggle + Bulk Upload -->
+              <div class="col-6">
+                <div class="d-flex gap-1 w-100 justify-content-center">
+                  <!-- View Toggle -->
+                  <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                    <button 
+                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                      @click="switchToListView"
+                      style="min-width: 35px; padding: 0.375rem 0.5rem;"
+                    >
+                      <i class="fas fa-list"></i>
+                    </button>
+                    <button 
+                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                      @click="switchToGridView"
+                      style="min-width: 35px; padding: 0.375rem 0.5rem;"
+                    >
+                      <i class="fas fa-th-large"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <button class="btn btn-outline-secondary btn-modern w-100" @click="openBulkUploadModal">
+                  <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                </button>
+              </div>
+            </div>
+            
+            <div class="row g-2">
+              <!-- Row 2: Add Employee -->
+              <div class="col-12">
+                <router-link to="/app/employees/add" class="btn btn-primary btn-modern w-100">
+                  <i class="fas fa-user-plus me-1"></i>Add Employee
+                </router-link>
+              </div>
+            </div>
           </div>
           
-          <!-- Action Buttons -->
-          <button class="btn btn-outline-secondary btn-modern" @click="openBulkUploadModal">
-            <i class="fas fa-file-excel me-1"></i>Bulk Upload
-          </button>
-          <router-link to="/app/employees/add" class="btn btn-primary btn-modern">
-            <i class="fas fa-user-plus me-1"></i>Add Employee
-          </router-link>
+          <!-- Medium+ screens: Original layout -->
+          <div class="d-none d-md-block">
+            <div class="row g-2 justify-content-md-end">
+              <!-- View Toggle + Actions -->
+              <div class="col-md-12 col-lg-auto">
+                <div class="d-flex gap-2 w-100">
+                  <!-- View Toggle -->
+                  <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                    <button 
+                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                      @click="switchToListView"
+                      style="min-width: 40px;"
+                    >
+                      <i class="fas fa-list"></i>
+                    </button>
+                    <button 
+                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                      @click="switchToGridView"
+                      style="min-width: 40px;"
+                    >
+                      <i class="fas fa-th-large"></i>
+                    </button>
+                  </div>
+                  
+                  <button class="btn btn-outline-secondary btn-modern flex-fill" @click="openBulkUploadModal">
+                    <i class="fas fa-file-excel me-1"></i>Bulk Upload
+                  </button>
+                  
+                  <router-link to="/app/employees/add" class="btn btn-primary btn-modern flex-fill">
+                    <i class="fas fa-user-plus me-1"></i>Add Employee
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -95,7 +150,7 @@
         <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
-              <!-- Bootstrap Flexbox for equal width filters -->
+              <!-- Responsive filter layout -->
               <div class="d-flex flex-column flex-md-row gap-2">
                 <!-- Asset Count Filter -->
                 <div class="flex-fill">
@@ -121,10 +176,10 @@
                   />
                 </div>
                 
-                <!-- Clear Button: fixed width -->
-                <div class="flex-shrink-0" style="width: 12.5%;">
+                <!-- Clear Button: responsive width -->
+                <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -205,6 +260,7 @@
                         >
                           <i class="fas fa-laptop"></i>
                         </button>
+                        
                       </div>
                     </td>
                   </tr>
@@ -219,7 +275,37 @@
           <div class="text-muted">
             <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} employees</small>
           </div>
-          <AppPagination :current-page="currentPage" :total-pages="totalPages" @change="changePage" />
+          <nav aria-label="Employee pagination">
+            <ul class="pagination pagination-modern mb-0">
+              <li :class="['page-item', { disabled: currentPage === 1 }]">
+                <button class="page-link" @click="goToPage(1)" :disabled="currentPage === 1" title="First Page">
+                  <i class="fas fa-angle-double-left"></i>
+                </button>
+              </li>
+              <li :class="['page-item', { disabled: currentPage === 1 }]">
+                <button class="page-link" @click="previousPage" :disabled="currentPage === 1" title="Previous Page">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+              </li>
+              <li 
+                v-for="page in visiblePages" 
+                :key="page"
+                :class="['page-item', { active: page === currentPage }]"
+              >
+                <button class="page-link" @click="goToPage(page)">{{ page }}</button>
+              </li>
+              <li :class="['page-item', { disabled: currentPage === totalPages }]">
+                <button class="page-link" @click="nextPage" :disabled="currentPage === totalPages" title="Next Page">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </li>
+              <li :class="['page-item', { disabled: currentPage === totalPages }]">
+                <button class="page-link" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Last Page">
+                  <i class="fas fa-angle-double-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
 
         <!-- Grid View -->
@@ -231,60 +317,78 @@
               <p class="text-muted">Try adjusting your search criteria</p>
             </div>
             <div 
-              class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3" 
+              class="col-12 col-sm-12 col-md-6 col-lg-4 mb-4" 
               v-for="employee in filteredEmployees" 
               :key="employee.id"
             >
-              <div class="card h-100 employee-card">
-                <div class="card-body d-flex flex-column">
-                  <div class="employee-header mb-2">
-                    <div class="d-flex justify-content-center mb-3">
-                      <i :class="employee.iconClass" class="fa-3x"></i>
+              <div class="card h-100 employee-card-modern">
+                <div class="card-body p-2">
+                  <!-- Header with icon, employee name and status -->
+                  <div class="d-flex align-items-center mb-2">
+                    <div 
+                      class="rounded-circle d-flex align-items-center justify-content-center me-2" 
+                      :style="{ width: '36px', height: '36px', backgroundColor: getEmployeeIconColor(employee.id), flexShrink: 0 }"
+                    >
+                      <i class="fas fa-user text-white" style="font-size: 0.9rem;"></i>
                     </div>
-                    <div class="text-center mb-3">
-                      <h6 class="card-title fw-bold mb-1 text-truncate" style="color: var(--primary-black);">{{ employee.name }}</h6>
-                      <p class="text-muted small mb-0">{{ employee.id }}</p>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ employee.name }}</h6>
+                      <small class="text-muted text-truncate d-block">{{ employee.id }}</small>
                     </div>
+                    <span :class="[getStatusBadgeClass(employee.status), 'badge-sm']" style="font-size: 0.7rem;">
+                      {{ employee.status === 'active' ? 'Active' : 'Inactive' }}
+                    </span>
                   </div>
                   
-                  <div class="employee-details flex-grow-1 mb-3">
-                    <div class="mb-2">
-                      <i class="fas fa-envelope text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ employee.email }}</small>
-                    </div>
-                    <div class="mb-2">
-                      <i class="fas fa-phone text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ employee.phone }}</small>
-                    </div>
-                    <div class="mb-0">
-                      <i class="fas fa-laptop text-muted me-2" style="width: 14px;"></i>
-                      <small class="text-truncate">{{ employee.assetsCount }} Assets</small>
+                  <!-- Employee Details Grid - 2 columns for better space usage -->
+                  <div class="mb-2">
+                    <div class="row g-1">
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Email</small>
+                        <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ employee.email }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Phone</small>
+                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ employee.phone || 'Not provided' }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Assets</small>
+                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ employee.assetsCount }} Assigned</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Status</small>
+                        <div class="text-truncate" style="color: var(--primary-dark-gray); font-size: 0.8rem;">{{ employee.status === 'active' ? 'Currently Active' : 'Inactive' }}</div>
+                      </div>
                     </div>
                   </div>
                   
                   <div class="employee-actions-footer mt-auto pt-2 border-top">
-                    <div class="d-flex justify-content-center gap-2">
+                    <div class="d-flex justify-content-center gap-1">
                       <button 
-                        class="btn btn-sm btn-action btn-view employee-view-btn" 
-                        title="View Employee Details" 
+                        class="btn btn-action btn-view btn-sm" 
                         @click="viewEmployee(employee)"
+                        title="View Employee Details"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-eye"></i>
                       </button>
                       <button 
-                        class="btn btn-sm btn-action btn-edit employee-edit-btn" 
-                        title="Edit Employee" 
+                        class="btn btn-action btn-edit btn-sm" 
+                        title="Edit Employee"
                         @click="editEmployee(employee)"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-edit"></i>
                       </button>
                       <button 
-                        class="btn btn-sm btn-action btn-assign employee-assign-btn" 
-                        title="Issue Asset to Employee" 
+                        class="btn btn-action btn-assign btn-sm" 
+                        title="Issue Asset to Employee"
                         @click="issueAsset(employee)"
+                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-laptop"></i>
                       </button>
+                      
                     </div>
                   </div>
                 </div>
@@ -297,7 +401,37 @@
             <div class="text-muted">
               <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} employees</small>
             </div>
-            <AppPagination :current-page="currentPage" :total-pages="totalPages" @change="changePage" />
+            <nav aria-label="Employee pagination">
+              <ul class="pagination pagination-modern mb-0">
+                <li :class="['page-item', { disabled: currentPage === 1 }]">
+                  <button class="page-link" @click="goToPage(1)" :disabled="currentPage === 1" title="First Page">
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                </li>
+                <li :class="['page-item', { disabled: currentPage === 1 }]">
+                  <button class="page-link" @click="previousPage" :disabled="currentPage === 1" title="Previous Page">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                </li>
+                <li 
+                  v-for="page in visiblePages" 
+                  :key="page"
+                  :class="['page-item', { active: page === currentPage }]"
+                >
+                  <button class="page-link" @click="goToPage(page)">{{ page }}</button>
+                </li>
+                <li :class="['page-item', { disabled: currentPage === totalPages }]">
+                  <button class="page-link" @click="nextPage" :disabled="currentPage === totalPages" title="Next Page">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </li>
+                <li :class="['page-item', { disabled: currentPage === totalPages }]">
+                  <button class="page-link" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Last Page">
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
@@ -305,11 +439,12 @@
 
     <!-- Employee Detail Modal -->
     <div class="modal fade" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title fw-bold" style="color: var(--primary-black); font-size: 1.25rem;">
-              {{ selectedEmployee ? `Employee Details - ${selectedEmployee.name} (${selectedEmployee.id})` : 'Employee Details' }}
+              <span class="d-none d-md-inline">Employee Details - {{ selectedEmployee.name }} ({{ selectedEmployee.id }})</span>
+              <span class="d-md-none">{{ selectedEmployee.name }}</span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
@@ -317,7 +452,7 @@
             <!-- Employee Information - Compact Layout -->
             <div class="row g-2">
               <!-- Left Column: Basic Info -->
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="employee-info-section-compact">
                   <h6 class="section-title-compact"><i class="fas fa-user me-2"></i>Basic Information</h6>
                   <div class="info-grid-compact">
@@ -354,7 +489,7 @@
               </div>
 
               <!-- Right Column: Location & Assets -->
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <div class="employee-info-section-compact">
                   <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Assets</h6>
                   <div class="info-grid-compact">
@@ -373,88 +508,163 @@
               </div>
             </div>
 
-            <!-- Assigned Assets Section -->
+            <!-- Assigned Assets Section - Detailed Information -->
             <div class="row mt-2" v-if="selectedEmployee.assets && selectedEmployee.assets.length > 0">
               <div class="col-12">
-                <div class="assigned-assets-combined">
+                <div class="assigned-assets-detailed">
                   <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
                       @click="toggleAssetsDetails" 
                       style="cursor: pointer;">
-                    <span><i class="fas fa-laptop me-2"></i>Assigned Assets Details</span>
+                    <span><i class="fas fa-laptop me-2"></i>Assigned Assets Details ({{ selectedEmployee.assetsCount }})</span>
                     <i class="fas fa-chevron-down assets-chevron" 
                        :class="{ 'rotated': isAssetsDetailsExpanded }"
                        ></i>
                   </h6>
                   
-                  <!-- Basic Assets Info -->
-                  <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="assets-icon">
-                        <i class="fas fa-laptop fa-lg text-primary"></i>
-                      </div>
-                      <div class="assets-summary">
-                        <div class="d-flex align-items-center gap-3 mb-1">
-                          <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Total Assets:</span>
-                            <span class="badge badge-count ms-1">{{ selectedEmployee.assetsCount }}</span>
+                  
+                  <!-- Detailed Assets Information (expandable) -->
+                  <div v-show="isAssetsDetailsExpanded" class="assets-list-detailed">
+                    <div class="asset-item-detailed" v-for="asset in selectedEmployee.assets" :key="asset.id">
+                        <!-- Asset Header -->
+                        <div class="asset-header">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                              <div class="asset-icon-detailed" :style="{ backgroundColor: asset.iconColor }">
+                                <i :class="asset.iconClass"></i>
+                              </div>
+                              <div class="asset-basic-info">
+                                <div class="asset-name-detailed">{{ asset.name }}</div>
+                                <div class="asset-meta-detailed">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
+                              </div>
+                            </div>
+                            <!-- Desktop-only Collect button in header -->
+                            <div class="d-none d-md-block">
+                              <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                                <i class="fas fa-user-minus me-1"></i>Collect
+                              </button>
+                            </div>
                           </div>
                         </div>
-                        <div class="text-muted" style="font-size: 0.8rem;">{{ getAssetsStatusDescription(selectedEmployee.assetsCount) }}</div>
+                        
+                        <!-- Asset Assignment Details -->
+                        <div class="asset-assignment-details">
+                          <div class="row g-2">
+                            <!-- Assignment Status -->
+                            <div class="col-md-6">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assignment Status</label>
+                                <div class="info-value-compact">
+                                  <span class="badge badge-assigned">Currently Assigned</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <!-- Assigned To -->
+                            <div class="col-md-6">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assigned To</label>
+                                <div class="info-value-compact fw-medium">{{ selectedEmployee.name }}</div>
+                              </div>
+                            </div>
+                            
+                            <!-- Assignment Reason -->
+                            <div class="col-md-6" v-if="asset.assignmentReason">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assignment Reason</label>
+                                <div class="info-value-compact">{{ asset.assignmentReason }}</div>
+                              </div>
+                            </div>
+                            
+                            <!-- Assignment Date -->
+                            <div class="col-md-6" v-if="asset.assignedDate">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assignment Date</label>
+                                <div class="info-value-compact">{{ formatDate(asset.assignedDate) }}</div>
+                              </div>
+                            </div>
+                            
+                            <!-- Assigned By -->
+                            <div class="col-md-6" v-if="asset.assignedBy">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assigned By</label>
+                                <div class="info-value-compact">{{ asset.assignedBy }}</div>
+                              </div>
+                            </div>
+                            
+                            <!-- Divider for notes -->
+                            <div class="col-12" v-if="asset.assignmentNotes">
+                              <hr class="assignment-divider">
+                            </div>
+                            
+                            <!-- Assignment Notes -->
+                            <div class="col-12" v-if="asset.assignmentNotes">
+                              <div class="info-item-compact">
+                                <label class="info-label-compact">Assignment Notes</label>
+                                <div class="info-value-compact notes-display">
+                                  {{ asset.assignmentNotes }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Asset Actions Footer (mobile only) -->
+                        <div class="asset-actions-footer border-top d-flex justify-content-end d-md-none">
+                          <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                            <i class="fas fa-user-minus me-1"></i>Collect
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <!-- Assets Details (expandable) -->
-                  <div v-if="selectedEmployee.assets && selectedEmployee.assets.length > 0" 
-                       v-show="isAssetsDetailsExpanded" 
-                       class="assets-details-expanded">
-                    <div class="assets-list">
-                      <div class="asset-item-compact" v-for="asset in selectedEmployee.assets" :key="asset.id">
-                        <div class="d-flex align-items-center">
-                          <div class="asset-icon-compact" :style="{ backgroundColor: asset.iconColor }">
-                            <i :class="asset.iconClass"></i>
-                          </div>
-                          <div class="asset-details-compact flex-grow-1">
-                            <div class="asset-name-compact">{{ asset.name }}</div>
-                            <div class="asset-meta-compact">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
-                          </div>
-                          <div class="asset-actions-compact">
-                            <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
-                              <i class="fas fa-user-minus me-1"></i>Collect
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
                 </div>
-              </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
-              <i class="fas fa-laptop me-1"></i>Issue Asset
-            </button>
-            <div class="d-flex gap-2 status-action-slot" :class="{ 'inline-anim': confirmingStatus }">
+            <!-- Mobile: 2x2 grid of actions -->
+            <div class="mobile-actions-grid d-md-none w-100">
+              <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
+                <i class="fas fa-laptop me-1"></i>Issue Asset
+              </button>
               <button type="button" class="btn btn-primary-blue" @click="editEmployee(selectedEmployee)">
                 <i class="fas fa-edit me-1"></i>Edit Employee
               </button>
-              <template v-if="confirmingStatus">
-                <button type="button" class="btn btn-cancel-confirm" @click="cancelStatusChange()">
-                  <i class="fas fa-times me-1"></i>Cancel
+              <button 
+                type="button" 
+                :class="[selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate']"
+                @click="showStatusConfirmation(selectedEmployee)"
+              >
+                <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
+                {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
+              </button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-outline-secondary" @click="viewAssetHistory(selectedEmployee)">
+                <i class="fas fa-history me-1"></i>History
+              </button>
+            </div>
+            
+            <!-- Desktop: Original layout -->
+            <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
+                  <i class="fas fa-laptop me-1"></i>Issue Asset
                 </button>
-                <button type="button" :class="isActivatingTarget ? 'btn btn-confirm-activate' : 'btn btn-confirm-deactivate'" @click="confirmStatusChange()">
-                  <i :class="isActivatingTarget ? 'fas fa-check me-1' : 'fas fa-power-off me-1'"></i>{{ isActivatingTarget ? 'Confirm Activate' : 'Confirm Deactivate' }}
+                <button type="button" class="btn btn-primary-blue" @click="editEmployee(selectedEmployee)">
+                  <i class="fas fa-edit me-1"></i>Edit Employee
                 </button>
-              </template>
-              <template v-else>
-                <button type="button" :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate'" @click="startStatusToggle()">
+                <button 
+                  type="button" 
+                  :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate'" 
+                  @click="showStatusConfirmation(selectedEmployee)"
+                >
                   <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
-                  <span>{{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}</span>
+                  {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
                 </button>
-              </template>
+                <button type="button" class="btn btn-outline-secondary" @click="viewAssetHistory(selectedEmployee)">
+                  <i class="fas fa-history me-1"></i>History
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -473,19 +683,101 @@
       @upload="handleBulkUpload"
       @template-download="handleTemplateDownload"
     />
+
+    <!-- Status Confirmation Modal -->
+    <div v-if="showStatusModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black);">
+              <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+              <span class="d-none d-sm-inline">Confirm Status Change</span>
+              <span class="d-sm-none">Status Change</span>
+            </h5>
+            <button type="button" class="btn-close" @click="closeStatusModal"></button>
+          </div>
+          <div class="modal-body" v-if="statusChangeEmployee">
+            <div class="text-center py-3">
+              <div class="confirmation-icon mb-3">
+                <i 
+                  :class="statusChangeEmployee.status === 'active' ? 'fas fa-power-off fa-3x' : 'fas fa-check-circle fa-3x'"
+                  :style="statusChangeEmployee.status === 'active' ? 'color: var(--secondary-red);' : 'color: var(--secondary-green);'"
+                ></i>
+              </div>
+              <h6 class="mb-3" style="color: var(--primary-black);">
+                Are you sure you want to {{ statusChangeEmployee.status === 'active' ? 'deactivate' : 'activate' }} this employee?
+              </h6>
+              <p class="text-muted mb-0">
+                <strong>{{ statusChangeEmployee.name }}</strong> will be {{ statusChangeEmployee.status === 'active' ? 'deactivated' : 'activated' }} 
+                and will {{ statusChangeEmployee.status === 'active' ? 'no longer be' : 'be' }} available for new asset assignments.
+              </p>
+              <div class="mt-3 p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border-left: 4px solid var(--secondary-orange);">
+                <small class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>
+                  You can reverse this action at any time by changing the employee status again.
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <!-- Mobile: Stack buttons vertically -->
+            <div class="d-block d-sm-none w-100">
+              <button 
+                type="button" 
+                :class="['w-100 mb-2', statusChangeEmployee?.status === 'active' ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate']"
+                @click="confirmStatusChange"
+              >
+                <i class="fas fa-check me-1"></i>
+                {{ statusChangeEmployee?.status === 'active' ? 'Confirm Deactivate' : 'Confirm Activate' }}
+              </button>
+              <button type="button" class="btn btn-cancel-confirm w-100" @click="closeStatusModal">
+                <i class="fas fa-times me-1"></i>Cancel
+              </button>
+            </div>
+            
+            <!-- Desktop: Original centered layout -->
+            <div class="d-none d-sm-flex w-100 justify-content-center gap-3">
+              <button type="button" class="btn btn-cancel-confirm" @click="closeStatusModal">
+                <i class="fas fa-times me-1"></i>Cancel
+              </button>
+              <button 
+                type="button" 
+                :class="statusChangeEmployee?.status === 'active' ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate'"
+                @click="confirmStatusChange"
+              >
+                <i class="fas fa-check me-1"></i>
+                {{ statusChangeEmployee?.status === 'active' ? 'Confirm Deactivate' : 'Confirm Activate' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <ToastNotification />
   </div>
 </template>
   
 <script>
   import { Modal } from 'bootstrap'
   import { employeeService } from '@/services/employeeService'
+  import { employeeApiService } from '@/services/employeeApi'
   import AppPagination from '@/components/pagination/AppPagination.vue'
   import BulkUploadModal from '@/components/BulkUploadModal.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
+  import ToastNotification from '@/components/common/ToastNotification.vue'
+  import { useToastStore } from '@/stores/toast'
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination, BulkUploadModal, SearchableDropdown },
+    components: { AppPagination, BulkUploadModal, SearchableDropdown, ToastNotification },
+    setup() {
+      const toastStore = useToastStore()
+      return {
+        toastStore
+      }
+    },
     data() {
       return {
         isGridView: false,
@@ -496,15 +788,17 @@
         sortAscending: true,
         currentPage: 1,
         itemsPerPage: 10,
-        confirmingStatus: false,
-        isActivatingTarget: false,
         selectedEmployee: null,
         employees: [],
         totalEmployees: 0,
         serverTotalPages: 1,
-        confirmPayload: { current: false },
         showFilterDropdown: false,
-        isAssetsDetailsExpanded: false
+        isAssetsDetailsExpanded: false,
+        isAssetHistoryExpanded: false,
+        assetHistory: [],
+        showStatusModal: false,
+        statusChangeEmployee: null,
+        isMobileView: window.innerWidth <= 576
       }
     },
     computed: {
@@ -595,6 +889,23 @@
         const end = Math.min(this.currentPage * this.itemsPerPage, total)
         
         return { start, end, total }
+      },
+      visiblePages() {
+        const pages = []
+        // Show fewer pages on mobile to prevent overflow
+        const maxVisible = this.isMobileView ? 3 : 5
+        let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2))
+        let end = Math.min(this.totalPages, start + maxVisible - 1)
+
+        if (end - start + 1 < maxVisible) {
+          start = Math.max(1, end - maxVisible + 1)
+        }
+
+        for (let i = start; i <= end; i++) {
+          pages.push(i)
+        }
+
+        return pages
       },
       employeeColumns() {
         return [
@@ -749,10 +1060,85 @@
       toggleAssetsDetails() {
         this.isAssetsDetailsExpanded = !this.isAssetsDetailsExpanded
       },
+      toggleAssetHistory() {
+        this.isAssetHistoryExpanded = !this.isAssetHistoryExpanded
+        // Load asset history when expanding for the first time
+        if (this.isAssetHistoryExpanded && this.assetHistory.length === 0 && this.selectedEmployee) {
+          this.loadAssetHistory()
+        }
+      },
       getAssetsStatusDescription(count) {
         if (count === 0) return 'No assets currently assigned'
         if (count === 1) return '1 asset assigned to this employee'
         return `${count} assets assigned to this employee`
+      },
+      getEmployeeIconColor(employeeId) {
+        const colors = [
+          'var(--secondary-purple)',
+          'var(--secondary-green)', 
+          'var(--secondary-pink)',
+          'var(--secondary-orange)',
+          'var(--secondary-red)'
+        ]
+        // Use employee ID to generate consistent color
+        const hash = employeeId.split('').reduce((a, b) => {
+          a = ((a << 5) - a) + b.charCodeAt(0)
+          return a & a
+        }, 0)
+        return colors[Math.abs(hash) % colors.length]
+      },
+      getStatusBadgeClass(status) {
+        return status === 'active' ? 'badge badge-active' : 'badge badge-inactive'
+      },
+      formatDate(dateString) {
+        if (!dateString) return 'Not specified'
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        })
+      },
+      // Handle dropdown click with proper positioning
+      handleDropdownClick(event) {
+        const button = event.target
+        const dropdown = button.nextElementSibling
+        
+        if (dropdown) {
+          // Close all other dropdowns first
+          document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+            if (menu !== dropdown) {
+              menu.classList.remove('show')
+            }
+          })
+          document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+            if (btn !== button) {
+              btn.setAttribute('aria-expanded', 'false')
+            }
+          })
+          
+          // Toggle current dropdown
+          const isShown = dropdown.classList.contains('show')
+          if (isShown) {
+            dropdown.classList.remove('show')
+            button.setAttribute('aria-expanded', 'false')
+          } else {
+            dropdown.classList.add('show')
+            button.setAttribute('aria-expanded', 'true')
+            
+            // Ensure proper positioning
+            setTimeout(() => {
+              const rect = dropdown.getBoundingClientRect()
+              const viewportWidth = window.innerWidth
+              
+              // If dropdown goes off screen, adjust position
+              if (rect.right > viewportWidth) {
+                dropdown.style.right = '0'
+                dropdown.style.left = 'auto'
+              }
+            }, 10)
+          }
+        }
       },
       changePage(page) {
         if (page >= 1 && page <= this.totalPages) {
@@ -760,9 +1146,27 @@
           this.loadEmployees()
         }
       },
+      goToPage(page) {
+        this.currentPage = page
+        this.loadEmployees()
+      },
+      previousPage() {
+        if (this.currentPage > 1) {
+          this.currentPage--
+          this.loadEmployees()
+        }
+      },
+      nextPage() {
+        if (this.currentPage < this.totalPages) {
+          this.currentPage++
+          this.loadEmployees()
+        }
+      },
       viewEmployee(employee) {
         this.selectedEmployee = employee
         this.isAssetsDetailsExpanded = false // Reset collapse state
+        this.isAssetHistoryExpanded = false // Reset asset history state
+        this.assetHistory = [] // Clear previous history
         this.$nextTick(() => {
           const modal = new Modal(document.getElementById('employeeDetailModal'))
           modal.show()
@@ -772,31 +1176,67 @@
         // Navigate to edit employee page
         this.$router.push(`/app/employees/edit/${employee.id}`)
       },
-      startStatusToggle() {
-        if (!this.selectedEmployee) return
-        const current = this.selectedEmployee.status === 'active'
-        const action = current ? 'deactivate' : 'activate'
-        // Inline confirmation inside the same modal
-        this.confirmingStatus = true
-        this.isActivatingTarget = !current
-        this.confirmPayload = { current }
-      },
-      async confirmStatusChange() {
-        const current = this.confirmPayload.current
-        const employeeId = this.selectedEmployee.id
-        try {
-          await employeeService.updateEmployee(employeeId, { status: current ? 'INACTIVE' : 'ACTIVE' })
-          this.selectedEmployee.status = current ? 'inactive' : 'active'
-          const row = this.employees.find(e => e.id === employeeId)
-          if (row) row.status = this.selectedEmployee.status
-        } catch (e) {
-          console.warn('Failed to toggle employee status', e)
-        } finally {
-          this.confirmingStatus = false
+      showStatusConfirmation(employee) {
+        this.statusChangeEmployee = employee
+        this.showStatusModal = true
+        // Close the employee detail modal
+        const modal = document.getElementById('employeeDetailModal')
+        if (modal) {
+          const bsModal = Modal.getInstance(modal)
+          if (bsModal) {
+            bsModal.hide()
+          }
         }
       },
-      cancelStatusChange() {
-        this.confirmingStatus = false
+      closeStatusModal() {
+        this.showStatusModal = false
+        this.statusChangeEmployee = null
+      },
+      async confirmStatusChange() {
+        if (!this.statusChangeEmployee) return
+        
+        const newStatus = this.statusChangeEmployee.status === 'active' ? 'inactive' : 'active'
+        const employeeId = this.statusChangeEmployee.id
+        const employeeName = this.statusChangeEmployee.name
+        
+        try {
+          await employeeService.updateEmployee(employeeId, { status: newStatus.toUpperCase() })
+          
+          // Update the employee in the list
+          const row = this.employees.find(e => e.id === employeeId)
+          if (row) {
+            row.status = newStatus
+          }
+          
+          // Update selected employee if it's the same
+          if (this.selectedEmployee && this.selectedEmployee.id === employeeId) {
+            this.selectedEmployee.status = newStatus
+          }
+          
+          // Show toast in palette colors: green for activation, red for deactivation
+          const toastType = newStatus === 'active' ? 'success' : 'error'
+          const toastTitle = newStatus === 'active' ? 'Activated' : 'Deactivated'
+          const toastMessage = `Employee ${employeeName} has been ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`
+          // showToast(title, message, type)
+          this.toastStore.showToast(toastTitle, toastMessage, toastType)
+          
+        } catch (error) {
+          console.error('Failed to update employee status:', error)
+          
+          // Show error toast notification (red)
+          this.toastStore.showToast(
+            'Error',
+            `Failed to ${newStatus === 'active' ? 'activate' : 'deactivate'} employee ${employeeName}. Please try again.`,
+            'error'
+          )
+        } finally {
+          this.closeStatusModal()
+          // Reopen the employee detail modal after status change
+          this.$nextTick(() => {
+            const modal = new Modal(document.getElementById('employeeDetailModal'))
+            modal.show()
+          })
+        }
       },
       openBulkUploadModal() {
         this.$refs.bulkUploadModal.openModal()
@@ -836,9 +1276,27 @@
         // Navigate to issue asset page
         this.$router.push(`/app/assets/issue?employeeId=${employee.id}`)
       },
+      viewAssetHistory(employee) {
+        // Close the employee detail modal (if open) and clean up any backdrops
+        const modalEl = document.getElementById('employeeDetailModal')
+        if (modalEl) {
+          const modalInstance = Modal.getInstance(modalEl) || new Modal(modalEl)
+          try {
+            modalInstance.hide()
+          } catch (_) { /* noop */ }
+        }
+
+        // Remove bootstrap modal classes/backdrops if any linger
+        document.body.classList.remove('modal-open')
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+
+        // Navigate to employee asset history page
+        this.$router.push(`/app/employees/${employee.id}/history`)
+      },
       collectAsset(asset) {
-        // Navigate to collect asset page
-        this.$router.push(`/assets/collect/${asset.id}`)
+        const assetId = asset && asset.id ? asset.id : undefined
+        const employeeId = this.selectedEmployee && this.selectedEmployee.id ? this.selectedEmployee.id : undefined
+        this.$router.push({ path: '/app/assets/collect', query: { ...(assetId && { assetId }), ...(employeeId && { employeeId }) } })
       },
       async loadEmployees() {
         try {
@@ -876,6 +1334,9 @@
               name: `${a.assetId} - ${a.assetName}`,
               type: 'Asset',
               assignedDate: a.assignedDate,
+              assignmentReason: a.assignmentReason || null,
+              assignedBy: a.assignedBy || null,
+              assignmentNotes: a.assignmentNotes || null,
               iconClass: 'fas fa-laptop',
               iconColor: 'var(--secondary-purple)'
             }))
@@ -901,7 +1362,135 @@
       onStatusChange(item) {
         this.selectedStatus = item
         this.filterEmployees()
+      },
+      // Close dropdown when clicking outside
+      handleClickOutside(event) {
+        const target = event.target
+        if (!target.closest('.dropdown')) {
+          document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+            menu.classList.remove('show')
+          })
+          document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+            btn.setAttribute('aria-expanded', 'false')
+          })
+        }
+      },
+      // Handle window resize for responsive pagination
+      handleResize() {
+        this.isMobileView = window.innerWidth <= 576
+      },
+      // Load asset history for the selected employee
+      async loadAssetHistory() {
+        if (!this.selectedEmployee) return
+        
+        try {
+          const response = await employeeApiService.getAssetHistory(this.selectedEmployee.id)
+          this.assetHistory = response.data.assetHistory || []
+        } catch (error) {
+          console.error('Failed to load asset history:', error)
+          this.toastStore.showToast(
+            'Error',
+            'Failed to load asset history. Please try again.',
+            'error'
+          )
+        }
+      },
+      // Get count of currently assigned assets (from the main assigned assets section)
+      getCurrentAssignmentsCount() {
+        return this.selectedEmployee?.assetsCount || 0
+      },
+      // Get description for asset history
+      getHistoryDescription() {
+        if (this.assetHistory.length === 0) return 'No completed asset transactions recorded'
+        const currentlyAssigned = this.getCurrentAssignmentsCount()
+        const completed = this.assetHistory.length
+        return `${currentlyAssigned} currently assigned, ${completed} completed transactions`
+      },
+      // Get asset icon color based on type
+      getAssetIconColor(assetType) {
+        const colors = {
+          'Laptop': 'var(--secondary-purple)',
+          'Desktop': 'var(--secondary-blue)',
+          'Monitor': 'var(--secondary-green)',
+          'Phone': 'var(--secondary-orange)',
+          'Tablet': 'var(--secondary-pink)',
+          'Other': 'var(--secondary-gray)'
+        }
+        return colors[assetType] || colors['Other']
+      },
+      // Get asset type icon
+      getAssetTypeIcon(assetType) {
+        const icons = {
+          'Laptop': 'fas fa-laptop',
+          'Desktop': 'fas fa-desktop',
+          'Monitor': 'fas fa-tv',
+          'Phone': 'fas fa-mobile-alt',
+          'Tablet': 'fas fa-tablet-alt',
+          'Other': 'fas fa-cube'
+        }
+        return icons[assetType] || icons['Other']
+      },
+      // Get condition badge class
+      getConditionBadgeClass(condition) {
+        const classes = {
+          'EXCELLENT': 'badge-success',
+          'GOOD': 'badge-info',
+          'FAIR': 'badge-warning',
+          'POOR': 'badge-danger',
+          'DAMAGED': 'badge-danger'
+        }
+        return classes[condition] || 'badge-secondary'
       }
+    },
+    mounted() {
+      // Default to grid view on mobile screens
+      this.isGridView = window.innerWidth <= 576
+      this.loadEmployees()
+      // If navigated here with ?open=<employeeId>, open the employee modal automatically
+      const toOpen = this.$route?.query?.open
+      if (toOpen) {
+        // Delay to ensure employees are loaded
+        setTimeout(() => {
+          const match = this.employees.find(e => e.id === toOpen)
+          if (match) {
+            this.viewEmployee(match)
+          }
+        }, 300)
+      }
+      // Add click outside listener for dropdown
+      document.addEventListener('click', this.handleClickOutside)
+      // Add resize listener for responsive pagination
+      window.addEventListener('resize', this.handleResize)
+    },
+    unmounted() {
+      // Cleanup event listeners
+      document.removeEventListener('click', this.handleClickOutside)
+      window.removeEventListener('resize', this.handleResize)
+    },
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        try {
+          document.body.classList.remove('modal-open')
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+          const modalEl = document.getElementById('employeeDetailModal')
+          if (modalEl) {
+            const inst = Modal.getInstance(modalEl)
+            if (inst) inst.hide()
+          }
+        } catch (_) { /* noop */ }
+      })
+    },
+    beforeRouteLeave(to, from, next) {
+      try {
+        const modalEl = document.getElementById('employeeDetailModal')
+        if (modalEl) {
+          const inst = Modal.getInstance(modalEl) || new Modal(modalEl)
+          inst.hide()
+        }
+      } catch (_) { /* noop */ }
+      document.body.classList.remove('modal-open')
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+      next()
     }
   }
   </script>
@@ -977,8 +1566,8 @@
   flex-grow: 1;
 }
 
-/* Assets Details Combined */
-.assigned-assets-combined {
+/* Detailed Assets Information */
+.assigned-assets-detailed {
   margin-top: 0.5rem;
   padding: 0.75rem;
   border: 1px solid #e9ecef;
@@ -986,7 +1575,7 @@
   background-color: #fafafa;
 }
 
-.assigned-assets-combined .section-title-compact {
+.assigned-assets-detailed .section-title-compact {
   font-size: 1.1rem !important;
   font-weight: 600 !important;
   color: #495057 !important;
@@ -995,22 +1584,6 @@
   border-bottom: 2px solid #dee2e6;
 }
 
-.assigned-assets-combined .assets-summary {
-  flex-grow: 1;
-}
-
-.assigned-assets-combined .assets-icon {
-  flex-shrink: 0;
-}
-
-/* Assets Details Expanded */
-.assets-details-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
 
 /* Assets Chevron */
 .assets-chevron {
@@ -1025,22 +1598,39 @@
   transform: rotate(180deg);
 }
 
-/* Compact Asset Items */
-.asset-item-compact {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem !important;
-  margin-bottom: 0.5rem !important;
+/* Assets Details Expanded - removed middle box styling */
+
+/* Detailed Asset Items */
+.assets-list-detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.75rem;
 }
 
-.asset-item-compact:last-child {
+.asset-item-detailed {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.asset-item-detailed:last-child {
   margin-bottom: 0 !important;
 }
 
-.asset-icon-compact {
-  width: 32px !important;
-  height: 32px !important;
+.asset-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.asset-icon-detailed {
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 0.375rem !important;
   display: flex !important;
   align-items: center !important;
@@ -1049,41 +1639,64 @@
   flex-shrink: 0 !important;
 }
 
-.asset-icon-compact i {
+.asset-icon-detailed i {
   color: white !important;
-  font-size: 0.9rem !important;
+  font-size: 1rem !important;
 }
 
-.asset-details-compact {
+.asset-basic-info {
   min-width: 0 !important;
+  flex-grow: 1 !important;
 }
 
-.asset-name-compact {
+.asset-name-detailed {
   color: var(--primary-black) !important;
-  font-size: 0.85rem !important;
+  font-size: 1rem !important;
   font-weight: 600 !important;
-  margin-bottom: 0.2rem !important;
+  margin-bottom: 0.25rem !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
 
-.asset-meta-compact {
+.asset-meta-detailed {
   color: var(--primary-mid-gray) !important;
-  font-size: 0.7rem !important;
+  font-size: 0.8rem !important;
   font-weight: 500 !important;
 }
 
-.asset-actions-compact {
-  display: flex !important;
-  align-items: center !important;
-  flex-shrink: 0 !important;
+.asset-assignment-details {
+  padding: 1rem;
+  background-color: var(--primary-white);
+  border-radius: 0 0 0.5rem 0.5rem;
 }
 
-.asset-actions-compact .btn-sm {
-  font-size: 0.7rem !important;
-  padding: 0.2rem 0.4rem !important;
-  border-radius: 0.25rem !important;
+/* Asset actions footer */
+.asset-actions-footer {
+  background-color: var(--primary-white);
+  padding: 0.75rem 1rem 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Assignment Divider */
+.assignment-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Notes Display */
+.notes-display {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  color: #495057;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e9ecef;
 }
 
 /* Assets List Styling (unchanged with minor tweaks) */
@@ -1095,42 +1708,11 @@
 .asset-name { color: var(--primary-black) !important; font-size: 0.9rem !important; font-weight: 600 !important; margin-bottom: 0.25rem !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
 .asset-meta { color: var(--primary-mid-gray) !important; font-size: 0.75rem !important; font-weight: 500 !important; }
 
-/* Inline status confirmation buttons: fixed height to avoid layout shift */
-.btn-cancel-confirm,
-.btn-confirm-activate,
-.btn-confirm-deactivate {
-    padding: 0.5rem 0.75rem !important;
-    min-height: 40px !important;
-    line-height: 1.25 !important;
-    border-radius: 0.5rem !important;
-    font-weight: 500 !important;
-}
-.btn-cancel-confirm {
-    background-color: var(--primary-light-gray) !important;
-    border: 1px solid var(--element-gray) !important;
-    color: var(--primary-dark-gray) !important;
-}
-.btn-cancel-confirm:hover { background-color: var(--primary-white) !important; border-color: var(--primary-mid-light) !important; color: var(--primary-black) !important; }
-.btn-confirm-activate { background-color: var(--secondary-green) !important; border-color: var(--secondary-green) !important; color: white !important; }
-.btn-confirm-activate:hover { background-color: #1e9c5a !important; border-color: #1e9c5a !important; }
-.btn-confirm-deactivate { background-color: var(--secondary-red) !important; border-color: var(--secondary-red) !important; color: white !important; }
-.btn-confirm-deactivate:hover { background-color: #d63447 !important; border-color: #d63447 !important; }
-
 /* Keep actions area tidy */
-  .employee-actions-footer { border-top: 1px solid var(--primary-light-gray) !important; background-color: var(--primary-white) !important; }
-
-  /* Prevent modal layout shift when inline confirmation appears */
-  .status-action-slot {
-      min-height: 42px !important; /* matches button height to reserve space */
-      align-items: center !important;
-  }
-  .inline-anim {
-      animation: fadeSlideIn 320ms ease-in-out;
-  }
-  @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-  }
+.employee-actions-footer { 
+  border-top: 1px solid var(--primary-light-gray) !important; 
+  background-color: var(--primary-white) !important; 
+}
 
 /* Filter dropdown styling */
 .filter-dropdown {
@@ -1293,6 +1875,15 @@
       padding: 0.35rem 0.65rem !important;
       border-radius: 0.375rem !important;
   }
+
+.badge-assigned {
+    background-color: var(--secondary-green) !important;
+    color: white !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    padding: 0.35rem 0.65rem !important;
+    border-radius: 0.375rem !important;
+}
 
 .badge-info {
     background-color: var(--secondary-purple) !important;
@@ -1481,6 +2072,867 @@
     filter: brightness(0.92) !important;
     transform: none !important;
     box-shadow: none !important;
+}
+
+/* Status Confirmation Modal Styles */
+.confirmation-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Confirmation Modal Buttons */
+.btn-cancel-confirm {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  padding: 0.625rem 1.5rem !important;
+}
+
+.btn-cancel-confirm:hover {
+  background-color: var(--element-gray) !important;
+  border-color: var(--primary-mid-light) !important;
+  color: var(--primary-black) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-confirm-activate {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  padding: 0.625rem 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
+}
+
+.btn-confirm-activate:hover {
+  background-color: #1e9c5a !important;
+  border-color: #1e9c5a !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
+}
+
+.btn-confirm-deactivate {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  padding: 0.625rem 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
+}
+
+.btn-confirm-deactivate:hover {
+  background-color: #d63447 !important;
+  border-color: #d63447 !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+}
+
+/* Responsive Dropdown Improvements */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  z-index: 1050;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(51, 31, 234, 0.1);
+  color: #331FEA;
+}
+
+.dropdown-item:active {
+  background-color: rgba(51, 31, 234, 0.2);
+  color: #331FEA;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Ensure dropdown shows above other elements */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* Responsive dropdown positioning */
+.dropdown-menu-responsive {
+  /* Default: left-aligned for medium+ screens */
+  left: 0;
+  right: auto;
+}
+
+/* Small screens: right-aligned to prevent overflow */
+@media (max-width: 767.98px) {
+  .dropdown-menu-responsive {
+    left: auto;
+    right: 0;
+    max-width: calc(100vw - 2rem);
+    min-width: 200px;
+  }
+}
+
+/* Mobile-first responsive improvements */
+@media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.375rem 0.5rem;
+  }
+  
+  .modal-dialog {
+    margin: 0.5rem !important;
+  }
+  
+  .modal-content {
+    border-radius: 0.5rem !important;
+  }
+  
+  .table-responsive {
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .employee-card {
+    margin-bottom: 1rem;
+  }
+  
+  .employee-card .card-body {
+    padding: 1rem;
+  }
+
+  /* Mobile modal responsive adjustments */
+  .modal-header {
+    padding: 0.75rem 0.75rem 0 0.75rem !important;
+  }
+  
+  .modal-body {
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .modal-footer {
+    padding: 0 0.75rem 0.75rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  .modal-footer .btn {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .modal-footer .btn:last-child {
+    margin-bottom: 0 !important;
+  }
+  
+  .modal-footer .d-flex {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  .modal-title {
+    font-size: 1.1rem !important;
+  }
+
+  /* Employee info sections mobile adjustments */
+  .employee-info-section-compact {
+    margin-bottom: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  .employee-info-section-compact .section-title-compact {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .employee-info-section-compact .info-label-compact {
+    font-size: 0.85rem !important;
+    min-width: 100px !important;
+  }
+  
+  .employee-info-section-compact .info-value-compact {
+    font-size: 0.9rem !important;
+  }
+
+  /* Asset details mobile adjustments */
+  .assigned-assets-detailed {
+    padding: 0.5rem !important;
+    margin-top: 0.75rem !important;
+  }
+  
+  .asset-item-detailed {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .asset-header {
+    padding: 0.75rem !important;
+  }
+  
+  .asset-assignment-details {
+    padding: 0.75rem !important;
+  }
+  
+  /* Asset actions footer - mobile full width button */
+  .asset-actions-footer {
+    padding: 0.5rem 0.75rem 0.25rem 0.75rem !important;
+    margin-top: 0.25rem !important;
+  }
+  
+  .asset-actions-footer .btn {
+    width: 100% !important;
+  }
+  
+  .asset-icon-detailed {
+    width: 32px !important;
+    height: 32px !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .asset-name-detailed {
+    font-size: 0.9rem !important;
+  }
+  
+  .asset-meta-detailed {
+    font-size: 0.75rem !important;
+  }
+
+  /* Status confirmation modal mobile adjustments */
+  .confirmation-icon {
+    margin-bottom: 1rem !important;
+  }
+  
+  .confirmation-icon i {
+    font-size: 2rem !important;
+  }
+
+  /* Better text handling on mobile */
+  .employee-info-section-compact .info-value-compact {
+    text-align: left !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+  
+  .employee-info-section-compact .info-item-compact {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.5rem 0 !important;
+  }
+  
+  .employee-info-section-compact .info-label-compact {
+    min-width: unset !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* 2x2 buttons grid for mobile footer */
+  .mobile-actions-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: minmax(44px, auto) !important;
+    gap: 0.5rem !important;
+  }
+  .mobile-actions-grid .btn {
+    width: 100% !important;
+  }
+}
+
+/* Tablet responsive improvements */
+@media (min-width: 577px) and (max-width: 991.98px) {
+  .btn-group .btn {
+    padding: 0.5rem 1rem;
+  }
+  
+  .employee-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .modal-lg {
+    max-width: 90vw;
+  }
+
+  /* Tablet modal responsive adjustments */
+  .modal-header {
+    padding: 1rem 1rem 0 1rem !important;
+  }
+  
+  .modal-body {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .modal-footer {
+    padding: 0 1rem 1rem 1rem !important;
+  }
+  
+  .modal-footer .d-flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .modal-footer .btn {
+    flex: 1 1 auto !important;
+    min-width: 120px !important;
+  }
+
+  /* Employee info sections tablet adjustments */
+  .employee-info-section-compact {
+    padding: 0.65rem !important;
+  }
+  
+  .employee-info-section-compact .info-label-compact {
+    min-width: 120px !important;
+  }
+  
+  /* Better text wrapping for tablet */
+  .employee-info-section-compact .info-value-compact {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Asset details tablet adjustments */
+  .asset-header {
+    padding: 0.85rem !important;
+  }
+  
+  .asset-assignment-details {
+    padding: 0.85rem !important;
+  }
+  
+  /* Asset actions footer - tablet adjustments */
+  .asset-actions-footer {
+    padding: 0.65rem 0.85rem 0.4rem 0.85rem !important;
+    margin-top: 0.4rem !important;
+  }
+}
+
+/* Large tablet and small desktop adjustments */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .modal-lg {
+    max-width: 95vw;
+  }
+  
+  /* Two column layout adjustments for medium screens */
+  .row.g-2 .col-md-6 {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Filter dropdown responsive styling */
+.filter-dropdown {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Filter Clear Button Responsive Styling */
+.filter-clear-button-container {
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.filter-clear-btn {
+  width: 100%;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* Mobile: Full width clear button */
+@media (max-width: 767.98px) {
+  .filter-clear-button-container {
+    width: 100%;
+    min-width: unset;
+    margin-top: 0.5rem;
+  }
+  
+  .filter-clear-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Tablet: Adequate width for clear button */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .filter-clear-button-container {
+    min-width: 140px;
+  }
+  
+  .filter-clear-btn {
+    min-width: 140px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Active filter button styling */
+.btn.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn.active:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Modern Employee Card Styling */
+.employee-card-modern {
+  border: 1px solid #e9ecef;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.employee-card-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #dee2e6;
+}
+
+.employee-card-modern .card-body {
+  padding: 1rem;
+}
+
+/* Badge styling for employee cards */
+.badge-sm {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: 500;
+}
+
+/* Action buttons in employee cards */
+.employee-card-modern .btn-action {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  color: #495057;
+  transition: all 0.2s ease;
+  border-radius: 0.375rem;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.employee-card-modern .btn-view:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.employee-card-modern .btn-edit:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.employee-card-modern .btn-assign:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+ 
+
+/* Modern Pagination Styling */
+.pagination-modern {
+  gap: 0.25rem;
+}
+
+.pagination-modern .page-link {
+  border: 1px solid #dee2e6;
+  color: #495057;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  background-color: white;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.pagination-modern .page-link:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+  color: #212529;
+}
+
+.pagination-modern .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.pagination-modern .page-item.disabled .page-link {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Mobile pagination improvements */
+@media (max-width: 576px) {
+  .pagination-modern {
+    gap: 0.125rem;
+  }
+  
+  .pagination-modern .page-link {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8rem;
+    min-width: 36px;
+    height: 36px;
+  }
+  
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .text-muted small {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Extra small screens - further reduce pagination size */
+@media (max-width: 400px) {
+  .pagination-modern .page-link {
+    padding: 0.25rem 0.375rem;
+    font-size: 0.75rem;
+    min-width: 32px;
+    height: 32px;
+  }
+}
+
+/* Tablet pagination improvements */
+@media (min-width: 577px) and (max-width: 991.98px) {
+  .pagination-modern {
+    gap: 0.5rem;
+  }
+  
+  .pagination-modern .page-link {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Asset History Section Styling */
+.asset-history-section {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.asset-history-section .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* History Chevron */
+.history-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.history-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Asset History Expanded */
+.asset-history-expanded {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Timeline Styling */
+.asset-history-timeline {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 0.75rem;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-connector {
+  position: absolute;
+  left: -1.5rem;
+  top: 2rem;
+  width: 2px;
+  height: calc(100% + 1rem);
+  background-color: #dee2e6;
+  z-index: 1;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-dot.assigned {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.timeline-dot.returned {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.timeline-dot i {
+  font-size: 0.8rem;
+}
+
+.timeline-content {
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.asset-icon-timeline {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.asset-icon-timeline i {
+  color: white !important;
+  font-size: 1.1rem !important;
+}
+
+.asset-basic-info-timeline {
+  min-width: 0 !important;
+  flex-grow: 1 !important;
+}
+
+.asset-name-timeline {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.asset-meta-timeline {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+}
+
+.timeline-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.timeline-details {
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+/* Badge Styling for Timeline */
+.badge-returned {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge-duration {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+}
+
+.badge-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.badge-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
+.badge-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.badge-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.badge-secondary {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+/* Mobile Timeline Adjustments */
+@media (max-width: 576px) {
+  .asset-history-timeline {
+    padding-left: 1.5rem;
+  }
+  
+  .timeline-dot {
+    left: -1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .timeline-connector {
+    left: -1rem;
+  }
+  
+  .timeline-content {
+    padding: 0.75rem;
+  }
+  
+  .timeline-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .asset-icon-timeline {
+    width: 32px !important;
+    height: 32px !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .asset-name-timeline {
+    font-size: 0.9rem !important;
+  }
+  
+  .asset-meta-timeline {
+    font-size: 0.75rem !important;
+  }
+  
+  .timeline-badges {
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .timeline-details {
+    padding: 0.5rem;
+  }
+}
+
+/* Tablet Timeline Adjustments */
+@media (min-width: 577px) and (max-width: 991.98px) {
+  .timeline-content {
+    padding: 0.85rem;
+  }
+  
+  .timeline-details {
+    padding: 0.65rem;
+  }
 }
 
 </style>

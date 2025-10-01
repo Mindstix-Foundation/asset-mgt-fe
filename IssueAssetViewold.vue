@@ -56,7 +56,7 @@
                     <div class="form-text">Automatically populated based on asset selection</div>
                   </div>
                 </div>
-
+                
                 <!-- Asset Specifications -->
                 <div v-if="selectedAssetSpecs" class="mt-4">
                   <div class="asset-specifications-wrapper">
@@ -219,7 +219,38 @@ const selectedAsset = ref<Item | null>(null)
 const selectedEmployee = ref<Item | null>(null)
 
 // Computed property for selected asset specifications
-const selectedAssetSpecs = ref<string | null>(null)
+const selectedAssetSpecs = computed(() => {
+  if (!formData.assetId) return null
+  
+  const selectedAsset = availableAssets.value.find(asset => 
+    asset.id.toString() === formData.assetId || asset.id === parseInt(formData.assetId)
+  )
+  
+  const specs = selectedAsset?.model?.specifications
+  if (!specs) return null
+  
+  // Handle different types of specifications
+  if (typeof specs === 'object' && specs !== null) {
+    // If it's already an object, format it directly
+    return Object.entries(specs)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n')
+  } else if (typeof specs === 'string') {
+    // If it's a JSON string, try to parse it
+    try {
+      const parsed = JSON.parse(specs)
+      if (typeof parsed === 'object' && parsed !== null) {
+        return Object.entries(parsed)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join('\n')
+      }
+    } catch (e) {
+      // If it's not JSON, return as is
+    }
+  }
+  
+  return specs
+})
 
 // Form state - Enhanced validation system like the prototype
 const fieldErrors = reactive<Record<string, string>>({})
@@ -530,27 +561,12 @@ const submitForm = async (event?: Event) => {
   isSubmitting.value = true
 
   try {
-    // Get the selected asset and employee IDs from the dropdown selections
-    const selectedAssetId = selectedAsset.value?.value ? parseInt(selectedAsset.value.value.toString()) : null
-    const selectedEmployeeId = selectedEmployee.value?.value ? parseInt(selectedEmployee.value.value.toString()) : null
-
-    console.log('Selected asset ID:', selectedAssetId)
-    console.log('Selected employee ID:', selectedEmployeeId)
-
-    if (!selectedAssetId || !selectedEmployeeId) {
-      throw new Error('Please select both an asset and an employee')
-    }
-
-    // Get the current condition of the selected asset
-    const currentAsset = availableAssets.value.find(asset => asset.id === selectedAssetId)
-    const currentCondition = currentAsset?.condition || 'GOOD' // Fallback to GOOD if condition is not available
-
     // Prepare assignment data for API
     const assignmentData: CreateAssignmentDto = {
-      assetId: selectedAssetId,
-      employeeId: selectedEmployeeId,
+      assetId: parseInt(formData.assetId),
+      employeeId: parseInt(formData.employeeId),
       issueDate: formData.assignmentDate,
-      issueCondition: currentCondition, // Use the asset's current condition
+      issueCondition: 'GOOD', // Default condition, could be made configurable
       issueReason: formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
@@ -697,62 +713,26 @@ const showIssueAssetSuccessToast = (assignmentDetails: string) => {
   showToast(message, 'success')
 }
 
-const clearSelectedAssetInfo = () => {
-  formData.assetBrandModel = ''
-  selectedAssetSpecs.value = null
-}
 
-const loadAssetDetails = async (assetIdNumber: number) => {
-  try {
-    const response = await assetApiService.getAssetById(assetIdNumber)
-    const asset = response.data.asset
-
+// Asset and Employee selection handlers
+watch(() => selectedAsset.value, (newValue) => {
+  if (newValue && newValue.value) {
+    const assetId = parseInt(newValue.value.toString())
+    const asset = availableAssets.value.find(asset => asset.id === assetId)
+    
     if (asset) {
+      // Check if brand and model exist
       if (asset.brand && asset.model) {
-        formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
+        const brandModel = `${asset.brand.name} ${asset.model.name}`
+        formData.assetBrandModel = brandModel
       } else {
         formData.assetBrandModel = 'Brand/Model not available'
       }
-
-      const specs = asset.model?.specifications
-      if (specs) {
-        if (typeof specs === 'object') {
-          selectedAssetSpecs.value = Object.entries(specs)
-            .map(([k, v]) => `${k}: ${v}`)
-            .join('\n')
-        } else if (typeof specs === 'string') {
-          try {
-            const parsed = JSON.parse(specs)
-            if (parsed && typeof parsed === 'object') {
-              selectedAssetSpecs.value = Object.entries(parsed)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join('\n')
-            } else {
-              selectedAssetSpecs.value = specs
-            }
-          } catch {
-            selectedAssetSpecs.value = specs
-          }
-        }
-      } else {
-        selectedAssetSpecs.value = null
-      }
     } else {
-      clearSelectedAssetInfo()
+      formData.assetBrandModel = ''
     }
-  } catch (error) {
-    console.error('Error fetching asset details:', error)
-    clearSelectedAssetInfo()
-  }
-}
-
-// Asset and Employee selection handlers
-watch(() => selectedAsset.value, async (newValue) => {
-  if (newValue && newValue.value) {
-    const assetId = parseInt(newValue.value.toString())
-    await loadAssetDetails(assetId)
   } else {
-    clearSelectedAssetInfo()
+    formData.assetBrandModel = ''
   }
 }, { immediate: true })
 
@@ -775,8 +755,8 @@ watch(() => availableAssets.value, (newAssets) => {
 const loadAvailableAssets = async () => {
   try {
     isLoadingAssets.value = true
-    // Use the dropdown API to get all available assets without pagination
-    const response = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
+    // No limit - get all available assets
+    const response = await assetApiService.getAvailableAssets()
     availableAssets.value = response.data.assets
   } catch (error: any) {
     console.error('Error loading available assets:', error)
@@ -861,7 +841,6 @@ onMounted(async () => {
     if (field) field.focus()
   })
 })
-
 </script>
 
 <style scoped>

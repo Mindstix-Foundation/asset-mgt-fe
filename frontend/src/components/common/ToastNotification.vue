@@ -45,6 +45,6 @@ const closeToast = () => {
 
 <style scoped>
 .toast-container {
-  z-index: 1050;
+  z-index: 9999;
 }
 </style> 

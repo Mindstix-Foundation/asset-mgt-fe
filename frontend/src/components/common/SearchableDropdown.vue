@@ -125,6 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Item | null): void
   (e: 'change', value: Item | null): void
+  (e: 'validated'): void
 }>()
 
 const searchText = ref('')
@@ -390,6 +391,7 @@ const scrollToSelectedItem = () => {
 const selectItem = (item: Item) => {
   emit('update:modelValue', item)
   emit('change', item)
+  emit('validated')
   searchText.value = getItemLabel(item)
   showDropdown.value = false
   selectedIndex.value = -1

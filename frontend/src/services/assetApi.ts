@@ -184,6 +184,22 @@ class AssetApiService {
     }
   }
 
+  // Update asset status only
+  async updateAssetStatus(id: number, status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'): Promise<{ message: string; data: { asset: Asset } }> {
+    try {
+      const token = this.getAuthToken()
+      const response = await axios.put(`${this.baseURL}/${id}`, { status }, {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error updating asset status:', error)
+      throw this.handleError(error)
+    }
+  }
+
   // Get assets for dropdown selection (minimal data)
   async getAssetsForDropdowns(params: {
     status?: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'

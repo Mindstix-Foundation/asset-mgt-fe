@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { authService } from './authService'
 
 // Create a unified API client instance
 const apiClient = axios.create({
@@ -11,7 +12,7 @@ const apiClient = axios.create({
 // Add request interceptor to include auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token')
+    const token = authService.getToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -34,47 +35,28 @@ apiClient.interceptors.response.use(
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('[ApiClient] 401 error detected, attempting token refresh')
       originalRequest._retry = true
       
-      // Only try to refresh if we have a token
-      const token = localStorage.getItem('access_token')
-      if (token) {
-        try {
-          // Try to refresh the token
-          const refreshResponse = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}/auth/refresh`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          )
-
-          if (refreshResponse.data.access_token) {
-            // Update the token
-            localStorage.setItem('access_token', refreshResponse.data.access_token)
-            
-            // Retry the original request with new token
-            originalRequest.headers.Authorization = `Bearer ${refreshResponse.data.access_token}`
-            return apiClient(originalRequest)
-          }
-        } catch (refreshError) {
-          // Refresh failed, logout user
-          localStorage.removeItem('access_token')
-          localStorage.removeItem('user_data')
-          
-          // Only redirect if not already on login page
-          if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
-            window.location.href = '/'
-          }
+      // Use the centralized auth service for token refresh
+      if (authService.getToken()) {
+        const refreshSuccess = await authService.refreshToken()
+        
+        if (refreshSuccess) {
+          console.log('[ApiClient] Token refresh successful, retrying original request')
+          // Retry the original request with new token
+          const token = authService.getToken()
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return apiClient(originalRequest)
+        } else {
+          console.log('[ApiClient] Token refresh failed')
         }
       } else {
-        // No token, redirect to login
-        if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
-          window.location.href = '/'
-        }
+        console.log('[ApiClient] No token available for refresh')
       }
+      
+      // If we reach here, either no token or refresh failed
+      // The authService will handle logout if needed
     }
 
     return Promise.reject(error)

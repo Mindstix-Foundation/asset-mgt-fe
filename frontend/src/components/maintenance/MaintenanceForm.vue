@@ -31,34 +31,27 @@
                 <div class="row g-4">
                   <!-- Asset ID -->
                   <div class="col-md-6">
-                    <label for="assetId" class="form-label">Asset ID <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="assetId" 
-                      v-model="formData.assetId"
-                      :class="getFieldClass('assetId')"
-                      required
-                      @change="handleAssetChange"
-                      @blur="validateFieldInline('assetId')"
-                      @focus="clearFieldValidation('assetId')"
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                      id="assetId"
+                      label="Asset ID"
+                      placeholder="Choose an asset..."
+                      :items="assetItems"
+                      v-model="selectedAssetItem"
+                      :required="true"
                       :disabled="isEditMode"
-                    >
-                      <option value="">Choose an asset...</option>
-                      <option 
-                        v-for="asset in availableAssets" 
-                        :key="asset.id" 
-                        :value="asset.id"
-                      >
-                        {{ asset.assetId }} - {{ asset.assetName }}
-                      </option>
-                    </select>
+                      :class="getFieldClass('assetId')"
+                      @change="onAssetChange"
+                      @validated="() => validateFieldInline('assetId')"
+                      />
+                    </div>
                     <div class="form-text">Select asset that needs maintenance (required)</div>
                     <div v-if="fieldErrors.assetId" class="invalid-feedback">{{ fieldErrors.assetId }}</div>
                   </div>
 
                   <!-- Asset Information -->
                   <div class="col-md-6">
-                    <label for="assetInfo" class="form-label">Asset Information</label>
+                    <label for="assetInfo" class="form-label">Asset Information <span class="text-danger required-placeholder">*</span></label>
                     <input 
                       type="text" 
                       class="form-control" 
@@ -77,28 +70,38 @@
               <fieldset class="form-fieldset">
                 <legend class="form-legend">Maintenance Details</legend>
                 <div class="row g-4">
+                  <!-- Asset Specifications -->
+                  <div v-if="selectedAssetSpecs" class="col-12">
+                    <div class="asset-specifications-wrapper">
+                      <NotesTextarea 
+                        :model-value="selectedAssetSpecs"
+                        label="Asset Specifications"
+                        placeholder="No specifications available"
+                        help-text=""
+                        :max-length="1000"
+                        :required="false"
+                        :show-label="true"
+                        :readonly="true"
+                        input-id="assetSpecifications"
+                        @validation="() => {}"
+                      />
+                    </div>
+                  </div>
                   <!-- Maintenance Type -->
                   <div class="col-md-6">
-                    <label for="maintenanceTypeId" class="form-label">Maintenance Type <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="maintenanceTypeId" 
-                      v-model="formData.maintenanceTypeId"
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                      id="maintenanceTypeId"
+                      label="Maintenance Type"
+                      placeholder="Choose maintenance type..."
+                      :items="maintenanceTypeItems"
+                      v-model="selectedTypeItem"
+                      :required="true"
                       :class="getFieldClass('maintenanceTypeId')"
-                      required
-                      @blur="validateFieldInline('maintenanceTypeId')"
-                      @focus="clearFieldValidation('maintenanceTypeId')"
-                      @input="handleFieldInput('maintenanceTypeId')"
-                    >
-                      <option value="">Choose maintenance type...</option>
-                      <option 
-                        v-for="type in maintenanceTypes" 
-                        :key="type.id" 
-                        :value="type.id"
-                      >
-                        {{ type.name }} - {{ type.description }}
-                      </option>
-                    </select>
+                      @change="onTypeChange"
+                      @validated="() => validateFieldInline('maintenanceTypeId')"
+                      />
+                    </div>
                     <div class="form-text">Select the type of maintenance needed (required)</div>
                     <div v-if="fieldErrors.maintenanceTypeId" class="invalid-feedback">{{ fieldErrors.maintenanceTypeId }}</div>
                   </div>
@@ -168,30 +171,7 @@
                     <div v-if="fieldErrors.estimatedCost" class="invalid-feedback">{{ fieldErrors.estimatedCost }}</div>
                   </div>
 
-                  <!-- Vendor Assignment (Optional) -->
-                  <div class="col-md-6" v-if="isEditMode">
-                    <label for="vendorId" class="form-label">Assigned Vendor <span class="text-muted">(Optional)</span></label>
-                    <select 
-                      class="form-select" 
-                      id="vendorId" 
-                      v-model="formData.vendorId"
-                      :class="getFieldClass('vendorId')"
-                      @blur="validateFieldInline('vendorId')"
-                      @focus="clearFieldValidation('vendorId')"
-                      @input="handleFieldInput('vendorId')"
-                    >
-                      <option value="">Select vendor...</option>
-                      <option 
-                        v-for="vendor in availableVendors" 
-                        :key="vendor.id" 
-                        :value="vendor.id"
-                      >
-                        {{ vendor.name }}
-                      </option>
-                    </select>
-                    <div class="form-text">Assign maintenance to a specific vendor</div>
-                    <div v-if="fieldErrors.vendorId" class="invalid-feedback">{{ fieldErrors.vendorId }}</div>
-                  </div>
+                  
 
 
 
@@ -264,8 +244,11 @@
 import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { maintenanceService } from '@/services/maintenanceService'
-import type { CreateMaintenanceData, UpdateMaintenanceData, Asset, MaintenanceType, Vendor } from '@/services/maintenanceService'
+import type { CreateMaintenanceData, UpdateMaintenanceData, MaintenanceType } from '@/services/maintenanceService'
 import { showToast, showErrorToast } from '@/utils/toast'
+import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
+import { assetApiService, type Asset as AssetApiAsset } from '@/services/assetApi'
+import NotesTextarea from '@/components/common/NotesTextarea.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -300,15 +283,141 @@ const isLoading = ref(false)
 const formSubmitted = ref(false)
 
 // Data sources
-const availableAssets = ref<Asset[]>([])
+const availableAssets = ref<AssetApiAsset[]>([])
 const maintenanceTypes = ref<MaintenanceType[]>([])
-const availableVendors = ref<Vendor[]>([])
+// Vendors removed
 
 // Computed properties
 const assetInfo = ref('')
 
 // Template refs
 const maintenanceForm = ref<HTMLFormElement>()
+
+// SearchableDropdown adapters
+const assetItems = computed<Item[]>(() =>
+  availableAssets.value.map(a => ({
+    id: a.id.toString(),
+    name: `${a.assetId}${a.serialNumber ? ' - ' + a.serialNumber : ''}`.trim(),
+    value: a.id.toString()
+  }))
+)
+const maintenanceTypeItems = computed<Item[]>(() =>
+  maintenanceTypes.value.map(t => ({ id: t.id, name: `${t.name} - ${t.description}`, value: t.id }))
+)
+// Vendor items removed
+
+const selectedAssetItem = ref<Item | null>(null)
+const selectedTypeItem = ref<Item | null>(null)
+// Vendor selection removed
+
+// Tracks if asset was preselected via reschedule flow
+const preselectedAsset = ref(false)
+
+// Selected asset details for display
+const selectedAssetDetails = reactive({
+  serialNumber: '',
+  condition: '',
+  location: '',
+  notes: '',
+  brandModel: '',
+  assetType: '',
+  assetCategory: '',
+  vendor: '',
+  purchaseDate: '',
+  purchaseCost: '',
+  warrantyStartDate: '',
+  warrantyUntil: ''
+})
+const selectedAssetSpecs = ref<string | null>(null)
+
+const onAssetChange = (item: Item | null) => {
+  formData.assetId = (item?.value as string) || ''
+  handleAssetChange()
+  // Load full asset details for display
+  if (formData.assetId) {
+    const assetDbId = parseInt(formData.assetId)
+    if (!isNaN(assetDbId)) {
+      loadAssetDetails(assetDbId)
+    }
+  } else {
+    clearAssetDetails()
+  }
+}
+
+const onTypeChange = async (item: Item | null) => {
+  formData.maintenanceTypeId = (item?.value as string) || ''
+  handleFieldInput('maintenanceTypeId')
+  await nextTick()
+  validateFieldInline('maintenanceTypeId')
+}
+
+// Vendor change handler removed
+
+const clearAssetDetails = () => {
+  selectedAssetDetails.serialNumber = ''
+  selectedAssetDetails.condition = ''
+  selectedAssetDetails.location = ''
+  selectedAssetDetails.notes = ''
+  selectedAssetDetails.brandModel = ''
+  selectedAssetDetails.assetType = ''
+  selectedAssetDetails.assetCategory = ''
+  selectedAssetDetails.vendor = ''
+  selectedAssetDetails.purchaseDate = ''
+  selectedAssetDetails.purchaseCost = ''
+  selectedAssetDetails.warrantyStartDate = ''
+  selectedAssetDetails.warrantyUntil = ''
+  selectedAssetSpecs.value = null
+}
+
+const loadAssetDetails = async (assetIdNumber: number) => {
+  try {
+    const response = await assetApiService.getAssetById(assetIdNumber)
+    const asset = response.data.asset
+    if (asset) {
+      selectedAssetDetails.serialNumber = asset.serialNumber || ''
+      selectedAssetDetails.condition = asset.condition || ''
+      selectedAssetDetails.location = asset.location || ''
+      selectedAssetDetails.notes = asset.notes || ''
+      selectedAssetDetails.brandModel = asset.brand && asset.model ? `${asset.brand.name} ${asset.model.name}` : ''
+      selectedAssetDetails.assetType = asset.assetType?.name || ''
+      selectedAssetDetails.assetCategory = asset.assetType?.category?.name || ''
+      selectedAssetDetails.vendor = asset.vendor?.name || ''
+      selectedAssetDetails.purchaseDate = asset.purchaseDate || ''
+      selectedAssetDetails.purchaseCost = asset.purchaseCost ? String(asset.purchaseCost) : ''
+      selectedAssetDetails.warrantyStartDate = asset.warrantyStartDate || ''
+      selectedAssetDetails.warrantyUntil = asset.warrantyUntil || ''
+
+      const specs = asset.model?.specifications
+      if (specs) {
+        if (typeof specs === 'object') {
+          selectedAssetSpecs.value = Object.entries(specs)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join('\n')
+        } else if (typeof specs === 'string') {
+          try {
+            const parsed = JSON.parse(specs)
+            if (parsed && typeof parsed === 'object') {
+              selectedAssetSpecs.value = Object.entries(parsed)
+                .map(([k, v]) => `${k}: ${v}`)
+                .join('\n')
+            } else {
+              selectedAssetSpecs.value = specs
+            }
+          } catch {
+            selectedAssetSpecs.value = specs
+          }
+        }
+      } else {
+        selectedAssetSpecs.value = null
+      }
+    } else {
+      clearAssetDetails()
+    }
+  } catch (error) {
+    console.error('Error loading asset details:', error)
+    clearAssetDetails()
+  }
+}
 
 // Validation system
 const getFieldClass = (fieldName: string) => {
@@ -427,13 +536,18 @@ const getFieldDisplayName = (fieldName: string): string => {
 }
 
 // Asset handling
-const handleAssetChange = () => {
-  const selectedAsset = availableAssets.value.find(asset => asset.id === formData.assetId)
+const handleAssetChange = async () => {
+  const selectedAsset = availableAssets.value.find(asset => asset.id.toString() === formData.assetId)
   if (selectedAsset) {
-    assetInfo.value = `${selectedAsset.assetType} - ${selectedAsset.brand} ${selectedAsset.model}`
+    const typeName = selectedAsset.assetType?.name || ''
+    const brandName = selectedAsset.brand?.name || ''
+    const modelName = selectedAsset.model?.name || ''
+    const brandModel = [brandName, modelName].filter(Boolean).join(' ')
+    assetInfo.value = [typeName, brandModel].filter(Boolean).join(' - ')
   } else {
     assetInfo.value = ''
   }
+  await nextTick()
   validateFieldInline('assetId')
 }
 
@@ -471,16 +585,62 @@ const getCounterClass = (length: number, maxLength: number) => {
 const loadInitialData = async () => {
   isLoading.value = true
   try {
-    const [assetsResponse, typesResponse, vendorsResponse] = await Promise.all([
-      maintenanceService.getAssets(),
-      maintenanceService.getMaintenanceTypes(),
-      maintenanceService.getVendors()
+    const [assetsDropdownResponse, typesResponse] = await Promise.all([
+      assetApiService.getAssetsForDropdowns(props.isEditMode ? {} : { status: 'AVAILABLE' }),
+      maintenanceService.getMaintenanceTypes()
     ])
 
-    availableAssets.value = assetsResponse.data.assets
+    availableAssets.value = assetsDropdownResponse.data.assets
     maintenanceTypes.value = typesResponse.data.maintenanceTypes
-    availableVendors.value = vendorsResponse.data.vendors
+    // Vendors removed
+ 
+    // If navigated with ?assetId= (mirroring Collect Asset behavior), preselect asset
+    const preselectExternalAssetId = (route.query.assetId as string) || ''
+    if (preselectExternalAssetId) {
+      let match = availableAssets.value.find(a => a.assetId === preselectExternalAssetId)
+      if (!match) {
+        // Asset may not be in the AVAILABLE-filtered list; fetch from general assets and merge
+        try {
+          const resp = await assetApiService.getAssets({ search: preselectExternalAssetId, limit: 5 }) as any
+          const found = (resp?.data?.assets || resp?.data?.data?.assets || []).find((a: any) => a.assetId === preselectExternalAssetId)
+          if (found) {
+            match = found
+            if (!availableAssets.value.some(a => a.id === found.id)) {
+              availableAssets.value = [found, ...availableAssets.value]
+            }
+          }
+        } catch (_) { /* noop */ }
+      }
+      if (match) {
+        const item = { id: match.id.toString(), name: `${match.assetId}${match.serialNumber ? ' - ' + match.serialNumber : ''}`.trim(), value: match.id.toString() } as Item
+        selectedAssetItem.value = item
+        formData.assetId = match.id.toString()
+        await nextTick()
+        onAssetChange(item)
+        preselectedAsset.value = true
+        delete fieldErrors.assetId
+        fieldValidation.assetId = true
+        await nextTick()
+        validateFieldInline('assetId')
+      }
+    }
 
+    // Optional: preselect maintenance type via query (?maintenanceTypeId= or ?maintenanceTypeName=)
+    const qsTypeId = (route.query.maintenanceTypeId as string) || ''
+    const qsTypeName = (route.query.maintenanceTypeName as string) || ''
+    if (qsTypeId || qsTypeName) {
+      const typeMatch = maintenanceTypes.value.find(t => (qsTypeId && t.id === qsTypeId) || (qsTypeName && t.name.toLowerCase() === qsTypeName.toLowerCase()))
+      if (typeMatch) {
+        const typeItem = { id: typeMatch.id, name: `${typeMatch.name} - ${typeMatch.description}`, value: typeMatch.id } as Item
+        selectedTypeItem.value = typeItem
+        formData.maintenanceTypeId = typeMatch.id
+        await nextTick()
+        onTypeChange(typeItem)
+        delete fieldErrors.maintenanceTypeId
+        fieldValidation.maintenanceTypeId = true
+      }
+    }
+ 
     // Set default scheduled date to tomorrow
     if (!props.isEditMode) {
       const tomorrow = new Date()
@@ -504,21 +664,50 @@ const loadMaintenanceData = async () => {
     const maintenance = response.data.maintenance
 
     // Find the asset by assetId string to get the numeric id
-    const selectedAsset = availableAssets.value.find(asset => asset.assetId === maintenance.assetId)
+    let selectedAsset = availableAssets.value.find(asset => asset.assetId === maintenance.assetId)
+    if (!selectedAsset) {
+      // Fallback: query main assets endpoint by search string
+      try {
+        const listResp = await assetApiService.getAssets({ search: maintenance.assetId, limit: 5 }) as any
+        const found = (listResp?.data?.assets || listResp?.data?.data?.assets || []).find((a: any) => a.assetId === maintenance.assetId)
+        if (found) {
+          selectedAsset = found
+          if (!availableAssets.value.some(a => a.id === found.id)) {
+            availableAssets.value = [found, ...availableAssets.value]
+          }
+        }
+      } catch (_) { /* noop */ }
+    }
     if (selectedAsset) {
       formData.assetId = selectedAsset.id.toString() // Set the numeric id for the dropdown
-      assetInfo.value = `${selectedAsset.assetType} - ${selectedAsset.brand} ${selectedAsset.model}`
+      const item = { id: selectedAsset.id.toString(), name: `${selectedAsset.assetId}${selectedAsset.serialNumber ? ' - ' + selectedAsset.serialNumber : ''}`.trim(), value: selectedAsset.id.toString() } as Item
+      selectedAssetItem.value = item
+      await nextTick()
+      onAssetChange(item)
+      delete fieldErrors.assetId
+      fieldValidation.assetId = true
     } else {
       console.warn('Asset not found for assetId:', maintenance.assetId)
       formData.assetId = ''
     }
 
     formData.maintenanceTypeId = maintenance.maintenanceTypeId
+    // Preselect maintenance type item in dropdown
+    const typeMatch = maintenanceTypes.value.find(t => t.id === maintenance.maintenanceTypeId)
+    if (typeMatch) {
+      const typeItem = { id: typeMatch.id, name: `${typeMatch.name} - ${typeMatch.description}`, value: typeMatch.id } as Item
+      selectedTypeItem.value = typeItem
+      await nextTick()
+      onTypeChange(typeItem)
+      delete fieldErrors.maintenanceTypeId
+      fieldValidation.maintenanceTypeId = true
+    }
+    // Vendor selection removed
     formData.scheduledDate = maintenance.scheduledDate
     formData.frequencyDays = maintenance.frequencyDays
     formData.estimatedCost = maintenance.estimatedCost
     formData.description = maintenance.description
-    formData.vendorId = maintenance.vendorId || ''
+    // vendorId removed
 
     // Auto-expand textareas
     nextTick(() => {
@@ -571,8 +760,7 @@ const submitForm = async (event?: Event) => {
         scheduledDate: formData.scheduledDate,
         frequencyDays: formData.frequencyDays || undefined,
         estimatedCost: formData.estimatedCost || undefined,
-        description: formData.description,
-        vendorId: formData.vendorId ? Number(formData.vendorId) : undefined
+        description: formData.description
       }
 
       await maintenanceService.updateMaintenance(props.maintenanceId, maintenanceData)
@@ -585,11 +773,24 @@ const submitForm = async (event?: Event) => {
         scheduledDate: formData.scheduledDate,
         frequencyDays: formData.frequencyDays || undefined,
         estimatedCost: formData.estimatedCost || undefined,
-        description: formData.description,
-        vendorId: formData.vendorId ? Number(formData.vendorId) : undefined
+        description: formData.description
+      }
+ 
+      await maintenanceService.createMaintenance(maintenanceData)
+
+      // Update asset status to IN_MAINTENANCE
+      try {
+        await assetApiService.updateAssetStatus(Number(formData.assetId), 'IN_MAINTENANCE')
+      } catch (e) {
+        console.warn('Maintenance scheduled but failed to set asset status to IN_MAINTENANCE:', e)
       }
 
-      await maintenanceService.createMaintenance(maintenanceData)
+      // Reload available assets for dropdown to reflect change
+      try {
+        const refreshed = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
+        availableAssets.value = refreshed.data.assets
+      } catch {}
+ 
       showMaintenanceSuccessToast(generateMaintenanceDetails(), false)
     }
     
@@ -614,12 +815,13 @@ const submitForm = async (event?: Event) => {
 
 // Helper methods
 const generateMaintenanceDetails = () => {
-  const selectedAsset = availableAssets.value.find(asset => asset.id === formData.assetId)
+  const selectedAsset = availableAssets.value.find(asset => asset.id.toString() === formData.assetId)
   const selectedType = maintenanceTypes.value.find(type => type.id === formData.maintenanceTypeId)
   
   let details = ''
   if (selectedAsset) {
-    details += `${selectedAsset.assetId} - ${selectedAsset.assetName}`
+    const assetName = selectedAsset.model?.name || ''
+    details += `${selectedAsset.assetId}${assetName ? ' - ' + assetName : ''}`
   }
   if (selectedType) {
     details += ` - ${selectedType.name} maintenance`
@@ -765,8 +967,13 @@ onMounted(async () => {
   
   // Focus on first field
   nextTick(() => {
-    const firstField = document.getElementById('assetId')
-    if (firstField) firstField.focus()
+    if (preselectedAsset.value) {
+      const nextField = document.getElementById('scheduledDate') as HTMLElement | null
+      if (nextField) nextField.focus()
+    } else {
+      const firstField = document.getElementById('assetId') as HTMLElement | null
+      if (firstField) firstField.click()
+    }
   })
 })
 </script>
@@ -799,6 +1006,68 @@ onMounted(async () => {
 .character-count .text-danger {
   color: #dc2626 !important;
   font-weight: 600;
+}
+
+/* Reserve space for required asterisk on non-required labels to align rows */
+.required-placeholder {
+  visibility: hidden;
+  display: inline-block;
+  width: 0.5ch;
+}
+
+/* Standardize label sizes across this form */
+.form-label {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+}
+
+:deep(.searchable-dropdown-wrapper .form-label) {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+}
+
+/* Normalize required asterisk in labels so headings look consistent */
+.form-label .text-danger {
+  font-weight: 600 !important; /* match label */
+  font-size: 1em !important;  /* same size as label text */
+}
+
+:deep(.searchable-dropdown-wrapper .form-label .text-danger) {
+  font-weight: 600 !important;
+  font-size: 1em !important;
+}
+
+/* Using unified-form-styles for control sizing; no local height overrides */
+
+/* Asset Specifications - Make it look like a non-editable input */
+.asset-specifications-wrapper :deep(.form-control) {
+  background-color: #F3F3F3 !important;
+  border: 2px solid #E0E0E0 !important;
+  color: #0A0A0A !important;
+  cursor: default !important;
+  resize: none !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control:hover) {
+  border-color: #E0E0E0 !important;
+  background-color: #F3F3F3 !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control:focus) {
+  border-color: #E0E0E0 !important;
+  box-shadow: none !important;
+  background-color: #F3F3F3 !important;
+  outline: none !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control::placeholder) {
+  color: #999999 !important;
+}
+
+.asset-specifications-wrapper :deep(.character-count) {
+  display: none !important;
 }
 
 /* Form fieldset styling */

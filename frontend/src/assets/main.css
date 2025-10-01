@@ -182,7 +182,8 @@ body {
 }
 
 .quick-action-card.primary:hover .action-icon {
-  background: var(--accent-navy);
+  background: var(--secondary-purple);
+  filter: brightness(0.8);
 }
 
 /* Issue Asset - Green (Assign Action) */
@@ -192,11 +193,12 @@ body {
 }
 
 .quick-action-card.success:hover {
-border-color: var(--secondary-green);
+  border-color: var(--secondary-green);
 }
 
 .quick-action-card.success:hover .action-icon {
-  background: var(--primary-dark-gray);
+  background: var(--secondary-green);
+  filter: brightness(0.8);
 }
 
 /* Schedule Maintenance - Pink (Maintenance Action) */
@@ -210,7 +212,8 @@ border-color: var(--secondary-green);
 }
 
 .quick-action-card.warning:hover .action-icon {
-  background: var(--secondary-red);
+  background: var(--secondary-pink);
+  filter: brightness(0.8);
 }
 
 /* Collect Asset - Orange (Collect/Return Action) */
@@ -227,7 +230,8 @@ border-color: var(--secondary-green);
 
 .quick-action-card.collect:hover .action-icon,
 .quick-action-card.danger:hover .action-icon {
-  background: var(--secondary-red);
+  background: var(--secondary-orange);
+  filter: brightness(0.8);
 }
 
 .quick-action-card.info .action-icon {

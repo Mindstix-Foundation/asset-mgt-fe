@@ -169,43 +169,46 @@
       <div class="row">
         <div class="col-12 col-lg-6 mb-4">
           <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header">
               <h5 class="card-title mb-0">
-                <i class="fas fa-clock me-2"></i>Recent Activities
+                <i class="fas fa-clock me-2"></i>Last 24 Hours
               </h5>
-              <button class="btn btn-sm btn-outline-primary dashboard-btn" @click="viewAllActivities">View All</button>
             </div>
-            <div class="card-body">
-              <div class="list-group list-group-flush">
+            <div class="card-body p-0">
+              <div class="activity-list">
                 <!-- Loading state -->
-                <div v-if="isLoadingAnalytics" class="list-group-item border-0 px-0" v-for="n in 4" :key="'loading-' + n">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                      <div class="placeholder-glow">
-                        <span class="placeholder col-6"></span>
-                      </div>
-                      <div class="placeholder-glow mt-1">
-                        <small class="placeholder col-8"></small>
-                      </div>
-                    </div>
+                <div v-if="isLoadingAnalytics" class="activity-item" v-for="n in 4" :key="'loading-' + n">
+                  <div class="activity-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                  </div>
+                  <div class="activity-content">
                     <div class="placeholder-glow">
-                      <small class="placeholder col-3"></small>
+                      <span class="placeholder col-6"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-8"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-4"></span>
                     </div>
                   </div>
                 </div>
                 
                 <!-- Actual data -->
                 <div v-else-if="recentActivities.length > 0" v-for="activity in recentActivities" :key="activity.id" 
-                     class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
-                  <div class="ms-2 me-auto">
-                    <div class="fw-bold">{{ activity.title }}</div>
-                    <small class="text-muted">{{ activity.description }}</small>
+                     class="activity-item">
+                  <div class="activity-icon" :class="getActivityType(activity.title)">
+                    <i :class="getActivityIcon(activity.title)"></i>
                   </div>
-                  <small class="text-muted">{{ activity.timeAgo }}</small>
+                  <div class="activity-content">
+                    <div class="activity-text">{{ activity.title }}</div>
+                    <div class="activity-description">{{ activity.description }}</div>
+                    <div class="activity-time">{{ activity.timeAgo }}</div>
+                  </div>
                 </div>
                 
                 <!-- No data state -->
-                <div v-else class="list-group-item border-0 px-0 text-center py-4">
+                <div v-else class="activity-item text-center py-4">
                   <div class="text-muted">
                     <i class="fas fa-info-circle me-2"></i>
                     No recent activities found
@@ -342,6 +345,7 @@ const lastUpdated = ref('Loading...')
 let lastUpdatedAt: number | null = null
 let refreshIntervalId: number | undefined
 let updatedTickerId: number | undefined
+let realTimeUpdateId: number | undefined
 
 // Recent activities data (used by template)
 const recentActivities = ref<Array<{
@@ -349,6 +353,8 @@ const recentActivities = ref<Array<{
   title: string
   description: string
   timeAgo: string
+  needsRealTimeUpdate: boolean
+  timestamp: Date
 }>>([])
 
 // Asset distribution data (used by template)
@@ -387,6 +393,27 @@ function formatRelativeUpdated(nowMs: number) {
 
 function updateLastUpdatedDisplay() {
   lastUpdated.value = formatRelativeUpdated(Date.now())
+}
+
+// Update real-time activity times
+function updateRealTimeActivityTimes() {
+  try {
+    // Check if there are any activities that need real-time updates
+    const hasRealTimeActivities = recentActivities.value.some(activity => activity.needsRealTimeUpdate)
+    
+    if (!hasRealTimeActivities) {
+      return // No need to update if no activities need real-time updates
+    }
+    
+    const updatedActivities = dashboardApi.updateActivityTimes(recentActivities.value)
+    
+    // Only update if we have valid results
+    if (updatedActivities && updatedActivities.length > 0) {
+      recentActivities.value = updatedActivities
+    }
+  } catch (error) {
+    console.error('Error updating real-time activity times:', error)
+  }
 }
 
 // Update the loadDashboardStats method
@@ -462,10 +489,6 @@ const navigateToScheduleMaintenance = () => {
   router.push('/maintenance')
 }
 
-const viewAllActivities = () => {
-  // TODO: Navigate to activities page when ready
-  console.log('View All Activities')
-}
 
 // Refresh dashboard data
 const refreshDashboard = async () => {
@@ -482,8 +505,13 @@ onMounted(async () => {
   // Update relative "Updated X minutes ago" every 30 seconds
   updatedTickerId = window.setInterval(updateLastUpdatedDisplay, 30_000)
   
-  // Auto-refresh every 3 minutes
-  refreshIntervalId = window.setInterval(refreshDashboard, 180_000)
+  // Update real-time activity times every 2 minutes (more conservative)
+  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 120_000)
+  
+  // Smart refresh strategy:
+  // - Full refresh every 5 minutes for fresh data
+  // - Real-time updates every minute for time display
+  refreshIntervalId = window.setInterval(refreshDashboard, 300_000)
 })
 
 onUnmounted(() => {
@@ -495,7 +523,31 @@ onUnmounted(() => {
     clearInterval(updatedTickerId)
     updatedTickerId = undefined
   }
+  if (realTimeUpdateId) {
+    clearInterval(realTimeUpdateId)
+    realTimeUpdateId = undefined
+  }
 })
+
+// Helper functions for activity display
+const getActivityType = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'added'
+  if (title.includes('Asset Issued') || title.includes('Asset Collected')) return 'assigned'
+  if (title.includes('Maintenance')) return 'maintenance'
+  if (title.includes('Employee')) return 'added'
+  if (title.includes('Vendor')) return 'added'
+  return 'added'
+}
+
+const getActivityIcon = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'fas fa-laptop'
+  if (title.includes('Asset Issued')) return 'fas fa-arrow-right'
+  if (title.includes('Asset Collected')) return 'fas fa-arrow-left'
+  if (title.includes('Maintenance')) return 'fas fa-tools'
+  if (title.includes('Employee')) return 'fas fa-user'
+  if (title.includes('Vendor')) return 'fas fa-building'
+  return 'fas fa-circle'
+}
 </script>
 
 <style scoped>
@@ -532,10 +584,7 @@ onUnmounted(() => {
   cursor: default !important;
 }
 
-/* Ensure quick action cards use proper cursor */
-.quick-action-card {
-  cursor: pointer;
-}
+/* Quick action cards inherit styles from global CSS */
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -624,4 +673,74 @@ onUnmounted(() => {
 .progress-bar.bg-secondary { background-color: var(--secondary-red) !important; }
 /* Primary variant for Total Assets */
 .progress-bar.bg-primary { background-color: var(--secondary-purple) !important; }
+
+/* Activity List - Utilize full card height */
+.activity-list {
+  max-height: 500px; /* Show more activities to utilize full card space */
+  overflow-y: auto;
+}
+
+/* Responsive height adjustments */
+@media (min-height: 800px) {
+  .activity-list {
+    max-height: 600px; /* Even more space on taller screens */
+  }
+}
+
+@media (max-height: 700px) {
+  .activity-list {
+    max-height: 350px; /* Slightly less on shorter screens */
+  }
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem; /* Slightly reduced padding to fit more items */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+  background-color: rgba(51, 31, 234, 0.02);
+}
+
+.activity-icon {
+  width: 28px; /* Slightly smaller icon */
+  height: 28px; /* Slightly smaller icon */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  font-size: 0.75rem; /* Slightly smaller font */
+  color: white;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.activity-icon.added { background-color: var(--secondary-purple); }
+.activity-icon.assigned { background-color: var(--secondary-green); }
+.activity-icon.maintenance { background-color: var(--secondary-orange); }
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-text {
+  font-size: 0.8rem;
+  color: var(--primary-black);
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.activity-description {
+  font-size: 0.75rem;
+  color: var(--primary-dark-gray);
+  margin-bottom: 0.2rem;
+}
+
+.activity-time {
+  font-size: 0.7rem;
+  color: var(--primary-dark-gray);
+}
 </style>

@@ -10,11 +10,6 @@
    to match SearchableDropdown with form styling
 ================================= */
 
-/* Form-specific SearchableDropdown styling */
-.form-searchable-dropdown {
-  /* This wrapper ensures the SearchableDropdown matches form styling */
-}
-
 /* High specificity override to ensure borders match exactly */
 .form-searchable-dropdown :deep(.searchable-dropdown-wrapper .form-control),
 .form-searchable-dropdown :deep(.dropdown .form-control) {
@@ -36,6 +31,8 @@
   font-weight: 400 !important;
   line-height: 1.5 !important;
   background-color: #fff !important;
+  height: 3rem !important;            /* Fixed 48px height to match form controls */
+  box-sizing: border-box;              /* Include borders/padding in height */
 }
 
 .form-searchable-dropdown :deep(.form-control::placeholder),
@@ -476,3 +473,53 @@
         padding: 0.75rem 1.5rem;
     }
 }
+
+/* ================================
+   INPUT GROUP NORMALIZATION (borders, radius, focus)
+   Applies to forms within .container-fluid.py-4 only
+================================ */
+.container-fluid.py-4 .input-group .form-control,
+.container-fluid.py-4 .input-group .input-group-text {
+  border: 2px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  box-sizing: border-box;
+}
+
+/* Remove the inner seam so the shared edge looks continuous */
+.container-fluid.py-4 .input-group .input-group-text:first-child {
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+}
+.container-fluid.py-4 .input-group .form-control:last-child {
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+/* For reversed order (form-control first, text last) */
+.container-fluid.py-4 .input-group .form-control:first-child {
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+}
+.container-fluid.py-4 .input-group .input-group-text:last-child {
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+/* Apply glow ONLY to the outer container, not the inner seam */
+.container-fluid.py-4 .input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  border-radius: 0.5rem; /* matches children */
+}
+.container-fluid.py-4 .input-group:focus-within .form-control,
+.container-fluid.py-4 .input-group:focus-within .input-group-text {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: none !important; /* prevent inner vertical line glow */
+}
+
+/* Disabled state alignment */
+.container-fluid.py-4 .input-group .form-control:disabled,
+.container-fluid.py-4 .input-group .input-group-text:disabled {
+  border-color: #ced4da !important;
+}
+
+/* ================================ */
