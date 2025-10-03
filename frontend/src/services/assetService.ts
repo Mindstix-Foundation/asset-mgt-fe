@@ -315,6 +315,36 @@ class AssetService {
     }
   }
 
+  // Check if serial number is unique
+  async checkSerialNumberUnique(serialNumber: string, excludeAssetId?: number): Promise<{ isUnique: boolean; serialNumber: string; existingAsset?: { id: number; assetId: string } }> {
+    try {
+      const params = new URLSearchParams()
+      params.append('serialNumber', serialNumber)
+      if (excludeAssetId) {
+        params.append('excludeAssetId', excludeAssetId.toString())
+      }
+      
+      const response = await apiService.get<{ 
+        message: string; 
+        data: { 
+          isUnique: boolean; 
+          serialNumber: string; 
+          existingAsset?: { id: number; assetId: string } 
+        } 
+      }>(`${this.baseEndpoint}/check-serial-unique?${params.toString()}`)
+      
+      return response.data
+    } catch (error) {
+      console.error('Error checking serial number uniqueness:', error)
+      // Return false on error to be safe
+      return {
+        isUnique: false,
+        serialNumber,
+        existingAsset: undefined
+      }
+    }
+  }
+
   // Validate asset data before submission
   validateAssetData(data: CreateAssetDto | UpdateAssetDto): string[] {
     const errors: string[] = []

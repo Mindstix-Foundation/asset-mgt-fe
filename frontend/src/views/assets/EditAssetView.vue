@@ -35,6 +35,7 @@
     <AssetForm
       :is-edit-mode="true"
       :asset="asset"
+      :disable-asset-identity="true"
       @submit="handleSubmit"
       @cancel="handleCancel"
     />

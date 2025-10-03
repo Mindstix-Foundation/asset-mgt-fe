@@ -732,7 +732,7 @@ const getStatusBadgeClass = (status: string): string => {
     'ASSIGNED': 'badge badge-assigned', 
     'IN_MAINTENANCE': 'badge badge-under-repair',
     'RETIRED': 'badge badge-retired',
-    'LOST': 'badge badge-retired'
+    'LOST': 'badge badge-lost'
   }
   return classes[finalStatus] || 'badge badge-retired'
 }
@@ -1757,6 +1757,16 @@ onMounted(async () => {
   background-color: var(--secondary-brown) !important;
   color: white !important;
   border: 2px solid var(--secondary-brown) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.badge.badge-lost {
+  background-color: var(--secondary-red) !important;
+  color: white !important;
+  border: 2px solid var(--secondary-red) !important;
   font-size: 0.75rem !important;
   font-weight: 700 !important;
   padding: 0.35rem 0.65rem !important;

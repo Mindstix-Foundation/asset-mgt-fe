@@ -67,10 +67,11 @@
                       maxlength="50" 
                       pattern="[A-Za-z0-9\-_]{3,50}"
                       title="Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)"
-                      @blur="validateField('serialNumber')"
+                      @blur="validateSerialNumber"
                       @input="clearFieldError('serialNumber')"
                     >
                     <div class="form-text">3-50 characters (letters, numbers, hyphens, underscores only)</div>
+                    <div class="invalid-feedback">{{ errors.serialNumber }}</div>
                   </div>
 
                   <!-- Asset Category -->
@@ -78,19 +79,25 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="assetCategory"
-                        label="Asset Category"
+                        :label="props.disableAssetIdentity ? 'Asset Category (Read-only)' : 'Asset Category'"
                         placeholder="Search categories..."
                         :items="categoryItems"
                         v-model="selectedCategory"
-                        required
+                        :required="!props.disableAssetIdentity"
+                        :disabled="props.disableAssetIdentity"
                         @change="onCategoryChange"
                       />
                     </div>
                     <div class="form-text">
-                      Select the high-level category first. 
-                      <router-link to="/app/assets/manage-categories" class="text-primary">
-                        <i class="fas fa-cogs me-1"></i>Manage Categories
-                      </router-link>
+                      <span v-if="props.disableAssetIdentity">
+                        Asset category cannot be changed after creation
+                      </span>
+                      <span v-else>
+                        Select the high-level category first. 
+                        <router-link to="/app/assets/manage-categories" class="text-primary">
+                          <i class="fas fa-cogs me-1"></i>Manage Categories
+                        </router-link>
+                      </span>
                     </div>
                   </div>
 
@@ -99,21 +106,26 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="assetType"
-                        label="Asset Type"
-                        :placeholder="selectedCategory ? 'Search asset types...' : 'Select category first...'"
+                        :label="props.disableAssetIdentity ? 'Asset Type (Read-only)' : 'Asset Type'"
+                        :placeholder="props.disableAssetIdentity ? 'Asset type (read-only)' : (selectedCategory ? 'Search asset types...' : 'Select category first...')"
                         :items="typeItems"
                         v-model="selectedType"
-                        :disabled="!selectedCategory"
-                        required
+                        :disabled="props.disableAssetIdentity || !selectedCategory"
+                        :required="!props.disableAssetIdentity"
                         @change="onTypeChange"
                       />
                     </div>
                     <div class="form-text">
-                      Select category above to unlock asset type options.
-                      <span v-if="typeItems.length === 0 && selectedCategory">
-                        <router-link to="/app/assets/manage-categories" class="text-primary">
-                          <i class="fas fa-plus me-1"></i>Add asset types
-                        </router-link>
+                      <span v-if="props.disableAssetIdentity">
+                        Asset type cannot be changed after creation
+                      </span>
+                      <span v-else>
+                        Select category above to unlock asset type options.
+                        <span v-if="typeItems.length === 0 && selectedCategory">
+                          <router-link to="/app/assets/manage-categories" class="text-primary">
+                            <i class="fas fa-plus me-1"></i>Add asset types
+                          </router-link>
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -123,21 +135,26 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="brand"
-                        label="Brand"
-                        :placeholder="selectedType ? 'Search brands...' : 'Select asset type first...'"
+                        :label="props.disableAssetIdentity ? 'Brand (Read-only)' : 'Brand'"
+                        :placeholder="props.disableAssetIdentity ? 'Brand (read-only)' : (selectedType ? 'Search brands...' : 'Select asset type first...')"
                         :items="brandItems"
                         v-model="selectedBrand"
-                        :disabled="!selectedType"
-                        required
+                        :disabled="props.disableAssetIdentity || !selectedType"
+                        :required="!props.disableAssetIdentity"
                         @change="onBrandChange"
                       />
                     </div>
                     <div class="form-text">
-                      Select asset type above to unlock brand options.
-                      <span v-if="brandItems.length === 0 && selectedType">
-                        <router-link to="/app/assets/manage-categories" class="text-primary">
-                          <i class="fas fa-plus me-1"></i>Add brands
-                        </router-link>
+                      <span v-if="props.disableAssetIdentity">
+                        Brand cannot be changed after creation
+                      </span>
+                      <span v-else>
+                        Select asset type above to unlock brand options.
+                        <span v-if="brandItems.length === 0 && selectedType">
+                          <router-link to="/app/assets/manage-categories" class="text-primary">
+                            <i class="fas fa-plus me-1"></i>Add brands
+                          </router-link>
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -147,21 +164,26 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="model"
-                        label="Model"
-                        :placeholder="selectedBrand ? 'Search models...' : 'Select brand first...'"
+                        :label="props.disableAssetIdentity ? 'Model (Read-only)' : 'Model'"
+                        :placeholder="props.disableAssetIdentity ? 'Model (read-only)' : (selectedBrand ? 'Search models...' : 'Select brand first...')"
                         :items="modelItems"
                         v-model="selectedModel"
-                        :disabled="!selectedBrand"
-                        required
+                        :disabled="props.disableAssetIdentity || !selectedBrand"
+                        :required="!props.disableAssetIdentity"
                         @change="onModelChange"
                       />
                     </div>
                     <div class="form-text">
-                      Select brand above to unlock model options.
-                      <span v-if="modelItems.length === 0 && selectedBrand">
-                        <router-link to="/app/assets/manage-categories" class="text-primary">
-                          <i class="fas fa-plus me-1"></i>Add models
-                        </router-link>
+                      <span v-if="props.disableAssetIdentity">
+                        Model cannot be changed after creation
+                      </span>
+                      <span v-else>
+                        Select brand above to unlock model options.
+                        <span v-if="modelItems.length === 0 && selectedBrand">
+                          <router-link to="/app/assets/manage-categories" class="text-primary">
+                            <i class="fas fa-plus me-1"></i>Add models
+                          </router-link>
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -417,11 +439,13 @@ import type { Vendor } from '@/types/vendor.types'
 interface Props {
   asset?: any
   isEditMode?: boolean
+  disableAssetIdentity?: boolean // New prop to disable asset category, type, brand, model in edit mode
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isEditMode: false,
-  asset: null
+  asset: null,
+  disableAssetIdentity: false
 })
 
 // Emits
@@ -507,6 +531,9 @@ const wasValidated = ref(false)
 const isSubmitting = ref(false)
 const isLoading = ref(false)
 const notesExpanded = ref(false)
+
+// Store original asset data for comparison (only in edit mode)
+const originalAssetData = ref<any>(null)
 
 // API Data
 const categories = ref<AssetCategory[]>([])
@@ -677,7 +704,54 @@ const availableStatusOptions = computed(() => {
 })
 
 // Methods
-const validateField = (fieldName: string) => {
+const validateSerialNumber = async () => {
+  const field = document.getElementById('serialNumber') as HTMLInputElement
+  if (!field) return
+
+  // Clear previous validation state
+  field.classList.remove('is-invalid', 'is-valid')
+  errors.serialNumber = ''
+
+  // Basic validation first
+  if (!formData.serialNumber || formData.serialNumber.trim() === '') {
+    errors.serialNumber = 'Serial number is required'
+    field.classList.add('is-invalid')
+    return
+  }
+
+  if (formData.serialNumber.length < 3 || formData.serialNumber.length > 50) {
+    errors.serialNumber = 'Serial number must be 3-50 characters'
+    field.classList.add('is-invalid')
+    return
+  }
+
+  if (!/^[A-Za-z0-9\-_]{3,50}$/.test(formData.serialNumber)) {
+    errors.serialNumber = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)'
+    field.classList.add('is-invalid')
+    return
+  }
+
+  // Check uniqueness via API
+  try {
+    const excludeAssetId = props.isEditMode && props.asset ? props.asset.id : undefined
+    const result = await assetService.checkSerialNumberUnique(formData.serialNumber.trim(), excludeAssetId)
+    
+    if (!result.isUnique) {
+      errors.serialNumber = `Serial number '${formData.serialNumber}' is already in use by asset ${result.existingAsset?.assetId || 'unknown'}`
+      field.classList.add('is-invalid')
+    } else {
+      errors.serialNumber = ''
+      field.classList.add('is-valid')
+    }
+  } catch (error) {
+    console.error('Error checking serial number uniqueness:', error)
+    // On error, assume it's valid to avoid blocking the user
+    errors.serialNumber = ''
+    field.classList.add('is-valid')
+  }
+}
+
+const validateField = async (fieldName: string) => {
   const field = document.getElementById(fieldName) as HTMLInputElement
   if (!field) return
 
@@ -686,23 +760,8 @@ const validateField = (fieldName: string) => {
 
   switch (fieldName) {
     case 'serialNumber':
-      if (!formData.serialNumber || formData.serialNumber.trim() === '') {
-        errors.serialNumber = 'Serial number is required'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else if (formData.serialNumber.length < 3 || formData.serialNumber.length > 50) {
-        errors.serialNumber = 'Serial number must be 3-50 characters'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else if (!/^[A-Za-z0-9\-_]{3,50}$/.test(formData.serialNumber)) {
-        errors.serialNumber = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else {
-        errors.serialNumber = ''
-        field.classList.remove('is-invalid')
-        field.classList.add('is-valid')
-      }
+      // Use the dedicated serial number validation method
+      await validateSerialNumber()
       break
 
     case 'assetCategory':
@@ -1100,24 +1159,29 @@ const updateCharacterCount = () => {
   // Character count is computed automatically
 }
 
-const validateForm = (): boolean => {
+const validateForm = async (): Promise<boolean> => {
   let isValid = true
   
-  // Validate required fields
-  const requiredFields = ['serialNumber', 'assetCategory', 'assetType', 'brand', 'model', 'location', 'condition']
+  // Validate required fields (exclude asset identity fields if disabled)
+  const requiredFields = ['serialNumber', 'location', 'condition']
   
-  requiredFields.forEach(fieldName => {
-    validateField(fieldName)
+  // Add asset identity fields only if not disabled
+  if (!props.disableAssetIdentity) {
+    requiredFields.push('assetCategory', 'assetType', 'brand', 'model')
+  }
+  
+  for (const fieldName of requiredFields) {
+    await validateField(fieldName)
     if (errors[fieldName as keyof typeof errors]) {
       isValid = false
     }
-  })
+  }
 
   // Also validate optional fields to show green borders
   const optionalFields = ['vendor', 'notes', 'purchaseDate', 'purchaseCost']
-  optionalFields.forEach(fieldName => {
-    validateField(fieldName)
-  })
+  for (const fieldName of optionalFields) {
+    await validateField(fieldName)
+  }
 
   // Validate warranty dates
   if (!validateWarrantyDates()) {
@@ -1131,7 +1195,7 @@ const handleSubmit = async (event: Event) => {
   event.preventDefault()
   wasValidated.value = true
 
-  if (!validateForm()) {
+  if (!(await validateForm())) {
     // Scroll to first error
     const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
     if (firstInvalid) {
@@ -1156,21 +1220,93 @@ const handleSubmit = async (event: Event) => {
     }
     
     // Prepare asset data for API
-    const assetData = {
-      assetId: formData.assetId,
-      serialNumber: formData.serialNumber,
-      assetTypeId: parseInt(formData.assetTypeId),
-      brandId: parseInt(formData.brandId),
-      modelId: parseInt(formData.modelId),
-      vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
-      status: props.isEditMode ? (formData.status as any) : 'AVAILABLE',
-      condition: formData.condition as any,
-      location: formData.location,
-      purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? formData.purchaseDate : undefined,
-      purchaseCost: formData.purchaseCost && formData.purchaseCost.toString().trim() !== '' ? parseFloat(formData.purchaseCost.toString()) : undefined,
-      warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? formData.warrantyStartDate : undefined,
-      warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? formData.warrantyEndDate : undefined,
-      notes: formData.notes && formData.notes.toString().trim() !== '' ? formData.notes : undefined
+    let assetData: any = {}
+
+    if (props.isEditMode && originalAssetData.value) {
+      // In edit mode, only send fields that have changed
+      const original = originalAssetData.value
+
+      // Helper function to compare values (handles null, undefined, and empty strings)
+      const hasChanged = (newVal: any, oldVal: any) => {
+        // Normalize empty values
+        const normalizeEmpty = (val: any) => (!val || val === '' ? null : val)
+        const normalizedNew = normalizeEmpty(newVal)
+        const normalizedOld = normalizeEmpty(oldVal)
+        
+        // For numbers, compare as strings to handle type differences
+        if (typeof normalizedNew === 'number' || typeof normalizedOld === 'number') {
+          return String(normalizedNew) !== String(normalizedOld)
+        }
+        
+        return normalizedNew !== normalizedOld
+      }
+
+      // Check each field for changes
+      if (hasChanged(formData.serialNumber, original.serialNumber)) {
+        assetData.serialNumber = formData.serialNumber
+      }
+      if (hasChanged(formData.status, original.status)) {
+        assetData.status = formData.status
+      }
+      if (hasChanged(formData.condition, original.condition)) {
+        assetData.condition = formData.condition
+      }
+      if (hasChanged(formData.location, original.location)) {
+        assetData.location = formData.location
+      }
+      if (hasChanged(formData.purchaseDate, original.purchaseDate)) {
+        assetData.purchaseDate = formData.purchaseDate || undefined
+      }
+      if (hasChanged(formData.purchaseCost, original.purchaseCost)) {
+        assetData.purchaseCost = formData.purchaseCost ? parseFloat(formData.purchaseCost.toString()) : undefined
+      }
+      if (hasChanged(formData.warrantyStartDate, original.warrantyStartDate)) {
+        assetData.warrantyStartDate = formData.warrantyStartDate || undefined
+      }
+      if (hasChanged(formData.warrantyEndDate, original.warrantyEndDate)) {
+        assetData.warrantyEndDate = formData.warrantyEndDate || undefined
+      }
+      if (hasChanged(formData.notes, original.notes)) {
+        assetData.notes = formData.notes || undefined
+      }
+      
+      // Check vendorId separately (it's an ID field)
+      const newVendorId = formData.vendorId ? parseInt(formData.vendorId) : null
+      const oldVendorId = original.vendorId || null
+      if (newVendorId !== oldVendorId) {
+        assetData.vendorId = newVendorId || undefined
+      }
+
+      // Asset identity fields (only if not disabled)
+      if (!props.disableAssetIdentity) {
+        if (hasChanged(formData.assetTypeId, original.assetTypeId)) {
+          assetData.assetTypeId = parseInt(formData.assetTypeId)
+        }
+        if (hasChanged(formData.brandId, original.brandId)) {
+          assetData.brandId = parseInt(formData.brandId)
+        }
+        if (hasChanged(formData.modelId, original.modelId)) {
+          assetData.modelId = parseInt(formData.modelId)
+        }
+      }
+    } else {
+      // In add mode, send all fields
+      assetData = {
+        assetId: formData.assetId,
+        serialNumber: formData.serialNumber,
+        vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
+        status: 'AVAILABLE',
+        condition: formData.condition as any,
+        location: formData.location,
+        purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? formData.purchaseDate : undefined,
+        purchaseCost: formData.purchaseCost && formData.purchaseCost.toString().trim() !== '' ? parseFloat(formData.purchaseCost.toString()) : undefined,
+        warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? formData.warrantyStartDate : undefined,
+        warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? formData.warrantyEndDate : undefined,
+        notes: formData.notes && formData.notes.toString().trim() !== '' ? formData.notes : undefined,
+        assetTypeId: parseInt(formData.assetTypeId),
+        brandId: parseInt(formData.brandId),
+        modelId: parseInt(formData.modelId)
+      }
     }
 
     // Emit the form data
@@ -1288,6 +1424,23 @@ onMounted(async () => {
       formData.purchaseDate = ensureDateFormat(purchaseDate)
       formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
       formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
+
+      // Store original data for comparison to detect changes
+      originalAssetData.value = {
+        serialNumber: props.asset.serialNumber,
+        status: props.asset.status,
+        condition: props.asset.condition,
+        location: props.asset.location,
+        purchaseDate: ensureDateFormat(purchaseDate),
+        purchaseCost: props.asset.purchaseCost,
+        warrantyStartDate: ensureDateFormat(warrantyStartDate),
+        warrantyEndDate: ensureDateFormat(warrantyEndDate),
+        notes: props.asset.notes,
+        vendorId: props.asset.vendorId,
+        assetTypeId: props.asset.assetTypeId,
+        brandId: props.asset.brandId,
+        modelId: props.asset.modelId
+      }
       
       // Set UI form data for cascading dropdowns
       uiFormData.assetCategory = props.asset.assetType?.category?.id?.toString() || ''
@@ -1734,6 +1887,26 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
     padding: 0.2rem 0.4rem !important;
     margin-bottom: 0.5rem !important;
   }
+}
+
+/* Disabled field styling */
+.form-searchable-dropdown .form-control:disabled {
+  background-color: #F8F9FA !important;
+  border-color: #DEE2E6 !important;
+  color: #6C757D !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.form-searchable-dropdown .form-control:disabled::placeholder {
+  color: #ADB5BD !important;
+  font-style: italic;
+}
+
+/* Disabled field label styling */
+.form-label.disabled-label {
+  color: #6C757D !important;
+  font-weight: 500;
 }
 
 /* 

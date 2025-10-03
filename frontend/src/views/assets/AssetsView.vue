@@ -91,7 +91,7 @@
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-warning btn-modern w-100">
+              <button class="btn btn-warning btn-modern w-100" @click="navigateToScheduleMaintenance">
                 <i class="fas fa-wrench me-1"></i>Maintenance
               </button>
             </div>
@@ -174,7 +174,7 @@
                 <button class="btn btn-outline-warning btn-modern flex-fill" @click="navigateToCollectAsset">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
-                <button class="btn btn-warning btn-modern flex-fill">
+                <button class="btn btn-warning btn-modern flex-fill" @click="navigateToScheduleMaintenance">
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
               </div>
@@ -350,7 +350,7 @@
                   <td>
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
-                        class="btn btn-outline-primary" 
+                        class="btn btn-outline-primary btn-view-details" 
                         @click="viewAssetDetails(asset)"
                         :title="getViewButtonTitle(asset.status)"
                       >
@@ -358,7 +358,7 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'RETIRED'"
-                        class="btn btn-outline-secondary" 
+                        class="btn btn-outline-secondary btn-edit-asset" 
                         title="Edit Asset"
                         @click="editAsset(asset)"
                       >
@@ -366,7 +366,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'AVAILABLE'"
-                        class="btn btn-outline-success" 
+                        class="btn btn-outline-success btn-issue-asset" 
                         title="Issue Asset"
                         @click="issueAsset(asset)"
                       >
@@ -374,7 +374,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'ASSIGNED'"
-                        class="btn btn-outline-warning" 
+                        class="btn btn-outline-warning btn-collect-asset" 
                         title="Collect Asset"
                         @click="collectAsset(asset)"
                       >
@@ -382,12 +382,13 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'LOST'"
-                        class="btn btn-outline-warning" 
+                        class="btn btn-outline-warning btn-maintenance-action" 
                         :title="getMaintenanceButtonTitle(asset.status)"
+                        @click="handleMaintenanceAction(asset)"
                       >
                         <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                       </button>
-                      <button class="btn btn-outline-info" title="View QR Code">
+                      <button class="btn btn-outline-info btn-qr-code" title="View QR Code">
                         <i class="fas fa-qrcode"></i>
                       </button>
                     </div>
@@ -459,7 +460,7 @@
                 <div class="asset-actions-footer mt-auto pt-2 border-top">
                   <div class="d-flex justify-content-center gap-1">
                     <button 
-                      class="btn btn-action btn-view btn-sm" 
+                      class="btn btn-action btn-view-details btn-sm" 
                       @click="viewAssetDetails(asset)"
                       :title="getViewButtonTitle(asset.status)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -468,7 +469,7 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'RETIRED'"
-                      class="btn btn-action btn-edit btn-sm" 
+                      class="btn btn-action btn-edit-asset btn-sm" 
                       title="Edit Asset"
                       @click="editAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -477,7 +478,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'AVAILABLE'"
-                      class="btn btn-action btn-assign btn-sm" 
+                      class="btn btn-action btn-issue-asset btn-sm" 
                       title="Issue Asset"
                       @click="issueAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -486,7 +487,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'ASSIGNED'"
-                      class="btn btn-action btn-assign btn-sm" 
+                      class="btn btn-action btn-collect-asset btn-sm" 
                       title="Collect Asset"
                       @click="collectAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -495,13 +496,14 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'LOST'"
-                      class="btn btn-action btn-maintenance btn-sm" 
+                      class="btn btn-action btn-maintenance-action btn-sm" 
                       :title="getMaintenanceButtonTitle(asset.status)"
+                      @click="handleMaintenanceAction(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                     </button>
-                    <button class="btn btn-action btn-qr btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    <button class="btn btn-action btn-qr-code btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
                       <i class="fas fa-qrcode"></i>
                     </button>
                   </div>
@@ -910,9 +912,9 @@
                 <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
-                <button type="button" class="btn btn-warning">
+                <button type="button" class="btn btn-warning" @click="handleMaintenanceAction(selectedAsset!)">
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
-              </button>
+                </button>
               <button type="button" class="btn btn-primary-blue" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
@@ -1954,6 +1956,10 @@ const navigateToCollectAsset = () => {
   router.push('/app/assets/collect')
 }
 
+const navigateToScheduleMaintenance = () => {
+  router.push('/app/maintenance/schedule')
+}
+
 const issueAsset = (asset: AssetDisplayItem) => {
   // Store selected asset info in localStorage for pre-population
   localStorage.setItem('selectedAssetId', asset.id)
@@ -1970,6 +1976,20 @@ const collectAsset = (asset: AssetDisplayItem) => {
   
   // Navigate to collect asset form
   router.push('/app/assets/collect')
+}
+
+const handleMaintenanceAction = (asset: AssetDisplayItem) => {
+  if (asset.status === 'IN_MAINTENANCE') {
+    // If asset is already in maintenance, navigate to view existing maintenance
+    // For now, we'll navigate to the maintenance list where they can find the specific maintenance record
+    router.push('/app/maintenance')
+  } else {
+    // If asset is not in maintenance, navigate to schedule new maintenance with asset pre-selected
+    router.push({
+      path: '/app/maintenance/schedule',
+      query: { assetId: asset.id }
+    })
+  }
 }
 
 // Handle dropdown click with proper positioning
@@ -2895,6 +2915,51 @@ onUnmounted(() => {
   font-size: 0.95rem;
   font-style: italic;
   opacity: 0.7;
+}
+
+/* Custom Action Button Hover Effects */
+/* View Details Button - Brown */
+.btn-view-details:hover {
+  color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  background-color: rgba(150, 114, 89, 0.1) !important;
+}
+
+/* Edit Asset Button - Purple */
+.btn-edit-asset:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  background-color: rgba(51, 31, 234, 0.1) !important;
+}
+
+/* Issue Asset Button - Green */
+.btn-issue-asset:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  background-color: rgba(33, 175, 101, 0.1) !important;
+}
+
+/* Collect Asset Button - Pink */
+.btn-collect-asset:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  background-color: rgba(255, 87, 159, 0.1) !important;
+}
+
+/* Maintenance Button - Orange */
+.btn-maintenance-action:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  background-color: rgba(255, 140, 97, 0.1) !important;
+}
+
+/* QR Code Button - Non-clickable indicator */
+.btn-qr-code:hover {
+  color: var(--primary-mid-gray) !important;
+  border-color: var(--primary-mid-gray) !important;
+  background-color: rgba(153, 153, 153, 0.1) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
 }
 
 
