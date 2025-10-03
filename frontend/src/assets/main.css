@@ -3049,7 +3049,7 @@ i.text-muted {
 }
 
 .badge.badge-retired {
-  background-color: var(--secondary-red) !important;
+  background-color: var(--secondary-brown) !important;
   color: white !important;
   border: none !important;
   font-size: 0.75rem !important;

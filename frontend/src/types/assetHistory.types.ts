@@ -5,6 +5,7 @@ export enum AssetEventType {
   STATUS_CHANGED = 'STATUS_CHANGED',
   CONDITION_CHANGED = 'CONDITION_CHANGED',
   LOCATION_CHANGED = 'LOCATION_CHANGED',
+  LOCATION_UPDATED = 'LOCATION_UPDATED',
   ASSIGNED = 'ASSIGNED',
   RETURNED = 'RETURNED',
   MAINTENANCE_SCHEDULED = 'MAINTENANCE_SCHEDULED',
@@ -12,21 +13,64 @@ export enum AssetEventType {
   MAINTENANCE_COMPLETED = 'MAINTENANCE_COMPLETED',
   MAINTENANCE_CANCELLED = 'MAINTENANCE_CANCELLED',
   RETIRED = 'RETIRED',
-  REACTIVATED = 'REACTIVATED'
+  REACTIVATED = 'REACTIVATED',
+  WARRANTY_EXPIRED = 'WARRANTY_EXPIRED',
+  WARRANTY_RENEWED = 'WARRANTY_RENEWED',
+  WARRANTY_ACTIVE = 'WARRANTY_ACTIVE',
+  QR_CODE_GENERATED = 'QR_CODE_GENERATED',
+  IMAGE_UPLOADED = 'IMAGE_UPLOADED',
+  SERIAL_NUMBER_UPDATED = 'SERIAL_NUMBER_UPDATED',
+  PURCHASE_INFO_UPDATED = 'PURCHASE_INFO_UPDATED',
+  VENDOR_CHANGED = 'VENDOR_CHANGED'
 }
 
 // Asset History Event Interface
 export interface AssetHistoryEvent {
   id: string
-  type: AssetEventType
+  type: string
   date: string
-  title: string
+  dateIST: string
   description: string
-  user?: string
-  userId?: number
-  userName?: string
   userDisplayName?: string
-  details: Record<string, any>
+  status?: string
+  condition?: string
+  details?: {
+    // Maintenance details
+    maintenanceType?: string
+    scheduledDate?: string
+    estimatedCost?: number
+    actualCost?: number
+    description?: string
+    status?: string
+    actualCompletionDate?: string
+    cancellationDate?: string
+    completionNotes?: string
+    cancellationNotes?: string
+    changes?: Array<{
+      field: string
+      change: string
+    }>
+    totalChanges?: number
+    
+    // Asset details
+    serialNumber?: string
+    purchaseCost?: number
+    vendor?: string
+    purchaseDate?: string
+    retirementDate?: string
+    reactivationDate?: string
+    notes?: string
+    
+    // Assignment details
+    employeeEmail?: string
+    issueDate?: string
+    returnDate?: string
+    issueCondition?: string
+    returnCondition?: string
+    
+    // Legacy fields for backward compatibility
+    [key: string]: any
+  }
   icon?: string
   color?: string
 }
@@ -85,27 +129,24 @@ export interface AssetHistoryFilters {
 
 // Asset History Response Interface
 export interface AssetHistoryResponse {
-  message: string
-  data: {
-    asset: AssetBasicInfo
-    timeline: AssetHistoryEvent[]
-    pagination: AssetHistoryPagination
-    summary?: AssetHistorySummary
-  }
+  timestamp: string
+  description: string
+  asset: AssetBasicInfo
+  timeline: AssetHistoryEvent[]
+  pagination: AssetHistoryPagination
 }
 
 // Asset History Summary Response Interface
 export interface AssetHistorySummaryResponse {
-  message: string
-  data: {
-    asset: AssetBasicInfo
-    summary: AssetHistorySummary
-    recentEvents: AssetHistoryEvent[]
-    quickStats: {
-      avgAssignmentDuration: string
-      maintenanceFrequency: string
-      mostCommonStatus: string
-    }
+  timestamp: string
+  description: string
+  asset: AssetBasicInfo
+  summary: AssetHistorySummary
+  recentEvents: AssetHistoryEvent[]
+  quickStats: {
+    avgAssignmentDuration: string
+    maintenanceFrequency: string
+    mostCommonStatus: string
   }
 }
 

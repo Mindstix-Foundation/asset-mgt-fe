@@ -430,14 +430,34 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+// Helper function to ensure date format is correct
+const ensureDateFormat = (dateValue: any): string => {
+  if (!dateValue) return ''
+  if (typeof dateValue === 'string') {
+    // If it's already in yyyy-MM-dd format, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+      return dateValue
+    }
+    // If it's a date string, try to parse and format it
+    const date = new Date(dateValue)
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0]
+    }
+  }
+  if (dateValue instanceof Date) {
+    return dateValue.toISOString().split('T')[0]
+  }
+  return ''
+}
+
 // Reactive data
 const formData = reactive({
   assetId: '',
   serialNumber: '',
-  assetTypeId: '',
-  brandId: '',
-  modelId: '',
-  vendorId: '',
+  assetTypeId: undefined as string | undefined,
+  brandId: undefined as string | undefined,
+  modelId: undefined as string | undefined,
+  vendorId: undefined as string | undefined,
   purchaseDate: '',
   purchaseCost: '',
   warrantyStartDate: '',
@@ -902,9 +922,9 @@ const onCategoryChange = async (item: Item | null) => {
   uiFormData.assetType = ''
   uiFormData.brand = ''
   uiFormData.model = ''
-  formData.assetTypeId = ''
-  formData.brandId = ''
-  formData.modelId = ''
+  formData.assetTypeId = undefined
+  formData.brandId = undefined
+  formData.modelId = undefined
   
   // Clear dependent arrays
   assetTypes.value = []
@@ -935,8 +955,8 @@ const onTypeChange = async (item: Item | null) => {
   selectedModel.value = null
   uiFormData.brand = ''
   uiFormData.model = ''
-  formData.brandId = ''
-  formData.modelId = ''
+  formData.brandId = undefined
+  formData.modelId = undefined
   
   // Clear dependent arrays
   brands.value = []
@@ -965,7 +985,7 @@ const onBrandChange = async (item: Item | null) => {
   // Reset dependent fields
   selectedModel.value = null
   uiFormData.model = ''
-  formData.modelId = ''
+  formData.modelId = undefined
   
   // Clear models array
   models.value = []
@@ -1004,7 +1024,7 @@ const onModelChange = async (item: Item | null) => {
 
 const onVendorChange = (item: Item | null) => {
   selectedVendor.value = item
-  formData.vendorId = item && item.value ? item.value.toString() : ''
+  formData.vendorId = item && item.value ? item.value.toString() : undefined
   
   // Clear validation error when user makes a selection (vendor is optional)
   if (item) {
@@ -1146,11 +1166,11 @@ const handleSubmit = async (event: Event) => {
       status: props.isEditMode ? (formData.status as any) : 'AVAILABLE',
       condition: formData.condition as any,
       location: formData.location,
-      purchaseDate: formData.purchaseDate || undefined,
-      purchaseCost: formData.purchaseCost ? parseFloat(formData.purchaseCost) : undefined,
-      warrantyStartDate: formData.warrantyStartDate || undefined,
-      warrantyEndDate: formData.warrantyEndDate || undefined,
-      notes: formData.notes || undefined
+      purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? formData.purchaseDate : undefined,
+      purchaseCost: formData.purchaseCost && formData.purchaseCost.toString().trim() !== '' ? parseFloat(formData.purchaseCost.toString()) : undefined,
+      warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? formData.warrantyStartDate : undefined,
+      warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? formData.warrantyEndDate : undefined,
+      notes: formData.notes && formData.notes.toString().trim() !== '' ? formData.notes : undefined
     }
 
     // Emit the form data
@@ -1260,31 +1280,14 @@ onMounted(async () => {
     ])
 
     if (props.isEditMode && props.asset) {
-      // Populate form with existing data
-      Object.assign(formData, props.asset)
+      // Populate form with existing data (excluding dates)
+      const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = props.asset
+      Object.assign(formData, assetDataWithoutDates)
       
-      // Format dates for HTML date input (convert from ISO to yyyy-MM-dd)
-      if (formData.purchaseDate) {
-        const date = new Date(formData.purchaseDate)
-        if (!isNaN(date.getTime())) {
-          formData.purchaseDate = date.toISOString().split('T')[0]
-        }
-      }
-      
-      // Format warranty dates for HTML date input
-      if (formData.warrantyStartDate) {
-        const date = new Date(formData.warrantyStartDate)
-        if (!isNaN(date.getTime())) {
-          formData.warrantyStartDate = date.toISOString().split('T')[0]
-        }
-      }
-      
-      if (formData.warrantyEndDate) {
-        const date = new Date(formData.warrantyEndDate)
-        if (!isNaN(date.getTime())) {
-          formData.warrantyEndDate = date.toISOString().split('T')[0]
-        }
-      }
+      // Handle dates separately to ensure proper formatting
+      formData.purchaseDate = ensureDateFormat(purchaseDate)
+      formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
+      formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
       
       // Set UI form data for cascading dropdowns
       uiFormData.assetCategory = props.asset.assetType?.category?.id?.toString() || ''

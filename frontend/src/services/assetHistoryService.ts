@@ -28,7 +28,7 @@ export class AssetHistoryService {
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join('&')
 
-      const endpoint = `/assets/${assetId}/history${queryString ? `?${queryString}` : ''}`
+      const endpoint = `/asset-history/${assetId}${queryString ? `?${queryString}` : ''}`
       const response = await apiService.get<AssetHistoryResponse>(endpoint)
 
       return response
@@ -41,9 +41,16 @@ export class AssetHistoryService {
   /**
    * Get asset history summary with recent events and statistics
    */
-  async getAssetHistorySummary(assetId: string): Promise<AssetHistorySummaryResponse> {
+  async getAssetHistorySummary(assetId: string, params: Record<string, any> = {}): Promise<AssetHistorySummaryResponse> {
     try {
-      const response = await apiService.get<AssetHistorySummaryResponse>(`/assets/${assetId}/history/summary`)
+      // Build query string for cache-busting and other parameters
+      const queryString = Object.entries(params)
+        .filter(([_, value]) => value !== undefined && value !== null && value !== '')
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&')
+
+      const endpoint = `/asset-history/${assetId}/summary${queryString ? `?${queryString}` : ''}`
+      const response = await apiService.get<AssetHistorySummaryResponse>(endpoint)
       return response
     } catch (error) {
       console.error('Error fetching asset history summary:', error)
