@@ -14,271 +14,293 @@
     </div>
 
     <!-- Entity Type Selection -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Select Entity Type</h5>
-      </div>
-      <div class="card-body">
-        <div class="row g-3">
-          <div class="col-md-2">
-            <button 
-              class="btn w-100" 
-              :class="selectedEntityType === 'category' ? 'btn-primary' : 'btn-outline-primary'"
-              @click="setEntityType('category')"
-            >
-              <i class="fas fa-folder me-2"></i>Categories
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button 
-              class="btn w-100" 
-              :class="selectedEntityType === 'type' ? 'btn-primary' : 'btn-outline-primary'"
-              @click="setEntityType('type')"
-            >
-              <i class="fas fa-tags me-2"></i>Asset Types
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button 
-              class="btn w-100" 
-              :class="selectedEntityType === 'brand' ? 'btn-primary' : 'btn-outline-primary'"
-              @click="setEntityType('brand')"
-            >
-              <i class="fas fa-trademark me-2"></i>Brands
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button 
-              class="btn w-100" 
-              :class="selectedEntityType === 'model' ? 'btn-primary' : 'btn-outline-primary'"
-              @click="setEntityType('model')"
-            >
-              <i class="fas fa-cube me-2"></i>Models
-            </button>
-          </div>
+    <div class="mb-4">
+      <div class="row g-3 justify-content-end">
+        <div class="col-md-2">
+          <button 
+            class="btn btn-modern w-100" 
+            :class="selectedEntityType === 'category' ? 'btn-entity-active' : 'btn-entity-inactive'"
+            @click="setEntityType('category')"
+          >
+            Categories
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button 
+            class="btn btn-modern w-100" 
+            :class="selectedEntityType === 'type' ? 'btn-entity-active' : 'btn-entity-inactive'"
+            @click="setEntityType('type')"
+          >
+            Asset Types
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button 
+            class="btn btn-modern w-100" 
+            :class="selectedEntityType === 'brand' ? 'btn-entity-active' : 'btn-entity-inactive'"
+            @click="setEntityType('brand')"
+          >
+            Brands
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button 
+            class="btn btn-modern w-100" 
+            :class="selectedEntityType === 'model' ? 'btn-entity-active' : 'btn-entity-inactive'"
+            @click="setEntityType('model')"
+          >
+            Models
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Main Form Card -->
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
+    <!-- Main Form -->
+    <div class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h5 class="mb-0">
-            <i :class="getEntityIcon()" class="me-2"></i>
+          <h5 class="mb-1">
             {{ getEntityTitle() }}
           </h5>
-          <small class="text-muted">{{ getEntityDescription() }}</small>
+          <p class="text-muted mb-0">{{ getEntityDescription() }}</p>
+          <small class="text-muted">Showing {{ items.length }} items</small>
         </div>
         <div class="d-flex gap-2">
-          <button class="btn btn-outline-secondary" @click="resetForm">
-            <i class="fas fa-refresh me-1"></i>Reset
-          </button>
-          <button class="btn btn-success" @click="saveEntity" :disabled="isSaving">
-            <i v-if="isSaving" class="fas fa-spinner fa-spin me-1"></i>
-            <i v-else class="fas fa-save me-1"></i>
-            {{ isSaving ? 'Saving...' : 'Save' }}
+          <button class="btn btn-primary btn-modern" @click="startAdding">
+            <i class="fas fa-plus me-1"></i>Add New
           </button>
         </div>
       </div>
-      <div class="card-body">
-        <form @submit.prevent="saveEntity">
-          
-          <!-- Category Form -->
-          <div v-if="selectedEntityType === 'category'">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Category Name <span class="text-danger">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.name"
-                  placeholder="e.g., IT Equipment, Furniture, Vehicles"
-                  required
-                >
+      <form @submit.prevent="saveEntity">
+        <!-- Form Card - Using same design as filter dropdown in AssetsView.vue -->
+        <div v-if="showFormCard" class="form-card mt-3 p-3 bg-light rounded">
+          <div class="row">
+            <div class="col-12">
+              
+              <!-- Category Form -->
+              <div v-if="selectedEntityType === 'category'">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      v-model="formData.name"
+                      placeholder="IT Equipment, Furniture, Vehicles"
+                      style="text-transform: capitalize;"
+                      required
+                    >
+                  </div>
+                  <div class="col-12">
+                    <NotesTextarea
+                      v-model="formData.description"
+                      label="Description"
+                      placeholder="Brief description of this category"
+                      help-text="Provide a detailed description of this category"
+                      :max-length="100"
+                      :min-rows="2"
+                      input-id="category-description"
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Description</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.description"
-                  placeholder="Brief description of this category"
-                >
-              </div>
-            </div>
-          </div>
 
-          <!-- Asset Type Form -->
-          <div v-if="selectedEntityType === 'type'">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Category <span class="text-danger">*</span></label>
-                <select class="form-select" v-model="formData.categoryId" required :disabled="isLoadingCategories">
-                  <option value="">
-                    {{ isLoadingCategories ? 'Loading categories...' : 'Select Category' }}
-                  </option>
-                  <option v-for="category in categories" :key="category.id" :value="category.id">
-                    {{ category.name }}
-                  </option>
-                </select>
+              <!-- Asset Type Form -->
+              <div v-if="selectedEntityType === 'type'">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <SearchableDropdown
+                      id="asset-type-category"
+                      label="Category"
+                      placeholder="Search categories..."
+                      :items="categories"
+                      v-model="selectedCategory"
+                      :disabled="isLoadingCategories"
+                      required
+                      @change="onCategoryChange"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Asset Type Name <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      v-model="formData.name"
+                      placeholder="Laptop, Monitor, Chair, Vehicle"
+                      style="text-transform: capitalize;"
+                      required
+                    >
+                  </div>
+                  <div class="col-12">
+                    <NotesTextarea
+                      v-model="formData.description"
+                      label="Description"
+                      placeholder="Brief description of this asset type"
+                      help-text="Provide a detailed description of this asset type"
+                      :max-length="100"
+                      :min-rows="2"
+                      input-id="asset-type-description"
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Asset Type Name <span class="text-danger">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.name"
-                  placeholder="e.g., Laptop, Monitor, Chair, Vehicle"
-                  required
-                >
-              </div>
-              <div class="col-12">
-                <label class="form-label">Description</label>
-                <textarea 
-                  class="form-control" 
-                  v-model="formData.description"
-                  rows="2"
-                  placeholder="Brief description of this asset type"
-                ></textarea>
-              </div>
-            </div>
-          </div>
 
-          <!-- Brand Form -->
-          <div v-if="selectedEntityType === 'brand'">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Brand Name <span class="text-danger">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.name"
-                  placeholder="e.g., Dell, Apple, HP, Microsoft"
-                  required
-                >
+              <!-- Brand Form -->
+              <div v-if="selectedEntityType === 'brand'">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label">Brand Name <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      v-model="formData.name"
+                      placeholder="Dell, Apple, HP, Microsoft"
+                      style="text-transform: capitalize;"
+                      required
+                    >
+                  </div>
+                  <div class="col-12">
+                    <NotesTextarea
+                      v-model="formData.description"
+                      label="Description"
+                      placeholder="Brand description"
+                      help-text="Provide brand description"
+                      :max-length="100"
+                      :min-rows="2"
+                      input-id="brand-description"
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Description/Website</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.description"
-                  placeholder="Brand description or website URL"
-                >
-              </div>
-            </div>
-          </div>
 
-          <!-- Model Form -->
-          <div v-if="selectedEntityType === 'model'">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label class="form-label">Brand <span class="text-danger">*</span></label>
-                <select class="form-select" v-model="formData.brandId" required :disabled="isLoadingBrands">
-                  <option value="">
-                    {{ isLoadingBrands ? 'Loading brands...' : 'Select Brand' }}
-                  </option>
-                  <option v-for="brand in brands" :key="brand.id" :value="brand.id">
-                    {{ brand.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Asset Type <span class="text-danger">*</span></label>
-                <select class="form-select" v-model="formData.assetTypeId" required :disabled="isLoadingAssetTypes">
-                  <option value="">
-                    {{ isLoadingAssetTypes ? 'Loading asset types...' : 'Select Asset Type' }}
-                  </option>
-                  <option v-for="type in assetTypes" :key="type.id" :value="type.id">
-                    {{ type.name }} {{ type.category ? `(${type.category.name})` : '' }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Model Name <span class="text-danger">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="formData.name"
-                  placeholder="e.g., iPhone 15 Pro, MacBook Pro M3"
-                  required
-                >
-              </div>
-              <div class="col-12">
-                <label class="form-label">Specifications</label>
-                <textarea 
-                  class="form-control" 
-                  v-model="formData.specifications"
-                  rows="4"
-                  placeholder="Enter specifications as key-value pairs:
+              <!-- Model Form -->
+              <div v-if="selectedEntityType === 'model'">
+                <div class="row g-3">
+                  <div class="col-7">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <SearchableDropdown
+                          id="model-brand"
+                          label="Brand"
+                          placeholder="Search brands..."
+                          :items="brands"
+                          v-model="selectedBrand"
+                          :disabled="isLoadingBrands"
+                          required
+                          @change="onBrandChange"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <SearchableDropdown
+                          id="model-asset-type"
+                          label="Asset Type"
+                          placeholder="Search asset types..."
+                          :items="assetTypes"
+                          v-model="selectedAssetType"
+                          :disabled="isLoadingAssetTypes"
+                          required
+                          @change="onAssetTypeChange"
+                        >
+                          <template #item="{ item }">
+                            <div v-html="`${(item as any).name}${(item as any).category ? ` <span class='text-muted'>(${(item as any).category.name})</span>` : ''}`">
+                            </div>
+                          </template>
+                        </SearchableDropdown>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5">
+                    <label class="form-label">Model Name <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      v-model="formData.name"
+                      placeholder="iPhone 15 Pro, MacBook Pro M3"
+                      style="text-transform: capitalize;"
+                      required
+                    >
+                  </div>
+                  <div class="col-12">
+                    <NotesTextarea
+                      v-model="formData.specifications"
+                      label="Specifications"
+                      placeholder="Enter specifications as key-value pairs:
 Processor: Intel i7-13700H
 RAM: 16GB DDR5
 Storage: 512GB SSD
 Display: 15.6&quot; FHD"
-                ></textarea>
-                <div class="form-text">Enter specifications as key-value pairs (one per line)</div>
+                      help-text="Enter specifications as key-value pairs (one per line)"
+                      :max-length="1000"
+                      :min-rows="4"
+                      input-id="model-specifications"
+                    />
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
-
-
-        </form>
-      </div>
+          
+          <!-- Form Action Buttons - Bottom Right -->
+          <div class="d-flex justify-content-end gap-2 mt-4  ">
+            <button type="button" class="btn btn-outline-secondary btn-modern" @click="resetForm">
+              <i class="fas fa-refresh me-1"></i>Reset
+            </button>
+            <button class="btn btn-success btn-modern" @click="saveEntity" :disabled="isSaving">
+              <i v-if="isSaving" class="fas fa-spinner fa-spin me-1"></i>
+              <i v-else class="fas fa-save me-1"></i>
+              {{ isSaving ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
 
     <!-- Items Table -->
-    <div class="mt-4" v-if="items.length > 0">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">
-          <i :class="getEntityIcon()" class="me-2"></i>{{ getEntityTitle() }}
-        </h5>
-        <small class="text-muted">Showing {{ items.length }} items</small>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead class="table-light">
-            <tr>
-              <th>Name</th>
-              <th v-if="selectedEntityType === 'type'">Category</th>
-              <th v-if="selectedEntityType === 'model'">Brand</th>
-              <th v-if="selectedEntityType === 'model'">Asset Type</th>
-              <th>Description</th>
-              <th>Created</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+    <div class="mt-5" v-if="items.length > 0">
+        <div class="card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0" :class="`table-${selectedEntityType}`">
+              <thead class="table-light">
+                <tr>
+                  <th>Name</th>
+                  <th v-if="selectedEntityType === 'type'">Category</th>
+                  <th v-if="selectedEntityType === 'model'">Brand</th>
+                  <th v-if="selectedEntityType === 'model'">Asset Type</th>
+                  <th v-if="selectedEntityType !== 'model'">Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
           <tbody>
             <tr v-for="item in items" :key="item.id">
               <td>
                 <strong style="color: var(--primary-black);">{{ item.name }}</strong>
               </td>
               <td v-if="selectedEntityType === 'type'">
-                <span class="badge bg-primary">{{ item.category?.name || 'Unknown' }}</span>
+                <span class="text-muted">{{ item.category?.name || 'Unknown' }}</span>
               </td>
               <td v-if="selectedEntityType === 'model'">
-                <span class="badge bg-success">{{ item.brand?.name || 'Unknown' }}</span>
+                <span class="text-muted">{{ item.brand?.name || 'Unknown' }}</span>
               </td>
               <td v-if="selectedEntityType === 'model'">
-                <span class="badge bg-info">{{ item.assetType?.name || 'Unknown' }}</span>
+                <span class="text-muted">{{ item.assetType?.name || 'Unknown' }}</span>
               </td>
-              <td>
+              <td v-if="selectedEntityType !== 'model'">
                 <span class="text-muted">{{ item.description || 'No description' }}</span>
               </td>
               <td>
-                <small class="text-muted">{{ formatDate(item.createdAt) }}</small>
-              </td>
-              <td>
-                <div class="btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm asset-actions">
                   <button 
-                    class="btn btn-outline-primary" 
-                    @click="editItem(item)"
-                    title="Edit"
+                    v-if="selectedEntityType === 'model'"
+                    class="btn btn-outline-primary btn-view-details" 
+                    @click="viewModelDetails(item)"
+                    title="View Model Details"
                   >
-                    <i class="fas fa-edit"></i>
+                    <i class="fas fa-eye"></i>
                   </button>
                   <button 
-                    class="btn btn-outline-danger" 
+                    class="btn btn-outline-danger btn-delete-asset" 
                     @click="deleteItem(item)"
                     title="Delete"
                   >
@@ -289,117 +311,252 @@ Display: 15.6&quot; FHD"
             </tr>
           </tbody>
         </table>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div 
+      class="modal fade" 
+      :class="{ show: showDeleteConfirmationModal }" 
+      :style="{ display: showDeleteConfirmationModal ? 'block' : 'none' }"
+      tabindex="-1"
+      v-if="itemToDelete"
+    >
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title" id="deleteConfirmationModalLabel">
-              <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              <i class="fas fa-trash me-2" style="color: var(--secondary-red);"></i>Delete {{ getEntityTitle().slice(0, -1) }} - {{ itemToDelete?.name }}
             </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" @click="closeDeleteConfirmationModal"></button>
           </div>
           <div class="modal-body">
-            <div v-if="deleteImpact" class="alert alert-warning">
-              <h6 class="alert-heading">
-                <i class="fas fa-warning me-2"></i>Warning: This action will affect related data
-              </h6>
-              <p class="mb-0">Deleting <strong>{{ deleteImpact.itemName }}</strong> will impact the following:</p>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Warning:</strong> This action will permanently delete the {{ getEntityTitle().slice(0, -1).toLowerCase() }} and cannot be undone.
             </div>
             
-            <div v-if="deleteImpact" class="impact-details">
-              <div class="row g-3">
-                <div v-if="deleteImpact.assetTypes > 0" class="col-md-6">
-                  <div class="card border-warning">
-                    <div class="card-body text-center">
-                      <i class="fas fa-tags fa-2x text-warning mb-2"></i>
-                      <h5 class="card-title">{{ deleteImpact.assetTypes }}</h5>
-                      <p class="card-text">Asset Type{{ deleteImpact.assetTypes > 1 ? 's' : '' }}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div v-if="deleteImpact.assets > 0" class="col-md-6">
-                  <div class="card border-danger">
-                    <div class="card-body text-center">
-                      <i class="fas fa-box fa-2x text-danger mb-2"></i>
-                      <h5 class="card-title">{{ deleteImpact.assets }}</h5>
-                      <p class="card-text">Asset{{ deleteImpact.assets > 1 ? 's' : '' }}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div v-if="deleteImpact.models > 0" class="col-md-6">
-                  <div class="card border-info">
-                    <div class="card-body text-center">
-                      <i class="fas fa-cube fa-2x text-info mb-2"></i>
-                      <h5 class="card-title">{{ deleteImpact.models }}</h5>
-                      <p class="card-text">Model{{ deleteImpact.models > 1 ? 's' : '' }}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div v-if="deleteImpact.employees > 0" class="col-md-6">
-                  <div class="card border-primary">
-                    <div class="card-body text-center">
-                      <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                      <h5 class="card-title">{{ deleteImpact.employees }}</h5>
-                      <p class="card-text">Employee{{ deleteImpact.employees > 1 ? 's' : '' }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div v-if="deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0" class="mt-3">
-                <div class="alert alert-danger">
-                  <h6 class="alert-heading">
-                    <i class="fas fa-ban me-2"></i>Deletion Not Allowed
+            <!-- Entity Summary -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="asset-info-section-compact">
+                  <h6 class="section-title-compact">
+                    <i :class="getEntityIcon()" class="me-2"></i>{{ getEntityTitle().slice(0, -1) }} Summary
                   </h6>
-                  <p class="mb-0">
-                    This {{ getEntityTitle().slice(0, -1).toLowerCase() }} cannot be deleted because it has associated data. 
-                    Please reassign or delete the related items first, or consider using the merge functionality.
-                  </p>
-                </div>
-              </div>
-              
-              <div v-else class="mt-3">
-                <div class="alert alert-success">
-                  <h6 class="alert-heading">
-                    <i class="fas fa-check-circle me-2"></i>Safe to Delete
-                  </h6>
-                  <p class="mb-0">
-                    This {{ getEntityTitle().slice(0, -1).toLowerCase() }} has no associated data and can be safely deleted.
-                  </p>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="info-item-compact">
+                        <label class="info-label-compact">{{ getEntityTitle().slice(0, -1) }} Name</label>
+                        <div class="info-value-compact fw-bold">{{ itemToDelete?.name }}</div>
+                      </div>
+                      <div v-if="itemToDelete?.description" class="info-item-compact">
+                        <label class="info-label-compact">Description</label>
+                        <div class="info-value-compact">{{ itemToDelete?.description || 'No description' }}</div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div v-if="selectedEntityType === 'type' && itemToDelete?.category" class="info-item-compact">
+                        <label class="info-label-compact">Category</label>
+                        <div class="info-value-compact">{{ itemToDelete?.category?.name || 'Unknown' }}</div>
+                      </div>
+                      <div v-if="selectedEntityType === 'model'" class="info-item-compact">
+                        <label class="info-label-compact">Brand</label>
+                        <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
+                      </div>
+                      <div v-if="selectedEntityType === 'model'" class="info-item-compact">
+                        <label class="info-label-compact">Asset Type</label>
+                        <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div v-else class="text-center">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+
+            <!-- Deletion Impact Analysis -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="asset-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-chart-line me-2"></i>Deletion Impact Analysis</h6>
+                  
+                  <div v-if="deleteImpact" class="impact-details">
+                    <div class="row g-3">
+                      <div v-if="deleteImpact.assetTypes > 0" class="col-md-6">
+                        <div class="card border-warning">
+                          <div class="card-body text-center">
+                            <i class="fas fa-tags fa-2x text-warning mb-2"></i>
+                            <h5 class="card-title">{{ deleteImpact.assetTypes }}</h5>
+                            <p class="card-text">Asset Type{{ deleteImpact.assetTypes > 1 ? 's' : '' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div v-if="deleteImpact.assets > 0" class="col-md-6">
+                        <div class="card border-danger">
+                          <div class="card-body text-center">
+                            <i class="fas fa-box fa-2x text-danger mb-2"></i>
+                            <h5 class="card-title">{{ deleteImpact.assets }}</h5>
+                            <p class="card-text">Asset{{ deleteImpact.assets > 1 ? 's' : '' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div v-if="deleteImpact.models > 0" class="col-md-6">
+                        <div class="card border-info">
+                          <div class="card-body text-center">
+                            <i class="fas fa-cube fa-2x text-info mb-2"></i>
+                            <h5 class="card-title">{{ deleteImpact.models }}</h5>
+                            <p class="card-text">Model{{ deleteImpact.models > 1 ? 's' : '' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div v-if="deleteImpact.employees > 0" class="col-md-6">
+                        <div class="card border-primary">
+                          <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h5 class="card-title">{{ deleteImpact.employees }}</h5>
+                            <p class="card-text">Employee{{ deleteImpact.employees > 1 ? 's' : '' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div v-if="deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0" class="mt-3">
+                      <div class="alert alert-danger">
+                        <h6 class="alert-heading">
+                          <i class="fas fa-ban me-2"></i>Deletion Not Allowed
+                        </h6>
+                        <p class="mb-0">
+                          This {{ getEntityTitle().slice(0, -1).toLowerCase() }} cannot be deleted because it has associated data. 
+                          Please reassign or delete the related items first.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div v-else class="mt-3">
+                      <div class="alert alert-success">
+                        <h6 class="alert-heading">
+                          <i class="fas fa-check-circle me-2"></i>Safe to Delete
+                        </h6>
+                        <p class="mb-0">
+                          This {{ getEntityTitle().slice(0, -1).toLowerCase() }} has no associated data and can be safely deleted.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div v-else class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Analyzing deletion impact...</p>
+                  </div>
+                </div>
               </div>
-              <p class="mt-2">Analyzing deletion impact...</p>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              <i class="fas fa-times me-1"></i>Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" @click="closeDeleteConfirmationModal">Cancel</button>
             <button 
               type="button" 
               class="btn btn-danger" 
               @click="confirmDelete"
               :disabled="!deleteImpact || deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0"
             >
-              <i class="fas fa-trash me-1"></i>Delete {{ getEntityTitle().slice(0, -1) }}
+              <i class="fas fa-trash me-1"></i>
+              {{ isDeleting ? 'Deleting...' : `Delete ${getEntityTitle().slice(0, -1)}` }}
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Model Details Modal -->
+    <div 
+      class="modal fade" 
+      :class="{ show: showModelDetailsModal }" 
+      :style="{ display: showModelDetailsModal ? 'block' : 'none' }"
+      tabindex="-1"
+      v-if="selectedModel"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Model Details - {{ selectedModel.name }}</h5>
+            <button type="button" class="btn-close" @click="closeModelDetailsModal"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Model Information - Full Width -->
+            <div class="row g-2">
+              <div class="col-12">
+                <div class="asset-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Model Name</label>
+                      <div class="info-value-compact fw-bold">{{ selectedModel.name }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Brand</label>
+                      <div class="info-value-compact">{{ selectedModel.brand?.name || 'Unknown' }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Asset Type</label>
+                      <div class="info-value-compact fw-bold">{{ selectedModel.assetType?.name || 'Unknown' }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <label class="info-label-compact">Category</label>
+                      <div class="info-value-compact">{{ selectedModel.assetType?.category?.name || 'Unknown' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Specifications Details - Full Width -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <div class="asset-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-list-alt me-2"></i>Technical Specifications</h6>
+                  <NotesDisplay 
+                    :notes="formatSpecificationsForDisplay(selectedModel.specifications)"
+                    :fallback-text="'No specifications provided for this model.'"
+                    :show-label="false"
+                    :show-icon="false"
+                    :show-empty-icon="true"
+                    :preserve-formatting="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex justify-content-between w-100">
+              <div>
+                <!-- Left side: Additional actions (none for models) -->
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary" @click="closeModelDetailsModal">Close</button>
+                <button type="button" class="btn btn-danger" @click="deleteItem(selectedModel)">
+                  <i class="fas fa-trash me-1"></i>Delete Model
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Backdrop -->
+    <div 
+      v-if="showModelDetailsModal || showDeleteConfirmationModal" 
+      class="modal-backdrop fade show"
+      @click="closeModals"
+    ></div>
 
   </div>
 </template>
@@ -412,6 +569,9 @@ import { assetCategoryService } from '../../services/assetCategoryService'
 import { assetTypeService } from '../../services/assetTypeService'
 import { brandService } from '../../services/brandService'
 import { modelService } from '../../services/modelService'
+import NotesTextarea from '../../components/common/NotesTextarea.vue'
+import NotesDisplay from '../../components/common/NotesDisplay.vue'
+import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import type { AssetCategory } from '../../services/assetCategoryService'
 import type { AssetType } from '../../services/assetTypeService'
 import type { Brand } from '../../services/brandService'
@@ -422,6 +582,7 @@ const router = useRouter()
 // State
 const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model'>('category')
 const isSaving = ref(false)
+const showFormCard = ref(false)
 
 // Data
 const categories = ref<AssetCategory[]>([])
@@ -437,8 +598,19 @@ const isLoadingBrands = ref(false)
 const isLoadingModels = ref(false)
 
 // Delete confirmation modal state
+const showDeleteConfirmationModal = ref(false)
 const deleteImpact = ref<any>(null)
 const itemToDelete = ref<any>(null)
+const isDeleting = ref(false)
+
+// Model details modal state
+const showModelDetailsModal = ref(false)
+const selectedModel = ref<any>(null)
+
+// SearchableDropdown selected values
+const selectedCategory = ref<Item | null>(null)
+const selectedBrand = ref<Item | null>(null)
+const selectedAssetType = ref<Item | null>(null)
 
 // Form data
 const formData = reactive({
@@ -519,6 +691,39 @@ const resetForm = () => {
       (formData as any)[key] = ''
     }
   })
+  // Don't close the form card on reset - keep it open
+  
+  // Reset SearchableDropdown selections
+  selectedCategory.value = null
+  selectedBrand.value = null
+  selectedAssetType.value = null
+}
+
+const startAdding = () => {
+  showFormCard.value = !showFormCard.value
+  if (showFormCard.value) {
+    // Clear form data without hiding the card
+    Object.keys(formData).forEach(key => {
+      if (key === 'id') {
+        (formData as any)[key] = null
+      } else {
+        (formData as any)[key] = ''
+      }
+    })
+    
+    // Reset SearchableDropdown selections
+    selectedCategory.value = null
+    selectedBrand.value = null
+    selectedAssetType.value = null
+    
+    // Focus on the first input field after a short delay to ensure it's rendered
+    setTimeout(() => {
+      const firstInput = document.querySelector('.form-card input, .form-card select, .form-card textarea')
+      if (firstInput) {
+        (firstInput as HTMLElement).focus()
+      }
+    }, 100)
+  }
 }
 
 const loadItems = async () => {
@@ -573,61 +778,54 @@ const saveEntity = async () => {
     }
     
     
-    if (formData.id) {
-      // Update existing item
-      switch (selectedEntityType.value) {
-        case 'category':
-          response = await assetCategoryService.updateAssetCategory(formData.id, data)
-          break
-        case 'type':
-          response = await assetTypeService.updateAssetType(formData.id, data)
-          break
-        case 'brand':
-          response = await brandService.updateBrand(formData.id, data)
-          break
-        case 'model':
-          response = await modelService.updateModel(formData.id, data)
-          break
-      }
-      showToast(`${getEntityTitle().slice(0, -1)} updated successfully!`, 'success')
-    } else {
-      // Create new item
-      switch (selectedEntityType.value) {
-        case 'category':
-          response = await assetCategoryService.createAssetCategory(data)
-          break
-        case 'type':
-          response = await assetTypeService.createAssetType(data)
-          break
-        case 'brand':
-          response = await brandService.createBrand(data)
-          break
-        case 'model':
-          response = await modelService.createModel(data)
-          break
-      }
-      showToast(`${getEntityTitle().slice(0, -1)} created successfully!`, 'success')
+    // Create new item
+    switch (selectedEntityType.value) {
+      case 'category':
+        response = await assetCategoryService.createAssetCategory(data)
+        break
+      case 'type':
+        response = await assetTypeService.createAssetType(data)
+        break
+      case 'brand':
+        response = await brandService.createBrand(data)
+        break
+      case 'model':
+        response = await modelService.createModel(data)
+        break
     }
+    showToast(`${getEntityTitle().slice(0, -1)} created successfully!`, 'success')
     
-    resetForm()
+    // Clear form and hide card
+    Object.keys(formData).forEach(key => {
+      if (key === 'id') {
+        (formData as any)[key] = null
+      } else {
+        (formData as any)[key] = ''
+      }
+    })
+    showFormCard.value = false
+    
+    // Reset SearchableDropdown selections
+    selectedCategory.value = null
+    selectedBrand.value = null
+    selectedAssetType.value = null
+    
     await loadItems()
     
     // Refresh relevant dropdowns after creating new items
-    if (!formData.id) {
-      switch (selectedEntityType.value) {
-        case 'category':
-          await refreshCategories()
-          break
-        case 'type':
-          await refreshAssetTypes()
-          break
-        case 'brand':
-          await refreshBrands()
-          break
-        case 'model':
-          // Models don't affect other dropdowns
-          break
-      }
+    switch (selectedEntityType.value) {
+      case 'category':
+        await refreshCategories()
+        break
+      case 'type':
+        await refreshAssetTypes()
+        break
+      case 'brand':
+        await refreshBrands()
+        break
+      case 'model':
+        // Models don't affect other dropdowns
+        break
     }
     
   } catch (error: any) {
@@ -638,34 +836,18 @@ const saveEntity = async () => {
   }
 }
 
-const editItem = (item: any) => {
-  formData.id = item.id
-  formData.name = item.name
-  formData.description = item.description || ''
-  
-  if (selectedEntityType.value === 'type') {
-    formData.categoryId = item.categoryId?.toString() || item.category?.id?.toString() || ''
-  }
-  
-  if (selectedEntityType.value === 'model') {
-    formData.brandId = item.brandId?.toString() || item.brand?.id?.toString() || ''
-    formData.assetTypeId = item.assetTypeId?.toString() || item.assetType?.id?.toString() || ''
-    formData.specifications = item.specifications ? 
-      Object.entries(item.specifications).map(([key, value]) => `${key}: ${value}`).join('\n') : ''
-  }
-  
-  
-  // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
 
 const deleteItem = async (item: any) => {
   itemToDelete.value = item
   deleteImpact.value = null
   
+  // Close model details modal if it's open
+  if (showModelDetailsModal.value) {
+    closeModelDetailsModal()
+  }
+  
   // Show modal
-  const modal = new (window as any).bootstrap.Modal(document.getElementById('deleteConfirmationModal'))
-  modal.show()
+  showDeleteConfirmationModal.value = true
   
   // Analyze deletion impact
   await analyzeDeletionImpact(item)
@@ -738,8 +920,17 @@ const analyzeDeletionImpact = async (item: any) => {
   }
 }
 
+const closeDeleteConfirmationModal = () => {
+  showDeleteConfirmationModal.value = false
+  itemToDelete.value = null
+  deleteImpact.value = null
+  isDeleting.value = false
+}
+
 const confirmDelete = async () => {
   if (!itemToDelete.value) return
+  
+  isDeleting.value = true
   
   try {
     switch (selectedEntityType.value) {
@@ -761,12 +952,13 @@ const confirmDelete = async () => {
     await loadItems()
     
     // Close modal
-    const modal = (window as any).bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'))
-    modal.hide()
+    closeDeleteConfirmationModal()
     
   } catch (error: any) {
     console.error('Error deleting item:', error)
     showErrorToast(error.message || `Failed to delete ${getEntityTitle().slice(0, -1).toLowerCase()}`)
+  } finally {
+    isDeleting.value = false
   }
 }
 
@@ -790,6 +982,44 @@ const parseSpecifications = (specsInput: string) => {
   return Object.keys(specs).length > 0 ? specs : undefined
 }
 
+const formatSpecifications = (specifications: any) => {
+  if (!specifications) return ''
+  
+  // If it's already a string, return it
+  if (typeof specifications === 'string') {
+    return specifications
+  }
+  
+  // If it's an object, format it as key-value pairs
+  if (typeof specifications === 'object') {
+    return Object.entries(specifications)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ')
+  }
+  
+  return ''
+}
+
+
+const goBack = () => {
+  router.push('/app/assets')
+}
+
+const viewModelDetails = (model: any) => {
+  selectedModel.value = model
+  showModelDetailsModal.value = true
+}
+
+const closeModelDetailsModal = () => {
+  showModelDetailsModal.value = false
+  selectedModel.value = null
+}
+
+const closeModals = () => {
+  closeModelDetailsModal()
+  closeDeleteConfirmationModal()
+}
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { 
@@ -799,8 +1029,47 @@ const formatDate = (dateString: string) => {
   })
 }
 
-const goBack = () => {
-  router.push('/app/assets')
+const formatSpecificationsForDisplay = (specifications: any) => {
+  if (!specifications) return ''
+  
+  // If it's already a string, return it
+  if (typeof specifications === 'string') {
+    return specifications
+  }
+  
+  // If it's an object, format it as key-value pairs
+  if (typeof specifications === 'object') {
+    return Object.entries(specifications)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n')
+  }
+  
+  return ''
+}
+
+// SearchableDropdown change handlers
+const onCategoryChange = (category: Item | null) => {
+  if (category) {
+    formData.categoryId = category.id?.toString() || ''
+  } else {
+    formData.categoryId = ''
+  }
+}
+
+const onBrandChange = (brand: Item | null) => {
+  if (brand) {
+    formData.brandId = brand.id?.toString() || ''
+  } else {
+    formData.brandId = ''
+  }
+}
+
+const onAssetTypeChange = (assetType: Item | null) => {
+  if (assetType) {
+    formData.assetTypeId = assetType.id?.toString() || ''
+  } else {
+    formData.assetTypeId = ''
+  }
 }
 
 // Refresh individual dropdowns
@@ -908,130 +1177,198 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Card styling */
-.card {
-  border: none;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  border-radius: 0.75rem;
+/* Card styling - Using Bootstrap defaults like AssetsView.vue */
+
+/* Button styling - Matching AssetsView.vue theme */
+.btn {
+  border-radius: 0.375rem !important;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  border-radius: 0.75rem 0.75rem 0 0 !important;
-  padding: 1.25rem;
-}
-
-/* Button styling */
 .btn-modern {
-  border-radius: 0.5rem;
+  border-radius: 0.375rem !important;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .btn-primary {
-  background-color: #331FEA;
-  border-color: #331FEA;
+  background-color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+  color: white;
 }
 
 .btn-primary:hover {
-  background-color: #2415c7;
-  border-color: #2415c7;
+  background-color: var(--mindstix-primary);
+  border-color: var(--mindstix-primary);
+  color: white;
 }
 
 .btn-outline-primary {
-  color: #331FEA;
-  border-color: #331FEA;
+  color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
 }
 
 .btn-outline-primary:hover {
-  background-color: #331FEA;
-  border-color: #331FEA;
+  background-color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+  color: white;
 }
 
 .btn-outline-secondary {
-  color: #6c757d;
-  border-color: #6c757d;
+  color: var(--primary-mid-gray);
+  border-color: var(--primary-mid-gray);
 }
 
 .btn-outline-secondary:hover {
-  background-color: #6c757d;
-  border-color: #6c757d;
+  background-color: var(--primary-mid-gray);
+  border-color: var(--primary-mid-gray);
+  color: white;
 }
 
-/* Form styling */
+.btn-success {
+  background-color: var(--secondary-green);
+  border-color: var(--secondary-green);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: var(--mindstix-success);
+  border-color: var(--mindstix-success);
+  color: white;
+}
+
+/* Form styling - Matching AssetsView.vue theme */
 .form-control, .form-select {
-  border: 2px solid #ced4da;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--primary-white);
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #331FEA;
+  border-color: var(--secondary-purple);
   box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+  background-color: var(--primary-white);
 }
 
+.form-control::placeholder,
+textarea.form-control::placeholder {
+  color: #6c757d !important;
+  opacity: 1;
+}
+
+/* Target textarea placeholder in NotesTextarea component */
+:deep(.auto-expand-textarea::placeholder) {
+  color: #6c757d !important;
+  opacity: 1 !important;
+}
+
+/* Consistent form label styling - matching NotesTextarea.vue and unified-form-styles.css */
 .form-label {
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 0.5rem;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* Required field asterisk styling */
+.form-label .text-danger {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+  font-size: 1.1em !important;
+}
+
+/* Optional field text styling */
+.form-label .text-muted {
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+  font-size: 0.9em !important;
+}
+
+/* Match form label styling for SearchableDropdown */
+.searchable-dropdown-wrapper :deep(.form-label) {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* Required field asterisk styling for SearchableDropdown */
+.searchable-dropdown-wrapper :deep(.form-label .text-danger) {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+  font-size: 1.1em !important;
+}
+
+/* Optional field text styling for SearchableDropdown */
+.searchable-dropdown-wrapper :deep(.form-label .text-muted) {
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+  font-size: 0.9em !important;
 }
 
 .form-text {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--primary-mid-gray);
   margin-top: 0.25rem;
 }
 
-/* Table styling */
-.table {
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
+/* Table styling - Using Bootstrap defaults like AssetsView.vue */
 
-.table th {
-  font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #dee2e6;
-  background-color: #f8f9fa;
-  padding: 1rem 0.75rem;
-}
-
-.table td {
-  vertical-align: middle;
-  padding: 0.75rem;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.table-hover tbody tr:hover {
-  background-color: rgba(51, 31, 234, 0.05);
-}
-
-.table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Badge styling */
+/* Badge styling - Matching AssetsView.vue theme */
 .badge {
   font-weight: 600;
-  padding: 0.5em 0.75em;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.badge.bg-primary {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.badge.bg-success {
+  background-color: var(--secondary-green) !important;
+  color: white !important;
+}
+
+.badge.bg-info {
+  background-color: var(--mindstix-primary) !important;
+  color: white !important;
 }
 
 /* Loading states */
 .form-select:disabled {
-  background-color: #f8f9fa;
+  background-color: var(--primary-light-gray);
   opacity: 0.7;
   cursor: not-allowed;
+  color: var(--primary-mid-gray);
 }
 
 .form-select:disabled option {
-  color: #6c757d;
+  color: var(--primary-mid-gray);
 }
 
-/* Modal styling */
+/* Modal styling - Matching AssetsView.vue theme */
 .modal-header.bg-danger {
-  background-color: #dc3545 !important;
+  background-color: var(--secondary-red) !important;
+  color: white;
+}
+
+.modal-content {
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+}
+
+.modal-body {
+  background-color: var(--primary-white);
+}
+
+.modal-footer {
+  background-color: var(--primary-light-gray);
+  border-top: 1px solid var(--element-gray);
 }
 
 .impact-details .card {
@@ -1051,12 +1388,83 @@ onMounted(async () => {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: var(--primary-black);
 }
 
 .impact-details .card-text {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--primary-mid-gray);
   margin-bottom: 0;
+}
+
+.alert {
+  border-radius: 0.5rem;
+  border: 1px solid var(--element-gray);
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: var(--secondary-orange);
+  color: #856404;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: var(--secondary-red);
+  color: #721c24;
+}
+
+.alert-success {
+  background-color: #d1e7dd;
+  border-color: var(--secondary-green);
+  color: #0f5132;
+}
+
+/* Button group styling - Using main.css styling for consistent rounded corners */
+
+/* Form Card - Using same design as filter dropdown in AssetsView.vue */
+.form-card {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-outline-primary {
+  color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+}
+
+.btn-outline-primary:hover {
+  background-color: rgba(51, 31, 234, 0.1);
+  color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+}
+
+.btn-outline-danger {
+  color: var(--secondary-red);
+  border-color: var(--secondary-red);
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--secondary-red);
+  color: white;
+  border-color: var(--secondary-red);
 }
 
 /* Responsive design */
@@ -1093,4 +1501,211 @@ onMounted(async () => {
     width: 100%;
   }
 }
+
+/* Additional styles for consistency */
+h2, h5, h6 {
+  color: var(--primary-black);
+}
+
+.text-muted {
+  color: var(--primary-mid-gray) !important;
+}
+
+.spinner-border.text-primary {
+  color: var(--secondary-purple) !important;
+}
+
+/* Card border colors */
+.card.border-warning {
+  border-color: var(--secondary-orange) !important;
+}
+
+.card.border-danger {
+  border-color: var(--secondary-red) !important;
+}
+
+.card.border-info {
+  border-color: var(--mindstix-primary) !important;
+}
+
+.card.border-primary {
+  border-color: var(--secondary-purple) !important;
+}
+
+/* Icon colors in cards */
+.text-warning {
+  color: var(--secondary-orange) !important;
+}
+
+.text-danger {
+  color: var(--secondary-red) !important;
+}
+
+.text-info {
+  color: var(--mindstix-primary) !important;
+}
+
+.text-primary {
+  color: var(--secondary-purple) !important;
+}
+
+/* Action Buttons - Using main.css styling from AssetsView.vue */
+/* The .asset-actions .btn styling is now handled by main.css */
+/* This ensures consistent button appearance across all pages */
+
+/* Entity Type Selection Buttons - Using --secondary-gray color */
+.btn-entity-active {
+  background-color: var(--secondary-gray) !important;
+  border-color: var(--secondary-gray) !important;
+  color: white !important;
+}
+
+.btn-entity-active:hover {
+  background-color: #5a6b7d !important;
+  border-color: #5a6b7d !important;
+  color: white !important;
+}
+
+.btn-entity-inactive {
+  background-color: var(--primary-light-gray) !important;
+  border-color: var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.btn-entity-inactive:hover {
+  background-color: var(--secondary-gray) !important;
+  border-color: var(--secondary-gray) !important;
+  color: white !important;
+}
+
+/* Column width control - Entity-specific table classes */
+
+/* Categories table (3 columns: Name, Description, Actions) */
+.table-category {
+  table-layout: fixed;
+}
+.table-category th:nth-child(1), .table-category td:nth-child(1) { width: 25% !important; } /* Name */
+.table-category th:nth-child(2), .table-category td:nth-child(2) { width: 65% !important; } /* Description */
+.table-category th:nth-child(3), .table-category td:nth-child(3) { width: 10% !important; } /* Actions */
+
+/* Brands table (3 columns: Name, Description, Actions) */
+.table-brand {
+  table-layout: fixed;
+}
+.table-brand th:nth-child(1), .table-brand td:nth-child(1) { width: 25% !important; } /* Name */
+.table-brand th:nth-child(2), .table-brand td:nth-child(2) { width: 65% !important; } /* Description */
+.table-brand th:nth-child(3), .table-brand td:nth-child(3) { width: 10% !important; } /* Actions */
+
+/* Asset Types table (4 columns: Name, Category, Description, Actions) */
+.table-type {
+  table-layout: fixed;
+}
+.table-type th:nth-child(1), .table-type td:nth-child(1) { width: 25% !important; } /* Name */
+.table-type th:nth-child(2), .table-type td:nth-child(2) { width: 20% !important; } /* Category */
+.table-type th:nth-child(3), .table-type td:nth-child(3) { width: 45% !important; } /* Description */
+.table-type th:nth-child(4), .table-type td:nth-child(4) { width: 10% !important; } /* Actions */
+
+/* Models table (4 columns: Name, Brand, Asset Type, Actions) - No Description */
+.table-model {
+  table-layout: fixed;
+}
+.table-model th:nth-child(1), .table-model td:nth-child(1) { width: 30% !important; } /* Name */
+.table-model th:nth-child(2), .table-model td:nth-child(2) { width: 25% !important; } /* Brand */
+.table-model th:nth-child(3), .table-model td:nth-child(3) { width: 30% !important; } /* Asset Type */
+.table-model th:nth-child(4), .table-model td:nth-child(4) { width: 15% !important; } /* Actions (View + Delete) */
+
+/* Model Details Modal - Using same design as AssetsView.vue */
+.equal-height-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.equal-height-columns > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.asset-info-section-compact {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+.asset-info-section-compact .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.asset-info-section-compact .info-grid-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-grow: 1;
+}
+
+.asset-info-section-compact .info-item-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.asset-info-section-compact .info-item-compact:last-child {
+  border-bottom: none;
+}
+
+.asset-info-section-compact .info-label-compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.asset-info-section-compact .info-value-compact {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: #212529 !important;
+  margin-bottom: 0 !important;
+  text-align: right;
+  flex-grow: 1;
+}
+
+
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
+}
+
+/* View Details Button Hover Effect */
+.btn-view-details:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  background-color: rgba(51, 31, 234, 0.1) !important;
+}
+
+/* Delete Button Hover Effect */
+.btn-delete-asset:hover {
+  color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
 </style>
