@@ -330,7 +330,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { showToast, showErrorToast } from '../../utils/toast'
+import { useToastStore } from '@/stores/toast'
 import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto } from '../../services/collectAssetApi'
 import { employeeApiService, type Employee } from '../../services/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
@@ -339,6 +339,10 @@ import NotesTextarea from '../../components/common/NotesTextarea.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
+
+// Track the origin path to redirect back after success
+const originPath = ref<string>('/app/assets')
 
 // Form data
 const formData = reactive({
@@ -837,13 +841,19 @@ const confirmCollection = async () => {
     const response = await collectAssetApiService.collectAsset(parseInt(formData.assetId), returnData)
     
     const collectionDetails = generateCollectionDetails()
+    console.log('[Collect] success - redirecting to', originPath.value, 'with toast:', collectionDetails)
     
-    // Show success toast with action buttons
-    showCollectAssetSuccessToast(collectionDetails)
+    // Redirect back to origin page and show success toast after navigation
+    const target = originPath.value || '/app/assets'
+    router.push(target)
+    setTimeout(() => {
+      console.log('[Collect] showing success toast after navigation')
+      showCollectAssetSuccessToast(collectionDetails)
+    }, 300)
     
   } catch (error: any) {
     console.error('Error collecting asset:', error)
-    showErrorToast(error.message || 'An error occurred while collecting the asset. Please try again.')
+    toastStore.showError('Error', error.message || 'An error occurred while collecting the asset. Please try again.')
   } finally {
     isSubmitting.value = false
   }
@@ -907,43 +917,7 @@ const goBack = () => {
   router.push('/app/assets')
 }
 
-const collectAnotherAsset = async () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
-  
-  resetForm()
-  
-  // Reload data to ensure we have the latest assigned assets
-  try {
-    await Promise.all([
-      loadActiveEmployees(),
-      loadAssignedAssets()
-    ])
-  } catch (error) {
-    console.error('Error reloading data:', error)
-  }
-  
-  showToast('Ready to collect another asset!', 'info')
-  
-  // Focus on first field
-  nextTick(() => {
-    const firstField = document.getElementById('assetId')
-    if (firstField) firstField.focus()
-  })
-}
-
-const viewAssetStatus = () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
-  
-  showToast('Redirecting to Asset Status...', 'info')
-  
-  setTimeout(() => {
-    router.push('/app/assets')
-  }, 1500)
-}
+// Removed functions - no longer needed with simple toast notifications
 
 const scrollToFirstError = () => {
   // Hide any existing toasts (but keep this for other error toasts)
@@ -969,20 +943,7 @@ const scrollToFirstError = () => {
 
 // Custom success toast for asset collection
 const showCollectAssetSuccessToast = (collectionDetails: string) => {
-  const message = `<div class="mb-3">
-    <strong>${collectionDetails}</strong> has been collected successfully!
-  </div>
-  <div class="d-flex gap-2 justify-content-center">
-    <button type="button" class="btn btn-sm btn-success" onclick="collectAnotherAsset()">
-      Collect Another
-    </button>
-    <button type="button" class="btn btn-sm btn-outline-success" onclick="viewAssetStatus()">
-      View Assets
-    </button>
-  </div>`
-  
-  // Use the existing toast utility
-  showToast(message, 'success')
+  toastStore.showSuccess('Success', `${collectionDetails} has been collected successfully!`)
 }
 
 
@@ -1075,7 +1036,7 @@ watch(() => assignedAssets.value, (newAssignments) => {
         }, 100)
       })
       
-      showToast(`Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`, 'info')
+      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
       
       localStorage.removeItem('selectedAssetId')
       localStorage.removeItem('currentEmployee')
@@ -1092,7 +1053,7 @@ const loadActiveEmployees = async () => {
     activeEmployees.value = response.data.employees
   } catch (error: any) {
     console.error('Error loading active employees:', error)
-    showErrorToast('Failed to load active employees. Please try again.')
+    toastStore.showError('Error', 'Failed to load active employees. Please try again.')
   } finally {
     isLoadingEmployees.value = false
   }
@@ -1106,7 +1067,7 @@ const loadAssignedAssets = async () => {
     assignedAssets.value = response.data.assignments
   } catch (error: any) {
     console.error('Error loading assigned assets:', error)
-    showErrorToast('Failed to load assigned assets. Please try again.')
+    toastStore.showError('Error', 'Failed to load assigned assets. Please try again.')
   } finally {
     isLoadingAssignments.value = false
   }
@@ -1114,9 +1075,7 @@ const loadAssignedAssets = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  // Make functions available globally for toast buttons
-  ;(window as any).collectAnotherAsset = collectAnotherAsset
-  ;(window as any).viewAssetStatus = viewAssetStatus
+  // Make functions available globally
   ;(window as any).scrollToFirstError = scrollToFirstError
   
   // Set loading state
@@ -1140,10 +1099,18 @@ onMounted(async () => {
   // Query parameter based preselect (preferred)
   const qpAssetId = route.query.assetId ? route.query.assetId.toString() : ''
   const qpEmployeeId = route.query.employeeId ? route.query.employeeId.toString() : ''
+  const fromQuery = route.query.from as string | undefined
   let selectedAssetId = qpAssetId || localStorage.getItem('selectedAssetId') || ''
   let currentEmployee = qpEmployeeId || localStorage.getItem('currentEmployee') || ''
   
+  // Debug: log how we arrived
+  console.log('[Collect] onMounted origin detection:', { qpAssetId, qpEmployeeId, fromQuery, ls_selectedAssetId: localStorage.getItem('selectedAssetId'), ls_currentEmployee: localStorage.getItem('currentEmployee') })
+  
   if (selectedAssetId) {
+    // Default origin by context if not explicitly provided
+    if (!fromQuery && (qpEmployeeId || currentEmployee)) originPath.value = '/app/employees'
+    else if (!fromQuery && (qpAssetId || localStorage.getItem('selectedAssetId'))) originPath.value = '/app/assets'
+    console.log('[Collect] inferred originPath (pre-explicit):', originPath.value)
     // Find the assignment by asset ID
     const selectedAssignment = assignedAssets.value.find(assignment => assignment.asset.assetId === selectedAssetId)
     
@@ -1174,16 +1141,24 @@ onMounted(async () => {
       })
       
       // Show success message for pre-selection
-      showToast(`Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`, 'info')
+      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
     } else {
       console.error('Assignment not found for asset:', selectedAssetId)
-      showErrorToast(`Asset ${selectedAssetId} not found in assigned assets`)
+      toastStore.showError('Error', `Asset ${selectedAssetId} not found in assigned assets`)
     }
     
     // Clear only if they were from localStorage, keep query params intact
     if (!qpAssetId) localStorage.removeItem('selectedAssetId')
     if (!qpEmployeeId) localStorage.removeItem('currentEmployee')
   }
+  
+  // If explicit origin provided in query, respect it
+  if (fromQuery === 'employees') originPath.value = '/app/employees'
+  else if (fromQuery === 'assets') originPath.value = '/app/assets'
+  else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
+  // If no explicit origin but employeeId present, prefer employees
+  if (!fromQuery && qpEmployeeId) originPath.value = '/app/employees'
+  console.log('[Collect] final originPath:', originPath.value)
   
   // Focus on appropriate field
   nextTick(() => {

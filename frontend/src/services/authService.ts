@@ -1,24 +1,15 @@
 import axios from 'axios'
 
-// Create a separate axios instance for auth operations (no interceptors to avoid circular dependency)
+// Create a separate axios instance for auth operations with cookie support
 const authAxios = axios.create({
   baseURL: 'http://localhost:3000/api',
+  withCredentials: true, // Enable sending cookies
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// Add request interceptor to authAxios for token inclusion (for refresh and profile calls)
-authAxios.interceptors.request.use((config) => {
-  // Add token for refresh and profile endpoints
-  if (config.url?.includes('/auth/refresh') || config.url?.includes('/auth/profile')) {
-    const token = localStorage.getItem('access_token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-  }
-  return config
-})
+// No Authorization header needed - cookies are sent automatically
 
 // Types
 interface LoginRequest {
@@ -71,17 +62,16 @@ interface RefreshTokenResponse {
 }
 
 class AuthService {
-  private readonly TOKEN_KEY = 'access_token'
-  private readonly USER_KEY = 'user_data'
-  private readonly TOKEN_TIMESTAMP_KEY = 'token_timestamp'
+  private readonly USER_KEY = 'user_data' // Keep user data in localStorage for quick access
   private readonly REFRESH_INTERVAL = 12 * 60 * 1000 // 12 minutes (3 minutes before expiry)
-  private readonly TOKEN_EXPIRY_TIME = 15 * 60 * 1000 // 15 minutes
   private refreshTimer: number | null = null
   private refreshPromise: Promise<boolean> | null = null
+  private isAuthenticatedCache: boolean = false
 
   constructor() {
-    // Start token refresh timer if user is logged in
-    if (this.isAuthenticated()) {
+    // Check if user data exists to determine auth status
+    this.isAuthenticatedCache = !!this.getUserData()
+    if (this.isAuthenticatedCache) {
       this.startTokenRefresh()
     }
   }
@@ -94,10 +84,9 @@ class AuthService {
       const response = await authAxios.post<LoginResponse>('/auth/login', credentials)
       
       if (response.data.success) {
-        // Store token and user data with timestamp
-        this.setToken(response.data.access_token)
+        // Store only user data (tokens are in HTTP-only cookies now)
         this.setUserData(response.data.user)
-        this.setTokenTimestamp()
+        this.isAuthenticatedCache = true
         
         // Start automatic token refresh
         this.startTokenRefresh()
@@ -113,19 +102,25 @@ class AuthService {
   /**
    * Logout user and clear all stored data
    */
-  logout(): void {
-    // Clear stored data
-    localStorage.removeItem(this.TOKEN_KEY)
-    localStorage.removeItem(this.USER_KEY)
-    localStorage.removeItem(this.TOKEN_TIMESTAMP_KEY)
-    
-    // Stop token refresh and clear refresh promise
-    this.stopTokenRefresh()
-    this.refreshPromise = null
-    
-    // Redirect to login page only if not already there
-    if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
-      window.location.href = '/'
+  async logout(): Promise<void> {
+    try {
+      // Call backend logout to clear cookies and invalidate session
+      await authAxios.post('/auth/logout')
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      // Clear stored user data (cookies cleared by server)
+      localStorage.removeItem(this.USER_KEY)
+      this.isAuthenticatedCache = false
+      
+      // Stop token refresh and clear refresh promise
+      this.stopTokenRefresh()
+      this.refreshPromise = null
+      
+      // Redirect to login page only if not already there
+      if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
+        window.location.href = '/'
+      }
     }
   }
 
@@ -139,7 +134,7 @@ class AuthService {
     } catch (error: any) {
       console.error('Profile fetch error:', error)
       if (error.response?.status === 401) {
-        this.logout()
+        await this.logout()
       }
       throw new Error(error.response?.data?.message || 'Failed to fetch profile')
     }
@@ -172,55 +167,44 @@ class AuthService {
   private async performTokenRefresh(): Promise<boolean> {
     try {
       console.log('[AuthService] Refreshing token...')
+      // No need to send refresh_token - it's in HTTP-only cookie
       const response = await authAxios.post<RefreshTokenResponse>('/auth/refresh')
       
       if (response.data.success) {
-        this.setToken(response.data.access_token)
-        this.setTokenTimestamp()
-        console.log('[AuthService] Token refreshed successfully')
+        // New tokens set in cookies by server automatically
+        console.log('[AuthService] Token refreshed successfully:', new Date().toISOString())
         return true
       }
       
+      console.log('[AuthService] Token refresh failed: response not successful')
       return false
     } catch (error: any) {
-      console.error('Token refresh error:', error)
+      console.error('[AuthService] Token refresh error:', error)
       // Only logout if it's a 401 error (unauthorized), not for network errors
       if (error.response?.status === 401) {
-        this.logout()
+        console.log('[AuthService] 401 error during refresh, logging out')
+        await this.logout()
       }
       return false
     }
   }
 
   /**
-   * Check if user is authenticated and token is not expired
+   * Check if user is authenticated
+   * With HTTP-only cookies, we can't check token directly
+   * We rely on user data presence and let server validate on each request
    */
   isAuthenticated(): boolean {
-    const token = this.getToken()
-    if (!token) return false
-
-    // Check if token is expired
-    const timestamp = this.getTokenTimestamp()
-    if (timestamp) {
-      const now = Date.now()
-      const tokenAge = now - timestamp
-      
-      // If token is older than expiry time, consider it expired
-      if (tokenAge >= this.TOKEN_EXPIRY_TIME) {
-        console.log('[AuthService] Token expired, clearing auth data')
-        this.logout()
-        return false
-      }
-    }
-
-    return true
+    return this.isAuthenticatedCache && !!this.getUserData()
   }
 
   /**
-   * Get stored access token
+   * Get stored access token (deprecated - tokens in HTTP-only cookies now)
+   * @deprecated Tokens are now in HTTP-only cookies and not accessible
    */
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY)
+    console.warn('[AuthService] getToken() deprecated - tokens now in HTTP-only cookies')
+    return null
   }
 
   /**
@@ -240,32 +224,10 @@ class AuthService {
   }
 
   /**
-   * Set access token in localStorage
-   */
-  private setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token)
-  }
-
-  /**
    * Set user data in localStorage
    */
   private setUserData(userData: any): void {
     localStorage.setItem(this.USER_KEY, JSON.stringify(userData))
-  }
-
-  /**
-   * Set token timestamp in localStorage
-   */
-  private setTokenTimestamp(): void {
-    localStorage.setItem(this.TOKEN_TIMESTAMP_KEY, Date.now().toString())
-  }
-
-  /**
-   * Get token timestamp from localStorage
-   */
-  private getTokenTimestamp(): number | null {
-    const timestamp = localStorage.getItem(this.TOKEN_TIMESTAMP_KEY)
-    return timestamp ? parseInt(timestamp, 10) : null
   }
 
   /**
@@ -275,30 +237,13 @@ class AuthService {
     // Clear existing timer
     this.stopTokenRefresh()
     
-    // Calculate when to start refreshing based on token timestamp
-    const timestamp = this.getTokenTimestamp()
-    let refreshDelay = this.REFRESH_INTERVAL
+    console.log('[AuthService] Starting token refresh interval')
     
-    if (timestamp) {
-      const tokenAge = Date.now() - timestamp
-      const timeUntilRefresh = this.REFRESH_INTERVAL - tokenAge
-      
-      // If we're already past the refresh time, refresh immediately
-      if (timeUntilRefresh <= 0) {
-        console.log('[AuthService] Token needs immediate refresh')
-        this.refreshToken()
-        refreshDelay = this.REFRESH_INTERVAL
-      } else {
-        // Set timer for the remaining time until refresh
-        refreshDelay = timeUntilRefresh
-        console.log(`[AuthService] Next token refresh in ${Math.round(refreshDelay / 1000)} seconds`)
-      }
-    }
-    
-    // Set up new timer
+    // Set up regular refresh interval (cookies don't expose expiry time)
+    // Refresh every 12 minutes (3 minutes before 15-minute expiry)
     this.refreshTimer = setInterval(async () => {
       await this.refreshToken()
-    }, refreshDelay) as unknown as number
+    }, this.REFRESH_INTERVAL) as unknown as number
   }
 
   /**
@@ -306,6 +251,8 @@ class AuthService {
    */
   private stopTokenRefresh(): void {
     if (this.refreshTimer) {
+      // Clear both setTimeout and setInterval
+      clearTimeout(this.refreshTimer)
       clearInterval(this.refreshTimer)
       this.refreshTimer = null
     }
@@ -339,4 +286,5 @@ class AuthService {
 
 // Export singleton instance
 export const authService = new AuthService()
+export { authAxios }
 export default authService 

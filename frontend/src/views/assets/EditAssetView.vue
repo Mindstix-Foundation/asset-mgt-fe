@@ -46,11 +46,12 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { assetService } from '@/services/assetService'
-import { showToast, showErrorToast } from '@/utils/toast'
+import { useToastStore } from '@/stores/toast'
 import AssetForm from '@/components/forms/AssetForm.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Get asset ID from route
 const assetId = computed(() => parseInt(route.params.id as string))
@@ -85,7 +86,7 @@ const handleSubmit = async (assetData: any) => {
     const updatedAsset = response.data.asset
 
     const assetName = `${updatedAsset.serialNumber || 'Asset'}`
-    showToast(`${assetName} has been updated successfully!`, 'success')
+    toastStore.showSuccess('Success', `${assetName} has been updated successfully!`)
     
     // Navigate back to assets list after successful update
     setTimeout(() => {
@@ -95,7 +96,7 @@ const handleSubmit = async (assetData: any) => {
     console.error('Error updating asset:', error)
     
     const errorMsg = error?.response?.data?.message || error?.message || 'Failed to update asset. Please try again.'
-    showErrorToast(errorMsg)
+    toastStore.showError('Error', errorMsg)
   }
 }
 

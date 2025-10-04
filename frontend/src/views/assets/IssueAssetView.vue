@@ -193,7 +193,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { showToast, showErrorToast } from '../../utils/toast'
+import { useToastStore } from '@/stores/toast'
 import { assignmentApiService, type CreateAssignmentDto } from '../../services/assignmentApi'
 import { assetApiService, type Asset } from '../../services/assetApi'
 import { employeeApiService, type Employee } from '../../services/employeeApi'
@@ -203,7 +203,10 @@ import NotesTextarea from '../../components/common/NotesTextarea.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
+// Track the origin path to redirect back after success
+const originPath = ref<string>('/app/assets')
 // Form data
 const formData = reactive({
   assetId: '',
@@ -550,7 +553,7 @@ const submitForm = async (event?: Event) => {
       assetId: selectedAssetId,
       employeeId: selectedEmployeeId,
       issueDate: formData.assignmentDate,
-      issueCondition: currentCondition, // Use the asset's current condition
+      issueCondition: currentCondition as "GOOD" | "NEW" | "FAIR" | "POOR" | "DAMAGED", // Use the asset's current condition
       issueReason: formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
@@ -560,12 +563,29 @@ const submitForm = async (event?: Event) => {
     
     const assignmentDetails = generateAssignmentDetails()
     
-    // Show success toast with action buttons
-    showIssueAssetSuccessToast(assignmentDetails)
+    // Redirect back to origin page; if target is assets list, pass toast via query
+    const target = originPath.value || '/app/assets'
+    if (target === '/app/assets') {
+      router.push({
+        path: '/app/assets',
+        query: {
+          toastType: 'success',
+          toastTitle: 'Success',
+          toastMessage: `${assignmentDetails} has been assigned successfully!`
+        }
+      })
+    } else {
+      router.push(target)
+    }
+    
+    // Fallback: also try showing toast after navigation
+    setTimeout(() => {
+      showIssueAssetSuccessToast(assignmentDetails)
+    }, 200)
     
   } catch (error: any) {
     console.error('Error issuing asset:', error)
-    showErrorToast(error.message || 'An error occurred while issuing the asset. Please try again.')
+    toastStore.showError('Error', error.message || 'An error occurred while issuing the asset. Please try again.')
   } finally {
     isSubmitting.value = false
   }
@@ -636,7 +656,7 @@ const issueAnotherAsset = async () => {
     console.error('Error reloading data:', error)
   }
   
-  showToast('Ready to issue another asset!', 'info')
+  toastStore.showInfo('Info', 'Ready to issue another asset!')
   
   // Focus on first field
   nextTick(() => {
@@ -650,7 +670,7 @@ const viewAssignments = () => {
   const existingToasts = document.querySelectorAll('.custom-toast-notification')
   existingToasts.forEach(toast => toast.remove())
   
-  showToast('Redirecting to Asset Assignments...', 'info')
+  toastStore.showInfo('Info', 'Redirecting to Asset Assignments...')
   
   setTimeout(() => {
     router.push('/app/assets')
@@ -679,22 +699,9 @@ const scrollToFirstError = () => {
   }
 }
 
-// Custom success toast for asset issuance
+// Simple success toast for asset issuance
 const showIssueAssetSuccessToast = (assignmentDetails: string) => {
-  const message = `<div class="mb-3">
-    <strong>${assignmentDetails}</strong> has been assigned successfully!
-  </div>
-  <div class="d-flex gap-2 justify-content-center">
-    <button type="button" class="btn btn-sm btn-success" onclick="issueAnotherAsset()">
-      Issue Another Asset
-    </button>
-    <button type="button" class="btn btn-sm btn-outline-success" onclick="viewAssignments()">
-      View Assignments
-    </button>
-  </div>`
-  
-  // Use the existing toast utility
-  showToast(message, 'success')
+  toastStore.showSuccess('Success', `${assignmentDetails} has been assigned successfully!`)
 }
 
 const clearSelectedAssetInfo = () => {
@@ -780,7 +787,7 @@ const loadAvailableAssets = async () => {
     availableAssets.value = response.data.assets
   } catch (error: any) {
     console.error('Error loading available assets:', error)
-    showErrorToast('Failed to load available assets. Please try again.')
+    toastStore.showError('Error', 'Failed to load available assets. Please try again.')
   } finally {
     isLoadingAssets.value = false
   }
@@ -794,7 +801,7 @@ const loadActiveEmployees = async () => {
     activeEmployees.value = response.data.employees
   } catch (error: any) {
     console.error('Error loading active employees:', error)
-    showErrorToast('Failed to load active employees. Please try again.')
+    toastStore.showError('Error', 'Failed to load active employees. Please try again.')
   } finally {
     isLoadingEmployees.value = false
   }
@@ -802,9 +809,7 @@ const loadActiveEmployees = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  // Make functions available globally for toast buttons
-  ;(window as any).issueAnotherAsset = issueAnotherAsset
-  ;(window as any).viewAssignments = viewAssignments
+  // Make functions available globally
   ;(window as any).scrollToFirstError = scrollToFirstError
   
   // Set loading state
@@ -828,8 +833,11 @@ onMounted(async () => {
   // Check if asset was pre-selected from assets page
   const selectedAssetId = localStorage.getItem('selectedAssetId')
   const selectedAssetType = localStorage.getItem('selectedAssetType')
+  const fromQuery = route.query.from as string | undefined
   
   if (selectedAssetId && selectedAssetType) {
+    // Came from assets page
+    originPath.value = '/app/assets'
     // Find the asset by assetId (not database ID)
     const asset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
     if (asset) {
@@ -843,20 +851,60 @@ onMounted(async () => {
       formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
       
       // Show success message for pre-selection
-      showToast(`Asset ${selectedAssetId} pre-selected for issuing`, 'info')
+      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for issuing`)
     } else {
       console.error('Asset not found:', selectedAssetId, 'Available assets:', availableAssets.value.map(a => a.assetId))
-      showErrorToast(`Asset ${selectedAssetId} not found in available assets`)
+      toastStore.showError('Error', `Asset ${selectedAssetId} not found in available assets`)
     }
     
     localStorage.removeItem('selectedAssetId')
     localStorage.removeItem('selectedAssetType')
   }
   
+  // Check if employee was pre-selected from employee page
+  const employeeIdFromQuery = route.query.employeeId as string
+  if (employeeIdFromQuery) {
+    // Came from employees page unless explicitly overridden by from query
+    if (!fromQuery) {
+      originPath.value = '/app/employees'
+    }
+    const employeeId = parseInt(employeeIdFromQuery)
+    const employee = activeEmployees.value.find(emp => emp.id === employeeId)
+    if (employee) {
+      // Set the selected employee for SearchableDropdown
+      selectedEmployee.value = {
+        id: employee.id,
+        name: `${employee.employeeId} - ${employee.firstName} ${employee.lastName}`,
+        value: employee.id.toString()
+      }
+      formData.employeeId = employee.id.toString()
+      
+      // Show success message for pre-selection
+      toastStore.showInfo('Info', `Employee ${employee.firstName} ${employee.lastName} pre-selected for asset assignment`)
+    } else {
+      console.error('Employee not found:', employeeIdFromQuery, 'Available employees:', activeEmployees.value.map(e => e.id))
+      toastStore.showError('Error', `Employee with ID ${employeeIdFromQuery} not found in active employees`)
+    }
+  }
+  
+  // If explicit origin provided in query, respect it
+  if (fromQuery === 'employees') originPath.value = '/app/employees'
+  else if (fromQuery === 'assets') originPath.value = '/app/assets'
+  else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
+  
   // Focus on appropriate field
   nextTick(() => {
-    // If asset was pre-selected, focus on employee field, otherwise focus on asset field
-    const focusField = (selectedAssetId && selectedAssetType) ? 'employeeId' : 'assetId'
+    // Determine which field to focus based on what was pre-selected
+    let focusField = 'assetId' // Default to asset field
+    
+    if (selectedAssetId && selectedAssetType) {
+      // Asset was pre-selected, focus on employee field
+      focusField = 'employeeId'
+    } else if (employeeIdFromQuery) {
+      // Employee was pre-selected, focus on asset field
+      focusField = 'assetId'
+    }
+    
     const field = document.getElementById(focusField)
     if (field) field.focus()
   })

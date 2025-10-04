@@ -42,11 +42,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { maintenanceService } from '@/services/maintenanceService'
-import { showErrorToast } from '@/utils/toast'
-import MaintenanceForm from '@/components/maintenance/MaintenanceForm.vue'
+import { useToastStore } from '@/stores/toast'
+import MaintenanceForm from '@/components/forms/MaintenanceForm.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Get maintenance ID from route
 const maintenanceId = computed(() => route.params.id as string)
@@ -71,9 +72,9 @@ const checkMaintenanceExists = async () => {
     loadError.value = true
     
     if (error.response?.status === 404) {
-      showErrorToast('Maintenance record not found.')
+      toastStore.showError('Error', 'Maintenance record not found.')
     } else {
-      showErrorToast('Failed to load maintenance data. Please try again.')
+      toastStore.showError('Error', 'Failed to load maintenance data. Please try again.')
     }
   } finally {
     isLoading.value = false

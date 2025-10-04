@@ -171,19 +171,25 @@
                       </div>
                       <div class="asset-basic-info-timeline">
                         <div class="asset-name-timeline">{{ item.assetName }}</div>
-                        <div class="asset-meta-timeline small">{{ item.assetType }} • {{ item.brand }} {{ item.model }}</div>
+                        <div class="asset-meta-timeline small">{{ item.assetType }} • {{ item.brand }} {{ item.model }} • {{ item.assetId }}</div>
                       </div>
                     </div>
                     <div class="timeline-badges">
                       <span class="badge" :class="item.action === 'ASSIGNED' ? 'badge-assigned' : 'badge-returned'">{{ item.action === 'ASSIGNED' ? 'Assigned' : 'Returned' }}</span>
-                      <span class="badge badge-duration">{{ formatDateTime(item.date) }}</span>
+                      <span class="badge badge-duration">{{ formatDateTime(item.timestamp) }}</span>
                     </div>
                   </div>
                 </div>
 
                 <div class="timeline-details compact">
                   <div class="row g-2">
-                    <div class="col-sm-4 col-md-3">
+                    <div class="col-6 col-sm-3">
+                      <div class="info-item">
+                        <label class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Date' : 'Return Date' }}</label>
+                        <div class="info-value small">{{ formatDate(item.date) }}</div>
+                      </div>
+                    </div>
+                    <div class="col-6 col-sm-2">
                       <div class="info-item">
                         <label class="info-label small">Condition</label>
                         <div class="info-value small">
@@ -191,13 +197,13 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-sm-4 col-md-5">
+                    <div class="col-6 col-sm-4">
                       <div class="info-item">
                         <label class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Reason' : 'Return Reason' }}</label>
                         <div class="info-value small">{{ item.reason || 'Not specified' }}</div>
                       </div>
                     </div>
-                    <div class="col-sm-4 col-md-4">
+                    <div class="col-6 col-sm-3">
                       <div class="info-item">
                         <label class="info-label small">Performed By</label>
                         <div class="info-value small">{{ item.performedBy }}</div>
@@ -216,23 +222,18 @@
           </div>
 
           <!-- Pagination -->
-          <div class="d-flex justify-content-between align-items-center mt-2" v-if="pagination.totalPages > 1">
-            <div class="text-muted small">Page {{ pagination.currentPage }} of {{ pagination.totalPages }} • {{ pagination.totalCount }} events</div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-sm" :disabled="!pagination.hasPrevious" @click="changePage(pagination.currentPage - 1)">
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <button class="btn btn-outline-secondary btn-sm" :disabled="!pagination.hasNext" @click="changePage(pagination.currentPage + 1)">
-                <i class="fas fa-chevron-right"></i>
-              </button>
-            </div>
+          <div v-if="pagination.totalPages > 1" class="d-flex justify-content-center mt-4">
+            <AppPagination 
+              :current-page="pagination.currentPage" 
+              :total-pages="pagination.totalPages" 
+              @change="changePage" 
+            />
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <ToastNotification />
+    
   </div>
 </template>
 
@@ -242,11 +243,12 @@ import { assetApiService } from '@/services/assetApi'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import DateField from '@/components/common/DateField.vue'
+import AppPagination from '@/components/pagination/AppPagination.vue'
 import { useToastStore } from '@/stores/toast'
 
 export default {
   name: 'EmployeeAssetHistory',
-  components: { ToastNotification, SearchableDropdown, DateField },
+  components: { ToastNotification, SearchableDropdown, DateField, AppPagination },
   setup() {
     const toastStore = useToastStore()
     return {
@@ -372,10 +374,12 @@ export default {
     },
     async applyFilters() {
       this.filters.page = 1
+      this.pagination.currentPage = 1
       await this.fetchEvents()
     },
     async changePage(page) {
       this.filters.page = page
+      this.pagination.currentPage = page
       await this.fetchEvents()
     },
     async toggleSortOrder() {
@@ -401,6 +405,7 @@ export default {
       this.selectedAction = null
       this.selectedAssetType = null
       this.filters = { action: '', assetType: '', dateFrom: '', dateTo: '', search: '', sortBy: 'date', sortOrder: 'desc', page: 1, limit: 20 }
+      this.pagination.currentPage = 1
       this.applyFilters()
     },
     async enrichCurrentAssignments() {
@@ -426,8 +431,29 @@ export default {
       })
       await Promise.all(fetches)
     },
-    formatDate(dateString) { return dateString || 'Not specified' },
-    formatDateTime(dateString) { return dateString || 'Not specified' },
+    formatDate(dateString) {
+      if (!dateString) return 'Not specified'
+      const d = new Date(dateString)
+      if (isNaN(d.getTime())) return 'Not specified'
+      const day = d.getDate()
+      const monthShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]
+      const year = d.getFullYear()
+      return `${day} ${monthShort} ${year}`
+    },
+    formatDateTime(dateString) {
+      if (!dateString) return 'Not specified'
+      const d = new Date(dateString)
+      if (isNaN(d.getTime())) return 'Not specified'
+      const day = d.getDate()
+      const month = d.getMonth() + 1
+      const year = d.getFullYear()
+      const pad2 = (n) => String(n).padStart(2, '0')
+      const hours = pad2(d.getHours())
+      const minutes = pad2(d.getMinutes())
+      const seconds = pad2(d.getSeconds())
+      // Format: D/M/YYYY  HH:mm:ss (two spaces between date and time)
+      return `${day}/${month}/${year}  ${hours}:${minutes}:${seconds}`
+    },
     getNotesForAction(item) {
       // For employee asset events, the notes field contains the appropriate content
       // based on the action (ASSIGNED or RETURNED)
@@ -446,7 +472,10 @@ export default {
         'var(--secondary-green)', 
         'var(--secondary-pink)',
         'var(--secondary-orange)',
-        'var(--secondary-red)'
+        'var(--secondary-red)',
+        'var(--secondary-blue)',
+        'var(--secondary-brown)',
+        'var(--primary-dark-gray)'
       ]
       const hash = employeeId.split('').reduce((a, b) => {
         a = ((a << 5) - a) + b.charCodeAt(0)

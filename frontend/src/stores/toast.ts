@@ -16,7 +16,7 @@ export const useToastStore = defineStore('toast', () => {
   const title = ref('')
   const message = ref('')
   const type = ref<ToastType>('info')
-  const duration = ref(5000) // Default 5 seconds
+  const duration = ref(3000) // Default 3 seconds
 
   let timeoutId: number | null = null
 
@@ -34,7 +34,7 @@ export const useToastStore = defineStore('toast', () => {
     title.value = toastTitle
     message.value = toastMessage
     type.value = toastType
-    duration.value = toastDuration || 5000
+    duration.value = toastDuration || 3000
     show.value = true
 
     // Auto-hide toast after duration

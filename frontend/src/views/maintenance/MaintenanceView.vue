@@ -659,14 +659,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useRouteToast } from '@/composables/useRouteToast'
 import { Modal } from 'bootstrap'
 import { maintenanceService } from '@/services/maintenanceService'
-import { fetchDashboardStats } from '@/services/api'
-import { showToast, showErrorToast } from '@/utils/toast'
+import { fetchDashboardStats } from '@/services/dashboardApi'
+import { useToastStore } from '@/stores/toast'
+import { formatDateOnly } from '@/utils/date'
 import AppPagination from '@/components/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 
 const router = useRouter()
+useRouteToast()
+const toastStore = useToastStore()
 
 // Local type representing a table row in this view
 interface MaintenanceRow {
@@ -822,11 +826,11 @@ const sortOptions = ref<Item[]>([
       // Update stats after loading maintenance data
       fetchStats()
     } else {
-      showErrorToast('Failed to fetch maintenance data')
+      toastStore.showError('Error', 'Failed to fetch maintenance data')
     }
   } catch (error) {
     console.error('Error fetching maintenances:', error)
-    showErrorToast('Error loading maintenance data')
+    toastStore.showError('Error', 'Error loading maintenance data')
     maintenanceData.value = []
     totalItems.value = 0
     totalPages.value = 1
@@ -1060,14 +1064,7 @@ const formatStatus = (status: string) => {
   return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
-  })
-}
+const formatDate = (dateString: string) => formatDateOnly(dateString)
 
 const navigateToSchedule = (maintenance?: any) => {
   // If a maintenance record (e.g., cancelled) is provided, pass external assetId as query param
@@ -1298,7 +1295,7 @@ const completeMaintenance = async () => {
         row.completionNotes = completeForm.completionNotes || null
       }
 
-      showToast(`Maintenance completed successfully!<br>Actual Cost: ₹${parseFloat(completeForm.actualCost).toFixed(2)}${completeForm.completionNotes ? '<br>Notes: ' + completeForm.completionNotes : ''}`, 'success')
+      toastStore.showSuccess('Success', `Maintenance completed successfully! Actual Cost: ₹${parseFloat(completeForm.actualCost).toFixed(2)}${completeForm.completionNotes ? ' Notes: ' + completeForm.completionNotes : ''}`)
       const modal = Modal.getInstance(completeModal.value!)
       if (modal) modal.hide()
 
@@ -1307,12 +1304,12 @@ const completeMaintenance = async () => {
       completeForm.completionNotes = ''
       completeFormErrors.actualCost = ''
     } else {
-      showToast(response.message || 'Error completing maintenance. Please try again.', 'error')
+      toastStore.showError('Error', response.message || 'Error completing maintenance. Please try again.')
     }
 
   } catch (error) {
     console.error('Error completing maintenance:', error)
-    showToast('Error completing maintenance. Please try again.', 'error')
+    toastStore.showError('Error', 'Error completing maintenance. Please try again.')
   } finally {
     completeLoading.value = false
   }
@@ -1342,7 +1339,7 @@ const cancelMaintenance = async () => {
         row.cancellationNotes = cancelForm.cancelNotes
       }
 
-      showToast(`Maintenance cancelled successfully!<br>Notes: ${cancelForm.cancelNotes}`, 'success')
+      toastStore.showSuccess('Success', `Maintenance cancelled successfully! Notes: ${cancelForm.cancelNotes}`)
       const modal = Modal.getInstance(cancelModal.value!)
       if (modal) modal.hide()
 
@@ -1350,12 +1347,12 @@ const cancelMaintenance = async () => {
       cancelForm.cancelNotes = ''
       cancelFormErrors.cancelNotes = ''
     } else {
-      showToast(response.message || 'Error cancelling maintenance. Please try again.', 'error')
+      toastStore.showError('Error', response.message || 'Error cancelling maintenance. Please try again.')
     }
 
   } catch (error) {
     console.error('Error cancelling maintenance:', error)
-    showToast('Error cancelling maintenance. Please try again.', 'error')
+    toastStore.showError('Error', 'Error cancelling maintenance. Please try again.')
   } finally {
     cancelLoading.value = false
   }
@@ -1610,29 +1607,29 @@ const isHistoryExpanded = ref(true)
 }
 
 .btn-action.btn-view:hover {
-  color: var(--secondary-purple) !important;
   border-color: var(--secondary-purple) !important;
+  /* Preserve original text color */
 }
 
 .btn-action.btn-edit:hover {
-  color: var(--secondary-orange) !important;
   border-color: var(--secondary-orange) !important;
+  /* Preserve original text color */
 }
 
 .btn-action.btn-complete:hover {
-  color: var(--secondary-green) !important;
   border-color: var(--secondary-green) !important;
+  /* Preserve original text color */
 }
 
 .btn-action.btn-cancel:hover {
-  color: var(--secondary-red) !important;
   border-color: var(--secondary-red) !important;
+  /* Preserve original text color */
 }
 
 .btn-action.btn-reschedule:hover,
 .btn-action.btn-report:hover {
-  color: var(--secondary-purple) !important;
   border-color: var(--secondary-purple) !important;
+  /* Preserve original text color */
 }
 
 /* Table styling */

@@ -672,16 +672,9 @@
     </div>
 
     <!-- Bulk Upload Employees Modal -->
-    <BulkUploadModal
+    <BulkEmployeeUpload
       ref="bulkUploadModal"
-      modal-id="employeeBulkUploadModal"
-      title="Bulk Upload Employees"
-      entity-name="employee"
-      :columns="employeeColumns"
-      :template-data="employeeTemplateData"
-      upload-button-text="Upload Employees"
-      @upload="handleBulkUpload"
-      @template-download="handleTemplateDownload"
+      @upload-success="handleBulkUploadSuccess"
     />
 
     <!-- Status Confirmation Modal -->
@@ -754,8 +747,7 @@
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <ToastNotification />
+    
   </div>
 </template>
   
@@ -764,16 +756,18 @@
   import { employeeService } from '@/services/employeeService'
   import { employeeApiService } from '@/services/employeeApi'
   import AppPagination from '@/components/pagination/AppPagination.vue'
-  import BulkUploadModal from '@/components/BulkUploadModal.vue'
+  import BulkEmployeeUpload from '@/views/employees/BulkEmployeeUpload.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
   import ToastNotification from '@/components/common/ToastNotification.vue'
   import { useToastStore } from '@/stores/toast'
+  import { useRouteToast } from '@/composables/useRouteToast'
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination, BulkUploadModal, SearchableDropdown, ToastNotification },
+    components: { AppPagination, BulkEmployeeUpload, SearchableDropdown, ToastNotification },
     setup() {
       const toastStore = useToastStore()
+      useRouteToast()
       return {
         toastStore
       }
@@ -907,71 +901,6 @@
 
         return pages
       },
-      employeeColumns() {
-        return [
-          { 
-            key: 'firstName', 
-            label: 'First Name', 
-            required: true,
-            validation: (value) => {
-              if (!value || value.trim() === '') return 'First name is required'
-              if (value.length < 2 || value.length > 50) return 'First name must be 2-50 characters'
-              if (!/^[A-Za-z\s]+$/.test(value)) return 'First name can only contain letters and spaces'
-              return null
-            }
-          },
-          { 
-            key: 'lastName', 
-            label: 'Last Name', 
-            required: true,
-            validation: (value) => {
-              if (!value || value.trim() === '') return 'Last name is required'
-              if (value.length < 2 || value.length > 50) return 'Last name must be 2-50 characters'
-              if (!/^[A-Za-z\s]+$/.test(value)) return 'Last name can only contain letters and spaces'
-              return null
-            }
-          },
-          { 
-            key: 'email', 
-            label: 'Email', 
-            required: true,
-            validation: (value) => {
-              if (!value || value.trim() === '') return 'Email is required'
-              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Invalid email format'
-              return null
-            }
-          },
-          { 
-            key: 'phone', 
-            label: 'Phone',
-            validation: (value) => {
-              if (value && !value.startsWith('+91')) return 'Phone should start with +91'
-              return null
-            }
-          },
-          { 
-            key: 'dateOfBirth', 
-            label: 'Date of Birth (YYYY-MM-DD)',
-            validation: (value) => {
-              if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Date of Birth must be YYYY-MM-DD'
-              return null
-            }
-          },
-          { key: 'address', label: 'Address' }
-        ]
-      },
-      employeeTemplateData() {
-        return [
-          {
-            firstName: 'Aarav',
-            lastName: 'Sharma',
-            email: 'aarav.sharma@example.com',
-            phone: '+91 9123456789',
-            dateOfBirth: '1992-05-21',
-            address: '123 MG Road Pune'
-          }
-        ]
-      }
     },
     created() {
       this.loadEmployees()
@@ -1078,7 +1007,10 @@
           'var(--secondary-green)', 
           'var(--secondary-pink)',
           'var(--secondary-orange)',
-          'var(--secondary-red)'
+          'var(--secondary-red)',
+          'var(--secondary-blue)',
+          'var(--secondary-brown)',
+          'var(--primary-dark-gray)'
         ]
         // Use employee ID to generate consistent color
         const hash = employeeId.split('').reduce((a, b) => {
@@ -1213,8 +1145,8 @@
             this.selectedEmployee.status = newStatus
           }
           
-          // Show toast in palette colors: green for activation, red for deactivation
-          const toastType = newStatus === 'active' ? 'success' : 'error'
+          // Show toast as success (green) for both activation and deactivation
+          const toastType = 'success'
           const toastTitle = newStatus === 'active' ? 'Activated' : 'Deactivated'
           const toastMessage = `Employee ${employeeName} has been ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`
           // showToast(title, message, type)
@@ -1242,39 +1174,14 @@
         this.$refs.bulkUploadModal.openModal()
       },
       // Bulk upload event handlers
-      handleBulkUpload(data) {
-        this.uploadEmployeesData(data)
-      },
-      handleTemplateDownload(type) {
-        console.log(`Template downloaded: ${type}`)
-      },
-      async uploadEmployeesData(employeeData) {
-        try {
-          // Map to API payloads
-          const payloads = employeeData.map(emp => ({
-            firstName: emp.firstName,
-            lastName: emp.lastName,
-            email: emp.email,
-            phone: emp.phone || undefined,
-            dateOfBirth: emp.dateOfBirth || undefined,
-            address: emp.address || undefined
-          }))
-          
-          // Create employees sequentially
-          for (const data of payloads) {
-            await employeeService.createEmployee(data)
-          }
-          
-          // Refresh the employee list
-          await this.loadEmployees()
-          
-        } catch (e) {
-          console.error('Failed to upload employees:', e)
-        }
+      handleBulkUploadSuccess(result) {
+        console.log('Bulk upload successful:', result)
+        // Refresh the employee list
+        this.loadEmployees()
       },
       issueAsset(employee) {
-        // Navigate to issue asset page
-        this.$router.push(`/app/assets/issue?employeeId=${employee.id}`)
+        // Navigate to issue asset page using database ID
+        this.$router.push(`/app/assets/issue?employeeId=${employee.databaseId}`)
       },
       viewAssetHistory(employee) {
         // Close the employee detail modal (if open) and clean up any backdrops
@@ -1290,12 +1197,12 @@
         document.body.classList.remove('modal-open')
         document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
 
-        // Navigate to employee asset history page
-        this.$router.push(`/app/employees/${employee.id}/history`)
+        // Navigate to employee asset history page using database ID
+        this.$router.push(`/app/employees/${employee.databaseId}/history`)
       },
       collectAsset(asset) {
         const assetId = asset && asset.id ? asset.id : undefined
-        const employeeId = this.selectedEmployee && this.selectedEmployee.id ? this.selectedEmployee.id : undefined
+        const employeeId = this.selectedEmployee && this.selectedEmployee.databaseId ? this.selectedEmployee.databaseId : undefined
         this.$router.push({ path: '/app/assets/collect', query: { ...(assetId && { assetId }), ...(employeeId && { employeeId }) } })
       },
       async loadEmployees() {
@@ -1318,9 +1225,10 @@
           this.totalEmployees = pagination.totalCount || 0
           this.serverTotalPages = pagination.totalPages || 1
           
-          const colorClasses = ['text-primary','text-success','text-info','text-warning','text-secondary','text-danger']
+          const colorClasses = ['text-purple','text-success','text-info','text-warning','text-blue','text-danger','text-brown','text-muted']
           this.employees = list.map((e, idx) => ({
             id: e.employeeId,
+            databaseId: e.id, // Store the database ID for API calls
             name: `${e.firstName} ${e.lastName}`.trim(),
             email: e.email,
             phone: e.phone || '',
@@ -2165,7 +2073,7 @@
 
 .dropdown-item:hover {
   background-color: rgba(51, 31, 234, 0.1);
-  color: #331FEA;
+  /* Preserve original text color */
 }
 
 .dropdown-item:active {
@@ -2570,19 +2478,19 @@
 .employee-card-modern .btn-view:hover {
   background-color: #007bff;
   border-color: #007bff;
-  color: white;
+  /* Preserve original text color */
 }
 
 .employee-card-modern .btn-edit:hover {
   background-color: #6c757d;
   border-color: #6c757d;
-  color: white;
+  /* Preserve original text color */
 }
 
 .employee-card-modern .btn-assign:hover {
   background-color: #28a745;
   border-color: #28a745;
-  color: white;
+  /* Preserve original text color */
 }
 
  

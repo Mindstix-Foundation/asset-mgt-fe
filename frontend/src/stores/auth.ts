@@ -65,12 +65,16 @@ export const useAuthStore = defineStore('auth', () => {
     // Use authService to check authentication status
     if (authService.isAuthenticated()) {
       const userData = authService.getUserData()
-      const authToken = authService.getToken()
       
-      if (userData && authToken) {
+      if (userData) {
         user.value = userData
-        token.value = authToken
+        // Token is in HTTP-only cookies now, no need to store it
+        token.value = null
         isAuthenticated.value = true
+      } else {
+        user.value = null
+        token.value = null
+        isAuthenticated.value = false
       }
     } else {
       user.value = null

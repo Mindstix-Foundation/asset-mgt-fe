@@ -23,7 +23,7 @@
             </div>
             
             <!-- Form -->
-            <form v-else ref="employeeForm" class="needs-validation" @submit.prevent="submitForm" novalidate autocomplete="off">
+            <form v-else ref="employeeForm" class="needs-validation" @submit.prevent="submitForm" @keydown.enter="handleEnterKey" novalidate autocomplete="off">
               
               <!-- Section 1: Basic Information -->
               <fieldset class="form-fieldset">
@@ -258,7 +258,7 @@
     </div>
   </div>
 
-  <!-- Dynamic Toast Container - Created automatically by showToast function -->
+  <!-- Toast notifications are handled by ToastNotification component -->
 </template>
 
 <script setup lang="ts">
@@ -266,10 +266,11 @@ import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { employeeService } from '@/services/employeeService'
 import type { CreateEmployeeData } from '@/services/employeeService'
-import { showToast, showErrorToast, showEmployeeSuccessToast } from '@/utils/toast'
+import { useToastStore } from '@/stores/toast'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Check if we're in edit mode
 const isEditMode = computed(() => route.name === 'edit-employee')
@@ -570,7 +571,7 @@ const loadEmployeeData = async () => {
     })
   } catch (error: any) {
     console.error('Error loading employee data:', error)
-    showErrorToast('Failed to load employee data. Please try again.')
+    toastStore.showError('Error', 'Failed to load employee data. Please try again.')
     router.push('/app/employees')
   } finally {
     isLoading.value = false
@@ -634,7 +635,7 @@ const submitForm = async (event?: Event) => {
       resetForm()
       
       // Show success toast for edit mode with integrated redirect
-      showEmployeeSuccessToast(successMessage.value, true)
+      toastStore.showSuccess('Success', successMessage.value)
     } else {
       // Create new employee
       const employeeData: CreateEmployeeData = {
@@ -652,8 +653,13 @@ const submitForm = async (event?: Event) => {
       // Clear form immediately after successful creation
       resetForm()
       
-      // Show success toast for create mode with integrated redirect
-      showEmployeeSuccessToast(successMessage.value, false)
+      // Redirect to employee list immediately after success
+      router.push('/app/employees')
+      
+      // Show success toast after redirect (with a small delay to ensure page loads)
+      setTimeout(() => {
+        toastStore.showSuccess('Success', successMessage.value)
+      }, 100)
     }
     
   } catch (error: any) {
@@ -673,7 +679,7 @@ const submitForm = async (event?: Event) => {
     }
     
     // This is a backend/API error, so show error toast
-    showErrorToast(errorMsg)
+    toastStore.showError('Error', errorMsg)
   } finally {
     isSubmitting.value = false
   }
@@ -799,42 +805,7 @@ const goBack = () => {
   router.push('/app/employees')
 }
 
-const addAnotherEmployee = () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.toast')
-  existingToasts.forEach(toast => {
-    if ((window as any).bootstrap) {
-      const toastInstance = (window as any).bootstrap.Toast.getInstance(toast)
-      if (toastInstance) toastInstance.hide()
-    }
-  })
-  
-  resetForm()
-  showToast('Ready to add another employee!', 'info')
-  
-  // Focus on first field
-  nextTick(() => {
-    const firstField = document.getElementById('firstName')
-    if (firstField) firstField.focus()
-  })
-}
-
-const viewEmployeeList = () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.toast')
-  existingToasts.forEach(toast => {
-    if ((window as any).bootstrap) {
-      const toastInstance = (window as any).bootstrap.Toast.getInstance(toast)
-      if (toastInstance) toastInstance.hide()
-    }
-  })
-  
-  showToast('Redirecting to Employee List...', 'info')
-  
-  setTimeout(() => {
-    router.push('/app/employees')
-  }, 1500)
-}
+// Removed functions - no longer needed with simple toast notifications
 
 const scrollToFirstError = () => {
   // Hide any existing toasts (but keep this for other error toasts)
@@ -858,6 +829,41 @@ const scrollToFirstError = () => {
   }
 }
 
+// Keyboard navigation handler
+const handleEnterKey = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
+  
+  // Don't submit if user is in a textarea (allow Enter for new lines)
+  if (target.tagName === 'TEXTAREA') {
+    return
+  }
+  
+  // Prevent default Enter behavior
+  event.preventDefault()
+  
+  // If it's the last field or submit button, submit the form
+  const form = employeeForm.value
+  if (!form) return
+  
+  const focusableElements = form.querySelectorAll(
+    'input:not([readonly]):not([disabled]), select:not([disabled]), textarea:not([readonly]):not([disabled]), button:not([disabled])'
+  ) as NodeListOf<HTMLElement>
+  
+  const currentIndex = Array.from(focusableElements).indexOf(target)
+  const isLastField = currentIndex === focusableElements.length - 1
+  
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-primary')) {
+    // Submit the form
+    submitForm()
+  } else {
+    // Move to next field
+    const nextElement = focusableElements[currentIndex + 1]
+    if (nextElement) {
+      nextElement.focus()
+    }
+  }
+}
+
 // Watchers for textarea auto-expansion
 watch(() => formData.address, (newValue) => {
   if (newValue) {
@@ -872,8 +878,7 @@ watch(() => formData.address, (newValue) => {
 
 // Lifecycle
 onMounted(async () => {
-  // Make functions available globally for toast buttons
-  ;(window as any).addAnotherEmployee = addAnotherEmployee
+  // Make functions available globally
   ;(window as any).scrollToFirstError = scrollToFirstError
   
   if (isEditMode.value) {

@@ -1,6 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+import apiClient from './apiClient'
 
 // Types for collect asset API
 export interface ActiveAssignment {
@@ -72,25 +70,14 @@ export interface ReturnAssetResponse {
 }
 
 class CollectAssetApiService {
-  private baseURL = `${API_BASE_URL}/assignments`
-
-  // Get auth token from localStorage
-  private getAuthToken(): string | null {
-    return localStorage.getItem('access_token')
-  }
+  private baseURL = `/assignments`
 
   // Get all active assignments (assigned assets) - NO LIMIT to show all
   async getActiveAssignments(query?: { search?: string; employeeId?: number }): Promise<ActiveAssignmentsResponse> {
     try {
-      const token = this.getAuthToken()
       // Use the enhanced endpoint for collect asset page
       const params = { ...query }
-      const response = await axios.get(`${this.baseURL}/active/collect`, {
-        params,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<ActiveAssignmentsResponse>(`${this.baseURL}/active/collect`, { params })
       return response.data
     } catch (error: any) {
       console.error('Error fetching active assignments:', error)
@@ -101,13 +88,7 @@ class CollectAssetApiService {
   // Return/collect asset from employee
   async collectAsset(assignmentId: number, returnData: ReturnAssignmentDto): Promise<ReturnAssetResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.put(`${this.baseURL}/${assignmentId}/return`, returnData, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.put<ReturnAssetResponse>(`${this.baseURL}/${assignmentId}/return`, returnData)
       return response.data
     } catch (error: any) {
       console.error('Error collecting asset:', error)
@@ -118,12 +99,7 @@ class CollectAssetApiService {
   // Get assignment by ID
   async getAssignmentById(id: number): Promise<{ message: string; data: { assignment: ActiveAssignment } }> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/${id}`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<{ message: string; data: { assignment: ActiveAssignment } }>(`${this.baseURL}/${id}`)
       return response.data
     } catch (error: any) {
       console.error('Error fetching assignment:', error)

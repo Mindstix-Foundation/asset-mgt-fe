@@ -70,10 +70,10 @@
                 
                 <!-- Forgot Password -->
                 <div class="d-flex justify-content-end align-items-center mb-3">
-                  <a href="#" class="forgot-password-link">
+                  <router-link to="/forgot-password" class="forgot-password-link">
                     <i class="fas fa-key me-1"></i>
                     Forgot password?
-                  </a>
+                  </router-link>
                 </div>
                 
                 <!-- Login Button -->

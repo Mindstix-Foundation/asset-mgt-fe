@@ -44,7 +44,7 @@
 
           <!-- Form Body -->
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
-            <form ref="employeeForm" @submit.prevent="submitForm" novalidate>
+            <form ref="employeeForm" @submit.prevent="submitForm" @keydown.enter="handleEnterKey" novalidate>
               <div class="row g-4">
                 <!-- Employee ID (Read-only) -->
                 <div class="col-md-6">
@@ -260,7 +260,7 @@
       </div>
     </div>
 
-    <!-- Dynamic Toast Container - Created automatically by showToast function -->
+    <!-- Toast notifications are handled by ToastNotification component -->
   </div>
 </template>
 
@@ -269,10 +269,11 @@ import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { employeeService } from '@/services/employeeService'
 import type { UpdateEmployeeData } from '@/services/employeeService'
-import { showToast, showErrorToast, showEmployeeSuccessToast } from '@/utils/toast'
+import { useToastStore } from '@/stores/toast'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Get employee ID from route
 const employeeId = computed(() => route.params.id as string)
@@ -584,24 +585,20 @@ const submitForm = async (event?: Event) => {
     const updatedEmployee = response.data.employee
 
     const employeeName = `${updatedEmployee.firstName} ${updatedEmployee.lastName}`
-    showEmployeeSuccessToast(employeeName, true)
-
-    formData.employeeId = updatedEmployee.employeeId
-    formData.firstName = updatedEmployee.firstName
-    formData.lastName = updatedEmployee.lastName
-    formData.email = updatedEmployee.email
-    formData.phone = updatedEmployee.phone || ''
-    formData.dateOfBirth = updatedEmployee.dateOfBirth || ''
-    formData.address = updatedEmployee.address || ''
-    formData.status = updatedEmployee.status || 'ACTIVE'
-
-    originalEmail.value = updatedEmployee.email
+    
+    // Redirect to employee list immediately after success
+    router.push('/app/employees')
+    
+    // Show success toast after redirect (with a small delay to ensure page loads)
+    setTimeout(() => {
+      toastStore.showSuccess('Success', `Employee ${employeeName} updated successfully!`)
+    }, 100)
 
   } catch (error: any) {
     console.error('Error updating employee:', error)
     
     const errorMsg = error?.response?.data?.message || error?.message || 'Failed to update employee. Please try again.'
-    showErrorToast(errorMsg)
+    toastStore.showError('Error', errorMsg)
     
   } finally {
     isSubmitting.value = false
@@ -623,9 +620,42 @@ const scrollToFirstError = () => {
   })
 }
 
-;(window as any).addAnotherEmployee = () => {
-  router.push('/app/employees/add')
+// Keyboard navigation handler
+const handleEnterKey = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
+  
+  // Don't submit if user is in a textarea (allow Enter for new lines)
+  if (target.tagName === 'TEXTAREA') {
+    return
+  }
+  
+  // Prevent default Enter behavior
+  event.preventDefault()
+  
+  // If it's the last field or submit button, submit the form
+  const form = employeeForm.value
+  if (!form) return
+  
+  const focusableElements = form.querySelectorAll(
+    'input:not([readonly]):not([disabled]), select:not([disabled]), textarea:not([readonly]):not([disabled]), button:not([disabled])'
+  ) as NodeListOf<HTMLElement>
+  
+  const currentIndex = Array.from(focusableElements).indexOf(target)
+  const isLastField = currentIndex === focusableElements.length - 1
+  
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-primary')) {
+    // Submit the form
+    submitForm()
+  } else {
+    // Move to next field
+    const nextElement = focusableElements[currentIndex + 1]
+    if (nextElement) {
+      nextElement.focus()
+    }
+  }
 }
+
+// Removed global function - no longer needed with simple toast notifications
 
 onMounted(() => {
   loadEmployeeData()

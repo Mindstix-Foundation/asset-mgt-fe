@@ -407,7 +407,7 @@ Display: 15.6&quot; FHD"
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { showToast, showErrorToast } from '../../utils/toast'
+import { useToastStore } from '@/stores/toast'
 import { assetCategoryService } from '../../services/assetCategoryService'
 import { assetTypeService } from '../../services/assetTypeService'
 import { brandService } from '../../services/brandService'
@@ -418,6 +418,7 @@ import type { Brand } from '../../services/brandService'
 import type { Model } from '../../services/modelService'
 
 const router = useRouter()
+const toastStore = useToastStore()
 
 // State
 const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model'>('category')
@@ -548,7 +549,7 @@ const loadItems = async () => {
 
 const saveEntity = async () => {
   if (!formData.name.trim()) {
-    showErrorToast('Name is required')
+    toastStore.showError('Error', 'Name is required')
     return
   }
   
@@ -589,7 +590,7 @@ const saveEntity = async () => {
           response = await modelService.updateModel(formData.id, data)
           break
       }
-      showToast(`${getEntityTitle().slice(0, -1)} updated successfully!`, 'success')
+      toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} updated successfully!`)
     } else {
       // Create new item
       switch (selectedEntityType.value) {
@@ -606,7 +607,7 @@ const saveEntity = async () => {
           response = await modelService.createModel(data)
           break
       }
-      showToast(`${getEntityTitle().slice(0, -1)} created successfully!`, 'success')
+      toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} created successfully!`)
     }
     
     resetForm()
@@ -632,7 +633,7 @@ const saveEntity = async () => {
     
   } catch (error: any) {
     console.error('Error saving entity:', error)
-    showErrorToast(error.message || `Failed to save ${getEntityTitle().slice(0, -1).toLowerCase()}`)
+    toastStore.showError('Error', error.message || `Failed to save ${getEntityTitle().slice(0, -1).toLowerCase()}`)
   } finally {
     isSaving.value = false
   }
@@ -757,7 +758,7 @@ const confirmDelete = async () => {
         break
     }
     
-    showToast(`${getEntityTitle().slice(0, -1)} deleted successfully!`, 'success')
+    toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} deleted successfully!`)
     await loadItems()
     
     // Close modal
@@ -766,7 +767,7 @@ const confirmDelete = async () => {
     
   } catch (error: any) {
     console.error('Error deleting item:', error)
-    showErrorToast(error.message || `Failed to delete ${getEntityTitle().slice(0, -1).toLowerCase()}`)
+    toastStore.showError('Error', error.message || `Failed to delete ${getEntityTitle().slice(0, -1).toLowerCase()}`)
   }
 }
 
@@ -811,7 +812,7 @@ const refreshCategories = async () => {
     categories.value = response.data.assetCategories
   } catch (error) {
     console.error('Error refreshing categories:', error)
-    showErrorToast('Failed to refresh categories')
+    toastStore.showError('Error', 'Failed to refresh categories')
   } finally {
     isLoadingCategories.value = false
   }
@@ -824,7 +825,7 @@ const refreshAssetTypes = async () => {
     assetTypes.value = response.data.assetTypes
   } catch (error) {
     console.error('Error refreshing asset types:', error)
-    showErrorToast('Failed to refresh asset types')
+    toastStore.showError('Error', 'Failed to refresh asset types')
   } finally {
     isLoadingAssetTypes.value = false
   }
@@ -837,7 +838,7 @@ const refreshBrands = async () => {
     brands.value = response.data.brands
   } catch (error) {
     console.error('Error refreshing brands:', error)
-    showErrorToast('Failed to refresh brands')
+    toastStore.showError('Error', 'Failed to refresh brands')
   } finally {
     isLoadingBrands.value = false
   }
@@ -853,7 +854,7 @@ const loadInitialData = async () => {
       categories.value = categoryResponse.data.assetCategories
     } catch (error) {
       console.error('Error loading categories:', error)
-      showErrorToast('Failed to load categories')
+      toastStore.showError('Error', 'Failed to load categories')
     } finally {
       isLoadingCategories.value = false
     }
@@ -865,7 +866,7 @@ const loadInitialData = async () => {
       assetTypes.value = typeResponse.data.assetTypes
     } catch (error) {
       console.error('Error loading asset types:', error)
-      showErrorToast('Failed to load asset types')
+      toastStore.showError('Error', 'Failed to load asset types')
     } finally {
       isLoadingAssetTypes.value = false
     }
@@ -877,7 +878,7 @@ const loadInitialData = async () => {
       brands.value = brandResponse.data.brands
     } catch (error) {
       console.error('Error loading brands:', error)
-      showErrorToast('Failed to load brands')
+      toastStore.showError('Error', 'Failed to load brands')
     } finally {
       isLoadingBrands.value = false
     }
@@ -889,7 +890,7 @@ const loadInitialData = async () => {
       models.value = modelResponse.data.models
     } catch (error) {
       console.error('Error loading models:', error)
-      showErrorToast('Failed to load models')
+      toastStore.showError('Error', 'Failed to load models')
     } finally {
       isLoadingModels.value = false
     }
@@ -897,7 +898,7 @@ const loadInitialData = async () => {
     await loadItems()
   } catch (error) {
     console.error('Error loading initial data:', error)
-    showErrorToast('Failed to load initial data')
+    toastStore.showError('Error', 'Failed to load initial data')
   }
 }
 

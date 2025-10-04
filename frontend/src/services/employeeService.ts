@@ -1,5 +1,5 @@
-import { apiService } from './api'
-import type { ApiResponse } from './api'
+import { apiService, type ApiResponse } from './apiClient'
+import apiClient from './apiClient'
 
 // Types based on the API specification
 export interface Employee {
@@ -280,6 +280,106 @@ class EmployeeService {
     }
 
     return errors
+  }
+
+  /**
+   * Validate bulk upload file for employees
+   */
+  async validateBulkUpload(file: File): Promise<ApiResponse<{ errors: any[], totalRows: number }>> {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    try {
+      const response = await apiClient.post('/employees/bulk-upload/validate', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error: any) {
+      const errorData = error.response?.data || {
+        message: 'Validation failed',
+        error: error.message
+      }
+      const err = new Error(errorData.error || errorData.message || 'Validation failed')
+      ;(err as any).response = { data: errorData, status: error.response?.status }
+      throw err
+    }
+  }
+
+  /**
+   * Bulk upload employees
+   */
+  async bulkUploadEmployees(file: File, validateOnly: boolean = false): Promise<ApiResponse<{ imported: number, errors: any[] }>> {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('validateOnly', validateOnly.toString())
+    
+    try {
+      const response = await apiClient.post('/employees/bulk-upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error: any) {
+      const errorData = error.response?.data || {
+        message: 'Upload failed',
+        error: error.message
+      }
+      const err = new Error(errorData.error || errorData.message || 'Upload failed')
+      ;(err as any).response = { data: errorData, status: error.response?.status }
+      throw err
+    }
+  }
+
+  // Export employees to Excel (server-side)
+  async exportEmployeesToExcel(params: EmployeeQueryParams = {}): Promise<void> {
+    const searchParams = new URLSearchParams()
+    
+    // Add all query parameters
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, value.toString())
+      }
+    })
+
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `/employees/export?${queryString}` : '/employees/export'
+    
+    try {
+      console.log('Employee export request:', { endpoint })
+      
+      const response = await apiClient.get(endpoint, {
+        responseType: 'blob',
+      })
+
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers['content-disposition']
+      let filename = 'employees_export.xlsx'
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      // Create blob and download
+      const blob = response.data
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      
+      console.log('Employee export completed successfully')
+    } catch (error) {
+      console.error('Error exporting employees:', error)
+      throw error
+    }
   }
 }
 

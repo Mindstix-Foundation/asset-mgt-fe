@@ -1341,7 +1341,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useToastStore } from '@/stores/toast'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
 import { assetService } from '../../services/assetService'
 import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
@@ -1351,6 +1352,8 @@ import NotesTextarea from '@/components/common/NotesTextarea.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
 
 const router = useRouter()
+const route = useRoute()
+const toastStore = useToastStore()
 
 // Local types for display
 interface AssetDisplayItem {
@@ -2416,6 +2419,36 @@ onMounted(async () => {
   // Set default view based on screen size
   setDefaultView()
   
+  // If redirected here with toast query, show it and then clear it
+  const toastType = route.query.toastType as string | undefined
+  const toastTitle = route.query.toastTitle as string | undefined
+  const toastMessage = route.query.toastMessage as string | undefined
+  if (toastType && toastTitle && toastMessage) {
+    console.log('[Assets] showing toast from onMounted query:', { toastType, toastTitle, toastMessage })
+    if (toastType === 'success') toastStore.showSuccess(toastTitle, toastMessage)
+    else if (toastType === 'error') toastStore.showError(toastTitle, toastMessage)
+    else if (toastType === 'warning') toastStore.showWarning(toastTitle, toastMessage)
+    else toastStore.showInfo(toastTitle, toastMessage)
+    
+    // Clean the query so the toast doesn't repeat on navigation
+    router.replace({ path: route.path })
+  }
+  
+  // Also handle cases where component is reused (watch query)
+  watch(() => route.query, (q) => {
+    const tType = q.toastType as string | undefined
+    const tTitle = q.toastTitle as string | undefined
+    const tMsg = q.toastMessage as string | undefined
+    if (tType && tTitle && tMsg) {
+      console.log('[Assets] showing toast from route watcher:', { tType, tTitle, tMsg })
+      if (tType === 'success') toastStore.showSuccess(tTitle, tMsg)
+      else if (tType === 'error') toastStore.showError(tTitle, tMsg)
+      else if (tType === 'warning') toastStore.showWarning(tTitle, tMsg)
+      else toastStore.showInfo(tTitle, tMsg)
+      router.replace({ path: route.path })
+    }
+  }, { deep: true })
+  
   // Add resize listener to update view on screen size change
   window.addEventListener('resize', handleResize)
   
@@ -2499,7 +2532,7 @@ onUnmounted(() => {
 
 .dropdown-item:hover {
   background-color: rgba(51, 31, 234, 0.1);
-  color: #331FEA;
+  /* Preserve original text color */
 }
 
 .dropdown-item:active {

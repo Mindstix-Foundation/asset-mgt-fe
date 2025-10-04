@@ -121,13 +121,12 @@ class EmployeeApiService {
     }
   }
 
-  // Get active employees (for issue asset page) - NO LIMIT to show all employees
+  // Get active employees (for issue asset page) - Use dropdowns endpoint to get all employees without pagination
   async getActiveEmployees(query?: Omit<EmployeeQueryDto, 'status' | 'limit'>): Promise<EmployeeListResponse> {
     try {
-      // Remove limit to get all active employees
-      const activeQuery = { ...query, status: 'ACTIVE' as const }
-      const response = await apiClient.get(this.baseURL, {
-        params: activeQuery
+      // Use the dropdowns endpoint which returns all employees without pagination
+      const response = await apiClient.get(`${this.baseURL}/dropdowns`, {
+        params: { status: 'ACTIVE' }
       })
       return response.data
     } catch (error: any) {
@@ -150,6 +149,17 @@ class EmployeeApiService {
       return response.data
     } catch (error: any) {
       console.error('Error fetching employees for dropdowns:', error)
+      throw this.handleError(error)
+    }
+  }
+
+  // Get active employees excluding admins for admin assignment
+  async getNonAdminEmployeesForDropdown(): Promise<{ success: boolean; data: any[] }> {
+    try {
+      const response = await apiClient.get(`${this.baseURL}/non-admin-dropdown`)
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching non-admin employees for dropdown:', error)
       throw this.handleError(error)
     }
   }

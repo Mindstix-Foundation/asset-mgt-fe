@@ -16,6 +16,16 @@ const router = createRouter({
       redirect: '/'
     },
     {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/auth/ForgotPasswordView.vue'),
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/auth/ResetPasswordView.vue'),
+    },
+    {
       path: '/app',
       component: MainLayout,
       redirect: '/app/dashboard',
@@ -120,14 +130,35 @@ const router = createRouter({
           name: 'reports',
           component: () => import('../views/reports/ReportsView.vue'),
         },
+        {
+          path: 'change-password',
+          name: 'change-password',
+          component: () => import('../views/auth/ChangePasswordView.vue'),
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('../views/profile/ProfileView.vue'),
+        },
+        {
+          path: 'manage-admins',
+          name: 'manage-admins',
+          component: () => import('../views/admin/ManageAdminsView.vue'),
+        },
       ],
     },
   ],
 })
 
+// Public routes that don't require authentication
+const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password']
+
 // Navigation guards
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  
+  // Ensure auth status is up to date
+  authStore.checkAuthStatus()
   
   // Check if user is authenticated
   const isAuthenticated = authStore.isAuthenticated

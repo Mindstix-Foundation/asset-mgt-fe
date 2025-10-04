@@ -31,7 +31,7 @@
             </RouterLink>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent="handleQRScanner">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
               QR Scanner
             </a>
           </li>
@@ -39,7 +39,7 @@
         
         <!-- User Info and Logout -->
         <div class="navbar-user-section d-flex align-items-center">
-          <div class="user-info d-flex align-items-center">
+          <div class="user-info d-flex align-items-center" @click="handleProfile" style="cursor: pointer;" title="View Profile">
             <i class="fas fa-user-circle me-2 user-icon"></i>
             <span class="username">
               {{ authStore.getUsername() || 'Admin User' }}
@@ -90,7 +90,7 @@
             </RouterLink>
           </li>
           <li class="sidebar-nav-item">
-            <a class="sidebar-nav-link" href="#" @click.prevent="handleQRScanner">
+            <a class="sidebar-nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
               <i class="fas fa-qrcode sidebar-nav-icon"></i>
               QR Scanner
             </a>
@@ -100,13 +100,17 @@
       
       <!-- Sidebar Footer with User Info -->
       <div class="sidebar-footer">
-        <div class="sidebar-user-info">
+        <div class="sidebar-user-info" @click="handleProfile" style="cursor: pointer;">
           <i class="fas fa-user-circle sidebar-user-icon"></i>
           <div class="sidebar-user-details">
             <span class="sidebar-username">{{ authStore.getUsername() || 'Admin User' }}</span>
             <span class="sidebar-user-role">Administrator</span>
           </div>
         </div>
+        <button @click="handleProfile" class="sidebar-profile-btn">
+          <i class="fas fa-user me-2"></i>
+          My Profile
+        </button>
         <button @click="handleLogout" class="sidebar-logout-btn">
           <i class="fas fa-sign-out-alt me-2"></i>
           Logout
@@ -174,9 +178,12 @@ const handleLogout = () => {
   router.push('/')
 }
 
-const handleQRScanner = () => {
-  alert('QR Scanner functionality - to be implemented')
+const handleProfile = () => {
+  router.push('/app/profile')
 }
+
+// QR scanner disabled - keep placeholder without action
+const handleQRScanner = () => {}
 
 const getNavIcon = (itemName: string) => {
   const icons: Record<string, string> = {
@@ -284,6 +291,13 @@ watch(() => route.path, () => {
 
 .user-info {
   color: var(--primary-dark-gray);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.user-info:hover {
+  background-color: rgba(102, 126, 234, 0.05);
 }
 
 .user-icon {
@@ -295,6 +309,7 @@ watch(() => route.path, () => {
   font-size: 0.9rem;
   font-weight: 500;
 }
+
 
 /* Logout button styling */
 .btn-logout {
@@ -487,6 +502,35 @@ watch(() => route.path, () => {
   color: var(--primary-dark-gray);
   margin-top: 0.25rem;
 }
+
+.sidebar-user-info:hover {
+  background-color: rgba(102, 126, 234, 0.05);
+  border-radius: 0.5rem;
+}
+
+.sidebar-profile-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #667eea;
+  border: 1px solid #667eea;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-profile-btn:hover {
+  background-color: #5469d4;
+  border-color: #5469d4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
 
 .sidebar-logout-btn {
   width: 100%;

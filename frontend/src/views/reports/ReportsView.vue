@@ -11,7 +11,7 @@
 
       <!-- Quick Report Cards -->
       <div class="row mb-5">
-        <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body text-center p-4">
               <i class="fas fa-file-excel fa-3x mb-3" style="color: var(--secondary-purple) !important;"></i>
@@ -30,7 +30,7 @@
           </div>
         </div>
         
-        <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body text-center p-4">
               <i class="fas fa-users fa-3x mb-3" style="color: var(--secondary-green) !important;"></i>
@@ -49,12 +49,12 @@
           </div>
         </div>
         
-        <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body text-center p-4">
               <i class="fas fa-tools fa-3x mb-3" style="color: var(--secondary-orange) !important;"></i>
               <h5 class="card-title">Maintenance Report</h5>
-              <p class="card-text text-muted">Maintenance history and costs</p>
+              <p class="card-text text-muted">Completed maintenance history and costs</p>
               <button 
                 class="btn btn-warning"
                 @click="handleQuickExport('maintenance')"
@@ -68,18 +68,6 @@
           </div>
         </div>
         
-        <div class="col-12 col-md-6 col-lg-3 mb-3">
-          <div class="card border-0 shadow-sm h-100 stats-card-modern">
-            <div class="card-body text-center p-4">
-              <i class="fas fa-chart-line fa-3x mb-3" style="color: var(--secondary-pink) !important;"></i>
-              <h5 class="card-title">Audit Log Report</h5>
-              <p class="card-text text-muted">Complete audit trail of all activities</p>
-              <button class="btn btn-audit">
-                <i class="fas fa-download me-1"></i>Generate Excel
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Custom Reports Section -->
@@ -100,37 +88,59 @@
           <form @submit.prevent>
             <div class="row">
               <div class="col-12 col-md-3 mb-3">
-                <label class="form-label">Report Type</label>
-                <select class="form-select" v-model="customFilters.reportType">
-                  <option value="assets">Asset Report</option>
-                  <option value="employees">Employee Report</option>
-                  <option value="maintenance">Maintenance Report</option>
-                  <option value="audit">Audit Log Report</option>
-                </select>
+                <SearchableDropdown
+                  id="report-type"
+                  label="Report Type"
+                  placeholder="Select report type"
+                  :items="reportTypeOptions"
+                  v-model="selectedReportType"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                />
               </div>
 
-              <div class="col-12 col-md-2 mb-3">
-                <label class="form-label">Asset Type</label>
-                <select class="form-select" v-model="customFilters.assetType">
-                  <option value="">All Types</option>
-                  <option value="Laptop">Laptop</option>
-                  <option value="Monitor">Monitor</option>
-                  <option value="Mobile">Mobile</option>
-                  <option value="Tablet">Tablet</option>
-                  <option value="Accessories">Accessories</option>
-                </select>
+              <div class="col-12 col-md-3 mb-3" v-if="customFilters.reportType === 'assets'">
+                <SearchableDropdown
+                  id="report-asset-type"
+                  label="Asset Type"
+                  placeholder="Select asset type"
+                  :items="[{ value: '', label: 'All Types' }, ...assetTypes]"
+                  v-model="selectedAssetType"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                  :disabled="isLoadingDropdowns"
+                />
               </div>
+
+              <div class="col-12 col-md-3 mb-3" v-if="customFilters.reportType === 'assets'">
+                <SearchableDropdown
+                  id="report-asset-status"
+                  label="Asset Status"
+                  placeholder="Select asset status"
+                  :items="[{ value: '', label: 'All Status' }, ...assetStatuses]"
+                  v-model="selectedAssetStatus"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                  :disabled="isLoadingDropdowns"
+                />
+              </div>
+
+              
 
               <div class="col-12 col-md-3 mb-3">
-                <label class="form-label">Date Range</label>
-                <select class="form-select" v-model="customFilters.dateRange" @change="handleDateRangeChange">
-                  <option value="last30">Last 30 Days</option>
-                  <option value="last3months">Last 3 Months</option>
-                  <option value="last6months">Last 6 Months</option>
-                  <option value="lastyear">Last Year</option>
-                  <option value="alltime">All Time</option>
-                  <option value="custom">Custom Range</option>
-                </select>
+                <SearchableDropdown
+                  id="report-date-range"
+                  label="Date Range"
+                  placeholder="Select date range"
+                  :items="dateRangeOptions"
+                  v-model="selectedDateRange"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                />
               </div>
             </div>
             
@@ -193,13 +203,13 @@
       <!-- Analytics Cards -->
       <div class="row mb-5 analytics-cards" v-if="analyticsData">
         <!-- Asset Distribution by Type -->
-        <div class="col-12 col-xl-3 col-lg-6 mb-4">
+        <div class="col-12 col-lg-4 mb-4">
           <div class="card compact-chart-card">
             <div class="card-header compact-header">
               <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Asset Distribution</h6>
             </div>
-            <div class="card-body p-3">
-              <div class="mini-chart-container mb-3 d-flex justify-content-center">
+            <div class="card-body p-2">
+              <div class="mini-chart-container mb-2 d-flex justify-content-center">
                 <canvas ref="assetDistributionChart" width="200" height="150"></canvas>
               </div>
               <div class="compact-stats">
@@ -214,12 +224,12 @@
         </div>
 
         <!-- Asset Status Overview -->
-        <div class="col-12 col-xl-3 col-lg-6 mb-4">
+        <div class="col-12 col-lg-4 mb-4">
           <div class="card compact-chart-card">
             <div class="card-header compact-header">
               <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Status Overview</h6>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-2">
               <div class="status-grid">
                 <div 
                   v-for="status in analyticsData.statusOverview" 
@@ -236,38 +246,17 @@
                     <div class="status-percent">{{ status.percentage }}%</div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Asset Value Distribution -->
-        <div class="col-12 col-xl-3 col-lg-6 mb-4">
-          <div class="card compact-chart-card">
-            <div class="card-header compact-header">
-              <h6 class="mb-0"><i class="bi bi-currency-rupee me-2"></i>Value Distribution</h6>
-            </div>
-            <div class="card-body p-3">
-              <div class="value-summary mb-3">
-                <div class="total-value">₹{{ formatCurrency(analyticsData.totalValue) }}</div>
-                <div class="total-label">Total Asset Value</div>
-              </div>
-              <div class="value-breakdown">
-                <div 
-                  v-for="item in analyticsData.assetDistribution" 
-                  :key="item.type"
-                  class="value-row"
-                >
-                  <div class="value-bar">
-                    <div 
-                      class="value-fill" 
-                      :style="{ 
-                        width: `${(item.value / analyticsData.totalValue) * 100}%`, 
-                        backgroundColor: getColorForType(item.type) 
-                      }"
-                    ></div>
+                
+                <!-- Total Assets Card -->
+                <div class="status-mini-card total-assets">
+                  <div class="status-icon">
+                    <i class="fas fa-laptop"></i>
                   </div>
-                  <span class="value-text">{{ item.type }} ₹{{ formatCurrency(item.value) }}</span>
+                  <div class="status-info">
+                    <div class="status-count">{{ getTotalAssetCount() }}</div>
+                    <div class="status-label">Total Assets</div>
+                    <div class="status-percent">100%</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -275,7 +264,7 @@
         </div>
 
         <!-- Recent Activity -->
-        <div class="col-12 col-xl-3 col-lg-6 mb-4">
+        <div class="col-12 col-lg-4 mb-4">
           <div class="card compact-chart-card">
             <div class="card-header compact-header d-flex justify-content-between align-items-center">
               <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h6>
@@ -283,17 +272,42 @@
             </div>
             <div class="card-body p-0">
               <div class="activity-list">
-                <div 
-                  v-for="activity in analyticsData.recentActivity" 
-                  :key="activity.id"
-                  class="activity-item"
-                >
-                  <div class="activity-icon" :class="activity.type">
-                    <i :class="getActivityIcon(activity.type)"></i>
+                <!-- Loading state -->
+                <div v-if="isLoadingAnalytics" class="activity-item" v-for="n in 4" :key="'loading-' + n">
+                  <div class="activity-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
                   </div>
                   <div class="activity-content">
-                    <div class="activity-text">{{ activity.description }}</div>
-                    <div class="activity-time">{{ formatTimeAgo(activity.timestamp) }}</div>
+                    <div class="placeholder-glow">
+                      <span class="placeholder col-6"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-8"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-4"></span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Actual data -->
+                <div v-else-if="recentActivities.length > 0" v-for="activity in recentActivities" :key="activity.id" 
+                     class="activity-item">
+                  <div class="activity-icon" :class="getActivityType(activity.title)">
+                    <i :class="getActivityIcon(activity.title)"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-text">{{ activity.title }}</div>
+                    <div class="activity-description">{{ activity.description }}</div>
+                    <div class="activity-time">{{ activity.timeAgo }}</div>
+                  </div>
+                </div>
+                
+                <!-- No data state -->
+                <div v-else class="activity-item text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No recent activities found
                   </div>
                 </div>
               </div>
@@ -339,7 +353,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in previewData" :key="item.id || item.assetId || item.employeeId">
+                  <tr v-for="item in previewData" :key="item.id || item.maintenanceId || item.assetId || item.employeeId">
                     <td v-for="column in getPreviewColumns()" :key="column.key">
                       <span v-if="column.key === 'status'" class="badge" :class="getBadgeClass(item[column.key])">
                         <i :class="getStatusIcon(item[column.key])" class="me-1"></i>
@@ -386,9 +400,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/reportsApi'
+import { dashboardApi } from '@/services/dashboardApi'
+import { assetService } from '@/services/assetService'
+import { employeeService } from '@/services/employeeService'
+import { maintenanceService } from '@/services/maintenanceService'
+import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
 
 Chart.register(...registerables)
 
@@ -403,6 +422,19 @@ const previewData = ref<any[]>([])
 const previewTotal = ref(0)
 const showCustomDateRange = ref(false)
 
+// Recent activities data (used by template)
+const recentActivities = ref<Array<{
+  id: string
+  title: string
+  description: string
+  timeAgo: string
+  needsRealTimeUpdate: boolean
+  timestamp: Date
+}>>([])
+
+// Real-time update intervals
+let realTimeUpdateId: number | undefined
+
 // Chart refs
 const assetDistributionChart = ref<HTMLCanvasElement>()
 
@@ -410,9 +442,84 @@ const assetDistributionChart = ref<HTMLCanvasElement>()
 const customFilters = ref<ReportFilters>({
   reportType: 'assets',
   assetType: '',
+  assetStatus: '',
+  
   dateRange: 'last30',
   fromDate: '',
   toDate: ''
+})
+
+// Dynamic dropdown data
+const assetTypes = ref<Array<{value: string, label: string}>>([])
+const assetStatuses = ref<Array<{value: string, label: string}>>([])
+const isLoadingDropdowns = ref(false)
+
+// Selected SearchableDropdown models
+const selectedAssetType = ref<SDItem | null>(null)
+const selectedAssetStatus = ref<SDItem | null>(null)
+const selectedReportType = ref<SDItem | null>({ value: 'assets', label: 'Asset Report' })
+const selectedDateRange = ref<SDItem | null>({ value: 'last30', label: 'Last 30 Days' })
+
+const reportTypeOptions = [
+  { value: 'assets', label: 'Asset Report' },
+  { value: 'employees', label: 'Employee Report' },
+  { value: 'maintenance', label: 'Maintenance Report' }
+]
+
+const dateRangeOptions = [
+  { value: 'last7', label: 'Last 7 Days' },
+  { value: 'last30', label: 'Last 30 Days' },
+  { value: 'last3months', label: 'Last 3 Months' },
+  { value: 'last6months', label: 'Last 6 Months' },
+  { value: 'lastyear', label: 'Last Year' },
+  { value: 'alltime', label: 'All Time' },
+  { value: 'custom', label: 'Custom Range' }
+]
+// Helpers
+const toISODate = (val: any): string => {
+  if (!val) return ''
+  try {
+    if (typeof val === 'string') {
+      // Handle 'DD/MM/YYYY, HH:mm:ss'
+      const m = val.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/)
+      if (m) {
+        const day = parseInt(m[1], 10)
+        const month = parseInt(m[2], 10) - 1
+        const year = parseInt(m[3], 10)
+        const hh = parseInt(m[4] || '0', 10)
+        const mm = parseInt(m[5] || '0', 10)
+        const ss = parseInt(m[6] || '0', 10)
+        const d = new Date(year, month, day, hh, mm, ss)
+        if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+      }
+    }
+    const d = new Date(val)
+    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+    return ''
+  } catch { return '' }
+}
+
+
+// Sync dropdown models into customFilters
+watch(selectedAssetType, (val: SDItem | null) => {
+  customFilters.value.assetType = (val?.value as string) ?? ''
+})
+watch(selectedAssetStatus, (val: SDItem | null) => {
+  customFilters.value.assetStatus = (val?.value as string) ?? ''
+})
+
+watch(selectedReportType, (val: SDItem | null) => {
+  const v = (val?.value as string) || 'assets'
+  if (v === 'assets' || v === 'employees' || v === 'maintenance') {
+    customFilters.value.reportType = v as any
+  } else {
+    customFilters.value.reportType = 'assets'
+  }
+})
+
+watch(selectedDateRange, (val: SDItem | null) => {
+  customFilters.value.dateRange = (val?.value as string) || 'last30'
+  handleDateRangeChange()
 })
 
 // Helper to read CSS variables defined in main.css
@@ -421,13 +528,116 @@ const getCssVar = (name: string, fallback: string): string => {
   return value || fallback
 }
 
+// Transform asset distribution to show all types even with 0 assets
+const transformAssetDistributionForReports = (assetDistribution: any[]) => {
+  // Define all standard asset types
+  const standardTypes = ['Laptop', 'Desktop', 'Monitor', 'Mobile', 'Tablet', 'Accessories']
+  
+  // Create a map of existing data
+  const existingData = new Map()
+  assetDistribution.forEach(item => {
+    existingData.set(item.type, item)
+  })
+  
+  // Create result array with all standard types
+  const result = standardTypes.map(type => {
+    const existing = existingData.get(type)
+    if (existing) {
+      return existing
+    } else {
+      // Return 0 values for missing types
+      return {
+        type: type,
+        count: 0,
+        percentage: 0,
+        value: 0
+      }
+    }
+  })
+  
+  // Add any additional types from backend that aren't in standard list
+  assetDistribution.forEach(item => {
+    if (!standardTypes.includes(item.type)) {
+      result.push(item)
+    }
+  })
+  
+  // Sort by percentage (highest to lowest)
+  return result.sort((a, b) => b.percentage - a.percentage)
+}
+
+  // Helper function to determine if an activity should be updated based on its timeAgo
+  function shouldUpdateActivityTime(timeAgo: string): boolean {
+    // Update activities that are less than 1 hour old
+    if (timeAgo === 'Just now' || timeAgo.includes('minute')) {
+      return true
+    }
+    // Don't update activities that are hours, days, etc. old
+    return false
+  }
+
+  // Update real-time activity times
+  function updateRealTimeActivityTimes() {
+    try {
+      // Only update if we have activities
+      if (recentActivities.value.length === 0) {
+        return
+      }
+      
+      // Use backend's needsRealTimeUpdate flag OR check if activities are recent enough
+      const needsUpdateActivities = recentActivities.value.filter(activity => 
+        activity.needsRealTimeUpdate || shouldUpdateActivityTime(activity.timeAgo)
+      )
+      
+      if (needsUpdateActivities.length === 0) {
+        return // No activities need updates
+      }
+      
+      const updatedActivities = dashboardApi.updateActivityTimes(recentActivities.value)
+      
+      // Only update if we have valid results
+      if (updatedActivities && updatedActivities.length > 0) {
+        recentActivities.value = updatedActivities
+      }
+    } catch (error) {
+      console.error('Error updating real-time activity times:', error)
+    }
+  }
+
 // Methods
 const loadAnalyticsData = async () => {
   try {
     isLoadingAnalytics.value = true
     analyticsData.value = await reportsApi.getAnalytics()
+    
+    // Transform asset distribution to show all types even with 0 assets
+    if (analyticsData.value.assetDistribution) {
+      analyticsData.value.assetDistribution = transformAssetDistributionForReports(analyticsData.value.assetDistribution)
+    }
+    
+    // Transform recent activities using dashboardApi
+    if (analyticsData.value.recentActivity) {
+      // Convert the reports API format to dashboard API format
+      const convertedActivities = analyticsData.value.recentActivity.map(activity => ({
+        id: activity.id,
+        type: activity.type as any,
+        description: activity.description,
+        timestamp: typeof activity.timestamp === 'string' ? new Date(activity.timestamp) : new Date(activity.timestamp),
+        timeAgo: activity.timeAgo || 'Unknown', // Use the backend's timeAgo value
+        needsRealTimeUpdate: activity.needsRealTimeUpdate || false,
+        assetId: activity.assetId,
+        employeeId: activity.employeeId,
+        maintenanceId: activity.maintenanceId,
+        vendorId: activity.vendorId
+      }))
+      recentActivities.value = dashboardApi.transformRecentActivity(convertedActivities)
+    }
+    
     await nextTick()
     initializeCharts()
+    
+    // Load dropdown data after analytics data is loaded
+    await loadDropdownData()
   } catch (error) {
     console.error('Error loading analytics data:', error)
     showNotification('Failed to load analytics data', 'error')
@@ -497,28 +707,24 @@ const handleQuickExport = async (reportType: string) => {
     isExporting.value = true
     exportingType.value = reportType
     
-    let blob: Blob
-    let filename: string
-    
     switch (reportType) {
       case 'asset-inventory':
-        blob = await reportsApi.exportAssetInventory()
-        filename = `asset_inventory_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        // Use the same asset export API as the Assets page
+        await assetService.exportAssetsToExcel()
+        showNotification('Asset inventory report exported successfully!', 'success')
         break
       case 'employee-assets':
-        blob = await reportsApi.exportEmployeeAssets()
-        filename = `employee_assets_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        // Use the same employee export API as the Employees page
+        await employeeService.exportEmployeesToExcel()
+        showNotification('Employee assets report exported successfully!', 'success')
         break
       case 'maintenance':
-        blob = await reportsApi.exportMaintenance()
-        filename = `maintenance_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        await maintenanceService.exportMaintenanceToExcel()
+        showNotification('Completed maintenance report exported successfully!', 'success')
         break
       default:
         throw new Error('Unknown report type')
     }
-    
-    reportsApi.downloadFile(blob, filename)
-    showNotification('Report exported successfully!', 'success')
   } catch (error) {
     console.error('Error exporting report:', error)
     showNotification('Failed to export report', 'error')
@@ -536,28 +742,43 @@ const handleCustomExport = async (format: string) => {
     const filters = { ...customFilters.value }
     delete filters.dateRange
     
-    let blob: Blob
-    let filename: string
-    
     switch (customFilters.value.reportType) {
       case 'assets':
-        blob = await reportsApi.exportAssetInventory(filters)
-        filename = `custom_asset_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        // Use the same asset export API as the Assets page with custom filters
+        const assetParams: any = {}
+        if (filters.assetType) assetParams.assetType = filters.assetType
+        if (filters.assetStatus) assetParams.status = filters.assetStatus
+        if (filters.fromDate) assetParams.fromDate = filters.fromDate
+        if (filters.toDate) assetParams.toDate = filters.toDate
+        
+        await assetService.exportAssetsToExcel(assetParams)
+        showNotification('Custom asset report exported successfully!', 'success')
         break
       case 'employees':
-        blob = await reportsApi.exportEmployeeAssets(filters)
-        filename = `custom_employee_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        // Use the same employee export API as the Employees page with custom filters
+        const employeeParams: any = {}
+        if (filters.fromDate) employeeParams.fromDate = filters.fromDate
+        if (filters.toDate) employeeParams.toDate = filters.toDate
+        
+        await employeeService.exportEmployeesToExcel(employeeParams)
+        showNotification('Custom employee report exported successfully!', 'success')
         break
       case 'maintenance':
-        blob = await reportsApi.exportMaintenance(filters)
-        filename = `custom_maintenance_report_${new Date().toISOString().split('T')[0]}.xlsx`
+        const maintenanceParams: any = {
+          sortBy: 'id',
+          sortOrder: 'desc'
+        }
+        if (filters.assetType) maintenanceParams.assetType = filters.assetType
+        if (filters.fromDate) maintenanceParams.scheduledDateFrom = filters.fromDate
+        if (filters.toDate) maintenanceParams.scheduledDateTo = filters.toDate
+        
+        await maintenanceService.exportMaintenanceToExcel(maintenanceParams)
+        showNotification('Custom completed maintenance report exported successfully!', 'success')
         break
       default:
         throw new Error('Unknown report type')
     }
     
-    reportsApi.downloadFile(blob, filename)
-    showNotification('Custom report exported successfully!', 'success')
     showPreviewModal.value = false
   } catch (error) {
     console.error('Error exporting custom report:', error)
@@ -573,10 +794,89 @@ const loadPreviewData = async () => {
     isLoadingPreview.value = true
     const filters = { ...customFilters.value }
     delete filters.dateRange
+
+    const reportType = customFilters.value.reportType || 'assets'
     
-    const response = await reportsApi.getReportPreview(customFilters.value.reportType || 'assets', filters)
-    previewData.value = response.data
-    previewTotal.value = response.total
+
+    switch (reportType) {
+      case 'assets': {
+        const params: any = {
+          page: 1,
+          limit: 5
+        }
+        if (filters.assetType) params.assetType = filters.assetType
+        if (filters.assetStatus) params.status = filters.assetStatus
+        if (filters.fromDate) params.fromDate = filters.fromDate
+        if (filters.toDate) params.toDate = filters.toDate
+
+        const listRes = await assetService.getAssets(params)
+        const items = (listRes as any).data?.assets || (listRes as any).assets || []
+        const pagination = (listRes as any).data?.pagination || (listRes as any).pagination || { totalCount: items.length }
+        const transformed = assetService.transformAssetsForDisplay(items)
+        previewData.value = transformed.slice(0, 5)
+        previewTotal.value = pagination.totalCount || pagination.total || transformed.length
+        break
+      }
+      case 'employees': {
+        const params: any = {
+          page: 1,
+          limit: 5
+        }
+        if (filters.fromDate) params.fromDate = filters.fromDate
+        if (filters.toDate) params.toDate = filters.toDate
+
+        const listRes = await employeeService.getEmployees(params)
+        const employees = (listRes as any).data?.employees || (listRes as any).employees || []
+        const pagination = (listRes as any).data?.pagination || (listRes as any).pagination || { totalCount: employees.length }
+
+        // Map to preview columns structure
+        const mapped = employees.map((e: any) => ({
+          employeeName: `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.employeeId,
+          email: e.email,
+          phoneNumber: e.phoneNumber || e.phone || '-',
+          status: e.status || 'ACTIVE',
+          totalAssetsAssigned: e.assignedAssetsCount || 0
+        }))
+        previewData.value = mapped.slice(0, 5)
+        previewTotal.value = pagination.totalCount || pagination.total || mapped.length
+        break
+      }
+      case 'maintenance': {
+        // Use the reports API to get completed maintenance records only
+        const params: any = {}
+        if (filters.assetType) params.assetType = filters.assetType
+        if (filters.fromDate) params.fromDate = filters.fromDate
+        if (filters.toDate) params.toDate = filters.toDate
+
+        const response = await reportsApi.getReportPreview('maintenance', params)
+        // The response is directly an array, not wrapped in a data property
+        const records = Array.isArray(response) ? response : (response.data || [])
+        
+        // Transform the data to match preview structure
+        const transformed = records.map((record: any) => ({
+          id: record.maintenanceId || record.id,
+          maintenanceId: record.maintenanceId,
+          assetId: record.assetId || '-',
+          assetType: record.assetType || '-',
+          assetBrand: record.assetBrand || '-',
+          maintenanceType: record.maintenanceType || '-',
+          scheduledDate: record.scheduledDate,
+          status: record.status,
+          cost: record.cost || 0,
+          completedDate: record.completedDate || '-'
+        }))
+
+        previewData.value = transformed.slice(0, 5)
+        previewTotal.value = (Array.isArray(response) ? response.length : (response.total || transformed.length))
+        break
+      }
+      default: {
+        // Fallback to reports API
+        const response = await reportsApi.getReportPreview(reportType, filters)
+        previewData.value = (response.data || []).slice(0, 5)
+        previewTotal.value = response.total || (response.data || []).length
+      }
+    }
   } catch (error) {
     console.error('Error loading preview data:', error)
     showNotification('Failed to load preview data', 'error')
@@ -595,6 +895,9 @@ const handleDateRangeChange = () => {
     let fromDate = new Date()
     
     switch (customFilters.value.dateRange) {
+      case 'last7':
+        fromDate.setDate(now.getDate() - 7)
+        break
       case 'last30':
         fromDate.setDate(now.getDate() - 30)
         break
@@ -622,6 +925,8 @@ const clearFilters = () => {
   customFilters.value = {
     reportType: 'assets',
     assetType: '',
+    assetStatus: '',
+    department: '',
     dateRange: 'last30',
     fromDate: '',
     toDate: ''
@@ -647,34 +952,27 @@ const getStatusIcon = (status: string): string => {
     'ASSIGNED': 'fas fa-user-check',
     'AVAILABLE': 'fas fa-check-circle',
     'MAINTENANCE': 'fas fa-tools',
-    'RETIRED': 'fas fa-archive'
+    'IN_MAINTENANCE': 'fas fa-tools',
+    'COMPLETED': 'fas fa-check-circle',
+    'SCHEDULED': 'fas fa-calendar',
+    'CANCELLED': 'fas fa-times-circle',
+    'RETIRED': 'fas fa-archive',
+    'ACTIVE': 'fas fa-user-check',
+    'INACTIVE': 'fas fa-user-times',
+    'TERMINATED': 'fas fa-user-slash',
+    'ON_LEAVE': 'fas fa-calendar-times'
   }
   return icons[status] || 'fas fa-question-circle'
 }
 
-const getActivityIcon = (type: string): string => {
-  const icons: Record<string, string> = {
-    'assigned': 'fas fa-laptop',
-    'maintenance': 'fas fa-tools',
-    'added': 'fas fa-plus',
-    'returned': 'fas fa-undo',
-    'retired': 'fas fa-archive'
-  }
-  return icons[type] || 'fas fa-circle'
-}
 
 const formatStatus = (status: string): string => {
-  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+  if (!status) return '-'
+  const normalized = status.toUpperCase()
+  if (normalized === 'IN_MAINTENANCE') return 'In Maintenance'
+  return normalized.charAt(0) + normalized.slice(1).toLowerCase()
 }
 
-const formatCurrency = (amount: number): string => {
-  if (amount >= 1000000) {
-    return (amount / 1000000).toFixed(1) + 'M'
-  } else if (amount >= 1000) {
-    return (amount / 1000).toFixed(0) + 'K'
-  }
-  return amount.toString()
-}
 
 const formatTimeAgo = (timestamp: string): string => {
   const now = new Date()
@@ -694,8 +992,7 @@ const getReportTitle = (): string => {
   const titles: Record<string, string> = {
     'assets': 'Asset Inventory Report',
     'employees': 'Employee Asset Report',
-    'maintenance': 'Maintenance Report',
-    'audit': 'Audit Log Report'
+    'maintenance': 'Completed Maintenance Report'
   }
   return titles[customFilters.value.reportType || 'assets'] || 'Report'
 }
@@ -718,10 +1015,9 @@ const getPreviewColumns = () => {
       return [
         { key: 'employeeName', label: 'Employee Name', width: '150px' },
         { key: 'email', label: 'Email', width: '180px' },
-        { key: 'department', label: 'Department', width: '120px' },
-        { key: 'position', label: 'Position', width: '120px' },
-        { key: 'totalAssetsAssigned', label: 'Total Assets', width: '100px' },
-        { key: 'totalAssetValue', label: 'Total Value', width: '120px', type: 'currency' }
+        { key: 'phoneNumber', label: 'Phone Number', width: '120px' },
+        { key: 'status', label: 'Status', width: '100px' },
+        { key: 'totalAssetsAssigned', label: 'Total Assets', width: '100px' }
       ]
     case 'maintenance':
       return [
@@ -732,7 +1028,7 @@ const getPreviewColumns = () => {
         { key: 'scheduledDate', label: 'Scheduled Date', width: '120px', type: 'date' },
         { key: 'status', label: 'Status', width: '100px' },
         { key: 'cost', label: 'Cost', width: '100px', type: 'currency' },
-        { key: 'vendor', label: 'Vendor', width: '120px' }
+        { key: 'completedDate', label: 'Completed Date', width: '120px', type: 'date' }
       ]
     default:
       return []
@@ -741,12 +1037,20 @@ const getPreviewColumns = () => {
 
 const getBadgeClass = (status: string): string => {
   const classes: Record<string, string> = {
-    'ASSIGNED': 'badge-assigned',
-    'AVAILABLE': 'badge-available',
-    'MAINTENANCE': 'badge-under-repair',
-    'RETIRED': 'badge-retired'
+    'ASSIGNED': 'badge bg-primary text-white',
+    'AVAILABLE': 'badge bg-success text-white',
+    'MAINTENANCE': 'badge bg-warning text-dark',
+    'IN_MAINTENANCE': 'badge bg-warning text-dark',
+    'COMPLETED': 'badge bg-success text-white',
+    'SCHEDULED': 'badge bg-info text-white',
+    'CANCELLED': 'badge bg-danger text-white',
+    'RETIRED': 'badge bg-secondary text-white',
+    'ACTIVE': 'badge bg-success text-white',
+    'INACTIVE': 'badge bg-warning text-dark',
+    'TERMINATED': 'badge bg-danger text-white',
+    'ON_LEAVE': 'badge bg-info text-white'
   }
-  return classes[status] || 'badge-secondary'
+  return classes[status] || 'badge bg-secondary text-white'
 }
 
 const formatCellValue = (value: any, type?: string): string => {
@@ -754,7 +1058,14 @@ const formatCellValue = (value: any, type?: string): string => {
   
   switch (type) {
     case 'date':
-      return new Date(value).toLocaleDateString()
+      try {
+        if (!value) return '-'
+        const d = typeof value === 'string' ? new Date(value) : value
+        if (isNaN(d?.getTime?.())) return '-'
+        return d.toLocaleDateString()
+      } catch {
+        return '-'
+      }
     case 'currency':
       return `₹${value.toLocaleString()}`
     default:
@@ -767,10 +1078,80 @@ const showNotification = (message: string, type: 'success' | 'error' | 'info' = 
   console.log(`${type.toUpperCase()}: ${message}`)
 }
 
+// Helper functions for activity display
+const getActivityType = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'added'
+  if (title.includes('Asset Issued') || title.includes('Asset Collected')) return 'assigned'
+  if (title.includes('Maintenance')) return 'maintenance'
+  if (title.includes('Employee')) return 'added'
+  if (title.includes('Vendor')) return 'added'
+  return 'added'
+}
+
+const getActivityIcon = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'fas fa-laptop'
+  if (title.includes('Asset Issued')) return 'fas fa-arrow-right'
+  if (title.includes('Asset Collected')) return 'fas fa-arrow-left'
+  if (title.includes('Maintenance')) return 'fas fa-tools'
+  if (title.includes('Employee')) return 'fas fa-user'
+  if (title.includes('Vendor')) return 'fas fa-building'
+  return 'fas fa-circle'
+}
+
+// Calculate total asset count from status overview
+const getTotalAssetCount = (): number => {
+  if (!analyticsData.value?.statusOverview) return 0
+  return analyticsData.value.statusOverview.reduce((total, status) => total + status.count, 0)
+}
+
+// Load dynamic dropdown data
+const loadDropdownData = async () => {
+  try {
+    isLoadingDropdowns.value = true
+    
+    // Load asset types from asset distribution
+    if (analyticsData.value?.assetDistribution) {
+      assetTypes.value = analyticsData.value.assetDistribution
+        .filter(item => item.count > 0) // Only show types with assets
+        .map(item => ({
+          value: item.type,
+          label: item.type
+        }))
+    }
+    
+    // Load asset statuses from status overview
+    if (analyticsData.value?.statusOverview) {
+      assetStatuses.value = analyticsData.value.statusOverview
+        .filter(item => item.count > 0) // Only show statuses with assets
+        .map(item => ({
+          value: item.status,
+          label: formatStatus(item.status)
+        }))
+    }
+    
+    
+    
+  } catch (error) {
+    console.error('Error loading dropdown data:', error)
+  } finally {
+    isLoadingDropdowns.value = false
+  }
+}
+
 // Lifecycle
-onMounted(() => {
-  loadAnalyticsData()
+onMounted(async () => {
+  await loadAnalyticsData()
   handleDateRangeChange()
+  
+  // Update real-time activity times every minute for minute-level updates
+  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 60_000)
+})
+
+onUnmounted(() => {
+  if (realTimeUpdateId) {
+    clearInterval(realTimeUpdateId)
+    realTimeUpdateId = undefined
+  }
 })
 </script>
 
@@ -822,6 +1203,7 @@ onMounted(() => {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   height: 100%;
+  max-height: 400px;
 }
 
 .compact-header {
@@ -840,13 +1222,13 @@ onMounted(() => {
 
 .mini-chart-container {
   position: relative;
-  height: 120px;
+  height: 100px;
 }
 
 .compact-stats .stat-row {
   display: flex;
   align-items: center;
-  padding: 0.4rem 0;
+  padding: 0.3rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -898,10 +1280,22 @@ onMounted(() => {
 .status-mini-card.assigned .status-count { color: var(--secondary-purple); }
 .status-mini-card.available .status-icon,
 .status-mini-card.available .status-count { color: var(--secondary-green); }
+.status-mini-card.in_maintenance .status-icon,
+.status-mini-card.in_maintenance .status-count { color: var(--secondary-orange); }
 .status-mini-card.maintenance .status-icon,
 .status-mini-card.maintenance .status-count { color: var(--secondary-orange); }
 .status-mini-card.retired .status-icon,
 .status-mini-card.retired .status-count { color: var(--primary-dark-gray); }
+.status-mini-card.total-assets .status-icon,
+.status-mini-card.total-assets .status-count { color: var(--secondary-blue); }
+
+/* Ensure maintenance status icons are orange colored */
+.status-mini-card.in_maintenance .status-icon { 
+  color: var(--secondary-orange) !important; 
+}
+.status-mini-card.maintenance .status-icon { 
+  color: var(--secondary-orange) !important; 
+}
 
 .status-count {
   font-size: 1.5rem;
@@ -921,63 +1315,16 @@ onMounted(() => {
   color: var(--primary-dark-gray);
 }
 
-.value-summary {
-  text-align: center;
-  padding: 1rem 0;
-  background-color: rgba(51, 31, 234, 0.05);
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.total-value {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--secondary-purple);
-  margin-bottom: 0.2rem;
-}
-
-.total-label {
-  font-size: 0.75rem;
-  color: var(--primary-dark-gray);
-  font-weight: 600;
-}
-
-.value-breakdown .value-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.value-bar {
-  width: 60px;
-  height: 4px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
-  margin-right: 0.75rem;
-  overflow: hidden;
-}
-
-.value-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 1s ease;
-}
-
-.value-text {
-  font-size: 0.8rem;
-  color: var(--primary-dark-gray);
-  font-weight: 500;
-}
 
 .activity-list {
-  max-height: 280px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
 }
@@ -987,15 +1334,16 @@ onMounted(() => {
 }
 
 .activity-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 0.75rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: white;
+  flex-shrink: 0;
 }
 
 .activity-icon.assigned { background-color: var(--secondary-green); }
@@ -1012,6 +1360,12 @@ onMounted(() => {
   font-size: 0.8rem;
   color: var(--primary-black);
   font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.activity-description {
+  font-size: 0.75rem;
+  color: var(--primary-dark-gray);
   margin-bottom: 0.2rem;
 }
 
@@ -1216,7 +1570,7 @@ onMounted(() => {
 }
 
 /* Responsive adjustments */
-@media (max-width: 1200px) {
+@media (max-width: 992px) {
   .status-grid {
     grid-template-columns: 1fr;
     gap: 0.5rem;

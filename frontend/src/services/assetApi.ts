@@ -1,6 +1,6 @@
-import axios from 'axios'
+import apiClient from './apiClient'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+const API_BASE_URL = ''
 
 // Types for asset API
 export interface AssetQueryDto {
@@ -78,23 +78,12 @@ export interface AssetStats {
 }
 
 class AssetApiService {
-  private baseURL = `${API_BASE_URL}/assets`
-
-  // Get auth token from localStorage
-  private getAuthToken(): string | null {
-    return localStorage.getItem('access_token')
-  }
+  private baseURL = `/assets`
 
   // Get all assets with filtering
   async getAssets(query?: AssetQueryDto): Promise<AssetListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(this.baseURL, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssetListResponse>(this.baseURL, { params: query })
       return response.data
     } catch (error: any) {
       console.error('Error fetching assets:', error)
@@ -105,13 +94,7 @@ class AssetApiService {
   // Get available assets (for issue asset page)
   async getAvailableAssets(query?: AssetQueryDto): Promise<AssetListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/available`, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssetListResponse>(`${this.baseURL}/available`, { params: query })
       return response.data
     } catch (error: any) {
       console.error('Error fetching available assets:', error)
@@ -122,12 +105,7 @@ class AssetApiService {
   // Get asset by ID
   async getAssetById(id: number): Promise<AssetResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/${id}`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssetResponse>(`${this.baseURL}/${id}`)
       return response.data
     } catch (error: any) {
       console.error('Error fetching asset:', error)
@@ -138,12 +116,7 @@ class AssetApiService {
   // Get asset statistics
   async getAssetStats(): Promise<AssetStats> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/stats`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssetStats>(`${this.baseURL}/stats`)
       return response.data
     } catch (error: any) {
       console.error('Error fetching asset stats:', error)
@@ -154,13 +127,7 @@ class AssetApiService {
   // Search assets
   async searchAssets(query: { q: string; [key: string]: any }): Promise<AssetListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/search`, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssetListResponse>(`${this.baseURL}/search`, { params: query })
       return response.data
     } catch (error: any) {
       console.error('Error searching assets:', error)
@@ -171,12 +138,7 @@ class AssetApiService {
   // Generate next asset ID
   async generateAssetId(): Promise<{ message: string; data: { assetId: string } }> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/generate-id`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<{ message: string; data: { assetId: string } }>(`${this.baseURL}/generate-id`)
       return response.data
     } catch (error: any) {
       console.error('Error generating asset ID:', error)
@@ -187,12 +149,7 @@ class AssetApiService {
   // Update asset status only
   async updateAssetStatus(id: number, status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'): Promise<{ message: string; data: { asset: Asset } }> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.put(`${this.baseURL}/${id}`, { status }, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.put<{ message: string; data: { asset: Asset } }>(`${this.baseURL}/${id}`, { status })
       return response.data
     } catch (error: any) {
       console.error('Error updating asset status:', error)
@@ -208,13 +165,7 @@ class AssetApiService {
     modelId?: number
   } = {}): Promise<{ message: string; data: { assets: Asset[] } }> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/dropdowns`, {
-        params,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<{ message: string; data: { assets: Asset[] } }>(`${this.baseURL}/dropdowns`, { params })
       return response.data
     } catch (error: any) {
       console.error('Error getting assets for dropdowns:', error)

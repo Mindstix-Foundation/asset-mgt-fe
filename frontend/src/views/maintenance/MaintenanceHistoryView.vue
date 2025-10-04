@@ -106,7 +106,7 @@
       <div v-else class="maintenance-history-section">
         <h6 class="section-title d-flex align-items-center justify-content-between">
           <span><i class="fas fa-history me-2"></i>Timeline</span>
-          <span class="badge bg-primary">{{ filteredHistory.length }} records</span>
+          <span class="badge bg-primary">{{ totalRecords }} records</span>
         </h6>
 
         <div class="history-timeline">
@@ -169,6 +169,15 @@
             </div>
           </div>
         </div>
+
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
+          <AppPagination 
+            :current-page="currentPage" 
+            :total-pages="totalPages" 
+            @change="onPageChange" 
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -180,6 +189,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { maintenanceService } from '@/services/maintenanceService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import DateField from '@/components/common/DateField.vue'
+import AppPagination from '@/components/pagination/AppPagination.vue'
+import { formatDateOnly, formatDateTime } from '@/utils/date'
 
 interface HistoryItem {
   id: number
@@ -205,6 +216,12 @@ const assetId = String(route.params.assetId || '')
 
 const loading = ref(false)
 const history = ref<HistoryItem[]>([])
+
+// Pagination state
+const currentPage = ref(1)
+const pageSize = ref(20)
+const totalPages = ref(0)
+const totalRecords = ref(0)
 
 // Filters state
 const showFilterDropdown = ref(false)
@@ -237,8 +254,29 @@ const typeOptions = [
 const sortAscending = computed(() => filters.value.sortOrder === 'asc')
 
 const formatStatus = (status: string) => status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
-const formatDate = (dateString?: string | null) => dateString || '-'
-const formatDateTime = (dateString?: string | null) => dateString || '-'
+
+// Format date as "3 Oct 2025" (day month year)
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return '-'
+  return formatDateOnly(dateString, 'en-US')
+}
+
+// Format datetime as "2 Oct 2025 8:10:10" (day month year hour:minute:second)
+const formatDateTime = (dateString?: string | null) => {
+  if (!dateString) return '-'
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return '-'
+  
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
 const getNotesForStatus = (item: any) => {
   switch (item.status) {
     case 'SCHEDULED':
@@ -280,6 +318,12 @@ const clearFilters = () => {
   selectedStatus.value = null
   selectedType.value = null
   selectedSortBy.value = { id: 'date', name: 'Date' }
+  currentPage.value = 1
+  applyFilters()
+}
+
+const onPageChange = (page: number) => {
+  currentPage.value = page
   applyFilters()
 }
 
@@ -296,8 +340,17 @@ const applyFilters = async () => {
       dateTo: filters.value.dateTo || undefined,
       sortBy: filters.value.sortBy,
       sortOrder: filters.value.sortOrder,
+      page: currentPage.value,
+      limit: pageSize.value,
     }
     const res = await maintenanceService.getMaintenanceEvents(assetId, params)
+    
+    // Update pagination info
+    if (res.data.pagination) {
+      totalPages.value = res.data.pagination.totalPages
+      totalRecords.value = res.data.pagination.totalCount
+    }
+    
     // Transform events to the HistoryItem-like shape expected by the template
     history.value = (res.data.events || []).map((e: any, idx: number) => ({
       id: e.id || idx,
@@ -322,6 +375,8 @@ const applyFilters = async () => {
   } catch (error) {
     console.error('Error fetching maintenance events:', error)
     history.value = []
+    totalPages.value = 0
+    totalRecords.value = 0
   } finally {
     loading.value = false
   }
@@ -340,10 +395,12 @@ const debouncedSearch = () => {
 
 // Watchers for automatic filtering
 watch(() => filters.value.search, () => {
+  currentPage.value = 1
   debouncedSearch()
 })
 
 watch(() => filters.value.dateFrom, (newFromDate) => {
+  currentPage.value = 1
   // Reset "To" date only if "From" date is after the "To" date
   if (newFromDate && filters.value.dateTo && new Date(newFromDate) > new Date(filters.value.dateTo)) {
     filters.value.dateTo = ''
@@ -354,14 +411,17 @@ watch(() => filters.value.dateFrom, (newFromDate) => {
 })
 
 watch(() => filters.value.dateTo, () => {
+  currentPage.value = 1
   applyFilters()
 })
 
 watch(() => selectedStatus.value, () => {
+  currentPage.value = 1
   applyFilters()
 })
 
 watch(() => selectedType.value, () => {
+  currentPage.value = 1
   applyFilters()
 })
 

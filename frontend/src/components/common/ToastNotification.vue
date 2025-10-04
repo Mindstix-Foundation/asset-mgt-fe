@@ -9,7 +9,6 @@
     >
       <div class="toast-header">
         <strong class="me-auto">{{ toastStore.title }}</strong>
-        <button type="button" class="btn-close" @click="closeToast" aria-label="Close"></button>
       </div>
       <div class="toast-body">
         {{ toastStore.message }}
@@ -38,13 +37,14 @@ const toastClass = computed(() => {
   }
 })
 
-const closeToast = () => {
-  toastStore.hideToast()
-}
 </script>
 
 <style scoped>
 .toast-container {
-  z-index: 9999;
+  z-index: 99999 !important;
+}
+
+.toast {
+  z-index: 99999 !important;
 }
 </style> 

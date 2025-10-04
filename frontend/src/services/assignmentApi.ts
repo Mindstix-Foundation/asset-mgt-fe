@@ -1,6 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
+import apiClient from './apiClient'
 
 // Types for assignment API
 export interface CreateAssignmentDto {
@@ -86,23 +84,12 @@ export interface AssignmentListResponse {
 }
 
 class AssignmentApiService {
-  private baseURL = `${API_BASE_URL}/assignments`
-
-  // Get auth token from localStorage
-  private getAuthToken(): string | null {
-    return localStorage.getItem('access_token')
-  }
+  private baseURL = `/assignments`
 
   // Create assignment (issue asset)
   async createAssignment(assignmentData: CreateAssignmentDto): Promise<AssignmentResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.post(this.baseURL, assignmentData, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.post<AssignmentResponse>(this.baseURL, assignmentData)
       return response.data
     } catch (error: any) {
       console.error('Error creating assignment:', error)
@@ -113,13 +100,7 @@ class AssignmentApiService {
   // Get all assignments with filtering
   async getAssignments(query?: AssignmentQueryDto): Promise<AssignmentListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(this.baseURL, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssignmentListResponse>(this.baseURL, { params: query })
       return response.data
     } catch (error: any) {
       console.error('Error fetching assignments:', error)
@@ -130,13 +111,7 @@ class AssignmentApiService {
   // Get active assignments (for collect asset page)
   async getActiveAssignments(query?: AssignmentQueryDto): Promise<AssignmentListResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/active`, {
-        params: query,
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssignmentListResponse>(`${this.baseURL}/active`, { params: query })
       return response.data
     } catch (error: any) {
       console.error('Error fetching active assignments:', error)
@@ -147,12 +122,7 @@ class AssignmentApiService {
   // Get assignment by ID
   async getAssignmentById(id: number): Promise<AssignmentResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.get(`${this.baseURL}/${id}`, {
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.get<AssignmentResponse>(`${this.baseURL}/${id}`)
       return response.data
     } catch (error: any) {
       console.error('Error fetching assignment:', error)
@@ -163,13 +133,7 @@ class AssignmentApiService {
   // Return asset (for collect asset functionality)
   async returnAsset(id: number, returnData: ReturnAssignmentDto): Promise<AssignmentResponse> {
     try {
-      const token = this.getAuthToken()
-      const response = await axios.put(`${this.baseURL}/${id}/return`, returnData, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` })
-        }
-      })
+      const response = await apiClient.put<AssignmentResponse>(`${this.baseURL}/${id}/return`, returnData)
       return response.data
     } catch (error: any) {
       console.error('Error returning asset:', error)

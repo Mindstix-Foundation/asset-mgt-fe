@@ -54,7 +54,7 @@
                   </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-success" style="width: 71.5%"></div>
+                <div class="progress-bar bg-success" :style="{ width: `${assignedPercent.toFixed(1)}%` }"></div>
               </div>
             </div>
           </div>
@@ -65,7 +65,7 @@
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body p-4">
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="stats-icon bg-info rounded-circle p-3">
+                <div class="stats-icon bg-pink rounded-circle p-3">
                   <i class="fas fa-warehouse fa-lg"></i>
                 </div>
                                   <div class="text-end">
@@ -79,7 +79,7 @@
                   </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-info" style="width: 25%"></div>
+                <div class="progress-bar bg-pink" :style="{ width: `${availablePercent.toFixed(1)}%` }"></div>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@
                   <div class="activity-content">
                     <div class="activity-text">{{ activity.title }}</div>
                     <div class="activity-description">{{ activity.description }}</div>
-                    <div class="activity-time">{{ activity.timeAgo }}</div>
+                    <div class="activity-time">{{ activity.timeAgo || 'Unknown' }}</div>
                   </div>
                 </div>
                 
@@ -226,84 +226,25 @@
                 <i class="fas fa-chart-pie me-2"></i>Asset Distribution
               </h5>
             </div>
-            <div class="card-body">
-              <!-- Laptops -->
-              <div class="asset-distribution-item mb-4">
+            <div class="card-body p-0">
+              <div class="asset-distribution-list">
+                <div v-for="item in assetDistribution" :key="item.name" class="asset-distribution-item mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <div class="d-flex align-items-center">
-                    <div class="asset-type-icon laptops me-3">
-                      <i class="fas fa-laptop"></i>
+                    <div class="asset-type-icon me-3" :class="getCategoryClass(item.name)">
+                      <i :class="getCategoryIcon(item.name)"></i>
                     </div>
                     <div>
-                      <div class="fw-bold text-dark">Laptops</div>
+                      <div class="fw-bold text-dark">{{ item.name }}</div>
                     </div>
                   </div>
                   <div class="text-end">
-                    <div class="fw-bold" style="color: #0A0A0A;">{{ assetDistribution.laptops.percentage }}%</div>
+                    <div class="fw-bold" style="color: #0A0A0A;">{{ item.percentage }}%</div>
                   </div>
                 </div>
                 <div class="progress asset-progress">
-                  <div class="progress-bar progress-bar-laptops" :style="`width: ${assetDistribution.laptops.percentage}%`"></div>
+                  <div class="progress-bar" :class="getCategoryBarClass(item.name)" :style="`width: ${item.percentage}%`"></div>
                 </div>
-              </div>
-
-              <!-- Monitors -->
-              <div class="asset-distribution-item mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <div class="d-flex align-items-center">
-                    <div class="asset-type-icon monitors me-3">
-                      <i class="fas fa-desktop"></i>
-                    </div>
-                    <div>
-                      <div class="fw-bold text-dark">Monitors</div>
-                    </div>
-                  </div>
-                  <div class="text-end">
-                    <div class="fw-bold" style="color: #0A0A0A;">{{ assetDistribution.monitors.percentage }}%</div>
-                  </div>
-                </div>
-                <div class="progress asset-progress">
-                  <div class="progress-bar progress-bar-monitors" :style="`width: ${assetDistribution.monitors.percentage}%`"></div>
-                </div>
-              </div>
-
-              <!-- Mobile Devices -->
-              <div class="asset-distribution-item mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <div class="d-flex align-items-center">
-                    <div class="asset-type-icon mobile me-3">
-                      <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div>
-                      <div class="fw-bold text-dark">Mobile Devices</div>
-                    </div>
-                  </div>
-                  <div class="text-end">
-                    <div class="fw-bold" style="color: #0A0A0A;">{{ assetDistribution.mobile.percentage }}%</div>
-                  </div>
-                </div>
-                <div class="progress asset-progress">
-                  <div class="progress-bar progress-bar-mobile" :style="`width: ${assetDistribution.mobile.percentage}%`"></div>
-                </div>
-              </div>
-
-              <!-- Accessories -->
-              <div class="asset-distribution-item">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <div class="d-flex align-items-center">
-                    <div class="asset-type-icon accessories me-3">
-                      <i class="fas fa-headphones"></i>
-                    </div>
-                    <div>
-                      <div class="fw-bold text-dark">Accessories</div>
-                    </div>
-                  </div>
-                  <div class="text-end">
-                    <div class="fw-bold" style="color: #0A0A0A;">{{ assetDistribution.accessories.percentage }}%</div>
-                  </div>
-                </div>
-                <div class="progress asset-progress">
-                  <div class="progress-bar progress-bar-accessories" :style="`width: ${assetDistribution.accessories.percentage}%`"></div>
                 </div>
               </div>
             </div>
@@ -357,28 +298,22 @@ const recentActivities = ref<Array<{
   timestamp: Date
 }>>([])
 
-// Asset distribution data (used by template)
-const assetDistribution = ref({
-  laptops: {
-    assigned: 0,
-    total: 0,
-    percentage: 0
-  },
-  monitors: {
-    assigned: 0,
-    total: 0,
-    percentage: 0
-  },
-  mobile: {
-    assigned: 0,
-    total: 0,
-    percentage: 0
-  },
-  accessories: {
-    assigned: 0,
-    total: 0,
-    percentage: 0
-  }
+// Asset distribution data (dynamic list from backend)
+const assetDistribution = ref<Array<{ name: string; percentage: number; count?: number }>>([])
+
+// Percentages for top cards
+const assignedPercent = computed(() => {
+  const total = dashboardStats.value.totalAssets
+  if (!total || total <= 0) return 0
+  const assigned = Math.max(0, Math.min(total, dashboardStats.value.assignedAssets))
+  return (assigned / total) * 100
+})
+
+const availablePercent = computed(() => {
+  const total = dashboardStats.value.totalAssets
+  if (!total || total <= 0) return 0
+  const available = Math.max(0, Math.min(total, dashboardStats.value.availableAssets))
+  return (available / total) * 100
 })
 
 function formatRelativeUpdated(nowMs: number) {
@@ -398,11 +333,16 @@ function updateLastUpdatedDisplay() {
 // Update real-time activity times
 function updateRealTimeActivityTimes() {
   try {
-    // Check if there are any activities that need real-time updates
-    const hasRealTimeActivities = recentActivities.value.some(activity => activity.needsRealTimeUpdate)
+    // Only update if we have activities
+    if (recentActivities.value.length === 0) {
+      return
+    }
     
-    if (!hasRealTimeActivities) {
-      return // No need to update if no activities need real-time updates
+    // Use backend's needsRealTimeUpdate flag as primary method
+    const needsUpdateActivities = recentActivities.value.filter(activity => activity.needsRealTimeUpdate)
+    
+    if (needsUpdateActivities.length === 0) {
+      return // No activities need updates
     }
     
     const updatedActivities = dashboardApi.updateActivityTimes(recentActivities.value)
@@ -471,22 +411,19 @@ const loadAnalyticsData = async () => {
 
 // Navigation methods
 const navigateToAddAsset = () => {
-  // TODO: Navigate to add asset page when ready
-  console.log('Navigate to Add Asset')
+  router.push('/app/assets/add')
 }
 
 const navigateToIssueAsset = () => {
-  // TODO: Navigate to issue asset page when ready
-  console.log('Navigate to Issue Asset')
+  router.push('/app/assets/issue')
 }
 
 const navigateToCollectAsset = () => {
-  // TODO: Navigate to collect asset page when ready
-  console.log('Navigate to Collect Asset')
+  router.push('/app/assets/collect')
 }
 
 const navigateToScheduleMaintenance = () => {
-  router.push('/maintenance')
+  router.push('/app/maintenance/schedule')
 }
 
 
@@ -505,8 +442,8 @@ onMounted(async () => {
   // Update relative "Updated X minutes ago" every 30 seconds
   updatedTickerId = window.setInterval(updateLastUpdatedDisplay, 30_000)
   
-  // Update real-time activity times every 2 minutes (more conservative)
-  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 120_000)
+  // Update real-time activity times every minute for minute-level updates
+  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 60_000)
   
   // Smart refresh strategy:
   // - Full refresh every 5 minutes for fresh data
@@ -547,6 +484,34 @@ const getActivityIcon = (title: string): string => {
   if (title.includes('Employee')) return 'fas fa-user'
   if (title.includes('Vendor')) return 'fas fa-building'
   return 'fas fa-circle'
+}
+
+// Category helpers for dynamic distribution
+const getCategoryIcon = (name: string): string => {
+  const v = name.toLowerCase()
+  if (v.includes('laptop')) return 'fas fa-laptop'
+  if (v.includes('desktop')) return 'fas fa-desktop'
+  if (v.includes('monitor') || v.includes('display')) return 'fas fa-tv'
+  if (v.includes('mobile') || v.includes('phone')) return 'fas fa-mobile-alt'
+  if (v.includes('tablet')) return 'fas fa-tablet-alt'
+  if (v.includes('accessor')) return 'fas fa-headphones'
+  return 'fas fa-cube'
+}
+
+const getCategoryClass = (name: string): string => {
+  const v = name.toLowerCase()
+  if (v.includes('laptop')) return 'laptops'
+  if (v.includes('desktop')) return 'desktops'
+  if (v.includes('monitor') || v.includes('display')) return 'monitors'
+  if (v.includes('mobile') || v.includes('phone')) return 'mobile'
+  if (v.includes('tablet')) return 'tablets'
+  if (v.includes('accessor')) return 'accessories'
+  return 'others'
+}
+
+const getCategoryBarClass = (name: string): string => {
+  const base = getCategoryClass(name)
+  return `progress-bar-${base}`
 }
 </script>
 
@@ -661,6 +626,7 @@ const getActivityIcon = (title: string): string => {
 /* Stats icon background colors to match maintenance */
 .stats-icon.bg-warning { background-color: var(--secondary-orange) !important; color: white !important; }
 .stats-icon.bg-info { background-color: var(--secondary-purple) !important; color: white !important; }
+.stats-icon.bg-pink { background-color: var(--secondary-pink) !important; color: white !important; }
 .stats-icon.bg-success { background-color: var(--secondary-green) !important; color: white !important; }
 .stats-icon.bg-secondary { background-color: var(--secondary-red) !important; color: white !important; }
 /* Primary variant for Total Assets */
@@ -669,28 +635,23 @@ const getActivityIcon = (title: string): string => {
 /* Progress bar colors to match maintenance */
 .progress-bar.bg-warning { background-color: var(--secondary-orange) !important; }
 .progress-bar.bg-info { background-color: var(--secondary-purple) !important; }
+.progress-bar.bg-pink { background-color: var(--secondary-pink) !important; }
 .progress-bar.bg-success { background-color: var(--secondary-green) !important; }
 .progress-bar.bg-secondary { background-color: var(--secondary-red) !important; }
 /* Primary variant for Total Assets */
 .progress-bar.bg-primary { background-color: var(--secondary-purple) !important; }
 
-/* Activity List - Utilize full card height */
+/* Activity List - Fixed height with scrollbar */
 .activity-list {
-  max-height: 500px; /* Show more activities to utilize full card space */
-  overflow-y: auto;
+  height: 400px; /* Fixed height for consistent card sizing */
+  overflow-y: auto; /* Always show scrollbar when content exceeds height */
 }
 
-/* Responsive height adjustments */
-@media (min-height: 800px) {
-  .activity-list {
-    max-height: 600px; /* Even more space on taller screens */
-  }
-}
-
-@media (max-height: 700px) {
-  .activity-list {
-    max-height: 350px; /* Slightly less on shorter screens */
-  }
+/* Asset Distribution List - Fixed height with scrollbar */
+.asset-distribution-list {
+  height: 400px; /* Same fixed height as activity list */
+  overflow-y: auto; /* Always show scrollbar when content exceeds height */
+  padding: 1rem; /* Add padding since card-body padding was removed */
 }
 
 .activity-item {
@@ -703,6 +664,7 @@ const getActivityIcon = (title: string): string => {
 
 .activity-item:hover {
   background-color: rgba(51, 31, 234, 0.02);
+  /* Preserve original text and icon colors */
 }
 
 .activity-icon {

@@ -1,8 +1,11 @@
-import { apiService, type ApiResponse } from './api'
+import { apiService, type ApiResponse } from './apiClient'
+import apiClient from './apiClient'
 
 export interface ReportFilters {
   reportType?: 'assets' | 'employees' | 'maintenance' | 'audit'
   assetType?: string
+  assetStatus?: string
+  department?: string
   dateRange?: string
   fromDate?: string
   toDate?: string
@@ -149,56 +152,26 @@ class ReportsApiService {
 
   // Export asset inventory to Excel
   async exportAssetInventory(filters?: ReportFilters): Promise<Blob> {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}/reports/export/asset-inventory`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: JSON.stringify(filters || {}),
+    const response = await apiClient.post('/reports/export/asset-inventory', filters || {}, {
+      responseType: 'blob',
     })
-
-    if (!response.ok) {
-      throw new Error('Failed to export report')
-    }
-
-    return response.blob()
+    return response.data
   }
 
   // Export employee assets to Excel
   async exportEmployeeAssets(filters?: ReportFilters): Promise<Blob> {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}/reports/export/employee-assets`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: JSON.stringify(filters || {}),
+    const response = await apiClient.post('/reports/export/employee-assets', filters || {}, {
+      responseType: 'blob',
     })
-
-    if (!response.ok) {
-      throw new Error('Failed to export report')
-    }
-
-    return response.blob()
+    return response.data
   }
 
   // Export maintenance report to Excel
   async exportMaintenance(filters?: ReportFilters): Promise<Blob> {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}/reports/export/maintenance`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: JSON.stringify(filters || {}),
+    const response = await apiClient.post('/reports/export/maintenance', filters || {}, {
+      responseType: 'blob',
     })
-
-    if (!response.ok) {
-      throw new Error('Failed to export report')
-    }
-
-    return response.blob()
+    return response.data
   }
 
   // Helper function to download blob as file

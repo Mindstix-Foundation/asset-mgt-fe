@@ -1,5 +1,5 @@
-import { apiService } from './api'
-import type { ApiResponse } from './api'
+import { apiService, type ApiResponse } from './apiClient'
+import apiClient from './apiClient'
 import type {
   Asset,
   AssetListResponse,
@@ -127,37 +127,24 @@ class AssetService {
     const formData = new FormData()
     formData.append('file', file)
 
-    const url = `${apiService.getBaseURL()}${this.baseEndpoint}/validate-bulk-upload`
-    console.log('assetService.validateBulkUpload: Making request to:', url)
-
-    // Override the default JSON content type for file upload
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        // Don't set Content-Type, let browser set it with boundary for multipart/form-data
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: formData,
-    })
-
-    console.log('assetService.validateBulkUpload: Response status:', response.status)
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
+    try {
+      const response = await apiClient.post(`${this.baseEndpoint}/validate-bulk-upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      console.log('assetService.validateBulkUpload: Validation successful')
+      return response.data
+    } catch (error: any) {
+      console.error('assetService.validateBulkUpload: Error response:', error.response?.data)
+      const errorData = error.response?.data || {
         message: 'Validation failed',
-        error: `HTTP ${response.status}: ${response.statusText}`
-      }))
-      console.error('assetService.validateBulkUpload: Error response:', errorData)
-      
-      // Create error object that preserves the response data
-      const error = new Error(errorData.error || errorData.message || 'Validation failed')
-      ;(error as any).response = { data: errorData }
-      throw error
+        error: error.message
+      }
+      const err = new Error(errorData.error || errorData.message || 'Validation failed')
+      ;(err as any).response = { data: errorData }
+      throw err
     }
-
-    const result = await response.json()
-    console.log('assetService.validateBulkUpload: Success response:', result)
-    return result
   }
 
   // Bulk upload assets
@@ -166,25 +153,20 @@ class AssetService {
     formData.append('file', file)
     formData.append('validate_only', validateOnly.toString())
 
-    // Override the default JSON content type for file upload
-    const response = await fetch(`${apiService.getBaseURL()}${this.baseEndpoint}/bulk-upload`, {
-      method: 'POST',
-      headers: {
-        // Don't set Content-Type, let browser set it with boundary for multipart/form-data
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: formData,
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
+    try {
+      const response = await apiClient.post(`${this.baseEndpoint}/bulk-upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error: any) {
+      const errorData = error.response?.data || {
         message: 'Upload failed',
-        error: `HTTP ${response.status}: ${response.statusText}`
-      }))
+        error: error.message
+      }
       throw new Error(errorData.error || errorData.message || 'Upload failed')
     }
-
-    return await response.json()
   }
 
   // Helper methods for filter data
@@ -264,34 +246,65 @@ class AssetService {
       ? `${currentAssignment.employee.firstName} ${currentAssignment.employee.lastName}`
       : undefined
 
+    // Normalize date to YYYY-MM-DD string if possible
+    const toDateString = (d: any): string => {
+      if (!d) return ''
+      try {
+        let dt: Date
+        if (typeof d === 'string') {
+          // Handle IST string format: DD/MM/YYYY, HH:mm:ss
+          const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/)
+          if (m) {
+            const day = parseInt(m[1], 10)
+            const month = parseInt(m[2], 10) - 1
+            const year = parseInt(m[3], 10)
+            const hh = parseInt(m[4] || '0', 10)
+            const mm = parseInt(m[5] || '0', 10)
+            const ss = parseInt(m[6] || '0', 10)
+            dt = new Date(year, month, day, hh, mm, ss)
+          } else {
+            dt = new Date(d)
+          }
+        } else {
+          dt = d
+        }
+        if (isNaN(dt.getTime())) return ''
+        return dt.toISOString().split('T')[0]
+      } catch {
+        return ''
+      }
+    }
+
     return {
       id: asset.assetId,
+      assetId: asset.assetId,
       type: asset.assetType.name,
       brand: asset.brand.name,
+      model: asset.model.name,
       brandModel: `${asset.brand.name} ${asset.model.name}`,
       serialNumber: asset.serialNumber,
       status: asset.status,
       assignedTo: assignedTo,
-      purchaseDate: asset.purchaseDate || '',
+      purchaseDate: toDateString(asset.purchaseDate),
       location: asset.location,
       category: asset.assetType.category.name,
       condition: asset.condition,
       purchaseCost: asset.purchaseCost,
       vendor: asset.vendor?.name || 'N/A',
-      warrantyUntil: asset.warrantyEndDate || '',
-      warrantyStartDate: asset.warrantyStartDate || '',
+      warrantyUntil: toDateString(asset.warrantyEndDate),
+      warrantyStartDate: toDateString(asset.warrantyStartDate),
       notes: asset.notes || '',
       // Assignment details (from AssetIssue - limited data available)
       assignmentReason: '',
       assignmentNotes: '',
-      assignmentDate: currentAssignment?.issueDate || '',
-      assignedBy: currentAssignment?.issuedByUser?.username || '',
+      assignmentDate: toDateString(currentAssignment?.issueDate),
+      assignedBy: (currentAssignment as any)?.issuedByUser?.username || '',
       // Retirement details
-      retirementDate: asset.retirementDate || '',
+      retirementDate: toDateString(asset.retirementDate),
       retirementReason: asset.retirementReason || '',
       retirementNotes: asset.retirementNotes || '',
       // Reactivation details
-      reactivationDate: asset.reactivationDate || '',
+      reactivationDate: toDateString(asset.reactivationDate),
       reactivationReason: asset.reactivationReason || ''
     }
   }
@@ -407,26 +420,14 @@ class AssetService {
     const endpoint = queryString ? `${this.baseEndpoint}/export?${queryString}` : `${this.baseEndpoint}/export`
     
     try {
-      const token = localStorage.getItem('access_token')
-      const apiUrl = `${import.meta.env.VITE_API_BASE_URL}${endpoint}`
+      console.log('Export request:', { endpoint })
       
-      console.log('Export request:', { apiUrl, hasToken: !!token })
-      
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await apiClient.get(endpoint, {
+        responseType: 'blob',
       })
 
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Export failed:', { status: response.status, statusText: response.statusText, error: errorText })
-        throw new Error(`Export failed: ${response.statusText}`)
-      }
-
       // Get filename from Content-Disposition header
-      const contentDisposition = response.headers.get('Content-Disposition')
+      const contentDisposition = response.headers['content-disposition']
       let filename = 'assets_export.xlsx'
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="(.+)"/)
@@ -436,7 +437,7 @@ class AssetService {
       }
 
       // Create blob and download
-      const blob = await response.blob()
+      const blob = response.data
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url

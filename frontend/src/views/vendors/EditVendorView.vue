@@ -45,11 +45,12 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import VendorApiService from '@/services/vendorApi'
-import { showToast, showErrorToast } from '@/utils/toast'
+import { useToastStore } from '@/stores/toast'
 import VendorForm from '@/components/forms/VendorForm.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Get vendor ID from route
 const vendorId = computed(() => parseInt(route.params.id as string))
@@ -84,7 +85,7 @@ const handleSubmit = async (vendorData: any) => {
     const updatedVendor = response.data.vendor
 
     const vendorName = `${updatedVendor.name || 'Vendor'}`
-    showToast(`${vendorName} has been updated successfully!`, 'success')
+    toastStore.showSuccess('Success', `${vendorName} has been updated successfully!`)
     
     // Navigate back to vendors list after successful update
     setTimeout(() => {
@@ -94,7 +95,7 @@ const handleSubmit = async (vendorData: any) => {
     console.error('Error updating vendor:', error)
     
     const errorMsg = error?.response?.data?.message || error?.message || 'Failed to update vendor. Please try again.'
-    showErrorToast(errorMsg)
+    toastStore.showError('Error', errorMsg)
   }
 }
 

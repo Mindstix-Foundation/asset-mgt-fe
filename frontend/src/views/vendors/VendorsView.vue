@@ -631,6 +631,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useRouteToast } from '@/composables/useRouteToast'
+import { useToastStore } from '@/stores/toast'
 import VendorApiService from '../../services/vendorApi'
 import { VendorStatus } from '../../types/vendor.types'
 import type { Vendor, VendorQueryParams } from '../../types/vendor.types'
@@ -639,6 +641,8 @@ import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import BulkVendorUpload from './BulkVendorUpload.vue'
 
 const router = useRouter()
+useRouteToast()
+const toastStore = useToastStore()
 
 // Types
 interface Toast {
@@ -1044,7 +1048,7 @@ const showVendorDetails = async (vendor: Vendor) => {
   } catch (error: any) {
     console.error('Error fetching vendor details:', error)
     console.error('Error details:', error?.response?.data)
-    showToast('error', 'Failed to load vendor details from API, showing cached data')
+    toastStore.showError('Error', 'Failed to load vendor details from API, showing cached data')
     
     // Keep the vendor data we already have (this should already be set)
     if (!selectedVendor.value) {
@@ -1088,22 +1092,13 @@ const openBulkUploadModal = () => {
 }
 
 const handleBulkUploadSuccess = (result: any) => {
-  showToast('success', 'Vendors uploaded successfully!')
+  toastStore.showSuccess('Success', 'Vendors uploaded successfully!')
       // Refresh vendor list
       fetchVendors()
 }
 
 // Toast methods
-const showToast = (type: 'success' | 'error', message: string) => {
-  toast.value = { show: true, type, message }
-  setTimeout(() => {
-    hideToast()
-  }, 5000)
-}
-
-const hideToast = () => {
-  toast.value.show = false
-}
+// Removed custom toast functions - using toast store instead
 
 // Action methods
 
@@ -1118,7 +1113,7 @@ const editVendor = (vendor: Vendor) => {
 const updateVendorStatus = async (vendor: Vendor, newStatus: VendorStatus) => {
   try {
     await VendorApiService.updateVendorStatus(vendor.id, { status: newStatus })
-    showToast('success', `${vendor.name} status updated to ${getStatusLabel(newStatus)}`)
+    toastStore.showSuccess('Success', `${vendor.name} status updated to ${getStatusLabel(newStatus)}`)
     fetchVendors() // Refresh the list
     closeStatusModal()
   } catch (error: any) {
@@ -1129,7 +1124,7 @@ const updateVendorStatus = async (vendor: Vendor, newStatus: VendorStatus) => {
       errorMessage = error.response.data.message
     }
     
-    showToast('error', errorMessage)
+    toastStore.showError('Error', errorMessage)
   }
 }
 

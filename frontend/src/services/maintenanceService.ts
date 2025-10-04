@@ -1,4 +1,5 @@
-import { apiService } from './api'
+import { apiService } from './apiClient'
+import apiClient from './apiClient'
 
 export interface Asset {
   id: string
@@ -183,6 +184,48 @@ class MaintenanceService {
     const query = new URLSearchParams()
     Object.entries(params || {}).forEach(([k,v]) => { if (v !== undefined && v !== null && v !== '') query.append(k, String(v)) })
     return apiService.get(`/maintenance/asset/${assetId}/history-events${query.toString() ? `?${query.toString()}` : ''}`)
+  }
+
+  // Export maintenance records to Excel
+  async exportMaintenanceToExcel(params: MaintenanceQueryParams = {}): Promise<void> {
+    const searchParams = new URLSearchParams()
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, value.toString())
+      }
+    })
+
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `/maintenance/export?${queryString}` : '/maintenance/export'
+
+    try {
+      const response = await apiClient.get(endpoint, {
+        responseType: 'blob',
+      })
+
+      const contentDisposition = response.headers['content-disposition']
+      let filename = 'maintenance_export.xlsx'
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      const blob = response.data
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error exporting maintenance:', error)
+      throw error
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { apiService } from './api'
+import { apiService } from './apiClient'
 import type { 
   AssetHistoryResponse, 
   AssetHistorySummaryResponse,

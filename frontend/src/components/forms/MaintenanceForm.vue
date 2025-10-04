@@ -23,7 +23,7 @@
             </div>
             
             <!-- Form -->
-            <form v-else ref="maintenanceForm" class="needs-validation" @submit.prevent="submitForm" novalidate>
+            <form v-else ref="maintenanceForm" class="needs-validation" @submit.prevent="submitForm" @keydown.enter="handleEnterKey" novalidate>
               
               <!-- Section 1: Asset Selection -->
               <fieldset class="form-fieldset">
@@ -245,13 +245,15 @@ import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { maintenanceService } from '@/services/maintenanceService'
 import type { CreateMaintenanceData, UpdateMaintenanceData, MaintenanceType } from '@/services/maintenanceService'
-import { showToast, showErrorToast } from '@/utils/toast'
+import { useToastStore } from '@/stores/toast'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import { assetApiService, type Asset as AssetApiAsset } from '@/services/assetApi'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
+import { formatDateForInput } from '@/utils/date'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Props
 interface Props {
@@ -649,7 +651,7 @@ const loadInitialData = async () => {
     }
   } catch (error: any) {
     console.error('Error loading initial data:', error)
-    showErrorToast('Failed to load form data. Please try again.')
+    toastStore.showError('Error', 'Failed to load form data. Please try again.')
   } finally {
     isLoading.value = false
   }
@@ -703,7 +705,7 @@ const loadMaintenanceData = async () => {
       fieldValidation.maintenanceTypeId = true
     }
     // Vendor selection removed
-    formData.scheduledDate = maintenance.scheduledDate
+    formData.scheduledDate = formatDateForInput(maintenance.scheduledDate)
     formData.frequencyDays = maintenance.frequencyDays
     formData.estimatedCost = maintenance.estimatedCost
     formData.description = maintenance.description
@@ -715,7 +717,7 @@ const loadMaintenanceData = async () => {
     })
   } catch (error: any) {
     console.error('Error loading maintenance data:', error)
-    showErrorToast('Failed to load maintenance data. Please try again.')
+    toastStore.showError('Error', 'Failed to load maintenance data. Please try again.')
     router.push('/app/maintenance')
   }
 }
@@ -778,13 +780,6 @@ const submitForm = async (event?: Event) => {
  
       await maintenanceService.createMaintenance(maintenanceData)
 
-      // Update asset status to IN_MAINTENANCE
-      try {
-        await assetApiService.updateAssetStatus(Number(formData.assetId), 'IN_MAINTENANCE')
-      } catch (e) {
-        console.warn('Maintenance scheduled but failed to set asset status to IN_MAINTENANCE:', e)
-      }
-
       // Reload available assets for dropdown to reflect change
       try {
         const refreshed = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
@@ -807,7 +802,7 @@ const submitForm = async (event?: Event) => {
       errorMsg = error.response.data.message
     }
     
-    showErrorToast(errorMsg)
+    toastStore.showError('Error', errorMsg)
   } finally {
     isSubmitting.value = false
   }
@@ -840,21 +835,7 @@ const generateMaintenanceDetails = () => {
 }
 
 const showMaintenanceSuccessToast = (details: string, isEdit: boolean) => {
-  const message = `
-    <div class="mb-3">
-      <strong>${details}</strong> has been ${isEdit ? 'updated' : 'scheduled'} successfully!
-    </div>
-    <div class="d-flex gap-2 justify-content-center">
-      <button type="button" class="btn btn-sm btn-warning" onclick="scheduleAnotherMaintenance()">
-        ${isEdit ? 'Edit Another' : 'Schedule Another'}
-      </button>
-      <button type="button" class="btn btn-sm btn-outline-warning" onclick="viewMaintenanceList()">
-        View Maintenance
-      </button>
-    </div>
-  `
-  
-  showToast(message, 'success')
+  toastStore.showSuccess('Success', `${details} has been ${isEdit ? 'updated' : 'scheduled'} successfully!`)
 }
 
 const goBack = () => {
@@ -875,76 +856,49 @@ const scrollToFirstError = () => {
   }
 }
 
-// Global functions for toast buttons
-;(window as any).scheduleAnotherMaintenance = () => {
-  const existingToasts = document.querySelectorAll('.toast')
-  existingToasts.forEach(toast => {
-    if ((window as any).bootstrap) {
-      const toastInstance = (window as any).bootstrap.Toast.getInstance(toast)
-      if (toastInstance) toastInstance.hide()
-    }
-  })
+// Keyboard navigation handler
+const handleEnterKey = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
   
-  if (props.isEditMode) {
-    router.push('/app/maintenance/schedule')
+  // Don't submit if user is in a textarea (allow Enter for new lines)
+  if (target.tagName === 'TEXTAREA') {
+    return
+  }
+  
+  // Don't submit if user is in a dropdown (allow Enter to select)
+  if (target.classList.contains('searchable-dropdown-input')) {
+    return
+  }
+  
+  // Prevent default Enter behavior
+  event.preventDefault()
+  
+  // If it's the last field or submit button, submit the form
+  const form = maintenanceForm.value
+  if (!form) return
+  
+  const focusableElements = form.querySelectorAll(
+    'input:not([readonly]):not([disabled]), select:not([disabled]), textarea:not([readonly]):not([disabled]), button:not([disabled])'
+  ) as NodeListOf<HTMLElement>
+  
+  const currentIndex = Array.from(focusableElements).indexOf(target)
+  const isLastField = currentIndex === focusableElements.length - 1
+  
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-warning')) {
+    // Submit the form
+    submitForm()
   } else {
-    // Reset form for another entry
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    
-    formData.assetId = ''
-    formData.maintenanceTypeId = ''
-    formData.scheduledDate = tomorrow.toISOString().split('T')[0]
-    formData.frequencyDays = undefined
-    formData.estimatedCost = undefined
-    formData.description = ''
-    formData.vendorId = ''
-    
-    // Clear validation state
-    Object.keys(fieldErrors).forEach(key => delete fieldErrors[key])
-    Object.keys(fieldValidation).forEach(key => delete fieldValidation[key])
-    
-    formSubmitted.value = false
-    assetInfo.value = ''
-    
-    if (maintenanceForm.value) {
-      maintenanceForm.value.classList.remove('was-validated')
+    // Move to next field
+    const nextElement = focusableElements[currentIndex + 1]
+    if (nextElement) {
+      nextElement.focus()
     }
-
-    nextTick(() => {
-      const fields = document.querySelectorAll('.is-valid, .is-invalid')
-      fields.forEach(field => {
-        field.classList.remove('is-valid', 'is-invalid')
-      })
-      
-      const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-      textareas.forEach(textarea => {
-        textarea.style.height = '72px'
-      })
-      
-      const firstField = document.getElementById('assetId')
-      if (firstField) firstField.focus()
-    })
-    
-    showToast('Ready to schedule another maintenance!', 'info')
   }
 }
 
-;(window as any).viewMaintenanceList = () => {
-  const existingToasts = document.querySelectorAll('.toast')
-  existingToasts.forEach(toast => {
-    if ((window as any).bootstrap) {
-      const toastInstance = (window as any).bootstrap.Toast.getInstance(toast)
-      if (toastInstance) toastInstance.hide()
-    }
-  })
-  
-  showToast('Redirecting to Maintenance List...', 'info')
-  
-  setTimeout(() => {
-    router.push('/app/maintenance')
-  }, 1500)
-}
+// Removed global functions - no longer needed with simple toast notifications
+
+// Removed global functions for toast buttons - using simple toast notifications
 
 // Watchers for textarea auto-expansion
 watch(() => formData.description, (newValue) => {

@@ -67,37 +67,24 @@ export class VendorApiService {
     const formData = new FormData()
     formData.append('file', file)
 
-    const url = `${apiClient.defaults.baseURL}/vendors/validate-bulk-upload`
-    console.log('vendorApi.validateBulkUpload: Making request to:', url)
-
-    // Override the default JSON content type for file upload
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        // Don't set Content-Type, let browser set it with boundary for multipart/form-data
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      },
-      body: formData,
-    })
-
-    console.log('vendorApi.validateBulkUpload: Response status:', response.status)
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
+    try {
+      const response = await apiClient.post('/vendors/validate-bulk-upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      console.log('vendorApi.validateBulkUpload: Validation successful')
+      return response.data
+    } catch (error: any) {
+      console.error('vendorApi.validateBulkUpload: Error response:', error.response?.data)
+      const errorData = error.response?.data || {
         message: 'Validation failed',
-        error: `HTTP ${response.status}: ${response.statusText}`
-      }))
-      console.error('vendorApi.validateBulkUpload: Error response:', errorData)
-      
-      // Create error object that preserves the response data
-      const error = new Error(errorData.error || errorData.message || 'Validation failed')
-      ;(error as any).response = { data: errorData }
-      throw error
+        error: error.message
+      }
+      const err = new Error(errorData.error || errorData.message || 'Validation failed')
+      ;(err as any).response = { data: errorData }
+      throw err
     }
-
-    const result = await response.json()
-    console.log('vendorApi.validateBulkUpload: Success response:', result)
-    return result
   }
 
   // Bulk upload vendors

@@ -1,5 +1,4 @@
-import { apiService } from './api'
-import type { ApiResponse } from './api'
+import { apiService, type ApiResponse } from './apiClient'
 
 export interface AssetCategory {
   id: number

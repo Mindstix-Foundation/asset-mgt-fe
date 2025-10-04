@@ -1,4 +1,4 @@
-import { apiService, type ApiResponse } from './api'
+import { apiService, type ApiResponse } from './apiClient'
 
 // Dashboard Stats Interface
 export interface DashboardStats {
@@ -78,52 +78,70 @@ class DashboardApiService {
   }
 
   // Transform analytics data for dashboard display
+  // Always show all 6 standard categories even if they have 0 values
   transformAssetDistribution(assetDistribution: AssetDistributionData[]) {
-    const distributionMap = new Map<string, { assigned: number; total: number; percentage: number }>()
+    const normalize = (value: string) => {
+      const v = value.trim().toLowerCase()
+      if (v.includes('laptop')) return 'Laptop'
+      if (v.includes('desktop')) return 'Desktop'
+      if (v.includes('monitor') || v.includes('display')) return 'Monitor'
+      if (v.includes('mobile') || v.includes('phone')) return 'Mobile'
+      if (v.includes('tablet')) return 'Tablet'
+      if (v.includes('accessor') || v.includes('keyboard') || v.includes('mouse') || v.includes('headphone')) return 'Accessories'
+      // Fallback to original (title case first letter)
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    }
+
+    // Initialize all standard categories with 0 values
+    const standardCategories = ['Laptop', 'Desktop', 'Monitor', 'Mobile', 'Tablet', 'Accessories']
+    const distributionMap = new Map<string, { count: number; percentage: number }>()
     
-    // Initialize with common asset types
-    distributionMap.set('Laptops', { assigned: 0, total: 0, percentage: 0 })
-    distributionMap.set('Monitors', { assigned: 0, total: 0, percentage: 0 })
-    distributionMap.set('Mobile Devices', { assigned: 0, total: 0, percentage: 0 })
-    distributionMap.set('Accessories', { assigned: 0, total: 0, percentage: 0 })
+    // Initialize standard categories
+    standardCategories.forEach(category => {
+      distributionMap.set(category, { count: 0, percentage: 0 })
+    })
 
-    // Map API data to display format
+    // Process backend data
     assetDistribution.forEach(item => {
-      let displayName = item.type
-      
-      // Map common asset types to display names
-      if (item.type.toLowerCase().includes('laptop') || item.type.toLowerCase().includes('computer')) {
-        displayName = 'Laptops'
-      } else if (item.type.toLowerCase().includes('monitor') || item.type.toLowerCase().includes('display')) {
-        displayName = 'Monitors'
-      } else if (item.type.toLowerCase().includes('mobile') || item.type.toLowerCase().includes('phone') || item.type.toLowerCase().includes('tablet')) {
-        displayName = 'Mobile Devices'
-      } else if (item.type.toLowerCase().includes('accessory') || item.type.toLowerCase().includes('headphone') || item.type.toLowerCase().includes('mouse') || item.type.toLowerCase().includes('keyboard')) {
-        displayName = 'Accessories'
-      }
-
-      if (distributionMap.has(displayName)) {
-        const existing = distributionMap.get(displayName)!
-        distributionMap.set(displayName, {
-          assigned: existing.assigned + item.count,
-          total: existing.total + item.count,
-          percentage: existing.percentage + item.percentage
+      const name = normalize(item.type)
+      const existing = distributionMap.get(name)
+      if (existing) {
+        distributionMap.set(name, {
+          count: existing.count + item.count,
+          percentage: existing.percentage + (item.percentage ?? 0)
         })
       } else {
-        distributionMap.set(displayName, {
-          assigned: item.count,
-          total: item.count,
-          percentage: item.percentage
+        // For non-standard categories, add them as-is
+        distributionMap.set(name, { count: item.count, percentage: item.percentage ?? 0 })
+      }
+    })
+
+    // Return standard categories first, then any additional ones
+    const result: Array<{ name: string; count: number; percentage: number }> = []
+    
+    // Add standard categories in order
+    standardCategories.forEach(category => {
+      const data = distributionMap.get(category)!
+      result.push({
+        name: category,
+        count: data.count,
+        percentage: Math.round((data.percentage + Number.EPSILON) * 100) / 100
+      })
+    })
+    
+    // Add any additional categories from backend
+    distributionMap.forEach((data, name) => {
+      if (!standardCategories.includes(name)) {
+        result.push({
+          name,
+          count: data.count,
+          percentage: Math.round((data.percentage + Number.EPSILON) * 100) / 100
         })
       }
     })
 
-    return {
-      laptops: distributionMap.get('Laptops')!,
-      monitors: distributionMap.get('Monitors')!,
-      mobile: distributionMap.get('Mobile Devices')!,
-      accessories: distributionMap.get('Accessories')!
-    }
+    // Sort by percentage (highest to lowest) - more to less
+    return result.sort((a, b) => b.percentage - a.percentage)
   }
 
   // Transform status overview to dashboard stats format
@@ -162,110 +180,82 @@ class DashboardApiService {
       id: activity.id,
       title: this.getActivityTitle(activity),
       description: activity.description,
-      timeAgo: activity.timeAgo,
+      timeAgo: activity.timeAgo || 'Unknown', // Fallback to 'Unknown' if timeAgo is missing
       needsRealTimeUpdate: activity.needsRealTimeUpdate,
       timestamp: typeof activity.timestamp === 'string' ? new Date(activity.timestamp) : activity.timestamp
     }))
   }
 
+
   // Update time display for activities that need real-time updates
   updateActivityTimes(activities: any[]) {
     return activities.map(activity => {
-      if (activity.needsRealTimeUpdate && activity.timestamp) {
-        try {
-          // Ensure timestamp is properly parsed as Date
-          let timestamp: Date
-          
-          if (typeof activity.timestamp === 'string') {
-            timestamp = new Date(activity.timestamp)
-          } else if (activity.timestamp instanceof Date) {
-            timestamp = activity.timestamp
+      // Update activities that need real-time updates OR are recent enough (less than 1 hour)
+      const needsUpdate = activity.needsRealTimeUpdate || this.shouldUpdateActivityTime(activity.timeAgo)
+      if (needsUpdate) {
+        const currentTimeAgo = activity.timeAgo
+        
+        // Simple increment logic based on current timeAgo string
+        let newTimeAgo: string
+        
+        if (currentTimeAgo === 'Just now') {
+          newTimeAgo = '1 minute ago'
+        } else if (currentTimeAgo === '1 minute ago') {
+          newTimeAgo = '2 minutes ago'
+        } else if (currentTimeAgo === '2 minutes ago') {
+          newTimeAgo = '3 minutes ago'
+        } else if (currentTimeAgo === '3 minutes ago') {
+          newTimeAgo = '4 minutes ago'
+        } else if (currentTimeAgo === '4 minutes ago') {
+          newTimeAgo = '5 minutes ago'
+        } else if (currentTimeAgo === '5 minutes ago') {
+          newTimeAgo = '6 minutes ago'
+        } else if (currentTimeAgo === '6 minutes ago') {
+          newTimeAgo = '7 minutes ago'
+        } else if (currentTimeAgo === '7 minutes ago') {
+          newTimeAgo = '8 minutes ago'
+        } else if (currentTimeAgo === '8 minutes ago') {
+          newTimeAgo = '9 minutes ago'
+        } else if (currentTimeAgo === '9 minutes ago') {
+          newTimeAgo = '10 minutes ago'
+        } else if (currentTimeAgo.match(/^(\d+) minutes ago$/)) {
+          // Extract number and increment
+          const match = currentTimeAgo.match(/^(\d+) minutes ago$/)
+          if (match) {
+            const minutes = parseInt(match[1])
+            if (minutes < 60) { // Only update if less than 1 hour
+              newTimeAgo = `${minutes + 1} minutes ago`
+            } else {
+              newTimeAgo = currentTimeAgo // Keep as is if 1 hour or more
+            }
           } else {
-            // Handle other possible formats
-            timestamp = new Date(activity.timestamp)
+            newTimeAgo = currentTimeAgo
           }
-          
-          // Validate the date is valid
-          if (isNaN(timestamp.getTime())) {
-            console.warn('Invalid timestamp for activity:', {
-              id: activity.id,
-              timestamp: activity.timestamp,
-              type: typeof activity.timestamp
-            })
-            return activity
-          }
-          
-          const newTimeAgo = this.formatTimeAgo(timestamp)
-          
-          // Debug logging for the first few activities
-          if (Math.random() < 0.1) { // Log 10% of updates for debugging
-            console.log('Time update:', {
-              id: activity.id,
-              originalTimeAgo: activity.timeAgo,
-              newTimeAgo,
-              timestamp: timestamp.toISOString(),
-              now: new Date().toISOString()
-            })
-          }
-          
-          return {
-            ...activity,
-            timeAgo: newTimeAgo
-          }
-        } catch (error) {
-          console.error('Error updating activity time:', error, activity)
-          return activity
+        } else {
+          // For hours, days, etc., keep the backend's timeAgo
+          newTimeAgo = currentTimeAgo
+        }
+        
+
+        return {
+          ...activity,
+          timeAgo: newTimeAgo
         }
       }
       return activity
     })
   }
 
-  private formatTimeAgo(date: Date): string {
-    const now = new Date()
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-    // Debug logging to identify the issue
-    if (diffInSeconds < 0) {
-      console.warn('Negative time difference detected:', {
-        now: now.toISOString(),
-        date: date.toISOString(),
-        diffInSeconds
-      })
+  // Helper method to determine if an activity should be updated based on its timeAgo
+  private shouldUpdateActivityTime(timeAgo: string): boolean {
+    // Update activities that are less than 1 hour old
+    if (timeAgo === 'Just now' || timeAgo.includes('minute')) {
+      return true
     }
-
-    if (diffInSeconds < 60) {
-      return 'Just now'
-    }
-
-    const diffInMinutes = Math.floor(diffInSeconds / 60)
-    if (diffInMinutes < 60) {
-      return diffInMinutes === 1 ? '1 minute ago' : `${diffInMinutes} minutes ago`
-    }
-
-    const diffInHours = Math.floor(diffInMinutes / 60)
-    if (diffInHours < 24) {
-      return diffInHours === 1 ? '1 hour ago' : `${diffInHours} hours ago`
-    }
-
-    const diffInDays = Math.floor(diffInHours / 24)
-    if (diffInDays < 7) {
-      return diffInDays === 1 ? '1 day ago' : `${diffInDays} days ago`
-    }
-
-    const diffInWeeks = Math.floor(diffInDays / 7)
-    if (diffInWeeks < 4) {
-      return diffInWeeks === 1 ? '1 week ago' : `${diffInWeeks} weeks ago`
-    }
-
-    const diffInMonths = Math.floor(diffInDays / 30)
-    if (diffInMonths < 12) {
-      return diffInMonths === 1 ? '1 month ago' : `${diffInMonths} months ago`
-    }
-
-    const diffInYears = Math.floor(diffInDays / 365)
-    return diffInYears === 1 ? '1 year ago' : `${diffInYears} years ago`
+    // Don't update activities that are hours, days, etc. old
+    return false
   }
+
 
   private getActivityTitle(activity: RecentActivityData): string {
     switch (activity.type) {
