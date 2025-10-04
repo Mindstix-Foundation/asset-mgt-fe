@@ -382,28 +382,11 @@
         <div class="text-muted">
           <small>Showing <span>{{ paginationStart }}</span>-<span>{{ paginationEnd }}</span> of <span>{{ totalVendors }}</span> vendors</small>
         </div>
-        <nav aria-label="Vendor pagination">
-          <ul class="pagination pagination-modern mb-0">
-            <li class="page-item" :class="{ disabled: currentPage === 1 }">
-              <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)" aria-label="Previous">
-                <i class="fas fa-chevron-left"></i>
-              </a>
-            </li>
-            <li 
-              v-for="page in visiblePages" 
-              :key="page" 
-              class="page-item" 
-              :class="{ active: page === currentPage }"
-            >
-              <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-            </li>
-            <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-              <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)" aria-label="Next">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <AppPagination 
+          :current-page="currentPage" 
+          :total-pages="totalPages" 
+          @change="changePage"
+        />
       </div>
     </div>
 
@@ -639,6 +622,7 @@ import type { Vendor, VendorQueryParams } from '../../types/vendor.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import BulkVendorUpload from './BulkVendorUpload.vue'
+import AppPagination from '@/components/pagination/AppPagination.vue'
 
 const router = useRouter()
 useRouteToast()
@@ -768,17 +752,6 @@ const sortOptions = computed(() => [
   { id: 'status', name: 'Status', value: 'status' },
   { id: 'createdAt', name: 'Created Date', value: 'createdAt' }
 ])
-
-const visiblePages = computed(() => {
-  const pages = []
-  const start = Math.max(1, currentPage.value - 2)
-  const end = Math.min(totalPages.value, currentPage.value + 2)
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
-})
 
 // Methods
 const toggleView = (view: 'list' | 'grid') => {

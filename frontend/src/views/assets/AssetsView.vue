@@ -527,27 +527,11 @@
       <div class="text-muted">
         <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} assets</small>
       </div>
-      <nav aria-label="Asset pagination">
-        <ul class="pagination pagination-modern mb-0">
-          <li :class="['page-item', { disabled: currentPage === 1 }]">
-            <button class="page-link" @click="previousPage" :disabled="currentPage === 1">
-              <i class="fas fa-chevron-left"></i>
-            </button>
-          </li>
-          <li 
-            v-for="page in visiblePages" 
-            :key="page"
-            :class="['page-item', { active: page === currentPage }]"
-          >
-            <button class="page-link" @click="goToPage(page)">{{ page }}</button>
-          </li>
-          <li :class="['page-item', { disabled: currentPage === totalPages }]">
-            <button class="page-link" @click="nextPage" :disabled="currentPage === totalPages">
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <AppPagination 
+        :current-page="currentPage" 
+        :total-pages="totalPages" 
+        @change="goToPage"
+      />
     </div>
 
     <!-- Asset Detail Modal -->
@@ -1350,6 +1334,7 @@ import SearchableDropdown, { type Item } from '@/components/common/SearchableDro
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
+import AppPagination from '@/components/pagination/AppPagination.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -1541,23 +1526,6 @@ const paginationInfo = computed(() => {
   }
 })
 
-const visiblePages = computed(() => {
-  const pages = []
-  const maxVisible = 5
-  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
-  let end = Math.min(totalPages.value, start + maxVisible - 1)
-
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  return pages
-})
-
 // Computed properties for filter tracking
 const hasActiveFilters = computed(() => {
   return selectedType.value !== null || selectedBrand.value !== null || selectedStatus.value !== null || selectedCondition.value !== null
@@ -1700,20 +1668,6 @@ const toggleRefurbishmentDetails = () => {
 const goToPage = (page: number) => {
   currentPage.value = page
   loadAssets()
-}
-
-const previousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    loadAssets()
-  }
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-    loadAssets()
-  }
 }
 
 const viewAssetDetails = (asset: AssetDisplayItem) => {
