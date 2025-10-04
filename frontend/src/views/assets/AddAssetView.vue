@@ -20,7 +20,14 @@ const handleSubmit = async (assetData: any) => {
     await assetService.createAsset(assetData)
     
     const assetDetails = generateAssetDetails(assetData)
-    showAssetSuccessToast(assetDetails)
+    
+    // Redirect to asset list immediately after success
+    router.push('/app/assets')
+    
+    // Show success toast after redirect (with a small delay to ensure page loads)
+    setTimeout(() => {
+      toastStore.showSuccess('Success', `${assetDetails} has been registered successfully!`)
+    }, 100)
   } catch (error: any) {
     console.error('Error creating asset:', error)
     
@@ -53,11 +60,4 @@ const generateAssetDetails = (assetData: any) => {
   
   return details
 }
-
-const showAssetSuccessToast = (assetDetails: string) => {
-  toastStore.showSuccess('Success', `${assetDetails} has been registered successfully!`)
-}
-
-// Removed global functions for toast buttons - using simple toast notifications
-// Removed functions - no longer needed with simple toast notifications
 </script>

@@ -933,8 +933,21 @@ const getDisplayableDetails = (details: any): Array<{key: string, value: any}> =
     return []
   }
   
+  // If there's a changes array, exclude fields that are shown in changes to avoid duplication
+  let additionalExcludes: string[] = []
+  if (details.changes && Array.isArray(details.changes) && details.changes.length > 0) {
+    // Get all field names from the changes array
+    additionalExcludes = details.changes.map((change: any) => change.fieldName || change.field)
+  }
+  
   return Object.entries(details)
-    .filter(([key, value]) => shouldDisplayDetail(key, value))
+    .filter(([key, value]) => {
+      // Don't show fields that are in the changes array
+      if (additionalExcludes.includes(key)) {
+        return false
+      }
+      return shouldDisplayDetail(key, value)
+    })
     .map(([key, value]) => ({ key, value }))
 }
 

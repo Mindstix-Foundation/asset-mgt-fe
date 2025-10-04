@@ -381,7 +381,7 @@
                         <i class="fas fa-user-minus"></i>
                       </button>
                       <button 
-                        v-if="asset.status !== 'LOST'"
+                        v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
                         class="btn btn-outline-warning btn-maintenance-action" 
                         :title="getMaintenanceButtonTitle(asset.status)"
                         @click="handleMaintenanceAction(asset)"
@@ -495,7 +495,7 @@
                       <i class="fas fa-user-minus"></i>
                     </button>
                     <button 
-                      v-if="asset.status !== 'LOST'"
+                      v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
                       class="btn btn-action btn-maintenance-action btn-sm" 
                       :title="getMaintenanceButtonTitle(asset.status)"
                       @click="handleMaintenanceAction(asset)"
@@ -542,7 +542,7 @@
       tabindex="-1"
       v-if="selectedAsset"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Asset Details - {{ selectedAsset.id }}</h5>
@@ -638,13 +638,13 @@
                   <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
                       @click="toggleAssignmentDetails" 
                       style="cursor: pointer;">
-                    <span><i class="fas fa-user me-2"></i>Assignment Status & Information</span>
+                    <span><i :class="getStatusIcon(selectedAsset.status)" class="me-2"></i>{{ getStatusSectionTitle(selectedAsset.status) }}</span>
                     <i class="fas fa-chevron-down assignment-chevron" 
                        :class="{ 'rotated': isAssignmentDetailsExpanded }"
-                       v-if="selectedAsset.status === 'ASSIGNED'"></i>
+                       v-if="selectedAsset.status === 'ASSIGNED' || selectedAsset.status === 'IN_MAINTENANCE' || selectedAsset.status === 'LOST'"></i>
                   </h6>
                   
-                  <!-- Basic Assignment Info -->
+                  <!-- Basic Status Info -->
                   <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
                     <div class="d-flex align-items-center gap-3">
                       <div class="assignment-icon">
@@ -654,11 +654,11 @@
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
                             <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
-                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getAssignmentStatusText(selectedAsset.status) }}</span>
+                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
                           </div>
                           <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Assigned To:</span>
-                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ selectedAsset.assignedTo || 'Not Assigned' }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">{{ getStatusSecondaryLabel(selectedAsset.status) }}</span>
+                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ getStatusSecondaryValue(selectedAsset) }}</span>
                           </div>
                         </div>
                         <div class="text-muted" style="font-size: 0.8rem;">{{ getAssignmentStatusDescription(selectedAsset.status) }}</div>
@@ -669,56 +669,81 @@
                     </div>
                   </div>
                   
-                  <!-- Assignment Details (only show if asset is assigned) -->
-                  <div v-if="selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)" 
+                  <!-- Status Details (collapsible for ASSIGNED, IN_MAINTENANCE, LOST) -->
+                  <div v-if="(selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)) ||
+                             (selectedAsset.status === 'IN_MAINTENANCE' && selectedAsset.notes) ||
+                             (selectedAsset.status === 'LOST' && selectedAsset.notes)" 
                        v-show="isAssignmentDetailsExpanded" 
                        class="assignment-details-expanded">
                     <div class="row g-2">
-                      <!-- Assignment Reason -->
-                      <div class="col-md-6" v-if="selectedAsset.assignmentReason">
-                        <div class="info-item-compact">
-                          <label class="info-label-compact">Assignment Reason</label>
-                          <div class="info-value-compact">{{ selectedAsset.assignmentReason }}</div>
-                        </div>
-                      </div>
-                      
-                      <!-- Assignment Date -->
-                      <div class="col-md-6" v-if="selectedAsset.assignmentDate">
-                        <div class="info-item-compact">
-                          <label class="info-label-compact">Assignment Date</label>
-                          <div class="info-value-compact">{{ formatDate(selectedAsset.assignmentDate) }}</div>
-                        </div>
-                      </div>
-                      
-                      <!-- Assigned By (only show if not system) -->
-                      <div class="col-md-6" v-if="selectedAsset.assignedBy && selectedAsset.assignedBy !== 'system'">
-                        <div class="info-item-compact">
-                          <label class="info-label-compact">Assigned By</label>
-                          <div class="info-value-compact">{{ selectedAsset.assignedBy }}</div>
-                        </div>
-                      </div>
-                      
-                      <!-- Divider between assignment details and notes -->
-                      <div class="col-12" v-if="selectedAsset.assignmentNotes">
-                        <hr class="assignment-divider">
-                      </div>
-                      
-                      <!-- Assignment Notes -->
-                      <div class="col-12" v-if="selectedAsset.assignmentNotes">
-                        <div class="info-item-compact">
-                          <label class="info-label-compact">Assignment Notes</label>
-                          <div class="info-value-compact">
-                            <NotesDisplay 
-                              :notes="selectedAsset.assignmentNotes"
-                              :fallback-text="'No assignment notes provided.'"
-                              :show-label="false"
-                              :show-icon="false"
-                              :show-empty-icon="true"
-                              :preserve-formatting="true"
-                            />
+                      <!-- ASSIGNED Status Details -->
+                      <template v-if="selectedAsset.status === 'ASSIGNED'">
+                        <!-- Assignment Reason -->
+                        <div class="col-md-6" v-if="selectedAsset.assignmentReason">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Assignment Reason</label>
+                            <div class="info-value-compact">{{ selectedAsset.assignmentReason }}</div>
                           </div>
                         </div>
-                      </div>
+                        
+                        <!-- Assignment Date -->
+                        <div class="col-md-6" v-if="selectedAsset.assignmentDate">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Assignment Date</label>
+                            <div class="info-value-compact">{{ formatDate(selectedAsset.assignmentDate) }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Assigned By (only show if not system) -->
+                        <div class="col-md-6" v-if="selectedAsset.assignedBy && selectedAsset.assignedBy !== 'system'">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Assigned By</label>
+                            <div class="info-value-compact">{{ selectedAsset.assignedBy }}</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Divider between assignment details and notes -->
+                        <div class="col-12" v-if="selectedAsset.assignmentNotes">
+                          <hr class="assignment-divider">
+                        </div>
+                        
+                        <!-- Assignment Notes -->
+                        <div class="col-12" v-if="selectedAsset.assignmentNotes">
+                          <div class="info-item-compact">
+                            <label class="info-label-compact">Assignment Notes</label>
+                            <div class="info-value-compact">
+                              <NotesDisplay 
+                                :notes="selectedAsset.assignmentNotes"
+                                :fallback-text="'No assignment notes provided.'"
+                                :show-label="false"
+                                :show-icon="false"
+                                :show-empty-icon="true"
+                                :preserve-formatting="true"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                      
+                      <!-- IN_MAINTENANCE Status Details -->
+                      <template v-if="selectedAsset.status === 'IN_MAINTENANCE'">
+                        <div class="col-12">
+                          <div class="alert alert-warning mb-0">
+                            <i class="fas fa-wrench me-2"></i>
+                            <strong>Maintenance Status:</strong> This asset is currently under maintenance. Check the maintenance records for detailed information.
+                          </div>
+                        </div>
+                      </template>
+                      
+                      <!-- LOST Status Details -->
+                      <template v-if="selectedAsset.status === 'LOST'">
+                        <div class="col-12">
+                          <div class="alert alert-danger mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Lost Asset:</strong> This asset has been reported as lost. Please contact the administrator for further action.
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -896,7 +921,12 @@
                 <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
-                <button type="button" class="btn btn-warning" @click="handleMaintenanceAction(selectedAsset!)">
+                <button 
+                  v-if="selectedAsset.status === 'AVAILABLE'"
+                  type="button" 
+                  class="btn btn-warning" 
+                  @click="handleMaintenanceAction(selectedAsset!)"
+                >
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
               <button type="button" class="btn btn-primary-blue" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
@@ -930,7 +960,7 @@
       tabindex="-1"
       v-if="showRetireAssetModal"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
@@ -1074,7 +1104,7 @@
       tabindex="-1"
       v-if="showReactivateAssetModal"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
@@ -1802,7 +1832,7 @@ const exportAssets = async () => {
     
   } catch (error) {
     console.error('Error exporting assets:', error)
-    alert('Error exporting assets. Please try again.')
+    toastStore.showError('Export Failed', 'Error exporting assets. Please try again.')
   } finally {
     isLoading.value = false
   }
@@ -1852,9 +1882,9 @@ const handleBulkUpload = async (data: any[]) => {
     
     // Show success message with results
     if (errorCount === 0) {
-      alert(`Upload completed successfully!\nSuccessfully imported: ${successCount} assets`)
+      toastStore.showSuccess('Upload Completed', `Successfully imported ${successCount} assets`)
     } else {
-      alert(`Upload completed with some errors!\nSuccessfully imported: ${successCount} assets\nErrors: ${errorCount}\n\nError details:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? '\n...' : ''}`)
+      toastStore.showWarning('Upload Completed with Errors', `Successfully imported: ${successCount} assets, Errors: ${errorCount}. Check console for details.`)
     }
     
     // Reload assets to show new data
@@ -1862,7 +1892,7 @@ const handleBulkUpload = async (data: any[]) => {
     
   } catch (error) {
     console.error('Error uploading assets:', error)
-    alert('Error uploading assets. Please check the data and try again.')
+    toastStore.showError('Upload Failed', 'Error uploading assets. Please check the data and try again.')
   } finally {
     isLoading.value = false
   }
@@ -1937,11 +1967,22 @@ const collectAsset = (asset: AssetDisplayItem) => {
 
 const handleMaintenanceAction = (asset: AssetDisplayItem) => {
   if (asset.status === 'IN_MAINTENANCE') {
-    // If asset is already in maintenance, navigate to view existing maintenance
-    // For now, we'll navigate to the maintenance list where they can find the specific maintenance record
-    router.push('/app/maintenance')
+    // If asset is already in maintenance, navigate to maintenance history for this specific asset
+    // This shows all maintenance records including the active one
+    router.push({
+      path: `/app/maintenance/${asset.id}/history`,
+      query: { 
+        returnTo: '/app/assets',
+        assetName: asset.brandModel,
+        assetId: asset.id
+      }
+    })
   } else {
     // If asset is not in maintenance, navigate to schedule new maintenance with asset pre-selected
+    // Store asset info for pre-population (similar to issue/collect patterns)
+    localStorage.setItem('selectedAssetForMaintenance', asset.id)
+    localStorage.setItem('selectedAssetType', asset.type)
+    
     router.push({
       path: '/app/maintenance/schedule',
       query: { assetId: asset.id }
@@ -2050,7 +2091,7 @@ const retireAsset = async () => {
     })
 
     // Show success message
-    alert(`Asset ${assetToRetire.value.id} has been successfully retired.`)
+    toastStore.showSuccess('Asset Retired', `Asset ${assetToRetire.value.id} has been successfully retired.`)
 
     // Close modal and refresh data
     closeRetireAssetModal()
@@ -2058,7 +2099,7 @@ const retireAsset = async () => {
 
   } catch (error) {
     console.error('Error retiring asset:', error)
-    alert('Error retiring asset. Please try again.')
+    toastStore.showError('Retirement Failed', 'Error retiring asset. Please try again.')
   } finally {
     isRetiringAsset.value = false
   }
@@ -2142,7 +2183,7 @@ const reactivateAsset = async () => {
     })
 
     // Show success message
-    alert(`Asset ${assetToReactivate.value.id} has been successfully reactivated.`)
+    toastStore.showSuccess('Asset Reactivated', `Asset ${assetToReactivate.value.id} has been successfully reactivated.`)
 
     // Close modal and refresh data
     closeReactivateAssetModal()
@@ -2150,7 +2191,7 @@ const reactivateAsset = async () => {
 
   } catch (error) {
     console.error('Error reactivating asset:', error)
-    alert('Error reactivating asset. Please try again.')
+    toastStore.showError('Reactivation Failed', 'Error reactivating asset. Please try again.')
   } finally {
     isReactivatingAsset.value = false
   }
@@ -2247,7 +2288,41 @@ const getMaintenanceButtonIcon = (status: string) => {
 
 const getAssignmentIcon = (status: string) => {
   if (status === 'ASSIGNED') return 'fas fa-user'
+  if (status === 'IN_MAINTENANCE') return 'fas fa-wrench'
+  if (status === 'LOST') return 'fas fa-exclamation-triangle'
   return 'fas fa-box'
+}
+
+const getStatusIcon = (status: string) => {
+  if (status === 'ASSIGNED') return 'fas fa-user'
+  if (status === 'IN_MAINTENANCE') return 'fas fa-wrench'
+  if (status === 'LOST') return 'fas fa-exclamation-triangle'
+  if (status === 'AVAILABLE') return 'fas fa-box'
+  return 'fas fa-info-circle'
+}
+
+const getStatusSectionTitle = (status: string) => {
+  if (status === 'ASSIGNED') return 'Assignment Status & Information'
+  if (status === 'IN_MAINTENANCE') return 'Maintenance Status & Information'
+  if (status === 'LOST') return 'Lost Asset Information'
+  if (status === 'AVAILABLE') return 'Asset Availability Status'
+  return 'Asset Status Information'
+}
+
+const getStatusSecondaryLabel = (status: string) => {
+  if (status === 'ASSIGNED') return 'Assigned To:'
+  if (status === 'IN_MAINTENANCE') return 'Current Location:'
+  if (status === 'LOST') return 'Last Known Location:'
+  if (status === 'AVAILABLE') return 'Current Location:'
+  return 'Location:'
+}
+
+const getStatusSecondaryValue = (asset: AssetDisplayItem) => {
+  if (asset.status === 'ASSIGNED') return asset.assignedTo || 'Not Assigned'
+  if (asset.status === 'IN_MAINTENANCE') return asset.location || 'Unknown'
+  if (asset.status === 'LOST') return asset.location || 'Unknown'
+  if (asset.status === 'AVAILABLE') return asset.location || 'Warehouse'
+  return asset.location || 'Unknown'
 }
 
 const getAssignmentStatusText = (status: string) => {
@@ -2257,7 +2332,10 @@ const getAssignmentStatusText = (status: string) => {
 
 const getAssignmentStatusDescription = (status: string) => {
   if (status === 'ASSIGNED') return 'Currently with employee'
-  return 'Ready to be assigned to an employee'
+  if (status === 'IN_MAINTENANCE') return 'Asset is currently under maintenance'
+  if (status === 'LOST') return 'Asset has been reported as lost'
+  if (status === 'AVAILABLE') return 'Ready to be assigned to an employee'
+  return 'Asset status information'
 }
 
 const getRetirementStatusDescription = (retirementReason: string) => {

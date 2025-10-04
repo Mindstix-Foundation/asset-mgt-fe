@@ -18,10 +18,20 @@ const toastStore = useToastStore()
 
 const handleSubmit = async (vendorData: any) => {
   try {
-      await VendorApiService.createVendor(vendorData)
+    const response = await VendorApiService.createVendor(vendorData)
+    const createdVendor = response.data.vendor
     
     const vendorDetails = generateVendorDetails(vendorData)
-    showVendorSuccessToast(vendorDetails)
+    
+    // Navigate back to vendors list with success message
+    router.push({
+      path: '/app/vendors',
+      query: {
+        toastType: 'success',
+        toastTitle: 'Vendor Added',
+        toastMessage: `${vendorDetails} has been registered successfully!`
+      }
+    })
   } catch (error: any) {
     console.error('Error creating vendor:', error)
     
@@ -66,11 +76,4 @@ const generateVendorDetails = (vendorData: any) => {
   
   return details
 }
-
-const showVendorSuccessToast = (vendorDetails: string) => {
-  toastStore.showSuccess('Success', `${vendorDetails} has been registered successfully!`)
-}
-
-// Removed global functions for toast buttons - using simple toast notifications
-// Removed functions - no longer needed with simple toast notifications
 </script>

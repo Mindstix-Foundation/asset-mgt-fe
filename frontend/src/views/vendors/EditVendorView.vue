@@ -85,12 +85,16 @@ const handleSubmit = async (vendorData: any) => {
     const updatedVendor = response.data.vendor
 
     const vendorName = `${updatedVendor.name || 'Vendor'}`
-    toastStore.showSuccess('Success', `${vendorName} has been updated successfully!`)
     
-    // Navigate back to vendors list after successful update
-    setTimeout(() => {
-      router.push('/app/vendors')
-    }, 1500)
+    // Navigate back to vendors list with success message
+    router.push({
+      path: '/app/vendors',
+      query: {
+        toastType: 'success',
+        toastTitle: 'Vendor Updated',
+        toastMessage: `${vendorName} has been updated successfully!`
+      }
+    })
   } catch (error: any) {
     console.error('Error updating vendor:', error)
     

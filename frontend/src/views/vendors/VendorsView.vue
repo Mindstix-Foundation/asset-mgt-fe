@@ -398,7 +398,7 @@
       tabindex="-1"
       v-if="selectedVendor"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Vendor Details - {{ selectedVendor.name }}</h5>
@@ -540,7 +540,7 @@
 
     <!-- Status Confirmation Modal -->
     <div v-if="showStatusModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black);">

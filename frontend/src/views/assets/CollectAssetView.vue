@@ -962,15 +962,14 @@ const confirmCollection = async () => {
     const response = await collectAssetApiService.collectAsset(parseInt(formData.assetId), returnData)
     
     const collectionDetails = generateCollectionDetails()
-    console.log('[Collect] success - redirecting to', originPath.value, 'with toast:', collectionDetails)
     
-    // Redirect back to origin page and show success toast after navigation
-    const target = originPath.value || '/app/assets'
-    router.push(target)
+    // Redirect to asset list immediately after success
+    router.push('/app/assets')
+    
+    // Show success toast after redirect (with a small delay to ensure page loads)
     setTimeout(() => {
-      console.log('[Collect] showing success toast after navigation')
-      showCollectAssetSuccessToast(collectionDetails)
-    }, 300)
+      toastStore.showSuccess('Success', `${collectionDetails} has been collected successfully!`)
+    }, 100)
     
   } catch (error: any) {
     console.error('Error collecting asset:', error)
@@ -1062,10 +1061,6 @@ const scrollToFirstError = () => {
   }
 }
 
-// Custom success toast for asset collection
-const showCollectAssetSuccessToast = (collectionDetails: string) => {
-  toastStore.showSuccess('Success', `${collectionDetails} has been collected successfully!`)
-}
 
 
 // Employee selection handler - filter assets by selected employee

@@ -566,25 +566,13 @@ const submitForm = async (event?: Event) => {
     
     const assignmentDetails = generateAssignmentDetails()
     
-    // Redirect back to origin page; if target is assets list, pass toast via query
-    const target = originPath.value || '/app/assets'
-    if (target === '/app/assets') {
-      router.push({
-        path: '/app/assets',
-        query: {
-          toastType: 'success',
-          toastTitle: 'Success',
-          toastMessage: `${assignmentDetails} has been assigned successfully!`
-        }
-      })
-    } else {
-      router.push(target)
-    }
+    // Redirect to asset list immediately after success
+    router.push('/app/assets')
     
-    // Fallback: also try showing toast after navigation
+    // Show success toast after redirect (with a small delay to ensure page loads)
     setTimeout(() => {
-      showIssueAssetSuccessToast(assignmentDetails)
-    }, 200)
+      toastStore.showSuccess('Success', `${assignmentDetails} has been assigned successfully!`)
+    }, 100)
     
   } catch (error: any) {
     console.error('Error issuing asset:', error)
@@ -642,44 +630,6 @@ const goBack = () => {
   router.push('/app/assets')
 }
 
-const issueAnotherAsset = async () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
-  
-  resetForm()
-  
-  // Reload data to ensure we have the latest available assets
-  try {
-    await Promise.all([
-      loadAvailableAssets(),
-      loadActiveEmployees()
-    ])
-  } catch (error) {
-    console.error('Error reloading data:', error)
-  }
-  
-  toastStore.showInfo('Info', 'Ready to issue another asset!')
-  
-  // Focus on first field
-  nextTick(() => {
-    const firstField = document.getElementById('assetId')
-    if (firstField) firstField.focus()
-  })
-}
-
-const viewAssignments = () => {
-  // Hide any existing toasts
-  const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
-  
-  toastStore.showInfo('Info', 'Redirecting to Asset Assignments...')
-  
-  setTimeout(() => {
-    router.push('/app/assets')
-  }, 1500)
-}
-
 const scrollToFirstError = () => {
   // Hide any existing toasts (but keep this for other error toasts)
   const existingToasts = document.querySelectorAll('.custom-toast-notification')
@@ -702,10 +652,6 @@ const scrollToFirstError = () => {
   }
 }
 
-// Simple success toast for asset issuance
-const showIssueAssetSuccessToast = (assignmentDetails: string) => {
-  toastStore.showSuccess('Success', `${assignmentDetails} has been assigned successfully!`)
-}
 
 const clearSelectedAssetInfo = () => {
   formData.assetBrandModel = ''

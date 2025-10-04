@@ -86,12 +86,14 @@ const handleSubmit = async (assetData: any) => {
     const updatedAsset = response.data.asset
 
     const assetName = `${updatedAsset.serialNumber || 'Asset'}`
-    toastStore.showSuccess('Success', `${assetName} has been updated successfully!`)
     
-    // Navigate back to assets list after successful update
+    // Redirect to asset list immediately after success
+    router.push('/app/assets')
+    
+    // Show success toast after redirect (with a small delay to ensure page loads)
     setTimeout(() => {
-      router.push('/app/assets')
-    }, 1500)
+      toastStore.showSuccess('Success', `${assetName} has been updated successfully!`)
+    }, 100)
   } catch (error: any) {
     console.error('Error updating asset:', error)
     
