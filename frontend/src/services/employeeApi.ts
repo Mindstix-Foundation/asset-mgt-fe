@@ -136,11 +136,14 @@ class EmployeeApiService {
   }
 
   // Get all employees for dropdown selection (minimal data, no pagination)
-  async getEmployeesForDropdowns(status?: 'ACTIVE' | 'INACTIVE'): Promise<EmployeeListResponse> {
+  async getEmployeesForDropdowns(status?: 'ACTIVE' | 'INACTIVE', hasAssignedAssets?: boolean): Promise<EmployeeListResponse> {
     try {
       const params: any = {}
       if (status) {
         params.status = status
+      }
+      if (hasAssignedAssets !== undefined) {
+        params.hasAssignedAssets = hasAssignedAssets
       }
       
       const response = await apiClient.get(`${this.baseURL}/dropdowns`, {

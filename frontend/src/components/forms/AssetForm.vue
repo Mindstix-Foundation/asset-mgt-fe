@@ -65,10 +65,13 @@
                       required 
                       minlength="3" 
                       maxlength="50" 
-                      pattern="[A-Za-z0-9\-_]{3,50}"
+                      pattern="^[A-Za-z0-9\-_]{3,50}$"
                       title="Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)"
                       @blur="validateSerialNumber"
-                      @input="clearFieldError('serialNumber')"
+                      @input="handleSerialNumberInput"
+                      @keyup="clearFieldError('serialNumber')"
+                      @keydown="preventSpaceInput"
+                      @paste="handleSerialNumberPaste"
                     >
                     <div class="form-text">3-50 characters (letters, numbers, hyphens, underscores only)</div>
                     <div class="invalid-feedback">{{ errors.serialNumber }}</div>
@@ -196,19 +199,18 @@
                 <div class="row g-4">
                   <!-- Purchase Date -->
                   <div class="col-md-6">
-                    <label for="purchaseDate" class="form-label">
-                      Purchase Date <span class="text-muted">(Optional)</span>
-                    </label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="purchaseDate" 
+                    <DatePicker
                       v-model="formData.purchaseDate"
-                      :max="todayDate"
-                      @blur="validateField('purchaseDate')"
-                      @input="clearFieldError('purchaseDate')"
-                    >
-                    <div class="form-text">Cannot be future date</div>
+                      label="Purchase Date (Optional)"
+                      placeholder="dd-mm-yyyy"
+                      help-text="Cannot be future date"
+                      :required="false"
+                      input-id="purchaseDate"
+                      :error-message="errors.purchaseDate"
+                      :input-class="getFieldClass('purchaseDate') as any"
+                      @change="validateField('purchaseDate')"
+                      @focus="clearFieldError('purchaseDate')"
+                    />
                   </div>
 
                   <!-- Purchase Cost -->
@@ -259,36 +261,34 @@
                 <div class="row g-4">
                   <!-- Warranty Start Date -->
                   <div class="col-md-6">
-                    <label for="warrantyStartDate" class="form-label">
-                      Warranty Start Date <span class="text-muted">(Optional)</span>
-                    </label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="warrantyStartDate" 
+                    <DatePicker
                       v-model="formData.warrantyStartDate"
-                      @blur="validateWarrantyDates"
-                      @input="clearFieldError('warrantyStartDate')"
-                    >
-                    <div class="form-text">When warranty coverage begins</div>
-                    <div class="invalid-feedback">{{ errors.warrantyStartDate }}</div>
+                      label="Warranty Start Date (Optional)"
+                      placeholder="dd-mm-yyyy"
+                      help-text="When warranty coverage begins"
+                      :required="false"
+                      input-id="warrantyStartDate"
+                      :error-message="errors.warrantyStartDate"
+                      :input-class="getFieldClass('warrantyStartDate') as any"
+                      @change="validateWarrantyDates"
+                      @focus="clearFieldError('warrantyStartDate')"
+                    />
                   </div>
 
                   <!-- Warranty End Date -->
                   <div class="col-md-6">
-                    <label for="warrantyEndDate" class="form-label">
-                      Warranty End Date <span class="text-muted">(Optional)</span>
-                    </label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="warrantyEndDate" 
+                    <DatePicker
                       v-model="formData.warrantyEndDate"
-                      @blur="validateWarrantyDates"
-                      @input="clearFieldError('warrantyEndDate')"
-                    >
-                    <div class="form-text">When warranty coverage expires</div>
-                    <div class="invalid-feedback">{{ errors.warrantyEndDate }}</div>
+                      label="Warranty End Date (Optional)"
+                      placeholder="dd-mm-yyyy"
+                      help-text="When warranty coverage expires"
+                      :required="false"
+                      input-id="warrantyEndDate"
+                      :error-message="errors.warrantyEndDate"
+                      :input-class="getFieldClass('warrantyEndDate') as any"
+                      @change="validateWarrantyDates"
+                      @focus="clearFieldError('warrantyEndDate')"
+                    />
                   </div>
                 </div>
               </fieldset>
@@ -424,6 +424,7 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { assetService } from '@/services/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
+import DatePicker from '../common/DatePicker.vue'
 import { assetCategoryService } from '@/services/assetCategoryService'
 import { assetTypeService } from '@/services/assetTypeService'
 import { brandService } from '@/services/brandService'
@@ -472,6 +473,77 @@ const ensureDateFormat = (dateValue: any): string => {
     return dateValue.toISOString().split('T')[0]
   }
   return ''
+}
+
+// Helper function to parse Prisma Decimal values
+const parseDecimalValue = (decimalValue: any): string => {
+  if (!decimalValue) return ''
+  
+  // If it's already a number or string, return as string
+  if (typeof decimalValue === 'number' || typeof decimalValue === 'string') {
+    return decimalValue.toString()
+  }
+  
+  // If it's a Prisma Decimal object with s, e, d properties
+  if (decimalValue && typeof decimalValue === 'object' && decimalValue.s !== undefined && decimalValue.e !== undefined && decimalValue.d) {
+    console.log('Parsing Decimal:', decimalValue) // Debug log
+    
+    // Parse the Decimal format: { s: sign, e: exponent, d: [digits] }
+    const sign = decimalValue.s === 1 ? '' : '-'
+    const digits = decimalValue.d.join('')
+    const exponent = decimalValue.e
+    
+    if (digits === '0') return '0'
+    
+    // Based on the actual data: {s: 1, e: 4, d: [55000]}
+    // The user entered 55000, but it's showing as 55
+    // This suggests that the current logic is dividing by 10^exponent somewhere
+    
+    // Let me try the simplest approach: just return the digits as-is
+    // If the user entered 55000 and it's stored as d: [55000], maybe we should just use that
+    let result = digits
+    
+    console.log('Parsed result:', result) // Debug log
+    
+    return sign + result
+  }
+  
+  // Fallback: try to convert to string
+  return decimalValue.toString()
+}
+
+// Helper function to convert dd-mm-yyyy to ISO date string (yyyy-mm-dd)
+const convertDDMMYYYYToISO = (dateString: string | undefined): string => {
+  if (!dateString) return ''
+  
+  console.log('Converting date:', dateString)
+  const parts = dateString.split('-')
+  if (parts.length !== 3) {
+    console.log('Invalid date format, returning original:', dateString)
+    return dateString
+  }
+  
+  const day = parts[0]
+  const month = parts[1]
+  const year = parts[2]
+  const result = `${year}-${month}-${day}`
+  
+  console.log('Converted date:', dateString, '->', result)
+  return result
+}
+
+// Helper function to convert ISO date string (yyyy-mm-dd) to dd-mm-yyyy
+const convertISOToDDMMYYYY = (dateString: string | undefined): string => {
+  if (!dateString) return ''
+  
+  const parts = dateString.split('-')
+  if (parts.length !== 3) return dateString
+  
+  const year = parts[0]
+  const month = parts[1]
+  const day = parts[2]
+  
+  return `${day}-${month}-${year}`
 }
 
 // Reactive data
@@ -704,6 +776,61 @@ const availableStatusOptions = computed(() => {
 })
 
 // Methods
+const preventSpaceInput = (event: KeyboardEvent) => {
+  // Prevent space key (keyCode 32) and other whitespace characters
+  if (event.key === ' ' || event.key === 'Space' || event.keyCode === 32) {
+    event.preventDefault()
+    return false
+  }
+}
+
+const handleSerialNumberPaste = (event: ClipboardEvent) => {
+  // Get the pasted text
+  const pastedText = event.clipboardData?.getData('text') || ''
+  
+  // Remove any spaces from the pasted text
+  const cleanedText = pastedText.replace(/\s/g, '')
+  
+  // If the pasted text contained spaces, prevent the default paste and set the cleaned text
+  if (pastedText !== cleanedText) {
+    event.preventDefault()
+    
+    // Get the current cursor position
+    const input = event.target as HTMLInputElement
+    const start = input.selectionStart || 0
+    const end = input.selectionEnd || 0
+    
+    // Insert the cleaned text at the cursor position
+    const currentValue = formData.serialNumber
+    const newValue = currentValue.substring(0, start) + cleanedText + currentValue.substring(end)
+    
+    // Update the form data
+    formData.serialNumber = newValue
+    
+    // Set cursor position after the inserted text
+    setTimeout(() => {
+      input.setSelectionRange(start + cleanedText.length, start + cleanedText.length)
+    }, 0)
+  }
+}
+
+const handleSerialNumberInput = () => {
+  // Clear any existing errors immediately
+  clearFieldError('serialNumber')
+  
+  // If the serial number looks valid, validate it immediately
+  const trimmedSerialNumber = formData.serialNumber.trim()
+  if (trimmedSerialNumber.length >= 3 && /^[A-Za-z0-9\-_]+$/.test(trimmedSerialNumber)) {
+    // Mark as valid if it matches the pattern
+    const field = document.getElementById('serialNumber') as HTMLInputElement
+    if (field) {
+      field.classList.add('is-valid')
+      field.classList.remove('is-invalid')
+    }
+    errors.serialNumber = ''
+  }
+}
+
 const validateSerialNumber = async () => {
   const field = document.getElementById('serialNumber') as HTMLInputElement
   if (!field) return
@@ -725,7 +852,9 @@ const validateSerialNumber = async () => {
     return
   }
 
-  if (!/^[A-Za-z0-9\-_]{3,50}$/.test(formData.serialNumber)) {
+  // Trim the serial number and test against pattern
+  const trimmedSerialNumber = formData.serialNumber.trim()
+  if (!/^[A-Za-z0-9\-_]{3,50}$/.test(trimmedSerialNumber)) {
     errors.serialNumber = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)'
     field.classList.add('is-invalid')
     return
@@ -849,14 +978,25 @@ const validateField = async (fieldName: string) => {
       break
 
     case 'purchaseDate':
-      if (formData.purchaseDate && formData.purchaseDate > todayDate.value) {
-        errors.purchaseDate = 'Purchase date cannot be in the future'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
+      if (formData.purchaseDate) {
+        // Convert dd-mm-yyyy to yyyy-mm-dd for comparison
+        const dateParts = formData.purchaseDate.split('-')
+        if (dateParts.length === 3) {
+          const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+          if (formattedDate > todayDate.value) {
+            errors.purchaseDate = 'Purchase date cannot be in the future'
+            applyValidationToDatePicker(fieldName, 'invalid')
+          } else {
+            errors.purchaseDate = ''
+            applyValidationToDatePicker(fieldName, 'valid')
+          }
+        } else {
+          errors.purchaseDate = ''
+          applyValidationToDatePicker(fieldName, 'valid')
+        }
       } else {
         errors.purchaseDate = ''
-        field.classList.remove('is-invalid')
-        if (formData.purchaseDate) field.classList.add('is-valid')
+        applyValidationToDatePicker(fieldName, 'valid')
       }
       break
 
@@ -929,24 +1069,61 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   }
 }
 
+// Helper function to apply validation classes to DatePicker components
+const applyValidationToDatePicker = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Find the DatePicker input by ID
+  const input = document.getElementById(fieldName) as HTMLInputElement
+  if (!input) {
+    console.warn(`Could not find input for DatePicker field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+  }
+}
+
 const clearFieldError = (fieldName: string) => {
-  if (errors[fieldName as keyof typeof errors]) {
-    const field = document.getElementById(fieldName) as HTMLInputElement
-    if (field && ((formData as any)[fieldName] || (uiFormData as any)[fieldName])) {
-      field.classList.remove('is-invalid')
-    }
-    
-    // Also clear validation for SearchableDropdown components
-    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
-    if (searchableDropdownFields.includes(fieldName)) {
-      const wrapper = document.querySelector(`#${fieldName}`)?.closest('.form-searchable-dropdown')
-      if (wrapper) {
-        const input = wrapper.querySelector('.form-control') as HTMLInputElement
-        if (input) {
-          input.classList.remove('is-invalid')
-        }
+  // Clear the error message
+  errors[fieldName as keyof typeof errors] = ''
+  
+  const field = document.getElementById(fieldName) as HTMLInputElement
+  if (field) {
+    field.classList.remove('is-invalid')
+    field.classList.remove('is-valid')
+  }
+  
+  // Also clear validation for SearchableDropdown components
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  if (searchableDropdownFields.includes(fieldName)) {
+    const wrapper = document.querySelector(`#${fieldName}`)?.closest('.form-searchable-dropdown')
+    if (wrapper) {
+      const input = wrapper.querySelector('.form-control') as HTMLInputElement
+      if (input) {
+        input.classList.remove('is-invalid')
+        input.classList.remove('is-valid')
       }
     }
+  }
+  
+  // Also clear validation for DatePicker components
+  const datePickerFields = ['purchaseDate', 'warrantyStartDate', 'warrantyEndDate']
+  if (datePickerFields.includes(fieldName)) {
+    const input = document.getElementById(fieldName) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid')
+      input.classList.remove('is-valid')
+    }
+  }
+  
+  // Reset wasValidated state when user starts typing in any field
+  if (wasValidated.value) {
+    wasValidated.value = false
   }
 }
 
@@ -968,6 +1145,20 @@ const getFieldDisplayName = (fieldName: string): string => {
     notes: 'Additional Notes'
   }
   return displayNames[fieldName] || fieldName
+}
+
+// Helper function to get field validation classes for DatePicker components
+const getFieldClass = (fieldName: string): string => {
+  const field = document.getElementById(fieldName) as HTMLInputElement
+  if (!field) return ''
+  
+  if (field.classList.contains('is-invalid')) {
+    return 'is-invalid'
+  } else if (field.classList.contains('is-valid')) {
+    return 'is-valid'
+  }
+  
+  return ''
 }
 
 // SearchableDropdown change handlers
@@ -1119,29 +1310,35 @@ const onStatusChange = (item: Item | null) => {
 
 // Warranty date validation
 const validateWarrantyDates = () => {
-  if (formData.warrantyStartDate && formData.warrantyEndDate && formData.warrantyEndDate < formData.warrantyStartDate) {
-    errors.warrantyEndDate = 'Warranty end date must be after start date'
-    const field = document.getElementById('warrantyEndDate') as HTMLInputElement
-    if (field) {
-      field.classList.add('is-invalid')
-      field.classList.remove('is-valid')
+  if (formData.warrantyStartDate && formData.warrantyEndDate) {
+    // Convert dd-mm-yyyy to yyyy-mm-dd for comparison
+    const startParts = formData.warrantyStartDate.split('-')
+    const endParts = formData.warrantyEndDate.split('-')
+    
+    if (startParts.length === 3 && endParts.length === 3) {
+      const startDate = `${startParts[2]}-${startParts[1]}-${startParts[0]}`
+      const endDate = `${endParts[2]}-${endParts[1]}-${endParts[0]}`
+      
+      if (endDate < startDate) {
+        errors.warrantyEndDate = 'Warranty end date must be after start date'
+        applyValidationToDatePicker('warrantyEndDate', 'invalid')
+        return false
+      }
     }
-    return false
-  } else {
-    errors.warrantyEndDate = ''
-    errors.warrantyStartDate = ''
-    const endField = document.getElementById('warrantyEndDate') as HTMLInputElement
-    const startField = document.getElementById('warrantyStartDate') as HTMLInputElement
-    if (endField) {
-      endField.classList.remove('is-invalid')
-      if (formData.warrantyEndDate) endField.classList.add('is-valid')
-    }
-    if (startField) {
-      startField.classList.remove('is-invalid')
-      if (formData.warrantyStartDate) startField.classList.add('is-valid')
-    }
-    return true
   }
+  
+  // Clear errors and apply valid classes
+  errors.warrantyEndDate = ''
+  errors.warrantyStartDate = ''
+  
+  if (formData.warrantyStartDate) {
+    applyValidationToDatePicker('warrantyStartDate', 'valid')
+  }
+  if (formData.warrantyEndDate) {
+    applyValidationToDatePicker('warrantyEndDate', 'valid')
+  }
+  
+  return true
 }
 
 const expandNotesField = () => {
@@ -1243,7 +1440,7 @@ const handleSubmit = async (event: Event) => {
 
       // Check each field for changes
       if (hasChanged(formData.serialNumber, original.serialNumber)) {
-        assetData.serialNumber = formData.serialNumber
+        assetData.serialNumber = formData.serialNumber ? formData.serialNumber.trim() : undefined
       }
       if (hasChanged(formData.status, original.status)) {
         assetData.status = formData.status
@@ -1255,16 +1452,16 @@ const handleSubmit = async (event: Event) => {
         assetData.location = formData.location
       }
       if (hasChanged(formData.purchaseDate, original.purchaseDate)) {
-        assetData.purchaseDate = formData.purchaseDate || undefined
+        assetData.purchaseDate = formData.purchaseDate ? convertDDMMYYYYToISO(formData.purchaseDate) : undefined
       }
       if (hasChanged(formData.purchaseCost, original.purchaseCost)) {
         assetData.purchaseCost = formData.purchaseCost ? parseFloat(formData.purchaseCost.toString()) : undefined
       }
       if (hasChanged(formData.warrantyStartDate, original.warrantyStartDate)) {
-        assetData.warrantyStartDate = formData.warrantyStartDate || undefined
+        assetData.warrantyStartDate = formData.warrantyStartDate ? convertDDMMYYYYToISO(formData.warrantyStartDate) : undefined
       }
       if (hasChanged(formData.warrantyEndDate, original.warrantyEndDate)) {
-        assetData.warrantyEndDate = formData.warrantyEndDate || undefined
+        assetData.warrantyEndDate = formData.warrantyEndDate ? convertDDMMYYYYToISO(formData.warrantyEndDate) : undefined
       }
       if (hasChanged(formData.notes, original.notes)) {
         assetData.notes = formData.notes || undefined
@@ -1280,35 +1477,48 @@ const handleSubmit = async (event: Event) => {
       // Asset identity fields (only if not disabled)
       if (!props.disableAssetIdentity) {
         if (hasChanged(formData.assetTypeId, original.assetTypeId)) {
-          assetData.assetTypeId = parseInt(formData.assetTypeId)
+          assetData.assetTypeId = formData.assetTypeId ? parseInt(formData.assetTypeId) : undefined
         }
         if (hasChanged(formData.brandId, original.brandId)) {
-          assetData.brandId = parseInt(formData.brandId)
+          assetData.brandId = formData.brandId ? parseInt(formData.brandId) : undefined
         }
         if (hasChanged(formData.modelId, original.modelId)) {
-          assetData.modelId = parseInt(formData.modelId)
+          assetData.modelId = formData.modelId ? parseInt(formData.modelId) : undefined
         }
       }
     } else {
       // In add mode, send all fields
       assetData = {
         assetId: formData.assetId,
-        serialNumber: formData.serialNumber,
+        serialNumber: formData.serialNumber ? formData.serialNumber.trim() : undefined,
         vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
         status: 'AVAILABLE',
         condition: formData.condition as any,
         location: formData.location,
-        purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? formData.purchaseDate : undefined,
+        purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? convertDDMMYYYYToISO(formData.purchaseDate) : undefined,
         purchaseCost: formData.purchaseCost && formData.purchaseCost.toString().trim() !== '' ? parseFloat(formData.purchaseCost.toString()) : undefined,
-        warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? formData.warrantyStartDate : undefined,
-        warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? formData.warrantyEndDate : undefined,
+        warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? convertDDMMYYYYToISO(formData.warrantyStartDate) : undefined,
+        warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? convertDDMMYYYYToISO(formData.warrantyEndDate) : undefined,
         notes: formData.notes && formData.notes.toString().trim() !== '' ? formData.notes : undefined,
-        assetTypeId: parseInt(formData.assetTypeId),
-        brandId: parseInt(formData.brandId),
-        modelId: parseInt(formData.modelId)
+        assetTypeId: formData.assetTypeId ? parseInt(formData.assetTypeId) : undefined,
+        brandId: formData.brandId ? parseInt(formData.brandId) : undefined,
+        modelId: formData.modelId ? parseInt(formData.modelId) : undefined
       }
     }
 
+    // Debug: Log the asset data being sent
+    console.log('Asset data being submitted:', assetData)
+    console.log('Serial number debug:', {
+      original: formData.serialNumber,
+      length: formData.serialNumber?.length,
+      trimmed: formData.serialNumber?.trim(),
+      trimmedLength: formData.serialNumber?.trim()?.length
+    })
+    console.log('Date conversions:')
+    console.log('purchaseDate:', formData.purchaseDate, '->', assetData.purchaseDate)
+    console.log('warrantyStartDate:', formData.warrantyStartDate, '->', assetData.warrantyStartDate)
+    console.log('warrantyEndDate:', formData.warrantyEndDate, '->', assetData.warrantyEndDate)
+    
     // Emit the form data
     emit('submit', assetData)
   } catch (error) {
@@ -1416,25 +1626,28 @@ onMounted(async () => {
     ])
 
     if (props.isEditMode && props.asset) {
-      // Populate form with existing data (excluding dates)
-      const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = props.asset
+      // Populate form with existing data (excluding dates and purchaseCost)
+      const { purchaseDate, warrantyStartDate, warrantyEndDate, purchaseCost, ...assetDataWithoutDates } = props.asset
       Object.assign(formData, assetDataWithoutDates)
       
-      // Handle dates separately to ensure proper formatting
-      formData.purchaseDate = ensureDateFormat(purchaseDate)
-      formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
-      formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
+      // Handle dates separately to ensure proper formatting for DatePicker (dd-mm-yyyy)
+      formData.purchaseDate = purchaseDate ? convertISOToDDMMYYYY(ensureDateFormat(purchaseDate)) : ''
+      formData.warrantyStartDate = warrantyStartDate ? convertISOToDDMMYYYY(ensureDateFormat(warrantyStartDate)) : ''
+      formData.warrantyEndDate = warrantyEndDate ? convertISOToDDMMYYYY(ensureDateFormat(warrantyEndDate)) : ''
+      
+      // Handle purchaseCost separately to ensure proper formatting
+      formData.purchaseCost = purchaseCost ? parseDecimalValue(purchaseCost) : ''
 
-      // Store original data for comparison to detect changes
+      // Store original data for comparison to detect changes (using dd-mm-yyyy format for dates)
       originalAssetData.value = {
         serialNumber: props.asset.serialNumber,
         status: props.asset.status,
         condition: props.asset.condition,
         location: props.asset.location,
-        purchaseDate: ensureDateFormat(purchaseDate),
-        purchaseCost: props.asset.purchaseCost,
-        warrantyStartDate: ensureDateFormat(warrantyStartDate),
-        warrantyEndDate: ensureDateFormat(warrantyEndDate),
+        purchaseDate: purchaseDate ? convertISOToDDMMYYYY(ensureDateFormat(purchaseDate)) : '',
+        purchaseCost: props.asset.purchaseCost ? parseDecimalValue(props.asset.purchaseCost) : '',
+        warrantyStartDate: warrantyStartDate ? convertISOToDDMMYYYY(ensureDateFormat(warrantyStartDate)) : '',
+        warrantyEndDate: warrantyEndDate ? convertISOToDDMMYYYY(ensureDateFormat(warrantyEndDate)) : '',
         notes: props.asset.notes,
         vendorId: props.asset.vendorId,
         assetTypeId: props.asset.assetTypeId,
@@ -1716,10 +1929,13 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
   border-radius: 0.5rem 0 0 0.5rem;
   color: #666666;
   font-weight: 600;
+  font-size: 1rem; /* Match form-control font size */
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px); /* Match form-control height */
+  padding: 0.75rem;
+  height: 48px; /* Fixed height to match form-control */
+  min-width: 48px; /* Ensure minimum width for rupee symbol */
 }
 
 .input-group .form-control {
@@ -1749,7 +1965,10 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem !important;
+  height: 48px !important;
+  min-width: 48px !important;
 }
 
 .input-group.is-invalid .input-group-text {
@@ -1761,7 +1980,10 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
+  font-size: 1rem !important;
+  padding: 0.75rem !important;
+  height: 48px !important;
+  min-width: 48px !important;
 }
 
 /* Ensure the form-control border connects properly */

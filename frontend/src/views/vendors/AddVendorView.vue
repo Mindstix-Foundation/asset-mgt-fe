@@ -1,6 +1,7 @@
 <template>
   <VendorForm
     :is-edit-mode="false"
+    :disable-status="true"
     @submit="handleSubmit"
     @cancel="handleCancel"
   />

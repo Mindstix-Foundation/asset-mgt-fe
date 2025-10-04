@@ -52,6 +52,15 @@
             Models
           </button>
         </div>
+        <div class="col-md-2">
+          <button 
+            class="btn btn-modern w-100" 
+            :class="selectedEntityType === 'asset' ? 'btn-entity-active' : 'btn-entity-inactive'"
+            @click="setEntityType('asset')"
+          >
+            Assets
+          </button>
+        </div>
       </div>
     </div>
 
@@ -66,8 +75,11 @@
           <small class="text-muted">Showing {{ items.length }} items</small>
         </div>
         <div class="d-flex gap-2">
-          <button class="btn btn-primary btn-modern" @click="startAdding">
+          <button v-if="selectedEntityType !== 'asset'" class="btn btn-primary btn-modern" @click="startAdding">
             <i class="fas fa-plus me-1"></i>Add New
+          </button>
+          <button v-if="selectedEntityType === 'asset'" class="btn btn-danger btn-modern" @click="startBulkDelete">
+            <i class="fas fa-trash me-1"></i>Bulk Delete
           </button>
         </div>
       </div>
@@ -238,22 +250,240 @@ Display: 15.6&quot; FHD"
                 </div>
               </div>
 
+              <!-- Assets Form -->
+              <div v-if="selectedEntityType === 'asset'">
+                <div class="row g-3 justify-content-between">
+                  <div class="col-4">
+                    <label class="form-label">Add Single Asset</label>
+                    <div class="row justify-content-around">
+                      <div class="col-7">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          v-model="singleAssetInput"
+                          placeholder="AST-0001"
+                          @keyup.enter="addSingleAsset"
+                          pattern="AST-\d{4}"
+                          title="Format: AST-XXXX (e.g., AST-0001)"
+                        >
+                      </div>
+                      <div class="col-4">
+                  <button 
+                    class="btn btn-brown w-100 asset-add-btn" 
+                    type="button" 
+                    @click="addSingleAsset"
+                    :disabled="!singleAssetInput"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                      </div>
+                    </div>
+                    <small class="form-text text-muted">
+                      Enter a single asset ID (e.g., AST-0001) to add to deletion list
+                    </small>
+                  </div>
+                  <div class="col-7">
+                    <label class="form-label">Add Asset Range</label>
+                     <div class="row justify-content-around">
+                       <div class="col-9">
+                         <div class="d-flex align-items-center gap-2">
+                           <span class="text-muted">From</span>
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          v-model="assetFromInput"
+                          placeholder="AST-0000"
+                          @keyup.enter="addAssetRange"
+                          pattern="AST-\d{4}"
+                          title="Format: AST-XXXX (e.g., AST-0000)"
+                        >
+                           <span class="text-muted">to</span>
+                           <input 
+                             type="text" 
+                             class="form-control" 
+                             v-model="assetToInput"
+                             placeholder="AST-9999"
+                             @keyup.enter="addAssetRange"
+                             pattern="AST-\d{4}"
+                             title="Format: AST-XXXX (e.g., AST-9999)"
+                           >
+                         </div>
+                       </div>
+                       <div class="col-2">
+                  <button 
+                    class="btn btn-brown w-100 asset-add-btn" 
+                    type="button" 
+                    @click="addAssetRange"
+                    :disabled="!assetFromInput || !assetToInput"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                      </div>
+                    </div>
+                    <small class="form-text text-muted">
+                      Enter asset ID range (e.g., AST-0000 to AST-9999) to add multiple assets for deletion
+                    </small>
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <label class="form-label mb-1">Selected Assets for Deletion ({{ selectedAssetsForDeletion.length }})</label>
+                      </div>
+                    </div>
+                    <div v-if="selectedAssetsForDeletion.length > 0" class="mt-3">
+                      <div class="d-flex flex-wrap gap-2">
+                        <span 
+                          v-for="assetId in selectedAssetsForDeletion" 
+                          :key="assetId"
+                          class="badge bg-warning d-flex align-items-center gap-1"
+                        >
+                          <i class="fas fa-box"></i>
+                          {{ getAssetDisplayId(assetId) }}
+                          <button 
+                            type="button" 
+                            class="btn-close btn-close-white" 
+                            style="font-size: 0.7em;"
+                            @click="toggleAssetSelection(assetId)"
+                            title="Remove from selection"
+                          ></button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
           
           <!-- Form Action Buttons - Bottom Right -->
           <div class="d-flex justify-content-end gap-2 mt-4  ">
-            <button type="button" class="btn btn-outline-secondary btn-modern" @click="resetForm">
+            <button v-if="selectedEntityType !== 'asset'" type="button" class="btn btn-outline-secondary btn-modern" @click="resetForm">
               <i class="fas fa-refresh me-1"></i>Reset
             </button>
-            <button class="btn btn-success btn-modern" @click="saveEntity" :disabled="isSaving">
+            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-outline-secondary btn-modern" @click="clearAssetSelection">
+              <i class="fas fa-times me-1"></i>Clear
+            </button>
+            <button v-if="selectedEntityType !== 'asset'" class="btn btn-success btn-modern" @click="saveEntity" :disabled="isSaving">
               <i v-if="isSaving" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-save me-1"></i>
               {{ isSaving ? 'Saving...' : 'Save' }}
             </button>
+            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-danger btn-modern" @click="confirmBulkDelete" :disabled="selectedAssetsForDeletion.length === 0 || isBulkDeleting">
+              <i v-if="isBulkDeleting" class="fas fa-spinner fa-spin me-1"></i>
+              <i v-else class="fas fa-trash me-1"></i>
+              {{ isBulkDeleting ? 'Deleting...' : 'Delete' }}
+            </button>
           </div>
         </div>
       </form>
+    </div>
+
+    <!-- Search and Sort Bar -->
+    <div class="mb-4" v-if="selectedEntityType === 'asset'">
+      <div class="row align-items-end">
+        <!-- Search Assets -->
+        <div class="col-12 col-lg-7 mb-3">
+          <label class="form-label">Search Assets</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input 
+              type="text" 
+              class="form-control" 
+              v-model="searchTerm"
+              placeholder="Search by ID, model, brand, or serial number..."
+              @input="debouncedLoadAssets"
+            >
+          </div>
+        </div>
+        
+        <!-- Sort By -->
+        <div class="col-12 col-lg-3 mb-3">
+          <SearchableDropdown
+            id="sort-by-filter"
+            label="Sort By"
+            placeholder="Select sort option..."
+            :items="sortOptions"
+            v-model="selectedSortBy"
+            @change="onSortByChange"
+          />
+        </div>
+        
+        <!-- Toggle Sort Order and Filter Button -->
+        <div class="col-12 col-lg-2 mb-3">
+          <div class="row g-3">
+            <!-- Toggle Sort Order -->
+            <div class="col-4">
+              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
+              </button>
+            </div>
+            
+            <!-- Filter Button -->
+            <div class="col-8">
+              <button 
+                class="btn btn-outline-secondary btn-modern w-100" 
+                @click="toggleFilterDropdown"
+                :class="{ active: showFilterDropdown }"
+              >
+                <i class="fas fa-filter me-1"></i>Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+        <!-- Filter Dropdown -->
+        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+          <div class="row">
+            <div class="col-12">
+              <!-- Bootstrap Flexbox for exact proportions -->
+              <div class="d-flex flex-column flex-md-row gap-2">
+                <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="asset-type-filter"
+                    label="Asset Type"
+                    placeholder="Search asset types..."
+                    :items="assetTypeFilterOptions"
+                    v-model="selectedAssetTypeFilter"
+                    @change="onAssetTypeFilterChange"
+                  />
+                </div>
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="brand-filter"
+                    label="Brand"
+                    placeholder="Search brands..."
+                    :items="brandFilterOptions"
+                    v-model="selectedBrandFilter"
+                    @change="onBrandFilterChange"
+                  />
+                </div>
+                <!-- Status filter removed - only showing AVAILABLE assets -->
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="condition-filter"
+                    label="Condition"
+                    placeholder="Search condition..."
+                    :items="conditionOptions"
+                    v-model="selectedCondition"
+                    @change="onConditionChange"
+                  />
+                </div>
+                
+                <!-- Clear Button: fixed width (1.5 columns = 12.5%) -->
+                <div class="flex-shrink-0" style="width: 12.5%;">
+                  <div class="d-flex align-items-end h-100">
+                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                      <i class="fas fa-times me-1"></i>Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
 
     <!-- Items Table -->
@@ -261,34 +491,89 @@ Display: 15.6&quot; FHD"
         <div class="card">
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-hover mb-0" :class="`table-${selectedEntityType}`">
+            <table class="table table-hover mb-0" :class="[`table-${selectedEntityType}`, { 'show-checkboxes': selectedEntityType === 'asset' && showFormCard }]">
               <thead class="table-light">
                 <tr>
-                  <th>Name</th>
+                  <th v-if="selectedEntityType === 'asset' && showFormCard"></th>
+                  <th v-if="selectedEntityType === 'asset'">Asset ID</th>
+                  <th v-if="selectedEntityType !== 'asset'">Name</th>
+                  <th v-if="selectedEntityType === 'asset'">Name (Type - Brand - Model)</th>
                   <th v-if="selectedEntityType === 'type'">Category</th>
                   <th v-if="selectedEntityType === 'model'">Brand</th>
                   <th v-if="selectedEntityType === 'model'">Asset Type</th>
-                  <th v-if="selectedEntityType !== 'model'">Description</th>
+                  <th v-if="selectedEntityType === 'asset'">Serial Number</th>
+                  <th v-if="selectedEntityType === 'asset'">Condition</th>
+                  <th v-if="selectedEntityType !== 'model' && selectedEntityType !== 'asset'">Description</th>
                   <th>Actions</th>
                 </tr>
               </thead>
           <tbody>
             <tr v-for="item in items" :key="item.id">
-              <td>
+              <!-- Checkbox column for assets -->
+              <td v-if="selectedEntityType === 'asset' && showFormCard">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  :checked="selectedAssetsForDeletion.includes(item.id)"
+                  @change="toggleAssetSelection(item.id)"
+                >
+              </td>
+              
+              <!-- Asset ID column -->
+              <td v-if="selectedEntityType === 'asset'">
+                <span class="text-muted">{{ item.assetId }}</span>
+              </td>
+              
+              <!-- Name column for non-assets -->
+              <td v-if="selectedEntityType !== 'asset'">
                 <strong style="color: var(--primary-black);">{{ item.name }}</strong>
               </td>
+              
+              <!-- Asset Name (Type - Brand - Model) column -->
+              <td v-if="selectedEntityType === 'asset'">
+                <div>
+                  <strong style="color: var(--primary-black);">
+                    {{ item.model?.name || 'Unknown Model' }}
+                  </strong>
+                  <br>
+                  <small class="text-muted">
+                    {{ item.assetType?.name || 'Unknown Type' }} - 
+                    {{ item.brand?.name || 'Unknown Brand' }}
+                  </small>
+                </div>
+              </td>
+              
+              <!-- Category column for asset types -->
               <td v-if="selectedEntityType === 'type'">
                 <span class="text-muted">{{ item.category?.name || 'Unknown' }}</span>
               </td>
+              
+              <!-- Brand column for models -->
               <td v-if="selectedEntityType === 'model'">
                 <span class="text-muted">{{ item.brand?.name || 'Unknown' }}</span>
               </td>
+              
+              <!-- Asset Type column for models -->
               <td v-if="selectedEntityType === 'model'">
                 <span class="text-muted">{{ item.assetType?.name || 'Unknown' }}</span>
               </td>
-              <td v-if="selectedEntityType !== 'model'">
+              
+              <!-- Serial Number column for assets -->
+              <td v-if="selectedEntityType === 'asset'">
+                <span class="text-muted">{{ item.serialNumber || 'N/A' }}</span>
+              </td>
+              
+              <!-- Condition column for assets -->
+              <td v-if="selectedEntityType === 'asset'">
+                <span class="text-muted">{{ item.condition || 'Unknown' }}</span>
+              </td>
+              
+              <!-- Description column for non-models and non-assets -->
+              <td v-if="selectedEntityType !== 'model' && selectedEntityType !== 'asset'">
                 <span class="text-muted">{{ item.description || 'No description' }}</span>
               </td>
+              
+              <!-- Actions column -->
               <td>
                 <div class="btn-group btn-group-sm asset-actions">
                   <button 
@@ -300,9 +585,18 @@ Display: 15.6&quot; FHD"
                     <i class="fas fa-eye"></i>
                   </button>
                   <button 
+                    v-if="selectedEntityType !== 'asset'"
                     class="btn btn-outline-danger btn-delete-asset" 
                     @click="deleteItem(item)"
                     title="Delete"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <button 
+                    v-if="selectedEntityType === 'asset'"
+                    class="btn btn-outline-danger btn-delete-asset" 
+                    @click="deleteSingleAsset(item)"
+                    title="Delete Asset"
                   >
                     <i class="fas fa-trash"></i>
                   </button>
@@ -316,7 +610,8 @@ Display: 15.6&quot; FHD"
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+
+    <!-- Single Item Delete Confirmation Modal -->
     <div 
       class="modal fade" 
       :class="{ show: showDeleteConfirmationModal }" 
@@ -324,150 +619,238 @@ Display: 15.6&quot; FHD"
       tabindex="-1"
       v-if="itemToDelete"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
-              <i class="fas fa-trash me-2" style="color: var(--secondary-red);"></i>Delete {{ getEntityTitle().slice(0, -1) }} - {{ itemToDelete?.name }}
+            <h5 class="modal-title" style="color: var(--primary-black);">
+              <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+              <span>Confirm Deletion</span>
             </h5>
             <button type="button" class="btn-close" @click="closeDeleteConfirmationModal"></button>
           </div>
-          <div class="modal-body">
-            <div class="alert alert-warning">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              <strong>Warning:</strong> This action will permanently delete the {{ getEntityTitle().slice(0, -1).toLowerCase() }} and cannot be undone.
+          <div class="modal-body" v-if="itemToDelete">
+            <div class="text-center py-2">
+              <div class="confirmation-icon mb-2">
+                <i 
+                  class="fas fa-trash fa-2x"
+                  style="color: var(--secondary-red);"
+                ></i>
+              </div>
+              <h6 class="mb-2" style="color: var(--primary-black); font-size: 1rem;">
+                Are you sure you want to delete this {{ getEntityTitle().slice(0, -1).toLowerCase() }}?
+              </h6>
+              <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                <strong>{{ selectedEntityType === 'asset' ? itemToDelete.assetId : itemToDelete.name }}</strong> will be permanently deleted 
+                and this action cannot be undone.
+              </p>
             </div>
             
-            <!-- Entity Summary -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <div class="asset-info-section-compact">
-                  <h6 class="section-title-compact">
-                    <i :class="getEntityIcon()" class="me-2"></i>{{ getEntityTitle().slice(0, -1) }} Summary
-                  </h6>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="info-item-compact">
-                        <label class="info-label-compact">{{ getEntityTitle().slice(0, -1) }} Name</label>
-                        <div class="info-value-compact fw-bold">{{ itemToDelete?.name }}</div>
-                      </div>
-                      <div v-if="itemToDelete?.description" class="info-item-compact">
-                        <label class="info-label-compact">Description</label>
-                        <div class="info-value-compact">{{ itemToDelete?.description || 'No description' }}</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div v-if="selectedEntityType === 'type' && itemToDelete?.category" class="info-item-compact">
-                        <label class="info-label-compact">Category</label>
-                        <div class="info-value-compact">{{ itemToDelete?.category?.name || 'Unknown' }}</div>
-                      </div>
-                      <div v-if="selectedEntityType === 'model'" class="info-item-compact">
-                        <label class="info-label-compact">Brand</label>
-                        <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
-                      </div>
-                      <div v-if="selectedEntityType === 'model'" class="info-item-compact">
-                        <label class="info-label-compact">Asset Type</label>
-                        <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
-                      </div>
-                    </div>
+            <!-- Entity Summary - Compact Version -->
+            <div class="mt-2">
+              <div class="asset-info-section-compact">
+                <h6 class="section-title-compact">
+                  <i :class="getEntityIcon()" class="me-2"></i>{{ getEntityTitle().slice(0, -1) }} Details
+                </h6>
+                <div class="info-grid-compact">
+                  <!-- Asset-specific fields -->
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Asset ID</label>
+                    <div class="info-value-compact fw-bold">{{ itemToDelete?.assetId || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Model</label>
+                    <div class="info-value-compact">{{ itemToDelete?.model?.name || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Brand</label>
+                    <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Asset Type</label>
+                    <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Serial Number</label>
+                    <div class="info-value-compact">{{ itemToDelete?.serialNumber || 'N/A' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">Condition</label>
+                    <div class="info-value-compact">{{ itemToDelete?.condition || 'Unknown' }}</div>
+                  </div>
+                  
+                  <!-- Non-asset entity fields -->
+                  <div v-if="selectedEntityType !== 'asset'" class="info-item-compact">
+                    <label class="info-label-compact">{{ getEntityTitle().slice(0, -1) }} Name</label>
+                    <div class="info-value-compact fw-bold">{{ itemToDelete?.name }}</div>
+                  </div>
+                  <div v-if="selectedEntityType !== 'asset' && itemToDelete?.description" class="info-item-compact">
+                    <label class="info-label-compact">Description</label>
+                    <div class="info-value-compact">{{ itemToDelete?.description || 'No description' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'type' && itemToDelete?.category" class="info-item-compact">
+                    <label class="info-label-compact">Category</label>
+                    <div class="info-value-compact">{{ itemToDelete?.category?.name || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'model'" class="info-item-compact">
+                    <label class="info-label-compact">Brand</label>
+                    <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
+                  </div>
+                  <div v-if="selectedEntityType === 'model'" class="info-item-compact">
+                    <label class="info-label-compact">Asset Type</label>
+                    <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Deletion Impact Analysis -->
-            <div class="row mb-4">
-              <div class="col-12">
-                <div class="asset-info-section-compact">
-                  <h6 class="section-title-compact"><i class="fas fa-chart-line me-2"></i>Deletion Impact Analysis</h6>
-                  
-                  <div v-if="deleteImpact" class="impact-details">
-                    <div class="row g-3">
-                      <div v-if="deleteImpact.assetTypes > 0" class="col-md-6">
-                        <div class="card border-warning">
-                          <div class="card-body text-center">
-                            <i class="fas fa-tags fa-2x text-warning mb-2"></i>
-                            <h5 class="card-title">{{ deleteImpact.assetTypes }}</h5>
-                            <p class="card-text">Asset Type{{ deleteImpact.assetTypes > 1 ? 's' : '' }}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div v-if="deleteImpact.assets > 0" class="col-md-6">
-                        <div class="card border-danger">
-                          <div class="card-body text-center">
-                            <i class="fas fa-box fa-2x text-danger mb-2"></i>
-                            <h5 class="card-title">{{ deleteImpact.assets }}</h5>
-                            <p class="card-text">Asset{{ deleteImpact.assets > 1 ? 's' : '' }}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div v-if="deleteImpact.models > 0" class="col-md-6">
-                        <div class="card border-info">
-                          <div class="card-body text-center">
-                            <i class="fas fa-cube fa-2x text-info mb-2"></i>
-                            <h5 class="card-title">{{ deleteImpact.models }}</h5>
-                            <p class="card-text">Model{{ deleteImpact.models > 1 ? 's' : '' }}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div v-if="deleteImpact.employees > 0" class="col-md-6">
-                        <div class="card border-primary">
-                          <div class="card-body text-center">
-                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                            <h5 class="card-title">{{ deleteImpact.employees }}</h5>
-                            <p class="card-text">Employee{{ deleteImpact.employees > 1 ? 's' : '' }}</p>
-                          </div>
+            <!-- Deletion Impact Analysis - Compact Version (Not for assets) -->
+            <div v-if="deleteImpact && selectedEntityType !== 'asset'" class="mt-2">
+              <div class="asset-info-section-compact">
+                <h6 class="section-title-compact"><i class="fas fa-chart-line me-1"></i>Deletion Impact</h6>
+                
+                <div class="impact-details">
+                  <div class="row g-1">
+                    <div v-if="deleteImpact.assetTypes > 0" class="col-6">
+                      <div class="card border-warning">
+                        <div class="card-body text-center p-1">
+                          <i class="fas fa-tags text-warning mb-1" style="font-size: 0.9rem;"></i>
+                          <h6 class="card-title mb-0" style="font-size: 1rem;">{{ deleteImpact.assetTypes }}</h6>
+                          <small class="card-text" style="font-size: 0.7rem;">Asset Type{{ deleteImpact.assetTypes > 1 ? 's' : '' }}</small>
                         </div>
                       </div>
                     </div>
                     
-                    <div v-if="deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0" class="mt-3">
-                      <div class="alert alert-danger">
-                        <h6 class="alert-heading">
-                          <i class="fas fa-ban me-2"></i>Deletion Not Allowed
-                        </h6>
-                        <p class="mb-0">
-                          This {{ getEntityTitle().slice(0, -1).toLowerCase() }} cannot be deleted because it has associated data. 
-                          Please reassign or delete the related items first.
-                        </p>
+                    <div v-if="deleteImpact.assets > 0" class="col-6">
+                      <div class="card border-danger">
+                        <div class="card-body text-center p-1">
+                          <i class="fas fa-box text-danger mb-1" style="font-size: 0.9rem;"></i>
+                          <h6 class="card-title mb-0" style="font-size: 1rem;">{{ deleteImpact.assets }}</h6>
+                          <small class="card-text" style="font-size: 0.7rem;">Asset{{ deleteImpact.assets > 1 ? 's' : '' }}</small>
+                        </div>
                       </div>
                     </div>
                     
-                    <div v-else class="mt-3">
-                      <div class="alert alert-success">
-                        <h6 class="alert-heading">
-                          <i class="fas fa-check-circle me-2"></i>Safe to Delete
-                        </h6>
-                        <p class="mb-0">
-                          This {{ getEntityTitle().slice(0, -1).toLowerCase() }} has no associated data and can be safely deleted.
-                        </p>
+                    <div v-if="deleteImpact.models > 0" class="col-6">
+                      <div class="card border-info">
+                        <div class="card-body text-center p-1">
+                          <i class="fas fa-cube text-info mb-1" style="font-size: 0.9rem;"></i>
+                          <h6 class="card-title mb-0" style="font-size: 1rem;">{{ deleteImpact.models }}</h6>
+                          <small class="card-text" style="font-size: 0.7rem;">Model{{ deleteImpact.models > 1 ? 's' : '' }}</small>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div v-if="deleteImpact.employees > 0" class="col-6">
+                      <div class="card border-primary">
+                        <div class="card-body text-center p-1">
+                          <i class="fas fa-users text-primary mb-1" style="font-size: 0.9rem;"></i>
+                          <h6 class="card-title mb-0" style="font-size: 1rem;">{{ deleteImpact.employees }}</h6>
+                          <small class="card-text" style="font-size: 0.7rem;">Employee{{ deleteImpact.employees > 1 ? 's' : '' }}</small>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div v-else class="text-center">
-                    <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Loading...</span>
+                  <div v-if="deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0" class="mt-1">
+                    <div class="alert alert-danger py-1">
+                      <h6 class="alert-heading mb-0" style="font-size: 0.85rem;">
+                        <i class="fas fa-ban me-1"></i>Deletion Not Allowed
+                      </h6>
+                      <small class="mb-0" style="font-size: 0.75rem;">
+                        This {{ getEntityTitle().slice(0, -1).toLowerCase() }} has associated data and cannot be deleted.
+                      </small>
                     </div>
-                    <p class="mt-2">Analyzing deletion impact...</p>
+                  </div>
+                  
+                  <div v-else class="mt-1">
+                    <div class="alert alert-success py-1">
+                      <h6 class="alert-heading mb-0" style="font-size: 0.85rem;">
+                        <i class="fas fa-check-circle me-1"></i>Safe to Delete
+                      </h6>
+                      <small class="mb-0" style="font-size: 0.75rem;">
+                        This {{ getEntityTitle().slice(0, -1).toLowerCase() }} has no associated data.
+                      </small>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            
+            <div v-else-if="selectedEntityType !== 'asset'" class="mt-2 text-center">
+              <div class="spinner-border text-primary spinner-border-sm" role="status" style="width: 1rem; height: 1rem;">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <small class="text-muted d-block mt-1" style="font-size: 0.8rem;">Analyzing deletion impact...</small>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeDeleteConfirmationModal">Cancel</button>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-cancel-confirm" @click="closeDeleteConfirmationModal">
+              <i class="fas fa-times me-1"></i>Cancel
+            </button>
             <button 
               type="button" 
-              class="btn btn-danger" 
+              class="btn btn-confirm-delete"
               @click="confirmDelete"
-              :disabled="!deleteImpact || deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0"
+              :disabled="isDeleting || (selectedEntityType !== 'asset' && deleteImpact && (deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0))"
             >
               <i class="fas fa-trash me-1"></i>
-              {{ isDeleting ? 'Deleting...' : `Delete ${getEntityTitle().slice(0, -1)}` }}
+              {{ isDeleting ? 'Deleting...' : 'Confirm Delete' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Delete Confirmation Modal -->
+    <div 
+      class="modal fade" 
+      :class="{ show: showBulkDeleteConfirmationModal }" 
+      :style="{ display: showBulkDeleteConfirmationModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black);">
+              <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+              <span>Confirm Bulk Deletion</span>
+            </h5>
+            <button type="button" class="btn-close" @click="closeBulkDeleteConfirmationModal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center py-2">
+              <div class="confirmation-icon mb-2">
+                <i 
+                  class="fas fa-trash fa-2x"
+                  style="color: var(--secondary-red);"
+                ></i>
+              </div>
+              <h6 class="mb-2" style="color: var(--primary-black); font-size: 1rem;">
+                Are you sure you want to delete {{ selectedAssetsForDeletion.length }} selected assets?
+              </h6>
+              <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                All selected assets will be permanently deleted and this action cannot be undone.
+              </p>
+              <div class="mt-2 p-2" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border-left: 4px solid var(--secondary-orange);">
+                <small class="text-muted" style="font-size: 0.8rem;">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Only assets that meet deletion criteria (AVAILABLE status, no assignment/maintenance history) will be deleted. Others will be skipped.
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-cancel-confirm" @click="closeBulkDeleteConfirmationModal">
+              <i class="fas fa-times me-1"></i>Cancel
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-confirm-delete"
+              @click="executeBulkDelete"
+              :disabled="isBulkDeleting"
+            >
+              <i class="fas fa-trash me-1"></i>
+              {{ isBulkDeleting ? 'Deleting...' : 'Confirm Delete All' }}
             </button>
           </div>
         </div>
@@ -482,18 +865,18 @@ Display: 15.6&quot; FHD"
       tabindex="-1"
       v-if="selectedModel"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Model Details - {{ selectedModel.name }}</h5>
+          <div class="modal-header py-2">
+            <h5 class="modal-title" style="font-size: 1.1rem;">Model Details - {{ selectedModel.name }}</h5>
             <button type="button" class="btn-close" @click="closeModelDetailsModal"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body py-2">
             <!-- Model Information - Full Width -->
-            <div class="row g-2">
+            <div class="row g-1">
               <div class="col-12">
                 <div class="asset-info-section-compact">
-                  <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
+                  <h6 class="section-title-compact"><i class="fas fa-info-circle me-1"></i>Basic Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
                       <label class="info-label-compact">Model Name</label>
@@ -514,14 +897,13 @@ Display: 15.6&quot; FHD"
                   </div>
                 </div>
               </div>
-
             </div>
 
             <!-- Specifications Details - Full Width -->
-            <div class="row mt-2">
+            <div class="row mt-1">
               <div class="col-12">
                 <div class="asset-info-section-compact">
-                  <h6 class="section-title-compact"><i class="fas fa-list-alt me-2"></i>Technical Specifications</h6>
+                  <h6 class="section-title-compact"><i class="fas fa-list-alt me-1"></i>Technical Specifications</h6>
                   <NotesDisplay 
                     :notes="formatSpecificationsForDisplay(selectedModel.specifications)"
                     :fallback-text="'No specifications provided for this model.'"
@@ -534,14 +916,14 @@ Display: 15.6&quot; FHD"
               </div>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer py-2">
             <div class="d-flex justify-content-between w-100">
               <div>
                 <!-- Left side: Additional actions (none for models) -->
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-secondary" @click="closeModelDetailsModal">Close</button>
-                <button type="button" class="btn btn-danger" @click="deleteItem(selectedModel)">
+                <button type="button" class="btn btn-secondary btn-sm" @click="closeModelDetailsModal">Close</button>
+                <button type="button" class="btn btn-danger btn-sm" @click="deleteItem(selectedModel)">
                   <i class="fas fa-trash me-1"></i>Delete Model
                 </button>
               </div>
@@ -553,7 +935,7 @@ Display: 15.6&quot; FHD"
 
     <!-- Modal Backdrop -->
     <div 
-      v-if="showModelDetailsModal || showDeleteConfirmationModal" 
+      v-if="showModelDetailsModal || showDeleteConfirmationModal || showBulkDeleteConfirmationModal" 
       class="modal-backdrop fade show"
       @click="closeModals"
     ></div>
@@ -569,6 +951,7 @@ import { assetCategoryService } from '../../services/assetCategoryService'
 import { assetTypeService } from '../../services/assetTypeService'
 import { brandService } from '../../services/brandService'
 import { modelService } from '../../services/modelService'
+import { assetService } from '../../services/assetService'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
 import NotesDisplay from '../../components/common/NotesDisplay.vue'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
@@ -581,9 +964,54 @@ const router = useRouter()
 const toastStore = useToastStore()
 
 // State
-const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model'>('category')
+const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model' | 'asset'>('category')
 const isSaving = ref(false)
 const showFormCard = ref(false)
+
+// Assets-specific state
+const selectedAssetsForDeletion = ref<(string | number)[]>([])
+const isBulkDeleting = ref(false)
+const singleAssetInput = ref('')
+const assetFromInput = ref('')
+const assetToInput = ref('')
+
+// Search and filter state
+const searchTerm = ref('')
+const selectedSortBy = ref<Item | null>(null)
+const sortAscending = ref(true)
+const showFilterDropdown = ref(false)
+const selectedAssetTypeFilter = ref<Item | null>(null)
+const selectedBrandFilter = ref<Item | null>(null)
+const selectedCondition = ref<Item | null>(null)
+
+// Filter options
+const sortOptions = ref<Item[]>([
+  { value: 'assetId', label: 'Asset ID' },
+  { value: 'status', label: 'Status' },
+  { value: 'condition', label: 'Condition' },
+  { value: 'purchaseDate', label: 'Purchase Date' },
+  { value: 'createdAt', label: 'Created Date' },
+  { value: 'updatedAt', label: 'Updated Date' }
+])
+
+const assetTypeFilterOptions = ref<Item[]>([])
+const brandFilterOptions = ref<Item[]>([])
+const statusOptions = ref<Item[]>([
+  { value: 'AVAILABLE', label: 'Available' },
+  { value: 'ASSIGNED', label: 'Assigned' },
+  { value: 'IN_MAINTENANCE', label: 'In Maintenance' },
+  { value: 'RETIRED', label: 'Retired' },
+  { value: 'LOST', label: 'Lost' }
+])
+
+const conditionOptions = ref<Item[]>([
+  { value: 'NEW', label: 'New' },
+  { value: 'GOOD', label: 'Good' },
+  { value: 'FAIR', label: 'Fair' },
+  { value: 'POOR', label: 'Poor' },
+  { value: 'DAMAGED', label: 'Damaged' },
+  { value: 'REFURBISHED', label: 'Refurbished' }
+])
 
 // Data
 const categories = ref<AssetCategory[]>([])
@@ -600,6 +1028,7 @@ const isLoadingModels = ref(false)
 
 // Delete confirmation modal state
 const showDeleteConfirmationModal = ref(false)
+const showBulkDeleteConfirmationModal = ref(false)
 const deleteImpact = ref<any>(null)
 const itemToDelete = ref<any>(null)
 const isDeleting = ref(false)
@@ -637,7 +1066,8 @@ const getEntityIcon = () => {
     category: 'fas fa-folder',
     type: 'fas fa-tags',
     brand: 'fas fa-trademark',
-    model: 'fas fa-cube'
+    model: 'fas fa-cube',
+    asset: 'fas fa-box'
   }
   return icons[selectedEntityType.value]
 }
@@ -647,7 +1077,8 @@ const getEntityTitle = () => {
     category: 'Asset Categories',
     type: 'Asset Types',
     brand: 'Brands',
-    model: 'Models'
+    model: 'Models',
+    asset: 'Manage Assets Count'
   }
   return titles[selectedEntityType.value]
 }
@@ -657,7 +1088,8 @@ const getEntityDescription = () => {
     category: 'Manage high-level asset categories',
     type: 'Manage specific asset types within categories',
     brand: 'Manage asset brands and manufacturers',
-    model: 'Manage specific models for brands and asset types'
+    model: 'Manage specific models for brands and asset types',
+    asset: 'Manage deletable assets (AVAILABLE status, no assignment/maintenance history)'
   }
   return descriptions[selectedEntityType.value]
 }
@@ -677,8 +1109,9 @@ const filteredModels = computed(() => {
   })
 })
 
+
 // Methods
-const setEntityType = async (type: 'category' | 'type' | 'brand' | 'model') => {
+const setEntityType = async (type: 'category' | 'type' | 'brand' | 'model' | 'asset') => {
   selectedEntityType.value = type
   resetForm()
   await loadItems()
@@ -698,6 +1131,12 @@ const resetForm = () => {
   selectedCategory.value = null
   selectedBrand.value = null
   selectedAssetType.value = null
+  
+  // Clear asset selection when resetting
+  selectedAssetsForDeletion.value = []
+  singleAssetInput.value = ''
+  assetFromInput.value = ''
+  assetToInput.value = ''
 }
 
 const startAdding = () => {
@@ -727,6 +1166,14 @@ const startAdding = () => {
   }
 }
 
+const startBulkDelete = () => {
+  showFormCard.value = !showFormCard.value
+  if (showFormCard.value) {
+    // Clear asset selection when starting bulk delete
+    selectedAssetsForDeletion.value = []
+  }
+}
+
 const loadItems = async () => {
   try {
     switch (selectedEntityType.value) {
@@ -745,6 +1192,40 @@ const loadItems = async () => {
       case 'model':
         const modelResponse = await modelService.getModels({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
         items.value = modelResponse.data.models
+        break
+      case 'asset':
+        // Load deletable assets from API (only assets that meet deletion criteria)
+        try {
+          const assetParams: any = {
+            limit: 100,
+            sortBy: selectedSortBy.value?.value || 'assetId',
+            sortOrder: sortAscending.value ? 'asc' : 'desc'
+          }
+
+          // Add search parameter
+          if (searchTerm.value) {
+            assetParams.search = searchTerm.value
+          }
+
+          // Add filter parameters
+          if (selectedAssetTypeFilter.value) {
+            assetParams.assetTypeId = selectedAssetTypeFilter.value.id
+          }
+          if (selectedBrandFilter.value) {
+            assetParams.brandId = selectedBrandFilter.value.id
+          }
+          if (selectedCondition.value) {
+            assetParams.condition = selectedCondition.value.value
+          }
+
+          // Use the new deletable assets endpoint
+          const assetResponse = await assetService.getDeletableAssets(assetParams)
+          items.value = assetResponse.data.assets
+        } catch (error) {
+          console.error('Error loading deletable assets:', error)
+          toastStore.showError('Error', 'Failed to load deletable assets')
+          items.value = []
+        }
         break
     }
   } catch (error) {
@@ -946,8 +1427,18 @@ const closeDeleteConfirmationModal = () => {
   isDeleting.value = false
 }
 
+const closeBulkDeleteConfirmationModal = () => {
+  showBulkDeleteConfirmationModal.value = false
+}
+
 const confirmDelete = async () => {
   if (!itemToDelete.value) return
+  
+  // If it's an asset, use the single asset delete method
+  if (selectedEntityType.value === 'asset') {
+    await executeSingleAssetDelete()
+    return
+  }
   
   isDeleting.value = true
   
@@ -1037,6 +1528,7 @@ const closeModelDetailsModal = () => {
 const closeModals = () => {
   closeModelDetailsModal()
   closeDeleteConfirmationModal()
+  closeBulkDeleteConfirmationModal()
 }
 
 const formatDate = (dateString: string) => {
@@ -1151,6 +1643,13 @@ const loadInitialData = async () => {
     try {
       const typeResponse = await assetTypeService.getAssetTypes({ limit: 50 })
       assetTypes.value = typeResponse.data.assetTypes
+      
+      // Populate asset type filter options
+      assetTypeFilterOptions.value = assetTypes.value.map(type => ({
+        id: type.id,
+        value: type.name,
+        label: type.name
+      }))
     } catch (error) {
       console.error('Error loading asset types:', error)
       toastStore.showError('Error', 'Failed to load asset types')
@@ -1163,6 +1662,13 @@ const loadInitialData = async () => {
     try {
       const brandResponse = await brandService.getBrands({ limit: 50 })
       brands.value = brandResponse.data.brands
+      
+      // Populate brand filter options
+      brandFilterOptions.value = brands.value.map(brand => ({
+        id: brand.id,
+        value: brand.name,
+        label: brand.name
+      }))
     } catch (error) {
       console.error('Error loading brands:', error)
       toastStore.showError('Error', 'Failed to load brands')
@@ -1188,6 +1694,303 @@ const loadInitialData = async () => {
     toastStore.showError('Error', 'Failed to load initial data')
   }
 }
+
+// Assets-specific methods
+const toggleAssetSelection = (assetId: string | number) => {
+  const index = selectedAssetsForDeletion.value.indexOf(assetId)
+  if (index > -1) {
+    selectedAssetsForDeletion.value.splice(index, 1)
+  } else {
+    selectedAssetsForDeletion.value.push(assetId)
+  }
+}
+
+
+const clearAssetSelection = () => {
+  selectedAssetsForDeletion.value = []
+}
+
+const addSingleAsset = () => {
+  const assetId = singleAssetInput.value.trim()
+  
+  if (!assetId) {
+    showErrorToast('Please enter an asset ID')
+    return
+  }
+  
+  // Validate AST-XXXX format
+  const astPattern = /^AST-\d{4}$/
+  if (!astPattern.test(assetId)) {
+    showErrorToast('Asset ID must be in format AST-XXXX (e.g., AST-0001)')
+    return
+  }
+  
+  // Check if the asset is in the current table (deletable assets)
+  const deletableAssetIds = items.value.map(asset => asset.assetId)
+  if (!deletableAssetIds.includes(assetId)) {
+    showErrorToast(`Asset ${assetId} is not deletable (not in current list or doesn't meet deletion criteria)`)
+    return
+  }
+  
+  if (!selectedAssetsForDeletion.value.includes(assetId)) {
+    selectedAssetsForDeletion.value.push(assetId)
+    showToast(`Added asset ${assetId} to selection`, 'success')
+  } else {
+    showToast(`Asset ${assetId} is already selected`, 'info')
+  }
+  
+  // Clear the input
+  singleAssetInput.value = ''
+}
+
+const addAssetRange = async () => {
+  const fromValue = assetFromInput.value.trim()
+  const toValue = assetToInput.value.trim()
+  
+  if (!fromValue || !toValue) {
+    showErrorToast('Please enter both "from" and "to" values')
+    return
+  }
+  
+  // Validate AST-XXXX format for both inputs
+  const astPattern = /^AST-\d{4}$/
+  if (!astPattern.test(fromValue) || !astPattern.test(toValue)) {
+    showErrorToast('Asset IDs must be in format AST-XXXX (e.g., AST-0001)')
+    return
+  }
+  
+  // Extract numeric parts for range calculation
+  const startNum = parseInt(fromValue.split('-')[1])
+  const endNum = parseInt(toValue.split('-')[1])
+  
+  if (startNum > endNum) {
+    showErrorToast('"From" value must be less than or equal to "to" value')
+    return
+  }
+  
+  // Generate all asset IDs in the range
+  const rangeAssetIds = []
+  for (let i = startNum; i <= endNum; i++) {
+    rangeAssetIds.push(`AST-${i.toString().padStart(4, '0')}`)
+  }
+  
+  // Filter to only include assets that are currently displayed in the table (deletable assets)
+  const deletableAssetIds = items.value.map(asset => asset.assetId)
+  const validRangeAssets = rangeAssetIds.filter(assetId => deletableAssetIds.includes(assetId))
+  
+  // Add only the valid (deletable) assets to selection
+  let addedCount = 0
+  let alreadySelectedCount = 0
+  
+  for (const assetId of validRangeAssets) {
+    if (!selectedAssetsForDeletion.value.includes(assetId)) {
+      selectedAssetsForDeletion.value.push(assetId)
+      addedCount++
+    } else {
+      alreadySelectedCount++
+    }
+  }
+  
+  // Show results
+  const totalInRange = rangeAssetIds.length
+  const notDeletableCount = totalInRange - validRangeAssets.length
+  
+  if (addedCount > 0) {
+    let message = `Added ${addedCount} deletable asset(s) from range ${fromValue} to ${toValue}`
+    if (notDeletableCount > 0) {
+      message += `\n(${notDeletableCount} assets in range are not deletable and were skipped)`
+    }
+    if (alreadySelectedCount > 0) {
+      message += `\n(${alreadySelectedCount} assets were already selected)`
+    }
+    showToast(message, 'success')
+  } else {
+    let message = `No new assets added from range ${fromValue} to ${toValue}`
+    if (notDeletableCount > 0) {
+      message += `\n(${notDeletableCount} assets in range are not deletable)`
+    }
+    if (alreadySelectedCount > 0) {
+      message += `\n(${alreadySelectedCount} assets were already selected)`
+    }
+    showToast(message, 'info')
+  }
+  
+  // Clear the inputs
+  assetFromInput.value = ''
+  assetToInput.value = ''
+}
+
+const confirmBulkDelete = async () => {
+  if (selectedAssetsForDeletion.value.length === 0) {
+    showErrorToast('Please select assets to delete')
+    return
+  }
+  
+  // Show confirmation modal
+  showBulkDeleteConfirmationModal.value = true
+}
+
+const executeBulkDelete = async () => {
+  try {
+    isBulkDeleting.value = true
+
+    // Get asset IDs (database IDs, not assetId strings)
+    const assetIdsToDelete = selectedAssetsForDeletion.value
+      .map(selectedId => {
+        const asset = items.value.find(item => item.id === selectedId || item.assetId === selectedId)
+        return asset?.id
+      })
+      .filter(id => id !== undefined) as number[]
+
+    if (assetIdsToDelete.length === 0) {
+      toastStore.showError('Error', 'No valid assets selected for deletion')
+      isBulkDeleting.value = false
+      return
+    }
+
+    // Call bulk delete API
+    const response = await assetService.bulkDeleteAssets(assetIdsToDelete)
+    
+    const { successCount, errorCount, results } = response.data
+    
+    // Show success message
+    if (successCount > 0) {
+      toastStore.showSuccess('Bulk Delete Complete', `Successfully deleted ${successCount} asset(s)`)
+    }
+    
+    // Show error details
+    if (errorCount > 0) {
+      const failedResults = results.filter((r: any) => r.status === 'error')
+      const errorMessages = failedResults.map((r: any) => `${r.assetId || r.id}: ${r.message}`)
+      const errorMessage = errorMessages.length > 3 
+        ? `${errorMessages.slice(0, 3).join('\n')}\n... and ${errorMessages.length - 3} more errors`
+        : errorMessages.join('\n')
+      toastStore.showError('Some Assets Could Not Be Deleted', errorMessage)
+    }
+
+    // Clear selection and reload
+    selectedAssetsForDeletion.value = []
+    showFormCard.value = false
+    showBulkDeleteConfirmationModal.value = false
+    await loadItems()
+    
+  } catch (error: any) {
+    console.error('Error in bulk delete:', error)
+    toastStore.showError('Error', 'Failed to perform bulk delete')
+  } finally {
+    isBulkDeleting.value = false
+  }
+}
+
+const deleteSingleAsset = async (asset: any) => {
+  // Set the asset to delete and show confirmation modal
+  itemToDelete.value = asset
+  showDeleteConfirmationModal.value = true
+}
+
+const executeSingleAssetDelete = async () => {
+  if (!itemToDelete.value) return
+  
+  try {
+    isDeleting.value = true
+
+    // Call the delete API
+    await assetService.deleteAsset(itemToDelete.value.id)
+    
+    toastStore.showSuccess('Success', `Asset ${itemToDelete.value.assetId} deleted successfully!`)
+    
+    // Close modal and reload assets
+    showDeleteConfirmationModal.value = false
+    itemToDelete.value = null
+    await loadItems()
+    
+  } catch (error: any) {
+    console.error('Error deleting asset:', error)
+    
+    // Handle specific error messages from the API
+    if (error.response?.data?.message) {
+      toastStore.showError('Cannot Delete Asset', error.response.data.message)
+    } else {
+      toastStore.showError('Error', 'Failed to delete asset')
+    }
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+// Search and filter methods
+const debouncedLoadAssets = () => {
+  // Debounce search input
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    loadItems()
+  }, 300)
+}
+
+let debounceTimer: number
+
+const toggleSortOrder = () => {
+  sortAscending.value = !sortAscending.value
+  loadItems()
+}
+
+const toggleFilterDropdown = () => {
+  showFilterDropdown.value = !showFilterDropdown.value
+}
+
+const onSortByChange = () => {
+  loadItems()
+}
+
+const onAssetTypeFilterChange = () => {
+  loadItems()
+}
+
+const onBrandFilterChange = () => {
+  loadItems()
+}
+
+
+const onConditionChange = () => {
+  loadItems()
+}
+
+const clearFilters = () => {
+  searchTerm.value = ''
+  selectedSortBy.value = null
+  selectedAssetTypeFilter.value = null
+  selectedBrandFilter.value = null
+  selectedCondition.value = null
+  loadItems()
+}
+
+// Helper functions for toast messages
+const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+  if (type === 'success') {
+    toastStore.showSuccess('Success', message)
+  } else if (type === 'error') {
+    toastStore.showError('Error', message)
+  } else {
+    toastStore.showInfo('Info', message)
+  }
+}
+
+const showErrorToast = (message: string) => {
+  toastStore.showError('Error', message)
+}
+
+// Helper function to get asset display ID (AST-XXXX)
+const getAssetDisplayId = (id: string | number): string => {
+  // If it's already a string in AST-XXXX format, return it
+  if (typeof id === 'string' && id.startsWith('AST-')) {
+    return id
+  }
+  
+  // Otherwise, find the asset in the items array and return its assetId
+  const asset = items.value.find(item => item.id === id || item.assetId === id)
+  return asset?.assetId || String(id)
+}
+
 
 // Lifecycle
 onMounted(async () => {
@@ -1633,6 +2436,31 @@ h2, h5, h6 {
 .table-model th:nth-child(3), .table-model td:nth-child(3) { width: 30% !important; } /* Asset Type */
 .table-model th:nth-child(4), .table-model td:nth-child(4) { width: 15% !important; } /* Actions (View + Delete) */
 
+/* Assets table - Dynamic column widths based on checkbox visibility */
+.table-asset {
+  table-layout: fixed;
+}
+
+/* When checkbox column is visible (6 columns: Checkbox, Asset ID, Name, Serial Number, Condition, Actions) */
+.table-asset th:nth-child(1), .table-asset td:nth-child(1) { width: 5% !important; } /* Checkbox */
+.table-asset th:nth-child(2), .table-asset td:nth-child(2) { width: 10% !important; } /* Asset ID */
+.table-asset th:nth-child(3), .table-asset td:nth-child(3) { width: 35% !important; } /* Name (Type - Brand - Model) */
+.table-asset th:nth-child(4), .table-asset td:nth-child(4) { width: 20% !important; } /* Serial Number */
+.table-asset th:nth-child(5), .table-asset td:nth-child(5) { width: 15% !important; } /* Condition */
+.table-asset th:nth-child(6), .table-asset td:nth-child(6) { width: 15% !important; } /* Actions */
+
+/* When checkbox column is hidden (5 columns: Asset ID, Name, Serial Number, Condition, Actions) */
+.table-asset:not(.show-checkboxes) th:nth-child(1), 
+.table-asset:not(.show-checkboxes) td:nth-child(1) { width: 12% !important; } /* Asset ID */
+.table-asset:not(.show-checkboxes) th:nth-child(2), 
+.table-asset:not(.show-checkboxes) td:nth-child(2) { width: 38% !important; } /* Name (Type - Brand - Model) */
+.table-asset:not(.show-checkboxes) th:nth-child(3), 
+.table-asset:not(.show-checkboxes) td:nth-child(3) { width: 22% !important; } /* Serial Number */
+.table-asset:not(.show-checkboxes) th:nth-child(4), 
+.table-asset:not(.show-checkboxes) td:nth-child(4) { width: 18% !important; } /* Condition */
+.table-asset:not(.show-checkboxes) th:nth-child(5), 
+.table-asset:not(.show-checkboxes) td:nth-child(5) { width: 10% !important; } /* Actions */
+
 /* Model Details Modal - Using same design as AssetsView.vue */
 .equal-height-columns {
   display: flex;
@@ -1645,8 +2473,8 @@ h2, h5, h6 {
 }
 
 .asset-info-section-compact {
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
+  margin-bottom: 0.25rem;
+  padding: 0.5rem;
   border: 1px solid #e9ecef;
   border-radius: 0.5rem;
   background-color: #fafafa;
@@ -1655,18 +2483,18 @@ h2, h5, h6 {
 }
 
 .asset-info-section-compact .section-title-compact {
-  font-size: 1.1rem !important;
+  font-size: 0.95rem !important;
   font-weight: 600 !important;
   color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
+  margin-bottom: 0.25rem !important;
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .asset-info-section-compact .info-grid-compact {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.15rem;
   flex-grow: 1;
 }
 
@@ -1674,7 +2502,7 @@ h2, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.25rem 0;
+  padding: 0.15rem 0;
   border-bottom: 1px solid #f8f9fa;
 }
 
@@ -1683,16 +2511,16 @@ h2, h5, h6 {
 }
 
 .asset-info-section-compact .info-label-compact {
-  font-size: 0.95rem !important;
+  font-size: 0.85rem !important;
   font-weight: 600 !important;
   color: #495057 !important;
   margin-bottom: 0 !important;
-  min-width: 140px;
+  min-width: 120px;
   flex-shrink: 0;
 }
 
 .asset-info-section-compact .info-value-compact {
-  font-size: 1rem !important;
+  font-size: 0.9rem !important;
   font-weight: 500 !important;
   color: #212529 !important;
   margin-bottom: 0 !important;
@@ -1726,5 +2554,172 @@ h2, h5, h6 {
   border-color: var(--secondary-red) !important;
   background-color: rgba(220, 53, 69, 0.1) !important;
 }
+
+/* Assets-specific styling */
+.form-check-input {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--element-gray) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Bulk delete section styling */
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: var(--mindstix-primary);
+  color: #0c5460;
+}
+
+/* Asset selection chips styling */
+.badge.bg-warning {
+  background-color: #8B4513 !important;
+  color: white !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+}
+
+/* Asset Add Buttons - Consistent sizing across all screen sizes */
+.asset-add-btn {
+  width: 103px !important;
+  height: 38px !important;
+  min-width: 103px !important;
+  max-width: 103px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.asset-add-btn:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.asset-add-btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Ensure buttons maintain size on all screen sizes */
+@media (max-width: 1200px) {
+  .asset-add-btn {
+    width: 103px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 992px) {
+  .asset-add-btn {
+    width: 103px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .asset-add-btn {
+    width: 103px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .asset-add-btn {
+    width: 103px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .asset-add-btn {
+    width: 103px !important;
+    height: 38px !important;
+  }
+}
+
+.badge .btn-close {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-left: 0.5rem !important;
+  opacity: 0.8 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.badge .btn-close:hover {
+  opacity: 1 !important;
+}
+
+.badge .btn-close::before {
+  content: "×" !important;
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+}
+
+/* Confirmation Modal Buttons */
+.btn-cancel-confirm {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  padding: 0.4rem 1rem !important;
+  font-size: 0.9rem !important;
+}
+
+.btn-cancel-confirm:hover {
+  background-color: var(--element-gray) !important;
+  border-color: var(--primary-mid-light) !important;
+  color: var(--primary-black) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-confirm-delete {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  padding: 0.4rem 1rem !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
+}
+
+.btn-confirm-delete:hover {
+  background-color: #d63447 !important;
+  border-color: #d63447 !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+}
+
+.confirmation-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
 
 </style>

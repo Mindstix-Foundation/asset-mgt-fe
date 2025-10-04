@@ -44,8 +44,8 @@
                         required 
                         minlength="2" 
                         maxlength="100"
-                        pattern="[A-Za-z0-9\s\.\-&]{2,100}"
-                        title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands only)"
+                        pattern="[A-Za-z0-9\s\.\-&,]{2,100}"
+                        title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)"
                         @blur="validateField('vendorName')"
                         @focus="clearFieldError('vendorName')"
                         @input="formatToTitleCase"
@@ -58,7 +58,7 @@
                       </div>
                     </div>
                     <div class="form-text">
-                      Company or organization name (2-100 characters)
+                      Company or organization name (2-100 characters, letters, numbers, spaces, periods, hyphens, ampersands, commas)
                       <span v-if="isCheckingName" class="text-muted ms-2">
                         <i class="fas fa-spinner fa-spin me-1"></i>Checking availability...
                       </span>
@@ -89,14 +89,21 @@
                       <SearchableDropdown
                         id="status"
                         label="Status"
-                        placeholder="Select status..."
+                        :placeholder="props.disableStatus ? 'Active' : 'Select status...'"
                         :items="statusItems"
                         v-model="selectedStatus"
                         required
                         @change="onStatusChange"
                       />
                     </div>
-                    <div class="form-text">Current status of the vendor relationship (required)</div>
+                    <div class="form-text">
+                      <span v-if="props.disableStatus">
+                        New vendors are set to Active status
+                      </span>
+                      <span v-else>
+                        Current status of the vendor relationship (required)
+                      </span>
+                    </div>
                     <!-- Error message hidden - red border is sufficient visual indication -->
                   </div>
 
@@ -309,11 +316,13 @@ import VendorApiService from '@/services/vendorApi'
 interface Props {
   vendor?: Vendor
   isEditMode?: boolean
+  disableStatus?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isEditMode: false,
-  vendor: undefined
+  vendor: undefined,
+  disableStatus: false
 })
 
 // Emits
@@ -369,10 +378,20 @@ const vendorTypeItems = computed(() => [
   { id: 'BOTH', name: 'Supplier & Service Provider', value: 'BOTH' }
 ])
 
-const statusItems = computed(() => [
-  { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' },
-  { id: 'INACTIVE', name: 'Inactive', value: 'INACTIVE' }
-])
+const statusItems = computed(() => {
+  if (props.disableStatus) {
+    // Only show Active option for new vendors
+    return [
+      { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' }
+    ]
+  } else {
+    // Show both options for editing existing vendors
+    return [
+      { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' },
+      { id: 'INACTIVE', name: 'Inactive', value: 'INACTIVE' }
+    ]
+  }
+})
 
 // SearchableDropdown change handlers
 const onVendorTypeChange = (item: Item | null) => {
@@ -420,8 +439,8 @@ const validateField = (fieldName: string) => {
         errors.vendorName = 'Vendor name must be at least 2 characters'
         element.classList.add('is-invalid')
         element.classList.remove('is-valid')
-      } else if (!/^[A-Za-z0-9\s\.\-&]{2,100}$/.test(formData.vendorName)) {
-        errors.vendorName = 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands only)'
+      } else if (!/^[A-Za-z0-9\s\.\-&,]{2,100}$/.test(formData.vendorName)) {
+        errors.vendorName = 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)'
         element.classList.add('is-invalid')
         element.classList.remove('is-valid')
       } else {
@@ -999,13 +1018,23 @@ onMounted(async () => {
         }, 300)
       })
     } else {
-      // For new vendor, don't set default values - user must make selection
-      // This ensures validation works correctly for required fields
-      formData.status = '' as VendorStatus
-      formData.vendorType = '' as VendorType
+      // For new vendor, set default values based on props
+      if (props.disableStatus) {
+        // Set status to ACTIVE when disabled (for new vendors)
+        formData.status = 'ACTIVE' as VendorStatus
+        selectedStatus.value = {
+          id: 'ACTIVE',
+          name: 'Active',
+          value: 'ACTIVE'
+        }
+      } else {
+        // Don't set default status - user must make selection
+        formData.status = '' as VendorStatus
+        selectedStatus.value = null
+      }
       
-      // Don't set default selected items - let user choose
-      selectedStatus.value = null
+      // Don't set default vendor type - user must choose
+      formData.vendorType = '' as VendorType
       selectedVendorType.value = null
     }
   } catch (error) {

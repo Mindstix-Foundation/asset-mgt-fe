@@ -78,6 +78,11 @@ class AssetService {
     return apiService.delete<ApiResponse<any>>(`${this.baseEndpoint}/${id}`)
   }
 
+  // Bulk delete assets
+  async bulkDeleteAssets(assetIds: number[]): Promise<ApiResponse<any>> {
+    return apiService.post<ApiResponse<any>>(`${this.baseEndpoint}/bulk-delete`, { assetIds })
+  }
+
   // Get asset statistics for dashboard
   async getAssetStats(): Promise<AssetStatsResponse> {
     return apiService.get<AssetStatsResponse>(`${this.baseEndpoint}/stats`)
@@ -116,6 +121,22 @@ class AssetService {
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `${this.baseEndpoint}/available?${queryString}` : `${this.baseEndpoint}/available`
+    
+    return apiService.get<AssetListResponse>(endpoint)
+  }
+
+  // Get deletable assets (for deletion management)
+  async getDeletableAssets(params: AssetQueryParams = {}): Promise<AssetListResponse> {
+    const searchParams = new URLSearchParams()
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, value.toString())
+      }
+    })
+
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `${this.baseEndpoint}/deletable?${queryString}` : `${this.baseEndpoint}/deletable`
     
     return apiService.get<AssetListResponse>(endpoint)
   }
