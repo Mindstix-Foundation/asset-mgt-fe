@@ -235,9 +235,9 @@ class EmployeeApiService {
     try {
       const query = new URLSearchParams()
       if (params) {
-        Object.entries(params).forEach(([k, v]) => {
+        for (const [k, v] of Object.entries(params)) {
           if (v !== undefined && v !== null && v !== '') query.append(k, String(v))
-        })
+        }
       }
       const queryString = query.toString()
       const basePath = `${this.baseURL}/${employeeId}/asset-events`

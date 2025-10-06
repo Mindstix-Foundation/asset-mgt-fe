@@ -16,8 +16,8 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output aria-live="polite">Loading...</output>
               </div>
               <p class="mt-3 text-muted">Loading maintenance data...</p>
             </div>
@@ -261,9 +261,15 @@ import NotesTextarea from '@/components/common/NotesTextarea.vue'
 import DateInput from '@/components/common/DateInput.vue'
 import { formatDateForInput } from '@/utils/date'
 
+// Alias for form field elements to improve readability and reuse
+type FormFieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
+
+// Type aliases
+type MaintenanceTypeLiteral = 'PREVENTIVE' | 'CORRECTIVE' | 'EMERGENCY' | 'UPGRADE'
 
 // Props
 interface Props {
@@ -381,47 +387,67 @@ const clearAssetDetails = () => {
   selectedAssetSpecs.value = null
 }
 
+// Helper function to parse asset specifications
+const parseAssetSpecs = (specs: any): string | null => {
+  if (!specs) {
+    return null
+  }
+  
+  if (typeof specs === 'object') {
+    return formatSpecsObject(specs)
+  }
+  
+  if (typeof specs === 'string') {
+    return parseSpecsString(specs)
+  }
+  
+  return null
+}
+
+// Helper function to format specs object into display string
+const formatSpecsObject = (specs: Record<string, any>): string => {
+  return Object.entries(specs)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join('\n')
+}
+
+// Helper function to parse specs string (may be JSON)
+const parseSpecsString = (specs: string): string => {
+  try {
+    const parsed = JSON.parse(specs)
+    if (parsed && typeof parsed === 'object') {
+      return formatSpecsObject(parsed)
+    }
+  } catch {
+    // If parsing fails, return the string as-is
+  }
+  return specs
+}
+
+// Helper function to populate asset details from API response
+const populateAssetDetails = (asset: any) => {
+  selectedAssetDetails.serialNumber = asset.serialNumber || ''
+  selectedAssetDetails.condition = asset.condition || ''
+  selectedAssetDetails.location = asset.location || ''
+  selectedAssetDetails.notes = asset.notes || ''
+  selectedAssetDetails.brandModel = asset.brand && asset.model ? `${asset.brand.name} ${asset.model.name}` : ''
+  selectedAssetDetails.assetType = asset.assetType?.name || ''
+  selectedAssetDetails.assetCategory = asset.assetType?.category?.name || ''
+  selectedAssetDetails.vendor = asset.vendor?.name || ''
+  selectedAssetDetails.purchaseDate = asset.purchaseDate || ''
+  selectedAssetDetails.purchaseCost = asset.purchaseCost ? String(asset.purchaseCost) : ''
+  selectedAssetDetails.warrantyStartDate = asset.warrantyStartDate || ''
+  selectedAssetDetails.warrantyUntil = asset.warrantyUntil || ''
+  selectedAssetSpecs.value = parseAssetSpecs(asset.model?.specifications)
+}
+
 const loadAssetDetails = async (assetIdNumber: number) => {
   try {
     const response = await assetApiService.getAssetById(assetIdNumber)
     const asset = response.data.asset
+    
     if (asset) {
-      selectedAssetDetails.serialNumber = asset.serialNumber || ''
-      selectedAssetDetails.condition = asset.condition || ''
-      selectedAssetDetails.location = asset.location || ''
-      selectedAssetDetails.notes = asset.notes || ''
-      selectedAssetDetails.brandModel = asset.brand && asset.model ? `${asset.brand.name} ${asset.model.name}` : ''
-      selectedAssetDetails.assetType = asset.assetType?.name || ''
-      selectedAssetDetails.assetCategory = asset.assetType?.category?.name || ''
-      selectedAssetDetails.vendor = asset.vendor?.name || ''
-      selectedAssetDetails.purchaseDate = asset.purchaseDate || ''
-      selectedAssetDetails.purchaseCost = asset.purchaseCost ? String(asset.purchaseCost) : ''
-      selectedAssetDetails.warrantyStartDate = asset.warrantyStartDate || ''
-      selectedAssetDetails.warrantyUntil = asset.warrantyUntil || ''
-
-      const specs = asset.model?.specifications
-      if (specs) {
-        if (typeof specs === 'object') {
-          selectedAssetSpecs.value = Object.entries(specs)
-            .map(([k, v]) => `${k}: ${v}`)
-            .join('\n')
-        } else if (typeof specs === 'string') {
-          try {
-            const parsed = JSON.parse(specs)
-            if (parsed && typeof parsed === 'object') {
-              selectedAssetSpecs.value = Object.entries(parsed)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join('\n')
-            } else {
-              selectedAssetSpecs.value = specs
-            }
-          } catch {
-            selectedAssetSpecs.value = specs
-          }
-        }
-      } else {
-        selectedAssetSpecs.value = null
-      }
+      populateAssetDetails(asset)
     } else {
       clearAssetDetails()
     }
@@ -443,53 +469,52 @@ const getFieldClass = (fieldName: string) => {
   }
 }
 
+// Field-specific validators returning an error message or null when valid
+const fieldValidators: Record<string, (value: unknown) => string | null> = {
+  scheduledDate: (value: unknown) => {
+    if (!value) return null
+    const today = new Date().toISOString().split('T')[0]
+    return (String(value) < today) ? 'Maintenance cannot be scheduled in the past' : null
+  },
+  frequencyDays: (value: unknown) => {
+    if (value === undefined || value === null || String(value) === '') return null
+    const num = Number(value)
+    return (num < 1 || num > 365) ? 'Frequency must be between 1 and 365 days' : null
+  },
+  estimatedCost: (value: unknown) => {
+    if (value === undefined || value === null || String(value) === '') return null
+    const num = Number(value)
+    return (num < 0 || num > 100000) ? 'Estimated cost must be between ₹0 and ₹1,00,000' : null
+  },
+  description: (value: unknown) => {
+    if (!value || typeof value !== 'string') return null
+    const len = value.length
+    return (len < 10 || len > 1000) ? 'Description must be between 10 and 1000 characters' : null
+  }
+}
+
 const validateFieldInline = async (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   
   if (!element) return true
 
   element.setCustomValidity('')
 
   const isRequired = element.hasAttribute('required')
-  
-  if (isRequired && (!value || value.toString().trim() === '')) {
+  const isEmpty = value === undefined || value === null || value.toString().trim() === ''
+  if (isRequired && isEmpty) {
     setFieldError(fieldName, '')
     return false
   }
 
-  // Custom validations
-  switch (fieldName) {
-    case 'scheduledDate':
-      if (value) {
-        const today = new Date().toISOString().split('T')[0]
-        if (value < today) {
-          setFieldError(fieldName, 'Maintenance cannot be scheduled in the past')
-          return false
-        }
-      }
-      break
-    
-    case 'frequencyDays':
-      if (value && (Number(value) < 1 || Number(value) > 365)) {
-        setFieldError(fieldName, 'Frequency must be between 1 and 365 days')
-        return false
-      }
-      break
-    
-    case 'estimatedCost':
-      if (value && (Number(value) < 0 || Number(value) > 100000)) {
-        setFieldError(fieldName, 'Estimated cost must be between ₹0 and ₹1,00,000')
-        return false
-      }
-      break
-    
-    case 'description':
-      if (value && typeof value === 'string' && (value.length < 10 || value.length > 1000)) {
-        setFieldError(fieldName, 'Description must be between 10 and 1000 characters')
-        return false
-      }
-      break
+  const validator = fieldValidators[fieldName]
+  if (validator) {
+    const message = validator(value)
+    if (message) {
+      setFieldError(fieldName, message)
+      return false
+    }
   }
 
   if (element.checkValidity()) {
@@ -505,7 +530,7 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   if (element) {
     element.setCustomValidity(message)
   }
@@ -515,7 +540,7 @@ const setFieldValid = (fieldName: string) => {
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   if (element) {
     element.setCustomValidity('')
   }
@@ -579,11 +604,11 @@ const resizeTextarea = (textarea: HTMLTextAreaElement) => {
 
 const resizeAllTextareas = () => {
   const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-  textareas.forEach(textarea => {
+  for (const textarea of textareas) {
     if (textarea.value.trim()) {
       resizeTextarea(textarea)
     }
-  })
+  }
 }
 
 const getCounterClass = (length: number, maxLength: number) => {
@@ -591,6 +616,101 @@ const getCounterClass = (length: number, maxLength: number) => {
   if (percentage > 90) return 'text-danger'
   if (percentage > 75) return 'text-warning'
   return 'text-muted'
+}
+
+// Helper function to find asset by assetId, with fallback fetch if needed
+const findAssetByExternalId = async (assetId: string): Promise<AssetApiAsset | null> => {
+  let match = availableAssets.value.find(a => a.assetId === assetId)
+  
+  if (match) {
+    return match
+  }
+  
+  // Asset may not be in the AVAILABLE-filtered list; fetch from general assets and merge
+  try {
+    const resp = await assetApiService.getAssets({ search: assetId, limit: 5 }) as any
+    const found = (resp?.data?.assets || resp?.data?.data?.assets || []).find((a: any) => a.assetId === assetId)
+    
+    if (found && !availableAssets.value.some(a => a.id === found.id)) {
+      availableAssets.value = [found, ...availableAssets.value]
+    }
+    
+    return found || null
+  } catch {
+    return null
+  }
+}
+
+// Helper function to preselect asset from query parameter
+const preselectAssetFromQuery = async () => {
+  const preselectExternalAssetId = (route.query.assetId as string) || ''
+  if (!preselectExternalAssetId) {
+    return
+  }
+  
+  const match = await findAssetByExternalId(preselectExternalAssetId)
+  if (!match) {
+    return
+  }
+  
+  const item = { 
+    id: match.id.toString(), 
+    name: `${match.assetId}${match.serialNumber ? ' - ' + match.serialNumber : ''}`.trim(), 
+    value: match.id.toString() 
+  } as Item
+  
+  selectedAssetItem.value = item
+  formData.assetId = match.id.toString()
+  await nextTick()
+  onAssetChange(item)
+  preselectedAsset.value = true
+  delete fieldErrors.assetId
+  fieldValidation.assetId = true
+  await nextTick()
+  validateFieldInline('assetId')
+}
+
+// Helper function to preselect maintenance type from query parameter
+const preselectMaintenanceTypeFromQuery = async () => {
+  const qsTypeId = (route.query.maintenanceTypeId as string) || ''
+  const qsTypeName = (route.query.maintenanceTypeName as string) || ''
+  
+  if (!qsTypeId && !qsTypeName) {
+    return
+  }
+  
+  const typeMatch = maintenanceTypes.value.find(t => 
+    (qsTypeId && t.id === qsTypeId) || 
+    (qsTypeName && t.name.toLowerCase() === qsTypeName.toLowerCase())
+  )
+  
+  if (!typeMatch) {
+    return
+  }
+  
+  const typeItem = { 
+    id: typeMatch.id, 
+    name: `${typeMatch.name} - ${typeMatch.description}`, 
+    value: typeMatch.id 
+  } as Item
+  
+  selectedTypeItem.value = typeItem
+  formData.maintenanceTypeId = typeMatch.id
+  await nextTick()
+  onTypeChange(typeItem)
+  delete fieldErrors.maintenanceTypeId
+  fieldValidation.maintenanceTypeId = true
+}
+
+// Helper function to set default scheduled date
+const setDefaultScheduledDate = () => {
+  if (props.isEditMode) {
+    return
+  }
+  
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  formData.scheduledDate = tomorrow.toISOString().split('T')[0]
 }
 
 // Data loading
@@ -604,61 +724,11 @@ const loadInitialData = async () => {
 
     availableAssets.value = assetsDropdownResponse.data.assets
     maintenanceTypes.value = typesResponse.data.maintenanceTypes
-    // Vendors removed
- 
-    // If navigated with ?assetId= (mirroring Collect Asset behavior), preselect asset
-    const preselectExternalAssetId = (route.query.assetId as string) || ''
-    if (preselectExternalAssetId) {
-      let match = availableAssets.value.find(a => a.assetId === preselectExternalAssetId)
-      if (!match) {
-        // Asset may not be in the AVAILABLE-filtered list; fetch from general assets and merge
-        try {
-          const resp = await assetApiService.getAssets({ search: preselectExternalAssetId, limit: 5 }) as any
-          const found = (resp?.data?.assets || resp?.data?.data?.assets || []).find((a: any) => a.assetId === preselectExternalAssetId)
-          if (found) {
-            match = found
-            if (!availableAssets.value.some(a => a.id === found.id)) {
-              availableAssets.value = [found, ...availableAssets.value]
-            }
-          }
-        } catch (_) { /* noop */ }
-      }
-      if (match) {
-        const item = { id: match.id.toString(), name: `${match.assetId}${match.serialNumber ? ' - ' + match.serialNumber : ''}`.trim(), value: match.id.toString() } as Item
-        selectedAssetItem.value = item
-        formData.assetId = match.id.toString()
-        await nextTick()
-        onAssetChange(item)
-        preselectedAsset.value = true
-        delete fieldErrors.assetId
-        fieldValidation.assetId = true
-        await nextTick()
-        validateFieldInline('assetId')
-      }
-    }
-
-    // Optional: preselect maintenance type via query (?maintenanceTypeId= or ?maintenanceTypeName=)
-    const qsTypeId = (route.query.maintenanceTypeId as string) || ''
-    const qsTypeName = (route.query.maintenanceTypeName as string) || ''
-    if (qsTypeId || qsTypeName) {
-      const typeMatch = maintenanceTypes.value.find(t => (qsTypeId && t.id === qsTypeId) || (qsTypeName && t.name.toLowerCase() === qsTypeName.toLowerCase()))
-      if (typeMatch) {
-        const typeItem = { id: typeMatch.id, name: `${typeMatch.name} - ${typeMatch.description}`, value: typeMatch.id } as Item
-        selectedTypeItem.value = typeItem
-        formData.maintenanceTypeId = typeMatch.id
-        await nextTick()
-        onTypeChange(typeItem)
-        delete fieldErrors.maintenanceTypeId
-        fieldValidation.maintenanceTypeId = true
-      }
-    }
- 
-    // Set default scheduled date to tomorrow
-    if (!props.isEditMode) {
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      formData.scheduledDate = tomorrow.toISOString().split('T')[0]
-    }
+    
+    // Handle query parameter preselections
+    await preselectAssetFromQuery()
+    await preselectMaintenanceTypeFromQuery()
+    setDefaultScheduledDate()
   } catch (error: any) {
     console.error('Error loading initial data:', error)
     toastStore.showError('Error', 'Failed to load form data. Please try again.')
@@ -688,7 +758,9 @@ const loadMaintenanceData = async () => {
             availableAssets.value = [found, ...availableAssets.value]
           }
         }
-      } catch (_) { /* noop */ }
+      } catch (error) {
+        console.debug('Fallback search for asset by assetId failed', error)
+      }
     }
     if (selectedAsset) {
       formData.assetId = selectedAsset.id.toString() // Set the numeric id for the dropdown
@@ -743,7 +815,6 @@ const submitForm = async (event?: Event) => {
 
   // Validate all fields
   let isFormValid = true
-  const requiredFields = ['assetId', 'maintenanceTypeId', 'scheduledDate', 'description']
   const allFields = Object.keys(formData)
 
   const validationResults = await Promise.all(
@@ -751,7 +822,7 @@ const submitForm = async (event?: Event) => {
   )
   isFormValid = validationResults.every(Boolean)
 
-  if (!isFormValid) {
+  if (isFormValid === false) {
     if (maintenanceForm.value) {
       maintenanceForm.value.classList.add('was-validated')
     }
@@ -765,48 +836,32 @@ const submitForm = async (event?: Event) => {
 
   try {
     if (props.isEditMode && props.maintenanceId) {
-      // Update existing maintenance
-      const maintenanceData: UpdateMaintenanceData = {
+      const payload: UpdateMaintenanceData = {
         assetId: Number(formData.assetId),
-        maintenanceType: formData.maintenanceTypeId as 'PREVENTIVE' | 'CORRECTIVE' | 'EMERGENCY' | 'UPGRADE',
+        maintenanceType: formData.maintenanceTypeId as MaintenanceTypeLiteral,
         scheduledDate: formData.scheduledDate,
         frequencyDays: formData.frequencyDays || undefined,
         estimatedCost: formData.estimatedCost || undefined,
         description: formData.description
       }
-
-      await maintenanceService.updateMaintenance(props.maintenanceId, maintenanceData)
-      
-      // Generate success message before redirect
+      await maintenanceService.updateMaintenance(props.maintenanceId, payload)
       const successMessage = generateMaintenanceDetails()
-      
-      // Redirect to maintenance view page immediately after success with stats refresh
       router.push('/app/maintenance?refreshStats=true')
-      
-      // Show success toast after redirect (with a small delay to ensure page loads)
       setTimeout(() => {
         toastStore.showSuccess('Success', `${successMessage} has been updated successfully!`)
       }, 100)
     } else {
-      // Create new maintenance
-      const maintenanceData: CreateMaintenanceData = {
+      const payload: CreateMaintenanceData = {
         assetId: Number(formData.assetId),
-        maintenanceType: formData.maintenanceTypeId as 'PREVENTIVE' | 'CORRECTIVE' | 'EMERGENCY' | 'UPGRADE',
+        maintenanceType: formData.maintenanceTypeId as MaintenanceTypeLiteral,
         scheduledDate: formData.scheduledDate,
         frequencyDays: formData.frequencyDays || undefined,
         estimatedCost: formData.estimatedCost || undefined,
         description: formData.description
       }
- 
-      await maintenanceService.createMaintenance(maintenanceData)
-
-      // Generate success message before redirect
+      await maintenanceService.createMaintenance(payload)
       const successMessage = generateMaintenanceDetails()
-      
-      // Redirect to maintenance view page immediately after success with stats refresh
       router.push('/app/maintenance?refreshStats=true')
-      
-      // Show success toast after redirect (with a small delay to ensure page loads)
       setTimeout(() => {
         toastStore.showSuccess('Success', `${successMessage} has been scheduled successfully!`)
       }, 100)
@@ -815,15 +870,15 @@ const submitForm = async (event?: Event) => {
   } catch (error: any) {
     console.error(`Error ${props.isEditMode ? 'updating' : 'creating'} maintenance:`, error)
     
-    let errorMsg = `An error occurred while ${props.isEditMode ? 'updating' : 'scheduling'} the maintenance. Please try again.`
-    
-    if (error.response?.status === 409) {
-      errorMsg = 'Asset is not available for maintenance on the selected date.'
-    } else if (error.response?.status === 400) {
-      errorMsg = 'Server validation failed. Please check your data and try again.'
-    } else if (error.response?.data?.message) {
-      errorMsg = error.response.data.message
+    const defaultMsg = `An error occurred while ${props.isEditMode ? 'updating' : 'scheduling'} the maintenance. Please try again.`
+    const statusToMessage: Record<number, string> = {
+      409: 'Asset is not available for maintenance on the selected date.',
+      400: 'Server validation failed. Please check your data and try again.'
     }
+    const status = error.response?.status as number | undefined
+    const mapped = (typeof status === 'number') ? statusToMessage[status] : undefined
+    const serverMsg = error.response?.data?.message as string | undefined
+    const errorMsg = mapped || serverMsg || defaultMsg
     
     toastStore.showError('Error', errorMsg)
   } finally {

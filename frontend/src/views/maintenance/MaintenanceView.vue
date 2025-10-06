@@ -238,7 +238,7 @@
                 </span>
               </td>
               <td>
-                <span :class="`badge badge-${maintenance.status.toLowerCase().replace('_', '-')}`">
+                <span :class="`badge badge-${maintenance.status.toLowerCase().replaceAll('_', '-')}`">
                   {{ formatStatus(maintenance.status) }}
                 </span>
               </td>
@@ -350,7 +350,7 @@
                     <div class="col-md-6">
                       <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
-                        <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replace('_', '-')}`">{{ formatStatus(selectedMaintenance.status) }}</span>
+                        <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replaceAll('_', '-')}`">{{ formatStatus(selectedMaintenance.status) }}</span>
                       </div>
                     </div>
                   </div>
@@ -670,7 +670,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
 import { Modal } from 'bootstrap'
 import { maintenanceService } from '@/services/maintenanceService'
-import { fetchDashboardStats } from '@/services/dashboardApi'
 import { useToastStore } from '@/stores/toast'
 import { formatDateOnly } from '@/utils/date'
 import AppPagination from '@/components/pagination/AppPagination.vue'
@@ -846,7 +845,7 @@ const sortOptions = ref<Item[]>([
     isLoading.value = false
     // Start stats refresh interval only after initial load
     if (!statsInterval) {
-      statsInterval = window.setInterval(fetchStats, 60_000)
+      statsInterval = globalThis.setInterval(fetchStats, 60_000)
     }
   }
 }
@@ -982,7 +981,7 @@ onMounted(async () => {
   selectedSortBy.value = sortOptions.value.find(o => o.value === sortBy.value) || null
   
   // Start timestamp update interval (every minute)
-  statsTimestampInterval = window.setInterval(updateStatsTimestampDisplay, 60_000)
+  statsTimestampInterval = globalThis.setInterval(updateStatsTimestampDisplay, 60_000)
 })
 
 // Watch for route changes to refresh stats when coming from form submissions
@@ -1106,7 +1105,7 @@ const paginationInfo = computed(() => {
 
 // Methods
 const formatStatus = (status: string) => {
-  return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  return status.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
 }
 
 const formatDate = (dateString: string) => formatDateOnly(dateString)

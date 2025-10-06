@@ -13,9 +13,9 @@
         readonly
         aria-haspopup="dialog"
       />
-      <span class="input-group-text date-addon" role="button" @click="openPicker" aria-label="Open date picker">
+      <button type="button" class="input-group-text date-addon" @click="openPicker" aria-label="Open date picker">
         <i class="fas fa-calendar-alt"></i>
-      </span>
+      </button>
       <input
         ref="hiddenDate"
         type="date"
@@ -60,7 +60,7 @@ export default {
       
       // Parse the date and format as DD/MM/YYYY
       const date = new Date(dateString)
-      if (isNaN(date.getTime())) return ''
+      if (Number.isNaN(date.getTime())) return ''
       
       const day = String(date.getDate()).padStart(2, '0')
       const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -78,7 +78,10 @@ export default {
         } else {
           el.focus(); el.click()
         }
-      } catch (_) {
+      } catch (error) {
+        // Fallback for browsers that throw on showPicker
+        // Log at debug level to aid troubleshooting without noisy errors
+        console.debug('DateField.showPicker failed, falling back to focus/click', error)
         el.focus(); el.click()
       }
     },

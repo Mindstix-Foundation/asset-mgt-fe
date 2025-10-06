@@ -206,7 +206,19 @@ class EmployeeService {
     
     const firstInitial = firstName.charAt(0).toUpperCase()
     const lastInitial = lastName.charAt(0).toUpperCase()
-    const randomNum = Math.floor(Math.random() * 999) + 1
+    // Use crypto-backed randomness when available for better unpredictability (not a security token)
+    const randomNum = (() => {
+      try {
+        if (typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto) {
+          const buf = new Uint32Array(1)
+          ;(globalThis as any).crypto.getRandomValues(buf)
+          return (buf[0] % 999) + 1
+        }
+      } catch (_) {
+        // ignore and fallback
+      }
+      return Math.floor(Math.random() * 999) + 1
+    })()
     
     return `EMP-${firstInitial}${lastInitial}${randomNum.toString().padStart(3, '0')}`
   }
@@ -378,11 +390,11 @@ class EmployeeService {
     const searchParams = new URLSearchParams()
     
     // Add all query parameters
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `/employees/export?${queryString}` : '/employees/export'
@@ -406,14 +418,14 @@ class EmployeeService {
 
       // Create blob and download
       const blob = response.data
-      const url = window.URL.createObjectURL(blob)
+      const url = globalThis.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = filename
       document.body.appendChild(link)
       link.click()
       link.remove()
-      window.URL.revokeObjectURL(url)
+      globalThis.URL.revokeObjectURL(url)
       
       console.log('Employee export completed successfully')
     } catch (error) {

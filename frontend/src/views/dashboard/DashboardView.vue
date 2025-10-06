@@ -440,15 +440,15 @@ onMounted(async () => {
   await refreshDashboard()
   
   // Update relative "Updated X minutes ago" every 30 seconds
-  updatedTickerId = window.setInterval(updateLastUpdatedDisplay, 30_000)
+  updatedTickerId = globalThis.setInterval(updateLastUpdatedDisplay, 30_000)
   
   // Update real-time activity times every minute for minute-level updates
-  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 60_000)
+  realTimeUpdateId = globalThis.setInterval(updateRealTimeActivityTimes, 60_000)
   
   // Smart refresh strategy:
   // - Full refresh every 5 minutes for fresh data
   // - Real-time updates every minute for time display
-  refreshIntervalId = window.setInterval(refreshDashboard, 300_000)
+  refreshIntervalId = globalThis.setInterval(refreshDashboard, 300_000)
 })
 
 onUnmounted(() => {

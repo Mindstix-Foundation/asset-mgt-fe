@@ -282,6 +282,9 @@ import type { UpdateEmployeeData } from '@/services/employeeService'
 import { useToastStore } from '@/stores/toast'
 import DateInput from '@/components/common/DateInput.vue'
 
+// Type alias for form elements
+type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
@@ -369,19 +372,20 @@ const validateEmailField = (value: any): boolean => {
 
 // Helper function to check email availability
 const checkEmailAvailability = (email: string) => {
-  if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
+  if (emailCheckTimer) globalThis.clearTimeout(emailCheckTimer)
   isCheckingEmail.value = true
-  emailCheckTimer = window.setTimeout(async () => {
+  emailCheckTimer = globalThis.setTimeout(async () => {
     try {
       const resp = await employeeService.checkEmailAvailability(email, formData.employeeId)
       const available = (resp as any)?.data?.available ?? (resp as any)?.available
-      if (!available) {
-        setFieldError('email', 'An employee with this email already exists')
-      } else {
+      if (available) {
         setFieldValid('email')
+      } else {
+        setFieldError('email', 'An employee with this email already exists')
       }
-    } catch (e) {
-      // Silent fail for email check
+    } catch (e: any) {
+      console.error('Email availability check failed:', e)
+      // Don't block form submission on email check failure
     } finally {
       isCheckingEmail.value = false
     }
@@ -448,7 +452,7 @@ const validateFieldType = async (fieldName: string, value: any): Promise<boolean
 
 const validateFieldInline = async (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   
   if (!element) return true
 
@@ -479,7 +483,7 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   if (element) {
     element.setCustomValidity(message)
   }
@@ -489,7 +493,7 @@ const setFieldValid = (fieldName: string) => {
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   if (element) {
     element.setCustomValidity('')
   }
@@ -523,9 +527,9 @@ const resizeTextarea = (textarea: HTMLTextAreaElement) => {
 
 const resizeAllTextareas = () => {
   const textareas = document.querySelectorAll('textarea.auto-expand')
-  textareas.forEach((textarea) => {
+  for (const textarea of Array.from(textareas)) {
     resizeTextarea(textarea as HTMLTextAreaElement)
-  })
+  }
 }
 
 const getCounterClass = (fieldName: string) => {

@@ -1,5 +1,4 @@
-import { apiService } from './apiClient'
-import apiClient from './apiClient'
+import apiClient, { apiService } from './apiClient'
 
 export interface Asset {
   id: string
@@ -182,7 +181,7 @@ class MaintenanceService {
     limit?: number
   }): Promise<ApiResponse<{ events: any[], pagination: { totalCount: number, currentPage: number, totalPages: number, hasNext: boolean, hasPrevious: boolean } }>> {
     const query = new URLSearchParams()
-    Object.entries(params || {}).forEach(([k,v]) => { if (v !== undefined && v !== null && v !== '') query.append(k, String(v)) })
+    for (const [k, v] of Object.entries(params || {})) { if (v !== undefined && v !== null && v !== '') query.append(k, String(v)) }
     const qs = query.toString()
     const suffix = qs ? `?${qs}` : ''
     return apiService.get(`/maintenance/asset/${assetId}/history-events${suffix}`)
@@ -192,11 +191,11 @@ class MaintenanceService {
   async exportMaintenanceToExcel(params: MaintenanceQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
 
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `/maintenance/export?${queryString}` : '/maintenance/export'
@@ -216,14 +215,14 @@ class MaintenanceService {
       }
 
       const blob = response.data
-      const url = window.URL.createObjectURL(blob)
+      const url = globalThis.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = filename
       document.body.appendChild(link)
       link.click()
       link.remove()
-      window.URL.revokeObjectURL(url)
+      globalThis.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Error exporting maintenance:', error)
       throw error

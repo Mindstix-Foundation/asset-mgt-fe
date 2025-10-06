@@ -130,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationDropdown from '@/components/notifications/NotificationDropdown.vue'
@@ -208,7 +208,6 @@ const getNavIcon = (itemName: string) => {
 }
 
 // Close mobile menu when route changes
-import { watch } from 'vue'
 watch(() => route.path, () => {
   closeMobileMenu()
 })

@@ -1375,7 +1375,18 @@ const generateAssetId = async () => {
     console.error('Error generating asset ID:', error)
     // Fallback to timestamp-based ID if backend fails
     const timestamp = Date.now().toString().slice(-6)
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+    const random = (() => {
+      try {
+        if (typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto) {
+          const buf = new Uint32Array(1)
+          ;(globalThis as any).crypto.getRandomValues(buf)
+          return (buf[0] % 1000).toString().padStart(3, '0')
+        }
+      } catch (_) {
+        // ignore and fallback
+      }
+      return Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+    })()
     formData.assetId = `AST-${timestamp}${random}`
   }
 }

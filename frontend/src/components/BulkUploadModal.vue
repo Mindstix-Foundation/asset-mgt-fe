@@ -222,7 +222,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { Modal } from 'bootstrap'
 import * as XLSX from 'xlsx'
 
@@ -368,7 +368,7 @@ const removeFile = () => {
   document.getElementById(`${props.modalId}UploadArea`)?.classList.remove('dragover')
 }
 
-const handleFile = (file: File) => {
+const handleFile = async (file: File) => {
   validationMessages.value = []
   
   if (file.type !== 'text/csv' && !file.name.endsWith('.csv') && 
@@ -382,23 +382,17 @@ const handleFile = (file: File) => {
   fileName.value = file.name
   fileSize.value = (file.size / 1024).toFixed(1) + ' KB'
 
-  const reader = new FileReader()
   if (file.name.endsWith('.xlsx') || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-    reader.onload = async (e) => {
-      const data = new Uint8Array(e.target?.result as ArrayBuffer)
-      const workbook = XLSX.read(data, { type: 'array' })
-      const firstSheetName = workbook.SheetNames[0]
-      const worksheet = workbook.Sheets[firstSheetName]
-      const csv = XLSX.utils.sheet_to_csv(worksheet)
-      await parseCsv(csv)
-    }
-    reader.readAsArrayBuffer(file)
+    const arrayBuffer = await file.arrayBuffer()
+    const data = new Uint8Array(arrayBuffer)
+    const workbook = XLSX.read(data, { type: 'array' })
+    const firstSheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[firstSheetName]
+    const csv = XLSX.utils.sheet_to_csv(worksheet)
+    await parseCsv(csv)
   } else {
-    reader.onload = async () => {
-      const text = reader.result as string
-      await parseCsv(text)
-    }
-    reader.readAsText(file)
+    const text = await file.text()
+    await parseCsv(text)
   }
 }
 
@@ -424,11 +418,11 @@ const parseCsv = async (text: string) => {
   
   console.log('  Header matches result:', headerMatches)
   
-  if (!headerMatches) {
+  if (headerMatches) {
+    console.log('BulkUploadModal: Header validation passed, will trigger comprehensive validation')
+  } else {
     validationMessages.value.push(`Invalid header order. Expected: ${props.columns.map(col => col.label).join(', ')}`)
     console.log('BulkUploadModal: Header validation failed, not triggering comprehensive validation')
-  } else {
-    console.log('BulkUploadModal: Header validation passed, will trigger comprehensive validation')
   }
   
   const parsedRows = lines.slice(1).map((line, idx) => {
@@ -439,12 +433,12 @@ const parseCsv = async (text: string) => {
     }
     
     // Map columns to row data
-    props.columns.forEach((column, colIdx) => {
+    for (const [colIdx, column] of props.columns.entries()) {
       row[column.key] = (cols[colIdx] || '').trim()
-    })
+    }
     
     // Validate each column
-    props.columns.forEach(column => {
+    for (const column of props.columns) {
       const value = row[column.key]
       
       // Required field validation
@@ -459,7 +453,7 @@ const parseCsv = async (text: string) => {
           row._errors.push(error)
         }
       }
-    })
+    }
     
     return row
   })
@@ -472,11 +466,11 @@ const parseCsv = async (text: string) => {
   
   // Show basic validation results
   const allErrors: string[] = []
-  parsedRows.forEach(r => {
+  for (const r of parsedRows) {
     if (r._errors && r._errors.length) {
       allErrors.push(`Row ${r._row}: ${r._errors.join('; ')}`)
     }
-  })
+  }
   
   console.log('BulkUploadModal: Basic validation results:')
   console.log('  Total rows:', parsedRows.length)
@@ -629,33 +623,44 @@ const formatCellValue = (value: any, columnKey: string) => {
   }
 }
 
+// Duplicate checking helpers to reduce complexity of the main function
+const UNIQUE_FIELDS = ['assetId', 'serialNumber', 'id', 'code', 'name']
+
+const ensureFieldSet = (fieldSets: Record<string, Set<string>>, field: string) => {
+  if (!fieldSets[field]) {
+    fieldSets[field] = new Set()
+  }
+  return fieldSets[field]
+}
+
+const handlePotentialDuplicate = (
+  row: any,
+  field: string,
+  fieldSets: Record<string, Set<string>>,
+  duplicates: string[]
+) => {
+  const value = row[field]
+  if (!value) return
+  const setForField = ensureFieldSet(fieldSets, field)
+  if (setForField.has(value)) {
+    duplicates.push(`Row ${row._row}: Duplicate ${field} '${value}'`)
+    return
+  }
+  setForField.add(value)
+}
+
 // Check for duplicate values within the file (generic)
 const checkDuplicates = (rows: any[]) => {
   // This is a generic duplicate checker - specific implementations can be added by parent components
   const duplicates: string[] = []
-  
-  // Check for duplicate values in any field that might be unique
   const fieldSets: Record<string, Set<string>> = {}
-  
-  rows.forEach(row => {
-    // Check common unique fields
-    const uniqueFields = ['assetId', 'serialNumber', 'id', 'code', 'name']
-    
-    uniqueFields.forEach(field => {
-      if (row[field]) {
-        if (!fieldSets[field]) {
-          fieldSets[field] = new Set()
-        }
-        
-        if (fieldSets[field].has(row[field])) {
-          duplicates.push(`Row ${row._row}: Duplicate ${field} '${row[field]}'`)
-        } else {
-          fieldSets[field].add(row[field])
-        }
-      }
-    })
-  })
-  
+
+  for (const row of rows) {
+    for (const field of UNIQUE_FIELDS) {
+      handlePotentialDuplicate(row, field, fieldSets, duplicates)
+    }
+  }
+
   if (duplicates.length > 0) {
     validationMessages.value.push(...duplicates)
   }
@@ -696,8 +701,10 @@ const handleUpload = async () => {
     // Reset state
     removeFile()
     
-  } catch (e) {
-    validationMessages.value.push('Upload failed. Please try again.')
+  } catch (error) {
+    console.error('Upload error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Upload failed. Please try again.'
+    validationMessages.value.push(errorMessage)
   } finally {
     uploading.value = false
     progress.value = 0

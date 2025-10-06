@@ -51,22 +51,22 @@ class AdvancedSearchService {
   buildIndex<T>(items: T[], keyField: string = 'id', searchFields: string[] = []): void {
     this.searchIndex = {}
     
-    items.forEach(item => {
+    for (const item of items) {
       const key = (item as any)[keyField]
-      if (!key) return
+      if (!key) continue
       
       this.searchIndex[key] = {}
       
       // If no search fields specified, use all string fields
       const fieldsToIndex = searchFields.length > 0 ? searchFields : this.getSearchableFields(item)
       
-      fieldsToIndex.forEach(field => {
+      for (const field of fieldsToIndex) {
         const value = this.getNestedValue(item, field)
         if (typeof value === 'string') {
           this.searchIndex[key][field] = this.tokenize(value)
         }
-      })
-    })
+      }
+    }
   }
 
   /**
@@ -83,7 +83,8 @@ class AdvancedSearchService {
     
     // Clear existing timer
     if (this.debounceTimers.has(searchKey)) {
-      clearTimeout(this.debounceTimers.get(searchKey)!)
+      const existing = this.debounceTimers.get(searchKey)
+      if (existing) clearTimeout(existing)
     }
     
     // Set new timer
@@ -109,12 +110,12 @@ class AdvancedSearchService {
     const results: SearchResult<T>[] = []
     const searchTerms = this.tokenize(query)
     
-    items.forEach(item => {
+    for (const item of items) {
       const result = this.searchItem(item, searchTerms, opts)
       if (result.score > 0) {
         results.push(result)
       }
-    })
+    }
     
     // Sort by score (highest first)
     results.sort((a, b) => b.score - a.score)
@@ -131,9 +132,9 @@ class AdvancedSearchService {
     let totalScore = 0
     const searchFields = options.searchFields.length > 0 ? options.searchFields : this.getSearchableFields(item)
     
-    searchFields.forEach(field => {
+    for (const field of searchFields) {
       const value = this.getNestedValue(item, field)
-      if (typeof value !== 'string') return
+      if (typeof value !== 'string') continue
       
       const fieldMatches = this.findMatches(value, searchTerms, field, options)
       matches.push(...fieldMatches)
@@ -141,7 +142,7 @@ class AdvancedSearchService {
       // Calculate score for this field
       const fieldScore = this.calculateFieldScore(value, searchTerms, options)
       totalScore += fieldScore
-    })
+    }
     
     return {
       item,
@@ -163,7 +164,7 @@ class AdvancedSearchService {
     const matches: SearchMatch[] = []
     const searchText = options.caseSensitive ? text : text.toLowerCase()
     
-    searchTerms.forEach(term => {
+    for (const term of searchTerms) {
       const searchTerm = options.caseSensitive ? term : term.toLowerCase()
       let startIndex = 0
       
@@ -180,7 +181,7 @@ class AdvancedSearchService {
         
         startIndex = index + 1
       }
-    })
+    }
     
     return matches
   }
@@ -192,7 +193,7 @@ class AdvancedSearchService {
     let score = 0
     const searchText = options.caseSensitive ? text : text.toLowerCase()
     
-    searchTerms.forEach(term => {
+    for (const term of searchTerms) {
       const searchTerm = options.caseSensitive ? term : term.toLowerCase()
       
       if (options.exactMatch) {
@@ -212,7 +213,7 @@ class AdvancedSearchService {
         // Fuzzy match gets lower score
         score += 30
       }
-    })
+    }
     
     return score
   }
@@ -240,34 +241,34 @@ class AdvancedSearchService {
   private highlightText<T>(item: T, matches: SearchMatch[]): string {
     const fieldMatches = new Map<string, SearchMatch[]>()
     
-    matches.forEach(match => {
+    for (const match of matches) {
       if (!fieldMatches.has(match.field)) {
         fieldMatches.set(match.field, [])
       }
       fieldMatches.get(match.field)!.push(match)
-    })
+    }
     
     const highlightedFields: string[] = []
     
-    fieldMatches.forEach((fieldMatches, field) => {
+    for (const [field, fieldMatchesArr] of fieldMatches.entries()) {
       const value = this.getNestedValue(item, field)
       if (typeof value === 'string') {
         let highlightedValue = value
         
         // Sort matches by start index (descending) to avoid index shifting
-        const sortedMatches = fieldMatches.toSorted((a, b) => b.startIndex - a.startIndex)
+        const sortedMatches = fieldMatchesArr.toSorted((a, b) => b.startIndex - a.startIndex)
         
-        sortedMatches.forEach(match => {
+        for (const match of sortedMatches) {
           const before = highlightedValue.substring(0, match.startIndex)
           const matchText = highlightedValue.substring(match.startIndex, match.endIndex)
           const after = highlightedValue.substring(match.endIndex)
           
           highlightedValue = `${before}<mark class="search-highlight">${matchText}</mark>${after}`
-        })
+        }
         
         highlightedFields.push(`${field}: ${highlightedValue}`)
       }
-    })
+    }
     
     return highlightedFields.join(' | ')
   }
@@ -280,7 +281,7 @@ class AdvancedSearchService {
       .toLowerCase()
       .split(/\s+/)
       .filter(token => token.length > 0)
-      .map(token => token.replace(/[^\w]/g, ''))
+      .map(token => token.replaceAll(/[^\w]/g, ''))
   }
 
   /**
@@ -298,7 +299,7 @@ class AdvancedSearchService {
     
     const traverse = (current: any, path: string = '') => {
       if (typeof current === 'object' && current !== null) {
-        Object.keys(current).forEach(key => {
+        for (const key of Object.keys(current)) {
           const newPath = path ? `${path}.${key}` : key
           const value = current[key]
           
@@ -307,7 +308,7 @@ class AdvancedSearchService {
           } else if (typeof value === 'object' && value !== null) {
             traverse(value, newPath)
           }
-        })
+        }
       }
     }
     
@@ -319,7 +320,9 @@ class AdvancedSearchService {
    * Clear debounce timers
    */
   clearDebounceTimers(): void {
-    this.debounceTimers.forEach(timer => clearTimeout(timer))
+    for (const timer of this.debounceTimers.values()) {
+      clearTimeout(timer)
+    }
     this.debounceTimers.clear()
   }
 

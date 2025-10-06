@@ -190,7 +190,7 @@ import { maintenanceService } from '@/services/maintenanceService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import DateField from '@/components/common/DateField.vue'
 import AppPagination from '@/components/pagination/AppPagination.vue'
-import { formatDateOnly, formatDateTime } from '@/utils/date'
+import { formatDateOnly } from '@/utils/date'
 
 interface HistoryItem {
   id: number
@@ -253,7 +253,7 @@ const typeOptions = [
 
 const sortAscending = computed(() => filters.value.sortOrder === 'asc')
 
-const formatStatus = (status: string) => status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+const formatStatus = (status: string) => status.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
 
 // Format date as "3 Oct 2025" (day month year)
 const formatDate = (dateString?: string | null) => {

@@ -65,12 +65,12 @@ export function useNotifications() {
       const count = await notificationService.markAllAsRead();
       
       // Update local state immediately
-      notifications.value.forEach(notification => {
+      for (const notification of notifications.value) {
         if (!notification.isRead) {
           notification.isRead = true;
           notification.readAt = new Date().toISOString();
         }
-      });
+      }
       unreadCount.value = 0;
       
       // No need to call loadNotifications() - local state update is sufficient

@@ -97,12 +97,12 @@ class DashboardApiService {
     const distributionMap = new Map<string, { count: number; percentage: number }>()
     
     // Initialize standard categories
-    standardCategories.forEach(category => {
+    for (const category of standardCategories) {
       distributionMap.set(category, { count: 0, percentage: 0 })
-    })
+    }
 
     // Process backend data
-    assetDistribution.forEach(item => {
+    for (const item of assetDistribution) {
       const name = normalize(item.type)
       const existing = distributionMap.get(name)
       if (existing) {
@@ -114,23 +114,23 @@ class DashboardApiService {
         // For non-standard categories, add them as-is
         distributionMap.set(name, { count: item.count, percentage: item.percentage ?? 0 })
       }
-    })
+    }
 
     // Return standard categories first, then any additional ones
     const result: Array<{ name: string; count: number; percentage: number }> = []
     
     // Add standard categories in order
-    standardCategories.forEach(category => {
+    for (const category of standardCategories) {
       const data = distributionMap.get(category)!
       result.push({
         name: category,
         count: data.count,
         percentage: Math.round((data.percentage + Number.EPSILON) * 100) / 100
       })
-    })
+    }
     
     // Add any additional categories from backend
-    distributionMap.forEach((data, name) => {
+    for (const [name, data] of distributionMap) {
       if (!standardCategories.includes(name)) {
         result.push({
           name,
@@ -138,7 +138,7 @@ class DashboardApiService {
           percentage: Math.round((data.percentage + Number.EPSILON) * 100) / 100
         })
       }
-    })
+    }
 
     // Sort by percentage (highest to lowest) - more to less
     return result.sort((a, b) => b.percentage - a.percentage)
@@ -150,7 +150,7 @@ class DashboardApiService {
     let availableAssets = 0
     let maintenanceAssets = 0
 
-    statusOverview.forEach(item => {
+    for (const item of statusOverview) {
       switch (item.status) {
         case 'ASSIGNED':
           assignedAssets += item.count
@@ -165,7 +165,7 @@ class DashboardApiService {
           console.warn(`Unknown asset status in analytics: ${item.status}`)
           break
       }
-    })
+    }
 
     return {
       assignedAssets,
@@ -208,9 +208,10 @@ class DashboardApiService {
     }
 
     // Handle generic minute pattern
-    const match = currentTimeAgo.match(/^(\d+) minutes ago$/)
-    if (match) {
-      const minutes = Number.parseInt(match[1])
+    const minuteRegex = /^(\d+) minutes ago$/
+    const execResult = minuteRegex.exec(currentTimeAgo)
+    if (execResult) {
+      const minutes = Number.parseInt(execResult[1])
       if (minutes < 60) {
         return `${minutes + 1} minutes ago`
       }

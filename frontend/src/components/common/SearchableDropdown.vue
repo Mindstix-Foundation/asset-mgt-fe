@@ -506,7 +506,10 @@ const clearAutofillData = () => {
     if (input) {
       // Set a temporary random value
       const originalValue = input.value
-      input.value = `no-autofill-${Math.random()}`
+      input.value = `no-autofill-${(typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto)
+        ? Array.from((() => { const b = new Uint8Array(16); (globalThis as any).crypto.getRandomValues(b); return b })(), (x) => x.toString(16).padStart(2, '0')).join('')
+        : Math.random().toString(36).slice(2)
+      }`
 
       // Then restore the original value
       setTimeout(() => {

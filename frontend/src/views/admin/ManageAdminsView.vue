@@ -189,6 +189,7 @@
                     class="form-control"
                     :class="getFieldClass('password')"
                     placeholder="Enter password"
+                    autocomplete="new-password"
                     required
                     @input="validatePassword"
                     @focus="clearFieldValidation('password')"
@@ -244,6 +245,7 @@
                     class="form-control"
                     :class="getFieldClass('confirmPassword')"
                     placeholder="Confirm password"
+                    autocomplete="new-password"
                     required
                     @input="validatePasswordMatch"
                     @focus="clearFieldValidation('confirmPassword')"
@@ -474,7 +476,7 @@ const validatePassword = () => {
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /\d/.test(password),
-    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password)
+    special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)
   }
   
   // Clear password error if all validations pass
@@ -499,12 +501,12 @@ const validatePasswordMatch = () => {
     return
   }
   
-  if (newAdmin.value.password !== newAdmin.value.confirmPassword) {
-    // Passwords don't match
-    errors.value.confirmPassword = 'Passwords do not match'
-  } else {
+  if (newAdmin.value.password === newAdmin.value.confirmPassword) {
     // Passwords match
     delete errors.value.confirmPassword
+  } else {
+    // Passwords don't match
+    errors.value.confirmPassword = 'Passwords do not match'
   }
 }
 
@@ -603,7 +605,7 @@ const handleAddAdmin = async () => {
     }
 
     const response = await authAxios.post('/admin/users', {
-      employeeId: parseInt(newAdmin.value.employeeId),
+      employeeId: Number.parseInt(newAdmin.value.employeeId),
       username: newAdmin.value.username,
       password: newAdmin.value.password,
       roles: ['ADMIN']
@@ -710,11 +712,13 @@ const getEmployeeIconColor = (employeeId: string) => {
     'var(--primary-dark-gray)'
   ]
   
-  // Use employee ID to generate consistent color
-  const hash = employeeId.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0)
-    return a & a
-  }, 0)
+  // Use employee ID to generate consistent color (unicode-safe)
+  let hash = 0
+  for (const ch of employeeId) {
+    const codePoint = ch.codePointAt(0) || 0
+    hash = ((hash << 5) - hash) + codePoint
+    hash = Math.trunc(hash)
+  }
   
   return colors[Math.abs(hash) % colors.length]
 }
@@ -722,83 +726,75 @@ const getEmployeeIconColor = (employeeId: string) => {
 const formatDate = (dateString: string) => {
   if (!dateString) return 'Never'
 
-  try {
-    // Try native parse first (handles ISO and many standard formats)
-    const native = new Date(dateString)
-    if (!Number.isNaN(native.getTime())) {
-      return native.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    }
-
-    // Handle "DD/MM/YYYY" or "DD/MM/YYYY, HH:mm:ss"
-    const [datePart] = dateString.split(',')
-    const [dayStr, monthStr, yearStr] = datePart.trim().split('/')
-    const day = Number.parseInt(dayStr, 10)
-    const month = Number.parseInt(monthStr, 10) - 1
-    const year = Number.parseInt(yearStr, 10)
-
-    const date = new Date(year, month, day)
-    if (!Number.isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    }
-
-    return 'Never'
-  } catch (error) {
-    return 'Never'
+  // Try native parse first (handles ISO and many standard formats)
+  const native = new Date(dateString)
+  if (!Number.isNaN(native.getTime())) {
+    return native.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
   }
+
+  // Handle "DD/MM/YYYY" or "DD/MM/YYYY, HH:mm:ss"
+  const [datePart] = dateString.split(',')
+  const [dayStr, monthStr, yearStr] = datePart.trim().split('/')
+  const day = Number.parseInt(dayStr, 10)
+  const month = Number.parseInt(monthStr, 10) - 1
+  const year = Number.parseInt(yearStr, 10)
+
+  const date = new Date(year, month, day)
+  if (!Number.isNaN(date.getTime())) {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  return 'Never'
 }
 
 const formatTime = (dateString: string) => {
   if (!dateString) return ''
 
-  try {
-    // Try native parse
-    const native = new Date(dateString)
-    if (!Number.isNaN(native.getTime())) {
-      return native.toLocaleTimeString('en-US', {
+  // Try native parse
+  const native = new Date(dateString)
+  if (!Number.isNaN(native.getTime())) {
+    return native.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+  }
+
+  // Handle "DD/MM/YYYY, HH:mm:ss" format
+  const parts = dateString.split(',')
+  if (parts.length >= 2) {
+    const datePart = parts[0].trim()
+    const timePart = parts[1].trim()
+
+    const [dayStr, monthStr, yearStr] = datePart.split('/')
+    const [hhStr, mmStr, ssStr = '00'] = timePart.split(':')
+
+    const day = Number.parseInt(dayStr, 10)
+    const month = Number.parseInt(monthStr, 10) - 1
+    const year = Number.parseInt(yearStr, 10)
+    const hh = Number.parseInt(hhStr, 10)
+    const mm = Number.parseInt(mmStr, 10)
+    const ss = Number.parseInt(ssStr, 10)
+
+    const date = new Date(year, month, day, hh, mm, ss)
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
       })
     }
-
-    // Handle "DD/MM/YYYY, HH:mm:ss" format
-    const parts = dateString.split(',')
-    if (parts.length >= 2) {
-      const datePart = parts[0].trim()
-      const timePart = parts[1].trim()
-
-      const [dayStr, monthStr, yearStr] = datePart.split('/')
-      const [hhStr, mmStr, ssStr = '00'] = timePart.split(':')
-
-      const day = Number.parseInt(dayStr, 10)
-      const month = Number.parseInt(monthStr, 10) - 1
-      const year = Number.parseInt(yearStr, 10)
-      const hh = Number.parseInt(hhStr, 10)
-      const mm = Number.parseInt(mmStr, 10)
-      const ss = Number.parseInt(ssStr, 10)
-
-      const date = new Date(year, month, day, hh, mm, ss)
-      if (!Number.isNaN(date.getTime())) {
-        return date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        })
-      }
-    }
-
-    return ''
-  } catch (error) {
-    return ''
   }
+
+  return ''
 }
 
 // Lifecycle

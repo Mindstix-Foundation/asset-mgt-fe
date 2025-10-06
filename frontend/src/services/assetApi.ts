@@ -3,6 +3,7 @@ import apiClient from './apiClient'
 const API_BASE_URL = ''
 
 // Types for asset API
+export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
 export interface AssetQueryDto {
   page?: number
   limit?: number
@@ -11,7 +12,7 @@ export interface AssetQueryDto {
   brandId?: number
   modelId?: number
   vendorId?: number
-  status?: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+  status?: AssetStatus
   condition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
   location?: string
   sortBy?: string
@@ -147,7 +148,7 @@ class AssetApiService {
   }
 
   // Update asset status only
-  async updateAssetStatus(id: number, status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'): Promise<{ message: string; data: { asset: Asset } }> {
+  async updateAssetStatus(id: number, status: AssetStatus): Promise<{ message: string; data: { asset: Asset } }> {
     try {
       const response = await apiClient.put<{ message: string; data: { asset: Asset } }>(`${this.baseURL}/${id}`, { status })
       return response.data
@@ -159,7 +160,7 @@ class AssetApiService {
 
   // Get assets for dropdown selection (minimal data)
   async getAssetsForDropdowns(params: {
-    status?: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+    status?: AssetStatus
     assetTypeId?: number
     brandId?: number
     modelId?: number

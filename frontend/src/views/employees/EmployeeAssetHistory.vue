@@ -426,7 +426,7 @@ export default {
             }
             this.$set(this.currentAssignments, index, updated)
           } catch (e) {
-            // ignore enrichment failure
+            console.error('Asset enrichment failed for assignment item', { item, error: e })
           }
         }
       })
@@ -478,9 +478,10 @@ export default {
         'var(--secondary-brown)',
         'var(--primary-dark-gray)'
       ]
-      const hash = employeeId.split('').reduce((a, b) => {
-        a = ((a << 5) - a) + b.charCodeAt(0)
-        return a & a
+      const hash = Array.from(employeeId).reduce((acc, ch) => {
+        const code = ch.codePointAt(0) ?? 0
+        acc = ((acc << 5) - acc) + code
+        return acc & acc
       }, 0)
       return colors[Math.abs(hash) % colors.length]
     },

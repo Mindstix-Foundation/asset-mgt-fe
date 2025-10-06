@@ -1,6 +1,8 @@
 // Robust date parsing for API dates that may come as "dd/MM/yyyy, HH:mm:ss"
 // Falls back to native Date parsing for ISO strings
 
+type DateInput = string | Date | undefined | null
+
 function parseDdMmYyyy(datePart: string, timePart?: string): Date | null {
   const [dayStr, monthStr, yearStr] = datePart.split('/')
   const day = Number(dayStr)
@@ -23,7 +25,7 @@ function parseDdMmYyyy(datePart: string, timePart?: string): Date | null {
   return new Date(year, month - 1, day, hours, minutes, seconds)
 }
 
-export function parseApiDate(raw: string | Date | undefined | null): Date | null {
+export function parseApiDate(raw: DateInput): Date | null {
   if (!raw) return null
   if (raw instanceof Date) return Number.isNaN(raw.getTime()) ? null : raw
 
@@ -41,7 +43,7 @@ export function parseApiDate(raw: string | Date | undefined | null): Date | null
   return Number.isNaN(native.getTime()) ? null : native
 }
 
-export function formatDateOnly(raw: string | Date | undefined | null, locale: string = 'en-US'): string {
+export function formatDateOnly(raw: DateInput, locale: string = 'en-US'): string {
   const date = parseApiDate(raw)
   if (!date) return '-'
   
@@ -53,7 +55,7 @@ export function formatDateOnly(raw: string | Date | undefined | null, locale: st
   return `${day}/${month}/${year}`
 }
 
-export function formatDateTime(raw: string | Date | undefined | null, locale: string = 'en-US'): string {
+export function formatDateTime(raw: DateInput, locale: string = 'en-US'): string {
   const date = parseApiDate(raw)
   if (!date) return '-'
   
@@ -68,7 +70,7 @@ export function formatDateTime(raw: string | Date | undefined | null, locale: st
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
 }
 
-export function formatDateForInput(raw: string | Date | undefined | null): string {
+export function formatDateForInput(raw: DateInput): string {
   const date = parseApiDate(raw)
   if (!date) return ''
   return date.toISOString().split('T')[0] // Returns YYYY-MM-DD format

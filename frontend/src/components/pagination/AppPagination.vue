@@ -49,16 +49,14 @@ export default {
 
       if (current <= 4) {
         for (let i = 2; i <= 5; i++) items.push(i)
-        items.push('...')
-        items.push(total)
+        items.push('...', total)
       } else if (current >= total - 3) {
         items.push('...')
         for (let i = total - 4; i <= total; i++) items.push(i)
       } else {
         items.push('...')
         for (let i = current - 1; i <= current + 1; i++) items.push(i)
-        items.push('...')
-        items.push(total)
+        items.push('...', total)
       }
 
       return items

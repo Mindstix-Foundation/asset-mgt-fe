@@ -689,11 +689,11 @@ const processEmployeeRange = (fromValue: string, toValue: string) => {
   
   for (const emp of items.value) {
     if (emp.employeeId >= fromValue && emp.employeeId <= toValue) {
-      if (!selectedEmployeesForDeletion.value.includes(emp.id)) {
+      if (selectedEmployeesForDeletion.value.includes(emp.id)) {
+        alreadySelectedCount++
+      } else {
         selectedEmployeesForDeletion.value.push(emp.id)
         addedCount++
-      } else {
-        alreadySelectedCount++
       }
     }
   }

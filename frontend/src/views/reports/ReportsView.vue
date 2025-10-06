@@ -543,9 +543,9 @@ const transformAssetDistributionForReports = (assetDistribution: any[]) => {
   
   // Create a map of existing data
   const existingData = new Map()
-  assetDistribution.forEach(item => {
+  for (const item of assetDistribution) {
     existingData.set(item.type, item)
-  })
+  }
   
   // Create result array with all standard types
   const result = standardTypes.map(type => {
@@ -564,11 +564,11 @@ const transformAssetDistributionForReports = (assetDistribution: any[]) => {
   })
   
   // Add any additional types from backend that aren't in standard list
-  assetDistribution.forEach(item => {
+  for (const item of assetDistribution) {
     if (!standardTypes.includes(item.type)) {
       result.push(item)
     }
-  })
+  }
   
   // Sort by percentage (highest to lowest)
   return result.sort((a, b) => b.percentage - a.percentage)
@@ -1192,7 +1192,7 @@ onMounted(async () => {
   handleDateRangeChange()
   
   // Update real-time activity times every minute for minute-level updates
-  realTimeUpdateId = window.setInterval(updateRealTimeActivityTimes, 60_000)
+  realTimeUpdateId = globalThis.setInterval(updateRealTimeActivityTimes, 60_000)
 })
 
 onUnmounted(() => {

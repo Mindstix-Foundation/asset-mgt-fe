@@ -1020,11 +1020,13 @@
           'var(--secondary-brown)',
           'var(--primary-dark-gray)'
         ]
-        // Use employee ID to generate consistent color
-        const hash = employeeId.split('').reduce((a, b) => {
-          a = ((a << 5) - a) + b.charCodeAt(0)
-          return a & a
-        }, 0)
+        // Use employee ID to generate consistent color (unicode-safe)
+        let hash = 0
+        for (const ch of employeeId) {
+          const codePoint = ch.codePointAt(0) || 0
+          hash = ((hash << 5) - hash) + codePoint
+          hash = Math.trunc(hash)
+        }
         return colors[Math.abs(hash) % colors.length]
       },
       getStatusBadgeClass(status) {
@@ -1046,16 +1048,16 @@
         
         if (dropdown) {
           // Close all other dropdowns first
-          document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+          for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
             if (menu !== dropdown) {
               menu.classList.remove('show')
             }
-          })
-          document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+          }
+          for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
             if (btn !== button) {
               btn.setAttribute('aria-expanded', 'false')
             }
-          })
+          }
           
           // Toggle current dropdown
           const isShown = dropdown.classList.contains('show')
@@ -1219,14 +1221,16 @@
         const modalEl = document.getElementById('employeeDetailModal')
         if (modalEl) {
           const modalInstance = Modal.getInstance(modalEl) || new Modal(modalEl)
-          try {
+          if (modalInstance && typeof modalInstance.hide === 'function') {
             modalInstance.hide()
-          } catch (_) { /* noop */ }
+          }
         }
 
         // Remove bootstrap modal classes/backdrops if any linger
         document.body.classList.remove('modal-open')
-        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+        for (const el of document.querySelectorAll('.modal-backdrop')) {
+          el.remove()
+        }
 
         // Navigate to employee asset history page using database ID
         this.$router.push(`/app/employees/${employee.databaseId}/history`)
@@ -1308,12 +1312,12 @@
       handleClickOutside(event) {
         const target = event.target
         if (!target.closest('.dropdown')) {
-          document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+          for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
             menu.classList.remove('show')
-          })
-          document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+          }
+          for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
             btn.setAttribute('aria-expanded', 'false')
-          })
+          }
         }
       },
       // Handle window resize for responsive pagination
@@ -1432,8 +1436,7 @@
         if (current <= 4) {
           // Near beginning: 1 2 3 4 5 ... total
           this.addPageRange(pages, 2, 5)
-          pages.push('...')
-          pages.push(total)
+          pages.push('...', total)
         } else if (current >= total - 3) {
           // Near end: 1 ... (total-4) (total-3) (total-2) (total-1) total
           pages.push('...')
@@ -1442,8 +1445,7 @@
           // Middle: 1 ... (current-1) current (current+1) ... total
           pages.push('...')
           this.addPageRange(pages, current - 1, current + 1)
-          pages.push('...')
-          pages.push(total)
+          pages.push('...', total)
         }
         
         return pages
@@ -1482,27 +1484,27 @@
     },
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        try {
-          document.body.classList.remove('modal-open')
-          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
-          const modalEl = document.getElementById('employeeDetailModal')
-          if (modalEl) {
-            const inst = Modal.getInstance(modalEl)
-            if (inst) inst.hide()
-          }
-        } catch (_) { /* noop */ }
+        document.body.classList.remove('modal-open')
+        for (const el of document.querySelectorAll('.modal-backdrop')) {
+          el.remove()
+        }
+        const modalEl = document.getElementById('employeeDetailModal')
+        if (modalEl) {
+          const inst = Modal.getInstance(modalEl)
+          if (inst && typeof inst.hide === 'function') inst.hide()
+        }
       })
     },
     beforeRouteLeave(to, from, next) {
-      try {
-        const modalEl = document.getElementById('employeeDetailModal')
-        if (modalEl) {
-          const inst = Modal.getInstance(modalEl) || new Modal(modalEl)
-          inst.hide()
-        }
-      } catch (_) { /* noop */ }
+      const modalEl = document.getElementById('employeeDetailModal')
+      if (modalEl) {
+        const inst = Modal.getInstance(modalEl) || new Modal(modalEl)
+        if (inst && typeof inst.hide === 'function') inst.hide()
+      }
       document.body.classList.remove('modal-open')
-      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+      for (const el of document.querySelectorAll('.modal-backdrop')) {
+        el.remove()
+      }
       next()
     }
   }

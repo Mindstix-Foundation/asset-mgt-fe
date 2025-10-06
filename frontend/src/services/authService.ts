@@ -118,8 +118,13 @@ class AuthService {
       this.refreshPromise = null
       
       // Redirect to login page only if not already there
-      if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
-        window.location.href = '/'
+      if (
+        typeof globalThis !== 'undefined' &&
+        globalThis.location &&
+        globalThis.location.pathname !== '/' &&
+        globalThis.location.pathname !== '/login'
+      ) {
+        globalThis.location.href = '/'
       }
     }
   }
@@ -266,7 +271,11 @@ class AuthService {
     try {
       const profile = await this.getProfile()
       return profile.data.roles.includes(role)
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[AuthService] hasRole error:', error)
+      if (error?.response?.status === 401) {
+        await this.logout()
+      }
       return false
     }
   }
@@ -278,7 +287,11 @@ class AuthService {
     try {
       const profile = await this.getProfile()
       return roles.some(role => profile.data.roles.includes(role))
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[AuthService] hasAnyRole error:', error)
+      if (error?.response?.status === 401) {
+        await this.logout()
+      }
       return false
     }
   }

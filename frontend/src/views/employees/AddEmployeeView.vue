@@ -274,6 +274,8 @@ import { employeeService } from '@/services/employeeService'
 import type { CreateEmployeeData } from '@/services/employeeService'
 import { useToastStore } from '@/stores/toast'
 import DateInput from '@/components/common/DateInput.vue'
+type EmployeeStatus = 'ACTIVE' | 'INACTIVE'
+type FormFieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
 const router = useRouter()
 const route = useRoute()
@@ -292,7 +294,7 @@ const formData = reactive({
   phone: '',
   dateOfBirth: '',
   address: '',
-  status: 'ACTIVE' as 'ACTIVE' | 'INACTIVE'
+  status: 'ACTIVE' as EmployeeStatus
 })
 
 // Form state - Enhanced validation system like the vendor form
@@ -355,21 +357,21 @@ const validateEmailField = (value: any): boolean => {
 
 // Helper function to check email availability
 const checkEmailAvailability = (value: any) => {
-  if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
+  if (emailCheckTimer) globalThis.clearTimeout(emailCheckTimer)
   isCheckingEmail.value = true
-  emailCheckTimer = window.setTimeout(async () => {
+  emailCheckTimer = globalThis.setTimeout(async () => {
     try {
       const emailToCheck = String(value).trim()
       const excludeId = isEditMode.value ? (employeeId.value as string) : undefined
       const resp = await employeeService.checkEmailAvailability(emailToCheck, excludeId)
       const available = (resp as any)?.data?.available ?? (resp as any)?.available
-      if (!available) {
-        setFieldError('email', 'An employee with this email already exists')
-      } else {
+      if (available) {
         setFieldValid('email')
+      } else {
+        setFieldError('email', 'An employee with this email already exists')
       }
     } catch (e) {
-      // On API error, do not block the user; keep current state
+      console.warn('Email availability check failed:', e)
     } finally {
       isCheckingEmail.value = false
     }
@@ -396,7 +398,7 @@ const validatePhoneField = (value: any): boolean => {
     return false
   }
   
-  const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  const digits = strVal.replace(/^\+91\s?/, '').replaceAll(/\D/g, '')
   
   if (digits.length < 10) {
     setFieldError('phone', 'Phone number must be exactly 10 digits after +91')
@@ -459,7 +461,7 @@ const validateFieldType = (fieldName: string, value: any): boolean => {
 
 const validateFieldInline = async (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   
   if (!element) return true
 
@@ -490,7 +492,7 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   if (element) {
     element.setCustomValidity(message)
   }
@@ -500,7 +502,7 @@ const setFieldValid = (fieldName: string) => {
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormFieldElement
   if (element) {
     element.setCustomValidity('')
   }
@@ -526,10 +528,10 @@ const formatNameField = (fieldName: string) => {
     // Format: trim, remove extra spaces, capitalize first letter of each word
     const formatted = value
       .trim()
-      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replaceAll(/\s+/g, ' ') // Replace multiple spaces with single space
       .toLowerCase() // Convert to lowercase first
       .replace(/^\w/, (c) => c.toUpperCase()) // Capitalize first letter
-      .replace(/\s\w/g, (match) => match.toUpperCase()) // Capitalize first letter after space
+      .replaceAll(/\s\w/g, (match) => match.toUpperCase()) // Capitalize first letter after space
     
     ;(formData as any)[fieldName] = formatted
   }
@@ -563,7 +565,7 @@ const formatPhoneNumber = (event: Event) => {
   }
 
   // Keep only digits after the prefix, max 10
-  let digits = raw.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  let digits = raw.replace(/^\+91\s?/, '').replaceAll(/\D/g, '')
   if (digits.length > 10) digits = digits.slice(0, 10)
 
   // Recompose
@@ -758,7 +760,7 @@ const normalizePhoneForSubmit = (val: string) => {
 // Format incoming API value to '+91 9999999999' or ''
 const formatPhoneFromApi = (val?: string) => {
   if (!val) return ''
-  const onlyDigits = val.replace(/\D/g, '')
+  const onlyDigits = val.replaceAll(/\D/g, '')
   // If already in +91XXXXXXXXXX
   const match = val.match(/^\+91\s?(\d{10})$/)
   if (match) return `+91 ${match[1]}`
@@ -772,25 +774,25 @@ const formatPhoneFromApi = (val?: string) => {
 const resetForm = () => {
   // Cancel any pending email validation
   if (emailCheckTimer) {
-    window.clearTimeout(emailCheckTimer)
+    globalThis.clearTimeout(emailCheckTimer)
     emailCheckTimer = undefined
   }
   isCheckingEmail.value = false
   
   // Reset form data
-  Object.keys(formData).forEach(key => {
+  for (const key of Object.keys(formData)) {
     if (key === 'status') {
       formData[key as keyof typeof formData] = 'ACTIVE' as any
     } else {
       formData[key as keyof typeof formData] = '' as any
     }
-  })
+  }
   
   // Clear validation state
-  Object.keys(fieldErrors).forEach(key => delete fieldErrors[key])
-  Object.keys(fieldValidation).forEach(key => {
+  for (const key of Object.keys(fieldErrors)) delete fieldErrors[key]
+  for (const key of Object.keys(fieldValidation)) {
     fieldValidation[key] = null
-  })
+  }
   
   // Reset form state
   formSubmitted.value = false
@@ -802,19 +804,19 @@ const resetForm = () => {
   // Clear all validation classes from DOM elements and reset textarea heights
   nextTick(() => {
     const fields = document.querySelectorAll('.is-valid, .is-invalid')
-    fields.forEach(field => {
+    for (const field of fields as any) {
       field.classList.remove('is-valid', 'is-invalid')
       // Also clear any custom validity messages
       if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement) {
         field.setCustomValidity('')
       }
-    })
+    }
     
     // Reset textarea heights to minimum
     const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-    textareas.forEach(textarea => {
+    for (const textarea of textareas) {
       textarea.style.height = '72px' // Reset to 3 rows
-    })
+    }
   })
 }
 
@@ -839,11 +841,11 @@ const resizeTextarea = (textarea: HTMLTextAreaElement) => {
 // Function to resize all textareas with content
 const resizeAllTextareas = () => {
   const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-  textareas.forEach(textarea => {
+  for (const textarea of textareas) {
     if (textarea.value.trim()) { // Only resize if there's content
       resizeTextarea(textarea)
     }
-  })
+  }
 }
 
 const getCounterClass = (length: number, maxLength: number) => {
@@ -863,7 +865,7 @@ const goBack = () => {
 const scrollToFirstError = () => {
   // Hide any existing toasts (but keep this for other error toasts)
   const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
+  for (const toast of existingToasts as any) (toast as HTMLElement).remove()
   
   // Look for the first invalid input/select/textarea specifically
   const firstInvalid = document.querySelector('input.is-invalid, select.is-invalid, textarea.is-invalid, input:invalid, select:invalid, textarea:invalid') as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -932,7 +934,7 @@ watch(() => formData.address, (newValue) => {
 // Lifecycle
 onMounted(async () => {
   // Make functions available globally
-  ;(window as any).scrollToFirstError = scrollToFirstError
+  ;(globalThis as any).scrollToFirstError = scrollToFirstError
   
   if (isEditMode.value) {
     await loadEmployeeData()
