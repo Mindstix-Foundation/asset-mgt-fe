@@ -91,6 +91,11 @@ const router = createRouter({
           component: () => import('../views/employees/EmployeeAssetHistory.vue'),
         },
         {
+          path: 'employees/manage',
+          name: 'manage-employees',
+          component: () => import('../views/employees/ManageEmployeesView.vue'),
+        },
+        {
           path: 'maintenance',
           name: 'maintenance',
           component: () => import('../views/maintenance/MaintenanceView.vue'),
@@ -139,6 +144,11 @@ const router = createRouter({
           path: 'profile',
           name: 'profile',
           component: () => import('../views/profile/ProfileView.vue'),
+        },
+        {
+          path: 'notifications',
+          name: 'notifications',
+          component: () => import('../views/notifications/NotificationsView.vue'),
         },
         {
           path: 'manage-admins',

@@ -16,6 +16,7 @@ export interface Employee {
   updatedAt: string
   assignedAssets?: AssignedAsset[]
   assignedAssetsCount?: number
+  isAdmin?: boolean
 }
 
 export interface AssignedAsset {
@@ -380,6 +381,24 @@ class EmployeeService {
       console.error('Error exporting employees:', error)
       throw error
     }
+  }
+
+  /**
+   * Get employees who can be deleted (non-admin with no asset history)
+   */
+  async getDeletableEmployees(params?: EmployeeQueryParams): Promise<ApiResponse<EmployeeListResponse>> {
+    const searchParams = new URLSearchParams()
+    
+    if (params?.page) searchParams.append('page', params.page.toString())
+    if (params?.limit) searchParams.append('limit', params.limit.toString())
+    if (params?.search) searchParams.append('search', params.search)
+    if (params?.sortBy) searchParams.append('sortBy', params.sortBy)
+    if (params?.sortOrder) searchParams.append('sortOrder', params.sortOrder)
+
+    const queryString = searchParams.toString()
+    const endpoint = queryString ? `/employees/deletable?${queryString}` : '/employees/deletable'
+    
+    return apiService.get(endpoint)
   }
 }
 

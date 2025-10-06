@@ -39,6 +39,9 @@
         
         <!-- User Info and Logout -->
         <div class="navbar-user-section d-flex align-items-center">
+          <!-- Notification Dropdown -->
+          <NotificationDropdown class="me-3" />
+          
           <div class="user-info d-flex align-items-center" @click="handleProfile" style="cursor: pointer;" title="View Profile">
             <i class="fas fa-user-circle me-2 user-icon"></i>
             <span class="username">
@@ -107,6 +110,12 @@
             <span class="sidebar-user-role">Administrator</span>
           </div>
         </div>
+        
+        <!-- Mobile Notifications -->
+        <div class="sidebar-notifications">
+          <NotificationDropdown />
+        </div>
+        
         <button @click="handleProfile" class="sidebar-profile-btn">
           <i class="fas fa-user me-2"></i>
           My Profile
@@ -124,6 +133,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import NotificationDropdown from '@/components/notifications/NotificationDropdown.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -506,6 +516,12 @@ watch(() => route.path, () => {
 .sidebar-user-info:hover {
   background-color: rgba(102, 126, 234, 0.05);
   border-radius: 0.5rem;
+}
+
+.sidebar-notifications {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
 }
 
 .sidebar-profile-btn {

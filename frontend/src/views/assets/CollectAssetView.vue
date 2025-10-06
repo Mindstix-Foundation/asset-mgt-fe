@@ -158,33 +158,40 @@
                 <div class="row g-4">
                   <!-- Collection Date -->
                   <div class="col-md-6">
-                    <DatePicker
+                    <DateInput
+                      id="collectionDate"
+                      label="Collection Date *"
                       v-model="formData.collectionDate"
-                      label="Collection Date"
-                      placeholder="dd-mm-yyyy"
-                      help-text="Date when the asset will be collected (required)"
-                      :required="true"
-                      input-id="collectionDate"
                       :error-message="fieldErrors.collectionDate"
-                      :input-class="getFieldClass('collectionDate') as any"
+                      help-text="Date when the asset will be collected (required)"
+                      required
                       @change="validateFieldInline('collectionDate')"
-                      @focus="clearFieldValidation('collectionDate')"
+                      @blur="clearFieldValidation('collectionDate')"
                     />
                   </div>
 
-                  <!-- Issue Date -->
+                  <!-- Collection Reason -->
                   <div class="col-md-6">
-                    <label for="issueDate" class="form-label">Issue Date</label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="issueDate" 
-                      :value="selectedAssignmentDate"
-                      readonly 
-                      style="background-color: #F3F3F3 !important;" 
-                      placeholder="Auto-filled from assignment"
+                    <label for="collectionReason" class="form-label">Collection Reason <span class="text-danger">*</span></label>
+                    <select 
+                      class="form-select" 
+                      id="collectionReason" 
+                      v-model="formData.collectionReason"
+                      :class="getFieldClass('collectionReason')"
+                      required
+                      @change="validateFieldInline('collectionReason')"
+                      @focus="clearFieldValidation('collectionReason')"
                     >
-                    <div class="form-text">Date when the asset was originally issued</div>
+                      <option value="">Choose reason...</option>
+                      <option value="employee-left">Employee Left Company</option>
+                      <option value="reassignment">Asset Reassignment</option>
+                      <option value="maintenance">Maintenance Required</option>
+                      <option value="upgrade">Equipment Upgrade</option>
+                      <option value="return-request">Employee Return Request</option>
+                      <option value="other">Other Reason</option>
+                    </select>
+                    <div class="form-text">Select the reason for collecting this asset (required)</div>
+                    <div v-if="fieldErrors.collectionReason" class="invalid-feedback">{{ fieldErrors.collectionReason }}</div>
                   </div>
 
                   <!-- Asset Condition -->
@@ -201,38 +208,6 @@
                       />
                     </div>
                     <div class="form-text">Select the current condition of the asset (required)</div>
-                  </div>
-
-                  <!-- Issue Condition -->
-                  <div class="col-md-6">
-                    <label for="issueCondition" class="form-label">Issue Condition</label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="issueCondition" 
-                      :value="selectedAssetCondition"
-                      readonly 
-                      style="background-color: #F3F3F3 !important;" 
-                      placeholder="Auto-filled from assignment"
-                    >
-                    <div class="form-text">Condition of the asset when it was originally issued</div>
-                  </div>
-
-                  <!-- Collection Reason -->
-                  <div class="col-md-6">
-                    <div class="form-searchable-dropdown">
-                      <SearchableDropdown
-                        id="collectionReason"
-                        label="Collection Reason"
-                        placeholder="Search collection reasons..."
-                        :items="collectionReasonItems"
-                        v-model="selectedCollectionReason"
-                        :required="true"
-                        @change="onCollectionReasonChange"
-                      />
-                    </div>
-                    <div class="form-text">Select the reason for collecting this asset (required)</div>
-                    <div v-if="fieldErrors.collectionReason" class="invalid-feedback">{{ fieldErrors.collectionReason }}</div>
                   </div>
 
                   <!-- Collection Notes -->
@@ -322,16 +297,8 @@
                 <div class="col-4 fw-semibold text-muted">Reason:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.reason }}</div>
               </div>
-              <div class="row mb-2">
-                <div class="col-4 fw-semibold text-muted">Issue Date:</div>
-                <div class="col-8 fw-medium">{{ confirmationDetails.assignmentDate }}</div>
-              </div>
-              <div class="row mb-2">
-                <div class="col-4 fw-semibold text-muted">Issue Condition:</div>
-                <div class="col-8 fw-medium">{{ confirmationDetails.assignmentCondition }}</div>
-              </div>
               <div class="row">
-                <div class="col-4 fw-semibold text-muted">Current Condition:</div>
+                <div class="col-4 fw-semibold text-muted">Condition:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.condition }}</div>
               </div>
             </div>
@@ -363,11 +330,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto } from '../../services/collectAssetApi'
 import { employeeApiService, type Employee } from '../../services/employeeApi'
-import { assetHistoryApiService, type AssetHistoryEvent } from '../../services/assetHistoryApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesDisplay from '../../components/common/NotesDisplay.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
-import DatePicker from '../../components/common/DatePicker.vue'
+import DateInput from '../../components/common/DateInput.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -391,7 +357,6 @@ const formData = reactive({
 const selectedEmployee = ref<Item | null>(null)
 const selectedAsset = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
-const selectedCollectionReason = ref<Item | null>(null)
 
 // Form state - Enhanced validation system like the prototype
 const fieldErrors = reactive<Record<string, string>>({})
@@ -408,10 +373,8 @@ const collectAssetForm = ref<HTMLFormElement>()
 // API data
 const activeEmployees = ref<Employee[]>([])
 const assignedAssets = ref<ActiveAssignment[]>([])
-const assetIssueEvent = ref<AssetHistoryEvent | null>(null)
 const isLoadingEmployees = ref(false)
 const isLoadingAssignments = ref(false)
-const isLoadingAssetHistory = ref(false)
 
 // Transform API data to SearchableDropdown format
 const employeeItems = computed(() => {
@@ -435,15 +398,6 @@ const conditionItems = computed(() => [
   { id: 'FAIR', name: 'Fair', value: 'FAIR' },
   { id: 'POOR', name: 'Poor', value: 'POOR' },
   { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
-])
-
-const collectionReasonItems = computed(() => [
-  { id: 'employee-left', name: 'Employee Left Company', value: 'employee-left' },
-  { id: 'reassignment', name: 'Asset Reassignment', value: 'reassignment' },
-  { id: 'maintenance', name: 'Maintenance Required', value: 'maintenance' },
-  { id: 'upgrade', name: 'Equipment Upgrade', value: 'upgrade' },
-  { id: 'return-request', name: 'Employee Return Request', value: 'return-request' },
-  { id: 'other', name: 'Other Reason', value: 'other' }
 ])
 
 const reasonLabels = {
@@ -515,8 +469,6 @@ const confirmationDetails = computed(() => {
       day: 'numeric' 
     }) : '-',
     reason: reasonLabel || '-',
-    assignmentDate: selectedAssignmentDate.value || '-',
-    assignmentCondition: selectedAssetCondition.value || '-',
     condition: conditionLabel || '-'
   }
 })
@@ -581,14 +533,6 @@ const selectedAssignmentNotes = computed(() => {
 const selectedAssetCondition = computed(() => {
   if (!formData.assetId) return null
   
-  // First try to get from asset history (more accurate)
-  if (assetIssueEvent.value?.condition) {
-    const condition = assetIssueEvent.value.condition
-    const conditionLabel = conditionLabels[condition as keyof typeof conditionLabels] || condition
-    return conditionLabel
-  }
-  
-  // Fallback to assignment data
   const selectedAssignment = assignedAssets.value.find(assignment => 
     assignment.id.toString() === formData.assetId.toString()
   )
@@ -600,42 +544,6 @@ const selectedAssetCondition = computed(() => {
   const conditionLabel = conditionLabels[condition as keyof typeof conditionLabels] || condition
   
   return conditionLabel
-})
-
-// Computed property for selected assignment date
-const selectedAssignmentDate = computed(() => {
-  if (!formData.assetId) return null
-  
-  // First try to get from asset history (more accurate)
-  if (assetIssueEvent.value?.details?.businessDate) {
-    try {
-      const date = new Date(assetIssueEvent.value.details.businessDate)
-      const day = date.getDate().toString().padStart(2, '0')
-      const month = (date.getMonth() + 1).toString().padStart(2, '0')
-      const year = date.getFullYear()
-      return `${day}-${month}-${year}`
-    } catch (error) {
-      return assetIssueEvent.value.details.businessDate
-    }
-  }
-  
-  // Fallback to assignment data
-  const selectedAssignment = assignedAssets.value.find(assignment => 
-    assignment.id.toString() === formData.assetId.toString()
-  )
-  
-  if (!selectedAssignment?.issueDate) return null
-  
-  // Format the date for display (dd-mm-yyyy format)
-  try {
-    const date = new Date(selectedAssignment.issueDate)
-    const day = date.getDate().toString().padStart(2, '0')
-    const month = (date.getMonth() + 1).toString().padStart(2, '0')
-    const year = date.getFullYear()
-    return `${day}-${month}-${year}`
-  } catch (error) {
-    return selectedAssignment.issueDate
-  }
 })
 
 // Enhanced validation system matching the prototype
@@ -678,14 +586,6 @@ const onAssetChange = (item: Item | null) => {
     clearFieldValidation('assetId')
   }
   
-  // Load asset history data for the selected asset
-  if (item && item.value) {
-    loadAssetHistoryData(item.value.toString())
-  } else {
-    // Clear asset history data when no asset is selected
-    assetIssueEvent.value = null
-  }
-  
   validateFieldInline('assetId')
 }
 
@@ -699,18 +599,6 @@ const onConditionChange = (item: Item | null) => {
   }
   
   validateFieldInline('assetCondition')
-}
-
-const onCollectionReasonChange = (item: Item | null) => {
-  selectedCollectionReason.value = item
-  formData.collectionReason = item && item.value ? item.value.toString() : ''
-  
-  // Clear validation error when user makes a selection
-  if (item) {
-    clearFieldValidation('collectionReason')
-  }
-  
-  validateFieldInline('collectionReason')
 }
 
 // Helper function to apply validation classes to SearchableDropdown components
@@ -776,17 +664,6 @@ const validateFieldInline = (fieldName: string) => {
       
     case 'assetCondition':
       if (!selectedCondition.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'collectionReason':
-      if (!selectedCollectionReason.value) {
         setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
         applyValidationToSearchableDropdown(fieldName, 'invalid')
         return false
@@ -1101,15 +978,11 @@ watch(() => selectedAsset.value, (newValue) => {
         }
         formData.employeeId = selectedAssignment.employee.id.toString()
       }
-      
-      // Load asset history data for the selected asset
-      loadAssetHistoryData(newValue.value.toString())
     } else {
       formData.assetBrandModel = ''
     }
   } else {
     formData.assetBrandModel = ''
-    assetIssueEvent.value = null
   }
 }, { immediate: true })
 
@@ -1149,9 +1022,6 @@ watch(() => assignedAssets.value, (newAssignments) => {
       formData.employeeId = selectedAssignment.employee.id.toString()
       formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
       
-      // Load asset history data for the pre-selected asset
-      loadAssetHistoryData(selectedAssignment.id.toString())
-      
       // Clear pre-selection flag after a short delay
       nextTick(() => {
         setTimeout(() => {
@@ -1171,8 +1041,8 @@ watch(() => assignedAssets.value, (newAssignments) => {
 const loadActiveEmployees = async () => {
   try {
     isLoadingEmployees.value = true
-    // Get only active employees who have at least one asset currently assigned
-    const response = await employeeApiService.getEmployeesForDropdowns('ACTIVE', true)
+    // No limit - get all active employees
+    const response = await employeeApiService.getActiveEmployees()
     activeEmployees.value = response.data.employees
   } catch (error: any) {
     console.error('Error loading active employees:', error)
@@ -1193,33 +1063,6 @@ const loadAssignedAssets = async () => {
     toastStore.showError('Error', 'Failed to load assigned assets. Please try again.')
   } finally {
     isLoadingAssignments.value = false
-  }
-}
-
-const loadAssetHistoryData = async (assignmentId: string) => {
-  try {
-    isLoadingAssetHistory.value = true
-    
-    // Find the asset ID from the assignment
-    const selectedAssignment = assignedAssets.value.find(assignment => 
-      assignment.id.toString() === assignmentId
-    )
-    
-    if (!selectedAssignment) {
-      console.warn('Assignment not found for ID:', assignmentId)
-      return
-    }
-    
-    // Get the asset history to find the issue event
-    const issueEvent = await assetHistoryApiService.getAssetIssueEvent(selectedAssignment.asset.assetId)
-    assetIssueEvent.value = issueEvent
-    
-  } catch (error: any) {
-    console.error('Error loading asset history:', error)
-    // Don't show error toast for asset history - it's not critical for the main functionality
-    // Just log the error and continue with fallback data
-  } finally {
-    isLoadingAssetHistory.value = false
   }
 }
 
@@ -1283,9 +1126,6 @@ onMounted(async () => {
       formData.employeeId = selectedAssignment.employee.id.toString()
       formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
       
-      // Load asset history data for the pre-selected asset
-      loadAssetHistoryData(selectedAssignment.id.toString())
-      
       // Clear pre-selection flag after a short delay
       nextTick(() => {
         setTimeout(() => {
@@ -1346,26 +1186,6 @@ onMounted(async () => {
   color: #0A0A0A !important;
   cursor: default !important;
   resize: none !important;
-}
-
-/* Readonly input fields styling */
-.form-control[readonly] {
-  background-color: #F3F3F3 !important;
-  border: 2px solid #E0E0E0 !important;
-  color: #0A0A0A !important;
-  cursor: default !important;
-}
-
-.form-control[readonly]:hover {
-  border-color: #E0E0E0 !important;
-  background-color: #F3F3F3 !important;
-}
-
-.form-control[readonly]:focus {
-  border-color: #E0E0E0 !important;
-  box-shadow: none !important;
-  background-color: #F3F3F3 !important;
-  outline: none !important;
 }
 
 .asset-specifications-wrapper :deep(.form-control:hover) {

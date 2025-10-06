@@ -1443,6 +1443,8 @@ body .btn-primary:active,
 .btn-primary:focus,
 .btn-primary:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
@@ -1455,6 +1457,8 @@ body .btn-primary:active,
 .btn-secondary:focus,
 .btn-secondary:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-success {
@@ -1467,6 +1471,8 @@ body .btn-primary:active,
 .btn-success:focus,
 .btn-success:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-danger {
@@ -1479,6 +1485,64 @@ body .btn-primary:active,
 .btn-danger:focus,
 .btn-danger:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Cancel Button - Consistent styling across all forms */
+.btn-cancel {
+  background-color: #f8f9fa !important;
+  border: 2px solid #6c757d !important;
+  color: #495057 !important;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #E97676 !important;
+  border-color: #E97676 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cancel:focus {
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25);
+  outline: 0;
+}
+
+.btn-cancel:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* History Button - Consistent styling across all modals */
+.btn-history {
+  background-color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-history:hover {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-history:focus {
+  box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+  outline: 0;
+}
+
+.btn-history:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn-warning {
@@ -1491,6 +1555,8 @@ body .btn-primary:active,
 .btn-warning:focus,
 .btn-warning:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-info {
@@ -1503,6 +1569,8 @@ body .btn-primary:active,
 .btn-info:focus,
 .btn-info:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-brown {
@@ -1515,6 +1583,8 @@ body .btn-primary:active,
 .btn-brown:focus,
 .btn-brown:active {
   filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive Design for Login */
@@ -1862,9 +1932,10 @@ i.text-brown {
 
 .btn-action:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
 }
 
 /* Specific action button hover colors */
@@ -1916,9 +1987,10 @@ i.text-brown {
 
 .vendor-actions .btn:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
 }
 
 /* Specific vendor action button hover colors */
@@ -2023,7 +2095,8 @@ i.text-brown {
   border-color: var(--secondary-purple) !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(51, 31, 234, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 /* Required Columns Section */
@@ -2182,12 +2255,6 @@ i.text-brown {
   transition: all 0.2s ease !important;
 }
 
-.btn-cancel:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
 .btn-upload-primary {
   background-color: var(--secondary-purple) !important;
   border: 1px solid var(--secondary-purple) !important;
@@ -2203,7 +2270,8 @@ i.text-brown {
   border-color: #2415c7 !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(51, 31, 234, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .btn-upload-primary:disabled {
@@ -2337,6 +2405,7 @@ i.text-brown {
 .modal-footer .btn:hover {
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .modal-footer .btn-secondary {
@@ -2382,11 +2451,6 @@ i.text-brown {
   color: var(--primary-dark-gray) !important;
 }
 
-.modal-footer .btn-cancel:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
 
 .modal-footer .btn-upload-primary {
   background-color: var(--secondary-purple) !important;
@@ -2513,7 +2577,8 @@ i.text-brown {
   border-color: #1e9c5a !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .btn-status-deactivate {
@@ -2533,7 +2598,8 @@ i.text-brown {
   border-color: #d63447 !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 /* Modal Footer Button Group */
@@ -2592,6 +2658,8 @@ i.text-brown {
   border-color: var(--primary-mid-light) !important;
   color: var(--primary-black) !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .btn-confirm-activate {
@@ -2610,7 +2678,8 @@ i.text-brown {
   border-color: #1e9c5a !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .btn-confirm-deactivate {
@@ -2629,7 +2698,8 @@ i.text-brown {
   border-color: #d63447 !important;
   color: white !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 /* Confirmation Modal Info Box */
@@ -2731,9 +2801,10 @@ i.text-brown {
 
 .employee-actions .btn:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
 }
 
 /* Specific action button hover colors */
@@ -3012,9 +3083,10 @@ i.text-brown {
 
 .asset-actions .btn:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
 }
 
 /* Specific action button hover colors */
@@ -3243,9 +3315,10 @@ i.text-brown {
 
 .btn-action:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
 }
 
 /* Specific action button hover colors */
@@ -3299,6 +3372,7 @@ i.text-brown {
 .modal-footer .btn:hover {
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
 }
 
 .modal-footer .btn-secondary {

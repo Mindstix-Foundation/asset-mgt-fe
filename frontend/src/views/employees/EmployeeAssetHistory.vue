@@ -435,24 +435,24 @@ export default {
       if (!dateString) return 'Not specified'
       const d = new Date(dateString)
       if (isNaN(d.getTime())) return 'Not specified'
-      const day = d.getDate()
-      const monthShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]
+      const day = String(d.getDate()).padStart(2, '0')
+      const month = String(d.getMonth() + 1).padStart(2, '0')
       const year = d.getFullYear()
-      return `${day} ${monthShort} ${year}`
+      return `${day}/${month}/${year}`
     },
     formatDateTime(dateString) {
       if (!dateString) return 'Not specified'
       const d = new Date(dateString)
       if (isNaN(d.getTime())) return 'Not specified'
-      const day = d.getDate()
-      const month = d.getMonth() + 1
+      const day = String(d.getDate()).padStart(2, '0')
+      const month = String(d.getMonth() + 1).padStart(2, '0')
       const year = d.getFullYear()
       const pad2 = (n) => String(n).padStart(2, '0')
       const hours = pad2(d.getHours())
       const minutes = pad2(d.getMinutes())
       const seconds = pad2(d.getSeconds())
-      // Format: D/M/YYYY  HH:mm:ss (two spaces between date and time)
-      return `${day}/${month}/${year}  ${hours}:${minutes}:${seconds}`
+      // Format: DD/MM/YYYY HH:mm:ss
+      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
     },
     getNotesForAction(item) {
       // For employee asset events, the notes field contains the appropriate content

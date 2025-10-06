@@ -39,7 +39,7 @@
                       :items="assetItems"
                       v-model="selectedAssetItem"
                       :required="true"
-                      :disabled="isEditMode"
+                      :disabled="isEditMode || isSubmitting"
                       :class="getFieldClass('assetId')"
                       @change="onAssetChange"
                       @validated="() => validateFieldInline('assetId')"
@@ -64,14 +64,10 @@
                     <div class="form-text">Asset type and brand will appear after selection</div>
                   </div>
                 </div>
-              </fieldset>
-
-              <!-- Section 2: Maintenance Details -->
-              <fieldset class="form-fieldset">
-                <legend class="form-legend">Maintenance Details</legend>
-                <div class="row g-4">
-                  <!-- Asset Specifications -->
-                  <div v-if="selectedAssetSpecs" class="col-12">
+                
+                <!-- Asset Specifications - Moved here from Maintenance Details -->
+                <div v-if="selectedAssetSpecs" class="row g-4 mt-3">
+                  <div class="col-12">
                     <div class="asset-specifications-wrapper">
                       <NotesTextarea 
                         :model-value="selectedAssetSpecs"
@@ -87,6 +83,13 @@
                       />
                     </div>
                   </div>
+                </div>
+              </fieldset>
+
+              <!-- Section 2: Maintenance Details -->
+              <fieldset class="form-fieldset">
+                <legend class="form-legend">Maintenance Details</legend>
+                <div class="row g-4">
                   <!-- Maintenance Type -->
                   <div class="col-md-6">
                     <div class="form-searchable-dropdown">
@@ -97,6 +100,7 @@
                       :items="maintenanceTypeItems"
                       v-model="selectedTypeItem"
                       :required="true"
+                      :disabled="isSubmitting"
                       :class="getFieldClass('maintenanceTypeId')"
                       @change="onTypeChange"
                       @validated="() => validateFieldInline('maintenanceTypeId')"
@@ -108,20 +112,17 @@
 
                   <!-- Scheduled Date -->
                   <div class="col-md-6">
-                    <label for="scheduledDate" class="form-label">Scheduled Date <span class="text-danger">*</span></label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="scheduledDate" 
+                    <DateInput
+                      id="scheduledDate"
+                      label="Scheduled Date *"
                       v-model="formData.scheduledDate"
-                      :class="getFieldClass('scheduledDate')"
+                      :error-message="fieldErrors.scheduledDate"
+                      help-text="Date when maintenance should be performed (required)"
+                      :disabled="isSubmitting"
                       required
+                      @change="handleFieldInput('scheduledDate')"
                       @blur="validateFieldInline('scheduledDate')"
-                      @focus="clearFieldValidation('scheduledDate')"
-                      @input="handleFieldInput('scheduledDate')"
-                    >
-                    <div class="form-text">Date when maintenance should be performed (required)</div>
-                    <div v-if="fieldErrors.scheduledDate" class="invalid-feedback">{{ fieldErrors.scheduledDate }}</div>
+                    />
                   </div>
 
                   <!-- Frequency -->
@@ -134,6 +135,7 @@
                         id="frequencyDays" 
                         v-model="formData.frequencyDays"
                         :class="getFieldClass('frequencyDays')"
+                        :disabled="isSubmitting"
                         placeholder="30" 
                         min="1" 
                         max="365"
@@ -151,13 +153,14 @@
                   <div class="col-md-6">
                     <label for="estimatedCost" class="form-label">Estimated Cost <span class="text-muted">(Optional)</span></label>
                     <div class="input-group">
-                      <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                      <span class="input-group-text">₹</span>
                       <input 
                         type="number" 
                         class="form-control" 
                         id="estimatedCost" 
                         v-model="formData.estimatedCost"
                         :class="getFieldClass('estimatedCost')"
+                        :disabled="isSubmitting"
                         placeholder="0.00" 
                         step="0.01" 
                         min="0" 
@@ -185,6 +188,7 @@
                       id="description" 
                       v-model="formData.description"
                       :class="getFieldClass('description')"
+                      :disabled="isSubmitting"
                       rows="3" 
                       placeholder="Describe the maintenance activity, any special requirements, or known issues..." 
                       maxlength="1000" 
@@ -214,7 +218,12 @@
           <div class="card-footer bg-light border-top">
             <div class="form-actions">
               <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-outline-secondary px-4 py-2" @click="goBack">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary px-4 py-2" 
+                  @click="goBack"
+                  :disabled="isSubmitting || isLoading"
+                >
                   Cancel
                 </button>
                 <button 
@@ -249,6 +258,7 @@ import { useToastStore } from '@/stores/toast'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import { assetApiService, type Asset as AssetApiAsset } from '@/services/assetApi'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
+import DateInput from '@/components/common/DateInput.vue'
 import { formatDateForInput } from '@/utils/date'
 
 const router = useRouter()
@@ -766,7 +776,17 @@ const submitForm = async (event?: Event) => {
       }
 
       await maintenanceService.updateMaintenance(props.maintenanceId, maintenanceData)
-      showMaintenanceSuccessToast(generateMaintenanceDetails(), true)
+      
+      // Generate success message before redirect
+      const successMessage = generateMaintenanceDetails()
+      
+      // Redirect to maintenance view page immediately after success with stats refresh
+      router.push('/app/maintenance?refreshStats=true')
+      
+      // Show success toast after redirect (with a small delay to ensure page loads)
+      setTimeout(() => {
+        toastStore.showSuccess('Success', `${successMessage} has been updated successfully!`)
+      }, 100)
     } else {
       // Create new maintenance
       const maintenanceData: CreateMaintenanceData = {
@@ -780,13 +800,16 @@ const submitForm = async (event?: Event) => {
  
       await maintenanceService.createMaintenance(maintenanceData)
 
-      // Reload available assets for dropdown to reflect change
-      try {
-        const refreshed = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
-        availableAssets.value = refreshed.data.assets
-      } catch {}
- 
-      showMaintenanceSuccessToast(generateMaintenanceDetails(), false)
+      // Generate success message before redirect
+      const successMessage = generateMaintenanceDetails()
+      
+      // Redirect to maintenance view page immediately after success with stats refresh
+      router.push('/app/maintenance?refreshStats=true')
+      
+      // Show success toast after redirect (with a small delay to ensure page loads)
+      setTimeout(() => {
+        toastStore.showSuccess('Success', `${successMessage} has been scheduled successfully!`)
+      }, 100)
     }
     
   } catch (error: any) {
@@ -834,9 +857,6 @@ const generateMaintenanceDetails = () => {
   return details || 'Maintenance'
 }
 
-const showMaintenanceSuccessToast = (details: string, isEdit: boolean) => {
-  toastStore.showSuccess('Success', `${details} has been ${isEdit ? 'updated' : 'scheduled'} successfully!`)
-}
 
 const goBack = () => {
   router.push('/app/maintenance')
@@ -922,7 +942,8 @@ onMounted(async () => {
   // Focus on first field
   nextTick(() => {
     if (preselectedAsset.value) {
-      const nextField = document.getElementById('scheduledDate') as HTMLElement | null
+      // When asset is preselected, focus on maintenance type (first field in Maintenance Details section)
+      const nextField = document.getElementById('maintenanceTypeId') as HTMLElement | null
       if (nextField) nextField.focus()
     } else {
       const firstField = document.getElementById('assetId') as HTMLElement | null
@@ -1208,18 +1229,6 @@ onMounted(async () => {
   color: #FFFFFF !important;
 }
 
-.btn-outline-secondary {
-  background-color: #f8f9fa !important;
-  border: 2px solid #6c757d !important;
-  color: #495057 !important;
-  font-weight: 600;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #FFFFFF !important;
-}
 
 .btn:focus-visible {
   outline: 2px solid #331FEA;

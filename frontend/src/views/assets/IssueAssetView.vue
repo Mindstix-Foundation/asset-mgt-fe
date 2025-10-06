@@ -104,34 +104,37 @@
                 <div class="row g-4">
                   <!-- Assignment Reason -->
                   <div class="col-md-6">
-                    <div class="form-searchable-dropdown">
-                      <SearchableDropdown
-                        id="assignmentReason"
-                        label="Assignment Reason"
-                        placeholder="Search assignment reasons..."
-                        :items="assignmentReasonItems"
-                        v-model="selectedAssignmentReason"
-                        :required="true"
-                        @change="onAssignmentReasonChange"
-                      />
-                    </div>
-                    <div class="form-text">Select the reason for issuing this asset (required)</div>
+                    <label for="assignmentReason" class="form-label">Assignment Reason <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="assignmentReason" 
+                      v-model="formData.assignmentReason"
+                      :class="getFieldClass('assignmentReason')"
+                      placeholder="e.g., Work laptop, Project requirement" 
+                      required 
+                      minlength="5" 
+                      maxlength="100" 
+                      title="Assignment reason must be 5-100 characters and start with a capital letter"
+                      @blur="validateFieldInline('assignmentReason')"
+                      @focus="clearFieldValidation('assignmentReason')"
+                      @input="handleAssignmentReasonInput"
+                    >
+                    <div class="form-text">Specify the reason for this assignment - 5-100 characters</div>
                     <div v-if="fieldErrors.assignmentReason" class="invalid-feedback">{{ fieldErrors.assignmentReason }}</div>
                   </div>
 
                   <!-- Assignment Date -->
                   <div class="col-md-6">
-                    <DatePicker
+                    <DateInput
+                      id="assignmentDate"
+                      label="Assignment Date *"
                       v-model="formData.assignmentDate"
-                      label="Assignment Date"
-                      placeholder="dd-mm-yyyy"
-                      help-text="Date when the asset will be assigned"
-                      :required="true"
-                      input-id="assignmentDate"
                       :error-message="fieldErrors.assignmentDate"
-                      :input-class="getFieldClass('assignmentDate') as any"
+                      help-text="Date when the asset will be assigned"
+                      required
                       @change="validateFieldInline('assignmentDate')"
-                      @focus="clearFieldValidation('assignmentDate')"
+                      @blur="clearFieldValidation('assignmentDate')"
                     />
                   </div>
 
@@ -194,7 +197,7 @@ import { employeeApiService, type Employee } from '../../services/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesDisplay from '../../components/common/NotesDisplay.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
-import DatePicker from '../../components/common/DatePicker.vue'
+import DateInput from '../../components/common/DateInput.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -212,21 +215,9 @@ const formData = reactive({
   assignmentNotes: ''
 })
 
-// Reason labels for display
-const reasonLabels = {
-  'new-employee': 'New Employee Setup',
-  'work-from-home': 'Work from Home Setup',
-  'project-requirement': 'Project Requirement',
-  'replacement': 'Equipment Replacement',
-  'upgrade': 'Equipment Upgrade',
-  'temporary-assignment': 'Temporary Assignment',
-  'other': 'Other Reason'
-}
-
 // Selected items for SearchableDropdown components
 const selectedAsset = ref<Item | null>(null)
 const selectedEmployee = ref<Item | null>(null)
-const selectedAssignmentReason = ref<Item | null>(null)
 
 // Computed property for selected asset specifications
 const selectedAssetSpecs = ref<string | null>(null)
@@ -264,16 +255,6 @@ const employeeItems = computed(() => {
   }))
 })
 
-const assignmentReasonItems = computed(() => [
-  { id: 'new-employee', name: 'New Employee Setup', value: 'new-employee' },
-  { id: 'work-from-home', name: 'Work from Home Setup', value: 'work-from-home' },
-  { id: 'project-requirement', name: 'Project Requirement', value: 'project-requirement' },
-  { id: 'replacement', name: 'Equipment Replacement', value: 'replacement' },
-  { id: 'upgrade', name: 'Equipment Upgrade', value: 'upgrade' },
-  { id: 'temporary-assignment', name: 'Temporary Assignment', value: 'temporary-assignment' },
-  { id: 'other', name: 'Other Reason', value: 'other' }
-])
-
 
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
@@ -310,18 +291,6 @@ const onEmployeeChange = (item: Item | null) => {
   }
   
   validateFieldInline('employeeId')
-}
-
-const onAssignmentReasonChange = (item: Item | null) => {
-  selectedAssignmentReason.value = item
-  formData.assignmentReason = item && item.value ? item.value.toString() : ''
-  
-  // Clear validation error when user makes a selection
-  if (item) {
-    clearFieldValidation('assignmentReason')
-  }
-  
-  validateFieldInline('assignmentReason')
 }
 
 // Helper function to apply validation classes to SearchableDropdown components
@@ -386,15 +355,25 @@ const validateFieldInline = (fieldName: string) => {
       }
       
     case 'assignmentReason':
-      if (!selectedAssignmentReason.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
+      if (value && value.length < 5) {
+        setFieldError(fieldName, 'Assignment reason must be at least 5 characters')
         return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
       }
+      if (value && value.length > 100) {
+        setFieldError(fieldName, 'Assignment reason cannot exceed 100 characters')
+        return false
+      }
+      // Check if first letter is capitalized
+      if (value && value.length > 0 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+        setFieldError(fieldName, 'Assignment reason must start with a capital letter')
+        return false
+      }
+      // Check for valid characters (letters, numbers, spaces, common punctuation)
+      if (value && !/^[A-Za-z0-9\s.,!?()-]+$/.test(value)) {
+        setFieldError(fieldName, 'Assignment reason contains invalid characters')
+        return false
+      }
+      break
     
     case 'assignmentDate':
       if (value) {
@@ -478,6 +457,22 @@ const handleFieldInput = (fieldName: string) => {
   }
 }
 
+// Special handler for Assignment Reason with formatting
+const handleAssignmentReasonInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  let value = target.value
+  
+  // Auto-capitalize first letter
+  if (value.length > 0) {
+    value = value.charAt(0).toUpperCase() + value.slice(1)
+    formData.assignmentReason = value
+  }
+  
+  // Clear error state on input if field was invalid
+  if (fieldValidation.assignmentReason === false && value.trim()) {
+    validateFieldInline('assignmentReason')
+  }
+}
 
 // Handle notes validation
 const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
@@ -557,7 +552,7 @@ const submitForm = async (event?: Event) => {
       employeeId: selectedEmployeeId,
       issueDate: formData.assignmentDate,
       issueCondition: currentCondition as "GOOD" | "NEW" | "FAIR" | "POOR" | "DAMAGED", // Use the asset's current condition
-      issueReason: reasonLabels[formData.assignmentReason as keyof typeof reasonLabels] || formData.assignmentReason,
+      issueReason: formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
 
@@ -818,7 +813,7 @@ onMounted(async () => {
       originPath.value = '/app/employees'
     }
     const employeeId = parseInt(employeeIdFromQuery)
-    const employee = activeEmployees.value.find(emp => Number(emp.id) === employeeId)
+    const employee = activeEmployees.value.find(emp => emp.id === employeeId)
     if (employee) {
       // Set the selected employee for SearchableDropdown
       selectedEmployee.value = {

@@ -227,6 +227,19 @@ class MaintenanceService {
       throw error
     }
   }
+
+  /**
+   * Get maintenance statistics
+   */
+  async getMaintenanceStats() {
+    try {
+      const response = await apiClient.get('/maintenance/stats')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching maintenance stats:', error)
+      throw error
+    }
+  }
 }
 
 export const maintenanceService = new MaintenanceService() 

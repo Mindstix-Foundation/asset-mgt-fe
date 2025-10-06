@@ -52,6 +52,7 @@
                       id="firstName" 
                       v-model="formData.firstName"
                       :class="getFieldClass('firstName')"
+                      :disabled="isSubmitting"
                       placeholder="Enter first name" 
                       required 
                       minlength="2" 
@@ -79,6 +80,7 @@
                       id="lastName" 
                       v-model="formData.lastName"
                       :class="getFieldClass('lastName')"
+                      :disabled="isSubmitting"
                       placeholder="Enter last name" 
                       required 
                       minlength="2" 
@@ -106,6 +108,7 @@
                       id="email" 
                       v-model="formData.email"
                       :class="getFieldClass('email')"
+                      :disabled="isSubmitting"
                       placeholder="john.doe@company.com" 
                       required 
                       maxlength="100"
@@ -131,6 +134,7 @@
                       id="phone" 
                       v-model="formData.phone"
                       :class="getFieldClass('phone')"
+                      :disabled="isSubmitting"
                       placeholder="+91 9999999999"
                       pattern="^\+91\s[0-9]{10}$"
                       title="Enter a 10-digit number with '+91' prefix (e.g., +91 9876543210)"
@@ -155,21 +159,16 @@
                 <div class="row g-4">
                   <!-- Date of Birth -->
                   <div class="col-md-6">
-                    <label for="dateOfBirth" class="form-label">Date of Birth <span class="text-muted">(Optional)</span></label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="dateOfBirth" 
+                    <DateInput
+                      id="dateOfBirth"
+                      label="Date of Birth (Optional)"
                       v-model="formData.dateOfBirth"
-                      :class="getFieldClass('dateOfBirth')"
-                      title="Employee date of birth"
-                      autocomplete="off"
+                      :error-message="fieldErrors.dateOfBirth"
+                      :disabled="isSubmitting"
+                      help-text="Used for HR records and birthday notifications"
+                      @change="handleFieldInput('dateOfBirth')"
                       @blur="validateFieldInline('dateOfBirth')"
-                      @focus="clearFieldValidation('dateOfBirth')"
-                      @input="handleFieldInput('dateOfBirth')"
-                    >
-                    <div class="form-text">Used for HR records and birthday notifications</div>
-                    <div v-if="fieldErrors.dateOfBirth" class="invalid-feedback">{{ fieldErrors.dateOfBirth }}</div>
+                    />
                   </div>
 
                   <!-- Status (for edit mode) -->
@@ -180,6 +179,7 @@
                       id="status" 
                       v-model="formData.status"
                       :class="getFieldClass('status')"
+                      :disabled="isSubmitting"
                       required
                       @change="validateFieldInline('status')"
                       @focus="clearFieldValidation('status')"
@@ -201,6 +201,7 @@
                       id="address" 
                       v-model="formData.address"
                       :class="getFieldClass('address')"
+                      :disabled="isSubmitting"
                       rows="3"
                       placeholder="Enter complete address with street, city, state, and country..."
                       autocomplete="off"
@@ -233,9 +234,14 @@
           <div class="card-footer bg-light border-top">
             <div class="form-actions">
               <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-outline-secondary px-4 py-2" @click="goBack">
+                <button 
+                  type="button" 
+                  class="btn btn-cancel" 
+                  @click="goBack"
+                  :disabled="isSubmitting || isLoading"
+                >
                   Cancel
-            </button>
+                </button>
             <button 
                   type="submit" 
                   class="btn btn-primary px-5 py-2" 
@@ -267,6 +273,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { employeeService } from '@/services/employeeService'
 import type { CreateEmployeeData } from '@/services/employeeService'
 import { useToastStore } from '@/stores/toast'
+import DateInput from '@/components/common/DateInput.vue'
 
 const router = useRouter()
 const route = useRoute()

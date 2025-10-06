@@ -70,6 +70,7 @@
                     class="form-select"
                     id="status"
                     v-model="formData.status"
+                    :disabled="isSubmitting"
                     required
                     :class="getFieldClass('status')"
                     @blur="validateFieldInline('status')"
@@ -94,6 +95,7 @@
                     class="form-control shake-on-invalid"
                     id="firstName"
                     v-model="formData.firstName"
+                    :disabled="isSubmitting"
                     placeholder="Enter first name"
                     required
                     maxlength="50"
@@ -117,6 +119,7 @@
                     class="form-control shake-on-invalid"
                     id="lastName"
                     v-model="formData.lastName"
+                    :disabled="isSubmitting"
                     placeholder="Enter last name"
                     required
                     maxlength="50"
@@ -134,6 +137,7 @@
                 <div class="col-md-6">
                   <label for="email" class="form-label fw-semibold">
                     Email Address <span class="text-danger">*</span>
+                    <span v-if="isAdmin" class="badge bg-warning ms-2">Admin - Cannot be changed</span>
                   </label>
                   <div class="position-relative">
                     <input 
@@ -141,6 +145,7 @@
                       class="form-control shake-on-invalid"
                       id="email"
                       v-model="formData.email"
+                      :disabled="isSubmitting || isAdmin"
                       placeholder="Enter email address"
                       required
                       maxlength="255"
@@ -148,6 +153,7 @@
                       @blur="validateFieldInline('email')"
                       @focus="clearFieldValidation('email')"
                       @input="handleFieldInput('email')"
+                      :style="isAdmin ? 'background-color: #F3F3F3;' : ''"
                     >
                     <div v-if="isCheckingEmail" class="position-absolute top-50 end-0 translate-middle-y me-3">
                       <div class="spinner-border spinner-border-sm text-primary" role="status">
@@ -157,6 +163,10 @@
                   </div>
                   <div v-if="fieldErrors.email" class="invalid-feedback">
                     {{ fieldErrors.email }}
+                  </div>
+                  <div v-if="isAdmin" class="form-text text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Email address cannot be changed for admin employees
                   </div>
                 </div>
 
@@ -170,6 +180,7 @@
                     class="form-control shake-on-invalid"
                     id="phone"
                     v-model="formData.phone"
+                    :disabled="isSubmitting"
                     placeholder="e.g., +91 9876543210"
                     maxlength="15"
                     :class="getFieldClass('phone')"
@@ -184,22 +195,15 @@
 
                 <!-- Date of Birth -->
                 <div class="col-md-6">
-                  <label for="dateOfBirth" class="form-label fw-semibold">
-                    Date of Birth
-                  </label>
-                  <input 
-                    type="date" 
-                    class="form-control shake-on-invalid"
+                  <DateInput
                     id="dateOfBirth"
+                    label="Date of Birth"
                     v-model="formData.dateOfBirth"
-                    :class="getFieldClass('dateOfBirth')"
+                    :error-message="fieldErrors.dateOfBirth"
+                    :disabled="isSubmitting"
+                    @change="handleFieldInput('dateOfBirth')"
                     @blur="validateFieldInline('dateOfBirth')"
-                    @focus="clearFieldValidation('dateOfBirth')"
-                    @input="handleFieldInput('dateOfBirth')"
-                  >
-                  <div v-if="fieldErrors.dateOfBirth" class="invalid-feedback">
-                    {{ fieldErrors.dateOfBirth }}
-                  </div>
+                  />
                 </div>
 
                 <!-- Address -->
@@ -212,6 +216,7 @@
                       class="form-control auto-expand shake-on-invalid"
                       id="address"
                       v-model="formData.address"
+                      :disabled="isSubmitting"
                       placeholder="Enter full address"
                       rows="3"
                       maxlength="500"
@@ -236,7 +241,12 @@
           <div class="card-footer bg-light border-top">
             <div class="form-actions">
               <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-cancel px-4 py-2" @click="goBack">
+                <button 
+                  type="button" 
+                  class="btn btn-cancel" 
+                  @click="goBack"
+                  :disabled="isSubmitting || isLoading"
+                >
                   Cancel
                 </button>
                 <button 
@@ -270,6 +280,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { employeeService } from '@/services/employeeService'
 import type { UpdateEmployeeData } from '@/services/employeeService'
 import { useToastStore } from '@/stores/toast'
+import DateInput from '@/components/common/DateInput.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -292,6 +303,9 @@ const formData = reactive({
 
 // Store original email for validation
 const originalEmail = ref('')
+
+// Store admin status
+const isAdmin = ref(false)
 
 // Form state - Enhanced validation system
 const fieldErrors = reactive<Record<string, string>>({})
@@ -511,6 +525,7 @@ const loadEmployeeData = async () => {
     formData.status = employee.status || 'ACTIVE'
 
     originalEmail.value = employee.email
+    isAdmin.value = employee.isAdmin || false
 
     nextTick(() => {
       resizeAllTextareas()
@@ -574,11 +589,15 @@ const submitForm = async (event?: Event) => {
     const updateData: UpdateEmployeeData = {
       firstName: formData.firstName,
       lastName: formData.lastName,
-      email: formData.email,
       phone: formData.phone || undefined,
       dateOfBirth: formData.dateOfBirth || undefined,
       address: formData.address || undefined,
       status: formData.status
+    }
+
+    // Only include email if employee is not admin
+    if (!isAdmin.value) {
+      updateData.email = formData.email
     }
 
     const response = await employeeService.updateEmployee(employeeId.value, updateData)

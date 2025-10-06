@@ -110,44 +110,20 @@
                 />
           </div>
               <div class="flex-fill">
-              <label class="form-label">Date From</label>
-              <div class="date-input-container" @click="showDatePicker('from')">
-                <input 
-                  v-model="filters.dateFromDisplay" 
-                  type="text" 
-                  class="form-control date-display"
-                  placeholder="dd-mm-yyyy"
-                  readonly
-                >
-              <input 
-                v-model="filters.dateFrom" 
-                type="date" 
-                  class="form-control date-picker"
+                <DateInput
+                  id="date-from-filter"
+                  label="Date From"
+                  v-model="filters.dateFrom"
                   @change="onDateFromChange"
-                  ref="dateFromPicker"
-              >
-                <i class="fas fa-calendar-alt date-icon"></i>
+                />
               </div>
-            </div>
               <div class="flex-fill">
-              <label class="form-label">Date To</label>
-              <div class="date-input-container" @click="showDatePicker('to')">
-                <input 
-                  v-model="filters.dateToDisplay" 
-                  type="text" 
-                  class="form-control date-display"
-                  placeholder="dd-mm-yyyy"
-                  readonly
-                >
-              <input 
-                v-model="filters.dateTo" 
-                type="date" 
-                  class="form-control date-picker"
+                <DateInput
+                  id="date-to-filter"
+                  label="Date To"
+                  v-model="filters.dateTo"
                   @change="onDateToChange"
-                  ref="dateToPicker"
-                >
-                <i class="fas fa-calendar-alt date-icon"></i>
-              </div>
+                />
               </div>
               <div class="filter-clear-button-container">
                 <div class="d-flex align-items-end h-100">
@@ -316,6 +292,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { assetHistoryService } from '@/services/assetHistoryService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
+import DateInput from '@/components/common/DateInput.vue'
 import { useAdvancedSearch } from '@/services/advancedSearchService'
 import type { AssetHistoryEvent, AssetHistorySummary, AssetHistoryResponse, AssetHistorySummaryResponse } from '@/types/assetHistory.types'
 

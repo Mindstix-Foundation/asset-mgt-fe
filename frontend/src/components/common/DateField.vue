@@ -6,7 +6,7 @@
         :id="id"
         type="text"
         class="form-control date-display-input"
-        :placeholder="placeholder || 'yyyy-mm-dd'"
+        :placeholder="placeholder || 'dd/mm/yyyy'"
         :value="formattedValue"
         @click="openPicker"
         @keydown.enter.prevent="openPicker"
@@ -45,10 +45,30 @@ export default {
   emits: ['update:modelValue', 'change'],
   computed: {
     formattedValue() {
-      return this.modelValue || ''
+      if (!this.modelValue) return ''
+      return this.formatDateForDisplay(this.modelValue)
     }
   },
   methods: {
+    formatDateForDisplay(dateString) {
+      if (!dateString) return ''
+      
+      // If it's already in DD/MM/YYYY format, return as is
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
+        return dateString
+      }
+      
+      // Parse the date and format as DD/MM/YYYY
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return ''
+      
+      const day = String(date.getDate()).padStart(2, '0')
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const year = date.getFullYear()
+      
+      return `${day}/${month}/${year}`
+    },
+    
     openPicker() {
       const el = this.$refs.hiddenDate
       if (!el) return

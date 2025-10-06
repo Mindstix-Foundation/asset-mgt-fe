@@ -38,10 +38,37 @@
                 </div>
               </div>
               <div class="col-6">
-                <button class="btn btn-outline-secondary btn-modern w-100" @click="openBulkUploadModal">
-                  <i class="fas fa-file-excel me-1"></i>Bulk Upload
+              <!-- More Actions Dropdown -->
+              <div class="dropdown">
+                <button 
+                  class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                  type="button" 
+                  aria-expanded="false"
+                  id="moreActionsDropdownSm"
+                  @click="handleDropdownClick"
+                >
+                  <i class="fas fa-cog me-1"></i>More Actions
                 </button>
+                <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm" style="min-width: 200px;">
+                  <li>
+                    <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdownSm'); }">
+                      <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" @click="() => { exportEmployees(); closeDropdown('moreActionsDropdownSm'); }">
+                      <i class="fas fa-download me-2 text-success"></i>Export Employees
+                    </button>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <button class="dropdown-item" @click="() => { openManageEmployeesModal(); closeDropdown('moreActionsDropdownSm'); }">
+                      <i class="fas fa-cogs me-2 text-info"></i>Manage Employees
+                    </button>
+                  </li>
+                </ul>
               </div>
+            </div>
             </div>
             
             <div class="row g-2">
@@ -78,9 +105,36 @@
                     </button>
                   </div>
                   
-                  <button class="btn btn-outline-secondary btn-modern flex-fill" @click="openBulkUploadModal">
-                    <i class="fas fa-file-excel me-1"></i>Bulk Upload
-                  </button>
+                  <!-- More Actions Dropdown -->
+                  <div class="dropdown flex-fill">
+                    <button 
+                      class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                      type="button" 
+                      aria-expanded="false"
+                      id="moreActionsDropdown"
+                      @click="handleDropdownClick"
+                    >
+                      <i class="fas fa-cog me-1"></i>More Actions
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown" style="min-width: 200px; max-width: 90vw;">
+                      <li>
+                        <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdown'); }">
+                          <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload
+                        </button>
+                      </li>
+                      <li>
+                        <button class="dropdown-item" @click="() => { exportEmployees(); closeDropdown('moreActionsDropdown'); }">
+                          <i class="fas fa-download me-2 text-success"></i>Export Employees
+                        </button>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <button class="dropdown-item" @click="() => { openManageEmployeesModal(); closeDropdown('moreActionsDropdown'); }">
+                          <i class="fas fa-cogs me-2 text-info"></i>Manage Employees
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                   
                   <router-link to="/app/employees/add" class="btn btn-primary btn-modern flex-fill">
                     <i class="fas fa-user-plus me-1"></i>Add Employee
@@ -273,7 +327,12 @@
         <!-- Pagination for List View -->
         <div class="d-flex justify-content-between align-items-center mt-4" v-if="!isGridView">
           <div class="text-muted">
-            <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} employees</small>
+            <PaginationInfo 
+              :start="paginationInfo.start" 
+              :end="paginationInfo.end" 
+              :total="paginationInfo.total" 
+              item-name="employees"
+            />
           </div>
           <nav aria-label="Employee pagination">
             <ul class="pagination pagination-modern mb-0">
@@ -399,7 +458,12 @@
           <!-- Pagination for Grid View (bottom only) -->
           <div class="d-flex justify-content-between align-items-center mt-4" v-if="isGridView">
             <div class="text-muted">
-              <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} employees</small>
+              <PaginationInfo 
+              :start="paginationInfo.start" 
+              :end="paginationInfo.end" 
+              :total="paginationInfo.total" 
+              item-name="employees"
+            />
             </div>
             <nav aria-label="Employee pagination">
               <ul class="pagination pagination-modern mb-0">
@@ -449,35 +513,34 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <!-- Employee Information - Compact Layout -->
+            <!-- 2x2 grid layout to match MaintenanceView modal -->
             <div class="row g-2">
-              <!-- Left Column: Basic Info -->
               <div class="col-12 col-md-6">
-                <div class="employee-info-section-compact">
+                <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-user me-2"></i>Basic Information</h6>
-                  <div class="info-grid-compact">
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Employee ID</label>
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Employee ID</div>
                       <div class="info-value-compact fw-bold">{{ selectedEmployee.id }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Full Name</label>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Full Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedEmployee.name }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Email Address</label>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Email Address</div>
                       <div class="info-value-compact">{{ selectedEmployee.email }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Phone Number</label>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Phone Number</div>
                       <div class="info-value-compact">{{ selectedEmployee.phone || 'Not specified' }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Date of Birth</label>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Date of Birth</div>
                       <div class="info-value-compact">{{ selectedEmployee.dateOfBirth || 'Not specified' }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Status</label>
+                    <div class="col-md-6">
+                      <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
                         <span :class="['badge', selectedEmployee && selectedEmployee.status === 'active' ? 'badge-active' : 'badge-inactive']">
                           {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Active' : 'Inactive' }}
@@ -487,18 +550,16 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Right Column: Location & Assets -->
               <div class="col-12 col-md-6">
-                <div class="employee-info-section-compact">
+                <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Assets</h6>
-                  <div class="info-grid-compact">
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Address</label>
+                  <div class="row g-2">
+                    <div class="col-md-12">
+                      <div class="info-label-compact">Address</div>
                       <div class="info-value-compact" style="white-space: pre-wrap; overflow-wrap: break-word;">{{ selectedEmployee.address || 'Not specified' }}</div>
                     </div>
-                    <div class="info-item-compact">
-                      <label class="info-label-compact">Assigned Assets</label>
+                    <div class="col-md-12">
+                      <div class="info-label-compact">Assigned Assets</div>
                       <div class="info-value-compact">
                         <span class="badge badge-count">{{ selectedEmployee.assetsCount }} Assets</span>
                       </div>
@@ -511,109 +572,88 @@
             <!-- Assigned Assets Section - Detailed Information -->
             <div class="row mt-2" v-if="selectedEmployee.assets && selectedEmployee.assets.length > 0">
               <div class="col-12">
-                <div class="assigned-assets-detailed">
-                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                      @click="toggleAssetsDetails" 
-                      style="cursor: pointer;">
-                    <span><i class="fas fa-laptop me-2"></i>Assigned Assets Details ({{ selectedEmployee.assetsCount }})</span>
-                    <i class="fas fa-chevron-down assets-chevron" 
-                       :class="{ 'rotated': isAssetsDetailsExpanded }"
-                       ></i>
-                  </h6>
-                  
-                  
-                  <!-- Detailed Assets Information (expandable) -->
-                  <div v-show="isAssetsDetailsExpanded" class="assets-list-detailed">
-                    <div class="asset-item-detailed" v-for="asset in selectedEmployee.assets" :key="asset.id">
-                        <!-- Asset Header -->
-                        <div class="asset-header">
-                          <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                              <div class="asset-icon-detailed" :style="{ backgroundColor: asset.iconColor }">
-                                <i :class="asset.iconClass"></i>
-                              </div>
-                              <div class="asset-basic-info">
-                                <div class="asset-name-detailed">{{ asset.name }}</div>
-                                <div class="asset-meta-detailed">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
-                              </div>
+                <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                    @click="toggleAssetsDetails" 
+                    style="cursor: pointer;">
+                  <span><i class="fas fa-laptop me-2"></i>Assigned Assets Details ({{ selectedEmployee.assetsCount }})</span>
+                  <i class="fas fa-chevron-down assets-chevron" 
+                     :class="{ 'rotated': isAssetsDetailsExpanded }"
+                     ></i>
+                </h6>
+                
+                <!-- Detailed Assets Information (expandable) -->
+                <div v-show="isAssetsDetailsExpanded" class="assets-list-detailed">
+                  <div class="asset-item-detailed" v-for="asset in selectedEmployee.assets" :key="asset.id">
+                      <!-- Asset Header -->
+                      <div class="asset-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <div class="asset-icon-detailed" :style="{ backgroundColor: asset.iconColor }">
+                              <i :class="asset.iconClass"></i>
                             </div>
-                            <!-- Desktop-only Collect button in header -->
-                            <div class="d-none d-md-block">
-                              <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
-                                <i class="fas fa-user-minus me-1"></i>Collect
-                              </button>
+                            <div class="asset-basic-info">
+                              <div class="asset-name-detailed">{{ asset.name }}</div>
+                              <div class="asset-meta-detailed">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
                             </div>
                           </div>
+                          <!-- Desktop-only Collect button in header -->
+                          <div class="d-none d-md-block">
+                            <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                              <i class="fas fa-user-minus me-1"></i>Collect
+                            </button>
+                          </div>
                         </div>
-                        
-                        <!-- Asset Assignment Details -->
-                        <div class="asset-assignment-details">
-                          <div class="row g-2">
-                            <!-- Assignment Status -->
-                            <div class="col-md-6">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assignment Status</label>
-                                <div class="info-value-compact">
-                                  <span class="badge badge-assigned">Currently Assigned</span>
-                                </div>
-                              </div>
+                      </div>
+                      
+                      <!-- Asset Assignment Details -->
+                      <div class="asset-assignment-details">
+                        <div class="row g-2">
+                          <!-- Assignment Reason -->
+                          <div class="col-md-6" v-if="asset.assignmentReason">
+                            <div class="info-item-compact">
+                              <label class="info-label-compact">Assignment Reason</label>
+                              <div class="info-value-compact">{{ asset.assignmentReason }}</div>
                             </div>
-                            
-                            <!-- Assigned To -->
-                            <div class="col-md-6">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assigned To</label>
-                                <div class="info-value-compact fw-medium">{{ selectedEmployee.name }}</div>
-                              </div>
+                          </div>
+                          
+                          <!-- Assignment Date -->
+                          <div class="col-md-6" v-if="asset.assignedDate">
+                            <div class="info-item-compact">
+                              <label class="info-label-compact">Assignment Date</label>
+                              <div class="info-value-compact">{{ formatDate(asset.assignedDate) }}</div>
                             </div>
-                            
-                            <!-- Assignment Reason -->
-                            <div class="col-md-6" v-if="asset.assignmentReason">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assignment Reason</label>
-                                <div class="info-value-compact">{{ asset.assignmentReason }}</div>
-                              </div>
+                          </div>
+                          
+                          <!-- Assigned By -->
+                          <div class="col-md-6" v-if="asset.assignedBy">
+                            <div class="info-item-compact">
+                              <label class="info-label-compact">Assigned By</label>
+                              <div class="info-value-compact">{{ asset.assignedBy }}</div>
                             </div>
-                            
-                            <!-- Assignment Date -->
-                            <div class="col-md-6" v-if="asset.assignedDate">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assignment Date</label>
-                                <div class="info-value-compact">{{ formatDate(asset.assignedDate) }}</div>
-                              </div>
-                            </div>
-                            
-                            <!-- Assigned By -->
-                            <div class="col-md-6" v-if="asset.assignedBy">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assigned By</label>
-                                <div class="info-value-compact">{{ asset.assignedBy }}</div>
-                              </div>
-                            </div>
-                            
-                            <!-- Divider for notes -->
-                            <div class="col-12" v-if="asset.assignmentNotes">
-                              <hr class="assignment-divider">
-                            </div>
-                            
-                            <!-- Assignment Notes -->
-                            <div class="col-12" v-if="asset.assignmentNotes">
-                              <div class="info-item-compact">
-                                <label class="info-label-compact">Assignment Notes</label>
-                                <div class="info-value-compact notes-display">
-                                  {{ asset.assignmentNotes }}
-                                </div>
+                          </div>
+                          
+                          <!-- Divider for notes -->
+                          <div class="col-12" v-if="asset.assignmentNotes">
+                            <hr class="assignment-divider">
+                          </div>
+                          
+                          <!-- Assignment Notes -->
+                          <div class="col-12" v-if="asset.assignmentNotes">
+                            <div class="info-item-compact">
+                              <label class="info-label-compact">Assignment Notes</label>
+                              <div class="info-value-compact notes-display">
+                                {{ asset.assignmentNotes }}
                               </div>
                             </div>
                           </div>
                         </div>
+                      </div>
 
-                        <!-- Asset Actions Footer (mobile only) -->
-                        <div class="asset-actions-footer border-top d-flex justify-content-end d-md-none">
-                          <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
-                            <i class="fas fa-user-minus me-1"></i>Collect
-                          </button>
-                        </div>
+                      <!-- Asset Actions Footer (mobile only) -->
+                      <div class="asset-actions-footer border-top d-flex justify-content-end d-md-none">
+                        <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                          <i class="fas fa-user-minus me-1"></i>Collect
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -632,21 +672,29 @@
               <button 
                 type="button" 
                 :class="[selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate']"
-                @click="showStatusConfirmation(selectedEmployee)"
+                :disabled="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'"
+                @click="handleStatusButtonClick(selectedEmployee)"
+                :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
               >
                 <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                 {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
+                <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge bg-warning ms-2 admin-badge">Admin</span>
               </button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-outline-secondary" @click="viewAssetHistory(selectedEmployee)">
+              <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedEmployee)">
                 <i class="fas fa-history me-1"></i>History
               </button>
             </div>
             
             <!-- Desktop: Original layout -->
             <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <div>
+                <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedEmployee)">
+                  <i class="fas fa-history me-1"></i>History
+                </button>
+              </div>
               <div class="d-flex gap-2">
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
                   <i class="fas fa-laptop me-1"></i>Issue Asset
                 </button>
@@ -656,13 +704,13 @@
                 <button 
                   type="button" 
                   :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate'" 
-                  @click="showStatusConfirmation(selectedEmployee)"
+                  :disabled="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'"
+                  @click="handleStatusButtonClick(selectedEmployee)"
+                  :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
                 >
                   <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                   {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
-                </button>
-                <button type="button" class="btn btn-outline-secondary" @click="viewAssetHistory(selectedEmployee)">
-                  <i class="fas fa-history me-1"></i>History
+                  <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge bg-warning ms-2 admin-badge">Admin</span>
                 </button>
               </div>
             </div>
@@ -747,6 +795,7 @@
       </div>
     </div>
 
+
     
   </div>
 </template>
@@ -756,6 +805,7 @@
   import { employeeService } from '@/services/employeeService'
   import { employeeApiService } from '@/services/employeeApi'
   import AppPagination from '@/components/pagination/AppPagination.vue'
+  import PaginationInfo from '@/components/pagination/PaginationInfo.vue'
   import BulkEmployeeUpload from '@/views/employees/BulkEmployeeUpload.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
   import ToastNotification from '@/components/common/ToastNotification.vue'
@@ -764,7 +814,7 @@
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination, BulkEmployeeUpload, SearchableDropdown, ToastNotification },
+    components: { AppPagination, PaginationInfo, BulkEmployeeUpload, SearchableDropdown, ToastNotification },
     setup() {
       const toastStore = useToastStore()
       useRouteToast()
@@ -779,7 +829,7 @@
         selectedAssetCount: null,
         selectedStatus: null,
         selectedSortBy: null,
-        sortAscending: true,
+        sortAscending: false,
         currentPage: 1,
         itemsPerPage: 10,
         selectedEmployee: null,
@@ -792,7 +842,8 @@
         assetHistory: [],
         showStatusModal: false,
         statusChangeEmployee: null,
-        isMobileView: window.innerWidth <= 576
+        isMobileView: window.innerWidth <= 576,
+        isExporting: false
       }
     },
     computed: {
@@ -904,8 +955,8 @@
     },
     created() {
       this.loadEmployees()
-      // Initialize default sort option
-      this.selectedSortBy = this.sortOptions.find(option => option.value === 'name') || null
+      // Initialize default sort option - sort by creation date descending
+      this.selectedSortBy = this.sortOptions.find(option => option.value === 'createdAt') || null
     },
     methods: {
       showStatusConfirmation({ title, message, details, isActivating, onConfirm, onCancel }) {
@@ -1108,7 +1159,31 @@
         // Navigate to edit employee page
         this.$router.push(`/app/employees/edit/${employee.id}`)
       },
+      handleStatusButtonClick(employee) {
+        // Check if trying to deactivate an admin employee
+        if (employee && employee.isAdmin && employee.status === 'active') {
+          this.toastStore.showToast(
+            'Cannot Deactivate Admin',
+            'Admin employees cannot be deactivated. Admin users must remain active.',
+            'error'
+          )
+          return
+        }
+        
+        // Proceed with normal status confirmation
+        this.showStatusConfirmation(employee)
+      },
       showStatusConfirmation(employee) {
+        // Check if trying to deactivate an admin employee
+        if (employee.isAdmin && employee.status === 'active') {
+          this.toastStore.showToast(
+            'Cannot Deactivate Admin',
+            'Admin employees cannot be deactivated. Admin users must remain active.',
+            'error'
+          )
+          return
+        }
+        
         this.statusChangeEmployee = employee
         this.showStatusModal = true
         // Close the employee detail modal
@@ -1175,7 +1250,6 @@
       },
       // Bulk upload event handlers
       handleBulkUploadSuccess(result) {
-        console.log('Bulk upload successful:', result)
         // Refresh the employee list
         this.loadEmployees()
       },
@@ -1221,6 +1295,7 @@
           const list = resp.data.employees || []
           const pagination = resp.data.pagination || {}
           
+          
           // Update pagination info from server
           this.totalEmployees = pagination.totalCount || 0
           this.serverTotalPages = pagination.totalPages || 1
@@ -1234,6 +1309,7 @@
             phone: e.phone || '',
             assetsCount: e.assignedAssetsCount || 0,
             status: (e.status || 'ACTIVE').toLowerCase(),
+            isAdmin: e.isAdmin || false, // Include admin status
             iconClass: `fas fa-user-circle ${colorClasses[idx % colorClasses.length]}`,
             dateOfBirth: e.dateOfBirth,
             address: e.address,
@@ -1348,6 +1424,41 @@
           'DAMAGED': 'badge-danger'
         }
         return classes[condition] || 'badge-secondary'
+      },
+      // Export employees to Excel
+      async exportEmployees() {
+        try {
+          this.isExporting = true
+          await employeeService.exportEmployeesToExcel()
+          this.toastStore.showToast(
+            'Export Successful',
+            'Employee data has been exported to Excel successfully!',
+            'success'
+          )
+        } catch (error) {
+          console.error('Error exporting employees:', error)
+          this.toastStore.showToast(
+            'Export Failed',
+            'Failed to export employee data. Please try again.',
+            'error'
+          )
+        } finally {
+          this.isExporting = false
+        }
+      },
+      // Open manage employees page
+      openManageEmployeesModal() {
+        this.$router.push('/app/employees/manage')
+      },
+      // Close dropdown helper
+      closeDropdown(dropdownId) {
+        const button = document.getElementById(dropdownId)
+        const dropdown = button?.nextElementSibling
+        
+        if (dropdown) {
+          dropdown.classList.remove('show')
+          button?.setAttribute('aria-expanded', 'false')
+        }
       }
     },
     mounted() {
@@ -1420,8 +1531,8 @@
     padding: 2rem !important;
 }
 
-/* Employee Info Sections - Compact Design */
-.employee-info-section-compact {
+/* Asset Info Sections - Compact Design (matching MaintenanceView) */
+.asset-info-section-compact {
   margin-bottom: 0.5rem;
   padding: 0.75rem;
   border: 1px solid #e9ecef;
@@ -1429,7 +1540,7 @@
   background-color: #fafafa;
 }
 
-.employee-info-section-compact .section-title-compact {
+.section-title-compact {
   font-size: 1.1rem !important;
   font-weight: 600 !important;
   color: #495057 !important;
@@ -1438,25 +1549,7 @@
   border-bottom: 2px solid #dee2e6;
 }
 
-.employee-info-section-compact .info-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.employee-info-section-compact .info-item-compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.employee-info-section-compact .info-item-compact:last-child {
-  border-bottom: none;
-}
-
-.employee-info-section-compact .info-label-compact {
+.info-label-compact {
   font-size: 0.95rem !important;
   font-weight: 600 !important;
   color: #495057 !important;
@@ -1465,32 +1558,14 @@
   flex-shrink: 0;
 }
 
-.employee-info-section-compact .info-value-compact {
+.info-value-compact {
   font-size: 1rem !important;
   font-weight: 500 !important;
   color: #212529 !important;
   margin-bottom: 0 !important;
-  text-align: right;
-  flex-grow: 1;
 }
 
-/* Detailed Assets Information */
-.assigned-assets-detailed {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.assigned-assets-detailed .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
+/* Detailed Assets Information - Header styling (removed duplicate) */
 
 
 /* Assets Chevron */
@@ -1890,7 +1965,7 @@
 }
 
 .employee-actions {
-    justify-content: flex-start !important;
+    justify-content: flex-end !important;
     gap: 0.25rem !important;
 }
 
@@ -1950,10 +2025,10 @@
   }
   #employeesTable th:nth-child(7),
   #employeesTable td:nth-child(7) { /* Actions */
-      width: 136px !important;
-      min-width: 136px !important;
-      max-width: 136px !important;
-      padding-right: 1.75rem !important; /* extra right gutter to mirror left */
+      width: 125px !important;
+      min-width: 125px !important;
+      max-width: 125px !important;
+      padding-right: 1.25rem !important; /* extra right gutter to mirror left */
       padding-left: 0.25rem !important;
   }
 
@@ -2047,6 +2122,26 @@
   color: white !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
+}
+
+/* Admin badge styling - make it stand out even when button is disabled */
+.admin-badge {
+  opacity: 1 !important;
+  background-color: #e91e63 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: 1px solid #e91e63 !important;
+  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3) !important;
+}
+
+/* Ensure admin badge is visible even in disabled buttons */
+button:disabled .admin-badge {
+  opacity: 1 !important;
+  background-color: #e91e63 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: 1px solid #e91e63 !important;
+  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3) !important;
 }
 
 /* Responsive Dropdown Improvements */
@@ -2208,7 +2303,7 @@
   }
 
   /* Asset details mobile adjustments */
-  .assigned-assets-detailed {
+  .section-title-compact {
     padding: 0.5rem !important;
     margin-top: 0.75rem !important;
   }

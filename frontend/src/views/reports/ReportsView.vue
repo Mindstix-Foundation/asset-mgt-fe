@@ -146,12 +146,18 @@
             
             <div class="row" v-if="showCustomDateRange">
               <div class="col-12 col-md-3 mb-3">
-                <label class="form-label">From Date</label>
-                <input type="date" class="form-control" v-model="customFilters.fromDate">
+                <DateInput
+                  id="from-date-filter"
+                  label="From Date"
+                  v-model="customFilters.fromDate"
+                />
               </div>
               <div class="col-12 col-md-3 mb-3">
-                <label class="form-label">To Date</label>
-                <input type="date" class="form-control" v-model="customFilters.toDate">
+                <DateInput
+                  id="to-date-filter"
+                  label="To Date"
+                  v-model="customFilters.toDate"
+                />
               </div>
             </div>
             
@@ -408,6 +414,7 @@ import { assetService } from '@/services/assetService'
 import { employeeService } from '@/services/employeeService'
 import { maintenanceService } from '@/services/maintenanceService'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
+import DateInput from '@/components/common/DateInput.vue'
 
 Chart.register(...registerables)
 

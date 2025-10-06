@@ -7,7 +7,8 @@
     "src/**/*_new.*",
     "src/**/*.backup.*",
     "src/**/*.old.*",
-    "src/views/assets/old_AssetsView.vue"
+    "src/views/assets/old_AssetsView.vue",
+    "src/components/HelloWorld.vue"
   ],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

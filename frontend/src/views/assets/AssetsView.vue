@@ -909,12 +909,12 @@
           <div class="modal-footer">
             <div class="d-flex justify-content-between w-100">
               <div>
-                <button type="button" class="btn btn-brown" @click="viewAssetHistory(selectedAsset!)">
+                <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedAsset!)">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-secondary" @click="closeDetailModal">Close</button>
+                <button type="button" class="btn btn-cancel" @click="closeDetailModal">Close</button>
                 <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-success" @click="issueAsset(selectedAsset!)">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
@@ -1024,23 +1024,15 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="retirementDate" class="form-label">Retirement Date <span class="text-danger">*</span></label>
-                          <input 
-                            type="date" 
-                            class="form-control" 
-                            :class="{ 
-                              'is-invalid': !retireFormValidation.retirementDate.isValid,
-                              'is-valid': retireFormValidation.retirementDate.isValid && retireFormData.retirementDate
-                            }"
-                            id="retirementDate" 
+                          <DateInput
+                            id="retirementDate"
+                            label="Retirement Date *"
                             v-model="retireFormData.retirementDate"
-                            @blur="validateRetirementDate"
-                            @change="validateRetirementDate"
+                            :error-message="!retireFormValidation.retirementDate.isValid ? retireFormValidation.retirementDate.message : ''"
                             required
-                          >
-                          <div v-if="!retireFormValidation.retirementDate.isValid" class="invalid-feedback">
-                            {{ retireFormValidation.retirementDate.message }}
-                          </div>
+                            @change="validateRetirementDate"
+                            @blur="validateRetirementDate"
+                          />
                         </div>
                       </div>
                       <div class="col-md-6 form-searchable-dropdown">
@@ -1240,19 +1232,14 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="reactivationDate" class="form-label">Reactivation Date <span class="text-danger">*</span></label>
-                          <input 
-                            type="date" 
-                            class="form-control" 
+                          <DateInput
                             id="reactivationDate"
+                            label="Reactivation Date *"
                             v-model="reactivateFormData.reactivationDate"
-                            :class="{ 'is-invalid': reactivateFormValidation.reactivationDate === 'invalid', 'is-valid': reactivateFormValidation.reactivationDate === 'valid' }"
+                            :error-message="reactivateFormValidation.reactivationDate === 'invalid' ? 'Please select a valid reactivation date.' : ''"
+                            help-text="Date when asset returns to active status"
                             required
-                          >
-                          <div class="form-text">Date when asset returns to active status</div>
-                          <div v-if="reactivateFormValidation.reactivationDate === 'invalid'" class="invalid-feedback">
-                            Please select a valid reactivation date.
-                          </div>
+                          />
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -1363,6 +1350,7 @@ import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.t
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
+import DateInput from '@/components/common/DateInput.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
 import AppPagination from '@/components/pagination/AppPagination.vue'
 

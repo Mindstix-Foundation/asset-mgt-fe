@@ -22,8 +22,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (credentials: LoginCredentials): Promise<LoginResult> => {
     try {
-      console.log('Attempting login with authService...')
-      
       // Use the authService for consistent authentication
       const data = await authService.login(credentials)
       
@@ -31,8 +29,6 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = data.user
         isAuthenticated.value = true
         token.value = data.access_token
-        
-        console.log('Login successful:', data.user)
         return { success: true, user: data.user }
       } else {
         return { success: false, error: 'Invalid response from server' }

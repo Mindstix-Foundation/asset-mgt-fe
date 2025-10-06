@@ -100,7 +100,9 @@
         <div class="col-12">
           <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
             <div class="status-indicator me-2"></div>
-            <small class="text-muted">Updated 1 Minute Ago</small>
+            <small class="text-muted">
+              Updated {{ lastStatsUpdated }}
+            </small>
           </div>
         </div>
       </div>
@@ -270,7 +272,7 @@
                     <i class="fas fa-edit"></i>
                   </button>
                   <button 
-                    v-if="maintenance.status === 'CANCELLED'"
+                    v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
                     class="btn btn-action btn-reschedule" 
                     @click="navigateToSchedule(maintenance)"
                     title="Reschedule Maintenance"
@@ -377,7 +379,7 @@
             <div class="row g-2 mt-2">
               <div class="col-12 col-md-6">
                 <div class="asset-info-section-compact h-100">
-                  <h6 class="section-title-compact"><i class="bi bi-currency-rupee me-2"></i>Cost Information</h6>
+                  <h6 class="section-title-compact">₹ Cost Information</h6>
                   <div class="row g-2">
                     <div class="col-md-6">
                       <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
@@ -413,7 +415,6 @@
           <div class="modal-footer">
             <!-- Mobile: 2x2 grid like EmployeesView -->
             <div class="mobile-actions-grid d-md-none w-100">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <button 
                 v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                 type="button" 
@@ -431,12 +432,16 @@
                 <i class="fas fa-edit me-1"></i>Edit
               </button>
               <button 
-                v-if="selectedMaintenance?.status === 'CANCELLED'"
+                v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                 type="button" 
                 class="btn btn-warning" 
                 @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
               >
                 <i class="fas fa-calendar-plus me-1"></i>Reschedule
+              </button>
+              <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-history" @click="openHistory">
+                <i class="fas fa-history me-1"></i>History
               </button>
               <button 
                 v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
@@ -450,11 +455,13 @@
 
             <!-- Desktop: aligned like EmployeesView -->
             <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-secondary" @click="openHistory">
+              <div>
+                <button type="button" class="btn btn-history" @click="openHistory">
                   <i class="fas fa-history me-1"></i>History
                 </button>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
                 <button 
                   v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                   type="button" 
@@ -472,7 +479,7 @@
                   <i class="fas fa-edit me-1"></i>Edit Maintenance
                 </button>
                 <button 
-                  v-if="selectedMaintenance?.status === 'CANCELLED'"
+                  v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                   type="button" 
                   class="btn btn-warning" 
                   @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
@@ -515,7 +522,7 @@
                 <div class="mb-3">
                   <label for="actualCost" class="form-label">Actual Cost <span class="text-danger">*</span></label>
                   <div class="input-group has-validation">
-                    <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                    <span class="input-group-text">₹</span>
                     <input 
                       type="number" 
                       :class="['form-control', { 'is-invalid': completeFormErrors.actualCost }]"
@@ -658,7 +665,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
 import { Modal } from 'bootstrap'
 import { maintenanceService } from '@/services/maintenanceService'
@@ -669,6 +676,7 @@ import AppPagination from '@/components/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 
 const router = useRouter()
+const route = useRoute()
 useRouteToast()
 const toastStore = useToastStore()
 
@@ -823,8 +831,7 @@ const sortOptions = ref<Item[]>([
 
       totalPages.value = pagination.totalPages || Math.ceil((pagination.total || 0) / itemsPerPage)
       
-      // Update stats after loading maintenance data
-      fetchStats()
+      // Stats are fetched separately and don't need to be updated on every data load
     } else {
       toastStore.showError('Error', 'Failed to fetch maintenance data')
     }
@@ -836,6 +843,10 @@ const sortOptions = ref<Item[]>([
     totalPages.value = 1
   } finally {
     isLoading.value = false
+    // Start stats refresh interval only after initial load
+    if (!statsInterval) {
+      statsInterval = window.setInterval(fetchStats, 60_000)
+    }
   }
 }
 
@@ -956,20 +967,40 @@ const cancelLoading = ref(false)
 // Stats interval for periodic updates
 let statsInterval: number | undefined
 
+// Last updated tracking for stats
+const lastStatsUpdated = ref('Loading...')
+let lastStatsUpdatedAt: number | null = null
+let statsTimestampInterval: number | undefined
+
 // Initialize data on component mount
-onMounted(() => {
-  fetchMaintenances()
-  fetchStats()
-  // Refresh every 1 minute
-  statsInterval = window.setInterval(fetchStats, 60_000)
+onMounted(async () => {
+  await fetchMaintenances()
+  // Fetch stats once after initial data load
+  await fetchStats()
   // Initialize default sort option
   selectedSortBy.value = sortOptions.value.find(o => o.value === sortBy.value) || null
+  
+  // Start timestamp update interval (every minute)
+  statsTimestampInterval = window.setInterval(updateStatsTimestampDisplay, 60_000)
+})
+
+// Watch for route changes to refresh stats when coming from form submissions
+watch(() => route.query.refreshStats, async (newValue) => {
+  if (newValue === 'true') {
+    await fetchStats()
+    // Remove the query parameter to prevent repeated refreshes
+    router.replace({ query: { ...route.query, refreshStats: undefined } })
+  }
 })
 
 onUnmounted(() => {
   if (statsInterval) {
     clearInterval(statsInterval)
     statsInterval = undefined
+  }
+  if (statsTimestampInterval) {
+    clearInterval(statsTimestampInterval)
+    statsTimestampInterval = undefined
   }
 })
 
@@ -985,36 +1016,45 @@ const statsData = reactive({
   cancelledPercent: 0
 })
 
+// Format relative time for stats timestamp
+function formatRelativeStatsUpdated(nowMs: number) {
+  if (!lastStatsUpdatedAt) return 'Just now'
+  const diffMs = Math.max(0, nowMs - lastStatsUpdatedAt)
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  if (diffMin <= 0) return 'Just now'
+  if (diffMin === 1) return '1 minute ago'
+  return `${diffMin} minutes ago`
+}
+
+// Update stats timestamp display
+function updateStatsTimestampDisplay() {
+  lastStatsUpdated.value = formatRelativeStatsUpdated(Date.now())
+}
+
 const fetchStats = async () => {
   try {
-    // Get all maintenance records to compute accurate stats
-    const response = await maintenanceService.getMaintenances({ page: 1, limit: 1000 })
+    // Use dedicated stats endpoint for efficient data retrieval
+    const response = await maintenanceService.getMaintenanceStats()
     
-    if (response.data && response.data.maintenances) {
-      const maintenances = response.data.maintenances
+    if (response.data) {
+      const { counts, percentages } = response.data
       
-      // Count by status
-      const counts = maintenances.reduce((acc, m) => {
-        acc.total++
-        if (m.status === "IN_PROGRESS") acc.underMaintenance++
-        if (m.status === "SCHEDULED") acc.scheduled++
-        if (m.status === "COMPLETED") acc.completed++
-        if (m.status === "CANCELLED") acc.cancelled++
-        return acc
-      }, { total: 0, underMaintenance: 0, scheduled: 0, completed: 0, cancelled: 0 })
-
-      // Update stats data
+      // Update stats data directly from API response
       statsData.underMaintenance = counts.underMaintenance
       statsData.scheduled = counts.scheduled
       statsData.completed = counts.completed
       statsData.cancelled = counts.cancelled
 
-      // Calculate percentages
-      const total = counts.total || 1
-      statsData.underMaintenancePercent = Math.round((counts.underMaintenance / total) * 100)
-      statsData.scheduledPercent = Math.round((counts.scheduled / total) * 100)
-      statsData.completedPercent = Math.round((counts.completed / total) * 100)
-      statsData.cancelledPercent = Math.round((counts.cancelled / total) * 100)
+      // Update percentages directly from API response
+      statsData.underMaintenancePercent = percentages.underMaintenancePercent
+      statsData.scheduledPercent = percentages.scheduledPercent
+      statsData.completedPercent = percentages.completedPercent
+      statsData.cancelledPercent = percentages.cancelledPercent
+
+      // Update timestamp
+      lastStatsUpdatedAt = Date.now()
+      updateStatsTimestampDisplay()
     }
   } catch (error) {
     console.error("Error fetching stats:", error)
@@ -1038,6 +1078,10 @@ const fetchStats = async () => {
     statsData.scheduledPercent = Math.round((counts.scheduled / total) * 100)
     statsData.completedPercent = Math.round((counts.completed / total) * 100)
     statsData.cancelledPercent = Math.round((counts.cancelled / total) * 100)
+
+    // Update timestamp even for fallback
+    lastStatsUpdatedAt = Date.now()
+    updateStatsTimestampDisplay()
   }
 }
 const stats = computed(() => statsData)
@@ -1085,10 +1129,8 @@ const toggleSortOrder = () => {
   fetchMaintenances()
 }
 
-// Ensure API fires whenever sort order changes (in case of event binding issues)
-watch(sortAscending, () => {
-  fetchMaintenances()
-})
+// Note: Removed watch(sortAscending) to prevent duplicate API calls
+// The toggleSortOrder function already handles the API call
 
 const clearFilters = () => {
   filters.search = ''
@@ -1299,6 +1341,9 @@ const completeMaintenance = async () => {
       const modal = Modal.getInstance(completeModal.value!)
       if (modal) modal.hide()
 
+      // Refresh stats after completing maintenance
+      await fetchStats()
+
       // Reset form
       completeForm.actualCost = ''
       completeForm.completionNotes = ''
@@ -1342,6 +1387,9 @@ const cancelMaintenance = async () => {
       toastStore.showSuccess('Success', `Maintenance cancelled successfully! Notes: ${cancelForm.cancelNotes}`)
       const modal = Modal.getInstance(cancelModal.value!)
       if (modal) modal.hide()
+
+      // Refresh stats after cancelling maintenance
+      await fetchStats()
 
       // Reset form
       cancelForm.cancelNotes = ''
@@ -1389,6 +1437,27 @@ const isHistoryExpanded = ref(true)
   transition: none !important;
   overflow: hidden; /* ensure perfect rounded corners */
   background-clip: padding-box; /* prevent background bleed under border */
+}
+
+/* Status Indicator */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: var(--secondary-green);
+  border-radius: 50%;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(33, 175, 101, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0);
+  }
 }
 
 /* Make inner content respect rounded corners */
@@ -1466,26 +1535,6 @@ const isHistoryExpanded = ref(true)
   background-color: var(--secondary-red) !important;
 }
 
-/* Status Indicator */
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  background-color: var(--secondary-green);
-  border-radius: 50%;
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(33, 175, 101, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0);
-  }
-}
 
 /* Badges */
 .badge {
