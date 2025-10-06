@@ -168,6 +168,8 @@
                   class="form-control"
                   :class="getFieldClass('username')"
                   placeholder="Enter username"
+                  name="username"
+                  autocomplete="username"
                   required
                   @input="clearFieldValidation('username')"
                 />
@@ -189,6 +191,7 @@
                     class="form-control"
                     :class="getFieldClass('password')"
                     placeholder="Enter password"
+                  name="password"
                     autocomplete="new-password"
                     required
                     @input="validatePassword"
@@ -245,6 +248,7 @@
                     class="form-control"
                     :class="getFieldClass('confirmPassword')"
                     placeholder="Confirm password"
+                  name="confirmPassword"
                     autocomplete="new-password"
                     required
                     @input="validatePasswordMatch"

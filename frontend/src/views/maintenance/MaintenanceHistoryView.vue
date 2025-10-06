@@ -114,14 +114,14 @@
             v-for="item in filteredHistory" 
             :key="item.id" 
             class="timeline-item" 
-            :class="`timeline-${item.status.toLowerCase().replace('_', '-')}`">
+            :class="`timeline-${item.status.toLowerCase().replaceAll('_', '-')}`">
             <div class="timeline-marker"></div>
             <div class="timeline-content compact">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
                   <h6 class="timeline-title mb-1">{{ item.description }}</h6>
                   <div class="timeline-meta">
-                    <span class="badge" :class="`badge-${item.status.toLowerCase().replace('_', '-')}`">{{ formatStatus(item.status) }}</span>
+                    <span class="badge" :class="`badge-${item.status.toLowerCase().replaceAll('_', '-')}`">{{ formatStatus(item.status) }}</span>
                     <span class="badge" :class="`badge-type-${item.maintenanceTypeName.toLowerCase()}`">{{ item.maintenanceTypeName }}</span>
                   </div>
                 </div>

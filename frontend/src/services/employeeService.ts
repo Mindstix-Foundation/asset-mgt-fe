@@ -214,8 +214,8 @@ class EmployeeService {
           ;(globalThis as any).crypto.getRandomValues(buf)
           return (buf[0] % 999) + 1
         }
-      } catch (_) {
-        // ignore and fallback
+      } catch (error) {
+        console.debug('generateEmployeeIdPreview: crypto.getRandomValues failed; using Math.random fallback', error)
       }
       return Math.floor(Math.random() * 999) + 1
     })()
