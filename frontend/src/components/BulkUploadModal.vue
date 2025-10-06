@@ -185,7 +185,13 @@
                 <span style="color: var(--primary-black);">Processing your file...</span>
               </div>
               <div class="progress">
-                <div class="progress-bar" role="progressbar" :style="{ width: progress + '%' , backgroundColor: 'var(--secondary-purple)'}" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"></div>
+                <progress 
+                  class="progress-bar" 
+                  :value="progress" 
+                  max="100"
+                  :style="{ width: progress + '%', backgroundColor: 'var(--secondary-purple)' }"
+                  aria-label="Upload progress"
+                ></progress>
               </div>
             </div>
           </div>
@@ -291,7 +297,7 @@ const downloadCsvTemplate = () => {
   link.download = `${props.entityName.toLowerCase()}_upload_template.csv`
   document.body.appendChild(link)
   link.click()
-  document.body.removeChild(link)
+  link.remove()
 }
 
 const downloadExcelTemplate = () => {
@@ -315,7 +321,7 @@ const downloadExcelTemplate = () => {
     link.download = `${props.entityName.toLowerCase()}_upload_template.xlsx`
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
   } catch (e) {
     console.warn('Excel template generation failed', e)
   }

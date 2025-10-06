@@ -187,63 +187,58 @@ class DashboardApiService {
   }
 
 
+  // Helper function to increment time ago string
+  private incrementTimeAgo(currentTimeAgo: string): string {
+    // Handle specific minute cases
+    const minuteMap: Record<string, string> = {
+      'Just now': '1 minute ago',
+      '1 minute ago': '2 minutes ago',
+      '2 minutes ago': '3 minutes ago',
+      '3 minutes ago': '4 minutes ago',
+      '4 minutes ago': '5 minutes ago',
+      '5 minutes ago': '6 minutes ago',
+      '6 minutes ago': '7 minutes ago',
+      '7 minutes ago': '8 minutes ago',
+      '8 minutes ago': '9 minutes ago',
+      '9 minutes ago': '10 minutes ago'
+    }
+
+    if (minuteMap[currentTimeAgo]) {
+      return minuteMap[currentTimeAgo]
+    }
+
+    // Handle generic minute pattern
+    const match = currentTimeAgo.match(/^(\d+) minutes ago$/)
+    if (match) {
+      const minutes = Number.parseInt(match[1])
+      if (minutes < 60) {
+        return `${minutes + 1} minutes ago`
+      }
+    }
+
+    // For hours, days, etc., keep the backend's timeAgo
+    return currentTimeAgo
+  }
+
+  // Helper function to update single activity time
+  private updateSingleActivityTime(activity: any): any {
+    const needsUpdate = activity.needsRealTimeUpdate || this.shouldUpdateActivityTime(activity.timeAgo)
+    
+    if (!needsUpdate) {
+      return activity
+    }
+
+    const newTimeAgo = this.incrementTimeAgo(activity.timeAgo)
+    
+    return {
+      ...activity,
+      timeAgo: newTimeAgo
+    }
+  }
+
   // Update time display for activities that need real-time updates
   updateActivityTimes(activities: any[]) {
-    return activities.map(activity => {
-      // Update activities that need real-time updates OR are recent enough (less than 1 hour)
-      const needsUpdate = activity.needsRealTimeUpdate || this.shouldUpdateActivityTime(activity.timeAgo)
-      if (needsUpdate) {
-        const currentTimeAgo = activity.timeAgo
-        
-        // Simple increment logic based on current timeAgo string
-        let newTimeAgo: string
-        
-        if (currentTimeAgo === 'Just now') {
-          newTimeAgo = '1 minute ago'
-        } else if (currentTimeAgo === '1 minute ago') {
-          newTimeAgo = '2 minutes ago'
-        } else if (currentTimeAgo === '2 minutes ago') {
-          newTimeAgo = '3 minutes ago'
-        } else if (currentTimeAgo === '3 minutes ago') {
-          newTimeAgo = '4 minutes ago'
-        } else if (currentTimeAgo === '4 minutes ago') {
-          newTimeAgo = '5 minutes ago'
-        } else if (currentTimeAgo === '5 minutes ago') {
-          newTimeAgo = '6 minutes ago'
-        } else if (currentTimeAgo === '6 minutes ago') {
-          newTimeAgo = '7 minutes ago'
-        } else if (currentTimeAgo === '7 minutes ago') {
-          newTimeAgo = '8 minutes ago'
-        } else if (currentTimeAgo === '8 minutes ago') {
-          newTimeAgo = '9 minutes ago'
-        } else if (currentTimeAgo === '9 minutes ago') {
-          newTimeAgo = '10 minutes ago'
-        } else if (currentTimeAgo.match(/^(\d+) minutes ago$/)) {
-          // Extract number and increment
-          const match = currentTimeAgo.match(/^(\d+) minutes ago$/)
-          if (match) {
-            const minutes = parseInt(match[1])
-            if (minutes < 60) { // Only update if less than 1 hour
-              newTimeAgo = `${minutes + 1} minutes ago`
-            } else {
-              newTimeAgo = currentTimeAgo // Keep as is if 1 hour or more
-            }
-          } else {
-            newTimeAgo = currentTimeAgo
-          }
-        } else {
-          // For hours, days, etc., keep the backend's timeAgo
-          newTimeAgo = currentTimeAgo
-        }
-        
-
-        return {
-          ...activity,
-          timeAgo: newTimeAgo
-        }
-      }
-      return activity
-    })
+    return activities.map(activity => this.updateSingleActivityTime(activity))
   }
 
   // Helper method to determine if an activity should be updated based on its timeAgo

@@ -24,8 +24,8 @@
 
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <div class="spinner-border text-primary">
+          <output class="visually-hidden">Loading...</output>
         </div>
         <p class="mt-3 text-muted">Loading notifications...</p>
       </div>

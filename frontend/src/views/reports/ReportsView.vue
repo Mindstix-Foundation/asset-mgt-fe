@@ -444,6 +444,7 @@ let realTimeUpdateId: number | undefined
 
 // Chart refs
 const assetDistributionChart = ref<HTMLCanvasElement>()
+const assetDistributionChartInstance = ref<any | null>(null)
 
 // Filters
 const customFilters = ref<ReportFilters>({
@@ -490,18 +491,18 @@ const toISODate = (val: any): string => {
       // Handle 'DD/MM/YYYY, HH:mm:ss'
       const m = val.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/)
       if (m) {
-        const day = parseInt(m[1], 10)
-        const month = parseInt(m[2], 10) - 1
-        const year = parseInt(m[3], 10)
-        const hh = parseInt(m[4] || '0', 10)
-        const mm = parseInt(m[5] || '0', 10)
-        const ss = parseInt(m[6] || '0', 10)
+        const day = Number.parseInt(m[1], 10)
+        const month = Number.parseInt(m[2], 10) - 1
+        const year = Number.parseInt(m[3], 10)
+        const hh = Number.parseInt(m[4] || '0', 10)
+        const mm = Number.parseInt(m[5] || '0', 10)
+        const ss = Number.parseInt(m[6] || '0', 10)
         const d = new Date(year, month, day, hh, mm, ss)
-        if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+        if (!Number.isNaN(d.getTime())) return d.toISOString().split('T')[0]
       }
     }
     const d = new Date(val)
-    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+    if (!Number.isNaN(d.getTime())) return d.toISOString().split('T')[0]
     return ''
   } catch { return '' }
 }
@@ -629,7 +630,7 @@ const loadAnalyticsData = async () => {
         id: activity.id,
         type: activity.type as any,
         description: activity.description,
-        timestamp: typeof activity.timestamp === 'string' ? new Date(activity.timestamp) : new Date(activity.timestamp),
+        timestamp: new Date(activity.timestamp),
         timeAgo: activity.timeAgo || 'Unknown', // Use the backend's timeAgo value
         needsRealTimeUpdate: activity.needsRealTimeUpdate || false,
         assetId: activity.assetId,
@@ -670,7 +671,7 @@ const initializeCharts = () => {
       const dataValues = analyticsData.value.assetDistribution.map(item => item.percentage)
       const backgroundColors = analyticsData.value.assetDistribution.map(item => resolvedColors[item.type] || '#94A3B8')
 
-      new Chart(ctx, {
+      const chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels,
@@ -705,6 +706,8 @@ const initializeCharts = () => {
           }
         }
       })
+      // Store the instance if you need to update or destroy it later
+      assetDistributionChartInstance.value = chart
     }
   }
 }
@@ -741,6 +744,57 @@ const handleQuickExport = async (reportType: string) => {
   }
 }
 
+// Helper function to build asset export parameters
+const buildAssetExportParams = (filters: any) => {
+  const params: any = {}
+  if (filters.assetType) params.assetType = filters.assetType
+  if (filters.assetStatus) params.status = filters.assetStatus
+  if (filters.fromDate) params.fromDate = filters.fromDate
+  if (filters.toDate) params.toDate = filters.toDate
+  return params
+}
+
+// Helper function to build employee export parameters
+const buildEmployeeExportParams = (filters: any) => {
+  const params: any = {}
+  if (filters.fromDate) params.fromDate = filters.fromDate
+  if (filters.toDate) params.toDate = filters.toDate
+  return params
+}
+
+// Helper function to build maintenance export parameters
+const buildMaintenanceExportParams = (filters: any) => {
+  const params: any = {
+    sortBy: 'id',
+    sortOrder: 'desc'
+  }
+  if (filters.assetType) params.assetType = filters.assetType
+  if (filters.fromDate) params.scheduledDateFrom = filters.fromDate
+  if (filters.toDate) params.scheduledDateTo = filters.toDate
+  return params
+}
+
+// Helper function to export assets
+const exportAssets = async (filters: any) => {
+  const params = buildAssetExportParams(filters)
+  await assetService.exportAssetsToExcel(params)
+  showNotification('Custom asset report exported successfully!', 'success')
+}
+
+// Helper function to export employees
+const exportEmployees = async (filters: any) => {
+  const params = buildEmployeeExportParams(filters)
+  await employeeService.exportEmployeesToExcel(params)
+  showNotification('Custom employee report exported successfully!', 'success')
+}
+
+// Helper function to export maintenance
+const exportMaintenance = async (filters: any) => {
+  const params = buildMaintenanceExportParams(filters)
+  await maintenanceService.exportMaintenanceToExcel(params)
+  showNotification('Custom completed maintenance report exported successfully!', 'success')
+}
+
 const handleCustomExport = async (format: string) => {
   try {
     isExporting.value = true
@@ -749,43 +803,18 @@ const handleCustomExport = async (format: string) => {
     const filters = { ...customFilters.value }
     delete filters.dateRange
     
-    switch (customFilters.value.reportType) {
-      case 'assets':
-        // Use the same asset export API as the Assets page with custom filters
-        const assetParams: any = {}
-        if (filters.assetType) assetParams.assetType = filters.assetType
-        if (filters.assetStatus) assetParams.status = filters.assetStatus
-        if (filters.fromDate) assetParams.fromDate = filters.fromDate
-        if (filters.toDate) assetParams.toDate = filters.toDate
-        
-        await assetService.exportAssetsToExcel(assetParams)
-        showNotification('Custom asset report exported successfully!', 'success')
-        break
-      case 'employees':
-        // Use the same employee export API as the Employees page with custom filters
-        const employeeParams: any = {}
-        if (filters.fromDate) employeeParams.fromDate = filters.fromDate
-        if (filters.toDate) employeeParams.toDate = filters.toDate
-        
-        await employeeService.exportEmployeesToExcel(employeeParams)
-        showNotification('Custom employee report exported successfully!', 'success')
-        break
-      case 'maintenance':
-        const maintenanceParams: any = {
-          sortBy: 'id',
-          sortOrder: 'desc'
-        }
-        if (filters.assetType) maintenanceParams.assetType = filters.assetType
-        if (filters.fromDate) maintenanceParams.scheduledDateFrom = filters.fromDate
-        if (filters.toDate) maintenanceParams.scheduledDateTo = filters.toDate
-        
-        await maintenanceService.exportMaintenanceToExcel(maintenanceParams)
-        showNotification('Custom completed maintenance report exported successfully!', 'success')
-        break
-      default:
-        throw new Error('Unknown report type')
+    const exportHandlers: Record<string, (filters: any) => Promise<void>> = {
+      assets: exportAssets,
+      employees: exportEmployees,
+      maintenance: exportMaintenance
+    }
+
+    const handler = exportHandlers[customFilters.value.reportType]
+    if (!handler) {
+      throw new Error('Unknown report type')
     }
     
+    await handler(filters)
     showPreviewModal.value = false
   } catch (error) {
     console.error('Error exporting custom report:', error)
@@ -796,93 +825,105 @@ const handleCustomExport = async (format: string) => {
   }
 }
 
+// Helper function to build common API parameters
+const buildApiParams = (filters: any, additionalParams: any = {}) => {
+  const params: any = { page: 1, limit: 5, ...additionalParams }
+  
+  if (filters.assetType) params.assetType = filters.assetType
+  if (filters.assetStatus) params.status = filters.assetStatus
+  if (filters.fromDate) params.fromDate = filters.fromDate
+  if (filters.toDate) params.toDate = filters.toDate
+  
+  return params
+}
+
+// Helper function to extract data and pagination from API response
+const extractResponseData = (response: any, dataKey: string) => {
+  const items = response.data?.[dataKey] || response[dataKey] || []
+  const pagination = response.data?.pagination || response.pagination || { totalCount: items.length }
+  return { items, pagination }
+}
+
+// Helper function to set preview data with common logic
+const setPreviewData = (data: any[], total: number) => {
+  previewData.value = data.slice(0, 5)
+  previewTotal.value = total
+}
+
+// Helper function to load assets preview data
+const loadAssetsPreview = async (filters: any) => {
+  const params = buildApiParams(filters)
+  const response = await assetService.getAssets(params)
+  const { items, pagination } = extractResponseData(response, 'assets')
+  const transformed = assetService.transformAssetsForDisplay(items)
+  setPreviewData(transformed, pagination.totalCount || pagination.total || transformed.length)
+}
+
+// Helper function to load employees preview data
+const loadEmployeesPreview = async (filters: any) => {
+  const params = buildApiParams(filters, { fromDate: filters.fromDate, toDate: filters.toDate })
+  const response = await employeeService.getEmployees(params)
+  const { items: employees, pagination } = extractResponseData(response, 'employees')
+  
+  const mapped = employees.map((e: any) => ({
+    employeeName: `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.employeeId,
+    email: e.email,
+    phoneNumber: e.phoneNumber || e.phone || '-',
+    status: e.status || 'ACTIVE',
+    totalAssetsAssigned: e.assignedAssetsCount || 0
+  }))
+  
+  setPreviewData(mapped, pagination.totalCount || pagination.total || mapped.length)
+}
+
+// Helper function to load maintenance preview data
+const loadMaintenancePreview = async (filters: any) => {
+  const params = buildApiParams(filters, {})
+  const response = await reportsApi.getReportPreview('maintenance', params)
+  const records = Array.isArray(response) ? response : (response.data || [])
+  
+  const transformed = records.map((record: any) => ({
+    id: record.maintenanceId || record.id,
+    maintenanceId: record.maintenanceId,
+    assetId: record.assetId || '-',
+    assetType: record.assetType || '-',
+    assetBrand: record.assetBrand || '-',
+    maintenanceType: record.maintenanceType || '-',
+    scheduledDate: record.scheduledDate,
+    status: record.status,
+    cost: record.cost || 0,
+    completedDate: record.completedDate || '-'
+  }))
+  
+  const total = Array.isArray(response) ? response.length : (response.total || transformed.length)
+  setPreviewData(transformed, total)
+}
+
+// Helper function to load default preview data
+const loadDefaultPreview = async (reportType: string, filters: any) => {
+  const response = await reportsApi.getReportPreview(reportType, filters)
+  const data = response.data || []
+  setPreviewData(data, response.total || data.length)
+}
+
 const loadPreviewData = async () => {
   try {
     isLoadingPreview.value = true
     const filters = { ...customFilters.value }
     delete filters.dateRange
-
     const reportType = customFilters.value.reportType || 'assets'
-    
 
-    switch (reportType) {
-      case 'assets': {
-        const params: any = {
-          page: 1,
-          limit: 5
-        }
-        if (filters.assetType) params.assetType = filters.assetType
-        if (filters.assetStatus) params.status = filters.assetStatus
-        if (filters.fromDate) params.fromDate = filters.fromDate
-        if (filters.toDate) params.toDate = filters.toDate
+    const previewLoaders: Record<string, (filters: any) => Promise<void>> = {
+      assets: loadAssetsPreview,
+      employees: loadEmployeesPreview,
+      maintenance: loadMaintenancePreview
+    }
 
-        const listRes = await assetService.getAssets(params)
-        const items = (listRes as any).data?.assets || (listRes as any).assets || []
-        const pagination = (listRes as any).data?.pagination || (listRes as any).pagination || { totalCount: items.length }
-        const transformed = assetService.transformAssetsForDisplay(items)
-        previewData.value = transformed.slice(0, 5)
-        previewTotal.value = pagination.totalCount || pagination.total || transformed.length
-        break
-      }
-      case 'employees': {
-        const params: any = {
-          page: 1,
-          limit: 5
-        }
-        if (filters.fromDate) params.fromDate = filters.fromDate
-        if (filters.toDate) params.toDate = filters.toDate
-
-        const listRes = await employeeService.getEmployees(params)
-        const employees = (listRes as any).data?.employees || (listRes as any).employees || []
-        const pagination = (listRes as any).data?.pagination || (listRes as any).pagination || { totalCount: employees.length }
-
-        // Map to preview columns structure
-        const mapped = employees.map((e: any) => ({
-          employeeName: `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.employeeId,
-          email: e.email,
-          phoneNumber: e.phoneNumber || e.phone || '-',
-          status: e.status || 'ACTIVE',
-          totalAssetsAssigned: e.assignedAssetsCount || 0
-        }))
-        previewData.value = mapped.slice(0, 5)
-        previewTotal.value = pagination.totalCount || pagination.total || mapped.length
-        break
-      }
-      case 'maintenance': {
-        // Use the reports API to get completed maintenance records only
-        const params: any = {}
-        if (filters.assetType) params.assetType = filters.assetType
-        if (filters.fromDate) params.fromDate = filters.fromDate
-        if (filters.toDate) params.toDate = filters.toDate
-
-        const response = await reportsApi.getReportPreview('maintenance', params)
-        // The response is directly an array, not wrapped in a data property
-        const records = Array.isArray(response) ? response : (response.data || [])
-        
-        // Transform the data to match preview structure
-        const transformed = records.map((record: any) => ({
-          id: record.maintenanceId || record.id,
-          maintenanceId: record.maintenanceId,
-          assetId: record.assetId || '-',
-          assetType: record.assetType || '-',
-          assetBrand: record.assetBrand || '-',
-          maintenanceType: record.maintenanceType || '-',
-          scheduledDate: record.scheduledDate,
-          status: record.status,
-          cost: record.cost || 0,
-          completedDate: record.completedDate || '-'
-        }))
-
-        previewData.value = transformed.slice(0, 5)
-        previewTotal.value = (Array.isArray(response) ? response.length : (response.total || transformed.length))
-        break
-      }
-      default: {
-        // Fallback to reports API
-        const response = await reportsApi.getReportPreview(reportType, filters)
-        previewData.value = (response.data || []).slice(0, 5)
-        previewTotal.value = response.total || (response.data || []).length
-      }
+    const loader = previewLoaders[reportType]
+    if (loader) {
+      await loader(filters)
+    } else {
+      await loadDefaultPreview(reportType, filters)
     }
   } catch (error) {
     console.error('Error loading preview data:', error)
@@ -1068,7 +1109,7 @@ const formatCellValue = (value: any, type?: string): string => {
       try {
         if (!value) return '-'
         const d = typeof value === 'string' ? new Date(value) : value
-        if (isNaN(d?.getTime?.())) return '-'
+        if (Number.isNaN(d?.getTime?.())) return '-'
         return d.toLocaleDateString()
       } catch {
         return '-'

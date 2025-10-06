@@ -106,7 +106,7 @@ export interface AssetHistoryResponse {
 }
 
 class EmployeeApiService {
-  private baseURL = '/employees'
+  private readonly baseURL = '/employees'
 
   // Get all employees with filtering
   async getEmployees(query?: EmployeeQueryDto): Promise<EmployeeListResponse> {
@@ -239,7 +239,10 @@ class EmployeeApiService {
           if (v !== undefined && v !== null && v !== '') query.append(k, String(v))
         })
       }
-      const response = await apiClient.get(`${this.baseURL}/${employeeId}/asset-events${query.toString() ? `?${query.toString()}` : ''}`)
+      const queryString = query.toString()
+      const basePath = `${this.baseURL}/${employeeId}/asset-events`
+      const url = queryString ? `${basePath}?${queryString}` : basePath
+      const response = await apiClient.get(url)
       return response.data
     } catch (error: any) {
       console.error('Error fetching asset events:', error)

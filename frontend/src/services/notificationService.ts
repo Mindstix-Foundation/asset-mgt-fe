@@ -29,7 +29,7 @@ export interface MarkAllAsReadResponse {
 }
 
 class NotificationService {
-  private baseUrl = '/notifications';
+  private readonly baseUrl = '/notifications';
 
   async getNotifications(): Promise<Notification[]> {
     try {

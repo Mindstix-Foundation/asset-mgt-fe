@@ -19,7 +19,8 @@
               <div class="col-6">
                 <div class="d-flex gap-1 w-100 justify-content-center">
                   <!-- View Toggle -->
-                  <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                  <fieldset class="btn-group flex-shrink-0">
+                    <legend class="visually-hidden">View toggle</legend>
                     <button 
                       :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
                       @click="switchToListView"
@@ -34,7 +35,7 @@
                     >
                       <i class="fas fa-th-large"></i>
                     </button>
-                  </div>
+                  </fieldset>
                 </div>
               </div>
               <div class="col-6">
@@ -88,7 +89,8 @@
               <div class="col-md-12 col-lg-auto">
                 <div class="d-flex gap-2 w-100">
                   <!-- View Toggle -->
-                  <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                  <fieldset class="btn-group flex-shrink-0">
+                    <legend class="visually-hidden">View toggle</legend>
                     <button 
                       :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
                       @click="switchToListView"
@@ -103,7 +105,7 @@
                     >
                       <i class="fas fa-th-large"></i>
                     </button>
-                  </div>
+                  </fieldset>
                   
                   <!-- More Actions Dropdown -->
                   <div class="dropdown flex-fill">
@@ -151,10 +153,11 @@
         <div class="row align-items-end">
           <!-- Search Employees -->
           <div class="col-12 col-lg-7 mb-3">
-            <label class="form-label">Search Employees</label>
+            <label class="form-label" for="employees-search">Search Employees</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input 
+                id="employees-search"
                 type="text" 
                 class="form-control" 
                 v-model="searchTerm"
@@ -611,7 +614,7 @@
                           <!-- Assignment Reason -->
                           <div class="col-md-6" v-if="asset.assignmentReason">
                             <div class="info-item-compact">
-                              <label class="info-label-compact">Assignment Reason</label>
+                      <span class="info-label-compact">Assignment Reason</span>
                               <div class="info-value-compact">{{ asset.assignmentReason }}</div>
                             </div>
                           </div>
@@ -619,7 +622,7 @@
                           <!-- Assignment Date -->
                           <div class="col-md-6" v-if="asset.assignedDate">
                             <div class="info-item-compact">
-                              <label class="info-label-compact">Assignment Date</label>
+                      <span class="info-label-compact">Assignment Date</span>
                               <div class="info-value-compact">{{ formatDate(asset.assignedDate) }}</div>
                             </div>
                           </div>
@@ -627,7 +630,7 @@
                           <!-- Assigned By -->
                           <div class="col-md-6" v-if="asset.assignedBy">
                             <div class="info-item-compact">
-                              <label class="info-label-compact">Assigned By</label>
+                      <span class="info-label-compact">Assigned By</span>
                               <div class="info-value-compact">{{ asset.assignedBy }}</div>
                             </div>
                           </div>
@@ -640,7 +643,7 @@
                           <!-- Assignment Notes -->
                           <div class="col-12" v-if="asset.assignmentNotes">
                             <div class="info-item-compact">
-                              <label class="info-label-compact">Assignment Notes</label>
+                      <span class="info-label-compact">Assignment Notes</span>
                               <div class="info-value-compact notes-display">
                                 {{ asset.assignmentNotes }}
                               </div>
@@ -889,44 +892,14 @@
         return { length: this.totalEmployees }
       },
       visiblePages() {
-        const pages = []
         const total = this.totalPages
         const current = this.currentPage
         
         if (total <= 7) {
-          // If 7 or fewer pages, show all
-          for (let i = 1; i <= total; i++) {
-            pages.push(i)
-          }
-        } else {
-          // Always show first page
-          pages.push(1)
-          
-          if (current <= 4) {
-            // Near beginning: 1 2 3 4 5 ... total
-            for (let i = 2; i <= 5; i++) {
-              pages.push(i)
-            }
-            pages.push('...')
-            pages.push(total)
-          } else if (current >= total - 3) {
-            // Near end: 1 ... (total-4) (total-3) (total-2) (total-1) total
-            pages.push('...')
-            for (let i = total - 4; i <= total; i++) {
-              pages.push(i)
-            }
-          } else {
-            // Middle: 1 ... (current-1) current (current+1) ... total
-            pages.push('...')
-            for (let i = current - 1; i <= current + 1; i++) {
-              pages.push(i)
-            }
-            pages.push('...')
-            pages.push(total)
-          }
+          return this.generateAllPages(total)
         }
         
-        return pages
+        return this.generatePaginationPages(total, current)
       },
       paginationInfo() {
         const total = this.totalEmployees
@@ -935,23 +908,7 @@
         
         return { start, end, total }
       },
-      visiblePages() {
-        const pages = []
-        // Show fewer pages on mobile to prevent overflow
-        const maxVisible = this.isMobileView ? 3 : 5
-        let start = Math.max(1, this.currentPage - Math.floor(maxVisible / 2))
-        let end = Math.min(this.totalPages, start + maxVisible - 1)
-
-        if (end - start + 1 < maxVisible) {
-          start = Math.max(1, end - maxVisible + 1)
-        }
-
-        for (let i = start; i <= end; i++) {
-          pages.push(i)
-        }
-
-        return pages
-      },
+      // visiblePages is defined above; keep single source of truth
     },
     created() {
       this.loadEmployees()
@@ -959,7 +916,7 @@
       this.selectedSortBy = this.sortOptions.find(option => option.value === 'createdAt') || null
     },
     methods: {
-      showStatusConfirmation({ title, message, details, isActivating, onConfirm, onCancel }) {
+      showStatusConfirmationModal({ title, message, details, isActivating, onConfirm, onCancel }) {
         const html = `
           <div class="modal fade" id="empStatusConfirm" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -1171,7 +1128,7 @@
         }
         
         // Proceed with normal status confirmation
-        this.showStatusConfirmation(employee)
+        this.showStatusConfirmationModal(employee)
       },
       showStatusConfirmation(employee) {
         // Check if trying to deactivate an admin employee
@@ -1459,6 +1416,43 @@
           dropdown.classList.remove('show')
           button?.setAttribute('aria-expanded', 'false')
         }
+      },
+      // Helper method to generate all pages when total <= 7
+      generateAllPages(total) {
+        const pages = []
+        for (let i = 1; i <= total; i++) {
+          pages.push(i)
+        }
+        return pages
+      },
+      // Helper method to generate pagination pages with ellipsis
+      generatePaginationPages(total, current) {
+        const pages = [1]
+        
+        if (current <= 4) {
+          // Near beginning: 1 2 3 4 5 ... total
+          this.addPageRange(pages, 2, 5)
+          pages.push('...')
+          pages.push(total)
+        } else if (current >= total - 3) {
+          // Near end: 1 ... (total-4) (total-3) (total-2) (total-1) total
+          pages.push('...')
+          this.addPageRange(pages, total - 4, total)
+        } else {
+          // Middle: 1 ... (current-1) current (current+1) ... total
+          pages.push('...')
+          this.addPageRange(pages, current - 1, current + 1)
+          pages.push('...')
+          pages.push(total)
+        }
+        
+        return pages
+      },
+      // Helper method to add a range of pages
+      addPageRange(pages, start, end) {
+        for (let i = start; i <= end; i++) {
+          pages.push(i)
+        }
       }
     },
     mounted() {
@@ -1682,14 +1676,7 @@
   border: 1px solid #e9ecef;
 }
 
-/* Assets List Styling (unchanged with minor tweaks) */
-.assets-list { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }
-.asset-item { background-color: var(--primary-light-gray) !important; border: 1px solid var(--element-gray) !important; border-radius: 0.5rem !important; padding: 1rem !important; }
-.asset-icon { width: 40px !important; height: 40px !important; border-radius: 0.5rem !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-right: 1rem !important; flex-shrink: 0 !important; }
-.asset-icon i { color: white !important; font-size: 1.1rem !important; }
-.asset-details { min-width: 0 !important; }
-.asset-name { color: var(--primary-black) !important; font-size: 0.9rem !important; font-weight: 600 !important; margin-bottom: 0.25rem !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
-.asset-meta { color: var(--primary-mid-gray) !important; font-size: 0.75rem !important; font-weight: 500 !important; }
+/* Assets List Styling (moved to consolidated section below) */
 
 /* Keep actions area tidy */
 .employee-actions-footer { 
@@ -1697,12 +1684,7 @@
   background-color: var(--primary-white) !important; 
 }
 
-/* Filter dropdown styling */
-.filter-dropdown {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
-}
+/* Filter dropdown styling moved to responsive section */
 
 @keyframes slideDown {
   from {
@@ -1715,17 +1697,7 @@
   }
 }
 
-/* Active filter button styling */
-.btn.active {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: white;
-}
-
-.btn.active:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
-}
+/* Active filter button styling kept later to avoid duplication */
 
 /* Form styling consistency */
 :deep(.form-label) {
@@ -1868,31 +1840,24 @@
     border-radius: 0.375rem !important;
 }
 
-.badge-info {
-    background-color: var(--secondary-purple) !important;
-    color: white !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    padding: 0.35rem 0.65rem !important;
-    border-radius: 0.375rem !important;
-}
+/* .badge-info earlier variant removed to avoid duplication. */
 
 
 /* Assets List Styling */
-.assets-list {
+.assets-list /* consolidated */ {
     display: flex !important;
     flex-direction: column !important;
     gap: 0.75rem !important;
 }
 
-.asset-item {
+.asset-item /* consolidated */ {
     background-color: var(--primary-light-gray) !important;
     border: 1px solid var(--element-gray) !important;
     border-radius: 0.5rem !important;
     padding: 1rem !important;
 }
 
-.asset-icon {
+.asset-icon /* consolidated */ {
     width: 40px !important;
     height: 40px !important;
     border-radius: 0.5rem !important;
@@ -1903,16 +1868,16 @@
     flex-shrink: 0 !important;
 }
 
-.asset-icon i {
+.asset-icon i /* consolidated */ {
     color: white !important;
     font-size: 1.1rem !important;
 }
 
-.asset-details {
+.asset-details /* consolidated */ {
     min-width: 0 !important;
 }
 
-.asset-name {
+.asset-name /* consolidated */ {
     color: var(--primary-black) !important;
     font-size: 0.9rem !important;
     font-weight: 600 !important;
@@ -1922,7 +1887,7 @@
     text-overflow: ellipsis !important;
 }
 
-.asset-meta {
+.asset-meta /* consolidated */ {
     color: var(--primary-mid-gray) !important;
     font-size: 0.75rem !important;
     font-weight: 500 !important;
@@ -2295,11 +2260,15 @@ button:disabled .admin-badge {
   
   .employee-info-section-compact .info-label-compact {
     font-size: 0.85rem !important;
-    min-width: 100px !important;
+    min-width: unset !important;
+    margin-bottom: 0.25rem !important; /* merged from duplicate selector */
   }
   
   .employee-info-section-compact .info-value-compact {
     font-size: 0.9rem !important;
+    text-align: left !important; /* merged from duplicate selector */
+    word-break: break-word !important; /* merged from duplicate selector */
+    overflow-wrap: break-word !important; /* merged from duplicate selector */
   }
 
   /* Asset details mobile adjustments */
@@ -2354,22 +2323,13 @@ button:disabled .admin-badge {
   }
 
   /* Better text handling on mobile */
-  .employee-info-section-compact .info-value-compact {
-    text-align: left !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-  }
-  
   .employee-info-section-compact .info-item-compact {
     flex-direction: column !important;
     align-items: flex-start !important;
     padding: 0.5rem 0 !important;
   }
   
-  .employee-info-section-compact .info-label-compact {
-    min-width: unset !important;
-    margin-bottom: 0.25rem !important;
-  }
+  /* duplicate selector removed; override merged above */
 
   /* 2x2 buttons grid for mobile footer */
   .mobile-actions-grid {

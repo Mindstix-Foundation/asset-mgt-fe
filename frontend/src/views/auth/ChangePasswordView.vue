@@ -155,7 +155,7 @@
               class="btn btn-modern btn-primary"
               :disabled="isLoading || !isFormValid"
             >
-              <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
               <i v-else class="fas fa-key me-2"></i>
               Change Password
             </button>

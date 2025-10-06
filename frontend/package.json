@@ -16,8 +16,8 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "sonar": "sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_bd07d55d92ba577e4e534573a7b884a489bca700 -Dsonar.projectKey=TrackStix-Frontend -Dsonar.projectName=\"TrackStix Frontend\"",
-    "sonar:coverage": "npm run test:unit -- --coverage && sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_bd07d55d92ba577e4e534573a7b884a489bca700 -Dsonar.projectKey=TrackStix-Frontend -Dsonar.projectName=\"TrackStix Frontend\""
+    "sonar": "sonar-scanner",
+    "sonar:coverage": "npm run test:unit -- --coverage && sonar-scanner"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.1",

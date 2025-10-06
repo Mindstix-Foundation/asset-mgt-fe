@@ -25,7 +25,7 @@ function parseDdMmYyyy(datePart: string, timePart?: string): Date | null {
 
 export function parseApiDate(raw: string | Date | undefined | null): Date | null {
   if (!raw) return null
-  if (raw instanceof Date) return isNaN(raw.getTime()) ? null : raw
+  if (raw instanceof Date) return Number.isNaN(raw.getTime()) ? null : raw
 
   const str = String(raw).trim()
   // Try exact pattern: dd/MM/yyyy[, HH:mm:ss]
@@ -33,12 +33,12 @@ export function parseApiDate(raw: string | Date | undefined | null): Date | null
   const parts = str.split(',').map(s => s.trim())
   if (parts[0] && parts[0].includes('/') && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(parts[0])) {
     const date = parseDdMmYyyy(parts[0], parts[1])
-    if (date && !isNaN(date.getTime())) return date
+    if (date && !Number.isNaN(date.getTime())) return date
   }
 
   // Fallback to native parsing (handles ISO 8601)
   const native = new Date(str)
-  return isNaN(native.getTime()) ? null : native
+  return Number.isNaN(native.getTime()) ? null : native
 }
 
 export function formatDateOnly(raw: string | Date | undefined | null, locale: string = 'en-US'): string {

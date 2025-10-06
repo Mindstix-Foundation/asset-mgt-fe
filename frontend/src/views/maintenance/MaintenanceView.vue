@@ -112,10 +112,11 @@
         <div class="row align-items-end">
           <!-- Search -->
           <div class="col-12 col-lg-7 mb-3">
-            <label class="form-label">Search Maintenance</label>
+            <label class="form-label" for="mv-search">Search Maintenance</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input 
+                id="mv-search"
                 type="text" 
                 class="form-control" 
                 v-model="filters.search"
@@ -199,10 +200,10 @@
 
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border text-primary">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-2 text-muted">Loading maintenance records...</p>
+        <output class="mt-2 text-muted">Loading maintenance records...</output>
       </div>
 
       <!-- Maintenance Table -->
@@ -799,7 +800,7 @@ const sortOptions = ref<Item[]>([
     if (response.data) {
       // Transform API data to match local interface
       maintenanceData.value = response.data.maintenances.map(maintenance => ({
-        id: parseInt(maintenance.id),
+        id: Number.parseInt(maintenance.id),
         assetId: maintenance.assetId,
         assetName: maintenance.assetName,
         assetType: '', // Not provided in API response
@@ -925,10 +926,10 @@ const validateCompleteForm = () => {
   }
   
   // Convert to number for validation
-  const actualCostValue = typeof actualCost === 'number' ? actualCost : parseFloat(String(actualCost))
+  const actualCostValue = typeof actualCost === 'number' ? actualCost : Number.parseFloat(String(actualCost))
   
   // Check if it's a valid number
-  if (isNaN(actualCostValue)) {
+  if (Number.isNaN(actualCostValue)) {
     completeFormErrors.actualCost = 'Please enter a valid number'
     isValid = false
   } else if (actualCostValue <= 0) {
@@ -1215,7 +1216,7 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
     if (response.data && response.data.maintenanceHistory) {
       // Transform the history data to match our local interface
       maintenanceHistory.value = response.data.maintenanceHistory.map(history => ({
-        id: parseInt(history.id),
+        id: Number.parseInt(history.id),
         assetId: history.assetId,
         assetName: history.assetName,
         assetType: '', 
@@ -1229,11 +1230,15 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
         vendorName: history.vendorName || null,
         assignedTo: history.assignedTo || 'Not Assigned',
         scheduledDate: history.scheduledDate,
-        cost: history.actualCost 
-          ? `₹${history.actualCost.toFixed(2)}` 
-          : history.estimatedCost
-            ? `₹${history.estimatedCost.toFixed(2)}`
-            : '₹0.00',
+        cost: (() => {
+          if (history.actualCost) {
+            return `₹${history.actualCost.toFixed(2)}`
+          }
+          if (history.estimatedCost) {
+            return `₹${history.estimatedCost.toFixed(2)}`
+          }
+          return '₹0.00'
+        })(),
         costType: history.actualCost ? 'Actual' : 'Estimated',
         estimatedCost: history.estimatedCost || null,
         actualCost: history.actualCost || null,
@@ -1321,7 +1326,7 @@ const completeMaintenance = async () => {
     const response = await maintenanceService.completeMaintenance(
       selectedMaintenance.value.id.toString(),
       {
-        actualCost: parseFloat(completeForm.actualCost),
+        actualCost: Number.parseFloat(completeForm.actualCost),
         completionNotes: completeForm.completionNotes || undefined
       }
     )
@@ -1331,13 +1336,15 @@ const completeMaintenance = async () => {
       const row = maintenanceData.value.find(m => m.id === selectedMaintenance.value!.id)
       if (row) {
         row.status = 'COMPLETED'
-        row.cost = `₹${parseFloat(completeForm.actualCost).toFixed(2)}`
+        row.cost = `₹${Number.parseFloat(completeForm.actualCost).toFixed(2)}`
         row.costType = 'Actual'
-        row.actualCost = parseFloat(completeForm.actualCost)
+        row.actualCost = Number.parseFloat(completeForm.actualCost)
         row.completionNotes = completeForm.completionNotes || null
       }
 
-      toastStore.showSuccess('Success', `Maintenance completed successfully! Actual Cost: ₹${parseFloat(completeForm.actualCost).toFixed(2)}${completeForm.completionNotes ? ' Notes: ' + completeForm.completionNotes : ''}`)
+      const actual = Number.parseFloat(completeForm.actualCost)
+      const noteSuffix = completeForm.completionNotes ? ` Notes: ${completeForm.completionNotes}` : ''
+      toastStore.showSuccess('Success', `Maintenance completed successfully! Actual Cost: ₹${actual.toFixed(2)}${noteSuffix}`)
       const modal = Modal.getInstance(completeModal.value!)
       if (modal) modal.hide()
 
@@ -1437,6 +1444,7 @@ const isHistoryExpanded = ref(true)
   transition: none !important;
   overflow: hidden; /* ensure perfect rounded corners */
   background-clip: padding-box; /* prevent background bleed under border */
+  pointer-events: none;
 }
 
 /* Status Indicator */
@@ -1478,9 +1486,6 @@ const isHistoryExpanded = ref(true)
 }
 
 /* Prevent hover interactions */
-.stats-card-modern {
-  pointer-events: none;
-}
 
 /* Force same visuals on interactive states */
 .stats-card-modern,
@@ -2016,114 +2021,7 @@ const isHistoryExpanded = ref(true)
 }
 
 /* Maintenance History Timeline */
-.maintenance-history-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-}
-
-.history-timeline {
-  position: relative;
-  padding-left: 2rem;
-}
-
-.history-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--element-gray);
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
-}
-
-.timeline-item:last-child {
-  margin-bottom: 0;
-}
-
-.timeline-marker {
-  position: absolute;
-  left: -2.25rem;
-  top: 0.25rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-white);
-  background: var(--primary-mid-gray);
-}
-
-.timeline-scheduled .timeline-marker {
-  background: var(--secondary-purple);
-}
-
-.timeline-in-progress .timeline-marker {
-  background: var(--secondary-orange);
-}
-
-.timeline-completed .timeline-marker {
-  background: var(--secondary-green);
-}
-
-.timeline-cancelled .timeline-marker {
-  background: var(--secondary-red);
-}
-
-.timeline-content {
-  background: var(--primary-light-gray);
-  border: 1px solid var(--element-gray);
-  border-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.timeline-title {
-  color: var(--primary-black);
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.timeline-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.timeline-meta .badge {
-  font-size: 0.7rem;
-}
-
-.timeline-date {
-  font-size: 0.8rem;
-  color: var(--primary-mid-gray);
-  font-weight: 500;
-}
-
-.timeline-details {
-  margin-top: 0.75rem;
-  font-size: 0.85rem;
-}
-
-.timeline-details .text-muted {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  font-weight: 500;
-}
-
-.timeline-notes {
-  font-style: italic;
-  color: var(--primary-dark-gray);
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
+/* Duplicate timeline styles removed (see definitions above at lines 2026-2243) */
 
 /* Maintenance History Section (Collapsible) */
 .maintenance-history-section {

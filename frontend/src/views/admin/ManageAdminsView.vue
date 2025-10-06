@@ -36,8 +36,8 @@
           <div class="card-body p-0">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-2 text-muted">Loading admins...</p>
             </div>
@@ -97,7 +97,7 @@
                       </span>
                     </td>
                     <td class="text-center">
-                      <div class="btn-group" role="group">
+                      <div class="btn-group" aria-label="Admin actions">
                         
                         <button
                           v-if="admin.id !== currentUserId"
@@ -278,7 +278,8 @@
               class="btn btn-modern btn-primary"
               :disabled="isSubmitting"
             >
-              <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+              <output v-if="isSubmitting" class="visually-hidden">Submitting…</output>
               <i v-else class="fas fa-user-plus me-2"></i>
               Add Admin
             </button>
@@ -313,7 +314,8 @@
               class="btn btn-modern btn-danger"
               :disabled="isSubmitting"
             >
-              <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+              <output v-if="isSubmitting" class="visually-hidden">Processing…</output>
               <i v-else class="fas fa-trash me-2"></i>
               Remove Admin
             </button>
@@ -472,7 +474,7 @@ const validatePassword = () => {
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /\d/.test(password),
-    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password)
   }
   
   // Clear password error if all validations pass
@@ -564,7 +566,6 @@ const handleAddAdmin = async () => {
     errors.value = {}
 
     // Validate all required fields
-    const requiredFields = ['employeeId', 'username', 'password', 'confirmPassword']
     let isFormValid = true
 
     // Check if employee is selected
@@ -724,7 +725,7 @@ const formatDate = (dateString: string) => {
   try {
     // Try native parse first (handles ISO and many standard formats)
     const native = new Date(dateString)
-    if (!isNaN(native.getTime())) {
+    if (!Number.isNaN(native.getTime())) {
       return native.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -735,12 +736,12 @@ const formatDate = (dateString: string) => {
     // Handle "DD/MM/YYYY" or "DD/MM/YYYY, HH:mm:ss"
     const [datePart] = dateString.split(',')
     const [dayStr, monthStr, yearStr] = datePart.trim().split('/')
-    const day = parseInt(dayStr, 10)
-    const month = parseInt(monthStr, 10) - 1
-    const year = parseInt(yearStr, 10)
+    const day = Number.parseInt(dayStr, 10)
+    const month = Number.parseInt(monthStr, 10) - 1
+    const year = Number.parseInt(yearStr, 10)
 
     const date = new Date(year, month, day)
-    if (!isNaN(date.getTime())) {
+    if (!Number.isNaN(date.getTime())) {
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -760,7 +761,7 @@ const formatTime = (dateString: string) => {
   try {
     // Try native parse
     const native = new Date(dateString)
-    if (!isNaN(native.getTime())) {
+    if (!Number.isNaN(native.getTime())) {
       return native.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
@@ -777,15 +778,15 @@ const formatTime = (dateString: string) => {
       const [dayStr, monthStr, yearStr] = datePart.split('/')
       const [hhStr, mmStr, ssStr = '00'] = timePart.split(':')
 
-      const day = parseInt(dayStr, 10)
-      const month = parseInt(monthStr, 10) - 1
-      const year = parseInt(yearStr, 10)
-      const hh = parseInt(hhStr, 10)
-      const mm = parseInt(mmStr, 10)
-      const ss = parseInt(ssStr, 10)
+      const day = Number.parseInt(dayStr, 10)
+      const month = Number.parseInt(monthStr, 10) - 1
+      const year = Number.parseInt(yearStr, 10)
+      const hh = Number.parseInt(hhStr, 10)
+      const mm = Number.parseInt(mmStr, 10)
+      const ss = Number.parseInt(ssStr, 10)
 
       const date = new Date(year, month, day, hh, mm, ss)
-      if (!isNaN(date.getTime())) {
+      if (!Number.isNaN(date.getTime())) {
         return date.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',

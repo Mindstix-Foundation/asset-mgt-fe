@@ -212,72 +212,111 @@ class EmployeeService {
   }
 
   /**
+   * Validate name field (firstName or lastName)
+   */
+  private validateNameField(value: string | undefined, fieldName: string, errors: string[]): void {
+    if (!value) return
+
+    if (value.trim().length < 2) {
+      errors.push(`${fieldName} must be at least 2 characters`)
+    }
+    if (value.length > 50) {
+      errors.push(`${fieldName} cannot exceed 50 characters`)
+    }
+    if (!/^[A-Za-z\s]+$/.test(value)) {
+      errors.push(`${fieldName} can only contain letters and spaces`)
+    }
+  }
+
+  /**
+   * Validate email field
+   */
+  private validateEmailField(value: string | undefined, errors: string[]): void {
+    if (!value) return
+
+    if (!value.includes('@')) {
+      errors.push('Please enter a valid email address')
+    }
+    if (value.length > 255) {
+      errors.push('Email cannot exceed 255 characters')
+    }
+  }
+
+  /**
+   * Validate phone field
+   */
+  private validatePhoneField(value: string | undefined, errors: string[]): void {
+    if (!value) return
+
+    if (value.length < 10) {
+      errors.push('Phone number must be at least 10 digits')
+    }
+    if (value.length > 15) {
+      errors.push('Phone number cannot exceed 15 characters')
+    }
+  }
+
+  /**
+   * Validate date of birth field
+   */
+  private validateDateOfBirthField(value: string | undefined, errors: string[]): void {
+    if (!value) return
+
+    const birthDate = new Date(value)
+    const today = new Date()
+    const minAge = new Date()
+    minAge.setFullYear(today.getFullYear() - 100)
+    const maxAge = new Date()
+    maxAge.setFullYear(today.getFullYear() - 16)
+
+    if (birthDate > today) {
+      errors.push('Date of birth cannot be in the future')
+    } else if (birthDate > maxAge) {
+      errors.push('Employee must be at least 16 years old')
+    } else if (birthDate < minAge) {
+      errors.push('Please enter a valid date of birth')
+    }
+  }
+
+  /**
+   * Validate address field
+   */
+  private validateAddressField(value: string | undefined, errors: string[]): void {
+    if (!value) return
+
+    if (value.length > 500) {
+      errors.push('Address cannot exceed 500 characters')
+    }
+  }
+
+  /**
    * Validate employee data before submission
    */
   validateEmployeeData(data: CreateEmployeeData | UpdateEmployeeData): string[] {
     const errors: string[] = []
 
     if ('firstName' in data && data.firstName !== undefined) {
-      if (!data.firstName || data.firstName.trim().length < 2) {
-        errors.push('First name must be at least 2 characters')
-      }
-      if (data.firstName.length > 50) {
-        errors.push('First name cannot exceed 50 characters')
-      }
-      if (!/^[A-Za-z\s]+$/.test(data.firstName)) {
-        errors.push('First name can only contain letters and spaces')
-      }
+      this.validateNameField(data.firstName, 'First name', errors)
     }
 
     if ('lastName' in data && data.lastName !== undefined) {
-      if (!data.lastName || data.lastName.trim().length < 2) {
-        errors.push('Last name must be at least 2 characters')
-      }
-      if (data.lastName.length > 50) {
-        errors.push('Last name cannot exceed 50 characters')
-      }
-      if (!/^[A-Za-z\s]+$/.test(data.lastName)) {
-        errors.push('Last name can only contain letters and spaces')
-      }
+      this.validateNameField(data.lastName, 'Last name', errors)
     }
 
     if ('email' in data && data.email !== undefined) {
-      if (!data.email || !data.email.includes('@')) {
-        errors.push('Please enter a valid email address')
-      }
-      if (data.email.length > 255) {
-        errors.push('Email cannot exceed 255 characters')
-      }
+      this.validateEmailField(data.email, errors)
     }
 
     if ('phone' in data && data.phone) {
-      if (data.phone.length < 10) {
-        errors.push('Phone number must be at least 10 digits')
-      }
-      if (data.phone.length > 15) {
-        errors.push('Phone number cannot exceed 15 characters')
-      }
+      this.validatePhoneField(data.phone, errors)
     }
 
     if ('dateOfBirth' in data && data.dateOfBirth) {
-      const birthDate = new Date(data.dateOfBirth)
-      const today = new Date()
-      const minAge = new Date()
-      minAge.setFullYear(today.getFullYear() - 100)
-      const maxAge = new Date()
-      maxAge.setFullYear(today.getFullYear() - 16)
-
-      if (birthDate > today) {
-        errors.push('Date of birth cannot be in the future')
-      } else if (birthDate > maxAge) {
-        errors.push('Employee must be at least 16 years old')
-      } else if (birthDate < minAge) {
-        errors.push('Please enter a valid date of birth')
-      }
+      this.validateDateOfBirthField(data.dateOfBirth, errors)
     }
 
-    if ('address' in data && data.address && data.address.length > 500) {
-      errors.push('Address cannot exceed 500 characters')
+    if ('address' in data && data.address) {
+      this.validateAddressField(data.address, errors)
     }
 
     return errors
@@ -373,7 +412,7 @@ class EmployeeService {
       link.download = filename
       document.body.appendChild(link)
       link.click()
-      document.body.removeChild(link)
+      link.remove()
       window.URL.revokeObjectURL(url)
       
       console.log('Employee export completed successfully')

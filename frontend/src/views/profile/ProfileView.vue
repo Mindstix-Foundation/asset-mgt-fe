@@ -14,8 +14,8 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <div class="spinner-border text-primary">
+          <output class="visually-hidden">Loading...</output>
         </div>
         <p class="mt-3 text-muted">Loading profile...</p>
       </div>
@@ -70,23 +70,23 @@
             <div class="card-body">
               <div class="row g-3">
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Full Name</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Full Name</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.name || 'N/A' }}</p>
                 </div>
                 <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Email Address</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Email Address</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.email || 'N/A' }}</p>
                 </div>
                 <div class="col-12 col-md-6" v-if="userData.employee?.phone">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Phone Number</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Phone Number</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.employee.phone }}</p>
                 </div>
                 <div class="col-12 col-md-6" v-if="userData.employee?.dateOfBirth">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Date of Birth</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Date of Birth</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ formatDate(userData.employee.dateOfBirth) }}</p>
                 </div>
                 <div class="col-12" v-if="userData.employee?.address">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Address</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Address</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.employee.address }}</p>
                 </div>
               </div>
@@ -106,11 +106,11 @@
             <div class="card-body">
               <div class="row g-3">
                 <div class="col-12" v-if="userData.lastLogin">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Last Login</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Last Login</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ formatDateTime(userData.lastLogin) }}</p>
                 </div>
                 <div class="col-12">
-                  <label class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Assigned Roles</label>
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Assigned Roles</span>
                   <div class="d-flex flex-wrap gap-2">
                     <span v-for="role in userData.roles" :key="role" class="badge bg-primary">
                       {{ role }}

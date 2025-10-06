@@ -113,7 +113,8 @@ class ReportsApiService {
     if (filters?.toDate) params.append('toDate', filters.toDate)
     
     const queryString = params.toString()
-    const url = `/reports/asset-inventory${queryString ? `?${queryString}` : ''}`
+    const basePath = '/reports/asset-inventory'
+    const url = queryString ? `${basePath}?${queryString}` : basePath
     const response = await apiService.get<ApiResponse<AssetReportData[]>>(url)
     return response.data
   }
@@ -131,7 +132,8 @@ class ReportsApiService {
     if (filters?.toDate) params.append('toDate', filters.toDate)
     
     const queryString = params.toString()
-    const url = `/reports/maintenance${queryString ? `?${queryString}` : ''}`
+    const basePath = '/reports/maintenance'
+    const url = queryString ? `${basePath}?${queryString}` : basePath
     const response = await apiService.get<ApiResponse<MaintenanceReportData[]>>(url)
     return response.data
   }
@@ -182,7 +184,7 @@ class ReportsApiService {
     link.download = filename
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
     window.URL.revokeObjectURL(url)
   }
 }

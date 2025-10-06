@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" aria-label="Main navigation">
     <div class="container-fluid">
       <!-- Logo and Brand -->
       <RouterLink to="/app/dashboard" class="navbar-brand fw-bold">
@@ -79,7 +79,7 @@
       </div>
       
       <!-- Sidebar Navigation -->
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Mobile navigation menu">
         <ul class="sidebar-nav-list">
           <li class="sidebar-nav-item" v-for="item in navigationItems" :key="item.name">
             <RouterLink

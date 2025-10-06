@@ -55,13 +55,14 @@
           <div class="row align-items-end mb-3">
             <!-- Search -->
             <div class="col-12 col-lg-7 mb-3">
-              <label class="form-label">Search</label>
+              <label class="form-label" for="asset-history-search">Search</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                 <input 
                   type="text" 
                   class="form-control" 
                   v-model="filters.search"
+                  id="asset-history-search"
                   placeholder="Asset/brand/model"
                   @keyup.enter="applyFilters"
                 >
@@ -140,8 +141,8 @@
 
           <!-- Loading State -->
           <div v-if="loading" class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+            <div class="spinner-border text-primary">
+              <output class="visually-hidden">Loading...</output>
             </div>
             <p class="mt-2 text-muted">Loading asset events...</p>
           </div>
@@ -185,13 +186,13 @@
                   <div class="row g-2">
                     <div class="col-6 col-sm-3">
                       <div class="info-item">
-                        <label class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Date' : 'Return Date' }}</label>
+                        <span class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Date' : 'Return Date' }}</span>
                         <div class="info-value small">{{ formatDate(item.date) }}</div>
                       </div>
                     </div>
                     <div class="col-6 col-sm-2">
                       <div class="info-item">
-                        <label class="info-label small">Condition</label>
+                        <span class="info-label small">Condition</span>
                         <div class="info-value small">
                           <span class="badge" :class="getConditionBadgeClass(item.condition || 'UNKNOWN')">{{ item.condition || 'Not specified' }}</span>
                         </div>
@@ -199,19 +200,19 @@
                     </div>
                     <div class="col-6 col-sm-4">
                       <div class="info-item">
-                        <label class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Reason' : 'Return Reason' }}</label>
+                        <span class="info-label small">{{ item.action === 'ASSIGNED' ? 'Issue Reason' : 'Return Reason' }}</span>
                         <div class="info-value small">{{ item.reason || 'Not specified' }}</div>
                       </div>
                     </div>
                     <div class="col-6 col-sm-3">
                       <div class="info-item">
-                        <label class="info-label small">Performed By</label>
+                        <span class="info-label small">Performed By</span>
                         <div class="info-value small">{{ item.performedBy }}</div>
                       </div>
                     </div>
                     <div class="col-12" v-if="getNotesForAction(item)">
                       <div class="info-item">
-                        <label class="info-label small">Notes</label>
+                        <span class="info-label small">Notes</span>
                         <div class="info-value notes-display small">{{ getNotesForAction(item) }}</div>
                       </div>
                     </div>
@@ -411,8 +412,8 @@ export default {
     async enrichCurrentAssignments() {
       if (!this.currentAssignments || this.currentAssignments.length === 0) return
       const fetches = this.currentAssignments.map(async (item, index) => {
-        const numericId = parseInt(item.assetId, 10)
-        if (!isNaN(numericId)) {
+        const numericId = Number.parseInt(item.assetId, 10)
+        if (!Number.isNaN(numericId)) {
           try {
             const resp = await assetApiService.getAssetById(numericId)
             const asset = resp.data.asset
@@ -434,7 +435,7 @@ export default {
     formatDate(dateString) {
       if (!dateString) return 'Not specified'
       const d = new Date(dateString)
-      if (isNaN(d.getTime())) return 'Not specified'
+      if (Number.isNaN(d.getTime())) return 'Not specified'
       const day = String(d.getDate()).padStart(2, '0')
       const month = String(d.getMonth() + 1).padStart(2, '0')
       const year = d.getFullYear()
@@ -443,7 +444,7 @@ export default {
     formatDateTime(dateString) {
       if (!dateString) return 'Not specified'
       const d = new Date(dateString)
-      if (isNaN(d.getTime())) return 'Not specified'
+      if (Number.isNaN(d.getTime())) return 'Not specified'
       const day = String(d.getDate()).padStart(2, '0')
       const month = String(d.getMonth() + 1).padStart(2, '0')
       const year = d.getFullYear()

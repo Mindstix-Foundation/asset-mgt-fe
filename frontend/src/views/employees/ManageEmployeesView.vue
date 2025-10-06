@@ -39,13 +39,14 @@
             <div class="col-12">
               <div class="row g-3 justify-content-between">
                 <div class="col-4">
-                  <label class="form-label">Add Single Employee</label>
+                  <label class="form-label" for="single-emp-input">Add Single Employee</label>
                   <div class="row justify-content-around">
                     <div class="col-7">
                       <input 
                         type="text" 
                         class="form-control" 
                         v-model="singleEmployeeInput"
+                        id="single-emp-input"
                         placeholder="EMP-0001"
                         @keyup.enter="addSingleEmployee"
                         pattern="EMP-\d{4}"
@@ -68,25 +69,27 @@
                   </small>
                 </div>
                 <div class="col-7">
-                  <label class="form-label">Add Employee Range</label>
+                  <span class="form-label">Add Employee Range</span>
                   <div class="row justify-content-around">
                     <div class="col-9">
                       <div class="d-flex align-items-center gap-2">
-                        <span class="text-muted">From</span>
+                        <label class="text-muted mb-0" for="employee-from-input">From</label>
                         <input 
                           type="text" 
                           class="form-control" 
                           v-model="employeeFromInput"
+                          id="employee-from-input"
                           placeholder="EMP-0001"
                           @keyup.enter="addEmployeeRange"
                           pattern="EMP-\d{4}"
                           title="Format: EMP-NNNN (e.g., EMP-0001)"
                         >
-                        <span class="text-muted">to</span>
+                        <label class="text-muted mb-0" for="employee-to-input">to</label>
                         <input 
                           type="text" 
                           class="form-control" 
                           v-model="employeeToInput"
+                          id="employee-to-input"
                           placeholder="EMP-9999"
                           @keyup.enter="addEmployeeRange"
                           pattern="EMP-\d{4}"
@@ -112,7 +115,7 @@
                 <div class="col-12">
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
-                      <label class="form-label mb-1">Selected Employees for Deletion ({{ selectedEmployeesForDeletion.length }})</label>
+                      <span class="form-label mb-1">Selected Employees for Deletion ({{ selectedEmployeesForDeletion.length }})</span>
                     </div>
                   </div>
                   <div v-if="selectedEmployeesForDeletion.length > 0" class="mt-3">
@@ -159,13 +162,14 @@
       <div class="row align-items-end">
         <!-- Search Employees -->
         <div class="col-12 col-lg-7 mb-3">
-          <label class="form-label">Search Employees</label>
+          <label class="form-label" for="employees-search">Search Employees</label>
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input 
               type="text" 
               class="form-control" 
               v-model="searchTerm"
+              id="employees-search"
               placeholder="Search by ID, name, or email..."
               @input="debouncedLoadEmployees"
             >
@@ -335,23 +339,23 @@
                 </h6>
                 <div class="info-grid-compact">
                   <div class="info-item-compact">
-                    <label class="info-label-compact">Employee ID</label>
+                    <span class="info-label-compact">Employee ID</span>
                     <div class="info-value-compact fw-bold">{{ employeeToDelete?.employeeId || 'Unknown' }}</div>
                   </div>
                   <div class="info-item-compact">
-                    <label class="info-label-compact">Name</label>
+                    <span class="info-label-compact">Name</span>
                     <div class="info-value-compact">{{ employeeToDelete?.firstName }} {{ employeeToDelete?.lastName }}</div>
                   </div>
                   <div class="info-item-compact">
-                    <label class="info-label-compact">Email</label>
+                    <span class="info-label-compact">Email</span>
                     <div class="info-value-compact">{{ employeeToDelete?.email }}</div>
                   </div>
                   <div class="info-item-compact">
-                    <label class="info-label-compact">Phone</label>
+                    <span class="info-label-compact">Phone</span>
                     <div class="info-value-compact">{{ employeeToDelete?.phone || 'N/A' }}</div>
                   </div>
                   <div class="info-item-compact">
-                    <label class="info-label-compact">Status</label>
+                    <span class="info-label-compact">Status</span>
                     <div class="info-value-compact">{{ employeeToDelete?.status }}</div>
                   </div>
                 </div>
@@ -657,25 +661,29 @@ const addSingleEmployee = () => {
   singleEmployeeInput.value = ''
 }
 
-const addEmployeeRange = async () => {
-  const fromValue = employeeFromInput.value.trim()
-  const toValue = employeeToInput.value.trim()
-  
+// Helper function to validate employee ID format
+const validateEmployeeIdFormat = (value: string): boolean => {
+  const empPattern = /^EMP-\d{4}$/
+  return empPattern.test(value)
+}
+
+// Helper function to validate range inputs
+const validateRangeInputs = (fromValue: string, toValue: string): boolean => {
   if (!fromValue || !toValue) {
     showErrorToast('Please enter both "from" and "to" values')
-    return
+    return false
   }
   
-  // Validate EMP-NNNN format for both inputs
-  const empPattern = /^EMP-\d{4}$/
-  if (!empPattern.test(fromValue) || !empPattern.test(toValue)) {
+  if (!validateEmployeeIdFormat(fromValue) || !validateEmployeeIdFormat(toValue)) {
     showErrorToast('Employee IDs must be in format EMP-NNNN (e.g., EMP-0001)')
-    return
+    return false
   }
   
-  // For simplicity, we'll just add all employees between the two IDs that exist in the table
-  const deletableEmployeeIds = items.value.map(emp => emp.employeeId)
-  
+  return true
+}
+
+// Helper function to process employee range selection
+const processEmployeeRange = (fromValue: string, toValue: string) => {
   let addedCount = 0
   let alreadySelectedCount = 0
   
@@ -690,15 +698,34 @@ const addEmployeeRange = async () => {
     }
   }
   
+  return { addedCount, alreadySelectedCount }
+}
+
+// Helper function to generate success message
+const generateRangeMessage = (addedCount: number, alreadySelectedCount: number, fromValue: string, toValue: string): string => {
   if (addedCount > 0) {
     let message = `Added ${addedCount} deletable employee(s) from range ${fromValue} to ${toValue}`
     if (alreadySelectedCount > 0) {
       message += `\n(${alreadySelectedCount} employees were already selected)`
     }
-    showToast(message, 'success')
-  } else {
-    showToast(`No new employees added from range ${fromValue} to ${toValue}`, 'info')
+    return message
   }
+  return `No new employees added from range ${fromValue} to ${toValue}`
+}
+
+const addEmployeeRange = async () => {
+  const fromValue = employeeFromInput.value.trim()
+  const toValue = employeeToInput.value.trim()
+  
+  if (!validateRangeInputs(fromValue, toValue)) {
+    return
+  }
+  
+  const { addedCount, alreadySelectedCount } = processEmployeeRange(fromValue, toValue)
+  const message = generateRangeMessage(addedCount, alreadySelectedCount, fromValue, toValue)
+  const messageType = addedCount > 0 ? 'success' : 'info'
+  
+  showToast(message, messageType)
   
   // Clear the inputs
   employeeFromInput.value = ''

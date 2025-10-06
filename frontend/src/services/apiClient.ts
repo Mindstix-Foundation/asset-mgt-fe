@@ -19,7 +19,7 @@ apiClient.interceptors.request.use(
     return config
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)))
   }
 )
 
@@ -69,7 +69,7 @@ export interface ApiError {
 
 // Unified API Service class with clean interface
 class ApiService {
-  private client = apiClient
+  private readonly client = apiClient
 
   getBaseURL(): string {
     return this.client.defaults.baseURL || ''

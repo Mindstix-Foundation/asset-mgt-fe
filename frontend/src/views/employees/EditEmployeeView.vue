@@ -5,8 +5,8 @@
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
         <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
           <div class="card-body text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+            <div class="spinner-border text-primary">
+              <output class="visually-hidden">Loading...</output>
             </div>
             <p class="mt-3 text-muted">Loading employee information...</p>
           </div>
@@ -156,8 +156,8 @@
                       :style="isAdmin ? 'background-color: #F3F3F3;' : ''"
                     >
                     <div v-if="isCheckingEmail" class="position-absolute top-50 end-0 translate-middle-y me-3">
-                      <div class="spinner-border spinner-border-sm text-primary" role="status">
-                        <span class="visually-hidden">Checking...</span>
+                      <div class="spinner-border spinner-border-sm text-primary">
+                        <output class="visually-hidden">Checking...</output>
                       </div>
                     </div>
                   </div>
@@ -334,6 +334,118 @@ const getFieldClass = (fieldName: string) => {
   }
 }
 
+// Helper function to validate name fields (firstName, lastName)
+const validateNameField = (fieldName: string, value: any): boolean => {
+  if (!value) return true
+  
+  if (value.length < 2) {
+    setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`)
+    return false
+  }
+  
+  if (!/^[A-Za-z\s]{2,50}$/.test(value)) {
+    setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be 2-50 characters (letters and spaces only)`)
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate email field
+const validateEmailField = (value: any): boolean => {
+  if (!value) return true
+  
+  if (!String(value).includes('@')) {
+    setFieldError('email', 'Please enter a valid email address')
+    return false
+  }
+  
+  if (String(value) !== originalEmail.value) {
+    checkEmailAvailability(String(value))
+  }
+  
+  return true
+}
+
+// Helper function to check email availability
+const checkEmailAvailability = (email: string) => {
+  if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
+  isCheckingEmail.value = true
+  emailCheckTimer = window.setTimeout(async () => {
+    try {
+      const resp = await employeeService.checkEmailAvailability(email, formData.employeeId)
+      const available = (resp as any)?.data?.available ?? (resp as any)?.available
+      if (!available) {
+        setFieldError('email', 'An employee with this email already exists')
+      } else {
+        setFieldValid('email')
+      }
+    } catch (e) {
+      // Silent fail for email check
+    } finally {
+      isCheckingEmail.value = false
+    }
+  }, 400)
+}
+
+// Helper function to validate phone field
+const validatePhoneField = (value: any): boolean => {
+  if (!value) return true
+  
+  if (String(value).length < 10) {
+    setFieldError('phone', 'Phone number must be at least 10 digits (e.g., +91 9876543210)')
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate date of birth field
+const validateDateOfBirthField = (value: any): boolean => {
+  if (!value) return true
+  
+  const today = new Date()
+  const birthDate = new Date(String(value))
+  const minAge = new Date()
+  minAge.setFullYear(today.getFullYear() - 100)
+  const maxAge = new Date()
+  maxAge.setFullYear(today.getFullYear() - 16)
+
+  if (birthDate > today) {
+    setFieldError('dateOfBirth', 'Date of birth cannot be in the future')
+    return false
+  }
+  
+  if (birthDate > maxAge) {
+    setFieldError('dateOfBirth', 'Employee must be at least 16 years old')
+    return false
+  }
+  
+  if (birthDate < minAge) {
+    setFieldError('dateOfBirth', 'Please enter a valid date of birth')
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate specific field types
+const validateFieldType = async (fieldName: string, value: any): Promise<boolean> => {
+  switch (fieldName) {
+    case 'firstName':
+    case 'lastName':
+      return validateNameField(fieldName, value)
+    case 'email':
+      return validateEmailField(value)
+    case 'phone':
+      return validatePhoneField(value)
+    case 'dateOfBirth':
+      return validateDateOfBirthField(value)
+    default:
+      return true
+  }
+}
+
 const validateFieldInline = async (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -349,72 +461,9 @@ const validateFieldInline = async (fieldName: string) => {
     return false
   }
 
-  switch (fieldName) {
-    case 'firstName':
-    case 'lastName':
-      if (value && value.length < 2) {
-        setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`)
-        return false
-      }
-      if (value && !/^[A-Za-z\s]{2,50}$/.test(value)) {
-        setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be 2-50 characters (letters and spaces only)`)
-        return false
-      }
-      break
-    
-    case 'email':
-      if (value && !String(value).includes('@')) {
-        setFieldError(fieldName, 'Please enter a valid email address')
-        return false
-      }
-      if (value && String(value) !== originalEmail.value) {
-        if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
-        isCheckingEmail.value = true
-        emailCheckTimer = window.setTimeout(async () => {
-          try {
-            const resp = await employeeService.checkEmailAvailability(String(value), formData.employeeId)
-            const available = (resp as any)?.data?.available ?? (resp as any)?.available
-            if (!available) {
-              setFieldError('email', 'An employee with this email already exists')
-            } else {
-              setFieldValid('email')
-            }
-          } catch (e) {
-          } finally {
-            isCheckingEmail.value = false
-          }
-        }, 400)
-      }
-      break
-    
-    case 'phone':
-      if (value && String(value).length < 10) {
-        setFieldError(fieldName, 'Phone number must be at least 10 digits (e.g., +91 9876543210)')
-        return false
-      }
-      break
-    
-    case 'dateOfBirth':
-      if (value) {
-        const today = new Date()
-        const birthDate = new Date(String(value))
-        const minAge = new Date()
-        minAge.setFullYear(today.getFullYear() - 100)
-        const maxAge = new Date()
-        maxAge.setFullYear(today.getFullYear() - 16)
-
-        if (birthDate > today) {
-          setFieldError(fieldName, 'Date of birth cannot be in the future')
-          return false
-        } else if (birthDate > maxAge) {
-          setFieldError(fieldName, 'Employee must be at least 16 years old')
-          return false
-        } else if (birthDate < minAge) {
-          setFieldError(fieldName, 'Please enter a valid date of birth')
-          return false
-        }
-      }
-      break
+  const isFieldValid = await validateFieldType(fieldName, value)
+  if (!isFieldValid) {
+    return false
   }
 
   if (element.checkValidity()) {
@@ -546,6 +595,72 @@ const loadEmployeeData = async () => {
   }
 }
 
+// Helper function to validate required fields
+const validateRequiredFields = async (fieldsToValidate: string[]): Promise<boolean> => {
+  let hasErrors = false
+  for (const fieldName of fieldsToValidate) {
+    const isValid = await validateFieldInline(fieldName)
+    if (!isValid) {
+      hasErrors = true
+    }
+  }
+  return hasErrors
+}
+
+// Helper function to validate optional fields
+const validateOptionalFields = async (optionalFields: string[]): Promise<boolean> => {
+  let hasErrors = false
+  for (const fieldName of optionalFields) {
+    const value = formData[fieldName as keyof typeof formData]
+    if (value && value.toString().trim()) {
+      const isValid = await validateFieldInline(fieldName)
+      if (!isValid) {
+        hasErrors = true
+      }
+    }
+  }
+  return hasErrors
+}
+
+// Helper function to prepare update data
+const prepareUpdateData = (): UpdateEmployeeData => {
+  const updateData: UpdateEmployeeData = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    phone: formData.phone || undefined,
+    dateOfBirth: formData.dateOfBirth || undefined,
+    address: formData.address || undefined,
+    status: formData.status
+  }
+
+  // Only include email if employee is not admin
+  if (!isAdmin.value) {
+    updateData.email = formData.email
+  }
+
+  return updateData
+}
+
+// Helper function to handle successful update
+const handleUpdateSuccess = (updatedEmployee: any) => {
+  const employeeName = `${updatedEmployee.firstName} ${updatedEmployee.lastName}`
+  
+  // Redirect to employee list immediately after success
+  router.push('/app/employees')
+  
+  // Show success toast after redirect (with a small delay to ensure page loads)
+  setTimeout(() => {
+    toastStore.showSuccess('Success', `Employee ${employeeName} updated successfully!`)
+  }, 100)
+}
+
+// Helper function to handle update error
+const handleUpdateError = (error: any) => {
+  console.error('Error updating employee:', error)
+  const errorMsg = error?.response?.data?.message || error?.message || 'Failed to update employee. Please try again.'
+  toastStore.showError('Error', errorMsg)
+}
+
 // Form submission with enhanced validation
 const submitForm = async (event?: Event) => {
   if (event) {
@@ -558,27 +673,12 @@ const submitForm = async (event?: Event) => {
   if (isSubmitting.value) return
 
   const fieldsToValidate = ['firstName', 'lastName', 'email', 'status']
-  let hasErrors = false
-
-  for (const fieldName of fieldsToValidate) {
-    const isValid = await validateFieldInline(fieldName)
-    if (!isValid) {
-      hasErrors = true
-    }
-  }
-
   const optionalFields = ['phone', 'dateOfBirth', 'address']
-  for (const fieldName of optionalFields) {
-    const value = formData[fieldName as keyof typeof formData]
-    if (value && value.toString().trim()) {
-      const isValid = await validateFieldInline(fieldName)
-      if (!isValid) {
-        hasErrors = true
-      }
-    }
-  }
 
-  if (hasErrors) {
+  const hasRequiredErrors = await validateRequiredFields(fieldsToValidate)
+  const hasOptionalErrors = await validateOptionalFields(optionalFields)
+
+  if (hasRequiredErrors || hasOptionalErrors) {
     scrollToFirstError()
     return
   }
@@ -586,39 +686,11 @@ const submitForm = async (event?: Event) => {
   isSubmitting.value = true
 
   try {
-    const updateData: UpdateEmployeeData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone || undefined,
-      dateOfBirth: formData.dateOfBirth || undefined,
-      address: formData.address || undefined,
-      status: formData.status
-    }
-
-    // Only include email if employee is not admin
-    if (!isAdmin.value) {
-      updateData.email = formData.email
-    }
-
+    const updateData = prepareUpdateData()
     const response = await employeeService.updateEmployee(employeeId.value, updateData)
-    const updatedEmployee = response.data.employee
-
-    const employeeName = `${updatedEmployee.firstName} ${updatedEmployee.lastName}`
-    
-    // Redirect to employee list immediately after success
-    router.push('/app/employees')
-    
-    // Show success toast after redirect (with a small delay to ensure page loads)
-    setTimeout(() => {
-      toastStore.showSuccess('Success', `Employee ${employeeName} updated successfully!`)
-    }, 100)
-
+    handleUpdateSuccess(response.data.employee)
   } catch (error: any) {
-    console.error('Error updating employee:', error)
-    
-    const errorMsg = error?.response?.data?.message || error?.message || 'Failed to update employee. Please try again.'
-    toastStore.showError('Error', errorMsg)
-    
+    handleUpdateError(error)
   } finally {
     isSubmitting.value = false
   }

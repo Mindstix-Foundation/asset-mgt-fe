@@ -16,10 +16,10 @@
         <div class="row align-items-end">
           <!-- Search -->
           <div class="col-12 col-lg-7 mb-3">
-            <label class="form-label">Search</label>
+            <label class="form-label" for="mh-search">Search</label>
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" v-model="filters.search" placeholder="Description/type/status" @keyup.enter="applyFilters" />
+              <input id="mh-search" type="text" class="form-control" v-model="filters.search" placeholder="Description/type/status" @keyup.enter="applyFilters" />
             </div>
           </div>
           <!-- Sort By -->
@@ -91,10 +91,10 @@
     </div>
 
     <div v-if="loading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
+      <div class="spinner-border text-primary">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <p class="mt-2 text-muted">Loading maintenance history…</p>
+      <output class="mt-2 text-muted">Loading maintenance history…</output>
     </div>
 
     <div v-else>
@@ -136,21 +136,21 @@
                     </div>
                     <div class="col-md-4">
                       <small class="text-muted">Scheduled At</small>
-                      <div>{{ formatDateTime((item as any).date || item.scheduledDate) }}</div>
+              <div>{{ formatDateTimeDisplay((item as any).date || item.scheduledDate) }}</div>
                     </div>
                   </template>
 
                   <template v-else-if="item.status === 'COMPLETED'">
                     <div class="col-md-4">
                       <small class="text-muted">Completed At</small>
-                      <div>{{ formatDateTime((item as any).date) }}</div>
+              <div>{{ formatDateTimeDisplay((item as any).date) }}</div>
                     </div>
                   </template>
 
                   <template v-else-if="item.status === 'CANCELLED'">
                     <div class="col-md-4">
                       <small class="text-muted">Cancelled At</small>
-                      <div>{{ formatDateTime((item as any).date) }}</div>
+              <div>{{ formatDateTimeDisplay((item as any).date) }}</div>
                     </div>
                   </template>
 
@@ -261,11 +261,11 @@ const formatDate = (dateString?: string | null) => {
   return formatDateOnly(dateString, 'en-US')
 }
 
-// Format datetime as "2 Oct 2025 8:10:10" (day month year hour:minute:second)
-const formatDateTime = (dateString?: string | null) => {
+// Local display wrapper to avoid shadowing imported helper
+const formatDateTimeDisplay = (dateString?: string | null) => {
   if (!dateString) return '-'
   const date = new Date(dateString)
-  if (isNaN(date.getTime())) return '-'
+  if (Number.isNaN(date.getTime())) return '-'
   
   return date.toLocaleString('en-US', {
     year: 'numeric',
@@ -295,7 +295,7 @@ const calcDurationDays = (start?: string | null, end?: string | null) => {
   const startDt = new Date(start)
   const endDt = new Date(end)
   const ms = endDt.getTime() - startDt.getTime()
-  if (isNaN(ms) || ms < 0) return null
+  if (Number.isNaN(ms) || ms < 0) return null
   const days = Math.ceil(ms / (1000 * 60 * 60 * 24))
   return days === 1 ? '1 day' : `${days} days`
 }

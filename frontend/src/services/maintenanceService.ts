@@ -183,7 +183,9 @@ class MaintenanceService {
   }): Promise<ApiResponse<{ events: any[], pagination: { totalCount: number, currentPage: number, totalPages: number, hasNext: boolean, hasPrevious: boolean } }>> {
     const query = new URLSearchParams()
     Object.entries(params || {}).forEach(([k,v]) => { if (v !== undefined && v !== null && v !== '') query.append(k, String(v)) })
-    return apiService.get(`/maintenance/asset/${assetId}/history-events${query.toString() ? `?${query.toString()}` : ''}`)
+    const qs = query.toString()
+    const suffix = qs ? `?${qs}` : ''
+    return apiService.get(`/maintenance/asset/${assetId}/history-events${suffix}`)
   }
 
   // Export maintenance records to Excel
@@ -220,7 +222,7 @@ class MaintenanceService {
       link.download = filename
       document.body.appendChild(link)
       link.click()
-      document.body.removeChild(link)
+      link.remove()
       window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Error exporting maintenance:', error)

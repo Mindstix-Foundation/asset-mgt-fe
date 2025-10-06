@@ -31,10 +31,10 @@
 
       <!-- Loading State -->
       <div v-if="isLoading" class="notification-loading">
-        <div class="spinner-border spinner-border-sm" role="status">
+        <div class="spinner-border spinner-border-sm">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <span class="ms-2">Loading notifications...</span>
+        <output class="ms-2">Loading notifications...</output>
       </div>
 
       <!-- Empty State -->

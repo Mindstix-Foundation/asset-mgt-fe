@@ -33,7 +33,7 @@ interface SearchIndex {
 
 class AdvancedSearchService {
   private searchIndex: SearchIndex = {}
-  private debounceTimers = new Map<string, NodeJS.Timeout>()
+  private readonly debounceTimers = new Map<string, NodeJS.Timeout>()
   private readonly defaultOptions: Required<SearchOptions> = {
     debounceMs: 300,
     minLength: 2,
@@ -75,8 +75,8 @@ class AdvancedSearchService {
   searchDebounced<T>(
     query: string,
     items: T[],
-    options: SearchOptions = {},
-    callback: (results: SearchResult<T>[]) => void
+    callback: (results: SearchResult<T>[]) => void,
+    options: SearchOptions = {}
   ): void {
     const opts = { ...this.defaultOptions, ...options }
     const searchKey = `search-${JSON.stringify(opts)}`
@@ -199,23 +199,18 @@ class AdvancedSearchService {
         if (searchText === searchTerm) {
           score += 100
         }
-      } else {
+      } else if (searchText === searchTerm) {
         // Exact match gets highest score
-        if (searchText === searchTerm) {
-          score += 100
-        }
+        score += 100
+      } else if (searchText.startsWith(searchTerm)) {
         // Starts with gets high score
-        else if (searchText.startsWith(searchTerm)) {
-          score += 80
-        }
+        score += 80
+      } else if (searchText.includes(searchTerm)) {
         // Contains gets medium score
-        else if (searchText.includes(searchTerm)) {
-          score += 60
-        }
+        score += 60
+      } else if (options.fuzzySearch && this.fuzzyMatch(searchText, searchTerm)) {
         // Fuzzy match gets lower score
-        else if (options.fuzzySearch && this.fuzzyMatch(searchText, searchTerm)) {
-          score += 30
-        }
+        score += 30
       }
     })
     
@@ -260,7 +255,7 @@ class AdvancedSearchService {
         let highlightedValue = value
         
         // Sort matches by start index (descending) to avoid index shifting
-        const sortedMatches = fieldMatches.sort((a, b) => b.startIndex - a.startIndex)
+        const sortedMatches = fieldMatches.toSorted((a, b) => b.startIndex - a.startIndex)
         
         sortedMatches.forEach(match => {
           const before = highlightedValue.substring(0, match.startIndex)
@@ -365,7 +360,6 @@ export function useAdvancedSearch<T>(items: T[] | (() => T[]), options: SearchOp
     advancedSearchService.searchDebounced(
       query,
       getItems(),
-      options,
       (results) => {
         searchResults.value = results
         searchStats.value = {
@@ -373,7 +367,8 @@ export function useAdvancedSearch<T>(items: T[] | (() => T[]), options: SearchOp
           searchTime: performance.now() - startTime
         }
         isSearching.value = false
-      }
+      },
+      options
     )
   }
 

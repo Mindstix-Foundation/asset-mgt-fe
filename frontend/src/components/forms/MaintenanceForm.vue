@@ -347,8 +347,8 @@ const onAssetChange = (item: Item | null) => {
   handleAssetChange()
   // Load full asset details for display
   if (formData.assetId) {
-    const assetDbId = parseInt(formData.assetId)
-    if (!isNaN(assetDbId)) {
+    const assetDbId = Number.parseInt(formData.assetId)
+    if (!Number.isNaN(assetDbId)) {
       loadAssetDetails(assetDbId)
     }
   } else {
@@ -1172,12 +1172,7 @@ onMounted(async () => {
   border-color: #331FEA !important;
 }
 
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
-}
+/* Form labels - styles moved to unified-form-styles.css */
 
 .form-text {
   font-size: 0.875rem;

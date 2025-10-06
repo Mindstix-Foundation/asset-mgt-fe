@@ -16,10 +16,10 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
+              <div class="spinner-border text-primary">
                 <span class="visually-hidden">Loading...</span>
               </div>
-              <p class="mt-3 text-muted">Loading employee data...</p>
+              <output class="mt-3 text-muted">Loading employee data...</output>
             </div>
             
             <!-- Form -->
@@ -323,117 +323,160 @@ const getFieldClass = (fieldName: string) => {
   }
 }
 
+// Helper function to validate name fields (firstName, lastName)
+const validateNameField = (fieldName: string, value: any): boolean => {
+  if (!value) return true
+  
+  if (value.length < 2) {
+    setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`)
+    return false
+  }
+  
+  if (!/^[A-Za-z\s]{2,50}$/.test(value)) {
+    setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be 2-50 characters (letters and spaces only)`)
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate email field
+const validateEmailField = (value: any): boolean => {
+  if (!value) return true
+  
+  if (!String(value).includes('@')) {
+    setFieldError('email', 'Please enter a valid email address')
+    return false
+  }
+  
+  checkEmailAvailability(value)
+  return true
+}
+
+// Helper function to check email availability
+const checkEmailAvailability = (value: any) => {
+  if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
+  isCheckingEmail.value = true
+  emailCheckTimer = window.setTimeout(async () => {
+    try {
+      const emailToCheck = String(value).trim()
+      const excludeId = isEditMode.value ? (employeeId.value as string) : undefined
+      const resp = await employeeService.checkEmailAvailability(emailToCheck, excludeId)
+      const available = (resp as any)?.data?.available ?? (resp as any)?.available
+      if (!available) {
+        setFieldError('email', 'An employee with this email already exists')
+      } else {
+        setFieldValid('email')
+      }
+    } catch (e) {
+      // On API error, do not block the user; keep current state
+    } finally {
+      isCheckingEmail.value = false
+    }
+  }, 400)
+}
+
+// Helper function to validate phone field
+const validatePhoneField = (value: any): boolean => {
+  if (!value) return true
+  
+  const strVal = String(value)
+  
+  // Treat bare prefix as empty (optional field)
+  if (/^\+91\s?$/.test(strVal)) {
+    formData.phone = '' as any
+    const el = document.getElementById('phone') as HTMLInputElement
+    if (el) el.value = ''
+    setFieldValid('phone')
+    return true
+  }
+  
+  if (!strVal.startsWith('+91')) {
+    setFieldError('phone', "Phone number must start with '+91'")
+    return false
+  }
+  
+  const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  
+  if (digits.length < 10) {
+    setFieldError('phone', 'Phone number must be exactly 10 digits after +91')
+    return false
+  }
+  
+  if (digits.length > 10) {
+    setFieldError('phone', 'Phone number cannot exceed 10 digits after +91')
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate date of birth field
+const validateDateOfBirthField = (value: any): boolean => {
+  if (!value) return true
+  
+  const today = new Date()
+  const birthDate = new Date(String(value))
+  const minAge = new Date()
+  minAge.setFullYear(today.getFullYear() - 100)
+  const maxAge = new Date()
+  maxAge.setFullYear(today.getFullYear() - 16)
+
+  if (birthDate > today) {
+    setFieldError('dateOfBirth', 'Date of birth cannot be in the future')
+    return false
+  }
+  
+  if (birthDate > maxAge) {
+    setFieldError('dateOfBirth', 'Employee must be at least 16 years old')
+    return false
+  }
+  
+  if (birthDate < minAge) {
+    setFieldError('dateOfBirth', 'Please enter a valid date of birth')
+    return false
+  }
+  
+  return true
+}
+
+// Helper function to validate specific field types
+const validateFieldType = (fieldName: string, value: any): boolean => {
+  switch (fieldName) {
+    case 'firstName':
+    case 'lastName':
+      return validateNameField(fieldName, value)
+    case 'email':
+      return validateEmailField(value)
+    case 'phone':
+      return validatePhoneField(value)
+    case 'dateOfBirth':
+      return validateDateOfBirthField(value)
+    default:
+      return true
+  }
+}
+
 const validateFieldInline = async (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   
   if (!element) return true
 
-  // Clear previous custom validity
   element.setCustomValidity('')
 
-  // Check if field is required
   const isRequired = element.hasAttribute('required')
   
   if (isRequired && (!value || value.toString().trim() === '')) {
-    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+    setFieldError(fieldName, '')
     return false
   }
 
-  // Additional custom validations based on field type
-  switch (fieldName) {
-    case 'firstName':
-    case 'lastName':
-      if (value && value.length < 2) {
-        setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters`)
-        return false
-      }
-      if (value && !/^[A-Za-z\s]{2,50}$/.test(value)) {
-        setFieldError(fieldName, `${fieldName === 'firstName' ? 'First' : 'Last'} name must be 2-50 characters (letters and spaces only)`)
-        return false
-      }
-      break
-    
-    case 'email':
-      if (value && !String(value).includes('@')) {
-        setFieldError(fieldName, 'Please enter a valid email address')
-        return false
-      }
-      // Debounced availability check
-      if (value) {
-        if (emailCheckTimer) window.clearTimeout(emailCheckTimer)
-        isCheckingEmail.value = true
-        emailCheckTimer = window.setTimeout(async () => {
-          try {
-            const emailToCheck = String(value).trim()
-            const excludeId = isEditMode.value ? (employeeId.value as string) : undefined
-            const resp = await employeeService.checkEmailAvailability(emailToCheck, excludeId)
-            const available = (resp as any)?.data?.available ?? (resp as any)?.available
-            if (!available) {
-              setFieldError('email', 'An employee with this email already exists')
-            } else {
-              setFieldValid('email')
-            }
-          } catch (e) {
-            // On API error, do not block the user; keep current state
-          } finally {
-            isCheckingEmail.value = false
-          }
-        }, 400)
-      }
-      break
-    
-    case 'phone':
-      if (value) {
-        const strVal = String(value)
-        // Treat bare prefix as empty (optional field)
-        if (/^\+91\s?$/.test(strVal)) {
-          formData.phone = '' as any
-          const el = document.getElementById('phone') as HTMLInputElement
-          if (el) el.value = ''
-          setFieldValid(fieldName)
-          return true
-        }
-        if (!strVal.startsWith('+91')) {
-          setFieldError(fieldName, "Phone number must start with '+91'")
-          return false
-        }
-        const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
-        if (digits.length < 10) {
-          setFieldError(fieldName, 'Phone number must be exactly 10 digits after +91')
-          return false
-        }
-        if (digits.length > 10) {
-          setFieldError(fieldName, 'Phone number cannot exceed 10 digits after +91')
-          return false
-        }
-      }
-      break
-    
-    case 'dateOfBirth':
-      if (value) {
-        const today = new Date()
-        const birthDate = new Date(String(value))
-        const minAge = new Date()
-        minAge.setFullYear(today.getFullYear() - 100)
-        const maxAge = new Date()
-        maxAge.setFullYear(today.getFullYear() - 16)
-
-        if (birthDate > today) {
-          setFieldError(fieldName, 'Date of birth cannot be in the future')
-          return false
-        } else if (birthDate > maxAge) {
-          setFieldError(fieldName, 'Employee must be at least 16 years old')
-          return false
-        } else if (birthDate < minAge) {
-          setFieldError(fieldName, 'Please enter a valid date of birth')
-          return false
-        }
-      }
-      break
+  const isFieldValid = validateFieldType(fieldName, value)
+  if (!isFieldValid) {
+    return false
   }
 
-  // Use native validation
   if (element.checkValidity()) {
     setFieldValid(fieldName)
     return true
@@ -536,10 +579,7 @@ const onPhoneFocus = (event: FocusEvent) => {
   clearFieldValidation('phone')
   const target = event.target as HTMLInputElement
   const prefix = '+91 '
-  if (!target.value) {
-    target.value = prefix
-    formData.phone = prefix
-  } else if (!target.value.startsWith('+91')) {
+  if (!target.value || !target.value.startsWith('+91')) {
     target.value = prefix
     formData.phone = prefix
   }
@@ -585,6 +625,85 @@ const loadEmployeeData = async () => {
   }
 }
 
+// Helper function to validate form fields
+const validateFormFields = async (): Promise<boolean> => {
+  const allFields = Object.keys(formData)
+  const validationResults = await Promise.all(
+    allFields.map((fieldName) => validateFieldInline(fieldName))
+  )
+  return validationResults.every(Boolean)
+}
+
+// Helper function to handle validation errors
+const handleValidationErrors = async () => {
+  if (employeeForm.value) {
+    employeeForm.value.classList.add('was-validated')
+  }
+  await nextTick()
+  scrollToFirstError()
+}
+
+// Helper function to prepare employee data for update
+const prepareUpdateData = () => {
+  return {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    phone: normalizePhoneForSubmit(formData.phone),
+    dateOfBirth: formData.dateOfBirth || undefined,
+    address: formData.address || undefined,
+    status: formData.status
+  }
+}
+
+// Helper function to prepare employee data for creation
+const prepareCreateData = (): CreateEmployeeData => {
+  return {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    phone: normalizePhoneForSubmit(formData.phone),
+    dateOfBirth: formData.dateOfBirth || undefined,
+    address: formData.address || undefined
+  }
+}
+
+// Helper function to handle successful update
+const handleUpdateSuccess = () => {
+  successMessage.value = generateEmployeeDetails()
+  resetForm()
+  toastStore.showSuccess('Success', successMessage.value)
+}
+
+// Helper function to handle successful creation
+const handleCreateSuccess = () => {
+  successMessage.value = generateEmployeeDetails()
+  resetForm()
+  router.push('/app/employees')
+  setTimeout(() => {
+    toastStore.showSuccess('Success', successMessage.value)
+  }, 100)
+}
+
+// Helper function to handle errors
+const handleSubmitError = (error: any) => {
+  console.error(`Error ${isEditMode.value ? 'updating' : 'creating'} employee:`, error)
+  
+  let errorMsg = `An error occurred while ${isEditMode.value ? 'updating' : 'adding'} the employee. Please try again.`
+  
+  if (error.response?.status === 409) {
+    errorMsg = 'An employee with this email already exists.'
+  } else if (error.response?.status === 400) {
+    errorMsg = 'Server validation failed. Please check your data and try again.'
+  } else if (error.response?.status === 404) {
+    errorMsg = 'Employee not found.'
+  } else if (error.response?.data?.message) {
+    errorMsg = error.response.data.message
+  }
+  
+  toastStore.showError('Error', errorMsg)
+}
+
 // Form submission with enhanced validation
 const submitForm = async (event?: Event) => {
   if (event) {
@@ -594,29 +713,9 @@ const submitForm = async (event?: Event) => {
 
   formSubmitted.value = true
 
-  // Validate all fields
-  let isFormValid = true
-  const requiredFields = ['firstName', 'lastName', 'email']
-  if (isEditMode.value) requiredFields.push('status')
-  const allFields = Object.keys(formData)
-
-  // Run all validations and await results so we can accurately find first error
-  const validationResults = await Promise.all(
-    allFields.map((fieldName) => validateFieldInline(fieldName))
-  )
-  isFormValid = validationResults.every(Boolean)
-
+  const isFormValid = await validateFormFields()
   if (!isFormValid) {
-    // Add 'was-validated' class to show validation styling
-    if (employeeForm.value) {
-      employeeForm.value.classList.add('was-validated')
-    }
-
-    // Ensure DOM/classes are updated before scrolling
-    await nextTick()
-
-    // Scroll/focus to first error like the vendor form
-    scrollToFirstError()
+    await handleValidationErrors()
     return
   }
 
@@ -624,69 +723,16 @@ const submitForm = async (event?: Event) => {
 
   try {
     if (isEditMode.value && employeeId.value) {
-      // Update existing employee
-      const employeeData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: normalizePhoneForSubmit(formData.phone),
-        dateOfBirth: formData.dateOfBirth || undefined,
-        address: formData.address || undefined,
-        status: formData.status
-      }
-
+      const employeeData = prepareUpdateData()
       await employeeService.updateEmployee(employeeId.value, employeeData)
-      successMessage.value = generateEmployeeDetails()
-      
-      // Clear form immediately after successful update
-      resetForm()
-      
-      // Show success toast for edit mode with integrated redirect
-      toastStore.showSuccess('Success', successMessage.value)
+      handleUpdateSuccess()
     } else {
-      // Create new employee
-      const employeeData: CreateEmployeeData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: normalizePhoneForSubmit(formData.phone),
-        dateOfBirth: formData.dateOfBirth || undefined,
-        address: formData.address || undefined
-      }
-
+      const employeeData = prepareCreateData()
       await employeeService.createEmployee(employeeData)
-      successMessage.value = generateEmployeeDetails()
-      
-      // Clear form immediately after successful creation
-      resetForm()
-      
-      // Redirect to employee list immediately after success
-      router.push('/app/employees')
-      
-      // Show success toast after redirect (with a small delay to ensure page loads)
-      setTimeout(() => {
-        toastStore.showSuccess('Success', successMessage.value)
-      }, 100)
+      handleCreateSuccess()
     }
-    
   } catch (error: any) {
-    console.error(`Error ${isEditMode.value ? 'updating' : 'creating'} employee:`, error)
-    
-    // Handle specific backend/API errors
-    let errorMsg = `An error occurred while ${isEditMode.value ? 'updating' : 'adding'} the employee. Please try again.`
-    
-    if (error.response?.status === 409) {
-      errorMsg = 'An employee with this email already exists.'
-    } else if (error.response?.status === 400) {
-      errorMsg = 'Server validation failed. Please check your data and try again.'
-    } else if (error.response?.status === 404) {
-      errorMsg = 'Employee not found.'
-    } else if (error.response?.data?.message) {
-      errorMsg = error.response.data.message
-    }
-    
-    // This is a backend/API error, so show error toast
-    toastStore.showError('Error', errorMsg)
+    handleSubmitError(error)
   } finally {
     isSubmitting.value = false
   }

@@ -584,6 +584,7 @@ const getCategoryBarClass = (name: string): string => {
   transition: none !important;
   overflow: hidden;
   background-clip: padding-box;
+  pointer-events: none;
 }
 
 .stats-card-modern .card-body {
@@ -603,9 +604,6 @@ const getCategoryBarClass = (name: string): string => {
 }
 
 /* Prevent hover interactions entirely */
-.stats-card-modern {
-  pointer-events: none;
-}
 
 /* Force same visuals on interactive states */
 .stats-card-modern,

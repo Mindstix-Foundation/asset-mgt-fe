@@ -444,6 +444,7 @@ body {
 /* Table Styles - Clean Professional Look */
 .table {
   color: var(--text-secondary);
+  table-layout: fixed !important;
 }
 
 .table thead th {
@@ -458,7 +459,8 @@ body {
 }
 
 .table-hover tbody tr:hover {
-  background-color: var(--element-light-gray);
+  background-color: var(--primary-light-gray) !important;
+  transition: all 0.2s ease !important;
 }
 
 /* Badge Styles - TrackStix Colors with rounded corners */
@@ -670,6 +672,8 @@ body {
 .table-responsive {
   border-radius: 1rem;
   border: 1px solid var(--mindstix-border);
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Progress Stacked Fix for Bootstrap 5 with rounded corners */
@@ -692,6 +696,8 @@ body {
 
 .progress {
   border-radius: 1rem;
+  height: 0.5rem !important;
+  background-color: var(--element-gray) !important;
 }
 
 /* Custom Button Styles with rounded corners */
@@ -758,6 +764,14 @@ canvas {
   color: var(--secondary-red);
   background-color: rgba(233, 118, 118, 0.1);
   border-color: rgba(233, 118, 118, 0.2);
+  border-radius: 8px;
+  padding: 0.875rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.alert-danger i {
+  color: var(--secondary-red);
 }
 
 /* TrackStix Spacing and Typography */
@@ -1052,7 +1066,7 @@ label {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--primary-mid-gray); /* TrackStix secondary color */
+  color: var(--primary-dark-gray); /* Darker color for better contrast */
   cursor: pointer !important;
   padding: 6px;
   border-radius: 4px;
@@ -1069,8 +1083,19 @@ label {
 }
 
 .password-toggle:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(51, 31, 234, 0.15); /* Slightly more visible hover state */
   /* Preserve original icon color */
+}
+
+.password-toggle:focus {
+  outline: 2px solid var(--secondary-purple); /* Visible focus outline */
+  outline-offset: 2px;
+  color: var(--secondary-purple);
+  background: rgba(51, 31, 234, 0.15);
+}
+
+.password-toggle i {
+  font-size: 16px; /* Larger icon for better visibility */
 }
 
 /* Error message styling */
@@ -1119,11 +1144,6 @@ label {
 
 
 
-/* Ensure password field has proper padding */
-#password {
-  padding-right: 40px !important;
-}
-
 /* Ensure password field has proper padding and never gets validation styling */
 #password {
   padding-right: 40px !important;
@@ -1166,45 +1186,6 @@ label {
   box-shadow: 0 0 0 3px rgba(233, 118, 118, 0.1);
 }
 
-/* Password Toggle Button */
-.password-toggle {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: var(--primary-dark-gray); /* Darker color for better contrast */
-  cursor: pointer !important;
-  padding: 6px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  z-index: 1000; /* Higher z-index to ensure it's above validation icons */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px; /* Slightly larger touch target */
-  height: 36px; /* Slightly larger touch target */
-  pointer-events: auto;
-  outline: none;
-  -webkit-appearance: none;
-}
-
-.password-toggle:hover {
-  background: rgba(51, 31, 234, 0.15); /* Slightly more visible hover state */
-  /* Preserve original icon color */
-}
-
-.password-toggle:focus {
-  outline: 2px solid var(--secondary-purple); /* Visible focus outline */
-  outline-offset: 2px;
-  color: var(--secondary-purple);
-  background: rgba(51, 31, 234, 0.15);
-}
-
-.password-toggle i {
-  font-size: 16px; /* Larger icon for better visibility */
-}
 
 
 
@@ -1269,20 +1250,6 @@ label {
   margin-left: 0.5rem;
 }
 
-/* Login Error Alert */
-.alert-danger {
-  background: rgba(233, 118, 118, 0.1);
-  border: 1px solid rgba(233, 118, 118, 0.2);
-  color: var(--secondary-red);
-  border-radius: 8px;
-  padding: 0.875rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-}
-
-.alert-danger i {
-  color: var(--secondary-red);
-}
 
 
 /* Loading State for Login Button */
@@ -1757,21 +1724,22 @@ i.text-brown {
 
 /* Modern Button Styling - Unified Compact Design */
 .btn-modern {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: none;
-  letter-spacing: 0.025em;
-  transition: all 0.2s ease;
-  border: 1.5px solid;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: relative;
-  overflow: hidden;
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  text-transform: none !important;
+  letter-spacing: 0.025em !important;
+  transition: all 0.2s ease !important;
+  border: 1.5px solid !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
 }
 
 .btn-modern:before {
@@ -1790,8 +1758,9 @@ i.text-brown {
 }
 
 .btn-modern:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.95);
 }
 
 /* Consistent Button Color System - Same as Other Pages */
@@ -1971,7 +1940,7 @@ i.text-brown {
   border: 1px solid var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
   border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
   font-size: 0.8rem !important;
   font-weight: 500 !important;
   transition: all 0.2s ease !important;
@@ -1980,7 +1949,7 @@ i.text-brown {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: 36px !important;
+  min-width: 32px !important;
 }
 
 .vendor-actions .btn:hover {
@@ -2009,11 +1978,6 @@ i.text-brown {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Table responsive container - no padding to avoid white border */
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
-}
 
 /* Table cell padding adjustments for balanced spacing */
 .table td, .table th {
@@ -2037,13 +2001,7 @@ i.text-brown {
   gap: 0.25rem !important;
 }
 
-.vendor-actions .btn {
-  padding: 0.25rem 0.5rem !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-}
-
-/* View toggle buttons */
+/* View toggle buttons - Consolidated */
 .view-toggle {
   background-color: var(--primary-light-gray) !important;
   border: 1px solid var(--element-gray) !important;
@@ -2243,15 +2201,6 @@ i.text-brown {
   cursor: pointer !important;
 }
 
-/* Action Buttons */
-.btn-cancel {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
 
 .btn-upload-primary {
   background-color: var(--secondary-purple) !important;
@@ -2307,11 +2256,6 @@ i.text-brown {
   padding: 1rem !important;
 }
 
-.progress {
-  height: 0.5rem !important;
-  background-color: var(--element-gray) !important;
-  border-radius: 0.25rem !important;
-}
 
 /* Modern Pagination Styles */
 .pagination-modern {
@@ -2413,10 +2357,9 @@ i.text-brown {
 }
 
 .modal-footer .btn-secondary:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  filter: none !important;
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: white !important;
 }
 
 .modal-footer .btn-success {
@@ -2533,17 +2476,6 @@ i.text-brown {
   color: white !important;
 }
 
-.modal-footer .btn-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.modal-footer .btn-secondary:hover {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
 
 .modal-footer .btn-info {
   background-color: var(--secondary-orange) !important;
@@ -2712,72 +2644,10 @@ i.text-brown {
   background-color: rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Modern Button Styling - Updated Color Palette */
-.btn-modern {
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
-  font-size: 0.875rem !important;
-  text-transform: none !important;
-  letter-spacing: 0.025em !important;
-  transition: all 0.2s ease !important;
-  border: 1.5px solid !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  position: relative !important;
-  overflow: hidden !important;
-  min-height: 38px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
 
-.btn-modern:hover {
-  filter: brightness(0.95);
-}
 
-/* Add Employee - Primary Color */
-.btn-modern.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
+/* Add Employee - Primary Color (removed duplicate; using vendor/asset definitions) */
 
-.btn-modern.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-/* Bulk Upload - Secondary */
-.btn-modern.btn-outline-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.btn-modern.btn-outline-secondary:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-/* View toggle buttons */
-.view-toggle {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.view-toggle.active {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.view-toggle:hover:not(.active) {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
 
 /* Employee action buttons - Updated Design */
 .employee-actions .btn {
@@ -2805,34 +2675,15 @@ i.text-brown {
   filter: brightness(0.92);
 }
 
-/* Specific action button hover colors */
-.btn-view:hover {
-  /* Preserve original text color */
-  border-color: var(--secondary-purple) !important;
-}
-
-.btn-edit:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-}
+/* Specific action button hover colors (duplicates removed; using earlier definitions) */
 
 .btn-assign:hover {
   color: var(--secondary-green) !important;
   border-color: var(--secondary-green) !important;
 }
 
-/* Filter card styling */
-.filter-card {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-}
+/* Filter card styling (duplicate removed; using earlier definition) */
 
-/* Table hover effects */
-.table-hover tbody tr:hover {
-  background-color: var(--primary-light-gray) !important;
-  transition: all 0.2s ease !important;
-}
 
 /* Employee Card Specific Styles */
 .employee-card {
@@ -2847,121 +2698,19 @@ i.text-brown {
   transform: translateY(-1px) !important;
 }
 
-/* Modern Pagination Styles */
-.pagination-modern {
-  --bs-pagination-padding-x: 0.75rem;
-  --bs-pagination-padding-y: 0.5rem;
-  --bs-pagination-font-size: 0.875rem;
-  --bs-pagination-color: var(--primary-dark-gray);
-  --bs-pagination-bg: var(--primary-white);
-  --bs-pagination-border-width: 1px;
-  --bs-pagination-border-color: var(--element-gray);
-  --bs-pagination-border-radius: 0.5rem;
-  --bs-pagination-hover-color: var(--secondary-purple);
-  --bs-pagination-hover-bg: var(--primary-light-gray);
-  --bs-pagination-hover-border-color: var(--primary-mid-light);
-  --bs-pagination-focus-color: var(--secondary-purple);
-  --bs-pagination-focus-bg: var(--primary-light-gray);
-  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-  --bs-pagination-active-color: var(--primary-white);
-  --bs-pagination-active-bg: var(--secondary-purple);
-  --bs-pagination-active-border-color: var(--secondary-purple);
-  --bs-pagination-disabled-color: var(--primary-mid-gray);
-  --bs-pagination-disabled-bg: var(--primary-light-gray);
-  --bs-pagination-disabled-border-color: var(--element-gray);
-}
+/* Modern Pagination Styles (duplicate block removed; using earlier definition) */
 
-.pagination-modern .page-link {
-  border-radius: 0.5rem !important;
-  margin: 0 0.125rem !important;
-  min-width: 40px !important;
-  height: 40px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
-}
-
-.pagination-modern .page-item:not(.active) .page-link:hover {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  /* Preserve original text color */
-  transform: translateY(-1px) !important;
-}
-
-.pagination-modern .page-item.disabled .page-link {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  cursor: not-allowed !important;
-}
-
-/* General improvements */
-.btn-action {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
+/* General improvements (duplicate .btn-action removed; using earlier definition) */
 
 /* =================================
    ASSET MANAGEMENT STYLES
    Matching Prototype Design Exactly
 ================================= */
 
-/* Modern Button Styling - Updated Color Palette */
-.btn-modern {
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
-  font-size: 0.875rem !important;
-  text-transform: none !important;
-  letter-spacing: 0.025em !important;
-  transition: all 0.2s ease !important;
-  border: 1.5px solid !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  min-height: 38px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-}
 
-.btn-modern:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
 
 /* Primary Actions - Add/Create */
-.btn-modern.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.btn-modern.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
+/* Primary Actions - Add/Create (duplicate removed; using vendor definition) */
 
 /* Issue/Assign Actions - Green */
 .btn-modern.btn-success {
@@ -3043,23 +2792,6 @@ i.text-brown {
   color: var(--primary-black) !important;
 }
 
-/* View toggle buttons */
-.view-toggle {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.view-toggle.active {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.view-toggle:hover:not(.active) {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
 
 /* Individual asset action buttons - Updated Design */
 .asset-actions .btn {
@@ -3174,27 +2906,13 @@ i.text-brown {
   border-radius: 0.375rem !important;
 }
 
-/* Enhanced table styling */
-.table-hover tbody tr:hover {
-  background-color: var(--primary-light-gray) !important;
-  transition: all 0.2s ease !important;
-}
 
-/* Table responsive container - no padding to avoid white border */
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
-}
 
 /* Table cell padding adjustments for balanced spacing */
-.table td, .table th {
-  padding: 0.75rem !important;
-}
+/* Table cell padding adjustments for balanced spacing (duplicate removed; using earlier definition) */
 
 /* Table column width optimization */
-.table {
-  table-layout: fixed !important;
-}
+/* Table layout (duplicate removed; using earlier definition) */
 
 /* Prevent text wrapping in table headers */
 .table th {
@@ -3241,14 +2959,7 @@ i.text-brown {
 }
 
 /* Actions column (last column) - exact width for 5 buttons */
-.table td:last-child, .table th:last-child {
-  padding-right: 1.5rem !important;
-  padding-left: 1rem !important;
-  text-align: left !important;
-  width: 200px !important; /* Exact width for 5 action buttons with no extra space */
-  min-width: 200px !important;
-  max-width: 200px !important;
-}
+/* Actions column width rules (duplicate removed to avoid conflicts) */
 
 /* Asset actions button group spacing */
 .asset-actions {
@@ -3256,11 +2967,7 @@ i.text-brown {
   gap: 0.25rem !important;
 }
 
-.asset-actions .btn {
-  padding: 0.375rem 0.5rem !important;
-  min-width: 34px !important;
-  min-height: 34px !important;
-}
+/* Asset actions sizing tweaks (duplicate removed; using earlier definition) */
 
 /* Grid View Card Styles */
 .asset-card-modern {
@@ -3294,30 +3001,7 @@ i.text-brown {
 }
 
 /* Action Button Styles for Grid View */
-.btn-action {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
-
-.btn-action:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  filter: brightness(0.92);
-}
+/* Grid view action button styles (duplicate .btn-action removed; using earlier definition) */
 
 /* Specific action button hover colors */
 .btn-action.btn-view:hover {
@@ -3352,110 +3036,7 @@ i.text-brown {
 }
 
 /* Modal Footer Button Styling */
-.modal-footer {
-  background-color: var(--primary-light-gray) !important;
-  border-top: 1px solid var(--element-gray) !important;
-  padding: 1rem 1.5rem !important;
-}
-
-.modal-footer .btn {
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.modal-footer .btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-.modal-footer .btn-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.modal-footer .btn-secondary:hover {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-.modal-footer .btn-outline-primary {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--secondary-purple) !important;
-  /* Preserve original text color */
-}
-
-.modal-footer .btn-outline-primary:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-success {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-success:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-}
-
-.modal-footer .btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
-  color: white !important;
-}
-
-.modal-footer .btn-outline-secondary {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--primary-mid-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.modal-footer .btn-outline-secondary:hover {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--primary-dark-gray) !important;
-  color: var(--primary-black) !important;
-}
-
-.modal-footer .btn-primary-blue {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-primary-blue:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
+/* Modal Footer styles (duplicate group removed; using earlier definitions) */
 
 .modal-footer .btn-pink {
   background-color: var(--secondary-pink) !important;
