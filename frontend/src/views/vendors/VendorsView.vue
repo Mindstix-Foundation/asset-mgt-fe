@@ -17,7 +17,7 @@
             <div class="col-6">
               <div class="d-flex gap-1 w-100 justify-content-center">
                 <!-- View Toggle -->
-                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
                     :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
                     @click="toggleView('list')"
@@ -32,7 +32,7 @@
                   >
                     <i class="fas fa-th-large"></i>
                   </button>
-                </div>
+                </fieldset>
               </div>
             </div>
             <div class="col-6">
@@ -62,7 +62,7 @@
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
                 <!-- View Toggle -->
-                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
                     :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
                     @click="toggleView('list')"
@@ -77,7 +77,7 @@
                   >
                     <i class="fas fa-th-large"></i>
                   </button>
-                </div>
+                </fieldset>
                 
                 <!-- Bulk Upload Button -->
                 <button 
@@ -105,7 +105,7 @@
       <div class="row align-items-end">
         <!-- Search Vendors -->
         <div class="col-12 col-lg-7 mb-3">
-          <label class="form-label">Search Vendors</label>
+          <div class="form-label">Search Vendors</div>
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input 
@@ -198,8 +198,8 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading vendors...</span>
+        <div class="spinner-border text-primary">
+          <output class="visually-hidden">Loading vendors...</output>
         </div>
         <p class="mt-3 text-muted">Loading vendors...</p>
       </div>
@@ -407,8 +407,8 @@
           <div class="modal-body">
             <!-- Loading State -->
             <div v-if="!selectedVendor" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-2 text-muted">Loading vendor details...</p>
             </div>
@@ -421,21 +421,21 @@
                   <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Vendor Name</label>
+                      <div class="info-label-compact">Vendor Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedVendor.name }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Contact Person</label>
+                      <div class="info-label-compact">Contact Person</div>
                       <div class="info-value-compact">{{ selectedVendor.contactPerson || 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Vendor Type</label>
+                      <div class="info-label-compact">Vendor Type</div>
                       <div class="info-value-compact">
                         <span :class="getTypeBadgeClass(selectedVendor.vendorType)">{{ getTypeLabel(selectedVendor.vendorType) }}</span>
                       </div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Status</label>
+                      <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
                         <span :class="getStatusBadgeClass(selectedVendor.status)">{{ getStatusLabel(selectedVendor.status) }}</span>
                       </div>
@@ -450,19 +450,19 @@
                   <h6 class="section-title-compact"><i class="fas fa-address-book me-2"></i>Contact & Legal</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Email Address</label>
+                      <div class="info-label-compact">Email Address</div>
                       <div class="info-value-compact">{{ selectedVendor.email }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Phone Number</label>
+                      <div class="info-label-compact">Phone Number</div>
                       <div class="info-value-compact">{{ selectedVendor.phone || 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Tax ID</label>
+                      <div class="info-label-compact">Tax ID</div>
                       <div class="info-value-compact font-monospace">{{ selectedVendor.taxId || 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">PAN Number</label>
+                      <div class="info-label-compact">PAN Number</div>
                       <div class="info-value-compact font-monospace">{{ selectedVendor.panNumber || 'Not specified' }}</div>
                     </div>
                   </div>
@@ -602,7 +602,7 @@
             class="me-2"
           ></i>
           <strong class="me-auto">{{ toast.type === 'success' ? 'Success' : 'Error' }}</strong>
-          <button type="button" class="btn-close" @click="hideToast"></button>
+          <button type="button" class="btn-close" @click="toast.show = false"></button>
         </div>
         <div class="toast-body">
           {{ toast.message }}
@@ -1214,6 +1214,7 @@ onMounted(() => {
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  width: 24% !important;
 }
 
 /* Force column widths to be respected */
@@ -1227,7 +1228,6 @@ onMounted(() => {
 
 .table td:nth-child(1) { width: 27% !important; }
 .table td:nth-child(2) { width: 15% !important; }
-.table td:nth-child(3) { width: 24% !important; }
 .table td:nth-child(4) { width: 14% !important; }
 .table td:nth-child(5) { width: 13% !important; }
 .table td:nth-child(6) { width: 8% !important; }
@@ -1386,7 +1386,7 @@ onMounted(() => {
   border: 1px solid var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
   border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
   font-size: 0.8rem !important;
   font-weight: 500 !important;
   transition: all 0.2s ease !important;
@@ -1445,11 +1445,6 @@ onMounted(() => {
   gap: 0.25rem !important;
 }
 
-.vendor-actions .btn {
-  padding: 0.25rem 0.5rem !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-}
 
 /* View toggle buttons */
 .view-toggle {

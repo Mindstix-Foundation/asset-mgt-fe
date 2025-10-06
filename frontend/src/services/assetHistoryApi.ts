@@ -67,7 +67,7 @@ export interface AssetHistorySummaryResponse {
 }
 
 class AssetHistoryApiService {
-  private baseURL = `/asset-history`
+  private readonly baseURL = `/asset-history`
 
   // Get complete asset history with pagination and filtering
   async getAssetHistory(

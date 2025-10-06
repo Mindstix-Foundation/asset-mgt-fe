@@ -18,8 +18,8 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-3 text-muted">Loading asset data...</p>
             </div>
@@ -461,7 +461,7 @@ const ensureDateFormat = (dateValue: any): string => {
     }
     // If it's a date string, try to parse and format it
     const date = new Date(dateValue)
-    if (!isNaN(date.getTime())) {
+    if (!Number.isNaN(date.getTime())) {
       return date.toISOString().split('T')[0]
     }
   }
@@ -788,7 +788,7 @@ const validatePurchaseDate = (field: HTMLInputElement) => {
 }
 
 const validatePurchaseCost = (field: HTMLInputElement) => {
-  const isValid = !formData.purchaseCost || parseFloat(formData.purchaseCost) <= 1000000
+  const isValid = !formData.purchaseCost || Number.parseFloat(formData.purchaseCost) <= 1000000
   
   if (!isValid) {
     errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
@@ -961,7 +961,7 @@ const onCategoryChange = async (item: Item | null) => {
   
   // Load asset types for selected category
   if (item && item.value) {
-    await loadAssetTypes(parseInt(item.value.toString()))
+    await loadAssetTypes(Number.parseInt(item.value.toString()))
   }
   
   // Clear validation error when user makes a selection
@@ -1021,7 +1021,7 @@ const onBrandChange = async (item: Item | null) => {
   
   // Load models for selected brand AND asset type
   if (item && item.value && selectedType.value && selectedType.value.value) {
-    await loadModelsByBrandAndAssetType(parseInt(item.value.toString()), parseInt(selectedType.value.value.toString()))
+    await loadModelsByBrandAndAssetType(Number.parseInt(item.value.toString()), Number.parseInt(selectedType.value.value.toString()))
   }
   
   // Clear validation error when user makes a selection
@@ -1201,7 +1201,7 @@ const buildEditModeAssetData = (): any => {
     { formKey: 'condition', dataKey: 'condition' },
     { formKey: 'location', dataKey: 'location' },
     { formKey: 'purchaseDate', dataKey: 'purchaseDate', transform: (val: any) => val || undefined },
-    { formKey: 'purchaseCost', dataKey: 'purchaseCost', transform: (val: any) => val ? parseFloat(val.toString()) : undefined },
+    { formKey: 'purchaseCost', dataKey: 'purchaseCost', transform: (val: any) => val ? Number.parseFloat(val.toString()) : undefined },
     { formKey: 'warrantyStartDate', dataKey: 'warrantyStartDate', transform: (val: any) => val || undefined },
     { formKey: 'warrantyEndDate', dataKey: 'warrantyEndDate', transform: (val: any) => val || undefined },
     { formKey: 'notes', dataKey: 'notes', transform: (val: any) => val || undefined }
@@ -1217,7 +1217,7 @@ const buildEditModeAssetData = (): any => {
   })
 
   // Handle vendorId separately
-  const newVendorId = formData.vendorId ? parseInt(formData.vendorId) : null
+  const newVendorId = formData.vendorId ? Number.parseInt(formData.vendorId) : null
   const oldVendorId = original.vendorId || null
   if (newVendorId !== oldVendorId) {
     assetData.vendorId = newVendorId || undefined
@@ -1236,7 +1236,7 @@ const buildEditModeAssetData = (): any => {
       const originalValue = (original as any)[formKey]
       
       if (hasChanged(formValue, originalValue)) {
-        assetData[dataKey] = parseInt(formValue)
+        assetData[dataKey] = Number.parseInt(formValue)
       }
     })
   }
@@ -1252,18 +1252,18 @@ const buildAddModeAssetData = (): any => {
   return {
     assetId: formData.assetId,
     serialNumber: formData.serialNumber,
-    vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
+    vendorId: formData.vendorId ? Number.parseInt(formData.vendorId) : undefined,
     status: 'AVAILABLE',
     condition: formData.condition as any,
     location: formData.location,
     purchaseDate: normalizeOptionalField(formData.purchaseDate),
-    purchaseCost: formData.purchaseCost ? parseFloat(formData.purchaseCost.toString()) : undefined,
+    purchaseCost: formData.purchaseCost ? Number.parseFloat(formData.purchaseCost.toString()) : undefined,
     warrantyStartDate: normalizeOptionalField(formData.warrantyStartDate),
     warrantyEndDate: normalizeOptionalField(formData.warrantyEndDate),
     notes: normalizeOptionalField(formData.notes),
-    assetTypeId: parseInt(formData.assetTypeId!),
-    brandId: parseInt(formData.brandId!),
-    modelId: parseInt(formData.modelId!)
+    assetTypeId: Number.parseInt(formData.assetTypeId!),
+    brandId: Number.parseInt(formData.brandId!),
+    modelId: Number.parseInt(formData.modelId!)
   }
 }
 

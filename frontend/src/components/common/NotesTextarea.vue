@@ -141,7 +141,6 @@ const handleKeydown = (event: KeyboardEvent) => {
 const applySmartFormatting = (value: string, target: HTMLTextAreaElement): string => {
   if (!value) return value
   
-  const cursorPos = target.selectionStart
   const lines = value.split('\n')
   let formattedLines: string[] = []
   

@@ -25,15 +25,15 @@
             <!-- Event Header -->
             <div class="event-header">
               <div class="event-title-section">
-                <h6 class="event-title">{{ event.title }}</h6>
+                <h6 class="event-title">{{ formatEventType(event.type) }}</h6>
                 <div class="event-meta">
                   <span class="event-date">
                     <i class="fas fa-calendar-alt me-1"></i>
                     {{ formatDate(event.date) }}
                   </span>
-                  <span v-if="event.user" class="event-user">
+                  <span v-if="event.userDisplayName" class="event-user">
                     <i class="fas fa-user me-1"></i>
-                    {{ event.user }}
+                    {{ event.userDisplayName }}
                   </span>
                 </div>
               </div>
@@ -52,23 +52,31 @@
               <div class="details-grid">
                 <!-- Assignment Details -->
                 <template v-if="isAssignmentEvent(event.type)">
-                  <div v-if="event.details.employee" class="detail-item">
+                  <div v-if="event.details?.employeeEmail" class="detail-item">
                     <span class="detail-label">Employee:</span>
-                    <span class="detail-value">{{ event.details.employee }}</span>
+                    <span class="detail-value">{{ event.details.employeeEmail }}</span>
                   </div>
-                  <div v-if="event.details.employeeId" class="detail-item">
-                    <span class="detail-label">Employee ID:</span>
-                    <span class="detail-value">{{ event.details.employeeId }}</span>
+                  <div v-if="event.details?.issueDate" class="detail-item">
+                    <span class="detail-label">Issue Date:</span>
+                    <span class="detail-value">{{ formatDate(event.details.issueDate) }}</span>
                   </div>
-                  <div v-if="event.details.reason" class="detail-item">
-                    <span class="detail-label">Reason:</span>
-                    <span class="detail-value">{{ event.details.reason }}</span>
+                  <div v-if="event.details?.returnDate" class="detail-item">
+                    <span class="detail-label">Return Date:</span>
+                    <span class="detail-value">{{ formatDate(event.details.returnDate) }}</span>
                   </div>
-                  <div v-if="event.details.condition" class="detail-item">
-                    <span class="detail-label">Condition:</span>
+                  <div v-if="event.details?.issueCondition" class="detail-item">
+                    <span class="detail-label">Issue Condition:</span>
                     <span class="detail-value">
-                      <span class="condition-badge" :class="getConditionClass(event.details.condition)">
-                        {{ event.details.condition }}
+                      <span class="condition-badge" :class="getConditionClass(event.details.issueCondition)">
+                        {{ event.details.issueCondition }}
+                      </span>
+                    </span>
+                  </div>
+                  <div v-if="event.details?.returnCondition" class="detail-item">
+                    <span class="detail-label">Return Condition:</span>
+                    <span class="detail-value">
+                      <span class="condition-badge" :class="getConditionClass(event.details.returnCondition)">
+                        {{ event.details.returnCondition }}
                       </span>
                     </span>
                   </div>
@@ -76,23 +84,23 @@
 
                 <!-- Maintenance Details -->
                 <template v-if="isMaintenanceEvent(event.type)">
-                  <div v-if="event.details.type" class="detail-item">
+                  <div v-if="event.details?.maintenanceType" class="detail-item">
                     <span class="detail-label">Type:</span>
-                    <span class="detail-value">{{ formatMaintenanceType(event.details.type) }}</span>
+                    <span class="detail-value">{{ formatMaintenanceType(event.details.maintenanceType) }}</span>
                   </div>
-                  <div v-if="event.details.scheduledDate" class="detail-item">
+                  <div v-if="event.details?.scheduledDate" class="detail-item">
                     <span class="detail-label">Scheduled:</span>
                     <span class="detail-value">{{ formatDate(event.details.scheduledDate) }}</span>
                   </div>
-                  <div v-if="event.details.vendor" class="detail-item">
+                  <div v-if="event.details?.vendor" class="detail-item">
                     <span class="detail-label">Vendor:</span>
                     <span class="detail-value">{{ event.details.vendor }}</span>
                   </div>
-                  <div v-if="event.details.estimatedCost" class="detail-item">
+                  <div v-if="event.details?.estimatedCost" class="detail-item">
                     <span class="detail-label">Estimated Cost:</span>
                     <span class="detail-value">₹{{ formatCurrency(event.details.estimatedCost) }}</span>
                   </div>
-                  <div v-if="event.details.actualCost" class="detail-item">
+                  <div v-if="event.details?.actualCost" class="detail-item">
                     <span class="detail-label">Actual Cost:</span>
                     <span class="detail-value">₹{{ formatCurrency(event.details.actualCost) }}</span>
                   </div>
@@ -100,19 +108,19 @@
 
                 <!-- Asset Creation Details -->
                 <template v-if="event.type === 'ASSET_CREATED'">
-                  <div v-if="event.details.purchaseDate" class="detail-item">
+                  <div v-if="event.details?.purchaseDate" class="detail-item">
                     <span class="detail-label">Purchase Date:</span>
                     <span class="detail-value">{{ formatDate(event.details.purchaseDate) }}</span>
                   </div>
-                  <div v-if="event.details.purchaseCost" class="detail-item">
+                  <div v-if="event.details?.purchaseCost" class="detail-item">
                     <span class="detail-label">Purchase Cost:</span>
                     <span class="detail-value">₹{{ formatCurrency(event.details.purchaseCost) }}</span>
                   </div>
-                  <div v-if="event.details.location" class="detail-item">
+                  <div v-if="event.details?.location" class="detail-item">
                     <span class="detail-label">Location:</span>
                     <span class="detail-value">{{ event.details.location }}</span>
                   </div>
-                  <div v-if="event.details.serialNumber" class="detail-item">
+                  <div v-if="event.details?.serialNumber" class="detail-item">
                     <span class="detail-label">Serial Number:</span>
                     <span class="detail-value">{{ event.details.serialNumber }}</span>
                   </div>
@@ -120,7 +128,7 @@
               </div>
 
               <!-- Notes -->
-              <div v-if="event.details.notes" class="event-notes">
+              <div v-if="event.details?.notes" class="event-notes">
                 <div class="notes-label">
                   <i class="fas fa-sticky-note me-1"></i>
                   Notes:
@@ -129,7 +137,7 @@
               </div>
 
               <!-- Completion/Cancellation Notes -->
-              <div v-if="event.details.completionNotes" class="event-notes">
+              <div v-if="event.details?.completionNotes" class="event-notes">
                 <div class="notes-label">
                   <i class="fas fa-check-circle me-1"></i>
                   Completion Notes:
@@ -137,7 +145,7 @@
                 <div class="notes-content">{{ event.details.completionNotes }}</div>
               </div>
 
-              <div v-if="event.details.cancellationNotes" class="event-notes">
+              <div v-if="event.details?.cancellationNotes" class="event-notes">
                 <div class="notes-label">
                   <i class="fas fa-times-circle me-1"></i>
                   Cancellation Notes:
@@ -158,9 +166,9 @@
       <div v-if="loading" class="timeline-loading">
         <div class="timeline-connector">
           <div class="timeline-dot loading-dot">
-            <div class="spinner-border spinner-border-sm" role="status">
+            <output class="spinner-border spinner-border-sm">
               <span class="visually-hidden">Loading...</span>
-            </div>
+            </output>
           </div>
         </div>
         <div class="timeline-content">
@@ -239,11 +247,11 @@ const getConditionClass = (condition: string): string => {
 }
 
 const hasEventDetails = (event: AssetHistoryEvent): boolean => {
-  return event.details && Object.keys(event.details).some(key => 
-    event.details[key] !== null && 
-    event.details[key] !== undefined && 
-    event.details[key] !== ''
-  )
+  return !!(event.details && Object.keys(event.details).some(key => 
+    event.details![key] !== null && 
+    event.details![key] !== undefined && 
+    event.details![key] !== ''
+  ))
 }
 
 const isAssignmentEvent = (type: string): boolean => {

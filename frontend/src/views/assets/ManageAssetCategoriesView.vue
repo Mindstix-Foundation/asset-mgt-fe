@@ -93,8 +93,9 @@
               <div v-if="selectedEntityType === 'category'">
                 <div class="row g-3">
                   <div class="col-12">
-                    <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                    <label for="category-name" class="form-label">Category Name <span class="text-danger">*</span></label>
                     <input 
+                      id="category-name"
                       type="text" 
                       class="form-control" 
                       v-model="formData.name"
@@ -133,8 +134,9 @@
                     />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Asset Type Name <span class="text-danger">*</span></label>
+                    <label for="asset-type-name" class="form-label">Asset Type Name <span class="text-danger">*</span></label>
                     <input 
+                      id="asset-type-name"
                       type="text" 
                       class="form-control" 
                       v-model="formData.name"
@@ -161,8 +163,9 @@
               <div v-if="selectedEntityType === 'brand'">
                 <div class="row g-3">
                   <div class="col-12">
-                    <label class="form-label">Brand Name <span class="text-danger">*</span></label>
+                    <label for="brand-name" class="form-label">Brand Name <span class="text-danger">*</span></label>
                     <input 
+                      id="brand-name"
                       type="text" 
                       class="form-control" 
                       v-model="formData.name"
@@ -222,8 +225,9 @@
                     </div>
                   </div>
                   <div class="col-5">
-                    <label class="form-label">Model Name <span class="text-danger">*</span></label>
+                    <label for="model-name" class="form-label">Model Name <span class="text-danger">*</span></label>
                     <input 
+                      id="model-name"
                       type="text" 
                       class="form-control" 
                       v-model="formData.name"
@@ -254,7 +258,7 @@ Display: 15.6&quot; FHD"
               <div v-if="selectedEntityType === 'asset'">
                 <div class="row g-3 justify-content-between">
                   <div class="col-4">
-                    <label class="form-label">Add Single Asset</label>
+                    <div class="form-label">Add Single Asset</div>
                     <div class="row justify-content-around">
                       <div class="col-7">
                         <input 
@@ -283,7 +287,7 @@ Display: 15.6&quot; FHD"
                     </small>
                   </div>
                   <div class="col-7">
-                    <label class="form-label">Add Asset Range</label>
+                    <div class="form-label">Add Asset Range</div>
                      <div class="row justify-content-around">
                        <div class="col-9">
                          <div class="d-flex align-items-center gap-2">
@@ -327,7 +331,7 @@ Display: 15.6&quot; FHD"
                   <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
-                        <label class="form-label mb-1">Selected Assets for Deletion ({{ selectedAssetsForDeletion.length }})</label>
+                        <div class="form-label mb-1">Selected Assets for Deletion ({{ selectedAssetsForDeletion.length }})</div>
                       </div>
                     </div>
                     <div v-if="selectedAssetsForDeletion.length > 0" class="mt-3">
@@ -384,7 +388,7 @@ Display: 15.6&quot; FHD"
       <div class="row align-items-end">
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
-          <label class="form-label">Search Assets</label>
+          <div class="form-label">Search Assets</div>
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input 
@@ -654,49 +658,49 @@ Display: 15.6&quot; FHD"
                 <div class="info-grid-compact">
                   <!-- Asset-specific fields -->
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Asset ID</label>
+                    <div class="info-label-compact">Asset ID</div>
                     <div class="info-value-compact fw-bold">{{ itemToDelete?.assetId || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Model</label>
+                    <div class="info-label-compact">Model</div>
                     <div class="info-value-compact">{{ itemToDelete?.model?.name || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Brand</label>
+                    <div class="info-label-compact">Brand</div>
                     <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Asset Type</label>
+                    <div class="info-label-compact">Asset Type</div>
                     <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Serial Number</label>
+                    <div class="info-label-compact">Serial Number</div>
                     <div class="info-value-compact">{{ itemToDelete?.serialNumber || 'N/A' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">Condition</label>
+                    <div class="info-label-compact">Condition</div>
                     <div class="info-value-compact">{{ itemToDelete?.condition || 'Unknown' }}</div>
                   </div>
                   
                   <!-- Non-asset entity fields -->
                   <div v-if="selectedEntityType !== 'asset'" class="info-item-compact">
-                    <label class="info-label-compact">{{ getEntityTitle().slice(0, -1) }} Name</label>
+                    <div class="info-label-compact">{{ getEntityTitle().slice(0, -1) }} Name</div>
                     <div class="info-value-compact fw-bold">{{ itemToDelete?.name }}</div>
                   </div>
                   <div v-if="selectedEntityType !== 'asset' && itemToDelete?.description" class="info-item-compact">
-                    <label class="info-label-compact">Description</label>
+                    <div class="info-label-compact">Description</div>
                     <div class="info-value-compact">{{ itemToDelete?.description || 'No description' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'type' && itemToDelete?.category" class="info-item-compact">
-                    <label class="info-label-compact">Category</label>
+                    <div class="info-label-compact">Category</div>
                     <div class="info-value-compact">{{ itemToDelete?.category?.name || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'model'" class="info-item-compact">
-                    <label class="info-label-compact">Brand</label>
+                    <div class="info-label-compact">Brand</div>
                     <div class="info-value-compact">{{ itemToDelete?.brand?.name || 'Unknown' }}</div>
                   </div>
                   <div v-if="selectedEntityType === 'model'" class="info-item-compact">
-                    <label class="info-label-compact">Asset Type</label>
+                    <div class="info-label-compact">Asset Type</div>
                     <div class="info-value-compact">{{ itemToDelete?.assetType?.name || 'Unknown' }}</div>
                   </div>
                 </div>
@@ -777,8 +781,8 @@ Display: 15.6&quot; FHD"
             </div>
             
             <div v-else-if="selectedEntityType !== 'asset'" class="mt-2 text-center">
-              <div class="spinner-border text-primary spinner-border-sm" role="status" style="width: 1rem; height: 1rem;">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary spinner-border-sm" style="width: 1rem; height: 1rem;">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <small class="text-muted d-block mt-1" style="font-size: 0.8rem;">Analyzing deletion impact...</small>
             </div>
@@ -879,19 +883,19 @@ Display: 15.6&quot; FHD"
                   <h6 class="section-title-compact"><i class="fas fa-info-circle me-1"></i>Basic Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Model Name</label>
+                      <div class="info-label-compact">Model Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedModel.name }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Brand</label>
+                      <div class="info-label-compact">Brand</div>
                       <div class="info-value-compact">{{ selectedModel.brand?.name || 'Unknown' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Asset Type</label>
+                      <div class="info-label-compact">Asset Type</div>
                       <div class="info-value-compact fw-bold">{{ selectedModel.assetType?.name || 'Unknown' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Category</label>
+                      <div class="info-label-compact">Category</div>
                       <div class="info-value-compact">{{ selectedModel.assetType?.category?.name || 'Unknown' }}</div>
                     </div>
                   </div>
@@ -1097,14 +1101,14 @@ const getEntityDescription = () => {
 // Computed properties for dropdown filtering
 const filteredAssetTypes = computed(() => {
   if (!formData.categoryId) return assetTypes.value
-  return assetTypes.value.filter(type => type.categoryId === parseInt(formData.categoryId))
+  return assetTypes.value.filter(type => type.categoryId === Number.parseInt(formData.categoryId))
 })
 
 const filteredModels = computed(() => {
   if (!formData.brandId && !formData.assetTypeId) return models.value
   return models.value.filter(model => {
-    const brandMatch = !formData.brandId || model.brandId === parseInt(formData.brandId)
-    const typeMatch = !formData.assetTypeId || model.assetTypeId === parseInt(formData.assetTypeId)
+    const brandMatch = !formData.brandId || model.brandId === Number.parseInt(formData.brandId)
+    const typeMatch = !formData.assetTypeId || model.assetTypeId === Number.parseInt(formData.assetTypeId)
     return brandMatch && typeMatch
   })
 })
@@ -1177,22 +1181,26 @@ const startBulkDelete = () => {
 const loadItems = async () => {
   try {
     switch (selectedEntityType.value) {
-      case 'category':
+      case 'category': {
         const categoryResponse = await assetCategoryService.getAssetCategories({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
         items.value = categoryResponse.data.assetCategories
         break
-      case 'type':
+      }
+      case 'type': {
         const typeResponse = await assetTypeService.getAssetTypes({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
         items.value = typeResponse.data.assetTypes
         break
-      case 'brand':
+      }
+      case 'brand': {
         const brandResponse = await brandService.getBrands({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
         items.value = brandResponse.data.brands
         break
-      case 'model':
+      }
+      case 'model': {
         const modelResponse = await modelService.getModels({ limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
         items.value = modelResponse.data.models
         break
+      }
       case 'asset':
         // Load deletable assets from API (only assets that meet deletion criteria)
         try {
@@ -1250,47 +1258,55 @@ const saveEntity = async () => {
     
     // Add entity-specific fields
     if (selectedEntityType.value === 'type') {
-      data.categoryId = parseInt(formData.categoryId)
+      data.categoryId = Number.parseInt(formData.categoryId)
     }
     
     if (selectedEntityType.value === 'model') {
-      data.brandId = parseInt(formData.brandId)
-      data.assetTypeId = parseInt(formData.assetTypeId)
+      data.brandId = Number.parseInt(formData.brandId)
+      data.assetTypeId = Number.parseInt(formData.assetTypeId)
       data.specifications = parseSpecifications(formData.specifications)
     }
     
     if (formData.id) {
       // Update existing item
       switch (selectedEntityType.value) {
-        case 'category':
-          response = await assetCategoryService.updateAssetCategory(formData.id, data)
+        case 'category': {
+          await assetCategoryService.updateAssetCategory(formData.id, data)
           break
-        case 'type':
-          response = await assetTypeService.updateAssetType(formData.id, data)
+        }
+        case 'type': {
+          await assetTypeService.updateAssetType(formData.id, data)
           break
-        case 'brand':
-          response = await brandService.updateBrand(formData.id, data)
+        }
+        case 'brand': {
+          await brandService.updateBrand(formData.id, data)
           break
-        case 'model':
-          response = await modelService.updateModel(formData.id, data)
+        }
+        case 'model': {
+          await modelService.updateModel(formData.id, data)
           break
+        }
       }
       toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} updated successfully!`)
     } else {
       // Create new item
       switch (selectedEntityType.value) {
-        case 'category':
-          response = await assetCategoryService.createAssetCategory(data)
+        case 'category': {
+          await assetCategoryService.createAssetCategory(data)
           break
-        case 'type':
-          response = await assetTypeService.createAssetType(data)
+        }
+        case 'type': {
+          await assetTypeService.createAssetType(data)
           break
-        case 'brand':
-          response = await brandService.createBrand(data)
+        }
+        case 'brand': {
+          await brandService.createBrand(data)
           break
-        case 'model':
-          response = await modelService.createModel(data)
+        }
+        case 'model': {
+          await modelService.createModel(data)
           break
+        }
       }
       toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} created successfully!`)
     }
@@ -1364,7 +1380,7 @@ const analyzeDeletionImpact = async (item: any) => {
     }
     
     switch (selectedEntityType.value) {
-      case 'category':
+      case 'category': {
         // Get category details with counts
         const categoryResponse = await assetCategoryService.getAssetCategoryById(item.id)
         const category = categoryResponse.data.assetCategory
@@ -1377,16 +1393,18 @@ const analyzeDeletionImpact = async (item: any) => {
           }, 0)
         }
         break
+      }
         
-      case 'type':
+      case 'type': {
         // Get asset type details with counts
         const typeResponse = await assetTypeService.getAssetTypeById(item.id)
         const assetType = typeResponse.data.assetType
         impact.assets = assetType._count?.assets || 0
         impact.models = assetType._count?.models || 0
         break
+      }
         
-      case 'brand':
+      case 'brand': {
         // For brands, we need to count models and assets
         const brandModels = models.value.filter(model => model.brandId === item.id)
         impact.models = brandModels.length
@@ -1397,13 +1415,15 @@ const analyzeDeletionImpact = async (item: any) => {
           return total + (model._count?.assets || 0)
         }, 0)
         break
+      }
         
-      case 'model':
+      case 'model': {
         // For models, count assets
         const modelResponse = await modelService.getModelById(item.id)
         const model = modelResponse.data.model
         impact.assets = model._count?.assets || 0
         break
+      }
     }
     
     deleteImpact.value = impact
@@ -1756,8 +1776,8 @@ const validateRangeInputs = (fromValue: string, toValue: string): boolean => {
     return false
   }
   
-  const startNum = parseInt(fromValue.split('-')[1])
-  const endNum = parseInt(toValue.split('-')[1])
+  const startNum = Number.parseInt(fromValue.split('-')[1])
+  const endNum = Number.parseInt(toValue.split('-')[1])
   
   if (startNum > endNum) {
     showErrorToast('"From" value must be less than or equal to "to" value')
@@ -1768,8 +1788,8 @@ const validateRangeInputs = (fromValue: string, toValue: string): boolean => {
 }
 
 const generateAssetRange = (fromValue: string, toValue: string): string[] => {
-  const startNum = parseInt(fromValue.split('-')[1])
-  const endNum = parseInt(toValue.split('-')[1])
+  const startNum = Number.parseInt(fromValue.split('-')[1])
+  const endNum = Number.parseInt(toValue.split('-')[1])
   
   const rangeAssetIds = []
   for (let i = startNum; i <= endNum; i++) {
@@ -1780,8 +1800,8 @@ const generateAssetRange = (fromValue: string, toValue: string): string[] => {
 }
 
 const filterValidAssets = (rangeAssetIds: string[]): string[] => {
-  const deletableAssetIds = items.value.map(asset => asset.assetId)
-  return rangeAssetIds.filter(assetId => deletableAssetIds.includes(assetId))
+  const deletableAssetIds = new Set(items.value.map(asset => asset.assetId))
+  return rangeAssetIds.filter(assetId => deletableAssetIds.has(assetId))
 }
 
 const addAssetsToSelection = (validRangeAssets: string[]): { addedCount: number; alreadySelectedCount: number } => {
@@ -2298,16 +2318,6 @@ textarea.form-control::placeholder {
   font-size: 0.875rem;
 }
 
-.btn-outline-primary {
-  color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-}
-
-.btn-outline-primary:hover {
-  background-color: rgba(51, 31, 234, 0.1);
-  color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-}
 
 .btn-outline-danger {
   color: var(--secondary-red);

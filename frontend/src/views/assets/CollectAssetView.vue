@@ -12,8 +12,8 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-3 text-muted">Loading form data...</p>
             </div>
@@ -423,7 +423,7 @@ const filteredAssignedAssets = computed(() => {
     return assignedAssets.value
   }
   // Convert both to numbers for comparison since formData.employeeId is a string
-  const selectedEmployeeId = parseInt(formData.employeeId)
+  const selectedEmployeeId = Number.parseInt(formData.employeeId)
   return assignedAssets.value.filter(assignment => assignment.employee.id === selectedEmployeeId)
 })
 
@@ -803,7 +803,6 @@ const submitForm = async (event?: Event) => {
 
   // Validate all fields
   let isFormValid = true
-  const requiredFields = ['employeeId', 'assetId', 'collectionDate', 'collectionReason', 'assetCondition']
   const allFields = Object.keys(formData)
 
   allFields.forEach(fieldName => {
@@ -845,7 +844,7 @@ const confirmCollection = async () => {
     }
 
     // Call the API to collect/return the asset
-    const response = await collectAssetApiService.collectAsset(parseInt(formData.assetId), returnData)
+    await collectAssetApiService.collectAsset(Number.parseInt(formData.assetId), returnData)
     
     const collectionDetails = generateCollectionDetails()
     
@@ -966,7 +965,7 @@ watch(() => selectedEmployee.value, (newValue) => {
 // Asset selection handler - sync with employee dropdown
 watch(() => selectedAsset.value, (newValue) => {
   if (newValue && newValue.value) {
-    const assignmentId = parseInt(newValue.value.toString())
+    const assignmentId = Number.parseInt(newValue.value.toString())
     const selectedAssignment = assignedAssets.value.find(assignment => assignment.id === assignmentId)
     
     if (selectedAssignment) {
@@ -998,8 +997,8 @@ watch(() => selectedAsset.value, (newValue) => {
 // Watch for when assignedAssets are loaded to update brand-model if assetId is already set
 watch(() => assignedAssets.value, (newAssignments) => {
   if (newAssignments.length > 0 && selectedAsset.value) {
-    const assignmentId = selectedAsset.value.value ? parseInt(selectedAsset.value.value.toString()) : null
-    if (assignmentId) {
+    if (selectedAsset.value.value) {
+      const assignmentId = Number.parseInt(selectedAsset.value.value.toString())
       const selectedAssignment = newAssignments.find(assignment => assignment.id === assignmentId)
       if (selectedAssignment && selectedAssignment.asset.brand && selectedAssignment.asset.model) {
         const brandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
@@ -1178,9 +1177,8 @@ const focusAppropriateField = () => {
       focusField = 'collectionReason'
     } else if (hasEmployee && !hasAsset) {
       focusField = 'assetId'
-    } else if (!hasEmployee && hasAsset) {
-      focusField = 'employeeId'
     }
+    // If (!hasEmployee && hasAsset), focusField remains 'employeeId' (default value)
     
     const field = document.getElementById(focusField)
     if (field) field.focus()

@@ -4,8 +4,8 @@
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
         <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
           <div class="card-body text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+            <div class="spinner-border text-primary">
+              <output class="visually-hidden">Loading...</output>
             </div>
             <p class="mt-3 text-muted">Loading vendor information...</p>
           </div>
@@ -53,7 +53,7 @@ const route = useRoute()
 const toastStore = useToastStore()
 
 // Get vendor ID from route
-const vendorId = computed(() => parseInt(route.params.id as string))
+const vendorId = computed(() => Number.parseInt(route.params.id as string))
 
 // State
 const isLoading = ref(false)

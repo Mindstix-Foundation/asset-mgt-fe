@@ -18,8 +18,8 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-3 text-muted">Loading vendor data...</p>
             </div>
@@ -44,7 +44,7 @@
                         required 
                         minlength="2" 
                         maxlength="100"
-                        pattern="[A-Za-z0-9\s\.\-&,]{2,100}"
+                        pattern="[A-Za-z0-9\s.&-]{2,100}"
                         title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)"
                         @blur="validateField('vendorName')"
                         @focus="clearFieldError('vendorName')"
@@ -52,8 +52,8 @@
                       >
                       <!-- Loading spinner for name checking -->
                       <div v-if="isCheckingName" class="position-absolute top-50 end-0 translate-middle-y me-3">
-                        <div class="spinner-border spinner-border-sm text-primary" role="status">
-                          <span class="visually-hidden">Checking...</span>
+                        <div class="spinner-border spinner-border-sm text-primary">
+                          <output class="visually-hidden">Checking...</output>
                         </div>
                       </div>
                     </div>
@@ -221,7 +221,7 @@
                       v-model="formData.taxId"
                       placeholder="Enter tax identification number" 
                       maxlength="50"
-                      pattern="[A-Za-z0-9\-]{5,50}"
+                      pattern="[A-Za-z0-9-]{5,50}"
                       title="Tax ID must be 5-50 characters (letters, numbers, hyphens only)"
                       @blur="validateField('taxId')"
                       @focus="clearFieldError('taxId')"
@@ -438,7 +438,7 @@ const validateVendorName = (element: HTMLElement) => {
     setFieldValidation(element, false, '', 'vendorName')
   } else if (value.length < 2) {
     setFieldValidation(element, false, 'Vendor name must be at least 2 characters', 'vendorName')
-  } else if (!/^[A-Za-z0-9\s\.\-&,]{2,100}$/.test(value)) {
+  } else if (!/^[A-Za-z0-9\s.&-]{2,100}$/.test(value)) {
     setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)', 'vendorName')
   } else {
     setFieldValidation(element, true, '', 'vendorName')
@@ -735,10 +735,7 @@ const onPhoneFocus = (event: FocusEvent) => {
   clearFieldError('phone')
   const target = event.target as HTMLInputElement
   const prefix = '+91 '
-  if (!target.value) {
-    target.value = prefix
-    formData.phone = prefix
-  } else if (!target.value.startsWith('+91')) {
+  if (!target.value || !target.value.startsWith('+91')) {
     target.value = prefix
     formData.phone = prefix
   }
@@ -836,7 +833,7 @@ const formatContactPersonToTitleCase = (event: Event) => {
 
 const formatTaxId = (event: Event) => {
   const target = event.target as HTMLInputElement
-  target.value = target.value.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase()
+  target.value = target.value.replace(/[^A-Za-z0-9-]/g, '').toUpperCase()
   formData.taxId = target.value
   handleFieldInput('taxId')
 }
@@ -894,11 +891,9 @@ const validateForm = (): boolean => {
     validateField(fieldName)
     
     // Special handling for SearchableDropdown fields
-    if (fieldName === 'vendorType' && !selectedVendorType.value) {
-      isValid = false
-    } else if (fieldName === 'status' && !selectedStatus.value) {
-      isValid = false
-    } else if (errors[fieldName as keyof typeof errors]) {
+    if ((fieldName === 'vendorType' && !selectedVendorType.value) || 
+        (fieldName === 'status' && !selectedStatus.value) || 
+        errors[fieldName as keyof typeof errors]) {
       isValid = false
     }
   })

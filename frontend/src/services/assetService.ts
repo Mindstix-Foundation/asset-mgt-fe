@@ -276,12 +276,12 @@ class AssetService {
           // Handle IST string format: DD/MM/YYYY, HH:mm:ss
           const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/)
           if (m) {
-            const day = parseInt(m[1], 10)
-            const month = parseInt(m[2], 10) - 1
-            const year = parseInt(m[3], 10)
-            const hh = parseInt(m[4] || '0', 10)
-            const mm = parseInt(m[5] || '0', 10)
-            const ss = parseInt(m[6] || '0', 10)
+            const day = Number.parseInt(m[1], 10)
+            const month = Number.parseInt(m[2], 10) - 1
+            const year = Number.parseInt(m[3], 10)
+            const hh = Number.parseInt(m[4] || '0', 10)
+            const mm = Number.parseInt(m[5] || '0', 10)
+            const ss = Number.parseInt(m[6] || '0', 10)
             dt = new Date(year, month, day, hh, mm, ss)
           } else {
             dt = new Date(d)
@@ -289,7 +289,7 @@ class AssetService {
         } else {
           dt = d
         }
-        if (isNaN(dt.getTime())) return ''
+        if (Number.isNaN(dt.getTime())) return ''
         return dt.toISOString().split('T')[0]
       } catch {
         return ''
@@ -493,7 +493,7 @@ class AssetService {
       link.download = filename
       document.body.appendChild(link)
       link.click()
-      document.body.removeChild(link)
+      link.remove()
       window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Export error:', error)
@@ -556,7 +556,7 @@ class AssetService {
     
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
   }
 
   // Download bulk upload template
@@ -612,7 +612,7 @@ class AssetService {
     
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
   }
 }
 

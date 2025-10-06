@@ -79,7 +79,7 @@ export interface AssetStats {
 }
 
 class AssetApiService {
-  private baseURL = `/assets`
+  private readonly baseURL = `/assets`
 
   // Get all assets with filtering
   async getAssets(query?: AssetQueryDto): Promise<AssetListResponse> {

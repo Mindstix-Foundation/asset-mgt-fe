@@ -20,15 +20,17 @@
         :name="`no-autofill-${Date.now()}-${id}`"
         :data-form-type="'other'"
         :data-lpignore="true"
-        aria-autocomplete="none"
+        aria-autocomplete="list"
         data-ms-editor="false"
         data-address-field="no"
         data-1p-ignore="true"
         data-bwignore="true"
         data-dashlane-ignore="true"
         role="combobox"
-        aria-expanded="false"
+        :aria-expanded="showDropdown ? 'true' : 'false'"
         aria-haspopup="listbox"
+        :aria-controls="`${id}-listbox`"
+        :aria-activedescendant="selectedIndex >= 0 ? `${id}-option-${selectedIndex}` : undefined"
         readonly
         onfocus="this.removeAttribute('readonly')"
         :required="required"
@@ -47,7 +49,10 @@
           'z-index': '1000',
           'max-height': dropdownMaxHeight
         }"
+        :id="`${id}-listbox`"
         role="listbox"
+        :aria-label="`${label} options`"
+        aria-live="polite"
       >
         <!-- Show "No data available" message when there are no items -->
         <div v-if="processedItems.length === 0" class="dropdown-item no-data-item">
@@ -68,7 +73,8 @@
           @mousedown.prevent
           type="button"
           role="option"
-          :aria-selected="index === selectedIndex"
+          :aria-selected="index === selectedIndex ? 'true' : 'false'"
+          :id="`${id}-option-${index}`"
         >
           <slot name="item" :item="item">
             {{ getItemLabel(item) }}
@@ -285,14 +291,8 @@ const handleInput = () => {
   emit('update:modelValue', null)
   isFirstOpen.value = false // User is now typing, so disable first open behavior
   
-  // Update aria-expanded attribute
+  // Reset scroll position when filtering
   nextTick(() => {
-    const input = dropdownRef.value?.querySelector('input')
-    if (input) {
-      input.setAttribute('aria-expanded', 'true')
-    }
-    
-    // Reset scroll position when filtering
     const dropdownMenu = dropdownRef.value?.querySelector('.dropdown-menu')
     if (dropdownMenu) {
       dropdownMenu.scrollTop = 0
@@ -414,13 +414,6 @@ const selectItem = (item: Item) => {
   selectedIndex.value = -1
   isFirstOpen.value = true // Reset for next open
 
-  // Update aria-expanded attribute
-  nextTick(() => {
-    const input = dropdownRef.value?.querySelector('input')
-    if (input) {
-      input.setAttribute('aria-expanded', 'false')
-    }
-  })
 
   // Move focus to next field
   nextTick(() => {
@@ -463,8 +456,6 @@ const handleClickOutside = (event: MouseEvent) => {
       showDropdown.value = false
       selectedIndex.value = -1
       isFirstOpen.value = true // Reset for next open
-      // Update aria-expanded attribute
-      input?.setAttribute('aria-expanded', 'false')
     }
   }
 }
@@ -478,9 +469,6 @@ const handleBlur = (event: FocusEvent) => {
       showDropdown.value = false
       selectedIndex.value = -1
       isFirstOpen.value = true // Reset for next open
-      // Update aria-expanded attribute
-      const input = dropdownRef.value?.querySelector('input')
-      input?.setAttribute('aria-expanded', 'false')
     }
   }, 200)
 }
@@ -550,13 +538,6 @@ const handleClick = () => {
     scrollToSelectedItem() // Ensure first item is visible
   }
   
-  // Update aria-expanded attribute
-  nextTick(() => {
-    const input = dropdownRef.value?.querySelector('input')
-    if (input) {
-      input.setAttribute('aria-expanded', showDropdown.value.toString())
-    }
-  })
 }
 </script>
 

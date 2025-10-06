@@ -12,8 +12,8 @@
           <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
               </div>
               <p class="mt-3 text-muted">Loading form data...</p>
             </div>
@@ -537,7 +537,6 @@ const submitForm = async (event?: Event) => {
 
   // Validate all fields
   let isFormValid = true
-  const requiredFields = ['assetId', 'employeeId', 'assignmentReason', 'assignmentDate']
   const allFields = Object.keys(formData)
 
   allFields.forEach(fieldName => {
@@ -560,8 +559,8 @@ const submitForm = async (event?: Event) => {
 
   try {
     // Get the selected asset and employee IDs from the dropdown selections
-    const selectedAssetId = selectedAsset.value?.value ? parseInt(selectedAsset.value.value.toString()) : null
-    const selectedEmployeeId = selectedEmployee.value?.value ? parseInt(selectedEmployee.value.value.toString()) : null
+    const selectedAssetId = selectedAsset.value?.value ? Number.parseInt(selectedAsset.value.value.toString()) : null
+    const selectedEmployeeId = selectedEmployee.value?.value ? Number.parseInt(selectedEmployee.value.value.toString()) : null
 
     console.log('Selected asset ID:', selectedAssetId)
     console.log('Selected employee ID:', selectedEmployeeId)
@@ -585,7 +584,7 @@ const submitForm = async (event?: Event) => {
     }
 
     // Call the API to create assignment
-    const response = await assignmentApiService.createAssignment(assignmentData)
+    await assignmentApiService.createAssignment(assignmentData)
     
     const assignmentDetails = generateAssignmentDetails()
     
@@ -740,7 +739,7 @@ const loadAssetDetails = async (assetIdNumber: number) => {
 // Asset and Employee selection handlers
 watch(() => selectedAsset.value, async (newValue) => {
   if (newValue && newValue.value) {
-    const assetId = parseInt(newValue.value.toString())
+    const assetId = Number.parseInt(newValue.value.toString())
     await loadAssetDetails(assetId)
   } else {
     clearSelectedAssetInfo()
@@ -751,7 +750,7 @@ watch(() => selectedAsset.value, async (newValue) => {
 // Watch for when availableAssets are loaded to update brand-model if assetId is already set
 watch(() => availableAssets.value, (newAssets) => {
   if (newAssets.length > 0 && selectedAsset.value) {
-    const assetId = selectedAsset.value.value ? parseInt(selectedAsset.value.value.toString()) : null
+    const assetId = selectedAsset.value.value ? Number.parseInt(selectedAsset.value.value.toString()) : null
     if (assetId) {
       const asset = newAssets.find(asset => asset.id === assetId)
       if (asset && asset.brand && asset.model) {
@@ -852,7 +851,7 @@ onMounted(async () => {
     if (!fromQuery) {
       originPath.value = '/app/employees'
     }
-    const employeeId = parseInt(employeeIdFromQuery)
+    const employeeId = Number.parseInt(employeeIdFromQuery)
     const employee = activeEmployees.value.find(emp => emp.id === employeeId.toString())
     if (employee) {
       // Set the selected employee for SearchableDropdown
@@ -884,10 +883,8 @@ onMounted(async () => {
     if (selectedAssetId && selectedAssetType) {
       // Asset was pre-selected, focus on employee field
       focusField = 'employeeId'
-    } else if (employeeIdFromQuery) {
-      // Employee was pre-selected, focus on asset field
-      focusField = 'assetId'
     }
+    // Note: If employee was pre-selected, we keep the default 'assetId' focus
     
     const field = document.getElementById(focusField)
     if (field) field.focus()

@@ -18,7 +18,7 @@ const toastStore = useToastStore()
 
 const handleSubmit = async (vendorData: any) => {
   try {
-    const response = await VendorApiService.createVendor(vendorData)
+    await VendorApiService.createVendor(vendorData)
     
     const vendorDetails = generateVendorDetails(vendorData)
     

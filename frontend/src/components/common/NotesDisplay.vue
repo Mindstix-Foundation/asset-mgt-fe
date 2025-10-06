@@ -1,10 +1,10 @@
 <template>
   <div class="notes-display-container">
     <div v-if="showLabel" class="notes-label">
-      <label class="info-label">
+      <div class="info-label">
         <i v-if="showIcon" class="fas fa-sticky-note me-2"></i>
         {{ label }}
-      </label>
+      </div>
     </div>
     
     <div class="notes-content">
@@ -77,6 +77,7 @@ const hasNotes = computed(() => {
   min-height: 60px;
   display: flex;
   align-items: center;
+  transition: all 0.2s ease;
 }
 
 .notes-text {
@@ -90,6 +91,10 @@ const hasNotes = computed(() => {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
 .notes-empty {
@@ -124,9 +129,6 @@ const hasNotes = computed(() => {
 /* No borders - inherit all styling from parent */
 
 /* Animation for content changes */
-.notes-content {
-  transition: all 0.2s ease;
-}
 
 .notes-text,
 .notes-empty {
@@ -144,13 +146,7 @@ const hasNotes = computed(() => {
   }
 }
 
-/* Special styling for long content */
-.notes-text-formatted {
-  max-height: 200px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
-}
+/* Special styling for long content - merged with existing selector */
 
 .notes-text-formatted::-webkit-scrollbar {
   width: 6px;

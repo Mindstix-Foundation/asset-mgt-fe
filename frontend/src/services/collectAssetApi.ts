@@ -70,7 +70,7 @@ export interface ReturnAssetResponse {
 }
 
 class CollectAssetApiService {
-  private baseURL = `/assignments`
+  private readonly baseURL = `/assignments`
 
   // Get all active assignments (assigned assets) - NO LIMIT to show all
   async getActiveAssignments(query?: { search?: string; employeeId?: number }): Promise<ActiveAssignmentsResponse> {

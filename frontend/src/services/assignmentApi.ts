@@ -84,7 +84,7 @@ export interface AssignmentListResponse {
 }
 
 class AssignmentApiService {
-  private baseURL = `/assignments`
+  private readonly baseURL = `/assignments`
 
   // Create assignment (issue asset)
   async createAssignment(assignmentData: CreateAssignmentDto): Promise<AssignmentResponse> {

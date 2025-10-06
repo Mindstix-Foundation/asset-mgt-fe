@@ -17,7 +17,7 @@
             <div class="col-6">
               <div class="d-flex gap-1 w-100 justify-content-center">
                 <!-- View Toggle -->
-                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
                     :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
@@ -32,7 +32,7 @@
                   >
                     <i class="fas fa-th-large"></i>
                   </button>
-                </div>
+                </fieldset>
               </div>
             </div>
             <div class="col-6">
@@ -105,7 +105,7 @@
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
                 <!-- View Toggle -->
-                <div class="btn-group flex-shrink-0" role="group" aria-label="View toggle">
+                <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
                     :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
@@ -120,7 +120,7 @@
                   >
                     <i class="fas fa-th-large"></i>
                   </button>
-                </div>
+                </fieldset>
                 
                 <!-- Data Management Dropdown -->
                 <div class="dropdown flex-fill">
@@ -189,7 +189,7 @@
       <div class="row align-items-end">
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
-          <label class="form-label">Search Assets</label>
+          <div class="form-label">Search Assets</div>
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input 
@@ -304,8 +304,8 @@
     <div id="contentContainer">
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <div class="spinner-border text-primary">
+          <output class="visually-hidden">Loading...</output>
         </div>
         <p class="mt-3 text-muted">Loading assets...</p>
       </div>
@@ -557,27 +557,27 @@
                   <h6 class="section-title-compact"><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Asset ID</label>
+                      <div class="info-label-compact">Asset ID</div>
                       <div class="info-value-compact fw-bold">{{ selectedAsset.id }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Category</label>
+                      <div class="info-label-compact">Category</div>
                       <div class="info-value-compact">{{ selectedAsset.category }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Asset Type</label>
+                      <div class="info-label-compact">Asset Type</div>
                       <div class="info-value-compact fw-bold">{{ selectedAsset.type }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Brand & Model</label>
+                      <div class="info-label-compact">Brand & Model</div>
                       <div class="info-value-compact fw-bold">{{ selectedAsset.brandModel }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Serial Number</label>
+                      <div class="info-label-compact">Serial Number</div>
                       <div class="info-value-compact font-monospace">{{ selectedAsset.serialNumber }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Condition</label>
+                      <div class="info-label-compact">Condition</div>
                       <div class="info-value-compact">
                         <span :class="getConditionBadgeClass(selectedAsset.condition)">{{ selectedAsset.condition }}</span>
                       </div>
@@ -592,23 +592,23 @@
                   <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Financial</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Current Location</label>
+                      <div class="info-label-compact">Current Location</div>
                       <div class="info-value-compact fw-bold">{{ selectedAsset.location }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Purchase Date</label>
+                      <div class="info-label-compact">Purchase Date</div>
                       <div class="info-value-compact">{{ selectedAsset.purchaseDate ? formatDate(selectedAsset.purchaseDate) : 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Purchase Cost</label>
+                      <div class="info-label-compact">Purchase Cost</div>
                       <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${selectedAsset.purchaseCost.toLocaleString()}` : 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Vendor</label>
+                      <div class="info-label-compact">Vendor</div>
                       <div class="info-value-compact">{{ selectedAsset.vendor }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <label class="info-label-compact">Warranty Period</label>
+                      <div class="info-label-compact">Warranty Period</div>
                       <div class="info-value-compact">
                         <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyUntil" class="warranty-info-compact">
                           <div v-if="selectedAsset.warrantyStartDate" class="warranty-row">
@@ -681,7 +681,7 @@
                         <!-- Assignment Reason -->
                         <div class="col-md-6" v-if="selectedAsset.assignmentReason">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Assignment Reason</label>
+                            <div class="info-label-compact">Assignment Reason</div>
                             <div class="info-value-compact">{{ selectedAsset.assignmentReason }}</div>
                           </div>
                         </div>
@@ -689,7 +689,7 @@
                         <!-- Assignment Date -->
                         <div class="col-md-6" v-if="selectedAsset.assignmentDate">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Assignment Date</label>
+                            <div class="info-label-compact">Assignment Date</div>
                             <div class="info-value-compact">{{ formatDate(selectedAsset.assignmentDate) }}</div>
                           </div>
                         </div>
@@ -697,7 +697,7 @@
                         <!-- Assigned By (only show if not system) -->
                         <div class="col-md-6" v-if="selectedAsset.assignedBy && selectedAsset.assignedBy !== 'system'">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Assigned By</label>
+                            <div class="info-label-compact">Assigned By</div>
                             <div class="info-value-compact">{{ selectedAsset.assignedBy }}</div>
                           </div>
                         </div>
@@ -710,7 +710,7 @@
                         <!-- Assignment Notes -->
                         <div class="col-12" v-if="selectedAsset.assignmentNotes">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Assignment Notes</label>
+                            <div class="info-label-compact">Assignment Notes</div>
                             <div class="info-value-compact">
                               <NotesDisplay 
                                 :notes="selectedAsset.assignmentNotes"
@@ -792,7 +792,7 @@
                       <!-- Retirement Reason -->
                       <div class="col-md-6" v-if="selectedAsset.retirementReason">
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Retirement Reason</label>
+                          <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
                         </div>
                       </div>
@@ -805,7 +805,7 @@
                       <!-- Retirement Notes -->
                       <div class="col-12" v-if="selectedAsset.retirementNotes">
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Retirement Notes</label>
+                          <div class="info-label-compact">Retirement Notes</div>
                           <div class="info-value-compact">
                             <NotesDisplay 
                               :notes="selectedAsset.retirementNotes"
@@ -864,7 +864,7 @@
                       <!-- Retirement Information -->
                       <div v-if="selectedAsset.retirementReason">
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Retirement Reason</label>
+                          <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
                         </div>
                       </div>
@@ -983,31 +983,31 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Asset ID</label>
+                          <div class="info-label-compact">Asset ID</div>
                           <div class="info-value-compact fw-bold">{{ assetToRetire?.id }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Asset Type</label>
+                          <div class="info-label-compact">Asset Type</div>
                           <div class="info-value-compact">{{ assetToRetire?.type }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Brand & Model</label>
+                          <div class="info-label-compact">Brand & Model</div>
                           <div class="info-value-compact">{{ assetToRetire?.brandModel }}</div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Serial Number</label>
+                          <div class="info-label-compact">Serial Number</div>
                           <div class="info-value-compact font-monospace">{{ assetToRetire?.serialNumber }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Current Status</label>
+                          <div class="info-label-compact">Current Status</div>
                           <div class="info-value-compact">
                             <span :class="getStatusBadgeClass(assetToRetire?.status || '')">{{ getStatusText(assetToRetire?.status || '') }}</span>
                           </div>
                         </div>
                         <div class="info-item-compact">
-                          <label class="info-label-compact">Current Location</label>
+                          <div class="info-label-compact">Current Location</div>
                           <div class="info-value-compact">{{ assetToRetire?.location }}</div>
                         </div>
                       </div>
@@ -1150,7 +1150,7 @@
                         <!-- Asset Type -->
                         <div class="col-md-6">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Asset Type</label>
+                            <div class="info-label-compact">Asset Type</div>
                             <div class="info-value-compact">{{ assetToReactivate?.type }}</div>
                           </div>
                         </div>
@@ -1158,7 +1158,7 @@
                         <!-- Brand & Model -->
                         <div class="col-md-6">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Brand & Model</label>
+                            <div class="info-label-compact">Brand & Model</div>
                             <div class="info-value-compact">{{ assetToReactivate?.brandModel }}</div>
                           </div>
                         </div>
@@ -1166,7 +1166,7 @@
                         <!-- Serial Number -->
                         <div class="col-md-6">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Serial Number</label>
+                            <div class="info-label-compact">Serial Number</div>
                             <div class="info-value-compact font-monospace">{{ assetToReactivate?.serialNumber }}</div>
                           </div>
                         </div>
@@ -1174,7 +1174,7 @@
                         <!-- Current Condition -->
                         <div class="col-md-6">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Current Condition</label>
+                            <div class="info-label-compact">Current Condition</div>
                             <div class="info-value-compact">
                               <span :class="getConditionBadgeClass(assetToReactivate?.condition || 'POOR')">{{ assetToReactivate?.condition || 'POOR' }}</span>
                             </div>
@@ -1189,7 +1189,7 @@
                         <!-- Retirement Reason -->
                         <div class="col-md-6" v-if="assetToReactivate?.retirementReason">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Retirement Reason</label>
+                            <div class="info-label-compact">Retirement Reason</div>
                             <div class="info-value-compact">{{ assetToReactivate?.retirementReason }}</div>
                           </div>
                         </div>
@@ -1197,7 +1197,7 @@
                         <!-- Retirement Date -->
                         <div class="col-md-6" v-if="assetToReactivate?.retirementDate">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Retirement Date</label>
+                            <div class="info-label-compact">Retirement Date</div>
                             <div class="info-value-compact">{{ formatDate(assetToReactivate?.retirementDate) }}</div>
                           </div>
                         </div>
@@ -1205,7 +1205,7 @@
                         <!-- Retirement Notes -->
                         <div class="col-12" v-if="assetToReactivate?.retirementNotes">
                           <div class="info-item-compact">
-                            <label class="info-label-compact">Retirement Notes</label>
+                            <div class="info-label-compact">Retirement Notes</div>
                             <div class="info-value-compact">
                               <NotesDisplay 
                                 :notes="assetToReactivate?.retirementNotes"
@@ -1558,8 +1558,8 @@ const loadAssets = async () => {
       page: currentPage.value,
       limit: itemsPerPage.value,
       search: searchTerm.value || undefined,
-      assetTypeId: selectedType.value ? parseInt(selectedType.value.value as string) : undefined,
-      brandId: selectedBrand.value ? parseInt(selectedBrand.value.value as string) : undefined,
+      assetTypeId: selectedType.value ? Number.parseInt(selectedType.value.value as string) : undefined,
+      brandId: selectedBrand.value ? Number.parseInt(selectedBrand.value.value as string) : undefined,
       status: selectedStatus.value?.value as any || undefined,
       condition: selectedCondition.value?.value as any || undefined,
       sortBy: selectedSortBy.value?.value as string || 'assetId',
@@ -1807,8 +1807,8 @@ const exportAssets = async () => {
     const exportParams: any = {
       // Include current search and filter values
       search: searchTerm.value || undefined,
-      assetTypeId: selectedType.value ? parseInt(selectedType.value.value as string) : undefined,
-      brandId: selectedBrand.value ? parseInt(selectedBrand.value.value as string) : undefined,
+      assetTypeId: selectedType.value ? Number.parseInt(selectedType.value.value as string) : undefined,
+      brandId: selectedBrand.value ? Number.parseInt(selectedBrand.value.value as string) : undefined,
       status: selectedStatus.value?.value as any || undefined,
       condition: selectedCondition.value?.value as any || undefined,
       sortBy: selectedSortBy.value?.value as string || 'assetId',
@@ -1846,15 +1846,15 @@ const handleBulkUpload = async (data: any[]) => {
         const createAssetDto = {
           assetId: assetData.assetId,
           serialNumber: assetData.serialNumber,
-          assetTypeId: parseInt(assetData.assetTypeId) || 1, // Default to 1 if not provided
-          brandId: parseInt(assetData.brandId) || 1, // Default to 1 if not provided
-          modelId: parseInt(assetData.modelId) || 1, // Default to 1 if not provided
-          vendorId: parseInt(assetData.vendorId) || 1, // Default to 1 if not provided
+          assetTypeId: Number.parseInt(assetData.assetTypeId) || 1, // Default to 1 if not provided
+          brandId: Number.parseInt(assetData.brandId) || 1, // Default to 1 if not provided
+          modelId: Number.parseInt(assetData.modelId) || 1, // Default to 1 if not provided
+          vendorId: Number.parseInt(assetData.vendorId) || 1, // Default to 1 if not provided
           status: assetData.status || 'AVAILABLE',
           condition: assetData.condition || 'NEW',
           location: assetData.location || 'Warehouse',
           purchaseDate: assetData.purchaseDate || undefined,
-          purchaseCost: parseFloat(assetData.purchaseCost) || undefined,
+          purchaseCost: Number.parseFloat(assetData.purchaseCost) || undefined,
           warrantyStartDate: assetData.warrantyStartDate || undefined,
           warrantyEndDate: assetData.warrantyEndDate || undefined,
           notes: assetData.notes || undefined
@@ -1872,7 +1872,19 @@ const handleBulkUpload = async (data: any[]) => {
     if (errorCount === 0) {
       toastStore.showSuccess('Upload Completed', `Successfully imported ${successCount} assets`)
     } else {
-      toastStore.showWarning('Upload Completed with Errors', `Successfully imported: ${successCount} assets, Errors: ${errorCount}. Check console for details.`)
+      // Build error details step by step to avoid nested template literals and ternary operators
+      let errorDetails = ''
+      
+      if (errors.length > 0) {
+        const firstFiveErrors = errors.slice(0, 5).join('\n')
+        const remainingErrorCount = errors.length - 5
+        const moreErrorsText = remainingErrorCount > 0 ? `\n... and ${remainingErrorCount} more errors` : ''
+        
+        errorDetails = `\n\nErrors:\n${firstFiveErrors}${moreErrorsText}`
+      }
+      
+      const warningMessage = `Successfully imported: ${successCount} assets, Errors: ${errorCount}.${errorDetails}`
+      toastStore.showWarning('Upload Completed with Errors', warningMessage)
     }
     
     // Reload assets to show new data
@@ -1887,12 +1899,8 @@ const handleBulkUpload = async (data: any[]) => {
 }
 
 const handleTemplateDownload = (type: 'csv' | 'excel') => {
-  if (type === 'csv') {
-    assetService.downloadBulkUploadTemplate()
-  } else {
-    // For Excel template, we can use the same method or create a separate one
-    assetService.downloadBulkUploadTemplate()
-  }
+  // Both CSV and Excel templates use the same method
+  assetService.downloadBulkUploadTemplate()
 }
 
 const openBulkUploadModal = () => {
@@ -2360,7 +2368,7 @@ const getWarrantyTimeLeft = (warrantyDate: string) => {
   const startDate = new Date()
   
   // Check if the date is valid
-  if (isNaN(endDate.getTime())) {
+  if (Number.isNaN(endDate.getTime())) {
     return 'Invalid date'
   }
   
@@ -2425,13 +2433,9 @@ const debouncedLoadAssets = () => {
 const watchFilters = () => {
   // Watch search term with debounce
   let searchTimeout: number | null = null
-  const unwatchSearch = computed(() => searchTerm.value)
   
   // Watch other filters immediately
-  const unwatchType = computed(() => selectedType.value)
-  const unwatchBrand = computed(() => selectedBrand.value)
-  const unwatchStatus = computed(() => selectedStatus.value)
-  const unwatchSort = computed(() => selectedSortBy.value)
+  // Note: These computed properties are kept for potential future use
 }
 
 // Lifecycle
@@ -2808,6 +2812,11 @@ onUnmounted(() => {
 .assignment-details-expanded {
   transition: all 0.3s ease;
   overflow: hidden;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 /* Assignment Notes Display Override */
@@ -2873,14 +2882,6 @@ onUnmounted(() => {
 }
 
 
-/* Assignment Details Expanded */
-.assignment-details-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
 
 /* Retirement status combined */
 .retirement-status-combined {

@@ -55,7 +55,7 @@
           <div class="row align-items-end">
             <!-- Search -->
             <div class="col-12 col-lg-7 mb-3">
-              <label class="form-label">Search</label>
+              <div class="form-label">Search</div>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                 <input 
@@ -137,8 +137,8 @@
         </div>
           <!-- Loading State -->
           <div v-if="loading" class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+            <div class="spinner-border text-primary">
+              <output class="visually-hidden">Loading...</output>
             </div>
             <p class="mt-2 text-muted">Loading asset events...</p>
           </div>
@@ -758,11 +758,11 @@ const convertDDMMYYYYToDate = (dateString: string): Date | null => {
   const parts = dateString.split('-')
   if (parts.length !== 3) return null
   
-  const day = parseInt(parts[0], 10)
-  const month = parseInt(parts[1], 10) - 1 // JavaScript months are 0-indexed
-  const year = parseInt(parts[2], 10)
+  const day = Number.parseInt(parts[0], 10)
+  const month = Number.parseInt(parts[1], 10) - 1 // JavaScript months are 0-indexed
+  const year = Number.parseInt(parts[2], 10)
   
-  if (isNaN(day) || isNaN(month) || isNaN(year)) return null
+  if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) return null
   
   const date = new Date(year, month, day)
   
@@ -816,7 +816,7 @@ const onDateToChange = (event: Event) => {
 
 const formatCurrency = (amount: number | string): string => {
   try {
-    const num = typeof amount === 'string' ? parseFloat(amount) : amount
+    const num = typeof amount === 'string' ? Number.parseFloat(amount) : amount
     return num.toLocaleString('en-IN', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
@@ -1843,6 +1843,7 @@ onMounted(async () => {
 .filter-clear-btn { 
   width: 100%; 
   min-width: 120px; 
+  border-radius: 0.375rem !important;
 }
 
 @media (max-width: 767.98px) { 
@@ -1926,9 +1927,6 @@ onMounted(async () => {
   border-radius: 0.375rem !important;
 }
 
-.filter-clear-btn {
-  border-radius: 0.375rem !important;
-}
 
 /* Search Input Group Styling */
 .input-group {

@@ -81,11 +81,11 @@ const convertDDMMYYYYToDate = (dateString: string): Date | null => {
   const parts = dateString.split('-')
   if (parts.length !== 3) return null
   
-  const day = parseInt(parts[0], 10)
-  const month = parseInt(parts[1], 10) - 1 // JavaScript months are 0-indexed
-  const year = parseInt(parts[2], 10)
+  const day = Number.parseInt(parts[0], 10)
+  const month = Number.parseInt(parts[1], 10) - 1 // JavaScript months are 0-indexed
+  const year = Number.parseInt(parts[2], 10)
   
-  if (isNaN(day) || isNaN(month) || isNaN(year)) return null
+  if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) return null
   
   const date = new Date(year, month, day)
   
@@ -101,7 +101,7 @@ const convertDDMMYYYYToDate = (dateString: string): Date | null => {
 const initializeDisplayValue = () => {
   if (props.modelValue) {
     const date = new Date(props.modelValue)
-    if (!isNaN(date.getTime())) {
+    if (!Number.isNaN(date.getTime())) {
       displayValue.value = convertDateToDDMMYYYY(date)
       internalValue.value = props.modelValue
     }
@@ -123,7 +123,7 @@ watch(() => props.modelValue, (newValue) => {
     } else {
       // Assume it's in ISO format (yyyy-mm-dd) or a date string
       const date = new Date(newValue)
-      if (!isNaN(date.getTime())) {
+      if (!Number.isNaN(date.getTime())) {
         displayValue.value = convertDateToDDMMYYYY(date)
         internalValue.value = newValue
       }

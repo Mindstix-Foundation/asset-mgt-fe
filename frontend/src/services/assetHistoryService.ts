@@ -29,7 +29,7 @@ export class AssetHistoryService {
         .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
         .join('&')
 
-      const endpoint = `/asset-history/${assetId}${queryString ? `?${queryString}` : ''}`
+      const endpoint = queryString ? `/asset-history/${assetId}?${queryString}` : `/asset-history/${assetId}`
       const response = await apiService.get<AssetHistoryResponse>(endpoint)
 
       return response
@@ -50,7 +50,7 @@ export class AssetHistoryService {
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join('&')
 
-      const endpoint = `/asset-history/${assetId}/summary${queryString ? `?${queryString}` : ''}`
+      const endpoint = queryString ? `/asset-history/${assetId}/summary?${queryString}` : `/asset-history/${assetId}/summary`
       const response = await apiService.get<AssetHistorySummaryResponse>(endpoint)
       return response
     } catch (error) {
@@ -72,7 +72,7 @@ export class AssetHistoryService {
         eventTypes: 'ASSIGNED,RETURNED'
       }
 
-      return this.getAssetHistory(assetId, queryParams)
+      return await this.getAssetHistory(assetId, queryParams)
     } catch (error) {
       console.error('Error fetching asset assignment history:', error)
       throw this.handleError(error)
@@ -92,7 +92,7 @@ export class AssetHistoryService {
         eventTypes: 'MAINTENANCE_SCHEDULED,MAINTENANCE_STARTED,MAINTENANCE_COMPLETED,MAINTENANCE_CANCELLED'
       }
 
-      return this.getAssetHistory(assetId, queryParams)
+      return await this.getAssetHistory(assetId, queryParams)
     } catch (error) {
       console.error('Error fetching asset maintenance history:', error)
       throw this.handleError(error)
@@ -127,7 +127,7 @@ export class AssetHistoryService {
         search: searchQuery
       }
 
-      return this.getAssetHistory(assetId, queryParams)
+      return await this.getAssetHistory(assetId, queryParams)
     } catch (error) {
       console.error('Error searching asset history:', error)
       throw this.handleError(error)
@@ -153,7 +153,7 @@ export class AssetHistoryService {
         sortOrder: 'asc' as const
       }
 
-      return this.getAssetHistory(assetId, queryParams)
+      return await this.getAssetHistory(assetId, queryParams)
     } catch (error) {
       console.error('Error fetching asset lifecycle timeline:', error)
       throw this.handleError(error)
