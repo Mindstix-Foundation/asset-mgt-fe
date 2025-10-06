@@ -144,15 +144,15 @@ const applySmartFormatting = (value: string, target: HTMLTextAreaElement): strin
   const lines = value.split('\n')
   let formattedLines: string[] = []
   
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i]
+  for (const line of lines) {
+    let formattedLine = line
     
     // Capitalize first letter of each line (if it's a letter)
-    if (line.length > 0 && /[a-z]/.test(line[0])) {
-      line = line[0].toUpperCase() + line.slice(1)
+    if (formattedLine.length > 0 && /[a-z]/.test(formattedLine[0])) {
+      formattedLine = formattedLine[0].toUpperCase() + formattedLine.slice(1)
     }
     
-    formattedLines.push(line)
+    formattedLines.push(formattedLine)
   }
   
   return formattedLines.join('\n')

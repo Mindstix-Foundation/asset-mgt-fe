@@ -416,7 +416,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { assetService } from '@/services/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
@@ -733,12 +733,12 @@ const validateSerialNumber = async () => {
     const excludeAssetId = props.isEditMode && props.asset ? props.asset.id : undefined
     const result = await assetService.checkSerialNumberUnique(formData.serialNumber.trim(), excludeAssetId)
     
-    if (!result.isUnique) {
-      errors.serialNumber = `Serial number '${formData.serialNumber}' is already in use by asset ${result.existingAsset?.assetId || 'unknown'}`
-      field.classList.add('is-invalid')
-    } else {
+    if (result.isUnique) {
       errors.serialNumber = ''
       field.classList.add('is-valid')
+    } else {
+      errors.serialNumber = `Serial number '${formData.serialNumber}' is already in use by asset ${result.existingAsset?.assetId || 'unknown'}`
+      field.classList.add('is-invalid')
     }
   } catch (error) {
     console.error('Error checking serial number uniqueness:', error)
@@ -750,12 +750,12 @@ const validateSerialNumber = async () => {
 
 // Helper functions for field validation
 const validateRequiredDropdown = (fieldName: string, selectedValue: any) => {
-  if (!selectedValue) {
-    (errors as any)[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-    applyValidationToSearchableDropdown(fieldName, 'invalid')
-  } else {
+  if (selectedValue) {
     (errors as any)[fieldName] = ''
     applyValidationToSearchableDropdown(fieldName, 'valid')
+  } else {
+    (errors as any)[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
 }
 
@@ -790,14 +790,14 @@ const validatePurchaseDate = (field: HTMLInputElement) => {
 const validatePurchaseCost = (field: HTMLInputElement) => {
   const isValid = !formData.purchaseCost || Number.parseFloat(formData.purchaseCost) <= 1000000
   
-  if (!isValid) {
-    errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
-    field.classList.add('is-invalid')
-    field.classList.remove('is-valid')
-  } else {
+  if (isValid) {
     errors.purchaseCost = ''
     field.classList.remove('is-invalid')
     field.classList.add('is-valid')
+  } else {
+    errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
+    field.classList.add('is-invalid')
+    field.classList.remove('is-valid')
   }
   
   // Also add validation class to input group
@@ -1207,14 +1207,14 @@ const buildEditModeAssetData = (): any => {
     { formKey: 'notes', dataKey: 'notes', transform: (val: any) => val || undefined }
   ]
 
-  fieldMappings.forEach(({ formKey, dataKey, transform }) => {
+  for (const { formKey, dataKey, transform } of fieldMappings) {
     const formValue = (formData as any)[formKey]
     const originalValue = (original as any)[formKey]
     
     if (hasChanged(formValue, originalValue)) {
       assetData[dataKey] = transform ? transform(formValue) : formValue
     }
-  })
+  }
 
   // Handle vendorId separately
   const newVendorId = formData.vendorId ? Number.parseInt(formData.vendorId) : null
@@ -1231,14 +1231,14 @@ const buildEditModeAssetData = (): any => {
       { formKey: 'modelId', dataKey: 'modelId' }
     ]
 
-    identityFields.forEach(({ formKey, dataKey }) => {
+    for (const { formKey, dataKey } of identityFields) {
       const formValue = (formData as any)[formKey]
       const originalValue = (original as any)[formKey]
       
       if (hasChanged(formValue, originalValue)) {
         assetData[dataKey] = Number.parseInt(formValue)
       }
-    })
+    }
   }
 
   return assetData
@@ -1382,8 +1382,9 @@ const generateAssetId = async () => {
           ;(globalThis as any).crypto.getRandomValues(buf)
           return (buf[0] % 1000).toString().padStart(3, '0')
         }
-      } catch (_) {
-        // ignore and fallback
+      } catch (error) {
+        // Log the error for debugging but continue with fallback
+        console.warn('Crypto API not available, using Math.random fallback:', error)
       }
       return Math.floor(Math.random() * 1000).toString().padStart(3, '0')
     })()
@@ -1442,11 +1443,11 @@ const setSelectedDropdownItems = (asset: any) => {
     { condition: asset.vendor, target: selectedVendor }
   ]
 
-  dropdownMappings.forEach(({ condition, target }) => {
+  for (const { condition, target } of dropdownMappings) {
     if (condition) {
       target.value = createDropdownItem(condition.id, condition.name)
     }
-  })
+  }
 
   // Handle condition separately (special formatting)
   if (asset.condition) {

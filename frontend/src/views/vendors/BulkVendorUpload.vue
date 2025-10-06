@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Modal } from 'bootstrap'
 import BulkUploadModal from '@/components/BulkUploadModal.vue'
 import VendorApiService from '@/services/vendorApi'
 import { useToastStore } from '@/stores/toast'
@@ -62,7 +61,7 @@ const formatValidationErrors = (errors: any[]) => {
   
   const formattedErrors = topErrors.map(error => {
     const rowInfo = `Row ${error.row}`
-    const fieldInfo = error.field !== 'general' ? ` (${error.field})` : ''
+    const fieldInfo = error.field === 'general' ? '' : ` (${error.field})`
     const valueInfo = error.value ? ` - Value: ${error.value}` : ''
     return `${rowInfo}${fieldInfo}: ${error.message}${valueInfo}`
   })

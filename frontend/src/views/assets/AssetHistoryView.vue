@@ -291,7 +291,6 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { assetHistoryService } from '@/services/assetHistoryService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import DateInput from '@/components/common/DateInput.vue'
 import { useAdvancedSearch } from '@/services/advancedSearchService'
 import type { AssetHistoryEvent, AssetHistorySummary, AssetHistoryResponse, AssetHistorySummaryResponse } from '@/types/assetHistory.types'
@@ -578,6 +577,7 @@ const formatDateTime = (dateString: string): string => {
       hour12: true
     })
   } catch (error) {
+    console.warn('Error formatting date time:', error)
     return dateString
   }
 }
@@ -732,6 +732,7 @@ const formatDate = (dateString: string): string => {
     const year = date.getFullYear()
     return `${day}-${month}-${year}`
   } catch (error) {
+    console.warn('Error formatting date:', error)
     return dateString
   }
 }
@@ -822,6 +823,7 @@ const formatCurrency = (amount: number | string): string => {
       maximumFractionDigits: 2
     })
   } catch (error) {
+    console.warn('Error formatting currency:', error)
     return amount.toString()
   }
 }
@@ -870,7 +872,7 @@ const formatFieldName = (fieldName: string): string => {
     'completionNotes': 'Completion Notes',
     'cancellationNotes': 'Cancellation Notes'
   }
-  return fieldMap[fieldName] || fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
+  return fieldMap[fieldName] || (fieldName as any).replaceAll(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase())
 }
 
 const shouldDisplayDetail = (key: string, value: any): boolean => {
@@ -973,12 +975,14 @@ const clearFilters = () => {
   showViewFullHistoryButton.value = true
   // Clear any validation classes
   const dateInputs = document.querySelectorAll('.form-control[placeholder="dd-mm-yyyy"]')
-  dateInputs.forEach(input => input.classList.remove('is-invalid'))
+  for (const input of dateInputs) {
+    input.classList.remove('is-invalid')
+  }
 }
 
 const getEventTitle = (item: AssetHistoryEvent): string => {
   // Since we removed the title field from the API, generate it from the type
-  return item.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return (item.type as any).replaceAll('_', ' ').toLowerCase().replaceAll(/\b\w/g, (match: string) => match.toUpperCase())
 }
 
 const changePage = (page: number) => {

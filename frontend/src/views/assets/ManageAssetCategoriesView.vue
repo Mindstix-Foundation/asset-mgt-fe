@@ -1122,13 +1122,13 @@ const setEntityType = async (type: 'category' | 'type' | 'brand' | 'model' | 'as
 }
 
 const resetForm = () => {
-  Object.keys(formData).forEach(key => {
+  for (const key of Object.keys(formData)) {
     if (key === 'id') {
       (formData as any)[key] = null
     } else {
       (formData as any)[key] = ''
     }
-  })
+  }
   // Don't close the form card on reset - keep it open
   
   // Reset SearchableDropdown selections
@@ -1147,13 +1147,13 @@ const startAdding = () => {
   showFormCard.value = !showFormCard.value
   if (showFormCard.value) {
     // Clear form data without hiding the card
-    Object.keys(formData).forEach(key => {
+    for (const key of Object.keys(formData)) {
       if (key === 'id') {
         (formData as any)[key] = null
       } else {
         (formData as any)[key] = ''
       }
-    })
+    }
     
     // Reset SearchableDropdown selections
     selectedCategory.value = null
@@ -1312,13 +1312,13 @@ const saveEntity = async () => {
     }
     
     // Clear form and hide card
-    Object.keys(formData).forEach(key => {
+    for (const key of Object.keys(formData)) {
       if (key === 'id') {
         (formData as any)[key] = null
       } else {
         (formData as any)[key] = ''
       }
-    })
+    }
     showFormCard.value = false
     
     // Reset SearchableDropdown selections
@@ -1498,7 +1498,7 @@ const parseSpecifications = (specsInput: string) => {
   const specs: Record<string, string> = {}
   const lines = specsInput.split('\n')
   
-  lines.forEach(line => {
+  for (const line of lines) {
     const colonIndex = line.indexOf(':')
     if (colonIndex > 0) {
       const key = line.substring(0, colonIndex).trim()
@@ -1507,7 +1507,7 @@ const parseSpecifications = (specsInput: string) => {
         specs[key] = value
       }
     }
-  })
+  }
   
   return Object.keys(specs).length > 0 ? specs : undefined
 }
@@ -1752,11 +1752,11 @@ const addSingleAsset = () => {
     return
   }
   
-  if (!selectedAssetsForDeletion.value.includes(assetId)) {
+  if (selectedAssetsForDeletion.value.includes(assetId)) {
+    showToast(`Asset ${assetId} is already selected`, 'info')
+  } else {
     selectedAssetsForDeletion.value.push(assetId)
     showToast(`Added asset ${assetId} to selection`, 'success')
-  } else {
-    showToast(`Asset ${assetId} is already selected`, 'info')
   }
   
   // Clear the input
@@ -1809,11 +1809,11 @@ const addAssetsToSelection = (validRangeAssets: string[]): { addedCount: number;
   let alreadySelectedCount = 0
   
   for (const assetId of validRangeAssets) {
-    if (!selectedAssetsForDeletion.value.includes(assetId)) {
+    if (selectedAssetsForDeletion.value.includes(assetId)) {
+      alreadySelectedCount++
+    } else {
       selectedAssetsForDeletion.value.push(assetId)
       addedCount++
-    } else {
-      alreadySelectedCount++
     }
   }
   

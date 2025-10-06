@@ -307,7 +307,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import type { CreateVendorDto, UpdateVendorDto, VendorStatus, VendorType, Vendor } from '@/types/vendor.types'
+import type { VendorStatus, VendorType, Vendor } from '@/types/vendor.types'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
 import VendorApiService from '@/services/vendorApi'
@@ -438,28 +438,28 @@ const validateVendorName = (element: HTMLElement) => {
     setFieldValidation(element, false, '', 'vendorName')
   } else if (value.length < 2) {
     setFieldValidation(element, false, 'Vendor name must be at least 2 characters', 'vendorName')
-  } else if (!/^[A-Za-z0-9\s.&-]{2,100}$/.test(value)) {
-    setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)', 'vendorName')
-  } else {
+  } else if (/^[A-Za-z0-9\s.&-]{2,100}$/.test(value)) {
     setFieldValidation(element, true, '', 'vendorName')
+  } else {
+    setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)', 'vendorName')
   }
 }
 
 const validateContactPerson = (element: HTMLElement, value: any) => {
   if (value && value.length < 2) {
     setFieldValidation(element, false, 'Contact person name must be at least 2 characters', 'contactPerson')
-  } else if (value && !/^[A-Za-z\s]{2,100}$/.test(value)) {
-    setFieldValidation(element, false, 'Contact person name must be 2-100 characters (letters and spaces only)', 'contactPerson')
-  } else {
+  } else if (value && /^[A-Za-z\s]{2,100}$/.test(value)) {
     setFieldValidation(element, true, '', 'contactPerson')
+  } else {
+    setFieldValidation(element, false, 'Contact person name must be 2-100 characters (letters and spaces only)', 'contactPerson')
   }
 }
 
 const validateEmail = (element: HTMLElement, value: any) => {
-  if (value && !value.includes('@')) {
-    setFieldValidation(element, false, 'Please enter a valid email address', 'email')
-  } else {
+  if (value && value.includes('@')) {
     setFieldValidation(element, true, '', 'email')
+  } else {
+    setFieldValidation(element, false, 'Please enter a valid email address', 'email')
   }
 }
 
@@ -485,7 +485,7 @@ const validatePhone = (element: HTMLElement): boolean => {
     return false
   }
 
-  const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  const digits = (strVal as any).replaceAll(/^\+91\s?/, '').replaceAll(/\D/g, '')
   
   if (digits.length < 10) {
     setFieldValidation(element, false, 'Phone number must be exactly 10 digits after +91', 'phone')
@@ -511,11 +511,11 @@ const validateTaxId = (element: HTMLElement, value: any) => {
 
 const validatePanNumber = (element: HTMLElement, value: any) => {
   if (value && value.length === 10) {
-    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
-    if (!panPattern.test(value)) {
-      setFieldValidation(element, false, 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)', 'panNumber')
-    } else {
+    const panPattern = /^[A-Z]{5}\d{4}[A-Z]$/
+    if (panPattern.test(value)) {
       setFieldValidation(element, true, '', 'panNumber')
+    } else {
+      setFieldValidation(element, false, 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)', 'panNumber')
     }
   } else {
     setFieldValidation(element, true, '', 'panNumber')
@@ -531,14 +531,14 @@ const validateAddress = (element: HTMLElement, value: any) => {
 }
 
 const validateRequiredDropdown = (fieldName: string, selectedValue: any) => {
-  if (!selectedValue) {
-    (errors as any)[fieldName] = ''
-    applyValidationToSearchableDropdown(fieldName, 'invalid')
-    console.log(`${fieldName} validation: INVALID - no selection`)
-  } else {
+  if (selectedValue) {
     (errors as any)[fieldName] = ''
     applyValidationToSearchableDropdown(fieldName, 'valid')
     console.log(`${fieldName} validation: VALID - selection made`)
+  } else {
+    (errors as any)[fieldName] = ''
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    console.log(`${fieldName} validation: INVALID - no selection`)
   }
 }
 
@@ -719,7 +719,7 @@ const formatPhoneNumber = (event: Event) => {
   }
 
   // Keep only digits after the prefix, max 10
-  let digits = raw.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  let digits = (raw as any).replaceAll(/^\+91\s?/, '').replaceAll(/\D/g, '')
   if (digits.length > 10) digits = digits.slice(0, 10)
 
   // Recompose
@@ -746,7 +746,7 @@ const formatToTitleCase = (event: Event) => {
   const value = target.value
   
   // Convert to title case
-  const titleCaseValue = value.replace(/\w\S*/g, (txt) => {
+  const titleCaseValue = (value as any).replaceAll(/\w\S*/g, (txt: string) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   })
   
@@ -787,21 +787,21 @@ const checkVendorNameExists = async (name: string) => {
     const excludeId = props.isEditMode && props.vendor ? props.vendor.id : undefined
     const result = await VendorApiService.checkVendorNameExists(name, excludeId)
     
-    if (!result.data.available) {
-      // Name already exists
-      errors.vendorName = 'This vendor name already exists. Please choose a different name.'
-      const element = document.getElementById('vendorName') as HTMLInputElement
-      if (element) {
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      }
-    } else {
+    if (result.data.available) {
       // Name is available
       errors.vendorName = ''
       const element = document.getElementById('vendorName') as HTMLInputElement
       if (element) {
         element.classList.remove('is-invalid')
         element.classList.add('is-valid')
+      }
+    } else {
+      // Name already exists
+      errors.vendorName = 'This vendor name already exists. Please choose a different name.'
+      const element = document.getElementById('vendorName') as HTMLInputElement
+      if (element) {
+        element.classList.add('is-invalid')
+        element.classList.remove('is-valid')
       }
     }
   } catch (error) {
@@ -822,7 +822,7 @@ const formatContactPersonToTitleCase = (event: Event) => {
   const value = target.value
   
   // Convert to title case
-  const titleCaseValue = value.replace(/\w\S*/g, (txt) => {
+  const titleCaseValue = (value as any).replaceAll(/\w\S*/g, (txt: string) => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   })
   
@@ -833,14 +833,14 @@ const formatContactPersonToTitleCase = (event: Event) => {
 
 const formatTaxId = (event: Event) => {
   const target = event.target as HTMLInputElement
-  target.value = target.value.replace(/[^A-Za-z0-9-]/g, '').toUpperCase()
+  target.value = (target.value as any).replaceAll(/[^A-Za-z0-9-]/g, '').toUpperCase()
   formData.taxId = target.value
   handleFieldInput('taxId')
 }
 
 const formatPAN = (event: Event) => {
   const target = event.target as HTMLInputElement
-  target.value = target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+  target.value = (target.value as any).replaceAll(/[^a-zA-Z0-9]/g, '').toUpperCase()
   formData.panNumber = target.value
   handleFieldInput('panNumber')
 }
@@ -866,11 +866,11 @@ const resizeTextarea = (textarea: HTMLTextAreaElement) => {
 // Function to resize all textareas with content
 const resizeAllTextareas = () => {
   const textareas = document.querySelectorAll('.auto-expand-textarea') as NodeListOf<HTMLTextAreaElement>
-  textareas.forEach(textarea => {
+  for (const textarea of textareas) {
     if (textarea.value.trim()) { // Only resize if there's content
       resizeTextarea(textarea)
     }
-  })
+  }
 }
 
 // Character counters
@@ -887,7 +887,7 @@ const validateForm = (): boolean => {
   // Validate required fields
   const requiredFields = ['vendorName', 'vendorType', 'status']
   
-  requiredFields.forEach(fieldName => {
+  for (const fieldName of requiredFields) {
     validateField(fieldName)
     
     // Special handling for SearchableDropdown fields
@@ -896,13 +896,13 @@ const validateForm = (): boolean => {
         errors[fieldName as keyof typeof errors]) {
       isValid = false
     }
-  })
+  }
 
   // Also validate optional fields to show green borders
   const optionalFields = ['contactPerson', 'email', 'phone', 'address', 'taxId', 'panNumber', 'notes']
-  optionalFields.forEach(fieldName => {
+  for (const fieldName of optionalFields) {
     validateField(fieldName)
-  })
+  }
 
   return isValid
 }

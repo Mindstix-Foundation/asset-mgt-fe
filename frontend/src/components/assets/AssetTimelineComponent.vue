@@ -211,11 +211,11 @@ const formatCurrency = (amount: number): string => {
 }
 
 const formatEventType = (type: string): string => {
-  return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return type.replaceAll('_', ' ').toLowerCase().replaceAll(/\b\w/g, (match: string) => match.toUpperCase())
 }
 
 const formatMaintenanceType = (type: string): string => {
-  return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return type.replaceAll('_', ' ').toLowerCase().replaceAll(/\b\w/g, (match: string) => match.toUpperCase())
 }
 
 const getEventClass = (type: string): string => {
@@ -337,7 +337,7 @@ const isMaintenanceEvent = (type: string): boolean => {
 
 .event-header {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
 }

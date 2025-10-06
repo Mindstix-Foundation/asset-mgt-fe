@@ -9,11 +9,11 @@
               <i :class="event.icon"></i>
             </div>
             <div>
-              <h5 class="modal-title mb-1">{{ event.title }}</h5>
+              <h5 class="modal-title mb-1">{{ formatEventType(event.type) }}</h5>
               <div class="event-subtitle">
                 {{ formatDate(event.date) }}
-                <span v-if="event.user" class="ms-2">
-                  • by {{ event.user }}
+                <span v-if="event.userDisplayName" class="ms-2">
+                  • by {{ event.userDisplayName }}
                 </span>
               </div>
             </div>
@@ -41,19 +41,19 @@
             <div class="details-grid">
               <!-- Assignment Details -->
               <template v-if="isAssignmentEvent">
-                <div v-if="event.details.employee" class="detail-card">
+                <div v-if="event.details?.employee" class="detail-card">
                   <div class="detail-label">Employee</div>
                   <div class="detail-value">{{ event.details.employee }}</div>
                 </div>
-                <div v-if="event.details.employeeId" class="detail-card">
+                <div v-if="event.details?.employeeId" class="detail-card">
                   <div class="detail-label">Employee ID</div>
                   <div class="detail-value">{{ event.details.employeeId }}</div>
                 </div>
-                <div v-if="event.details.reason" class="detail-card">
+                <div v-if="event.details?.reason" class="detail-card">
                   <div class="detail-label">Reason</div>
                   <div class="detail-value">{{ event.details.reason }}</div>
                 </div>
-                <div v-if="event.details.condition" class="detail-card">
+                <div v-if="event.details?.condition" class="detail-card">
                   <div class="detail-label">Condition</div>
                   <div class="detail-value">
                     <span class="condition-badge" :class="getConditionClass(event.details.condition)">
@@ -65,19 +65,19 @@
 
               <!-- Maintenance Details -->
               <template v-if="isMaintenanceEvent">
-                <div v-if="event.details.type" class="detail-card">
+                <div v-if="event.details?.type" class="detail-card">
                   <div class="detail-label">Maintenance Type</div>
                   <div class="detail-value">{{ formatMaintenanceType(event.details.type) }}</div>
                 </div>
-                <div v-if="event.details.scheduledDate" class="detail-card">
+                <div v-if="event.details?.scheduledDate" class="detail-card">
                   <div class="detail-label">Scheduled Date</div>
                   <div class="detail-value">{{ formatDate(event.details.scheduledDate) }}</div>
                 </div>
-                <div v-if="event.details.vendor" class="detail-card">
+                <div v-if="event.details?.vendor" class="detail-card">
                   <div class="detail-label">Vendor</div>
                   <div class="detail-value">{{ event.details.vendor }}</div>
                 </div>
-                <div v-if="event.details.status" class="detail-card">
+                <div v-if="event.details?.status" class="detail-card">
                   <div class="detail-label">Status</div>
                   <div class="detail-value">
                     <span class="status-badge" :class="getStatusClass(event.details.status)">
@@ -85,16 +85,16 @@
                     </span>
                   </div>
                 </div>
-                <div v-if="event.details.estimatedCost" class="detail-card">
+                <div v-if="event.details?.estimatedCost" class="detail-card">
                   <div class="detail-label">Estimated Cost</div>
                   <div class="detail-value">₹{{ formatCurrency(event.details.estimatedCost) }}</div>
                 </div>
-                <div v-if="event.details.actualCost" class="detail-card">
+                <div v-if="event.details?.actualCost" class="detail-card">
                   <div class="detail-label">Actual Cost</div>
                   <div class="detail-value cost-value">
                     ₹{{ formatCurrency(event.details.actualCost) }}
                     <span 
-                      v-if="event.details.estimatedCost" 
+                      v-if="event.details?.estimatedCost" 
                       class="cost-difference"
                       :class="getCostDifferenceClass(event.details.actualCost, event.details.estimatedCost)"
                     >
@@ -106,23 +106,23 @@
 
               <!-- Asset Creation Details -->
               <template v-if="event.type === 'ASSET_CREATED'">
-                <div v-if="event.details.purchaseDate" class="detail-card">
+                <div v-if="event.details?.purchaseDate" class="detail-card">
                   <div class="detail-label">Purchase Date</div>
                   <div class="detail-value">{{ formatDate(event.details.purchaseDate) }}</div>
                 </div>
-                <div v-if="event.details.purchaseCost" class="detail-card">
+                <div v-if="event.details?.purchaseCost" class="detail-card">
                   <div class="detail-label">Purchase Cost</div>
                   <div class="detail-value">₹{{ formatCurrency(event.details.purchaseCost) }}</div>
                 </div>
-                <div v-if="event.details.location" class="detail-card">
+                <div v-if="event.details?.location" class="detail-card">
                   <div class="detail-label">Initial Location</div>
                   <div class="detail-value">{{ event.details.location }}</div>
                 </div>
-                <div v-if="event.details.serialNumber" class="detail-card">
+                <div v-if="event.details?.serialNumber" class="detail-card">
                   <div class="detail-label">Serial Number</div>
                   <div class="detail-value">{{ event.details.serialNumber }}</div>
                 </div>
-                <div v-if="event.details.initialCondition" class="detail-card">
+                <div v-if="event.details?.initialCondition" class="detail-card">
                   <div class="detail-label">Initial Condition</div>
                   <div class="detail-value">
                     <span class="condition-badge" :class="getConditionClass(event.details.initialCondition)">
@@ -130,7 +130,7 @@
                     </span>
                   </div>
                 </div>
-                <div v-if="event.details.initialStatus" class="detail-card">
+                <div v-if="event.details?.initialStatus" class="detail-card">
                   <div class="detail-label">Initial Status</div>
                   <div class="detail-value">
                     <span class="status-badge" :class="getStatusClass(event.details.initialStatus)">
@@ -150,7 +150,7 @@
             </h6>
             
             <!-- General Notes -->
-            <div v-if="event.details.notes" class="note-card">
+            <div v-if="event.details?.notes" class="note-card">
               <div class="note-header">
                 <i class="fas fa-comment me-2"></i>
                 Notes
@@ -159,7 +159,7 @@
             </div>
 
             <!-- Completion Notes -->
-            <div v-if="event.details.completionNotes" class="note-card success">
+            <div v-if="event.details?.completionNotes" class="note-card success">
               <div class="note-header">
                 <i class="fas fa-check-circle me-2"></i>
                 Completion Notes
@@ -168,7 +168,7 @@
             </div>
 
             <!-- Cancellation Notes -->
-            <div v-if="event.details.cancellationNotes" class="note-card danger">
+            <div v-if="event.details?.cancellationNotes" class="note-card danger">
               <div class="note-header">
                 <i class="fas fa-times-circle me-2"></i>
                 Cancellation Notes
@@ -177,7 +177,7 @@
             </div>
 
             <!-- Cancellation Reason -->
-            <div v-if="event.details.cancellationReason" class="note-card warning">
+            <div v-if="event.details?.cancellationReason" class="note-card warning">
               <div class="note-header">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 Cancellation Reason
@@ -209,9 +209,9 @@
                 <div class="metadata-label">Date & Time</div>
                 <div class="metadata-value">{{ formatFullDate(event.date) }}</div>
               </div>
-              <div v-if="event.user" class="metadata-item">
+              <div v-if="event.userDisplayName" class="metadata-item">
                 <div class="metadata-label">Performed By</div>
-                <div class="metadata-value">{{ event.user }}</div>
+                <div class="metadata-value">{{ event.userDisplayName }}</div>
               </div>
             </div>
           </div>
@@ -249,17 +249,17 @@ defineEmits<{
 // Computed properties
 const hasEventDetails = computed(() => {
   return props.event.details && Object.keys(props.event.details).some(key => 
-    props.event.details[key] !== null && 
-    props.event.details[key] !== undefined && 
-    props.event.details[key] !== ''
+    props.event.details![key] !== null && 
+    props.event.details![key] !== undefined && 
+    props.event.details![key] !== ''
   )
 })
 
 const hasNotes = computed(() => {
-  return props.event.details.notes || 
-         props.event.details.completionNotes || 
-         props.event.details.cancellationNotes ||
-         props.event.details.cancellationReason
+  return props.event.details?.notes || 
+         props.event.details?.completionNotes || 
+         props.event.details?.cancellationNotes ||
+         props.event.details?.cancellationReason
 })
 
 const isAssignmentEvent = computed(() => {
@@ -304,11 +304,11 @@ const formatCurrency = (amount: number): string => {
 }
 
 const formatEventType = (type: string): string => {
-  return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return type.replaceAll('_', ' ').toLowerCase().replaceAll(/\b\w/g, (match: string) => match.toUpperCase())
 }
 
 const formatMaintenanceType = (type: string): string => {
-  return type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  return type.replaceAll('_', ' ').toLowerCase().replaceAll(/\b\w/g, (match: string) => match.toUpperCase())
 }
 
 const getConditionClass = (condition: string): string => {

@@ -2,6 +2,7 @@
   <div class="searchable-dropdown-wrapper">
     <label :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
     <div class="dropdown" ref="dropdownRef">
+      <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
       <input
         type="text"
         class="form-control"
@@ -37,6 +38,7 @@
         :disabled="disabled"
         @keydown="handleKeydown"
       />
+      <!-- eslint-disable-next-line vuejs-accessibility/prefer-tag-over-role -->
       <div
         class="dropdown-menu"
         :class="{ 
@@ -63,6 +65,7 @@
           No results found
         </div>
         <!-- Show filtered items when available -->
+        <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props, vuejs-accessibility/prefer-tag-over-role -->
         <button
           v-else
           v-for="(item, index) in filteredItems"
@@ -309,21 +312,21 @@ const preventDefaultForNavigationKeys = (event: KeyboardEvent) => {
 }
 
 const handleArrowDown = () => {
-  if (!showDropdown.value) {
+  if (showDropdown.value) {
+    selectedIndex.value = Math.min(selectedIndex.value + 1, filteredItems.value.length - 1)
+  } else {
     showDropdown.value = true
     selectedIndex.value = filteredItems.value.length > 0 ? 0 : -1
-  } else {
-    selectedIndex.value = Math.min(selectedIndex.value + 1, filteredItems.value.length - 1)
   }
   scrollToSelectedItem()
 }
 
 const handleArrowUp = () => {
-  if (!showDropdown.value) {
+  if (showDropdown.value) {
+    selectedIndex.value = Math.max(selectedIndex.value - 1, -1)
+  } else {
     showDropdown.value = true
     selectedIndex.value = filteredItems.value.length > 0 ? filteredItems.value.length - 1 : -1
-  } else {
-    selectedIndex.value = Math.max(selectedIndex.value - 1, -1)
   }
   scrollToSelectedItem()
 }

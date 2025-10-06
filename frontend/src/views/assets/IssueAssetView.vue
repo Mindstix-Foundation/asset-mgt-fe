@@ -195,7 +195,6 @@ import { assignmentApiService, type CreateAssignmentDto } from '../../services/a
 import { assetApiService, type Asset } from '../../services/assetApi'
 import { employeeApiService, type Employee } from '../../services/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
-import NotesDisplay from '../../components/common/NotesDisplay.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
 import DateInput from '../../components/common/DateInput.vue'
 
@@ -326,14 +325,14 @@ const validateRequiredField = (fieldName: string, value: any, element: HTMLEleme
 }
 
 const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
-  if (!selectedValue) {
-    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-    applyValidationToSearchableDropdown(fieldName, 'invalid')
-    return false
-  } else {
+  if (selectedValue) {
     setFieldValid(fieldName)
     applyValidationToSearchableDropdown(fieldName, 'valid')
     return true
+  } else {
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    return false
   }
 }
 
@@ -377,8 +376,10 @@ const validateAssignmentDate = (fieldName: string, value: any): boolean => {
   return true
 }
 
+type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+
 const validateStandardField = (fieldName: string, element: HTMLElement): boolean => {
-  const inputElement = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const inputElement = element as FormElement
   if (inputElement.checkValidity()) {
     setFieldValid(fieldName)
     return true
@@ -398,7 +399,7 @@ const validationHandlers = {
 
 const validateFieldInline = (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   
   if (!element) return false
 
@@ -434,7 +435,7 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   if (element) {
     element.setCustomValidity(message)
   }
@@ -450,7 +451,7 @@ const setFieldValid = (fieldName: string) => {
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
-  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const element = document.getElementById(fieldName) as FormElement
   if (element) {
     element.setCustomValidity('')
   }
@@ -539,11 +540,11 @@ const submitForm = async (event?: Event) => {
   let isFormValid = true
   const allFields = Object.keys(formData)
 
-  allFields.forEach(fieldName => {
+  for (const fieldName of allFields) {
     if (!validateFieldInline(fieldName)) {
       isFormValid = false
     }
-  })
+  }
 
   if (!isFormValid) {
     // Don't show error toast for validation errors - instead scroll to first error
@@ -618,17 +619,17 @@ const generateAssignmentDetails = () => {
 
 const resetForm = () => {
   // Reset form data
-  Object.keys(formData).forEach(key => {
+  for (const key of Object.keys(formData)) {
     if (key === 'assignmentDate') {
       formData[key as keyof typeof formData] = new Date().toISOString().split('T')[0]
     } else {
       formData[key as keyof typeof formData] = ''
     }
-  })
+  }
   
   // Clear validation state
-  Object.keys(fieldErrors).forEach(key => delete fieldErrors[key])
-  Object.keys(fieldValidation).forEach(key => delete fieldValidation[key])
+  for (const key of Object.keys(fieldErrors)) delete fieldErrors[key]
+  for (const key of Object.keys(fieldValidation)) delete fieldValidation[key]
   
   // Reset form state
   formSubmitted.value = false
@@ -640,9 +641,9 @@ const resetForm = () => {
   // Clear all validation classes from DOM elements
   nextTick(() => {
     const fields = document.querySelectorAll('.is-valid, .is-invalid')
-    fields.forEach(field => {
+    for (const field of fields) {
       field.classList.remove('is-valid', 'is-invalid')
-    })
+    }
   })
 }
 
@@ -655,10 +656,12 @@ const goBack = () => {
 const scrollToFirstError = () => {
   // Hide any existing toasts (but keep this for other error toasts)
   const existingToasts = document.querySelectorAll('.custom-toast-notification')
-  existingToasts.forEach(toast => toast.remove())
+  for (const toast of existingToasts) {
+    toast.remove()
+  }
   
   // Look for the first invalid input/select/textarea specifically
-  const firstInvalid = document.querySelector('input.is-invalid, select.is-invalid, textarea.is-invalid, input:invalid, select:invalid, textarea:invalid') as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  const firstInvalid = document.querySelector('input.is-invalid, select.is-invalid, textarea.is-invalid, input:invalid, select:invalid, textarea:invalid') as FormElement
   
   if (firstInvalid) {
     // Simple scroll to the first invalid field
@@ -793,7 +796,7 @@ const loadActiveEmployees = async () => {
 // Lifecycle
 onMounted(async () => {
   // Make functions available globally
-  ;(window as any).scrollToFirstError = scrollToFirstError
+  ;(globalThis as any).scrollToFirstError = scrollToFirstError
   
   // Set loading state
   isLoading.value = true

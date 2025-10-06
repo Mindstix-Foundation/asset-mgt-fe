@@ -1996,16 +1996,16 @@ const handleDropdownClick = (event: Event) => {
   
   if (dropdown) {
     // Close all other dropdowns first
-    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+    for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
       if (menu !== dropdown) {
         menu.classList.remove('show')
       }
-    })
-    document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+    }
+    for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
       if (btn !== button) {
         btn.setAttribute('aria-expanded', 'false')
       }
-    })
+    }
     
     // Toggle current dropdown
     const isShown = dropdown.classList.contains('show')
@@ -2036,12 +2036,12 @@ const handleDropdownClick = (event: Event) => {
 const handleClickOutside = (event: Event) => {
   const target = event.target as HTMLElement
   if (!target.closest('.dropdown')) {
-    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+    for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
       menu.classList.remove('show')
-    })
-    document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+    }
+    for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
       btn.setAttribute('aria-expanded', 'false')
-    })
+    }
   }
 }
 
@@ -2397,15 +2397,15 @@ const getWarrantyTimeLeft = (warrantyDate: string) => {
   const parts = []
   
   if (totalYears > 0) {
-    parts.push(`${totalYears} year${totalYears !== 1 ? 's' : ''}`)
+    parts.push(`${totalYears} year${totalYears === 1 ? '' : 's'}`)
   }
   
   if (remainingMonths > 0) {
-    parts.push(`${remainingMonths} month${remainingMonths !== 1 ? 's' : ''}`)
+    parts.push(`${remainingMonths} month${remainingMonths === 1 ? '' : 's'}`)
   }
   
   if (remainingDays > 0) {
-    parts.push(`${remainingDays} day${remainingDays !== 1 ? 's' : ''}`)
+    parts.push(`${remainingDays} day${remainingDays === 1 ? '' : 's'}`)
   }
   
   // Handle edge cases

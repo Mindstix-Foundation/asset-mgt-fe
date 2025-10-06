@@ -10,7 +10,6 @@ import type {
   CreateAssetDto,
   UpdateAssetDto,
   AssetQueryParams,
-  AssetStats,
   FilterOptions,
   AssetType,
   Brand,
@@ -26,11 +25,11 @@ class AssetService {
     const searchParams = new URLSearchParams()
     
     // Add all query parameters
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `${this.baseEndpoint}?${queryString}` : this.baseEndpoint
@@ -100,11 +99,11 @@ class AssetService {
   }): Promise<SearchResponse> {
     const searchParams = new URLSearchParams()
     
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     return apiService.get<SearchResponse>(`${this.baseEndpoint}/search?${searchParams.toString()}`)
   }
@@ -113,11 +112,11 @@ class AssetService {
   async getAvailableAssets(params: AssetQueryParams = {}): Promise<AssetListResponse> {
     const searchParams = new URLSearchParams()
     
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `${this.baseEndpoint}/available?${queryString}` : `${this.baseEndpoint}/available`
@@ -129,11 +128,11 @@ class AssetService {
   async getDeletableAssets(params: AssetQueryParams = {}): Promise<AssetListResponse> {
     const searchParams = new URLSearchParams()
     
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `${this.baseEndpoint}/deletable?${queryString}` : `${this.baseEndpoint}/deletable`
@@ -274,7 +273,8 @@ class AssetService {
         let dt: Date
         if (typeof d === 'string') {
           // Handle IST string format: DD/MM/YYYY, HH:mm:ss
-          const m = d.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/)
+          const regex = /^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/
+          const m = regex.exec(d)
           if (m) {
             const day = Number.parseInt(m[1], 10)
             const month = Number.parseInt(m[2], 10) - 1
@@ -443,13 +443,7 @@ class AssetService {
     const errors: string[] = []
 
     // Validate required fields
-    errors.push(...this.validateRequiredFields(data))
-
-    // Validate purchase date
-    errors.push(...this.validatePurchaseDate(data))
-
-    // Validate warranty dates
-    errors.push(...this.validateWarrantyDates(data))
+    errors.push(...this.validateRequiredFields(data), ...this.validatePurchaseDate(data), ...this.validateWarrantyDates(data))
 
     return errors
   }
@@ -459,11 +453,11 @@ class AssetService {
     const searchParams = new URLSearchParams()
     
     // Add all query parameters
-    Object.entries(params).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
       }
-    })
+    }
 
     const queryString = searchParams.toString()
     const endpoint = queryString ? `${this.baseEndpoint}/export?${queryString}` : `${this.baseEndpoint}/export`
@@ -487,14 +481,14 @@ class AssetService {
 
       // Create blob and download
       const blob = response.data
-      const url = window.URL.createObjectURL(blob)
+      const url = globalThis.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = filename
       document.body.appendChild(link)
       link.click()
       link.remove()
-      window.URL.revokeObjectURL(url)
+      globalThis.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Export error:', error)
       throw error
