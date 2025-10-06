@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
 
     // Skip retry for auth endpoints to avoid infinite loops
     if (originalRequest.url?.includes('/auth/')) {
-      return Promise.reject(error)
+      throw error
     }
 
     // On 401, attempt token refresh (cookies handle authentication automatically)
@@ -52,7 +52,7 @@ apiClient.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error)
+    throw error
   }
 )
 
