@@ -419,6 +419,154 @@ const onStatusChange = (item: Item | null) => {
 }
 
 
+// Helper functions for field validation
+const setFieldValidation = (element: HTMLElement, isValid: boolean, errorMessage: string = '', errorKey?: string) => {
+  if (isValid) {
+    element.classList.remove('is-invalid')
+    element.classList.add('is-valid')
+    if (errorKey) (errors as any)[errorKey] = ''
+  } else {
+    element.classList.add('is-invalid')
+    element.classList.remove('is-valid')
+    if (errorKey) (errors as any)[errorKey] = errorMessage
+  }
+}
+
+const validateVendorName = (element: HTMLElement) => {
+  const value = formData.vendorName
+  if (!value || value.trim() === '') {
+    setFieldValidation(element, false, '', 'vendorName')
+  } else if (value.length < 2) {
+    setFieldValidation(element, false, 'Vendor name must be at least 2 characters', 'vendorName')
+  } else if (!/^[A-Za-z0-9\s\.\-&,]{2,100}$/.test(value)) {
+    setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)', 'vendorName')
+  } else {
+    setFieldValidation(element, true, '', 'vendorName')
+  }
+}
+
+const validateContactPerson = (element: HTMLElement, value: any) => {
+  if (value && value.length < 2) {
+    setFieldValidation(element, false, 'Contact person name must be at least 2 characters', 'contactPerson')
+  } else if (value && !/^[A-Za-z\s]{2,100}$/.test(value)) {
+    setFieldValidation(element, false, 'Contact person name must be 2-100 characters (letters and spaces only)', 'contactPerson')
+  } else {
+    setFieldValidation(element, true, '', 'contactPerson')
+  }
+}
+
+const validateEmail = (element: HTMLElement, value: any) => {
+  if (value && !value.includes('@')) {
+    setFieldValidation(element, false, 'Please enter a valid email address', 'email')
+  } else {
+    setFieldValidation(element, true, '', 'email')
+  }
+}
+
+const validatePhone = (element: HTMLElement): boolean => {
+  if (!formData.phone) {
+    setFieldValidation(element, true, '', 'phone')
+    return true
+  }
+
+  const strVal = String(formData.phone)
+  
+  // Treat bare prefix as empty (optional field)
+  if (/^\+91\s?$/.test(strVal)) {
+    formData.phone = '' as any
+    const el = document.getElementById('phone') as HTMLInputElement
+    if (el) el.value = ''
+    setFieldValidation(element, true, '', 'phone')
+    return true
+  }
+
+  if (!strVal.startsWith('+91')) {
+    setFieldValidation(element, false, "Phone number must start with '+91'", 'phone')
+    return false
+  }
+
+  const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
+  
+  if (digits.length < 10) {
+    setFieldValidation(element, false, 'Phone number must be exactly 10 digits after +91', 'phone')
+    return false
+  }
+
+  if (digits.length > 10) {
+    setFieldValidation(element, false, 'Phone number cannot exceed 10 digits after +91', 'phone')
+    return false
+  }
+
+  setFieldValidation(element, true, '', 'phone')
+  return true
+}
+
+const validateTaxId = (element: HTMLElement, value: any) => {
+  if (value && value.length < 5) {
+    setFieldValidation(element, false, 'Tax ID must be at least 5 characters', 'taxId')
+  } else {
+    setFieldValidation(element, true, '', 'taxId')
+  }
+}
+
+const validatePanNumber = (element: HTMLElement, value: any) => {
+  if (value && value.length === 10) {
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
+    if (!panPattern.test(value)) {
+      setFieldValidation(element, false, 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)', 'panNumber')
+    } else {
+      setFieldValidation(element, true, '', 'panNumber')
+    }
+  } else {
+    setFieldValidation(element, true, '', 'panNumber')
+  }
+}
+
+const validateAddress = (element: HTMLElement, value: any) => {
+  if (value && value.length > 500) {
+    setFieldValidation(element, false, 'Address cannot exceed 500 characters', 'address')
+  } else {
+    setFieldValidation(element, true, '', 'address')
+  }
+}
+
+const validateRequiredDropdown = (fieldName: string, selectedValue: any) => {
+  if (!selectedValue) {
+    (errors as any)[fieldName] = ''
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    console.log(`${fieldName} validation: INVALID - no selection`)
+  } else {
+    (errors as any)[fieldName] = ''
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+    console.log(`${fieldName} validation: VALID - selection made`)
+  }
+}
+
+const validateOptionalField = (fieldName: string) => {
+  (errors as any)[fieldName] = ''
+  const textarea = document.getElementById('notes') as HTMLTextAreaElement
+  if (textarea) {
+    textarea.classList.add('is-valid')
+    textarea.classList.remove('is-invalid')
+  } else {
+    console.warn('Could not find notes textarea element')
+  }
+}
+
+// Validation configuration mapping
+const validationHandlers = {
+  vendorName: (element: HTMLElement) => validateVendorName(element),
+  contactPerson: (element: HTMLElement, value: any) => validateContactPerson(element, value),
+  email: (element: HTMLElement, value: any) => validateEmail(element, value),
+  phone: (element: HTMLElement) => validatePhone(element),
+  taxId: (element: HTMLElement, value: any) => validateTaxId(element, value),
+  panNumber: (element: HTMLElement, value: any) => validatePanNumber(element, value),
+  address: (element: HTMLElement, value: any) => validateAddress(element, value),
+  vendorType: () => validateRequiredDropdown('vendorType', selectedVendorType.value),
+  status: () => validateRequiredDropdown('status', selectedStatus.value),
+  notes: () => validateOptionalField('notes')
+}
+
 const validateField = (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -428,176 +576,18 @@ const validateField = (fieldName: string) => {
   // Clear previous custom validity
   element.setCustomValidity('')
 
-
-  // Additional custom validations based on field type
-  switch (fieldName) {
-    case 'vendorName':
-      if (!formData.vendorName || formData.vendorName.trim() === '') {
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else if (formData.vendorName.length < 2) {
-        errors.vendorName = 'Vendor name must be at least 2 characters'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else if (!/^[A-Za-z0-9\s\.\-&,]{2,100}$/.test(formData.vendorName)) {
-        errors.vendorName = 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else {
-        errors.vendorName = ''
-        element.classList.remove('is-invalid')
-        element.classList.add('is-valid')
-      }
-      break
-    
-    case 'contactPerson':
-      if (value && value.length < 2) {
-        errors.contactPerson = 'Contact person name must be at least 2 characters'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else if (value && !/^[A-Za-z\s]{2,100}$/.test(value)) {
-        errors.contactPerson = 'Contact person name must be 2-100 characters (letters and spaces only)'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else {
-        errors.contactPerson = ''
-        element.classList.remove('is-invalid')
-        if (value) element.classList.add('is-valid')
-      }
-      break
-    
-    case 'email':
-      if (value && !value.includes('@')) {
-        errors.email = 'Please enter a valid email address'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else {
-        errors.email = ''
-        element.classList.remove('is-invalid')
-        if (value) element.classList.add('is-valid')
-      }
-      break
-    
-    case 'phone':
-      if (formData.phone) {
-        const strVal = String(formData.phone)
-        // Treat bare prefix as empty (optional field)
-        if (/^\+91\s?$/.test(strVal)) {
-          formData.phone = '' as any
-          const el = document.getElementById('phone') as HTMLInputElement
-          if (el) el.value = ''
-          element.classList.remove('is-invalid')
-          element.classList.add('is-valid')
-          errors.phone = ''
-          return true
-        }
-        if (!strVal.startsWith('+91')) {
-          errors.phone = "Phone number must start with '+91'"
-          element.classList.add('is-invalid')
-          element.classList.remove('is-valid')
-          return false
-        }
-        const digits = strVal.replace(/^\+91\s?/, '').replace(/\D/g, '')
-        if (digits.length < 10) {
-          errors.phone = 'Phone number must be exactly 10 digits after +91'
-          element.classList.add('is-invalid')
-          element.classList.remove('is-valid')
-          return false
-        }
-        if (digits.length > 10) {
-          errors.phone = 'Phone number cannot exceed 10 digits after +91'
-          element.classList.add('is-invalid')
-          element.classList.remove('is-valid')
-          return false
-        }
-        errors.phone = ''
-        element.classList.remove('is-invalid')
-        element.classList.add('is-valid')
-      } else {
-        errors.phone = ''
-        element.classList.remove('is-invalid')
-      }
-      break
-    
-    case 'taxId':
-      if (value && value.length < 5) {
-        errors.taxId = 'Tax ID must be at least 5 characters'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else {
-        errors.taxId = ''
-        element.classList.remove('is-invalid')
-        if (value) element.classList.add('is-valid')
-      }
-      break
-    
-    case 'panNumber':
-      if (value && value.length === 10) {
-        const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
-        if (!panPattern.test(value)) {
-          errors.panNumber = 'PAN format should be: ABCDE1234F (5 letters, 4 digits, 1 letter)'
-          element.classList.add('is-invalid')
-          element.classList.remove('is-valid')
-        } else {
-          errors.panNumber = ''
-          element.classList.remove('is-invalid')
-          element.classList.add('is-valid')
-        }
-      } else {
-        errors.panNumber = ''
-        element.classList.remove('is-invalid')
-        if (value) element.classList.add('is-valid')
-      }
-      break
-    
-    case 'address':
-      if (value && value.length > 500) {
-        errors.address = 'Address cannot exceed 500 characters'
-        element.classList.add('is-invalid')
-        element.classList.remove('is-valid')
-      } else {
-        errors.address = ''
-        element.classList.remove('is-invalid')
-        if (value) element.classList.add('is-valid')
-      }
-      break
-    
-    case 'vendorType':
-      if (!selectedVendorType.value) {
-        errors.vendorType = '' // No error message needed - red border is sufficient
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        console.log('VendorType validation: INVALID - no selection')
-      } else {
-        errors.vendorType = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        console.log('VendorType validation: VALID - selection made')
-      }
-      break
-
-    case 'status':
-      if (!selectedStatus.value) {
-        errors.status = '' // No error message needed - red border is sufficient
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        console.log('Status validation: INVALID - no selection')
-      } else {
-        errors.status = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        console.log('Status validation: VALID - selection made')
-      }
-      break
-
-    case 'notes':
-      // Notes are optional, so always valid
-      errors.notes = ''
-      const textarea = document.getElementById('notes') as HTMLTextAreaElement
-      if (textarea) {
-        textarea.classList.add('is-valid')
-        textarea.classList.remove('is-invalid')
-      } else {
-        console.warn('Could not find notes textarea element')
-      }
-      break
+  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
+  if (handler) {
+    if (fieldName === 'phone') {
+      return (handler as (element: HTMLElement) => boolean)(element)
+    } else if (['vendorType', 'status', 'notes'].includes(fieldName)) {
+      (handler as () => void)()
+    } else {
+      (handler as (element: HTMLElement, value: any) => void)(element, value)
+    }
   }
+
+  return true
 }
 
 // Helper function to apply validation classes to SearchableDropdown components
@@ -652,33 +642,45 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   }
 }
 
-const clearFieldError = (fieldName: string) => {
-  errors[fieldName as keyof typeof errors] = ''
-  
-  // Handle SearchableDropdown components
-  const searchableDropdownFields = ['vendorType', 'status']
-  if (searchableDropdownFields.includes(fieldName)) {
-    const element = document.getElementById(fieldName)
-    if (element) {
-      const wrapper = element.closest('.form-searchable-dropdown')
-      if (wrapper) {
-        const input = wrapper.querySelector('.form-control') as HTMLInputElement
-        if (input) {
-          input.classList.remove('is-invalid')
-        }
+// Helper functions for clearing field errors
+const clearSearchableDropdownError = (fieldName: string) => {
+  const element = document.getElementById(fieldName)
+  if (element) {
+    const wrapper = element.closest('.form-searchable-dropdown')
+    if (wrapper) {
+      const input = wrapper.querySelector('.form-control') as HTMLInputElement
+      if (input) {
+        input.classList.remove('is-invalid')
       }
     }
+  }
+}
+
+const clearTextareaError = (fieldName: string) => {
+  const textarea = document.getElementById(fieldName) as HTMLTextAreaElement
+  if (textarea) {
+    textarea.classList.remove('is-invalid')
+  }
+}
+
+const clearStandardFieldError = (fieldName: string) => {
+  const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  if (element) {
+    element.classList.remove('is-invalid')
+  }
+}
+
+const clearFieldError = (fieldName: string) => {
+  (errors as any)[fieldName] = ''
+  
+  const searchableDropdownFields = ['vendorType', 'status']
+  
+  if (searchableDropdownFields.includes(fieldName)) {
+    clearSearchableDropdownError(fieldName)
   } else if (fieldName === 'notes') {
-    // Handle NotesTextarea component
-    const textarea = document.getElementById('notes') as HTMLTextAreaElement
-    if (textarea) {
-      textarea.classList.remove('is-invalid')
-    }
+    clearTextareaError(fieldName)
   } else {
-    const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    if (element) {
-      element.classList.remove('is-invalid')
-    }
+    clearStandardFieldError(fieldName)
   }
 }
 
@@ -972,70 +974,85 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
 }
 
 // Initialize form data if editing
+// Helper functions for form initialization
+const populateFormDataFromVendor = (vendor: any) => {
+  formData.vendorName = vendor.name
+  formData.vendorType = vendor.vendorType || ''
+  formData.status = vendor.status
+  formData.contactPerson = vendor.contactPerson || ''
+  formData.email = vendor.email || ''
+  formData.phone = vendor.phone || ''
+  formData.address = vendor.address || ''
+  formData.taxId = vendor.taxId || ''
+  formData.panNumber = vendor.panNumber || ''
+  formData.notes = vendor.notes || ''
+}
+
+const setSelectedDropdownItems = (vendor: any) => {
+  if (vendor.vendorType) {
+    const vendorTypeOption = vendorTypeItems.value.find(item => item.value === vendor.vendorType)
+    if (vendorTypeOption) {
+      selectedVendorType.value = vendorTypeOption
+    }
+  }
+  
+  if (vendor.status) {
+    const statusOption = statusItems.value.find(item => item.value === vendor.status)
+    if (statusOption) {
+      selectedStatus.value = statusOption
+    }
+  }
+}
+
+const autoExpandTextareas = () => {
+  nextTick(() => {
+    resizeAllTextareas()
+    
+    // Also try again after a short delay in case Vue hasn't fully updated
+    setTimeout(() => {
+      resizeAllTextareas()
+    }, 100)
+    
+    // Final attempt after a longer delay
+    setTimeout(() => {
+      resizeAllTextareas()
+    }, 300)
+  })
+}
+
+const initializeEditMode = (vendor: any) => {
+  populateFormDataFromVendor(vendor)
+  setSelectedDropdownItems(vendor)
+  autoExpandTextareas()
+}
+
+const initializeNewVendor = () => {
+  if (props.disableStatus) {
+    // Set status to ACTIVE when disabled (for new vendors)
+    formData.status = 'ACTIVE' as VendorStatus
+    selectedStatus.value = {
+      id: 'ACTIVE',
+      name: 'Active',
+      value: 'ACTIVE'
+    }
+  } else {
+    // Don't set default status - user must make selection
+    formData.status = '' as VendorStatus
+    selectedStatus.value = null
+  }
+  
+  // Don't set default vendor type - user must choose
+  formData.vendorType = '' as VendorType
+  selectedVendorType.value = null
+}
+
 onMounted(async () => {
   isLoading.value = true
   try {
     if (props.isEditMode && props.vendor) {
-      // Populate form with existing data
-      formData.vendorName = props.vendor.name
-      formData.vendorType = props.vendor.vendorType || ''
-      formData.status = props.vendor.status
-      formData.contactPerson = props.vendor.contactPerson || ''
-      formData.email = props.vendor.email || ''
-      formData.phone = props.vendor.phone || ''
-      formData.address = props.vendor.address || ''
-      formData.taxId = props.vendor.taxId || ''
-      formData.panNumber = props.vendor.panNumber || ''
-      formData.notes = props.vendor.notes || ''
-
-      // Set selected items for SearchableDropdown components
-      if (props.vendor.vendorType) {
-        const vendorTypeOption = vendorTypeItems.value.find(item => item.value === props.vendor?.vendorType)
-        if (vendorTypeOption) {
-          selectedVendorType.value = vendorTypeOption
-        }
-      }
-      
-      if (props.vendor.status) {
-        const statusOption = statusItems.value.find(item => item.value === props.vendor?.status)
-        if (statusOption) {
-          selectedStatus.value = statusOption
-        }
-      }
-
-      // Auto-expand textareas if they have content
-      nextTick(() => {
-        resizeAllTextareas()
-        
-        // Also try again after a short delay in case Vue hasn't fully updated
-        setTimeout(() => {
-          resizeAllTextareas()
-        }, 100)
-        
-        // Final attempt after a longer delay
-        setTimeout(() => {
-          resizeAllTextareas()
-        }, 300)
-      })
+      initializeEditMode(props.vendor)
     } else {
-      // For new vendor, set default values based on props
-      if (props.disableStatus) {
-        // Set status to ACTIVE when disabled (for new vendors)
-        formData.status = 'ACTIVE' as VendorStatus
-        selectedStatus.value = {
-          id: 'ACTIVE',
-          name: 'Active',
-          value: 'ACTIVE'
-        }
-      } else {
-        // Don't set default status - user must make selection
-        formData.status = '' as VendorStatus
-        selectedStatus.value = null
-      }
-      
-      // Don't set default vendor type - user must choose
-      formData.vendorType = '' as VendorType
-      selectedVendorType.value = null
+      initializeNewVendor()
     }
   } catch (error) {
     console.error('Error loading vendor data:', error)

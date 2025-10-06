@@ -748,139 +748,108 @@ const validateSerialNumber = async () => {
   }
 }
 
+// Helper functions for field validation
+const validateRequiredDropdown = (fieldName: string, selectedValue: any) => {
+  if (!selectedValue) {
+    (errors as any)[fieldName] = `${getFieldDisplayName(fieldName)} is required`
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+  } else {
+    (errors as any)[fieldName] = ''
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+  }
+}
+
+const validateLocation = (field: HTMLInputElement) => {
+  if (!formData.location || formData.location.trim() === '') {
+    errors.location = 'Location is required'
+    field.classList.add('is-invalid')
+    field.classList.remove('is-valid')
+  } else if (formData.location.length < 2 || formData.location.length > 100) {
+    errors.location = 'Location must be 2-100 characters'
+    field.classList.add('is-invalid')
+    field.classList.remove('is-valid')
+  } else {
+    errors.location = ''
+    field.classList.remove('is-invalid')
+    field.classList.add('is-valid')
+  }
+}
+
+const validatePurchaseDate = (field: HTMLInputElement) => {
+  if (formData.purchaseDate && formData.purchaseDate > todayDate.value) {
+    errors.purchaseDate = 'Purchase date cannot be in the future'
+    field.classList.add('is-invalid')
+    field.classList.remove('is-valid')
+  } else {
+    errors.purchaseDate = ''
+    field.classList.remove('is-invalid')
+    if (formData.purchaseDate) field.classList.add('is-valid')
+  }
+}
+
+const validatePurchaseCost = (field: HTMLInputElement) => {
+  const isValid = !formData.purchaseCost || parseFloat(formData.purchaseCost) <= 1000000
+  
+  if (!isValid) {
+    errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
+    field.classList.add('is-invalid')
+    field.classList.remove('is-valid')
+  } else {
+    errors.purchaseCost = ''
+    field.classList.remove('is-invalid')
+    field.classList.add('is-valid')
+  }
+  
+  // Also add validation class to input group
+  const inputGroup = field.closest('.input-group')
+  if (inputGroup) {
+    if (isValid) {
+      inputGroup.classList.add('is-valid')
+      inputGroup.classList.remove('is-invalid')
+    } else {
+      inputGroup.classList.add('is-invalid')
+      inputGroup.classList.remove('is-valid')
+    }
+  }
+}
+
+const validateOptionalField = (fieldName: string, field: HTMLInputElement) => {
+  (errors as any)[fieldName] = ''
+  if (fieldName === 'notes') {
+    const textarea = document.getElementById('notes') as HTMLTextAreaElement
+    if (textarea) {
+      textarea.classList.add('is-valid')
+      textarea.classList.remove('is-invalid')
+    } else {
+      console.warn('Could not find notes textarea element')
+    }
+  } else {
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+  }
+}
+
+// Validation configuration mapping
+const validationHandlers = {
+  serialNumber: async () => await validateSerialNumber(),
+  assetCategory: () => validateRequiredDropdown('assetCategory', selectedCategory.value),
+  assetType: () => validateRequiredDropdown('assetType', selectedType.value),
+  brand: () => validateRequiredDropdown('brand', selectedBrand.value),
+  model: () => validateRequiredDropdown('model', selectedModel.value),
+  location: (field: HTMLInputElement) => validateLocation(field),
+  condition: () => validateRequiredDropdown('condition', selectedCondition.value),
+  vendor: (field: HTMLInputElement) => validateOptionalField('vendor', field),
+  notes: (field: HTMLInputElement) => validateOptionalField('notes', field),
+  purchaseDate: (field: HTMLInputElement) => validatePurchaseDate(field),
+  purchaseCost: (field: HTMLInputElement) => validatePurchaseCost(field)
+}
+
 const validateField = async (fieldName: string) => {
   const field = document.getElementById(fieldName) as HTMLInputElement
   if (!field) return
 
-  // Get value from either formData or uiFormData
-  let value = (formData as any)[fieldName] || (uiFormData as any)[fieldName]
-
-  switch (fieldName) {
-    case 'serialNumber':
-      // Use the dedicated serial number validation method
-      await validateSerialNumber()
-      break
-
-    case 'assetCategory':
-      if (!selectedCategory.value) {
-        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-      } else {
-        errors[fieldName] = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-      }
-      break
-
-    case 'assetType':
-      if (!selectedType.value) {
-        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-      } else {
-        errors[fieldName] = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-      }
-      break
-
-    case 'brand':
-      if (!selectedBrand.value) {
-        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-      } else {
-        errors[fieldName] = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-      }
-      break
-
-    case 'model':
-      if (!selectedModel.value) {
-        errors[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-      } else {
-        errors[fieldName] = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-      }
-      break
-
-    case 'location':
-      if (!formData.location || formData.location.trim() === '') {
-        errors.location = 'Location is required'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else if (formData.location.length < 2 || formData.location.length > 100) {
-        errors.location = 'Location must be 2-100 characters'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else {
-        errors.location = ''
-        field.classList.remove('is-invalid')
-        field.classList.add('is-valid')
-      }
-      break
-
-    case 'condition':
-      if (!selectedCondition.value) {
-        errors.condition = 'Condition is required'
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-      } else {
-        errors.condition = ''
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-      }
-      break
-
-    case 'vendor':
-      // Vendor is optional, so always valid
-      errors.vendor = ''
-      applyValidationToSearchableDropdown(fieldName, 'valid')
-      break
-
-    case 'notes':
-      // Notes are optional, so always valid
-      errors.notes = ''
-      const textarea = document.getElementById('notes') as HTMLTextAreaElement
-      if (textarea) {
-        textarea.classList.add('is-valid')
-        textarea.classList.remove('is-invalid')
-      } else {
-        console.warn('Could not find notes textarea element')
-      }
-      break
-
-    case 'purchaseDate':
-      if (formData.purchaseDate && formData.purchaseDate > todayDate.value) {
-        errors.purchaseDate = 'Purchase date cannot be in the future'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-      } else {
-        errors.purchaseDate = ''
-        field.classList.remove('is-invalid')
-        if (formData.purchaseDate) field.classList.add('is-valid')
-      }
-      break
-
-    case 'purchaseCost':
-      if (formData.purchaseCost && parseFloat(formData.purchaseCost) > 1000000) {
-        errors.purchaseCost = 'Purchase cost cannot exceed ₹10,00,000'
-        field.classList.add('is-invalid')
-        field.classList.remove('is-valid')
-        // Also add validation class to input group
-        const inputGroup = field.closest('.input-group')
-        if (inputGroup) {
-          inputGroup.classList.add('is-invalid')
-          inputGroup.classList.remove('is-valid')
-        }
-      } else {
-        errors.purchaseCost = ''
-        field.classList.remove('is-invalid')
-        // Purchase cost is optional, so always show as valid during validation
-        field.classList.add('is-valid')
-        // Also add validation class to input group
-        const inputGroup = field.closest('.input-group')
-        if (inputGroup) {
-          inputGroup.classList.add('is-valid')
-          inputGroup.classList.remove('is-invalid')
-        }
-      }
-      break
+  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
+  if (handler) {
+    await handler(field)
   }
 }
 
@@ -1188,125 +1157,134 @@ const validateForm = async (): Promise<boolean> => {
   return isValid
 }
 
+// Helper functions for form submission
+const scrollToFirstError = () => {
+  const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setTimeout(() => firstInvalid.focus(), 300)
+  }
+}
+
+const syncFormDataFromUI = () => {
+  if (!formData.assetTypeId && uiFormData.assetType) {
+    formData.assetTypeId = uiFormData.assetType
+  }
+  if (!formData.brandId && uiFormData.brand) {
+    formData.brandId = uiFormData.brand
+  }
+  if (!formData.modelId && uiFormData.model) {
+    formData.modelId = uiFormData.model
+  }
+}
+
+const hasChanged = (newVal: any, oldVal: any): boolean => {
+  const normalizeEmpty = (val: any) => (!val || val === '' ? null : val)
+  const normalizedNew = normalizeEmpty(newVal)
+  const normalizedOld = normalizeEmpty(oldVal)
+  
+  if (typeof normalizedNew === 'number' || typeof normalizedOld === 'number') {
+    return String(normalizedNew) !== String(normalizedOld)
+  }
+  
+  return normalizedNew !== normalizedOld
+}
+
+const buildEditModeAssetData = (): any => {
+  const original = originalAssetData.value
+  const assetData: any = {}
+
+  // Basic field changes
+  const fieldMappings = [
+    { formKey: 'serialNumber', dataKey: 'serialNumber' },
+    { formKey: 'status', dataKey: 'status' },
+    { formKey: 'condition', dataKey: 'condition' },
+    { formKey: 'location', dataKey: 'location' },
+    { formKey: 'purchaseDate', dataKey: 'purchaseDate', transform: (val: any) => val || undefined },
+    { formKey: 'purchaseCost', dataKey: 'purchaseCost', transform: (val: any) => val ? parseFloat(val.toString()) : undefined },
+    { formKey: 'warrantyStartDate', dataKey: 'warrantyStartDate', transform: (val: any) => val || undefined },
+    { formKey: 'warrantyEndDate', dataKey: 'warrantyEndDate', transform: (val: any) => val || undefined },
+    { formKey: 'notes', dataKey: 'notes', transform: (val: any) => val || undefined }
+  ]
+
+  fieldMappings.forEach(({ formKey, dataKey, transform }) => {
+    const formValue = (formData as any)[formKey]
+    const originalValue = (original as any)[formKey]
+    
+    if (hasChanged(formValue, originalValue)) {
+      assetData[dataKey] = transform ? transform(formValue) : formValue
+    }
+  })
+
+  // Handle vendorId separately
+  const newVendorId = formData.vendorId ? parseInt(formData.vendorId) : null
+  const oldVendorId = original.vendorId || null
+  if (newVendorId !== oldVendorId) {
+    assetData.vendorId = newVendorId || undefined
+  }
+
+  // Asset identity fields (only if not disabled)
+  if (!props.disableAssetIdentity) {
+    const identityFields = [
+      { formKey: 'assetTypeId', dataKey: 'assetTypeId' },
+      { formKey: 'brandId', dataKey: 'brandId' },
+      { formKey: 'modelId', dataKey: 'modelId' }
+    ]
+
+    identityFields.forEach(({ formKey, dataKey }) => {
+      const formValue = (formData as any)[formKey]
+      const originalValue = (original as any)[formKey]
+      
+      if (hasChanged(formValue, originalValue)) {
+        assetData[dataKey] = parseInt(formValue)
+      }
+    })
+  }
+
+  return assetData
+}
+
+const buildAddModeAssetData = (): any => {
+  const normalizeOptionalField = (val: any) => {
+    return val && val.toString().trim() !== '' ? val : undefined
+  }
+
+  return {
+    assetId: formData.assetId,
+    serialNumber: formData.serialNumber,
+    vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
+    status: 'AVAILABLE',
+    condition: formData.condition as any,
+    location: formData.location,
+    purchaseDate: normalizeOptionalField(formData.purchaseDate),
+    purchaseCost: formData.purchaseCost ? parseFloat(formData.purchaseCost.toString()) : undefined,
+    warrantyStartDate: normalizeOptionalField(formData.warrantyStartDate),
+    warrantyEndDate: normalizeOptionalField(formData.warrantyEndDate),
+    notes: normalizeOptionalField(formData.notes),
+    assetTypeId: parseInt(formData.assetTypeId!),
+    brandId: parseInt(formData.brandId!),
+    modelId: parseInt(formData.modelId!)
+  }
+}
+
 const handleSubmit = async (event: Event) => {
   event.preventDefault()
   wasValidated.value = true
 
   if (!(await validateForm())) {
-    // Scroll to first error
-    const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
-    if (firstInvalid) {
-      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      setTimeout(() => firstInvalid.focus(), 300)
-    }
+    scrollToFirstError()
     return
   }
 
   isSubmitting.value = true
 
   try {
-    // Ensure all required fields are populated in formData from uiFormData
-    if (!formData.assetTypeId && uiFormData.assetType) {
-      formData.assetTypeId = uiFormData.assetType
-    }
-    if (!formData.brandId && uiFormData.brand) {
-      formData.brandId = uiFormData.brand
-    }
-    if (!formData.modelId && uiFormData.model) {
-      formData.modelId = uiFormData.model
-    }
+    syncFormDataFromUI()
     
-    // Prepare asset data for API
-    let assetData: any = {}
+    const assetData = props.isEditMode && originalAssetData.value 
+      ? buildEditModeAssetData() 
+      : buildAddModeAssetData()
 
-    if (props.isEditMode && originalAssetData.value) {
-      // In edit mode, only send fields that have changed
-      const original = originalAssetData.value
-
-      // Helper function to compare values (handles null, undefined, and empty strings)
-      const hasChanged = (newVal: any, oldVal: any) => {
-        // Normalize empty values
-        const normalizeEmpty = (val: any) => (!val || val === '' ? null : val)
-        const normalizedNew = normalizeEmpty(newVal)
-        const normalizedOld = normalizeEmpty(oldVal)
-        
-        // For numbers, compare as strings to handle type differences
-        if (typeof normalizedNew === 'number' || typeof normalizedOld === 'number') {
-          return String(normalizedNew) !== String(normalizedOld)
-        }
-        
-        return normalizedNew !== normalizedOld
-      }
-
-      // Check each field for changes
-      if (hasChanged(formData.serialNumber, original.serialNumber)) {
-        assetData.serialNumber = formData.serialNumber
-      }
-      if (hasChanged(formData.status, original.status)) {
-        assetData.status = formData.status
-      }
-      if (hasChanged(formData.condition, original.condition)) {
-        assetData.condition = formData.condition
-      }
-      if (hasChanged(formData.location, original.location)) {
-        assetData.location = formData.location
-      }
-      if (hasChanged(formData.purchaseDate, original.purchaseDate)) {
-        assetData.purchaseDate = formData.purchaseDate || undefined
-      }
-      if (hasChanged(formData.purchaseCost, original.purchaseCost)) {
-        assetData.purchaseCost = formData.purchaseCost ? parseFloat(formData.purchaseCost.toString()) : undefined
-      }
-      if (hasChanged(formData.warrantyStartDate, original.warrantyStartDate)) {
-        assetData.warrantyStartDate = formData.warrantyStartDate || undefined
-      }
-      if (hasChanged(formData.warrantyEndDate, original.warrantyEndDate)) {
-        assetData.warrantyEndDate = formData.warrantyEndDate || undefined
-      }
-      if (hasChanged(formData.notes, original.notes)) {
-        assetData.notes = formData.notes || undefined
-      }
-      
-      // Check vendorId separately (it's an ID field)
-      const newVendorId = formData.vendorId ? parseInt(formData.vendorId) : null
-      const oldVendorId = original.vendorId || null
-      if (newVendorId !== oldVendorId) {
-        assetData.vendorId = newVendorId || undefined
-      }
-
-      // Asset identity fields (only if not disabled)
-      if (!props.disableAssetIdentity) {
-        if (hasChanged(formData.assetTypeId, original.assetTypeId)) {
-          assetData.assetTypeId = parseInt(formData.assetTypeId!)
-        }
-        if (hasChanged(formData.brandId, original.brandId)) {
-          assetData.brandId = parseInt(formData.brandId!)
-        }
-        if (hasChanged(formData.modelId, original.modelId)) {
-          assetData.modelId = parseInt(formData.modelId!)
-        }
-      }
-    } else {
-      // In add mode, send all fields
-      assetData = {
-        assetId: formData.assetId,
-        serialNumber: formData.serialNumber,
-        vendorId: formData.vendorId ? parseInt(formData.vendorId) : undefined,
-        status: 'AVAILABLE',
-        condition: formData.condition as any,
-        location: formData.location,
-        purchaseDate: formData.purchaseDate && formData.purchaseDate.toString().trim() !== '' ? formData.purchaseDate : undefined,
-        purchaseCost: formData.purchaseCost && formData.purchaseCost.toString().trim() !== '' ? parseFloat(formData.purchaseCost.toString()) : undefined,
-        warrantyStartDate: formData.warrantyStartDate && formData.warrantyStartDate.toString().trim() !== '' ? formData.warrantyStartDate : undefined,
-        warrantyEndDate: formData.warrantyEndDate && formData.warrantyEndDate.toString().trim() !== '' ? formData.warrantyEndDate : undefined,
-        notes: formData.notes && formData.notes.toString().trim() !== '' ? formData.notes : undefined,
-        assetTypeId: parseInt(formData.assetTypeId!),
-        brandId: parseInt(formData.brandId!),
-        modelId: parseInt(formData.modelId!)
-      }
-    }
-
-    // Emit the form data
     emit('submit', assetData)
   } catch (error) {
     console.error('Form submission error:', error)
@@ -1402,128 +1380,115 @@ const generateAssetId = async () => {
   }
 }
 
+// Helper functions for form initialization
+const populateFormDataFromAsset = (asset: any) => {
+  const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = asset
+  Object.assign(formData, assetDataWithoutDates)
+  
+  // Handle dates separately to ensure proper formatting
+  formData.purchaseDate = ensureDateFormat(purchaseDate)
+  formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
+  formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
+}
+
+const storeOriginalAssetData = (asset: any) => {
+  originalAssetData.value = {
+    serialNumber: asset.serialNumber,
+    status: asset.status,
+    condition: asset.condition,
+    location: asset.location,
+    purchaseDate: ensureDateFormat(asset.purchaseDate),
+    purchaseCost: asset.purchaseCost,
+    warrantyStartDate: ensureDateFormat(asset.warrantyStartDate),
+    warrantyEndDate: ensureDateFormat(asset.warrantyEndDate),
+    notes: asset.notes,
+    vendorId: asset.vendorId,
+    assetTypeId: asset.assetTypeId,
+    brandId: asset.brandId,
+    modelId: asset.modelId
+  }
+}
+
+const setUIFormData = (asset: any) => {
+  uiFormData.assetCategory = asset.assetType?.category?.id?.toString() || ''
+  uiFormData.assetType = asset.assetType?.id?.toString() || ''
+  uiFormData.brand = asset.brand?.id?.toString() || ''
+  uiFormData.model = asset.model?.id?.toString() || ''
+}
+
+const createDropdownItem = (id: any, name: string): Item => ({
+  id,
+  name,
+  value: id.toString()
+})
+
+const setSelectedDropdownItems = (asset: any) => {
+  const dropdownMappings = [
+    { condition: asset.assetType?.category, target: selectedCategory },
+    { condition: asset.assetType, target: selectedType },
+    { condition: asset.brand, target: selectedBrand },
+    { condition: asset.model, target: selectedModel },
+    { condition: asset.vendor, target: selectedVendor }
+  ]
+
+  dropdownMappings.forEach(({ condition, target }) => {
+    if (condition) {
+      target.value = createDropdownItem(condition.id, condition.name)
+    }
+  })
+
+  // Handle condition separately (special formatting)
+  if (asset.condition) {
+    selectedCondition.value = {
+      id: asset.condition,
+      name: asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase(),
+      value: asset.condition
+    }
+  }
+
+  // Handle status separately (requires lookup)
+  if (asset.status && props.isEditMode) {
+    const statusOption = availableStatusOptions.value.find(opt => opt.value === asset.status)
+    if (statusOption) {
+      selectedStatus.value = createDropdownItem(statusOption.value, statusOption.label)
+    }
+  }
+}
+
+const loadDependentData = async (asset: any) => {
+  const categoryId = asset.assetType?.category?.id
+  if (categoryId) {
+    await loadAssetTypes(categoryId)
+  }
+  await loadBrands()
+  if (asset.brand?.id && asset.assetType?.id) {
+    await loadModelsByBrandAndAssetType(asset.brand.id, asset.assetType.id)
+  }
+}
+
+const initializeNewAsset = async () => {
+  await generateAssetId()
+  selectedCondition.value = createDropdownItem('NEW', 'New')
+}
+
+const initializeEditMode = async (asset: any) => {
+  populateFormDataFromAsset(asset)
+  storeOriginalAssetData(asset)
+  setUIFormData(asset)
+  setSelectedDropdownItems(asset)
+  await loadDependentData(asset)
+}
+
 // Initialize form data if editing
 onMounted(async () => {
-  // Load initial data
   isLoading.value = true
   try {
-    await Promise.all([
-      loadCategories(),
-      loadVendors()
-    ])
+    await Promise.all([loadCategories(), loadVendors()])
 
     if (props.isEditMode && props.asset) {
-      // Populate form with existing data (excluding dates)
-      const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = props.asset
-      Object.assign(formData, assetDataWithoutDates)
-      
-      // Handle dates separately to ensure proper formatting
-      formData.purchaseDate = ensureDateFormat(purchaseDate)
-      formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
-      formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
-
-      // Store original data for comparison to detect changes
-      originalAssetData.value = {
-        serialNumber: props.asset.serialNumber,
-        status: props.asset.status,
-        condition: props.asset.condition,
-        location: props.asset.location,
-        purchaseDate: ensureDateFormat(purchaseDate),
-        purchaseCost: props.asset.purchaseCost,
-        warrantyStartDate: ensureDateFormat(warrantyStartDate),
-        warrantyEndDate: ensureDateFormat(warrantyEndDate),
-        notes: props.asset.notes,
-        vendorId: props.asset.vendorId,
-        assetTypeId: props.asset.assetTypeId,
-        brandId: props.asset.brandId,
-        modelId: props.asset.modelId
-      }
-      
-      // Set UI form data for cascading dropdowns
-      uiFormData.assetCategory = props.asset.assetType?.category?.id?.toString() || ''
-      uiFormData.assetType = props.asset.assetType?.id?.toString() || ''
-      uiFormData.brand = props.asset.brand?.id?.toString() || ''
-      uiFormData.model = props.asset.model?.id?.toString() || ''
-
-      // Set selected items for SearchableDropdown components
-      if (props.asset.assetType?.category) {
-        selectedCategory.value = {
-          id: props.asset.assetType.category.id,
-          name: props.asset.assetType.category.name,
-          value: props.asset.assetType.category.id.toString()
-        }
-      }
-
-      if (props.asset.assetType) {
-        selectedType.value = {
-          id: props.asset.assetType.id,
-          name: props.asset.assetType.name,
-          value: props.asset.assetType.id.toString()
-        }
-      }
-
-      if (props.asset.brand) {
-        selectedBrand.value = {
-          id: props.asset.brand.id,
-          name: props.asset.brand.name,
-          value: props.asset.brand.id.toString()
-        }
-      }
-
-      if (props.asset.model) {
-        selectedModel.value = {
-          id: props.asset.model.id,
-          name: props.asset.model.name,
-          value: props.asset.model.id.toString()
-        }
-      }
-
-      if (props.asset.vendor) {
-        selectedVendor.value = {
-          id: props.asset.vendor.id,
-          name: props.asset.vendor.name,
-          value: props.asset.vendor.id.toString()
-        }
-      }
-
-      if (props.asset.condition) {
-        selectedCondition.value = {
-          id: props.asset.condition,
-          name: props.asset.condition.charAt(0).toUpperCase() + props.asset.condition.slice(1).toLowerCase(),
-          value: props.asset.condition
-        }
-      }
-
-      if (props.asset.status && props.isEditMode) {
-        const statusOption = availableStatusOptions.value.find(opt => opt.value === props.asset.status)
-        if (statusOption) {
-          selectedStatus.value = {
-            id: statusOption.value,
-            name: statusOption.label,
-            value: statusOption.value
-          }
-        }
-      }
-
-      // Load dependent data in sequence
-      const categoryId = props.asset.assetType?.category?.id
-      if (categoryId) {
-        await loadAssetTypes(categoryId)
-      }
-      await loadBrands()
-      if (props.asset.brand?.id && props.asset.assetType?.id) {
-        await loadModelsByBrandAndAssetType(props.asset.brand.id, props.asset.assetType.id)
-      }
+      await initializeEditMode(props.asset)
     } else {
-      // Generate asset ID for new assets
-      await generateAssetId()
-      
-      // Set default condition for new assets
-      selectedCondition.value = {
-        id: 'NEW',
-        name: 'New',
-        value: 'NEW'
-      }
+      await initializeNewAsset()
     }
   } catch (error) {
     console.error('Error loading initial data:', error)

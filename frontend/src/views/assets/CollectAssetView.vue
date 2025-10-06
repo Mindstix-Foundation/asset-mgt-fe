@@ -621,6 +621,64 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   }
 }
 
+// Helper functions for field validation
+const validateRequiredField = (fieldName: string, value: any, element: HTMLElement): boolean => {
+  const isRequired = element.hasAttribute('required')
+  
+  if (isRequired && (!value || value.toString().trim() === '')) {
+    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+    return false
+  }
+  
+  return true
+}
+
+const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
+  if (!selectedValue) {
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    return false
+  } else {
+    setFieldValid(fieldName)
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+    return true
+  }
+}
+
+const validateCollectionDate = (fieldName: string, value: any): boolean => {
+  if (!value) return true
+  
+  const futureLimit = new Date()
+  futureLimit.setDate(futureLimit.getDate() + 30) // Allow up to 30 days in future
+  const futureLimitStr = futureLimit.toISOString().split('T')[0]
+  
+  if (value > futureLimitStr) {
+    setFieldError(fieldName, 'Collection date cannot be more than 30 days in the future')
+    return false
+  }
+  
+  return true
+}
+
+const validateStandardField = (fieldName: string, element: HTMLElement): boolean => {
+  const inputElement = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  if (inputElement.checkValidity()) {
+    setFieldValid(fieldName)
+    return true
+  } else {
+    setFieldError(fieldName, inputElement.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+    return false
+  }
+}
+
+// Validation configuration mapping
+const validationHandlers = {
+  employeeId: () => validateRequiredDropdown('employeeId', selectedEmployee.value),
+  assetId: () => validateRequiredDropdown('assetId', selectedAsset.value),
+  assetCondition: () => validateRequiredDropdown('assetCondition', selectedCondition.value),
+  collectionDate: (value: any) => validateCollectionDate('collectionDate', value)
+}
+
 const validateFieldInline = (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -631,61 +689,18 @@ const validateFieldInline = (fieldName: string) => {
   element.setCustomValidity('')
 
   // Check if field is required
-  const isRequired = element.hasAttribute('required')
-  
-  if (isRequired && (!value || value.toString().trim() === '')) {
-    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+  if (!validateRequiredField(fieldName, value, element)) {
     return false
   }
 
-  // Additional custom validations based on field type
-  switch (fieldName) {
-    case 'employeeId':
-      if (!selectedEmployee.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'assetId':
-      if (!selectedAsset.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'assetCondition':
-      if (!selectedCondition.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'collectionDate':
-      if (value) {
-        const today = new Date().toISOString().split('T')[0]
-        const futureLimit = new Date()
-        futureLimit.setDate(futureLimit.getDate() + 30) // Allow up to 30 days in future
-        const futureLimitStr = futureLimit.toISOString().split('T')[0]
-        
-        if (value > futureLimitStr) {
-          setFieldError(fieldName, 'Collection date cannot be more than 30 days in the future')
-          return false
-        }
-      }
-      break
+  // Handle specific field validations
+  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
+  if (handler) {
+    if (fieldName === 'collectionDate') {
+      return (handler as (value: any) => boolean)(value)
+    } else {
+      return (handler as () => boolean)()
+    }
   }
 
   // For SearchableDropdown fields, we've already handled validation above
@@ -695,13 +710,7 @@ const validateFieldInline = (fieldName: string) => {
   }
 
   // Use native validation for other fields
-  if (element.checkValidity()) {
-    setFieldValid(fieldName)
-    return true
-  } else {
-    setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
-    return false
-  }
+  return validateStandardField(fieldName, element)
 }
 
 const setFieldError = (fieldName: string, message: string) => {
@@ -830,7 +839,7 @@ const confirmCollection = async () => {
     // Prepare return data for API
     const returnData: ReturnAssignmentDto = {
       returnDate: formData.collectionDate,
-      returnCondition: formData.assetCondition, // Already uppercase from SearchableDropdown
+      returnCondition: formData.assetCondition as 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED', // Already uppercase from SearchableDropdown
       returnReason: formData.collectionReason,
       notes: formData.collectionNotes || undefined
     }
@@ -1066,6 +1075,118 @@ const loadAssignedAssets = async () => {
   }
 }
 
+// Helper functions to reduce cognitive complexity
+const initializeFormData = () => {
+  formData.collectionDate = new Date().toISOString().split('T')[0]
+}
+
+const getQueryParameters = () => {
+  const qpAssetId = route.query.assetId ? route.query.assetId.toString() : ''
+  const qpEmployeeId = route.query.employeeId ? route.query.employeeId.toString() : ''
+  const fromQuery = route.query.from as string | undefined
+  const selectedAssetId = qpAssetId || localStorage.getItem('selectedAssetId') || ''
+  const currentEmployee = qpEmployeeId || localStorage.getItem('currentEmployee') || ''
+  
+  console.log('[Collect] onMounted origin detection:', { 
+    qpAssetId, 
+    qpEmployeeId, 
+    fromQuery, 
+    ls_selectedAssetId: localStorage.getItem('selectedAssetId'), 
+    ls_currentEmployee: localStorage.getItem('currentEmployee') 
+  })
+  
+  return { qpAssetId, qpEmployeeId, fromQuery, selectedAssetId, currentEmployee }
+}
+
+const inferOriginPath = (fromQuery: string | undefined, qpEmployeeId: string, currentEmployee: string, qpAssetId: string) => {
+  if (!fromQuery && (qpEmployeeId || currentEmployee)) {
+    originPath.value = '/app/employees'
+  } else if (!fromQuery && (qpAssetId || localStorage.getItem('selectedAssetId'))) {
+    originPath.value = '/app/assets'
+  }
+  console.log('[Collect] inferred originPath (pre-explicit):', originPath.value)
+}
+
+const setPreselectedAssignment = (selectedAssignment: any, selectedAssetId: string) => {
+  isPreSelecting.value = true
+  
+  selectedAsset.value = {
+    id: selectedAssignment.id,
+    name: `${selectedAssignment.asset.assetId} - ${selectedAssignment.asset.serialNumber || 'No Serial'}`,
+    value: selectedAssignment.id.toString()
+  }
+  
+  selectedEmployee.value = {
+    id: selectedAssignment.employee.id,
+    name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
+    value: selectedAssignment.employee.id.toString()
+  }
+  
+  formData.assetId = selectedAssignment.id.toString()
+  formData.employeeId = selectedAssignment.employee.id.toString()
+  formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
+  
+  nextTick(() => {
+    setTimeout(() => {
+      isPreSelecting.value = false
+    }, 100)
+  })
+  
+  toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
+}
+
+const handleAssetPreselection = (selectedAssetId: string, qpAssetId: string, qpEmployeeId: string, currentEmployee: string, fromQuery: string | undefined) => {
+  if (!selectedAssetId) return
+  
+  inferOriginPath(fromQuery, qpEmployeeId, currentEmployee, qpAssetId)
+  
+  const selectedAssignment = assignedAssets.value.find(assignment => assignment.asset.assetId === selectedAssetId)
+  
+  if (selectedAssignment) {
+    setPreselectedAssignment(selectedAssignment, selectedAssetId)
+  } else {
+    console.error('Assignment not found for asset:', selectedAssetId)
+    toastStore.showError('Error', `Asset ${selectedAssetId} not found in assigned assets`)
+  }
+  
+  // Clear localStorage only if values weren't from query params
+  if (!qpAssetId) localStorage.removeItem('selectedAssetId')
+  if (!qpEmployeeId) localStorage.removeItem('currentEmployee')
+}
+
+const setFinalOriginPath = (fromQuery: string | undefined, qpEmployeeId: string) => {
+  if (fromQuery === 'employees') {
+    originPath.value = '/app/employees'
+  } else if (fromQuery === 'assets') {
+    originPath.value = '/app/assets'
+  } else if (fromQuery === 'dashboard') {
+    originPath.value = '/app/dashboard'
+  } else if (!fromQuery && qpEmployeeId) {
+    originPath.value = '/app/employees'
+  }
+  
+  console.log('[Collect] final originPath:', originPath.value)
+}
+
+const focusAppropriateField = () => {
+  nextTick(() => {
+    const hasEmployee = !!formData.employeeId
+    const hasAsset = !!formData.assetId
+    
+    let focusField = 'employeeId'
+    if (hasEmployee && hasAsset) {
+      focusField = 'collectionReason'
+    } else if (hasEmployee && !hasAsset) {
+      focusField = 'assetId'
+    } else if (!hasEmployee && hasAsset) {
+      focusField = 'employeeId'
+    }
+    
+    const field = document.getElementById(focusField)
+    if (field) field.focus()
+  })
+}
+
 // Lifecycle
 onMounted(async () => {
   // Make functions available globally
@@ -1086,90 +1207,20 @@ onMounted(async () => {
     isLoading.value = false
   }
   
-  // Set today's date as default
-  formData.collectionDate = new Date().toISOString().split('T')[0]
+  // Initialize form data
+  initializeFormData()
   
-  // Query parameter based preselect (preferred)
-  const qpAssetId = route.query.assetId ? route.query.assetId.toString() : ''
-  const qpEmployeeId = route.query.employeeId ? route.query.employeeId.toString() : ''
-  const fromQuery = route.query.from as string | undefined
-  let selectedAssetId = qpAssetId || localStorage.getItem('selectedAssetId') || ''
-  let currentEmployee = qpEmployeeId || localStorage.getItem('currentEmployee') || ''
+  // Get query parameters
+  const { qpAssetId, qpEmployeeId, fromQuery, selectedAssetId, currentEmployee } = getQueryParameters()
   
-  // Debug: log how we arrived
-  console.log('[Collect] onMounted origin detection:', { qpAssetId, qpEmployeeId, fromQuery, ls_selectedAssetId: localStorage.getItem('selectedAssetId'), ls_currentEmployee: localStorage.getItem('currentEmployee') })
+  // Handle asset preselection
+  handleAssetPreselection(selectedAssetId, qpAssetId, qpEmployeeId, currentEmployee, fromQuery)
   
-  if (selectedAssetId) {
-    // Default origin by context if not explicitly provided
-    if (!fromQuery && (qpEmployeeId || currentEmployee)) originPath.value = '/app/employees'
-    else if (!fromQuery && (qpAssetId || localStorage.getItem('selectedAssetId'))) originPath.value = '/app/assets'
-    console.log('[Collect] inferred originPath (pre-explicit):', originPath.value)
-    // Find the assignment by asset ID
-    const selectedAssignment = assignedAssets.value.find(assignment => assignment.asset.assetId === selectedAssetId)
-    
-    if (selectedAssignment) {
-      // Set pre-selection flag to prevent watchers from interfering
-      isPreSelecting.value = true
-      
-      // Set both values together
-      selectedAsset.value = {
-        id: selectedAssignment.id,
-        name: `${selectedAssignment.asset.assetId} - ${selectedAssignment.asset.serialNumber || 'No Serial'}`,
-        value: selectedAssignment.id.toString()
-      }
-      selectedEmployee.value = {
-        id: selectedAssignment.employee.id,
-        name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
-        value: selectedAssignment.employee.id.toString()
-      }
-      formData.assetId = selectedAssignment.id.toString()
-      formData.employeeId = selectedAssignment.employee.id.toString()
-      formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
-      
-      // Clear pre-selection flag after a short delay
-      nextTick(() => {
-        setTimeout(() => {
-          isPreSelecting.value = false
-        }, 100)
-      })
-      
-      // Show success message for pre-selection
-      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
-    } else {
-      console.error('Assignment not found for asset:', selectedAssetId)
-      toastStore.showError('Error', `Asset ${selectedAssetId} not found in assigned assets`)
-    }
-    
-    // Clear only if they were from localStorage, keep query params intact
-    if (!qpAssetId) localStorage.removeItem('selectedAssetId')
-    if (!qpEmployeeId) localStorage.removeItem('currentEmployee')
-  }
+  // Set final origin path
+  setFinalOriginPath(fromQuery, qpEmployeeId)
   
-  // If explicit origin provided in query, respect it
-  if (fromQuery === 'employees') originPath.value = '/app/employees'
-  else if (fromQuery === 'assets') originPath.value = '/app/assets'
-  else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
-  // If no explicit origin but employeeId present, prefer employees
-  if (!fromQuery && qpEmployeeId) originPath.value = '/app/employees'
-  console.log('[Collect] final originPath:', originPath.value)
-  
-  // Focus on appropriate field
-  nextTick(() => {
-    // If both employee and asset are preselected, focus next required unselected field.
-    // If asset is selected but employee isn't, focus employee; if employee selected but asset isn't, focus asset.
-    let focusField = 'employeeId'
-    const hasEmployee = !!formData.employeeId
-    const hasAsset = !!formData.assetId
-    if (hasEmployee && hasAsset) {
-      focusField = 'collectionReason'
-    } else if (hasEmployee && !hasAsset) {
-      focusField = 'assetId'
-    } else if (!hasEmployee && hasAsset) {
-      focusField = 'employeeId'
-    }
-    const field = document.getElementById(focusField)
-    if (field) field.focus()
-  })
+  // Focus appropriate field
+  focusAppropriateField()
 })
 </script> 
 

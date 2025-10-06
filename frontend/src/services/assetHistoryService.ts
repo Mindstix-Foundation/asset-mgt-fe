@@ -4,6 +4,7 @@ import type {
   AssetHistorySummaryResponse,
   AssetHistoryQueryParams 
 } from '@/types/assetHistory.types'
+import { AssetEventType } from '@/types/assetHistory.types'
 
 export class AssetHistoryService {
   /**
@@ -25,7 +26,7 @@ export class AssetHistoryService {
       // Build query string
       const queryString = Object.entries(queryParams)
         .filter(([_, value]) => value !== undefined && value !== null && value !== '')
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
         .join('&')
 
       const endpoint = `/asset-history/${assetId}${queryString ? `?${queryString}` : ''}`
@@ -100,7 +101,6 @@ export class AssetHistoryService {
 
   /**
    * Export asset history to various formats
-   * TODO: Implement when export endpoint is ready
    */
   async exportAssetHistory(
     assetId: string,
@@ -140,7 +140,14 @@ export class AssetHistoryService {
   async getAssetLifecycleTimeline(assetId: string): Promise<AssetHistoryResponse> {
     try {
       const queryParams = {
-        eventTypes: ['ASSET_CREATED', 'ASSIGNED', 'RETURNED', 'MAINTENANCE_COMPLETED', 'RETIRED', 'REACTIVATED'],
+        eventTypes: [
+          AssetEventType.ASSET_CREATED, 
+          AssetEventType.ASSIGNED, 
+          AssetEventType.RETURNED, 
+          AssetEventType.MAINTENANCE_COMPLETED, 
+          AssetEventType.RETIRED, 
+          AssetEventType.REACTIVATED
+        ],
         limit: 50,
         sortBy: 'date' as const,
         sortOrder: 'asc' as const

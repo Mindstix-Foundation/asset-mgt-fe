@@ -1743,42 +1743,48 @@ const addSingleAsset = () => {
   singleAssetInput.value = ''
 }
 
-const addAssetRange = async () => {
-  const fromValue = assetFromInput.value.trim()
-  const toValue = assetToInput.value.trim()
-  
+// Helper functions for asset range operations
+const validateRangeInputs = (fromValue: string, toValue: string): boolean => {
   if (!fromValue || !toValue) {
     showErrorToast('Please enter both "from" and "to" values')
-    return
+    return false
   }
   
-  // Validate AST-XXXX format for both inputs
   const astPattern = /^AST-\d{4}$/
   if (!astPattern.test(fromValue) || !astPattern.test(toValue)) {
     showErrorToast('Asset IDs must be in format AST-XXXX (e.g., AST-0001)')
-    return
+    return false
   }
   
-  // Extract numeric parts for range calculation
   const startNum = parseInt(fromValue.split('-')[1])
   const endNum = parseInt(toValue.split('-')[1])
   
   if (startNum > endNum) {
     showErrorToast('"From" value must be less than or equal to "to" value')
-    return
+    return false
   }
   
-  // Generate all asset IDs in the range
+  return true
+}
+
+const generateAssetRange = (fromValue: string, toValue: string): string[] => {
+  const startNum = parseInt(fromValue.split('-')[1])
+  const endNum = parseInt(toValue.split('-')[1])
+  
   const rangeAssetIds = []
   for (let i = startNum; i <= endNum; i++) {
     rangeAssetIds.push(`AST-${i.toString().padStart(4, '0')}`)
   }
   
-  // Filter to only include assets that are currently displayed in the table (deletable assets)
+  return rangeAssetIds
+}
+
+const filterValidAssets = (rangeAssetIds: string[]): string[] => {
   const deletableAssetIds = items.value.map(asset => asset.assetId)
-  const validRangeAssets = rangeAssetIds.filter(assetId => deletableAssetIds.includes(assetId))
-  
-  // Add only the valid (deletable) assets to selection
+  return rangeAssetIds.filter(assetId => deletableAssetIds.includes(assetId))
+}
+
+const addAssetsToSelection = (validRangeAssets: string[]): { addedCount: number; alreadySelectedCount: number } => {
   let addedCount = 0
   let alreadySelectedCount = 0
   
@@ -1791,10 +1797,16 @@ const addAssetRange = async () => {
     }
   }
   
-  // Show results
-  const totalInRange = rangeAssetIds.length
-  const notDeletableCount = totalInRange - validRangeAssets.length
-  
+  return { addedCount, alreadySelectedCount }
+}
+
+const buildResultMessage = (
+  fromValue: string, 
+  toValue: string, 
+  addedCount: number, 
+  notDeletableCount: number, 
+  alreadySelectedCount: number
+): { message: string; type: 'success' | 'info' } => {
   if (addedCount > 0) {
     let message = `Added ${addedCount} deletable asset(s) from range ${fromValue} to ${toValue}`
     if (notDeletableCount > 0) {
@@ -1803,7 +1815,7 @@ const addAssetRange = async () => {
     if (alreadySelectedCount > 0) {
       message += `\n(${alreadySelectedCount} assets were already selected)`
     }
-    showToast(message, 'success')
+    return { message, type: 'success' }
   } else {
     let message = `No new assets added from range ${fromValue} to ${toValue}`
     if (notDeletableCount > 0) {
@@ -1812,8 +1824,27 @@ const addAssetRange = async () => {
     if (alreadySelectedCount > 0) {
       message += `\n(${alreadySelectedCount} assets were already selected)`
     }
-    showToast(message, 'info')
+    return { message, type: 'info' }
   }
+}
+
+const addAssetRange = async () => {
+  const fromValue = assetFromInput.value.trim()
+  const toValue = assetToInput.value.trim()
+  
+  if (!validateRangeInputs(fromValue, toValue)) {
+    return
+  }
+  
+  const rangeAssetIds = generateAssetRange(fromValue, toValue)
+  const validRangeAssets = filterValidAssets(rangeAssetIds)
+  const { addedCount, alreadySelectedCount } = addAssetsToSelection(validRangeAssets)
+  
+  const totalInRange = rangeAssetIds.length
+  const notDeletableCount = totalInRange - validRangeAssets.length
+  
+  const { message, type } = buildResultMessage(fromValue, toValue, addedCount, notDeletableCount, alreadySelectedCount)
+  showToast(message, type)
   
   // Clear the inputs
   assetFromInput.value = ''

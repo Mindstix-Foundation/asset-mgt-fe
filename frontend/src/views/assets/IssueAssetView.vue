@@ -313,6 +313,89 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   }
 }
 
+// Helper functions for field validation
+const validateRequiredField = (fieldName: string, value: any, element: HTMLElement): boolean => {
+  const isRequired = element.hasAttribute('required')
+  
+  if (isRequired && (!value || value.toString().trim() === '')) {
+    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+    return false
+  }
+  
+  return true
+}
+
+const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
+  if (!selectedValue) {
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    return false
+  } else {
+    setFieldValid(fieldName)
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+    return true
+  }
+}
+
+const validateAssignmentReason = (fieldName: string, value: any): boolean => {
+  if (!value) return true
+  
+  if (value.length < 5) {
+    setFieldError(fieldName, 'Assignment reason must be at least 5 characters')
+    return false
+  }
+  
+  if (value.length > 100) {
+    setFieldError(fieldName, 'Assignment reason cannot exceed 100 characters')
+    return false
+  }
+  
+  // Check if first letter is capitalized
+  if (value.length > 0 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+    setFieldError(fieldName, 'Assignment reason must start with a capital letter')
+    return false
+  }
+  
+  // Check for valid characters (letters, numbers, spaces, common punctuation)
+  if (!/^[A-Za-z0-9\s.,!?()-]+$/.test(value)) {
+    setFieldError(fieldName, 'Assignment reason contains invalid characters')
+    return false
+  }
+  
+  return true
+}
+
+const validateAssignmentDate = (fieldName: string, value: any): boolean => {
+  if (!value) return true
+  
+  const today = new Date().toISOString().split('T')[0]
+  if (value < today) {
+    setFieldError(fieldName, 'Assignment date cannot be in the past')
+    return false
+  }
+  
+  return true
+}
+
+const validateStandardField = (fieldName: string, element: HTMLElement): boolean => {
+  const inputElement = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  if (inputElement.checkValidity()) {
+    setFieldValid(fieldName)
+    return true
+  } else {
+    setFieldError(fieldName, inputElement.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+    return false
+  }
+}
+
+// Validation configuration mapping
+const validationHandlers = {
+  assetId: () => validateRequiredDropdown('assetId', selectedAsset.value),
+  employeeId: () => validateRequiredDropdown('employeeId', selectedEmployee.value),
+  assignmentReason: (value: any) => validateAssignmentReason('assignmentReason', value),
+  assignmentDate: (value: any) => validateAssignmentDate('assignmentDate', value)
+}
+
 const validateFieldInline = (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -323,67 +406,18 @@ const validateFieldInline = (fieldName: string) => {
   element.setCustomValidity('')
 
   // Check if field is required
-  const isRequired = element.hasAttribute('required')
-  
-  if (isRequired && (!value || value.toString().trim() === '')) {
-    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+  if (!validateRequiredField(fieldName, value, element)) {
     return false
   }
 
-  // Additional custom validations based on field type
-  switch (fieldName) {
-    case 'assetId':
-      if (!selectedAsset.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'employeeId':
-      if (!selectedEmployee.value) {
-        setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
-        applyValidationToSearchableDropdown(fieldName, 'invalid')
-        return false
-      } else {
-        setFieldValid(fieldName)
-        applyValidationToSearchableDropdown(fieldName, 'valid')
-        return true
-      }
-      
-    case 'assignmentReason':
-      if (value && value.length < 5) {
-        setFieldError(fieldName, 'Assignment reason must be at least 5 characters')
-        return false
-      }
-      if (value && value.length > 100) {
-        setFieldError(fieldName, 'Assignment reason cannot exceed 100 characters')
-        return false
-      }
-      // Check if first letter is capitalized
-      if (value && value.length > 0 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
-        setFieldError(fieldName, 'Assignment reason must start with a capital letter')
-        return false
-      }
-      // Check for valid characters (letters, numbers, spaces, common punctuation)
-      if (value && !/^[A-Za-z0-9\s.,!?()-]+$/.test(value)) {
-        setFieldError(fieldName, 'Assignment reason contains invalid characters')
-        return false
-      }
-      break
-    
-    case 'assignmentDate':
-      if (value) {
-        const today = new Date().toISOString().split('T')[0]
-        if (value < today) {
-          setFieldError(fieldName, 'Assignment date cannot be in the past')
-          return false
-        }
-      }
-      break
+  // Handle specific field validations
+  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
+  if (handler) {
+    if (['assignmentReason', 'assignmentDate'].includes(fieldName)) {
+      return (handler as (value: any) => boolean)(value)
+    } else {
+      return (handler as () => boolean)()
+    }
   }
 
   // For SearchableDropdown fields, we've already handled validation above
@@ -393,13 +427,7 @@ const validateFieldInline = (fieldName: string) => {
   }
 
   // Use native validation for other fields
-  if (element.checkValidity()) {
-    setFieldValid(fieldName)
-    return true
-  } else {
-    setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
-    return false
-  }
+  return validateStandardField(fieldName, element)
 }
 
 const setFieldError = (fieldName: string, message: string) => {
@@ -653,41 +681,53 @@ const clearSelectedAssetInfo = () => {
   selectedAssetSpecs.value = null
 }
 
+// Helper functions for asset details loading
+const setAssetBrandModel = (asset: any) => {
+  if (asset.brand && asset.model) {
+    formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
+  } else {
+    formData.assetBrandModel = 'Brand/Model not available'
+  }
+}
+
+const formatSpecifications = (specs: any): string | null => {
+  if (!specs) return null
+  
+  if (typeof specs === 'object') {
+    return Object.entries(specs)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join('\n')
+  }
+  
+  if (typeof specs === 'string') {
+    try {
+      const parsed = JSON.parse(specs)
+      if (parsed && typeof parsed === 'object') {
+        return Object.entries(parsed)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('\n')
+      }
+      return specs
+    } catch {
+      return specs
+    }
+  }
+  
+  return null
+}
+
+const processAssetDetails = (asset: any) => {
+  setAssetBrandModel(asset)
+  selectedAssetSpecs.value = formatSpecifications(asset.model?.specifications)
+}
+
 const loadAssetDetails = async (assetIdNumber: number) => {
   try {
     const response = await assetApiService.getAssetById(assetIdNumber)
     const asset = response.data.asset
 
     if (asset) {
-      if (asset.brand && asset.model) {
-        formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
-      } else {
-        formData.assetBrandModel = 'Brand/Model not available'
-      }
-
-      const specs = asset.model?.specifications
-      if (specs) {
-        if (typeof specs === 'object') {
-          selectedAssetSpecs.value = Object.entries(specs)
-            .map(([k, v]) => `${k}: ${v}`)
-            .join('\n')
-        } else if (typeof specs === 'string') {
-          try {
-            const parsed = JSON.parse(specs)
-            if (parsed && typeof parsed === 'object') {
-              selectedAssetSpecs.value = Object.entries(parsed)
-                .map(([k, v]) => `${k}: ${v}`)
-                .join('\n')
-            } else {
-              selectedAssetSpecs.value = specs
-            }
-          } catch {
-            selectedAssetSpecs.value = specs
-          }
-        }
-      } else {
-        selectedAssetSpecs.value = null
-      }
+      processAssetDetails(asset)
     } else {
       clearSelectedAssetInfo()
     }
@@ -813,7 +853,7 @@ onMounted(async () => {
       originPath.value = '/app/employees'
     }
     const employeeId = parseInt(employeeIdFromQuery)
-    const employee = activeEmployees.value.find(emp => emp.id === employeeId)
+    const employee = activeEmployees.value.find(emp => emp.id === employeeId.toString())
     if (employee) {
       // Set the selected employee for SearchableDropdown
       selectedEmployee.value = {

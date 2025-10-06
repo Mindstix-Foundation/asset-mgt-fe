@@ -379,8 +379,8 @@ class AssetService {
     }
   }
 
-  // Validate asset data before submission
-  validateAssetData(data: CreateAssetDto | UpdateAssetDto): string[] {
+  // Helper validation functions to reduce cognitive complexity
+  private validateRequiredFields(data: CreateAssetDto | UpdateAssetDto): string[] {
     const errors: string[] = []
 
     if ('assetId' in data && !data.assetId?.trim()) {
@@ -407,6 +407,12 @@ class AssetService {
       errors.push('Location is required')
     }
 
+    return errors
+  }
+
+  private validatePurchaseDate(data: CreateAssetDto | UpdateAssetDto): string[] {
+    const errors: string[] = []
+
     if ('purchaseDate' in data && data.purchaseDate) {
       const purchaseDate = new Date(data.purchaseDate)
       const today = new Date()
@@ -415,6 +421,12 @@ class AssetService {
       }
     }
 
+    return errors
+  }
+
+  private validateWarrantyDates(data: CreateAssetDto | UpdateAssetDto): string[] {
+    const errors: string[] = []
+
     if ('warrantyStartDate' in data && 'warrantyEndDate' in data && data.warrantyStartDate && data.warrantyEndDate) {
       const startDate = new Date(data.warrantyStartDate)
       const endDate = new Date(data.warrantyEndDate)
@@ -422,6 +434,22 @@ class AssetService {
         errors.push('Warranty end date must be after start date')
       }
     }
+
+    return errors
+  }
+
+  // Validate asset data before submission
+  validateAssetData(data: CreateAssetDto | UpdateAssetDto): string[] {
+    const errors: string[] = []
+
+    // Validate required fields
+    errors.push(...this.validateRequiredFields(data))
+
+    // Validate purchase date
+    errors.push(...this.validatePurchaseDate(data))
+
+    // Validate warranty dates
+    errors.push(...this.validateWarrantyDates(data))
 
     return errors
   }
