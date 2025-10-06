@@ -192,7 +192,7 @@
                     :class="getFieldClass('password')"
                     placeholder="Enter password"
                   name="password"
-                    autocomplete="new-password"
+                    :autocomplete="showPassword ? 'off' : 'new-password'"
                     required
                     @input="validatePassword"
                     @focus="clearFieldValidation('password')"
@@ -249,7 +249,7 @@
                     :class="getFieldClass('confirmPassword')"
                     placeholder="Confirm password"
                   name="confirmPassword"
-                    autocomplete="new-password"
+                    :autocomplete="showConfirmPassword ? 'off' : 'new-password'"
                     required
                     @input="validatePasswordMatch"
                     @focus="clearFieldValidation('confirmPassword')"

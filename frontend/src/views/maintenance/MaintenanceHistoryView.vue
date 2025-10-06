@@ -253,7 +253,7 @@ const typeOptions = [
 
 const sortAscending = computed(() => filters.value.sortOrder === 'asc')
 
-const formatStatus = (status: string) => status.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+const formatStatus = (status: string) => status.replaceAll('_', ' ').replaceAll(/\b\w/g, l => l.toUpperCase())
 
 // Format date as "3 Oct 2025" (day month year)
 const formatDate = (dateString?: string | null) => {

@@ -1105,7 +1105,7 @@ const paginationInfo = computed(() => {
 
 // Methods
 const formatStatus = (status: string) => {
-  return status.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  return status.replaceAll('_', ' ').replaceAll(/\b\w/g, l => l.toUpperCase())
 }
 
 const formatDate = (dateString: string) => formatDateOnly(dateString)
