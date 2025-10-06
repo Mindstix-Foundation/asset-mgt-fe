@@ -239,12 +239,12 @@
 </template>
 
 <script>
-import { employeeApiService } from '@/services/employeeApi'
-import { assetApiService } from '@/services/assetApi'
+import { employeeApiService } from '@/services/api/employeeApi'
+import { assetApiService } from '@/services/api/assetApi'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateField from '@/components/common/DateField.vue'
-import AppPagination from '@/components/pagination/AppPagination.vue'
+import DateField from '@/components/ui/date/DateField.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import { useToastStore } from '@/stores/toast'
 
 export default {

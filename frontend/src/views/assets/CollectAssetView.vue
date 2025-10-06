@@ -328,11 +328,11 @@
 import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto } from '../../services/collectAssetApi'
-import { employeeApiService, type Employee } from '../../services/employeeApi'
+import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto } from '../../services/api/collectAssetApi'
+import { employeeApiService, type Employee } from '../../services/api/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
-import DateInput from '../../components/common/DateInput.vue'
+import DateInput from '../../components/ui/date/DateInput.vue'
 
 const router = useRouter()
 const route = useRoute()

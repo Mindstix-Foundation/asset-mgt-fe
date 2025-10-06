@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import BulkUploadModal from '@/components/BulkUploadModal.vue'
-import { employeeService } from '@/services/employeeService'
+import BulkUploadModal from '@/components/modals/BulkUploadModal.vue'
+import { employeeService } from '@/services/business/employeeService'
 import { useToastStore } from '@/stores/toast'
 
 // Refs

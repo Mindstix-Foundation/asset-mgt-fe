@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { maintenanceService } from '@/services/maintenanceService'
+import { maintenanceService } from '@/services/business/maintenanceService'
 import { useToastStore } from '@/stores/toast'
 import MaintenanceForm from '@/components/forms/MaintenanceForm.vue'
 

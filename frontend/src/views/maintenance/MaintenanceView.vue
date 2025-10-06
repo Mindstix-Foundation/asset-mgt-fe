@@ -669,10 +669,10 @@ import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from
 import { useRouter, useRoute } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
 import { Modal } from 'bootstrap'
-import { maintenanceService } from '@/services/maintenanceService'
+import { maintenanceService } from '@/services/business/maintenanceService'
 import { useToastStore } from '@/stores/toast'
 import { formatDateOnly } from '@/utils/date'
-import AppPagination from '@/components/pagination/AppPagination.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 
 const router = useRouter()

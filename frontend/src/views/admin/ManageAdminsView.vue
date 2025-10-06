@@ -335,11 +335,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { authAxios, authService } from '@/services/authService'
+import { authAxios, authService } from '@/services/core/authService'
 import { useToastStore } from '@/stores/toast'
 import { Modal } from 'bootstrap'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import { employeeApiService } from '@/services/employeeApi'
+import { employeeApiService } from '@/services/api/employeeApi'
 
 const router = useRouter()
 const toast = useToastStore()

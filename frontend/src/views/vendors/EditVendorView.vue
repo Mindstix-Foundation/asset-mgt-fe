@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import VendorApiService from '@/services/vendorApi'
+import VendorApiService from '@/services/api/vendorApi'
 import { useToastStore } from '@/stores/toast'
 import VendorForm from '@/components/forms/VendorForm.vue'
 

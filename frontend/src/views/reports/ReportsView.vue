@@ -408,13 +408,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
-import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/reportsApi'
-import { dashboardApi } from '@/services/dashboardApi'
-import { assetService } from '@/services/assetService'
-import { employeeService } from '@/services/employeeService'
-import { maintenanceService } from '@/services/maintenanceService'
+import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/api/reportsApi'
+import { dashboardApi } from '@/services/api/dashboardApi'
+import { assetService } from '@/services/business/assetService'
+import { employeeService } from '@/services/business/employeeService'
+import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
-import DateInput from '@/components/common/DateInput.vue'
+import DateInput from '@/components/ui/date/DateInput.vue'
 
 Chart.register(...registerables)
 

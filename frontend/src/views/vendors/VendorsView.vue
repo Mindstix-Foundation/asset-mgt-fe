@@ -616,13 +616,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
 import { useToastStore } from '@/stores/toast'
-import VendorApiService from '../../services/vendorApi'
+import VendorApiService from '../../services/api/vendorApi'
 import { VendorStatus } from '../../types/vendor.types'
 import type { Vendor, VendorQueryParams } from '../../types/vendor.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import BulkVendorUpload from './BulkVendorUpload.vue'
-import AppPagination from '@/components/pagination/AppPagination.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 
 const router = useRouter()
 useRouteToast()

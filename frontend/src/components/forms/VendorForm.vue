@@ -310,7 +310,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from
 import type { VendorStatus, VendorType, Vendor } from '@/types/vendor.types'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
-import VendorApiService from '@/services/vendorApi'
+import VendorApiService from '@/services/api/vendorApi'
 
 // Props
 interface Props {

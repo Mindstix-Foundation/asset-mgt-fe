@@ -1,0 +1,32 @@
+/**
+ * Main Styles Entry Point
+ * Imports all modular CSS files
+ */
+
+/* 1. Variables & Theme */
+@import './variables.css';
+
+/* 2. Base & Reset */
+@import './base.css';
+
+/* 3. Original Main Styles (to be gradually split) */
+@import '../main.css';
+
+/* 4. Unified Form Styles */
+@import '../unified-form-styles.css';
+
+/**
+ * TODO: Gradually migrate sections from main.css to modular files:
+ * - Extract button styles → components/buttons.css
+ * - Extract card styles → components/cards.css
+ * - Extract form styles → components/forms.css
+ * - Extract table styles → components/tables.css
+ * - Extract modal styles → components/modals.css
+ * - Extract badge styles → components/badges.css
+ * - Extract navigation styles → components/navigation.css
+ * - Extract login page styles → pages/login.css
+ * - Extract dashboard styles → pages/dashboard.css
+ * - Extract vendor styles → pages/vendors.css
+ * - Extract utility classes → utilities.css
+ */
+

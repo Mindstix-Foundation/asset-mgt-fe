@@ -184,7 +184,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
-import { authAxios } from '@/services/authService'
+import { authAxios } from '@/services/core/authService'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 

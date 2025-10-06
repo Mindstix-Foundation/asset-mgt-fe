@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { assetService } from '@/services/assetService'
+import { assetService } from '@/services/business/assetService'
 import { useToastStore } from '@/stores/toast'
 import AssetForm from '@/components/forms/AssetForm.vue'
 

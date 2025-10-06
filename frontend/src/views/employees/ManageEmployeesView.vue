@@ -450,10 +450,10 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { employeeService } from '@/services/employeeService'
+import { employeeService } from '@/services/business/employeeService'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
-import AppPagination from '@/components/pagination/AppPagination.vue'
-import PaginationInfo from '@/components/pagination/PaginationInfo.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+import PaginationInfo from '@/components/ui/pagination/PaginationInfo.vue'
 
 const router = useRouter()
 const toastStore = useToastStore()

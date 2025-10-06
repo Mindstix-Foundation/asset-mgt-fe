@@ -289,10 +289,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { assetHistoryService } from '@/services/assetHistoryService'
+import { assetHistoryService } from '@/services/api/assetHistoryService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateInput from '@/components/common/DateInput.vue'
-import { useAdvancedSearch } from '@/services/advancedSearchService'
+import DateInput from '@/components/ui/date/DateInput.vue'
+import { useAdvancedSearch } from '@/composables/useAdvancedSearch'
 import type { AssetHistoryEvent, AssetHistorySummary, AssetHistoryResponse, AssetHistorySummaryResponse } from '@/types/assetHistory.types'
 
 const route = useRoute()

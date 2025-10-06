@@ -277,10 +277,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { employeeService } from '@/services/employeeService'
-import type { UpdateEmployeeData } from '@/services/employeeService'
+import { employeeService } from '@/services/business/employeeService'
+import type { UpdateEmployeeData } from '@/services/business/employeeService'
 import { useToastStore } from '@/stores/toast'
-import DateInput from '@/components/common/DateInput.vue'
+import DateInput from '@/components/ui/date/DateInput.vue'
 
 // Type alias for form elements
 type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement

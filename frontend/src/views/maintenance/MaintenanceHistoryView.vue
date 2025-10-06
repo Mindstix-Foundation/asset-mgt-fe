@@ -186,10 +186,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { maintenanceService } from '@/services/maintenanceService'
+import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateField from '@/components/common/DateField.vue'
-import AppPagination from '@/components/pagination/AppPagination.vue'
+import DateField from '@/components/ui/date/DateField.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import { formatDateOnly } from '@/utils/date'
 
 interface HistoryItem {

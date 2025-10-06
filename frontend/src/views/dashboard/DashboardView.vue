@@ -259,7 +259,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { dashboardApi } from '@/services/dashboardApi'
+import { dashboardApi } from '@/services/api/dashboardApi'
 
 const router = useRouter()
 const authStore = useAuthStore()

@@ -805,10 +805,10 @@
   
 <script>
   import { Modal } from 'bootstrap'
-  import { employeeService } from '@/services/employeeService'
-  import { employeeApiService } from '@/services/employeeApi'
-  import AppPagination from '@/components/pagination/AppPagination.vue'
-  import PaginationInfo from '@/components/pagination/PaginationInfo.vue'
+  import { employeeService } from '@/services/business/employeeService'
+  import { employeeApiService } from '@/services/api/employeeApi'
+  import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+  import PaginationInfo from '@/components/ui/pagination/PaginationInfo.vue'
   import BulkEmployeeUpload from '@/views/employees/BulkEmployeeUpload.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
   import ToastNotification from '@/components/common/ToastNotification.vue'

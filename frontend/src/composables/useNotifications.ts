@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue';
-import { notificationService, type Notification } from '@/services/notificationService';
+import { notificationService, type Notification } from '@/services/api/notificationService';
 
 // Singleton state - shared across all instances
 const globalNotifications = ref<Notification[]>([]);

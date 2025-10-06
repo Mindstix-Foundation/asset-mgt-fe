@@ -1345,14 +1345,12 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
-import { assetService } from '../../services/assetService'
+import { assetService } from '../../services/business/assetService'
 import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
-import NotesDisplay from '@/components/common/NotesDisplay.vue'
-import NotesTextarea from '@/components/common/NotesTextarea.vue'
-import DateInput from '@/components/common/DateInput.vue'
+import { NotesDisplay, NotesTextarea } from '@/components/common'
+import { DateInput, AppPagination } from '@/components/ui'
 import BulkAssetUpload from './BulkAssetUpload.vue'
-import AppPagination from '@/components/pagination/AppPagination.vue'
 
 const router = useRouter()
 const route = useRoute()

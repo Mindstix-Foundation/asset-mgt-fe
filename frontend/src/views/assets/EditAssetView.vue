@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { assetService } from '@/services/assetService'
+import { assetService } from '@/services/business/assetService'
 import { useToastStore } from '@/stores/toast'
 import AssetForm from '@/components/forms/AssetForm.vue'
 

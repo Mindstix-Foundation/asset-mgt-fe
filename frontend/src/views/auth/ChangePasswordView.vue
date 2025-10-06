@@ -175,7 +175,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { authAxios } from '@/services/authService'
+import { authAxios } from '@/services/core/authService'
 import { useToastStore } from '@/stores/toast'
 
 const router = useRouter()

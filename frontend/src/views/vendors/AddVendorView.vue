@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import VendorApiService from '@/services/vendorApi'
+import VendorApiService from '@/services/api/vendorApi'
 import { useToastStore } from '@/stores/toast'
 import VendorForm from '@/components/forms/VendorForm.vue'
 

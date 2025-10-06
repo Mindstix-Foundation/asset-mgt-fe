@@ -252,13 +252,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { maintenanceService } from '@/services/maintenanceService'
-import type { CreateMaintenanceData, UpdateMaintenanceData, MaintenanceType } from '@/services/maintenanceService'
+import { maintenanceService } from '@/services/business/maintenanceService'
+import type { CreateMaintenanceData, UpdateMaintenanceData, MaintenanceType } from '@/services/business/maintenanceService'
 import { useToastStore } from '@/stores/toast'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
-import { assetApiService, type Asset as AssetApiAsset } from '@/services/assetApi'
+import { assetApiService, type Asset as AssetApiAsset } from '@/services/api/assetApi'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
-import DateInput from '@/components/common/DateInput.vue'
+import DateInput from '@/components/ui/date/DateInput.vue'
 import { formatDateForInput } from '@/utils/date'
 
 // Alias for form field elements to improve readability and reuse
