@@ -389,11 +389,11 @@ Display: 15.6&quot; FHD"
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
           <div class="form-label">Search Assets</div>
-          <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <div class="search-input-container">
+            <i class="fas fa-search search-icon"></i>
             <input 
               type="text" 
-              class="form-control" 
+              class="form-control search-input" 
               v-model="searchTerm"
               placeholder="Search by ID, model, brand, or serial number..."
               @input="debouncedLoadAssets"
@@ -418,7 +418,7 @@ Display: 15.6&quot; FHD"
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
                 <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
               </button>
             </div>
@@ -477,9 +477,9 @@ Display: 15.6&quot; FHD"
                 </div>
                 
                 <!-- Clear Button: fixed width (1.5 columns = 12.5%) -->
-                <div class="flex-shrink-0" style="width: 12.5%;">
+                <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>

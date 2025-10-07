@@ -112,6 +112,79 @@
   gap: 0.25rem !important;
 }
 
+/* Asset-specific table styles - Consolidated from assets.css */
+
+
+.asset-actions .btn {
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0.25rem !important;
+}
+
+/* Asset table column widths - Specific to AssetsView */
+.asset-table th:nth-child(1),
+.asset-table td:nth-child(1) { /* Asset ID */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(2),
+.asset-table td:nth-child(2) { /* Name (Type - Brand - Model) */
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.asset-table th:nth-child(3),
+.asset-table td:nth-child(3) { /* Serial Number */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(4),
+.asset-table td:nth-child(4) { /* Status */
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(5),
+.asset-table td:nth-child(5) { /* Assigned To */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(6),
+.asset-table td:nth-child(6) { /* Condition */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(7),
+.asset-table td:nth-child(7) { /* Actions */
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .table-responsive {

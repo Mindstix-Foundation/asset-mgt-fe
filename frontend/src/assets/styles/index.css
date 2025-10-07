@@ -17,6 +17,7 @@
 @import './components/modals.css';
 @import './components/badges.css';
 @import './components/navigation.css';
+@import './components/filters.css';
 
 /* 4. Page-Specific Styles */
 @import './pages/login.css';

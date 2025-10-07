@@ -190,11 +190,11 @@
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
           <div class="form-label">Search Assets</div>
-          <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <div class="search-input-container">
+            <i class="fas fa-search search-icon"></i>
             <input 
               type="text" 
-              class="form-control" 
+              class="form-control search-input" 
               v-model="searchTerm"
               placeholder="Search by ID, model, brand, or serial number..."
               @input="debouncedLoadAssets"
@@ -219,7 +219,7 @@
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
                 <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
               </button>
             </div>
@@ -286,10 +286,10 @@
                   />
                 </div>
                 
-                <!-- Clear Button: fixed width (1.5 columns = 12.5%) -->
-                <div class="flex-shrink-0" style="width: 12.5%;">
+                <!-- Clear Button: using filter-clear-button-container class -->
+                <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -1031,7 +1031,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <DateInput
+                          <DatePicker
                             id="retirementDate"
                             label="Retirement Date *"
                             v-model="retireFormData.retirementDate"
@@ -1239,7 +1239,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <DateInput
+                          <DatePicker
                             id="reactivationDate"
                             label="Reactivation Date *"
                             v-model="reactivateFormData.reactivationDate"
@@ -1357,7 +1357,7 @@ import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.t
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
-import DateInput from '@/components/ui/date/DateInput.vue'
+import DatePicker from '@/components/ui/date/DatePicker.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 
@@ -2236,25 +2236,25 @@ const getAssetTypeColor = (type: string) => {
 
 const getStatusBadgeClass = (status: string) => {
   const classes = {
-    'AVAILABLE': 'badge badge-available',
-    'ASSIGNED': 'badge badge-assigned',
-    'IN_MAINTENANCE': 'badge badge-under-repair',
-    'RETIRED': 'badge badge-retired',
-    'LOST': 'badge badge-retired'
+    'AVAILABLE': 'badge badge-green',        // Green for available
+    'ASSIGNED': 'badge badge-blue',          // Blue for assigned
+    'IN_MAINTENANCE': 'badge badge-orange',  // Orange for maintenance
+    'RETIRED': 'badge badge-brown',          // Brown for retired
+    'LOST': 'badge badge-red'                // Red for lost
   }
-  return classes[status as keyof typeof classes] || 'badge badge-retired'
+  return classes[status as keyof typeof classes] || 'badge badge-gray'
 }
 
 const getConditionBadgeClass = (condition: string) => {
   const classes = {
-    'Good': 'badge badge-condition-good',
-    'New': 'badge badge-condition-new',
-    'Fair': 'badge badge-condition-fair',
-    'Poor': 'badge badge-condition-poor',
-    'Damaged': 'badge badge-condition-poor',
-    'Refurbished': 'badge badge-condition-refurbished'
+    'Good': 'badge badge-green',           // Green for good condition
+    'New': 'badge badge-purple',           // Purple for new
+    'Fair': 'badge badge-orange',          // Orange for fair
+    'Poor': 'badge badge-red',             // Red for poor
+    'Damaged': 'badge badge-red',          // Red for damaged
+    'Refurbished': 'badge badge-brown'     // Brown for refurbished
   }
-  return classes[condition as keyof typeof classes] || 'badge badge-condition-good'
+  return classes[condition as keyof typeof classes] || 'badge badge-gray'
 }
 
 const getStatusText = (status: string) => {
@@ -2515,615 +2515,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Form validation styles */
-.form-searchable-dropdown.is-invalid :deep(.form-control) {
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-}
-
-.form-searchable-dropdown.is-valid :deep(.form-control) {
-  border-color: #198754 !important;
-  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc3545;
-  font-weight: 500;
-}
-
-/* Remove validation styling from optional notes textarea */
-.notes-no-validation :deep(.form-control.is-valid) {
-  border-color: #999999 !important;
-  box-shadow: none !important;
-}
-
-.notes-no-validation :deep(.form-control:focus) {
-  border-color: #331FEA !important;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
-}
-
-/* Dropdown improvements */
-.dropdown-menu {
-  border: none;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0;
-  min-width: 200px;
-  z-index: 1050;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-}
-
-.dropdown-item {
-  padding: 0.5rem 1rem;
-  transition: all 0.2s ease;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  color: #495057;
-}
-
-.dropdown-item:hover {
-  background-color: rgba(51, 31, 234, 0.1);
-  /* Preserve original text color */
-}
-
-.dropdown-item:active {
-  background-color: rgba(51, 31, 234, 0.2);
-  color: #331FEA;
-}
-
-.dropdown-divider {
-  margin: 0.5rem 0;
-  border-top: 1px solid #dee2e6;
-}
-
-/* Ensure dropdown shows above other elements */
-.dropdown {
-  position: relative;
-}
-
-.dropdown-menu.show {
-  display: block;
-}
-
-
-
-:deep(.form-label) {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0.5rem;
-}
-
-:deep(.form-control) {
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-/* Make button corners match input field corners for consistency - but don't override btn-modern */
-.btn:not(.btn-modern) {
-  border-radius: 0.375rem !important;
-}
-
-/* Fix search input group border-radius consistency */
-.input-group .input-group-text {
-  border-radius: 0.375rem 0 0 0.375rem !important;
-}
-
-.input-group .form-control:not(:last-child) {
-  border-radius: 0 0.375rem 0.375rem 0 !important;
-}
-
-:deep(.form-control:focus) {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-:deep(.dropdown-menu) {
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.375rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  z-index: 1050;
-}
-
-:deep(.dropdown-item:hover),
-:deep(.dropdown-item.active) {
-  background-color: #e9ecef;
-  color: #1e2125;
-}
-
-/* Filter dropdown styling */
-.filter-dropdown {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Active filter button styling */
-.btn.active {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: white;
-}
-
-.btn.active:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
-}
-
-/* Filter badge styling */
-.badge {
-  font-size: 0.7rem;
-  padding: 0.25rem 0.4rem;
-}
-
-/* Responsive dropdown positioning */
-.dropdown-menu-responsive {
-  /* Default: left-aligned for medium+ screens */
-  left: 0;
-  right: auto;
-}
-
-/* Small screens: right-aligned to prevent overflow */
-@media (max-width: 767.98px) {
-  .dropdown-menu-responsive {
-    left: auto;
-    right: 0;
-    max-width: calc(100vw - 2rem);
-    min-width: 200px;
-  }
-}
-
-/* Asset Details Modal - Reduced Spacing and Better Warranty Display */
-.equal-height-columns {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.equal-height-columns > [class*="col-"] {
-  display: flex;
-  flex-direction: column;
-}
-
-.asset-info-section-compact {
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-  display: flex;
-  flex-direction: column;
-}
-
-.asset-info-section-compact .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.asset-info-section-compact .info-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex-grow: 1;
-}
-
-.asset-info-section-compact .info-item-compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.asset-info-section-compact .info-item-compact:last-child {
-  border-bottom: none;
-}
-
-.asset-info-section-compact .info-label-compact {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0 !important;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.asset-info-section-compact .info-value-compact {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: #212529 !important;
-  margin-bottom: 0 !important;
-  text-align: right;
-  flex-grow: 1;
-}
-
-/* Warranty info - Right aligned display design */
-.warranty-info-compact {
-  font-size: 0.9rem;
-  line-height: 1.3;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-
-.warranty-info-compact .warranty-row:last-child {
-  margin-bottom: 0;
-}
-
-.warranty-info-compact .warranty-label {
-  font-size: 0.85rem;
-  color: #6c757d;
-  min-width: 40px;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-value {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #28a745;
-}
-
-.warranty-info-compact .warranty-time {
-  margin-top: 0.25rem;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-time-text {
-  font-size: 0.8rem;
-  color: #6c757d;
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* Assignment Divider */
-.assignment-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 1rem 0;
-  opacity: 0.6;
-}
-
-/* Assignment Details Collapsible */
-.assignment-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.assignment-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-.assignment-details-expanded {
-  transition: all 0.3s ease;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-/* Assignment Notes Display Override */
-.assignment-details-expanded .info-value-compact :deep(.notes-display-container) {
-  margin: 0;
-  padding: 0;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-content) {
-  padding: 0;
-  min-height: auto;
-  align-items: flex-start;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-text) {
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-empty) {
-  font-size: 0.95rem;
-  font-style: italic;
-  opacity: 0.7;
-}
-
-
-/* Assignment status combined */
-.assignment-status-combined {
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.assignment-status-combined .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.assignment-status-combined .assignment-details {
-  flex-grow: 1;
-}
-
-.assignment-status-combined .assignment-icon {
-  flex-shrink: 0;
-}
-
-.assignment-status-combined .qr-code-mini {
-  flex-shrink: 0;
-}
-
-.assignment-status-combined .assignment-details span {
-  font-size: 0.95rem !important;
-}
-
-.assignment-status-combined .assignment-details .fw-medium {
-  font-size: 1rem !important;
-}
-
-
-
-/* Retirement status combined */
-.retirement-status-combined {
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.retirement-status-combined .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.retirement-status-combined .retirement-details {
-  flex-grow: 1;
-}
-
-.retirement-status-combined .retirement-icon {
-  flex-shrink: 0;
-}
-
-
-.retirement-status-combined .retirement-details span {
-  font-size: 0.95rem !important;
-}
-
-.retirement-status-combined .retirement-details .fw-medium {
-  font-size: 1rem !important;
-}
-
-/* Retirement Details Expanded */
-.retirement-details-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-/* Retirement Divider */
-.retirement-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 1rem 0;
-  opacity: 0.6;
-}
-
-/* Retirement Details Collapsible */
-.retirement-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.retirement-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-/* Retirement Notes Display Override */
-.retirement-details-expanded .info-value-compact :deep(.notes-display-container) {
-  margin: 0;
-  padding: 0;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-content) {
-  padding: 0;
-  min-height: auto;
-  align-items: flex-start;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-text) {
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-empty) {
-  font-size: 0.95rem;
-  font-style: italic;
-  opacity: 0.7;
-}
-
-/* Table spacing adjustments */
-.table th:first-child, .table td:first-child {
-  padding-left: 1.25rem !important;
-}
-
-.table th:last-child, .table td:last-child {
-  padding-right: 0.75rem !important;
-  padding-left: 0.5rem !important;
-}
-
-.asset-actions {
-  justify-content: flex-start !important;
-  gap: 0.25rem !important;
-}
-
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Fixed column widths for consistent table layout */
-.table th:nth-child(1),
-.table td:nth-child(1) { /* Asset ID */
-  width: 120px !important;
-  min-width: 120px !important;
-  max-width: 120px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.table th:nth-child(2),
-.table td:nth-child(2) { /* Name (Type - Brand - Model) */
-  width: 280px !important;
-  min-width: 280px !important;
-  max-width: 280px !important;
-}
-
-.table th:nth-child(3),
-.table td:nth-child(3) { /* Serial Number */
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 180px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.table th:nth-child(4),
-.table td:nth-child(4) { /* Status */
-  width: 140px !important;
-  min-width: 140px !important;
-  max-width: 140px !important;
-  white-space: nowrap !important;
-}
-
-.table th:nth-child(5),
-.table td:nth-child(5) { /* Assigned To */
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 180px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.table th:nth-child(6),
-.table td:nth-child(6) { /* Condition */
-  width: 120px !important;
-  min-width: 120px !important;
-  max-width: 120px !important;
-  white-space: nowrap !important;
-}
-
-.table th:nth-child(7),
-.table td:nth-child(7) { /* Actions */
-  width: 200px !important;
-  min-width: 200px !important;
-  max-width: 200px !important;
-  padding-right: 1.25rem !important;
-  padding-left: 0.25rem !important;
-  text-align: left !important;
-}
-
-.asset-actions .btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
-  padding: 0.25rem !important;
-}
-
-/* Custom Action Button Hover Effects */
-/* View Details Button - Brown */
-.btn-view-details:hover {
-  color: var(--secondary-brown) !important;
-  border-color: var(--secondary-brown) !important;
-  background-color: rgba(150, 114, 89, 0.1) !important;
-}
-
-/* Edit Asset Button - Purple */
-.btn-edit-asset:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  background-color: rgba(51, 31, 234, 0.1) !important;
-}
-
-/* Issue Asset Button - Green */
-.btn-issue-asset:hover {
-  color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  background-color: rgba(33, 175, 101, 0.1) !important;
-}
-
-/* Collect Asset Button - Pink */
-.btn-collect-asset:hover {
-  color: var(--secondary-pink) !important;
-  border-color: var(--secondary-pink) !important;
-  background-color: rgba(255, 87, 159, 0.1) !important;
-}
-
-/* Maintenance Button - Orange */
-.btn-maintenance-action:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  background-color: rgba(255, 140, 97, 0.1) !important;
-}
-
-/* QR Code Button - Non-clickable indicator */
-.btn-qr-code:hover {
-  color: var(--primary-mid-gray) !important;
-  border-color: var(--primary-mid-gray) !important;
-  background-color: rgba(153, 153, 153, 0.1) !important;
-  cursor: not-allowed !important;
-  opacity: 0.6 !important;
-}
-
-
-
+/* AssetsView.vue now uses styles from assets.css */
+/* All styles have been moved to the proper CSS file structure */
 </style>

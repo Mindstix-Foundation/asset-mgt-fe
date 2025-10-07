@@ -38,12 +38,17 @@
         </div>
             <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
               <div class="d-flex flex-column flex-md-row gap-2 justify-content-md-end">
-              <span v-if="summary" class="badge badge-count">{{ summary.totalEvents }} Total Events</span>
-              <span v-if="summary && summary.totalAssignments > 0" class="badge badge-assigned">{{ summary.totalAssignments }} Assignments</span>
-              <span v-if="summary && summary.totalMaintenance > 0" class="badge badge-maintenance">{{ summary.totalMaintenance }} Maintenance</span>
-              <span v-if="!summary" class="badge badge-count">{{ timeline.length }} Events</span>
+                <!-- Total Events Badge - Pink -->
+                <span v-if="summary" class="badge badge-pink">{{ summary.totalEvents }} Total Events</span>
+                <span v-if="!summary" class="badge badge-pink">{{ timeline.length }} Events</span>
+                
+                <!-- Current Status Badge - Same colors as AssetsView.vue -->
+                <span v-if="summary" :class="getStatusBadgeClass(summary.currentStatus)">{{ getStatusText(summary.currentStatus) }}</span>
+                
+                <!-- Current Condition - Gray badge -->
+                <span v-if="summary" class="badge badge-gray">{{ getConditionText(summary.currentCondition) }}</span>
+              </div>
             </div>
-          </div>
         </div>
       </div>
 
@@ -56,11 +61,11 @@
             <!-- Search -->
             <div class="col-12 col-lg-7 mb-3">
               <div class="form-label">Search</div>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <div class="search-input-container">
+                <i class="fas fa-search search-icon"></i>
                 <input 
                   type="text" 
-                  class="form-control" 
+                  class="form-control search-input" 
                   v-model="filters.search"
                   placeholder="Description/type/status" 
                   @keyup.enter="applyFilters"
@@ -110,19 +115,21 @@
                 />
           </div>
               <div class="flex-fill">
-                <DateInput
+                <DatePicker
                   id="date-from-filter"
                   label="Date From"
                   v-model="filters.dateFrom"
                   @change="onDateFromChange"
+                  css-class="date-picker-filter"
                 />
               </div>
               <div class="flex-fill">
-                <DateInput
+                <DatePicker
                   id="date-to-filter"
                   label="Date To"
                   v-model="filters.dateTo"
                   @change="onDateToChange"
+                  css-class="date-picker-filter"
                 />
               </div>
               <div class="filter-clear-button-container">
@@ -160,7 +167,7 @@
                 <span v-else-if="currentViewMode === 'complete'">Complete History (500 events)</span>
                 <span v-else>Timeline</span>
               </span>
-              <span class="badge bg-primary">{{ displayTimeline.length }} records</span>
+              <span class="badge badge-brown">{{ displayTimeline.length }} records</span>
             </h6>
 
             <div class="history-timeline">
@@ -291,7 +298,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { assetHistoryService } from '@/services/api/assetHistoryService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateInput from '@/components/ui/date/DateInput.vue'
+import DatePicker from '@/components/ui/date/DatePicker.vue'
 import { useAdvancedSearch } from '@/composables/useAdvancedSearch'
 import type { AssetHistoryEvent, AssetHistorySummary, AssetHistoryResponse, AssetHistorySummaryResponse } from '@/types/assetHistory.types'
 
@@ -632,18 +639,18 @@ const getEventTypeLabel = (eventType: string): string => {
 
 const getEventTypeBadgeClass = (eventType: string): string => {
   const classes: Record<string, string> = {
-    'ASSET_CREATED': 'badge-success',
-    'ASSET_UPDATED': 'badge-info',
-    'ASSET_RETIRED': 'badge-danger',
-    'ASSET_REACTIVATED': 'badge-success',
-    'ASSET_ISSUED': 'badge-primary',
-    'ASSET_COLLECTED': 'badge-warning',
-    'MAINTENANCE_SCHEDULED': 'badge-warning',
-    'MAINTENANCE_UPDATED': 'badge-info',
-    'MAINTENANCE_COMPLETED': 'badge-success',
-    'MAINTENANCE_CANCELLED': 'badge-danger'
+    'ASSET_CREATED': 'badge badge-green',
+    'ASSET_UPDATED': 'badge badge-blue',
+    'ASSET_RETIRED': 'badge badge-red',
+    'ASSET_REACTIVATED': 'badge badge-green',
+    'ASSET_ISSUED': 'badge badge-purple',
+    'ASSET_COLLECTED': 'badge badge-orange',
+    'MAINTENANCE_SCHEDULED': 'badge badge-orange',
+    'MAINTENANCE_UPDATED': 'badge badge-blue',
+    'MAINTENANCE_COMPLETED': 'badge badge-green',
+    'MAINTENANCE_CANCELLED': 'badge badge-red'
   }
-  return classes[eventType] || 'badge-secondary'
+  return classes[eventType] || 'badge badge-gray'
 }
 
 const getAssetIconColor = (assetType?: string): string => {
@@ -689,14 +696,14 @@ const getConditionBadgeClass = (condition: string): string => {
   const finalCondition = condition.includes(' → ') ? condition.split(' → ')[1] : condition
   
   const classes: Record<string, string> = {
-    'NEW': 'badge badge-condition-new',
-    'GOOD': 'badge badge-condition-good',
-    'FAIR': 'badge badge-condition-fair',
-    'POOR': 'badge badge-condition-poor',
-    'DAMAGED': 'badge badge-condition-damaged',
-    'REFURBISHED': 'badge badge-condition-refurbished'
+    'NEW': 'badge badge-gray',
+    'GOOD': 'badge badge-gray',
+    'FAIR': 'badge badge-gray',
+    'POOR': 'badge badge-gray',
+    'DAMAGED': 'badge badge-gray',
+    'REFURBISHED': 'badge badge-gray'
   }
-  return classes[finalCondition] || 'badge badge-condition-poor'
+  return classes[finalCondition] || 'badge badge-gray'
 }
 
 const getStatusBadgeClass = (status: string): string => {
@@ -705,23 +712,48 @@ const getStatusBadgeClass = (status: string): string => {
   const finalStatus = status.includes(' → ') ? status.split(' → ')[1] : status
   
   const classes: Record<string, string> = {
-    'AVAILABLE': 'badge badge-available',
-    'ASSIGNED': 'badge badge-assigned', 
-    'IN_MAINTENANCE': 'badge badge-under-repair',
-    'RETIRED': 'badge badge-retired',
-    'LOST': 'badge badge-lost'
+    'AVAILABLE': 'badge badge-green',
+    'ASSIGNED': 'badge badge-blue', 
+    'IN_MAINTENANCE': 'badge badge-orange',
+    'RETIRED': 'badge badge-brown',
+    'LOST': 'badge badge-red'
   }
-  return classes[finalStatus] || 'badge badge-retired'
+  return classes[finalStatus] || 'badge badge-gray'
+}
+
+const getStatusText = (status: string): string => {
+  const texts: Record<string, string> = {
+    'AVAILABLE': 'Available',
+    'ASSIGNED': 'Assigned',
+    'IN_MAINTENANCE': 'In Maintenance',
+    'RETIRED': 'Retired',
+    'LOST': 'Lost'
+  }
+  return texts[status] || status
+}
+
+const getConditionText = (condition: string): string => {
+  const texts: Record<string, string> = {
+    'NEW': 'New',
+    'GOOD': 'Good',
+    'FAIR': 'Fair',
+    'POOR': 'Poor',
+    'DAMAGED': 'Damaged',
+    'REFURBISHED': 'Refurbished'
+  }
+  return texts[condition] || condition
 }
 
 const getStatusDisplayText = (status: string): string => {
-  // Replace → with Font Awesome arrow icon
-  return status.replace(' → ', ' <i class="fas fa-arrow-right"></i> ')
+  // Convert to title case and replace → with Font Awesome arrow icon
+  const titleCaseStatus = status.replace(' → ', ' → ').split(' → ').map(part => getStatusText(part)).join(' → ')
+  return titleCaseStatus.replace(' → ', ' <i class="fas fa-arrow-right"></i> ')
 }
 
 const getConditionDisplayText = (condition: string): string => {
-  // Replace → with Font Awesome arrow icon
-  return condition.replace(' → ', ' <i class="fas fa-arrow-right"></i> ')
+  // Convert to title case and replace → with Font Awesome arrow icon
+  const titleCaseCondition = condition.replace(' → ', ' → ').split(' → ').map(part => getConditionText(part)).join(' → ')
+  return titleCaseCondition.replace(' → ', ' <i class="fas fa-arrow-right"></i> ')
 }
 
 const formatDate = (dateString: string): string => {
@@ -791,11 +823,9 @@ const showDatePicker = (type: 'from' | 'to') => {
   }
 }
 
-const onDateFromChange = (event: Event) => {
-  const input = event.target as HTMLInputElement
-  if (input.value) {
-    const date = new Date(input.value)
-    filters.value.dateFromDisplay = convertDateToDDMMYYYY(date)
+const onDateFromChange = (value: string) => {
+  if (value) {
+    filters.value.dateFromDisplay = value
     applyFilters()
   } else {
     filters.value.dateFromDisplay = ''
@@ -803,11 +833,9 @@ const onDateFromChange = (event: Event) => {
   }
 }
 
-const onDateToChange = (event: Event) => {
-  const input = event.target as HTMLInputElement
-  if (input.value) {
-    const date = new Date(input.value)
-    filters.value.dateToDisplay = convertDateToDDMMYYYY(date)
+const onDateToChange = (value: string) => {
+  if (value) {
+    filters.value.dateToDisplay = value
     applyFilters()
   } else {
     filters.value.dateToDisplay = ''
@@ -1069,16 +1097,16 @@ onMounted(async () => {
 }
 
 /* Timeline marker colors based on event type */
-.timeline-asset-created .timeline-marker { background: var(--mindstix-success); }
-.timeline-asset-updated .timeline-marker { background: var(--mindstix-primary); }
-.timeline-asset-retired .timeline-marker { background: var(--mindstix-danger); }
-.timeline-asset-reactivated .timeline-marker { background: var(--mindstix-success); }
-.timeline-asset-issued .timeline-marker { background: var(--mindstix-primary); }
-.timeline-asset-collected .timeline-marker { background: var(--mindstix-warning); }
-.timeline-maintenance-scheduled .timeline-marker { background: var(--mindstix-warning); }
-.timeline-maintenance-updated .timeline-marker { background: var(--mindstix-primary); }
-.timeline-maintenance-completed .timeline-marker { background: var(--mindstix-success); }
-.timeline-maintenance-cancelled .timeline-marker { background: var(--mindstix-danger); }
+.timeline-asset-created .timeline-marker { background: var(--secondary-blue); }
+.timeline-asset-updated .timeline-marker { background: var(--secondary-gray); }
+.timeline-asset-retired .timeline-marker { background: var(--secondary-red); }
+.timeline-asset-reactivated .timeline-marker { background: var(--secondary-blue); }
+.timeline-asset-issued .timeline-marker { background: var(--secondary-green); }
+.timeline-asset-collected .timeline-marker { background: var(--secondary-pink); }
+.timeline-maintenance-scheduled .timeline-marker { background: var(--secondary-orange); }
+.timeline-maintenance-updated .timeline-marker { background: var(--secondary-gray); }
+.timeline-maintenance-completed .timeline-marker { background: var(--secondary-blue); }
+.timeline-maintenance-cancelled .timeline-marker { background: var(--secondary-red); }
 
 .timeline-content { 
   background: #fafafa; 
@@ -1253,23 +1281,6 @@ onMounted(async () => {
   padding: 0.25rem 0.5rem; 
   border-radius: 0.375rem; 
   font-weight: 500; 
-}
-
-/* Badge colors using palette */
-.badge-asset-created { background-color: var(--mindstix-success) !important; color: white !important; }
-.badge-asset-updated { background-color: var(--mindstix-primary) !important; color: white !important; }
-.badge-asset-retired { background-color: var(--mindstix-danger) !important; color: white !important; }
-.badge-asset-reactivated { background-color: var(--mindstix-success) !important; color: white !important; }
-.badge-asset-issued { background-color: var(--mindstix-primary) !important; color: white !important; }
-.badge-asset-collected { background-color: var(--mindstix-warning) !important; color: white !important; }
-.badge-maintenance-scheduled { background-color: var(--mindstix-warning) !important; color: white !important; }
-.badge-maintenance-updated { background-color: var(--mindstix-primary) !important; color: white !important; }
-.badge-maintenance-completed { background-color: var(--mindstix-success) !important; color: white !important; }
-.badge-maintenance-cancelled { background-color: var(--mindstix-danger) !important; color: white !important; }
-
-.badge-type-event { 
-  background-color: var(--primary-mid-gray) !important; 
-  color: white !important; 
 }
 
 .timeline-details { 
@@ -1458,46 +1469,6 @@ onMounted(async () => {
 }
 
 
-/* Badge Styles - Using Palette Colors */
-.badge-count {
-  background-color: var(--mindstix-primary) !important;
-  color: white !important;
-  border: 2px solid var(--mindstix-primary) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-assigned {
-  background-color: var(--mindstix-success) !important;
-  color: white !important;
-  border: 2px solid var(--mindstix-success) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-maintenance {
-  background-color: var(--mindstix-warning) !important;
-  color: white !important;
-  border: 2px solid var(--mindstix-warning) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.bg-primary {
-  background-color: var(--mindstix-primary) !important;
-  color: white !important;
-  border: 2px solid var(--mindstix-primary) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
 
 /* Details Grid - Compact Design */
 .details-grid {
@@ -1669,46 +1640,6 @@ onMounted(async () => {
   font-weight: bold;
 }
 
-.badge-duration {
-  background-color: var(--primary-mid-gray) !important;
-  color: white !important;
-}
-
-.badge-primary {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.badge-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-
-.badge-info {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-
-.badge-warning {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-
-.badge-danger {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-
-.badge-secondary {
-  background-color: var(--primary-mid-gray) !important;
-  color: white !important;
-  font-weight: 700 !important;
-}
-
 /* Arrow icons within badges */
 .badge i.fas.fa-arrow-right {
   font-size: 0.6rem;
@@ -1716,210 +1647,9 @@ onMounted(async () => {
   color: inherit;
 }
 
-/* Status Badge Colors - Matching AssetsView.vue */
-.badge.badge-available {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  border: 2px solid var(--secondary-green) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
+/* Filter dropdown styling - Moved to filters.css for better organization */
 
-.badge.badge-assigned {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  border: 2px solid var(--secondary-purple) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-under-repair {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-  border: 2px solid var(--secondary-orange) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-retired {
-  background-color: var(--secondary-brown) !important;
-  color: white !important;
-  border: 2px solid var(--secondary-brown) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-lost {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-  border: 2px solid var(--secondary-red) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-/* Condition Badge Colors - Using Specified Palette Colors */
-.badge.badge-condition-new {
-  background-color: var(--primary-white) !important;
-  color: var(--primary-black) !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-condition-good {
-  background-color: var(--primary-light-gray) !important;
-  color: var(--primary-black) !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-condition-fair {
-  background-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-condition-poor {
-  background-color: var(--primary-mid-gray) !important;
-  color: white !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-condition-damaged {
-  background-color: var(--primary-dark-gray) !important;
-  color: white !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-condition-refurbished {
-  background-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  border: 2px solid var(--primary-black) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-/* Filter dropdown styling - Using Palette Colors */
-.filter-dropdown { 
-  border: 1px solid var(--element-gray); 
-  background-color: var(--primary-light-gray) !important; 
-}
-
-.btn.active { 
-  background-color: var(--secondary-purple); 
-  color: #fff; 
-}
-
-.filter-clear-button-container { 
-  flex-shrink: 0; 
-  min-width: 120px; 
-}
-
-.filter-clear-btn { 
-  width: 100%; 
-  min-width: 120px; 
-  border-radius: 0.375rem !important;
-}
-
-@media (max-width: 767.98px) { 
-  .filter-clear-button-container { 
-    width: 100%; 
-    min-width: unset; 
-  } 
-  .filter-clear-btn { 
-    width: 100%;
-    min-width: unset; 
-  } 
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) { 
-  .filter-clear-button-container { 
-    min-width: 140px; 
-  } 
-  .filter-clear-btn { 
-    min-width: 140px; 
-  }
-}
-
-/* Date Input Validation */
-.form-control.is-invalid {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}
-
-.form-control[placeholder="dd-mm-yyyy"] {
-  font-family: monospace;
-}
-
-/* Date Input Container */
-.date-input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.date-display {
-  font-family: monospace;
-  cursor: pointer;
-  background-color: white;
-  border-radius: 0.375rem !important;
-}
-
-.date-picker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: -1;
-  border-radius: 0.375rem !important;
-  pointer-events: none;
-}
-
-.date-icon {
-  position: absolute;
-  right: 10px;
-  color: #6c757d;
-  cursor: pointer;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.date-input-container:hover .date-icon {
-  color: #495057;
-}
+/* Date Input Validation - Moved to filters.css for better organization */
 
 /* Form Controls - Match SearchableDropdown border radius */
 .form-control {
@@ -1932,45 +1662,7 @@ onMounted(async () => {
 }
 
 
-/* Search Input Group Styling */
-.input-group {
-  border-radius: 0.375rem !important;
-  overflow: hidden;
-}
-
-.input-group-text {
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  border-right: none;
-  color: #6c757d;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.375rem 0 0 0.375rem !important;
-}
-
-.input-group .form-control {
-  border-left: none;
-  border-radius: 0 0.375rem 0.375rem 0 !important;
-}
-
-.input-group .form-control:focus {
-  border-color: #ced4da !important;
-  box-shadow: none !important;
-  background-color: white !important;
-}
-
-.input-group .form-control:focus + .input-group-text,
-.input-group .form-control:focus ~ .input-group-text {
-  border-color: #ced4da !important;
-}
-
-/* Override any global focus styles for input group */
-.input-group .form-control:focus,
-.input-group .form-control:valid:focus,
-.input-group .form-control:invalid:focus {
-  border-color: #ced4da !important;
-  box-shadow: none !important;
-  background-color: white !important;
-}
+/* Search Input Group Styling - Moved to filters.css for better organization */
 
 /* Responsive styles */
 @media (max-width: 767.98px) {

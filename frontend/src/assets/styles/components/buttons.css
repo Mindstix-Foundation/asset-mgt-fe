@@ -276,7 +276,7 @@
   color: var(--primary-black) !important;
 }
 
-/* New Action Button Styles - Updated Design */
+/* Action Button Styles - Updated Design */
 .btn-action {
   background-color: var(--primary-light-gray) !important;
   border: 1px solid var(--element-gray) !important;
@@ -559,4 +559,95 @@
 .login-btn:focus-visible {
   outline: 3px solid var(--primary-white);
   outline-offset: 3px;
+}
+
+/* Asset-specific button styles - Consolidated from assets.css */
+.asset-actions .btn {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 36px !important;
+}
+
+.asset-actions .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
+}
+
+/* Specific action button hover colors */
+.asset-actions .btn-outline-primary:hover {
+  /* Preserve original text color */
+  border-color: var(--secondary-purple) !important;
+}
+
+.asset-actions .btn-outline-secondary:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+}
+
+.asset-actions .btn-outline-success:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+}
+
+.asset-actions .btn-outline-warning:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+}
+
+.asset-actions .btn-outline-info:hover {
+  /* Preserve original text color */
+  border-color: var(--secondary-purple) !important;
+}
+
+/* Custom Action Button Hover Effects */
+.btn-view-details:hover {
+  color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  background-color: rgba(150, 114, 89, 0.1) !important;
+}
+
+.btn-edit-asset:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  background-color: rgba(51, 31, 234, 0.1) !important;
+}
+
+.btn-issue-asset:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  background-color: rgba(33, 175, 101, 0.1) !important;
+}
+
+.btn-collect-asset:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  background-color: rgba(255, 87, 159, 0.1) !important;
+}
+
+.btn-maintenance-action:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  background-color: rgba(255, 140, 97, 0.1) !important;
+}
+
+.btn-qr-code:hover {
+  color: var(--primary-mid-gray) !important;
+  border-color: var(--primary-mid-gray) !important;
+  background-color: rgba(153, 153, 153, 0.1) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
 }
