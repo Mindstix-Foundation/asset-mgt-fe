@@ -1,0 +1,135 @@
+/**
+ * Filter Components - TrackStix Theme
+ * Shared filter dropdown and controls used across pages
+ */
+
+/* Filter dropdown styling */
+.filter-dropdown {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Filter clear button container and button */
+.filter-clear-button-container {
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.filter-clear-btn {
+  width: 100%;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* Mobile: Full width clear button */
+@media (max-width: 767.98px) {
+  .filter-clear-button-container {
+    width: 100%;
+    min-width: unset;
+    margin-top: 0.5rem;
+  }
+
+  .filter-clear-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Tablet: Adequate width for clear button */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .filter-clear-button-container {
+    min-width: 140px;
+  }
+
+  .filter-clear-btn {
+    min-width: 140px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Inline filter/search bar alignment (search, sort, toggle, filters) */
+.row.align-items-end .input-group .input-group-text,
+.row.align-items-end .input-group .form-control,
+.row.align-items-end select.form-select,
+.row.align-items-end .form-select,
+.row.align-items-end .searchable-dropdown .dropdown-toggle,
+.row.align-items-end .searchable-dropdown .form-select,
+.row.align-items-end .searchable-dropdown-wrapper .form-control,
+.row.align-items-end .btn {
+  height: 40px !important; /* unify control heights */
+}
+
+.row.align-items-end .form-select,
+.row.align-items-end .searchable-dropdown .dropdown-toggle {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem; /* match bootstrap btn/input vertical padding */
+}
+
+.row.align-items-end .searchable-dropdown-wrapper .form-control {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+
+.row.align-items-end .input-group .input-group-text {
+  display: flex;
+  align-items: center; /* center icon vertically */
+}
+
+.row.align-items-end .btn {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Uniform corner rounding across all filter controls */
+.row.align-items-end .form-select,
+.row.align-items-end .searchable-dropdown-wrapper .form-control,
+.row.align-items-end .input-group .search-with-icon,
+.row.align-items-end .btn {
+  border-radius: 0.5rem !important;
+}
+
+/* Input group left/right rounding for search field */
+.row.align-items-end .input-group .input-group-text {
+  border-radius: 0.5rem 0 0 0.5rem !important;
+}
+
+.row.align-items-end .input-group .form-control:not(:last-child) {
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+/* Search input padding (after removing left icon) */
+.search-with-icon {
+  padding-left: 0.75rem !important;
+}
+
+/* Filter dropdown panel: ensure same height, rounding, alignment */
+.filter-dropdown .searchable-dropdown-wrapper .form-control,
+.filter-dropdown .form-select,
+.filter-dropdown .btn.filter-clear-btn {
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+}
+
+.filter-dropdown .searchable-dropdown-wrapper .form-control {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+
+.filter-dropdown .btn.filter-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
