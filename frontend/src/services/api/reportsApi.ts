@@ -1,5 +1,5 @@
-import { apiService, type ApiResponse } from './apiClient'
-import apiClient from './apiClient'
+import { apiService, type ApiResponse } from '../core/apiClient'
+import apiClient from '../core/apiClient'
 
 export interface ReportFilters {
   reportType?: 'assets' | 'employees' | 'maintenance' | 'audit'

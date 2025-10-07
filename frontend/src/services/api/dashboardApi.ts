@@ -1,4 +1,4 @@
-import { apiService, type ApiResponse } from './apiClient'
+import { apiService, type ApiResponse } from '../core/apiClient'
 
 // Dashboard Stats Interface
 export interface DashboardStats {

@@ -1,4 +1,4 @@
-import apiClient from './apiClient'
+import apiClient from '../core/apiClient'
 
 // Types for assignment API
 export interface CreateAssignmentDto {

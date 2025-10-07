@@ -9,24 +9,35 @@
 /* 2. Base & Reset */
 @import './base.css';
 
-/* 3. Original Main Styles (to be gradually split) */
-@import '../main.css';
+/* 3. Component Styles */
+@import './components/buttons.css';
+@import './components/cards.css';
+@import './components/forms.css';
+@import './components/tables.css';
+@import './components/modals.css';
+@import './components/badges.css';
+@import './components/navigation.css';
 
-/* 4. Unified Form Styles */
-@import '../unified-form-styles.css';
+/* 4. Page-Specific Styles */
+@import './pages/login.css';
+@import './pages/dashboard.css';
+@import './pages/vendors.css';
+@import './pages/assets.css';
+@import './pages/employees.css';
+@import './pages/maintenance.css';
+@import './pages/notifications.css';
+@import './pages/profile.css';
+@import './pages/reports.css';
+
+/* 5. Utility Classes */
+@import './utilities.css';
+
+/* 6. Unified Form Styles - Imported individually by form components */
+/* @import '../unified-form-styles.css'; - Removed: This is imported by individual form components */
 
 /**
- * TODO: Gradually migrate sections from main.css to modular files:
- * - Extract button styles → components/buttons.css
- * - Extract card styles → components/cards.css
- * - Extract form styles → components/forms.css
- * - Extract table styles → components/tables.css
- * - Extract modal styles → components/modals.css
- * - Extract badge styles → components/badges.css
- * - Extract navigation styles → components/navigation.css
- * - Extract login page styles → pages/login.css
- * - Extract dashboard styles → pages/dashboard.css
- * - Extract vendor styles → pages/vendors.css
- * - Extract utility classes → utilities.css
+ * Migration Complete!
+ * All styles have been successfully migrated from main.css to modular files.
+ * The main.css file can now be removed or kept as a backup.
  */
 

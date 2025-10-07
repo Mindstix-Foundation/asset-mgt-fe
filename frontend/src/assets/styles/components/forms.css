@@ -1,0 +1,136 @@
+/**
+ * Form Components - TrackStix Theme
+ * General form component styles (NOT form-specific styling)
+ */
+
+/* General Form Labels */
+label {
+  color: var(--primary-dark-gray);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* General Form Controls */
+.form-control, .form-select {
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--secondary-purple);
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+  outline: none;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+/* Form Validation States */
+.form-control.is-valid {
+  border-color: var(--secondary-green);
+}
+
+.form-control.is-invalid {
+  border-color: var(--secondary-red);
+}
+
+/* Input Groups */
+.input-group-text {
+  background-color: var(--primary-light-gray);
+  border-color: var(--element-gray);
+  color: var(--primary-dark-gray);
+}
+
+/* Form Floating Labels */
+.form-floating > .form-control {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 0.75rem;
+}
+
+.form-floating > label {
+  padding: 1rem 0.75rem;
+}
+
+/* Form Check */
+.form-check-input {
+  border-color: var(--element-gray);
+}
+
+.form-check-input:checked {
+  background-color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+}
+
+/* Form Select */
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+}
+
+/* Form Range */
+.form-range {
+  background-color: var(--primary-light-gray);
+}
+
+.form-range::-webkit-slider-thumb {
+  background-color: var(--secondary-purple);
+}
+
+.form-range::-moz-range-thumb {
+  background-color: var(--secondary-purple);
+  border: none;
+}
+
+/* Form Text */
+.form-text {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+}
+
+/* Invalid Feedback */
+.invalid-feedback {
+  color: var(--secondary-red);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.valid-feedback {
+  color: var(--secondary-green);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Form Row */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+}
+
+.form-row > .col,
+.form-row > [class*="col-"] {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+/* Responsive Form Adjustments */
+@media (max-width: 768px) {
+  .form-control, .form-select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .form-floating > .form-control {
+    height: calc(3rem + 2px);
+    padding: 0.75rem;
+  }
+  
+  .form-floating > label {
+    padding: 0.75rem;
+  }
+}

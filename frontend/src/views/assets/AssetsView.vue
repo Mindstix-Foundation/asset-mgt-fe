@@ -318,8 +318,7 @@
               <thead class="table-light">
                 <tr>
                   <th>Asset ID</th>
-                  <th>Type</th>
-                  <th>Brand/Model</th>
+                  <th>Asset Details</th>
                   <th>Serial Number</th>
                   <th>Status</th>
                   <th>Assigned To</th>
@@ -338,9 +337,17 @@
                 >
                   <td><strong>{{ asset.id }}</strong></td>
                   <td>
-                    <i :class="getAssetTypeIcon(asset.type)" class="me-2"></i>{{ asset.type }}
+                    <div>
+                      <strong style="color: var(--primary-black);">
+                        {{ asset.model || 'Unknown Model' }}
+                      </strong>
+                      <br>
+                      <small class="text-muted">
+                        {{ asset.type || 'Unknown Type' }} - 
+                        {{ asset.brand || 'Unknown Brand' }}
+                      </small>
+                    </div>
                   </td>
-                  <td>{{ asset.brandModel }}</td>
                   <td>{{ asset.serialNumber }}</td>
                   <td>
                     <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
@@ -350,7 +357,7 @@
                   <td>
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
-                        class="btn btn-outline-primary btn-view-details" 
+                        class="btn btn-outline-primary btn-modern btn-view-details" 
                         @click="viewAssetDetails(asset)"
                         :title="getViewButtonTitle(asset.status)"
                       >
@@ -358,7 +365,7 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'RETIRED'"
-                        class="btn btn-outline-secondary btn-edit-asset" 
+                        class="btn btn-outline-secondary btn-modern btn-edit-asset" 
                         title="Edit Asset"
                         @click="editAsset(asset)"
                       >
@@ -366,7 +373,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'AVAILABLE'"
-                        class="btn btn-outline-success btn-issue-asset" 
+                        class="btn btn-outline-success btn-modern btn-issue-asset" 
                         title="Issue Asset"
                         @click="issueAsset(asset)"
                       >
@@ -374,7 +381,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'ASSIGNED'"
-                        class="btn btn-outline-warning btn-collect-asset" 
+                        class="btn btn-outline-warning btn-modern btn-collect-asset" 
                         title="Collect Asset"
                         @click="collectAsset(asset)"
                       >
@@ -382,13 +389,13 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                        class="btn btn-outline-warning btn-maintenance-action" 
+                        class="btn btn-outline-warning btn-modern btn-maintenance-action" 
                         :title="getMaintenanceButtonTitle(asset.status)"
                         @click="handleMaintenanceAction(asset)"
                       >
                         <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                       </button>
-                      <button class="btn btn-outline-info btn-qr-code" title="View QR Code">
+                      <button class="btn btn-outline-info btn-modern btn-qr-code" title="View QR Code">
                         <i class="fas fa-qrcode"></i>
                       </button>
                     </div>
@@ -396,7 +403,7 @@
                 </tr>
                 <!-- No results row -->
                 <tr v-if="filteredAssets.length === 0">
-                  <td colspan="8" class="text-center py-4">
+                  <td colspan="7" class="text-center py-4">
                     <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
                     <h6 class="text-muted">No items found</h6>
                     <p class="text-muted mb-0">Try adjusting your search criteria</p>
@@ -424,7 +431,7 @@
                     class="rounded-circle d-flex align-items-center justify-content-center me-2" 
                     :style="{ width: '36px', height: '36px', backgroundColor: getAssetTypeColor(asset.type), flexShrink: 0 }"
                   >
-                    <i :class="getAssetTypeIcon(asset.type)" class="text-white" style="font-size: 0.9rem;"></i>
+                    <i :class="getAssetTypeIconClass(asset.type)" class="text-white" style="font-size: 0.9rem;"></i>
                   </div>
                   <div class="flex-grow-1">
                     <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ asset.id }}</h6>
@@ -460,7 +467,7 @@
                 <div class="asset-actions-footer mt-auto pt-2 border-top">
                   <div class="d-flex justify-content-center gap-1">
                     <button 
-                      class="btn btn-action btn-view-details btn-sm" 
+                      class="btn btn-outline-primary btn-modern btn-view-details btn-sm" 
                       @click="viewAssetDetails(asset)"
                       :title="getViewButtonTitle(asset.status)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -469,7 +476,7 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'RETIRED'"
-                      class="btn btn-action btn-edit-asset btn-sm" 
+                      class="btn btn-outline-secondary btn-modern btn-edit-asset btn-sm" 
                       title="Edit Asset"
                       @click="editAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -478,7 +485,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'AVAILABLE'"
-                      class="btn btn-action btn-issue-asset btn-sm" 
+                      class="btn btn-outline-success btn-modern btn-issue-asset btn-sm" 
                       title="Issue Asset"
                       @click="issueAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -487,7 +494,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'ASSIGNED'"
-                      class="btn btn-action btn-collect-asset btn-sm" 
+                      class="btn btn-outline-warning btn-modern btn-collect-asset btn-sm" 
                       title="Collect Asset"
                       @click="collectAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -496,14 +503,14 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                      class="btn btn-action btn-maintenance-action btn-sm" 
+                      class="btn btn-outline-warning btn-modern btn-maintenance-action btn-sm" 
                       :title="getMaintenanceButtonTitle(asset.status)"
                       @click="handleMaintenanceAction(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                     </button>
-                    <button class="btn btn-action btn-qr-code btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    <button class="btn btn-outline-info btn-modern btn-qr-code btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
                       <i class="fas fa-qrcode"></i>
                     </button>
                   </div>
@@ -1348,9 +1355,11 @@ import { differenceInYears, differenceInMonths, differenceInDays, addYears, addM
 import { assetService } from '../../services/business/assetService'
 import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
-import { NotesDisplay, NotesTextarea } from '@/components/common'
-import { DateInput, AppPagination } from '@/components/ui'
+import NotesDisplay from '@/components/common/NotesDisplay.vue'
+import NotesTextarea from '@/components/common/NotesTextarea.vue'
+import DateInput from '@/components/ui/date/DateInput.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -2203,6 +2212,17 @@ const getAssetTypeIcon = (type: string) => {
   return icons[type as keyof typeof icons] || 'fas fa-cube text-primary'
 }
 
+const getAssetTypeIconClass = (type: string) => {
+  const icons = {
+    'Laptop': 'fas fa-laptop',
+    'Monitor': 'fas fa-desktop',
+    'Mobile': 'fas fa-mobile-alt',
+    'Tablet': 'fas fa-tablet-alt',
+    'Accessory': 'fas fa-headphones'
+  }
+  return icons[type as keyof typeof icons] || 'fas fa-cube'
+}
+
 const getAssetTypeColor = (type: string) => {
   const colors = {
     'Laptop': 'var(--secondary-purple)',
@@ -2590,8 +2610,8 @@ onUnmounted(() => {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-/* Make button corners match input field corners for consistency */
-.btn {
+/* Make button corners match input field corners for consistency - but don't override btn-modern */
+.btn:not(.btn-modern) {
   border-radius: 0.375rem !important;
 }
 
@@ -2967,6 +2987,96 @@ onUnmounted(() => {
   font-size: 0.95rem;
   font-style: italic;
   opacity: 0.7;
+}
+
+/* Table spacing adjustments */
+.table th:first-child, .table td:first-child {
+  padding-left: 1.25rem !important;
+}
+
+.table th:last-child, .table td:last-child {
+  padding-right: 0.75rem !important;
+  padding-left: 0.5rem !important;
+}
+
+.asset-actions {
+  justify-content: flex-start !important;
+  gap: 0.25rem !important;
+}
+
+.table-responsive {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fixed column widths for consistent table layout */
+.table th:nth-child(1),
+.table td:nth-child(1) { /* Asset ID */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) { /* Name (Type - Brand - Model) */
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) { /* Serial Number */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) { /* Status */
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  white-space: nowrap !important;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) { /* Assigned To */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) { /* Condition */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) { /* Actions */
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+}
+
+.asset-actions .btn {
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0.25rem !important;
 }
 
 /* Custom Action Button Hover Effects */

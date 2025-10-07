@@ -1,4 +1,4 @@
-import apiClient, { apiService } from './apiClient'
+import apiClient, { apiService } from '../core/apiClient'
 
 export interface Asset {
   id: string
@@ -131,7 +131,7 @@ class MaintenanceService {
 
   // Get all assets for dropdown
   async getAssets(): Promise<ApiResponse<{ assets: Asset[] }>> {
-    return apiService.get('/assets')
+    return apiService.get('/assets/dropdowns')
   }
 
   // Get all maintenance types for dropdown

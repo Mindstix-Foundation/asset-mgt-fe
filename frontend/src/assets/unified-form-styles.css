@@ -213,7 +213,8 @@
 }
 
 /* STANDARDIZED BUTTON SYSTEM - Perfect Consistency */
-.container-fluid.py-4 .btn {
+/* EXCLUDE modals and other non-form components to prevent affecting asset view modals */
+.container-fluid.py-4 .btn:not(.modal .btn):not(.btn-sm):not(.btn-lg) {
     height: 3.25rem;
     padding: 0.875rem 2rem;
     font-size: 1rem;
@@ -231,7 +232,8 @@
 
 
 /* General Button Hover - Subtle Effect */
-.container-fluid.py-4 .btn:hover {
+/* EXCLUDE modals to prevent affecting asset view modals */
+.container-fluid.py-4 .btn:not(.modal .btn):hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -373,7 +375,8 @@
 }
 
 /* Force consistent button spacing regardless of container */
-.container-fluid.py-4 .btn + .btn {
+/* EXCLUDE modals to prevent affecting asset view modals */
+.container-fluid.py-4 .btn:not(.modal .btn) + .btn:not(.modal .btn) {
     margin-left: 1.5rem;
 }
 
@@ -441,13 +444,14 @@
         gap: 1rem;
     }
     
-    .container-fluid.py-4 .btn {
+    /* EXCLUDE modals to prevent affecting asset view modals */
+    .container-fluid.py-4 .btn:not(.modal .btn) {
         width: 100%;
         margin-left: 0;
         min-width: unset;
     }
     
-    .container-fluid.py-4 .btn + .btn {
+    .container-fluid.py-4 .btn:not(.modal .btn) + .btn:not(.modal .btn) {
         margin-left: 0;
         margin-top: 0;
     }
@@ -467,7 +471,8 @@
         padding: 1rem;
     }
     
-    .container-fluid.py-4 .btn {
+    /* EXCLUDE modals to prevent affecting asset view modals */
+    .container-fluid.py-4 .btn:not(.modal .btn) {
         font-size: 0.95rem;
         height: 3rem;
         padding: 0.75rem 1.5rem;

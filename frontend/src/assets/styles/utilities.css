@@ -1,0 +1,533 @@
+/**
+ * Utility Classes - TrackStix Theme
+ * Utility classes and helper styles
+ */
+
+/* General Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #F5F5F5;
+  color: #222222;
+}
+
+#app {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Main Content Container - Responsive margins */
+.container-fluid.py-4 {
+  max-width: calc(100% - 4rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* TrackStix Spacing and Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.text-muted {
+  color: var(--mindstix-secondary) !important;
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Progress Components */
+.progress {
+  border-radius: 1rem;
+  height: 0.5rem !important;
+  background-color: var(--element-gray) !important;
+}
+
+.progress-bar {
+  background-color: var(--mindstix-primary);
+}
+
+/* Progress Stacked Fix for Bootstrap 5 with rounded corners */
+.progress-stacked {
+  display: flex;
+  height: 20px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: var(--mindstix-light);
+}
+
+.progress-stacked .progress {
+  height: 100%;
+  background-color: transparent;
+}
+
+/* Progress Circles */
+.progress-circle {
+  position: relative;
+  display: inline-block;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--mindstix-dark);
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+      opacity: 0;
+      transform: translateY(30px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Alert Styles - TrackStix Theme with rounded corners */
+.alert {
+  border-radius: 1rem;
+}
+
+.alert-primary {
+  color: var(--accent-navy);
+  background-color: rgba(26, 42, 67, 0.1);
+  border-color: rgba(26, 42, 67, 0.2);
+}
+
+.alert-success {
+  color: var(--secondary-green);
+  background-color: rgba(33, 175, 101, 0.1);
+  border-color: rgba(33, 175, 101, 0.2);
+}
+
+.alert-warning {
+  color: var(--secondary-orange);
+  background-color: rgba(255, 140, 97, 0.1);
+  border-color: rgba(255, 140, 97, 0.2);
+}
+
+.alert-danger {
+  color: var(--secondary-red);
+  background-color: rgba(233, 118, 118, 0.1);
+  border-color: rgba(233, 118, 118, 0.2);
+  border-radius: 8px;
+  padding: 0.875rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.alert-danger i {
+  color: var(--secondary-red);
+}
+
+/* Bootstrap Text Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+/* Text primary color - preserve original text color */
+
+body .text-secondary,
+.text-secondary {
+  color: var(--primary-mid-gray) !important;
+}
+
+body .text-success,
+.text-success {
+  color: var(--secondary-green) !important;
+}
+
+body .text-danger,
+.text-danger {
+  color: var(--secondary-red) !important;
+}
+
+body .text-warning,
+.text-warning {
+  color: var(--secondary-orange) !important;
+}
+
+body .text-info,
+.text-info {
+  color: var(--secondary-pink) !important;
+}
+
+body .text-brown,
+.text-brown {
+  color: var(--secondary-brown) !important;
+}
+
+body .text-purple,
+.text-purple {
+  color: var(--secondary-purple) !important;
+}
+
+body .text-blue,
+.text-blue {
+  color: var(--secondary-blue) !important;
+}
+
+body .text-light,
+.text-light {
+  color: var(--primary-light-gray) !important;
+}
+
+body .text-dark,
+.text-dark {
+  color: var(--primary-black) !important;
+}
+
+body .text-muted,
+.text-muted {
+  color: var(--primary-dark-gray) !important;
+}
+
+/* Bootstrap Background Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .bg-primary,
+.bg-primary {
+  background-color: var(--secondary-purple) !important;
+}
+
+body .bg-secondary,
+.bg-secondary {
+  background-color: var(--primary-mid-gray) !important;
+}
+
+body .bg-success,
+.bg-success {
+  background-color: var(--secondary-green) !important;
+}
+
+body .bg-danger,
+.bg-danger {
+  background-color: var(--secondary-red) !important;
+}
+
+body .bg-warning,
+.bg-warning {
+  background-color: var(--secondary-orange) !important;
+}
+
+body .bg-info,
+.bg-info {
+  background-color: var(--secondary-pink) !important;
+}
+
+body .bg-brown,
+.bg-brown {
+  background-color: var(--secondary-brown) !important;
+}
+
+body .bg-light,
+.bg-light {
+  background-color: var(--primary-light-gray) !important;
+}
+
+body .bg-dark,
+.bg-dark {
+  background-color: var(--primary-black) !important;
+}
+
+/* Bootstrap Button Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .btn-primary,
+.btn-primary {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: var(--primary-white) !important;
+}
+
+body .btn-primary:hover,
+body .btn-primary:focus,
+body .btn-primary:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+  background-color: var(--primary-mid-gray) !important;
+  border-color: var(--primary-mid-gray) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-warning {
+  background-color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-info {
+  background-color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-brown {
+  background-color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  color: var(--primary-white) !important;
+}
+
+.btn-brown:hover,
+.btn-brown:focus,
+.btn-brown:active {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* FINAL OVERRIDE: Force all icons to use TrackStix palette colors */
+/* This section has the highest priority to override any external CSS */
+
+/* Force FontAwesome icons to inherit color properly */
+.fas, .far, .fab, .fa {
+  color: inherit !important;
+}
+
+/* Specific icon color overrides for common patterns */
+/* Text primary icons - preserve original icon color */
+
+.text-success .fas,
+.text-success .far,
+.text-success .fab,
+.text-success .fa,
+i.text-success {
+  color: var(--secondary-green) !important;
+}
+
+.text-info .fas,
+.text-info .far,
+.text-info .fab,
+.text-info .fa,
+i.text-info {
+  color: var(--secondary-pink) !important;
+}
+
+.text-warning .fas,
+.text-warning .far,
+.text-warning .fab,
+.text-warning .fa,
+i.text-warning {
+  color: var(--secondary-orange) !important;
+}
+
+.text-danger .fas,
+.text-danger .far,
+.text-danger .fab,
+.text-danger .fa,
+i.text-danger {
+  color: var(--secondary-red) !important;
+}
+
+.text-muted .fas,
+.text-muted .far,
+.text-muted .fab,
+.text-muted .fa,
+i.text-muted {
+  color: var(--primary-dark-gray) !important;
+}
+
+.text-purple .fas,
+.text-purple .far,
+.text-purple .fab,
+.text-purple .fa,
+i.text-purple {
+  color: var(--secondary-purple) !important;
+}
+
+.text-blue .fas,
+.text-blue .far,
+.text-blue .fab,
+.text-blue .fa,
+i.text-blue {
+  color: var(--secondary-blue) !important;
+}
+
+.text-brown .fas,
+.text-brown .far,
+.text-brown .fab,
+.text-brown .fa,
+i.text-brown {
+  color: var(--secondary-brown) !important;
+}
+
+/* Override any remaining Bootstrap default colors */
+.btn-outline-primary i,
+.btn-outline-secondary i,
+.btn-outline-success i,
+.btn-outline-info i,
+.btn-outline-warning i,
+.btn-outline-danger i {
+  color: inherit !important;
+}
+
+/* Force specific asset type icon colors */
+.asset-type-icon i {
+  color: white !important;
+}
+
+/* Ensure action icons use proper colors */
+.action-icon i {
+  color: white !important;
+}
+
+/* Stats icons force colors */
+.stats-icon i {
+  color: white !important;
+}
+
+/* Final catch-all for any missed icons */
+[class*="fa-"] {
+  color: inherit !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .container-fluid.py-4 {
+      max-width: calc(100% - 2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .container-fluid.py-4 {
+      max-width: calc(100% - 1rem);
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+  }
+  
+  .card-body {
+      padding: 1rem;
+  }
+  
+  .modal-dialog {
+      margin: 0.5rem;
+  }
+  
+  .btn-group-sm > .btn, .btn-sm {
+      padding: 0.125rem 0.25rem;
+      font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container-fluid.py-4 {
+      max-width: 100%;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+  }
+  
+  .d-flex.gap-2 {
+      flex-direction: column;
+  }
+  
+  .d-flex.gap-2 > * {
+      margin-bottom: 0.5rem;
+  }
+  
+  .d-flex.gap-2 > *:last-child {
+      margin-bottom: 0;
+  }
+  
+  .table-responsive {
+      font-size: 0.875rem;
+  }
+  
+  .modal-xl, .modal-lg {
+      max-width: 95%;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .navbar, .btn, .dropdown, .modal {
+      display: none !important;
+  }
+  
+  .card {
+      border: 1px solid var(--mindstix-border) !important;
+      break-inside: avoid;
+  }
+  
+  .table {
+      font-size: 12px;
+  }
+}

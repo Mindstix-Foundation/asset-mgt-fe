@@ -1,4 +1,4 @@
-import apiClient from './apiClient'
+import apiClient from '../core/apiClient'
 
 // Types for collect asset API
 export interface ActiveAssignment {

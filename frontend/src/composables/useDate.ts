@@ -6,12 +6,15 @@
 import { ref, computed, type Ref } from 'vue'
 import { parseApiDate, formatDateOnly, formatDateTime, formatDateForInput } from '@/utils/date'
 
+// Type alias for date input values
+type DateInput = string | Date | null
+
 /**
  * Composable for reactive date handling
  * @param initialDate - Optional initial date value
  * @returns Object with date utilities
  */
-export function useDate(initialDate?: string | Date | null) {
+export function useDate(initialDate?: DateInput) {
   const date: Ref<Date | null> = ref(initialDate ? parseApiDate(initialDate) : null)
 
   // Formatted date (display format)
@@ -24,7 +27,7 @@ export function useDate(initialDate?: string | Date | null) {
   const formattedForInput = computed(() => (date.value ? formatDateForInput(date.value) : ''))
 
   // Set new date value
-  const setDate = (newDate: string | Date | null | undefined) => {
+  const setDate = (newDate: DateInput | undefined) => {
     date.value = newDate ? parseApiDate(newDate) : null
   }
 
@@ -34,7 +37,7 @@ export function useDate(initialDate?: string | Date | null) {
   }
 
   // Check if date is valid
-  const isValid = computed(() => date.value !== null && !isNaN(date.value.getTime()))
+  const isValid = computed(() => date.value !== null && !Number.isNaN(date.value.getTime()))
 
   // Check if date is in the past
   const isPast = computed(() => {
@@ -92,7 +95,7 @@ export function useDate(initialDate?: string | Date | null) {
  * @param initialStartDate - Optional initial start date
  * @param initialEndDate - Optional initial end date
  */
-export function useDateRange(initialStartDate?: string | Date | null, initialEndDate?: string | Date | null) {
+export function useDateRange(initialStartDate?: DateInput, initialEndDate?: DateInput) {
   const startDate = useDate(initialStartDate)
   const endDate = useDate(initialEndDate)
 
@@ -127,7 +130,7 @@ export function useDateRange(initialStartDate?: string | Date | null, initialEnd
 /**
  * Get relative time string (e.g., "2 days ago", "in 3 days")
  */
-export function useRelativeTime(date: string | Date | null | undefined) {
+export function useRelativeTime(date: DateInput | undefined) {
   const parsedDate = parseApiDate(date)
   
   if (!parsedDate) return 'Invalid date'

@@ -1,0 +1,46 @@
+/**
+ * Vendor Management Page Styles - TrackStix Theme
+ * Vendor-specific styling and components
+ */
+
+/* =================================
+   VENDOR MANAGEMENT STYLES
+   Matching Prototype Design Exactly
+================================= */
+
+/* Vendor action buttons - Updated Design to match Assets page */
+.vendor-actions .btn {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  min-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+}
+
+.vendor-actions .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
+  filter: brightness(0.92);
+}
+
+/* Specific vendor action button hover colors */
+.vendor-actions .btn-view:hover {
+  /* Preserve original text color */
+  border-color: var(--secondary-purple) !important;
+}
+
+.vendor-actions .btn-edit:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+}

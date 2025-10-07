@@ -2,7 +2,7 @@
   <div class="searchable-dropdown-wrapper">
     <label :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
     <div class="dropdown" ref="dropdownRef">
-      <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
+      <!-- SonarQube false positive: aria-expanded and aria-controls are present via Vue binding -->
       <input
         type="text"
         class="form-control"
@@ -38,7 +38,7 @@
         :disabled="disabled"
         @keydown="handleKeydown"
       />
-      <!-- eslint-disable-next-line vuejs-accessibility/prefer-tag-over-role -->
+      <!-- SonarQube: Using div with role="listbox" is appropriate for custom dropdowns with filtering -->
       <div
         class="dropdown-menu"
         :class="{ 
@@ -65,7 +65,7 @@
           No results found
         </div>
         <!-- Show filtered items when available -->
-        <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props, vuejs-accessibility/prefer-tag-over-role -->
+        <!-- SonarQube false positive: aria-selected is present via Vue binding, button with role="option" is correct for interactive options -->
         <button
           v-else
           v-for="(item, index) in filteredItems"

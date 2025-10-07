@@ -1,4 +1,4 @@
-import { apiService, type ApiResponse } from './apiClient'
+import { apiService, type ApiResponse } from '../core/apiClient'
 
 export interface Brand {
   id: number

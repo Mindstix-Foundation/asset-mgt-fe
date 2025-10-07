@@ -1,0 +1,797 @@
+/**
+ * Maintenance Management Pages Styles - TrackStix Theme
+ * Consolidated styles for all maintenance-related pages:
+ * - MaintenanceView.vue
+ * - MaintenanceHistoryView.vue
+ * - AddMaintenanceView.vue
+ * - EditMaintenanceView.vue
+ * - ScheduleMaintenanceView.vue
+ */
+
+/* =================================
+   MAINTENANCE CARDS GRID STYLES
+   For MaintenanceView.vue
+================================= */
+
+/* Maintenance Cards Grid */
+.maintenance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.maintenance-card {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem !important;
+  transition: all 0.2s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.maintenance-card:hover {
+  border-color: var(--secondary-orange) !important;
+  box-shadow: 0 4px 20px rgba(255, 140, 97, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Maintenance Card Header */
+.maintenance-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.maintenance-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--secondary-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.maintenance-info h5 {
+  color: var(--primary-black) !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.maintenance-info p {
+  color: var(--primary-mid-gray) !important;
+  margin: 0 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Asset Information */
+.asset-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: var(--primary-light-gray);
+  border-radius: 0.5rem;
+}
+
+.asset-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.asset-details h6 {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.125rem !important;
+}
+
+.asset-details p {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.875rem !important;
+  margin: 0 !important;
+}
+
+/* Maintenance Details in Cards */
+.maintenance-card .maintenance-details {
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.detail-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Detail label in maintenance cards */
+.detail-item .detail-label {
+  color: var(--primary-mid-gray) !important;
+  font-weight: 500 !important;
+}
+
+/* Detail value in maintenance cards */
+.detail-item .detail-value {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+}
+
+/* Status Badge */
+.maintenance-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-scheduled {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.status-in-progress {
+  background-color: var(--secondary-purple);
+  color: white;
+}
+
+.status-completed {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.status-cancelled {
+  background-color: var(--secondary-red);
+  color: white;
+}
+
+.status-overdue {
+  background-color: var(--secondary-red);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Maintenance Type Badge */
+.maintenance-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--secondary-purple);
+  color: white;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Progress Bar in Cards */
+.maintenance-card .progress-container {
+  margin-bottom: 1rem;
+}
+
+/* Progress bar in maintenance cards */
+.maintenance-card .progress-bar {
+  height: 8px;
+  background-color: var(--primary-light-gray);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+/* Progress fill in maintenance cards */
+.maintenance-card .progress-fill {
+  height: 100%;
+  background-color: var(--secondary-green);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Progress text in maintenance cards */
+.maintenance-card .progress-text {
+  color: var(--primary-mid-gray);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Cost Information in Cards */
+.maintenance-card .cost-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: var(--primary-light-gray);
+  border-radius: 0.5rem;
+}
+
+/* Cost label in maintenance cards */
+.maintenance-card .cost-label {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Cost value in maintenance cards */
+.maintenance-card .cost-value {
+  color: var(--secondary-green);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Maintenance Actions */
+.maintenance-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: var(--primary-mid-gray);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-light-gray);
+  color: var(--primary-black);
+}
+
+.action-btn.view:hover {
+  background-color: var(--secondary-purple);
+  color: white;
+}
+
+.action-btn.edit:hover {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.action-btn.complete:hover {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.action-btn.cancel:hover {
+  background-color: var(--secondary-red);
+  color: white;
+}
+
+/* Priority Indicator */
+.priority-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.priority-high {
+  background-color: var(--secondary-red);
+}
+
+.priority-medium {
+  background-color: var(--secondary-orange);
+}
+
+.priority-low {
+  background-color: var(--secondary-green);
+}
+
+/* Due Date Warning */
+.due-date-warning {
+  background-color: var(--secondary-red);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Vendor Information in Cards */
+.maintenance-card .vendor-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: var(--primary-light-gray);
+  border-radius: 0.375rem;
+}
+
+.vendor-icon {
+  color: var(--secondary-purple);
+  font-size: 1rem;
+}
+
+.vendor-details h6 {
+  color: var(--primary-black) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.125rem !important;
+}
+
+.vendor-details p {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+}
+
+/* =================================
+   MAINTENANCE HISTORY STYLES
+   For MaintenanceHistoryView.vue
+================================= */
+
+/* Maintenance History Section */
+.maintenance-history-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Maintenance Timeline */
+.maintenance-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.maintenance-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.timeline-item:last-child { 
+  margin-bottom: 0; 
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--primary-mid-gray);
+}
+
+/* Timeline marker colors based on maintenance status */
+.timeline-scheduled .timeline-marker { background: var(--secondary-orange); }
+.timeline-in-progress .timeline-marker { background: var(--secondary-purple); }
+.timeline-completed .timeline-marker { background: var(--secondary-green); }
+.timeline-cancelled .timeline-marker { background: var(--secondary-red); }
+.timeline-overdue .timeline-marker { background: var(--secondary-red); }
+
+.timeline-content { 
+  background: #fafafa; 
+  border: 1px solid #e9ecef; 
+  border-radius: 0.5rem;
+  padding: 1rem; 
+}
+
+/* Event Header */
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.event-icon-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-icon {
+  font-size: 1.25rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-title {
+  color: #495057;
+  font-size: 1.1rem;
+  font-weight: 600; 
+  margin: 0; 
+}
+
+.event-date {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+/* Maintenance Details in Timeline */
+.timeline-content .maintenance-details {
+  background-color: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Detail label in timeline events */
+.detail-row .detail-label {
+  color: var(--primary-dark-gray) !important;
+  font-weight: 600 !important;
+}
+
+/* Detail value in timeline events */
+.detail-row .detail-value {
+  color: var(--primary-black) !important;
+  font-weight: 500 !important;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Cost Information in Timeline */
+.timeline-content .cost-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Cost label in timeline */
+.timeline-content .cost-label {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Cost value in timeline */
+.timeline-content .cost-value {
+  color: var(--secondary-green);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Vendor Information in Timeline */
+.timeline-content .vendor-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.vendor-label {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.vendor-name {
+  color: var(--primary-black);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Progress Bar in Timeline */
+.timeline-content .progress-container {
+  margin-top: 0.75rem;
+}
+
+/* Progress bar in timeline */
+.timeline-content .progress-bar {
+  height: 6px;
+  background-color: var(--primary-light-gray);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Progress fill in timeline */
+.timeline-content .progress-fill {
+  height: 100%;
+  background-color: var(--secondary-green);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Progress text in timeline */
+.timeline-content .progress-text {
+  color: var(--primary-mid-gray);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+/* =================================
+   SHARED MAINTENANCE STYLES
+   Used across all maintenance pages
+================================= */
+
+/* Search and Filters */
+.maintenance-filters {
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input .form-control {
+  padding-left: 2.5rem;
+}
+
+.search-input .search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-mid-gray);
+  z-index: 2;
+}
+
+/* Summary Stats */
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--secondary-purple);
+  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.1);
+}
+
+.stat-number {
+  color: var(--secondary-purple);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--primary-mid-gray);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h4 {
+  color: var(--primary-mid-gray);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state h5 {
+  color: var(--primary-mid-gray);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--primary-mid-gray);
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  color: var(--secondary-orange);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  color: var(--primary-mid-gray);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* =================================
+   RESPONSIVE STYLES
+   For all maintenance pages
+================================= */
+
+@media (max-width: 768px) {
+  .maintenance-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .maintenance-card {
+    padding: 1.25rem !important;
+  }
+  
+  .maintenance-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .maintenance-actions {
+    justify-content: center;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .maintenance-status {
+    position: static;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+  
+  .asset-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .summary-stats {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+  }
+  
+  .stat-number {
+    font-size: 1.25rem;
+  }
+  
+  .event-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .maintenance-card {
+    padding: 1rem !important;
+  }
+  
+  .maintenance-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .maintenance-info h5 {
+    font-size: 1.1rem !important;
+  }
+  
+  .cost-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .maintenance-history-section {
+    padding: 1rem !important;
+  }
+  
+  .timeline-content {
+    padding: 0.75rem;
+  }
+  
+  .summary-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

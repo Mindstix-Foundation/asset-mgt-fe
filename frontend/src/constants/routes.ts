@@ -153,9 +153,9 @@ export function getRoutePath(routeName: RouteName, params?: Record<string, strin
   let path: string = ROUTE_PATHS[routeName]
   
   if (params) {
-    Object.entries(params).forEach(([key, value]) => {
-      path = path.replace(`:${key}`, String(value)) as string
-    })
+    for (const [key, value] of Object.entries(params)) {
+      path = path.replace(`:${key}`, String(value))
+    }
   }
   
   return path

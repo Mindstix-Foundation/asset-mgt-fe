@@ -1,0 +1,330 @@
+/**
+ * Modal Styles - TrackStix Theme
+ * Modal components and overlay styling
+ */
+
+/* Modal Enhancements with rounded corners */
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 2rem);
+  margin: 1rem auto;
+}
+
+.modal-content {
+  border: 1px solid var(--mindstix-border);
+  border-radius: 1rem;
+}
+
+.modal-header {
+  background-color: var(--mindstix-light);
+  border-bottom: 1px solid var(--mindstix-border);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.modal-xl {
+  max-width: 95%;
+}
+
+.modal-lg {
+  max-width: 900px;
+}
+
+/* Modal Footer Button Styling */
+.modal-footer {
+  background-color: var(--primary-light-gray) !important;
+  border-top: 1px solid var(--element-gray) !important;
+  padding: 1rem 1.5rem !important;
+}
+
+.modal-footer .btn {
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.modal-footer .btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(0.92);
+}
+
+.modal-footer .btn-secondary {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-success {
+  background-color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-success:hover {
+  background-color: #1e9c5a !important;
+  border-color: #1e9c5a !important;
+  color: white !important;
+}
+
+.modal-footer .btn-outline-primary {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--secondary-purple) !important;
+  /* Preserve original text color */
+}
+
+.modal-footer .btn-outline-primary:hover {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-cancel {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+.modal-footer .btn-upload-primary {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-upload-primary:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+.modal-footer .btn-pink {
+  background-color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-pink:hover {
+  background-color: #e6478a !important;
+  border-color: #e6478a !important;
+  color: white !important;
+}
+
+.modal-footer .btn-primary-blue {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-primary-blue:hover {
+  background-color: #2415c7 !important;
+  border-color: #2415c7 !important;
+  color: white !important;
+}
+
+.modal-footer .btn-info {
+  background-color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  color: white !important;
+}
+
+.modal-footer .btn-info:hover {
+  background-color: #e67e22 !important;
+  border-color: #e67e22 !important;
+  color: white !important;
+}
+
+/* Modal Footer Button Group */
+.modal-footer .d-flex {
+  gap: 0.5rem !important;
+}
+
+/* Bulk Upload Modal Styles */
+.bulk-upload-modal .modal-header {
+  background-color: var(--primary-light-gray) !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+}
+
+.bulk-upload-modal .modal-body {
+  background-color: var(--primary-white) !important;
+}
+
+.bulk-upload-modal .modal-footer {
+  background-color: var(--primary-light-gray) !important;
+  border-top: 1px solid var(--element-gray) !important;
+}
+
+/* Confirmation Modal Styles */
+#statusConfirmationModal .modal-content {
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.75rem !important;
+}
+
+#statusConfirmationModal .modal-header {
+  background-color: var(--primary-light-gray) !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+#statusConfirmationModal .modal-body {
+  background-color: var(--primary-white) !important;
+  padding: 2rem !important;
+}
+
+#statusConfirmationModal .modal-footer {
+  background-color: var(--primary-light-gray) !important;
+  border-top: 1px solid var(--element-gray) !important;
+  border-radius: 0 0 0.75rem 0.75rem !important;
+  padding: 1.25rem 2rem !important;
+}
+
+.confirmation-icon {
+  animation: pulse 2s infinite;
+}
+
+/* Confirmation Modal Info Box */
+#statusConfirmationModal .modal-body .mt-3 {
+  background-color: var(--primary-light-gray) !important;
+  border-radius: 0.5rem !important;
+  border-left: 4px solid var(--secondary-orange) !important;
+}
+
+/* Modal Backdrop for Confirmation */
+#statusConfirmationModal .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Compact Modal Styling */
+.asset-info-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  height: 100% !important;
+}
+
+.section-title {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+}
+
+.info-grid {
+  display: grid !important;
+  gap: 0.75rem !important;
+}
+
+.info-item {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+
+.info-label {
+  font-size: 0.875rem !important;
+  color: var(--primary-mid-gray) !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.info-value {
+  color: var(--primary-black) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+}
+
+.info-value.fw-bold {
+  font-weight: 600 !important;
+}
+
+.font-monospace {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+  font-size: 0.875rem !important;
+  background-color: var(--primary-light-gray) !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  display: inline-block !important;
+  color: var(--primary-dark-gray) !important;
+}
+
+/* Vendor Detail Modal Styling - Consistent with Assets/Employees Modals */
+.vendor-info-section {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.vendor-info-section .section-title {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.75rem !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+}
+
+.vendor-info-section .info-label {
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  color: var(--primary-dark-gray) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.vendor-info-section .info-value {
+  font-size: 0.9rem !important;
+  color: var(--primary-black) !important;
+  font-weight: 500 !important;
+}
+
+.vendor-info-section .info-item {
+  margin-bottom: 1rem !important;
+}
+
+.vendor-info-section .info-item:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Modal Size Adjustments */
+.modal-lg .modal-body {
+  padding: 1.5rem !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .modal-dialog {
+      margin: 0.5rem;
+  }
+  
+  .info-grid {
+    gap: 0.5rem !important;
+  }
+  
+  .asset-info-section {
+    padding: 0.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-xl, .modal-lg {
+      max-width: 95%;
+  }
+}

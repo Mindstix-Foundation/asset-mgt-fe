@@ -1,5 +1,5 @@
-import { apiService, type ApiResponse } from './apiClient'
-import apiClient from './apiClient'
+import { apiService, type ApiResponse } from '../core/apiClient'
+import apiClient from '../core/apiClient'
 import type {
   Asset,
   AssetListResponse,
@@ -20,6 +20,37 @@ import type { Vendor } from '../types/vendor.types'
 class AssetService {
   private readonly baseEndpoint = '/assets'
 
+  // Helper method to safely convert values to strings for URL parameters
+  private safeStringify(value: any): string {
+    if (value === null || value === undefined) {
+      return ''
+    }
+    if (typeof value === 'string') {
+      return value
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return String(value)
+    }
+    if (Array.isArray(value)) {
+      return value.join(',')
+    }
+    if (typeof value === 'object') {
+      // For objects, try to extract meaningful string representation
+      if (value.id !== undefined) {
+        return String(value.id)
+      }
+      if (value.name !== undefined) {
+        return String(value.name)
+      }
+      if (value.value !== undefined) {
+        return String(value.value)
+      }
+      // Fallback to JSON stringify for complex objects
+      return JSON.stringify(value)
+    }
+    return String(value)
+  }
+
   // Get all assets with filtering and pagination
   async getAssets(params: AssetQueryParams = {}): Promise<AssetListResponse> {
     const searchParams = new URLSearchParams()
@@ -27,7 +58,7 @@ class AssetService {
     // Add all query parameters
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
-        searchParams.append(key, value.toString())
+        searchParams.append(key, this.safeStringify(value))
       }
     }
 
@@ -114,7 +145,7 @@ class AssetService {
     
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
-        searchParams.append(key, value.toString())
+        searchParams.append(key, this.safeStringify(value))
       }
     }
 
@@ -130,7 +161,7 @@ class AssetService {
     
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
-        searchParams.append(key, value.toString())
+        searchParams.append(key, this.safeStringify(value))
       }
     }
 
@@ -455,7 +486,7 @@ class AssetService {
     // Add all query parameters
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
-        searchParams.append(key, value.toString())
+        searchParams.append(key, this.safeStringify(value))
       }
     }
 
