@@ -824,23 +824,15 @@ const showDatePicker = (type: 'from' | 'to') => {
 }
 
 const onDateFromChange = (value: string) => {
-  if (value) {
-    filters.value.dateFromDisplay = value
-    applyFilters()
-  } else {
-    filters.value.dateFromDisplay = ''
-    applyFilters()
-  }
+  filters.value.dateFrom = value
+  filters.value.dateFromDisplay = value
+  applyFilters()
 }
 
 const onDateToChange = (value: string) => {
-  if (value) {
-    filters.value.dateToDisplay = value
-    applyFilters()
-  } else {
-    filters.value.dateToDisplay = ''
-    applyFilters()
-  }
+  filters.value.dateTo = value
+  filters.value.dateToDisplay = value
+  applyFilters()
 }
 
 const formatCurrency = (amount: number | string): string => {
@@ -1006,6 +998,8 @@ const clearFilters = () => {
   for (const input of dateInputs) {
     input.classList.remove('is-invalid')
   }
+  // Apply the cleared filters to reload data
+  applyFilters()
 }
 
 const getEventTitle = (item: AssetHistoryEvent): string => {

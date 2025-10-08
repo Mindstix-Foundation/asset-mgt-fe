@@ -367,6 +367,10 @@ const initializeFromModel = () => {
       displayValue.value = formatDateForDisplay(date)
       currentDate.value = new Date(date)
     }
+  } else {
+    // Clear the internal state when modelValue is empty
+    selectedDate.value = null
+    displayValue.value = ''
   }
 }
 
