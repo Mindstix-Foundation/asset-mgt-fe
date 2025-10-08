@@ -7,7 +7,7 @@
         <p class="text-muted mb-0">Simple form to manage categories, types, brands, models, and vendors</p>
       </div>
       <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-outline-secondary btn-modern" @click="goBack">
+        <button class="btn btn-gray" @click="goBack">
           <i class="fas fa-arrow-left me-1"></i>Back to Assets
         </button>
       </div>
@@ -75,10 +75,10 @@
           <small class="text-muted">Showing {{ items.length }} items</small>
         </div>
         <div class="d-flex gap-2">
-          <button v-if="selectedEntityType !== 'asset'" class="btn btn-primary btn-modern" @click="startAdding">
+          <button v-if="selectedEntityType !== 'asset'" class="btn btn-purple" @click="startAdding">
             <i class="fas fa-plus me-1"></i>Add New
           </button>
-          <button v-if="selectedEntityType === 'asset'" class="btn btn-danger btn-modern" @click="startBulkDelete">
+          <button v-if="selectedEntityType === 'asset'" class="btn btn-red" @click="startBulkDelete">
             <i class="fas fa-trash me-1"></i>Bulk Delete
           </button>
         </div>
@@ -273,7 +273,7 @@ Display: 15.6&quot; FHD"
                       </div>
                       <div class="col-4">
                   <button 
-                    class="btn btn-brown w-100 asset-add-btn" 
+                    class="btn btn-brown w-100" 
                     type="button" 
                     @click="addSingleAsset"
                     :disabled="!singleAssetInput"
@@ -315,7 +315,7 @@ Display: 15.6&quot; FHD"
                        </div>
                        <div class="col-2">
                   <button 
-                    class="btn btn-brown w-100 asset-add-btn" 
+                    class="btn btn-brown w-100" 
                     type="button" 
                     @click="addAssetRange"
                     :disabled="!assetFromInput || !assetToInput"
@@ -362,18 +362,18 @@ Display: 15.6&quot; FHD"
           
           <!-- Form Action Buttons - Bottom Right -->
           <div class="d-flex justify-content-end gap-2 mt-4  ">
-            <button v-if="selectedEntityType !== 'asset'" type="button" class="btn btn-outline-secondary btn-modern" @click="resetForm">
+            <button v-if="selectedEntityType !== 'asset'" type="button" class="btn btn-gray btn-sm" @click="resetForm">
               <i class="fas fa-refresh me-1"></i>Reset
             </button>
-            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-outline-secondary btn-modern" @click="clearAssetSelection">
+            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-gray btn-sm" @click="clearAssetSelection">
               <i class="fas fa-times me-1"></i>Clear
             </button>
-            <button v-if="selectedEntityType !== 'asset'" class="btn btn-success btn-modern" @click="saveEntity" :disabled="isSaving">
+            <button v-if="selectedEntityType !== 'asset'" class="btn btn-green btn-sm" @click="saveEntity" :disabled="isSaving">
               <i v-if="isSaving" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-save me-1"></i>
               {{ isSaving ? 'Saving...' : 'Save' }}
             </button>
-            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-danger btn-modern" @click="confirmBulkDelete" :disabled="selectedAssetsForDeletion.length === 0 || isBulkDeleting">
+            <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-red btn-sm" @click="confirmBulkDelete" :disabled="selectedAssetsForDeletion.length === 0 || isBulkDeleting">
               <i v-if="isBulkDeleting" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-trash me-1"></i>
               {{ isBulkDeleting ? 'Deleting...' : 'Delete' }}
@@ -418,7 +418,7 @@ Display: 15.6&quot; FHD"
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
+              <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
                 <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
               </button>
             </div>
@@ -426,7 +426,7 @@ Display: 15.6&quot; FHD"
             <!-- Filter Button -->
             <div class="col-8">
               <button 
-                class="btn btn-outline-secondary btn-modern w-100" 
+                class="btn btn-gray w-100" 
                 @click="toggleFilterDropdown"
                 :class="{ active: showFilterDropdown }"
               >
@@ -479,7 +479,7 @@ Display: 15.6&quot; FHD"
                 <!-- Clear Button: fixed width (1.5 columns = 12.5%) -->
                 <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-gray" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -582,7 +582,7 @@ Display: 15.6&quot; FHD"
                 <div class="btn-group btn-group-sm asset-actions">
                   <button 
                     v-if="selectedEntityType === 'model'"
-                    class="btn btn-outline-primary btn-view-details" 
+                    class="btn btn-brown" 
                     @click="viewModelDetails(item)"
                     title="View Model Details"
                   >
@@ -590,7 +590,7 @@ Display: 15.6&quot; FHD"
                   </button>
                   <button 
                     v-if="selectedEntityType !== 'asset'"
-                    class="btn btn-outline-danger btn-delete-asset" 
+                    class="btn btn-red" 
                     @click="deleteItem(item)"
                     title="Delete"
                   >
@@ -598,7 +598,7 @@ Display: 15.6&quot; FHD"
                   </button>
                   <button 
                     v-if="selectedEntityType === 'asset'"
-                    class="btn btn-outline-danger btn-delete-asset" 
+                    class="btn btn-red" 
                     @click="deleteSingleAsset(item)"
                     title="Delete Asset"
                   >
@@ -630,7 +630,7 @@ Display: 15.6&quot; FHD"
               <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
               <span>Confirm Deletion</span>
             </h5>
-            <button type="button" class="btn-close" @click="closeDeleteConfirmationModal"></button>
+            <button type="button" class="btn btn-gray btn-sm btn-close" @click="closeDeleteConfirmationModal"></button>
           </div>
           <div class="modal-body" v-if="itemToDelete">
             <div class="text-center py-2">
@@ -788,12 +788,12 @@ Display: 15.6&quot; FHD"
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel-confirm" @click="closeDeleteConfirmationModal">
+            <button type="button" class="btn btn-gray btn-sm" @click="closeDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-confirm-delete"
+              class="btn btn-red btn-sm"
               @click="confirmDelete"
               :disabled="isDeleting || (selectedEntityType !== 'asset' && deleteImpact && (deleteImpact.assetTypes > 0 || deleteImpact.assets > 0 || deleteImpact.models > 0 || deleteImpact.employees > 0))"
             >
@@ -819,7 +819,7 @@ Display: 15.6&quot; FHD"
               <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
               <span>Confirm Bulk Deletion</span>
             </h5>
-            <button type="button" class="btn-close" @click="closeBulkDeleteConfirmationModal"></button>
+            <button type="button" class="btn btn-gray btn-sm btn-close" @click="closeBulkDeleteConfirmationModal"></button>
           </div>
           <div class="modal-body">
             <div class="text-center py-2">
@@ -844,12 +844,12 @@ Display: 15.6&quot; FHD"
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel-confirm" @click="closeBulkDeleteConfirmationModal">
+            <button type="button" class="btn btn-gray btn-sm" @click="closeBulkDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-confirm-delete"
+              class="btn btn-red btn-sm"
               @click="executeBulkDelete"
               :disabled="isBulkDeleting"
             >
@@ -873,7 +873,7 @@ Display: 15.6&quot; FHD"
         <div class="modal-content">
           <div class="modal-header py-2">
             <h5 class="modal-title" style="font-size: 1.1rem;">Model Details - {{ selectedModel.name }}</h5>
-            <button type="button" class="btn-close" @click="closeModelDetailsModal"></button>
+            <button type="button" class="btn btn-gray btn-sm btn-close" @click="closeModelDetailsModal"></button>
           </div>
           <div class="modal-body py-2">
             <!-- Model Information - Full Width -->
@@ -926,8 +926,8 @@ Display: 15.6&quot; FHD"
                 <!-- Left side: Additional actions (none for models) -->
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-secondary btn-sm" @click="closeModelDetailsModal">Close</button>
-                <button type="button" class="btn btn-danger btn-sm" @click="deleteItem(selectedModel)">
+                <button type="button" class="btn btn-gray btn-sm" @click="closeModelDetailsModal">Close</button>
+                <button type="button" class="btn btn-red btn-sm" @click="deleteItem(selectedModel)">
                   <i class="fas fa-trash me-1"></i>Delete Model
                 </button>
               </div>
@@ -2050,252 +2050,19 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Card styling - Using Bootstrap defaults like AssetsView.vue */
+/**
+ * Component-Specific Styles for ManageAssetCategoriesView
+ * All general button, form, badge, modal styles are now in their respective component CSS files:
+ * - buttons.css (button styling)
+ * - form.css (form controls, labels)
+ * - badges.css (badge styling)
+ * - modals.css (modal styling)
+ * - cards.css (card styling)
+ * 
+ * Only page-specific styles that aren't reusable should be here.
+ */
 
-/* Button styling - Matching AssetsView.vue theme */
-.btn {
-  border-radius: 0.375rem !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-modern {
-  border-radius: 0.375rem !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background-color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--mindstix-primary);
-  border-color: var(--mindstix-primary);
-  color: white;
-}
-
-.btn-outline-primary {
-  color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-  color: white;
-}
-
-.btn-outline-secondary {
-  color: var(--primary-mid-gray);
-  border-color: var(--primary-mid-gray);
-}
-
-.btn-outline-secondary:hover {
-  background-color: var(--primary-mid-gray);
-  border-color: var(--primary-mid-gray);
-  color: white;
-}
-
-.btn-success {
-  background-color: var(--secondary-green);
-  border-color: var(--secondary-green);
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: var(--mindstix-success);
-  border-color: var(--mindstix-success);
-  color: white;
-}
-
-/* Form styling - Matching AssetsView.vue theme */
-.form-control, .form-select {
-  border: 1px solid var(--element-gray);
-  border-radius: 0.375rem !important;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  background-color: var(--primary-white);
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: var(--secondary-purple);
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
-  background-color: var(--primary-white);
-}
-
-.form-control::placeholder,
-textarea.form-control::placeholder {
-  color: #6c757d !important;
-  opacity: 1;
-}
-
-/* Target textarea placeholder in NotesTextarea component */
-:deep(.auto-expand-textarea::placeholder) {
-  color: #6c757d !important;
-  opacity: 1 !important;
-}
-
-/* Consistent form label styling - matching NotesTextarea.vue and unified-form-styles.css */
-.form-label {
-  font-weight: 600 !important;
-  color: #666666 !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 1rem !important;
-}
-
-/* Required field asterisk styling */
-.form-label .text-danger {
-  color: #dc2626 !important;
-  font-weight: 700 !important;
-  font-size: 1.1em !important;
-}
-
-/* Optional field text styling */
-.form-label .text-muted {
-  color: #4b5563 !important;
-  font-weight: 600 !important;
-  font-size: 0.9em !important;
-}
-
-/* Match form label styling for SearchableDropdown */
-.searchable-dropdown-wrapper :deep(.form-label) {
-  font-weight: 600 !important;
-  color: #666666 !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 1rem !important;
-}
-
-/* Required field asterisk styling for SearchableDropdown */
-.searchable-dropdown-wrapper :deep(.form-label .text-danger) {
-  color: #dc2626 !important;
-  font-weight: 700 !important;
-  font-size: 1.1em !important;
-}
-
-/* Optional field text styling for SearchableDropdown */
-.searchable-dropdown-wrapper :deep(.form-label .text-muted) {
-  color: #4b5563 !important;
-  font-weight: 600 !important;
-  font-size: 0.9em !important;
-}
-
-.form-text {
-  font-size: 0.875rem;
-  color: var(--primary-mid-gray);
-  margin-top: 0.25rem;
-}
-
-/* Table styling - Using Bootstrap defaults like AssetsView.vue */
-
-/* Badge styling - Matching AssetsView.vue theme */
-.badge {
-  font-weight: 600;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.75rem;
-  border-radius: 0.375rem;
-}
-
-.badge.bg-primary {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.badge.bg-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge.bg-info {
-  background-color: var(--mindstix-primary) !important;
-  color: white !important;
-}
-
-/* Loading states */
-.form-select:disabled {
-  background-color: var(--primary-light-gray);
-  opacity: 0.7;
-  cursor: not-allowed;
-  color: var(--primary-mid-gray);
-}
-
-.form-select:disabled option {
-  color: var(--primary-mid-gray);
-}
-
-/* Modal styling - Matching AssetsView.vue theme */
-.modal-header.bg-danger {
-  background-color: var(--secondary-red) !important;
-  color: white;
-}
-
-.modal-content {
-  border: 1px solid var(--element-gray);
-  border-radius: 0.5rem;
-}
-
-.modal-body {
-  background-color: var(--primary-white);
-}
-
-.modal-footer {
-  background-color: var(--primary-light-gray);
-  border-top: 1px solid var(--element-gray);
-}
-
-.impact-details .card {
-  transition: all 0.2s ease;
-}
-
-.impact-details .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.impact-details .card-body {
-  padding: 1.5rem 1rem;
-}
-
-.impact-details .card-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: var(--primary-black);
-}
-
-.impact-details .card-text {
-  font-size: 0.9rem;
-  color: var(--primary-mid-gray);
-  margin-bottom: 0;
-}
-
-.alert {
-  border-radius: 0.5rem;
-  border: 1px solid var(--element-gray);
-}
-
-.alert-warning {
-  background-color: #fff3cd;
-  border-color: var(--secondary-orange);
-  color: #856404;
-}
-
-.alert-danger {
-  background-color: #f8d7da;
-  border-color: var(--secondary-red);
-  color: #721c24;
-}
-
-.alert-success {
-  background-color: #d1e7dd;
-  border-color: var(--secondary-green);
-  color: #0f5132;
-}
-
-/* Button group styling - Using main.css styling for consistent rounded corners */
-
-/* Form Card - Using same design as filter dropdown in AssetsView.vue */
+/* Form Card Animation - Page specific */
 .form-card {
   border: 1px solid #dee2e6;
   background-color: #f8f9fa !important;
@@ -2312,109 +2079,6 @@ textarea.form-control::placeholder {
     transform: translateY(0);
   }
 }
-
-.btn-group-sm .btn {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-}
-
-
-.btn-outline-danger {
-  color: var(--secondary-red);
-  border-color: var(--secondary-red);
-}
-
-.btn-outline-danger:hover {
-  background-color: var(--secondary-red);
-  color: white;
-  border-color: var(--secondary-red);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .card-header {
-    padding: 1rem;
-  }
-  
-  .card-header .d-flex {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .btn {
-    font-size: 0.875rem;
-  }
-  
-  .table-responsive {
-    font-size: 0.875rem;
-  }
-  
-  .btn-group-sm .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .col-md-2 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .btn {
-    width: 100%;
-  }
-}
-
-/* Additional styles for consistency */
-h2, h5, h6 {
-  color: var(--primary-black);
-}
-
-.text-muted {
-  color: var(--primary-mid-gray) !important;
-}
-
-.spinner-border.text-primary {
-  color: var(--secondary-purple) !important;
-}
-
-/* Card border colors */
-.card.border-warning {
-  border-color: var(--secondary-orange) !important;
-}
-
-.card.border-danger {
-  border-color: var(--secondary-red) !important;
-}
-
-.card.border-info {
-  border-color: var(--mindstix-primary) !important;
-}
-
-.card.border-primary {
-  border-color: var(--secondary-purple) !important;
-}
-
-/* Icon colors in cards */
-.text-warning {
-  color: var(--secondary-orange) !important;
-}
-
-.text-danger {
-  color: var(--secondary-red) !important;
-}
-
-.text-info {
-  color: var(--mindstix-primary) !important;
-}
-
-.text-primary {
-  color: var(--secondary-purple) !important;
-}
-
-/* Action Buttons - Using main.css styling from AssetsView.vue */
-/* The .asset-actions .btn styling is now handled by main.css */
-/* This ensures consistent button appearance across all pages */
 
 /* Entity Type Selection Buttons - Using --secondary-gray color */
 .btn-entity-active {
@@ -2570,197 +2234,21 @@ h2, h5, h6 {
 }
 
 
-/* Modal backdrop */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1040;
-  width: 100vw;
-  height: 100vh;
-  background-color: #000;
-  opacity: 0.5;
-}
-
-/* View Details Button Hover Effect */
-.btn-view-details:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  background-color: rgba(51, 31, 234, 0.1) !important;
-}
-
-/* Delete Button Hover Effect */
-.btn-delete-asset:hover {
-  color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  background-color: rgba(220, 53, 69, 0.1) !important;
-}
-
-/* Assets-specific styling */
-.form-check-input {
-  border-radius: 0.25rem !important;
-  border: 1px solid var(--element-gray) !important;
-}
-
-.form-check-input:checked {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-}
-
-.form-check-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
-}
-
-/* Bulk delete section styling */
-.alert-info {
-  background-color: #d1ecf1;
-  border-color: var(--mindstix-primary);
-  color: #0c5460;
-}
-
-/* Asset selection chips styling */
-.badge.bg-warning {
-  background-color: #8B4513 !important;
-  color: white !important;
-  padding: 0.5rem 0.75rem !important;
-  font-size: 0.875rem !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-}
-
-/* Asset Add Buttons - Consistent sizing across all screen sizes */
-.asset-add-btn {
-  width: 103px !important;
-  height: 38px !important;
-  min-width: 103px !important;
-  max-width: 103px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  border-radius: 0.5rem !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-.asset-add-btn:hover:not(:disabled) {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-.asset-add-btn:disabled {
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* Ensure buttons maintain size on all screen sizes */
-@media (max-width: 1200px) {
-  .asset-add-btn {
-    width: 103px !important;
-    height: 38px !important;
-  }
-}
-
-@media (max-width: 992px) {
-  .asset-add-btn {
-    width: 103px !important;
-    height: 38px !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .asset-add-btn {
-    width: 103px !important;
-    height: 38px !important;
-  }
-}
-
-@media (max-width: 576px) {
-  .asset-add-btn {
-    width: 103px !important;
-    height: 38px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .asset-add-btn {
-    width: 103px !important;
-    height: 38px !important;
-  }
-}
-
-.badge .btn-close {
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  margin-left: 0.5rem !important;
-  opacity: 0.8 !important;
-  transition: opacity 0.2s ease !important;
-}
-
-.badge .btn-close:hover {
-  opacity: 1 !important;
-}
-
-.badge .btn-close::before {
-  content: "×" !important;
-  font-size: 1.2em !important;
-  font-weight: bold !important;
-}
-
-/* Confirmation Modal Buttons */
-.btn-cancel-confirm {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.4rem 1rem !important;
-  font-size: 0.9rem !important;
-}
-
-.btn-cancel-confirm:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-confirm-delete {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.4rem 1rem !important;
-  font-size: 0.9rem !important;
-  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
-}
-
-.btn-confirm-delete:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
-}
-
-.confirmation-icon {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
+/* NOTE: The following styles are now handled by global component CSS files:
+ * - Button hover effects → buttons.css (.btn-action with color variants)
+ * - Form checkboxes → form.css (.form-check-input)
+ * - Alert styles → modals.css (.alert-info)
+ * - Badge close buttons → badges.css (.badge .btn-close)
+ * - Asset selection badges → Use .badge.badge-brown.badge-sm from badges.css
+ * - Asset add buttons → Use .btn.btn-brown.btn-sm from buttons.css
+ * - Confirmation modal buttons → Use .btn-cancel and .btn-red from buttons.css
+ * - Modal backdrop → modals.css
+ * - Pulse animation → modals.css (.confirmation-icon)
+ */
 
 
+</style>
+
+<style>
+@import '@/assets/styles/pages/assets.css';
 </style>

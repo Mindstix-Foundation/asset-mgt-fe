@@ -197,14 +197,9 @@ const validateField = () => {
 }
 
 const getFieldClass = () => {
-  if (isValid.value === null) {
-    return {} // No validation styling before validation
-  }
-  
-  return {
-    'is-valid': isValid.value === true,
-    'is-invalid': isValid.value === false || errorMessage.value
-  }
+  // Don't apply validation classes - let parent components handle validation styling
+  // This prevents Bootstrap's default checkmark/exclamation icons from appearing
+  return {}
 }
 
 const getCounterClass = () => {
@@ -334,32 +329,7 @@ defineExpose({
   border-color: #6b7280;
 }
 
-/* Validation styling */
-.form-control.is-valid {
-  border-color: #21AF65 !important;
-  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
-}
-
-.form-control.is-invalid {
-  border-color: #E97676 !important;
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out;
-}
-
-@keyframes subtle-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc2626;
-  font-weight: 500;
-}
+/* Validation styling removed - now handled by formValidation.css for form pages only */
 
 /* Form labels */
 .form-label {

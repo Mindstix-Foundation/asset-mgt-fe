@@ -52,6 +52,8 @@
   box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
   background-color: var(--bg-primary);
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 0 !important;
 }
 
 .card:hover {
@@ -390,6 +392,12 @@
   margin-top: 2rem;
 }
 
+/* Card body z-index */
+.card-body {
+  position: relative;
+  z-index: 0 !important;
+}
+
 /* Responsive adjustments for cards */
 @media (max-width: 768px) {
   .card-body {
@@ -525,4 +533,23 @@
 
 .warranty-indicator .progress-bar {
   border-radius: 2px !important;
+}
+
+/* =================================
+   FORM CARD FOOTER STYLING
+   For form action buttons container
+================================= */
+
+/* Form card footer styling */
+.card-footer {
+  background: #F3F3F3 !important;
+  border-top: 2px solid #B7B7B7 !important;
+  border-radius: 0 0 1.5rem 1.5rem !important;
+}
+
+/* Form actions container */
+.form-actions {
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
 }

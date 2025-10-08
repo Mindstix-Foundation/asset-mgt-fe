@@ -8,6 +8,8 @@
 .table {
   color: var(--text-secondary);
   /* Remove table-layout: fixed to allow Bootstrap's responsive behavior */
+  position: relative;
+  z-index: 0 !important;
 }
 
 .table thead th {
@@ -15,6 +17,8 @@
   border-bottom: 2px solid var(--element-gray);
   color: var(--text-primary);
   font-weight: 600;
+  position: relative;
+  z-index: 0 !important;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -32,6 +36,8 @@
   border: 1px solid var(--mindstix-border);
   margin: 0 !important;
   padding: 0 !important;
+  position: relative;
+  z-index: 0 !important;
 }
 
 /* Table cell padding adjustments for balanced spacing */
@@ -175,6 +181,35 @@
 /* Employee actions button group spacing */
 .employee-actions {
   gap: 0.25rem !important;
+}
+
+/* =================================
+   Z-INDEX LAYERING FOR DROPDOWNS
+   Ensure tables don't interfere with filter dropdowns
+================================= */
+
+/* Override Bootstrap table stacking context */
+.table-responsive .table {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table body doesn't interfere with dropdowns */
+.table tbody {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table-hover doesn't interfere with dropdowns */
+.table-hover tbody tr {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table-light header doesn't interfere with dropdowns */
+.table-light th {
+  position: relative;
+  z-index: 0 !important;
 }
 
 /* Responsive adjustments */

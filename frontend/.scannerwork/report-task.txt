@@ -1,6 +1,6 @@
-projectKey=asset-fe
+projectKey=TrackStix-Frontend
 serverUrl=http://localhost:9000
 serverVersion=25.10.0.114319
 dashboardUrl=http://localhost:9000/dashboard?id=TrackStix-Frontend
-ceTaskId=1eac5e62-0a97-42d8-880a-6d20479560cd
-ceTaskUrl=http://localhost:9000/api/ce/task?id=1eac5e62-0a97-42d8-880a-6d20479560cd
+ceTaskId=312eac89-fec5-471d-a349-fc17e73094d5
+ceTaskUrl=http://localhost:9000/api/ce/task?id=312eac89-fec5-471d-a349-fc17e73094d5

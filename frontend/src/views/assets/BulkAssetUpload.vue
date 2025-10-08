@@ -181,3 +181,7 @@ defineExpose({
 <style scoped>
 /* Asset-specific styles can be added here */
 </style>
+
+<style>
+@import '@/assets/styles/pages/assets.css';
+</style>

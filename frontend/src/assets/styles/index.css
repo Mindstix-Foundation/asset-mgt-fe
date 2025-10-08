@@ -16,10 +16,11 @@
 @import './components/modals.css';
 @import './components/badges.css';
 @import './components/navigation.css';
+@import './components/form.css';
 @import './components/filters.css';
 @import './components/timeline.css';
 
-/* 4. Page-Specific Styles */
+/* 4. Page-Specific Styles 
 @import './pages/login.css';
 @import './pages/dashboard.css';
 @import './pages/vendors.css';
@@ -29,12 +30,12 @@
 @import './pages/notifications.css';
 @import './pages/profile.css';
 @import './pages/reports.css';
-
+*/
 /* 5. Utility Classes */
 @import './utilities.css';
 
-/* 6. Unified Form Styles - Imported individually by form components */
-/* @import '../unified-form-styles.css'; - Removed: This is imported by individual form components */
+/* 6. Form Validation Styles */
+/* formValidation.css is NOT imported here - it must be imported individually by form pages that need validation */
 
 /**
  * Migration Complete!

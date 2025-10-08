@@ -1,0 +1,741 @@
+/**
+ * Form Components - TrackStix Theme
+ * Unified form component styling for inputs, textareas, labels, searchable dropdowns
+ * Used across all pages (filters, cards, modals, form pages)
+ */
+
+/* =================================
+   BASIC FORM CONTROLS
+   Input fields, textareas, select boxes
+================================= */
+
+/* Input fields base styling */
+input.form-control,
+select.form-select {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 40px !important;
+}
+
+/* Input placeholder styling */
+input.form-control::placeholder,
+select.form-select::placeholder {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+/* Input focus styling */
+input.form-control:focus,
+select.form-select:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Input hover styling */
+input.form-control:hover,
+select.form-select:hover {
+  border-color: #adb5bd !important;
+}
+
+/* Input disabled styling */
+input.form-control:disabled,
+select.form-select:disabled {
+  background-color: #e9ecef !important;
+  opacity: 1 !important;
+  border-color: #ced4da !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+}
+
+/* =================================
+   TEXTAREA STYLING
+   For NotesTextarea components
+================================= */
+
+/* Textarea base styling */
+textarea.form-control,
+.auto-expand-textarea {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  resize: vertical !important;
+  min-height: 2.5rem !important;
+}
+
+/* Textarea placeholder styling */
+textarea.form-control::placeholder,
+.auto-expand-textarea::placeholder {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+/* Textarea focus styling */
+textarea.form-control:focus,
+.auto-expand-textarea:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Textarea hover styling */
+textarea.form-control:hover,
+.auto-expand-textarea:hover {
+  border-color: #adb5bd !important;
+}
+
+/* Textarea disabled styling */
+textarea.form-control:disabled,
+.auto-expand-textarea:disabled {
+  background-color: #e9ecef !important;
+  opacity: 1 !important;
+  border-color: #ced4da !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+}
+
+/* =================================
+   FORM LABELS
+   Consistent label styling
+================================= */
+
+.form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* Form text/help text */
+.form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+/* =================================
+   SEARCHABLE DROPDOWN WRAPPER
+   Ensure consistent height and alignment
+================================= */
+
+.searchable-dropdown-wrapper .form-control {
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+  padding: 0.375rem 0.75rem !important;
+}
+
+/* =================================
+   SEARCH INPUT WITH ICON
+   Google-style search input
+================================= */
+
+/* Search input container */
+.search-input-container {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  border: none !important;
+}
+
+/* Search icon */
+.search-icon {
+  position: absolute !important;
+  left: 0.75rem !important;
+  color: var(--primary-mid-gray) !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  transition: color 0.2s ease !important;
+  font-size: 1rem !important;
+}
+
+/* Search input styling */
+.search-input-container .search-input,
+.search-input-container .form-control {
+  padding-left: 3rem !important;
+  padding-right: 0.75rem !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Dynamic icon color states */
+.search-input-container:focus-within .search-icon {
+  color: #000000 !important;
+}
+
+.search-input-container .search-input:not(:placeholder-shown) ~ .search-icon,
+.search-input-container:has(.search-input:not(:placeholder-shown)) .search-icon {
+  color: #000000 !important;
+}
+
+/* =================================
+   CURRENCY INPUT WITH ICON
+   Currency symbol inside input (like ₹ symbol)
+================================= */
+
+/* Currency input container */
+.currency-input-container {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  border: none !important;
+}
+
+/* Currency symbol */
+.currency-symbol {
+  position: absolute !important;
+  left: 0.75rem !important;
+  color: #666666 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  background-color: #f8f9fa !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  border: 1px solid #dee2e6 !important;
+  margin-right: 0.5rem !important;
+}
+
+/* Currency input styling */
+.currency-input-container .currency-input,
+.currency-input-container .form-control {
+  padding-left: 4.5rem !important; /* More space for currency symbol + padding */
+  padding-right: 0.75rem !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Currency symbol focus state */
+.currency-input-container:focus-within .currency-symbol {
+  border-color: #331FEA !important;
+  background-color: #f0f0ff !important;
+}
+
+/* Alternative: Currency symbol without background (simpler) */
+.currency-symbol-simple {
+  position: absolute !important;
+  left: 0.75rem !important;
+  color: #666666 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
+.currency-input-container .currency-input-simple,
+.currency-input-container .form-control {
+  padding-left: 2.5rem !important; /* Less space for simple symbol */
+  padding-right: 0.75rem !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+}
+
+.currency-input-container:focus-within .currency-symbol-simple {
+  color: #331FEA !important;
+}
+
+/* =================================
+   DATE PICKER STYLES
+================================= */
+
+/* Date Picker Container */
+.date-picker-container {
+  position: relative;
+}
+
+.date-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Date Display Input */
+.date-display {
+  font-family: inherit;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 0.5rem !important;
+  height: 40px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  border: 1px solid #dee2e6 !important;
+  transition: all 0.2s ease !important;
+  color: #212529 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+/* Date Picker Hidden Input */
+.date-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: -1;
+  border-radius: 0.5rem !important;
+  pointer-events: none;
+}
+
+/* Date Icon */
+.date-icon {
+  position: absolute;
+  right: 10px;
+  color: #6c757d;
+  cursor: pointer;
+  z-index: 1;
+  pointer-events: none;
+  font-size: 0.9rem;
+}
+
+/* Date Icon Hover */
+.date-input-container:hover .date-icon {
+  color: #495057;
+}
+
+.date-display:hover {
+  border-color: #adb5bd !important;
+}
+
+.date-display:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Custom Date Picker Container */
+.custom-date-picker-container {
+  position: relative;
+}
+
+/* Positioning wrapper - Contains input and calendar, provides positioning context */
+.date-picker-positioning-wrapper {
+  position: relative;
+  overflow: visible; /* Allow calendar to overflow */
+}
+
+/* Date Input Wrapper */
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.date-input-wrapper .date-icon {
+  right: 12px;
+  color: var(--primary-mid-gray);
+}
+
+.date-input-wrapper:hover .date-icon {
+  color: var(--primary-dark-gray);
+}
+
+.date-display-input {
+  font-family: inherit;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 0.5rem !important;
+  height: 40px !important;
+  padding: 0.75rem 2.5rem 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  border: 1px solid #dee2e6 !important;
+  transition: all 0.2s ease !important;
+  color: #212529 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.date-display-input:hover {
+  border-color: #adb5bd !important;
+}
+
+.date-display-input:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Calendar Dropdown - Positioned relative to positioning wrapper */
+.calendar-dropdown {
+  position: absolute;
+  top: 100%; /* Position directly below the input wrapper */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1060 !important; /* Higher than backdrop to ensure it's visible */
+  background: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: visible; /* Allow content to be fully visible */
+  animation: calendarSlideDown 0.2s ease-out;
+  width: 280px;
+  margin-top: 0; /* No gap - flush with input */
+}
+
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--primary-white);
+  color: var(--text-primary);
+}
+
+.nav-btn {
+  background: var(--element-light-gray);
+  border: none;
+  color: var(--text-primary);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.7rem;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--primary-mid-light);
+  transform: scale(1.05);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.month-year {
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: background 0.2s ease;
+}
+
+.month-year:hover {
+  background: var(--element-light-gray);
+}
+
+.year-chevron {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+}
+
+.year-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Year Picker */
+.year-picker {
+  padding: 0.5rem;
+  background: var(--primary-light-gray);
+  border-bottom: 1px solid var(--element-gray);
+}
+
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+  height: 200px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for year grid */
+.year-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.year-grid::-webkit-scrollbar-track {
+  background: var(--primary-light-gray);
+  border-radius: 3px;
+}
+
+.year-grid::-webkit-scrollbar-thumb {
+  background: var(--primary-mid-light);
+  border-radius: 3px;
+}
+
+.year-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-mid-gray);
+}
+
+.year-btn {
+  background: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.year-btn:hover {
+  background: var(--element-light-gray);
+  border-color: var(--primary-mid-light);
+}
+
+.year-btn.selected {
+  background: var(--secondary-gray);
+  color: var(--primary-white);
+  border-color: var(--secondary-gray);
+}
+
+/* Calendar Grid */
+.calendar-grid {
+  padding: 0.5rem;
+}
+
+.day-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.day-name {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--primary-mid-gray);
+  padding: 0.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.125rem;
+}
+
+.day-btn {
+  background: var(--primary-white);
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+}
+
+.day-btn:hover:not(:disabled) {
+  background: var(--element-light-gray);
+  border-color: var(--primary-mid-light);
+  transform: scale(1.05);
+}
+
+.day-btn.other-month {
+  color: var(--primary-mid-light);
+  background: var(--primary-light-gray);
+}
+
+.day-btn.today {
+  background: var(--primary-white);
+  border-color: var(--secondary-blue);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.day-btn.selected {
+  background: var(--secondary-gray);
+  color: var(--primary-white);
+  border-color: var(--secondary-gray);
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+.day-btn.disabled {
+  color: var(--primary-mid-light);
+  background: var(--primary-light-gray);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.day-btn.disabled:hover {
+  transform: none;
+  background: var(--primary-light-gray);
+}
+
+/* Calendar Footer */
+.calendar-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--primary-light-gray);
+  border-top: 1px solid var(--element-gray);
+}
+
+.footer-btn {
+  background: none;
+  border: none;
+  color: var(--primary-mid-gray);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.footer-btn:hover {
+  background: var(--element-light-gray);
+  color: var(--primary-dark-gray);
+}
+
+.clear-btn:hover {
+  color: var(--secondary-red);
+}
+
+.today-btn:hover {
+  color: var(--secondary-purple);
+}
+
+/* Calendar Backdrop */
+.calendar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1040;
+  background: transparent;
+}
+
+/* =================================
+   ANIMATIONS
+================================= */
+
+@keyframes calendarSlideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* =================================
+   FORM FIELDSET STYLING
+   For grouped form sections
+================================= */
+
+/* Form fieldset styling - Component specific */
+.form-fieldset {
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  background: rgba(243, 243, 243, 0.3);
+  position: relative;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-fieldset:hover {
+  border-color: #B7B7B7 !important;
+  background: rgba(243, 243, 243, 0.5);
+  transition: all 0.2s ease;
+}
+
+.form-legend {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  background-color: #FFFFFF !important;
+  padding: 0.375rem 0.75rem !important;
+  border: 1px solid #B7B7B7 !important;
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+  width: auto !important;
+  float: none !important;
+}
+
+/* =================================
+   FORM CHECKBOXES
+   Checkbox styling for forms
+================================= */
+
+.form-check-input {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--element-gray) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+================================= */
+
+@media (max-width: 576px) {
+  .calendar-dropdown {
+    width: 260px;
+  }
+  
+  .calendar-header {
+    padding: 0.5rem;
+  }
+  
+  .calendar-grid {
+    padding: 0.5rem;
+  }
+  
+  .day-btn {
+    padding: 0.25rem;
+    min-height: 24px;
+    font-size: 0.7rem;
+  }
+  
+  .year-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+

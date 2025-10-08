@@ -1130,8 +1130,8 @@ watch(() => formData.notes, (newValue) => {
 </script>
 
 <style scoped>
-/* Import the unified form styles */
-@import url('../../assets/unified-form-styles.css');
+/* Import form validation styles */
+@import url('../../assets/styles/formValidation.css');
 
 /* Additional component-specific styles */
 .auto-expand-textarea {

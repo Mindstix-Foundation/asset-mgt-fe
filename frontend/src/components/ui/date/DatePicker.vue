@@ -5,23 +5,25 @@
       <span v-if="required" class="text-danger">*</span>
     </label>
     
-    <div class="date-input-wrapper" @click="toggleCalendar">
-      <input 
-        v-model="displayValue" 
-        type="text" 
-        class="form-control date-display-input"
-        :class="inputClass"
-        :placeholder="placeholder"
-        :id="inputId"
-        readonly
-        @focus="onFocus"
-        @blur="onBlur"
-      >
-      <i class="fas fa-calendar-alt date-icon"></i>
-    </div>
-    
-    <!-- Custom Calendar Dropdown -->
-    <div v-if="showCalendar" class="calendar-dropdown" @click.stop>
+    <!-- Positioning wrapper for input and calendar only -->
+    <div class="date-picker-positioning-wrapper">
+      <div class="date-input-wrapper" @click="toggleCalendar">
+        <input 
+          v-model="displayValue" 
+          type="text" 
+          class="form-control date-display-input"
+          :class="inputClass"
+          :placeholder="placeholder"
+          :id="inputId"
+          readonly
+          @focus="onFocus"
+          @blur="onBlur"
+        >
+        <i class="fas fa-calendar-alt date-icon"></i>
+      </div>
+      
+      <!-- Custom Calendar Dropdown - Positioned relative to positioning wrapper -->
+      <div v-if="showCalendar" class="calendar-dropdown" @click.stop>
       <div class="calendar-header">
         <button type="button" class="nav-btn" @click="previousMonth" :disabled="isMinMonth">
           <i class="fas fa-chevron-left"></i>
@@ -76,14 +78,15 @@
         </div>
       </div>
       
-      <!-- Calendar Footer -->
-      <div class="calendar-footer">
-        <button type="button" class="footer-btn clear-btn" @click="clearDate">
-          <i class="fas fa-times"></i> Clear
-        </button>
-        <button type="button" class="footer-btn today-btn" @click="selectToday">
-          <i class="fas fa-calendar-day"></i> Today
-        </button>
+        <!-- Calendar Footer -->
+        <div class="calendar-footer">
+          <button type="button" class="footer-btn clear-btn" @click="clearDate">
+            <i class="fas fa-times"></i> Clear
+          </button>
+          <button type="button" class="footer-btn today-btn" @click="selectToday">
+            <i class="fas fa-calendar-day"></i> Today
+          </button>
+        </div>
       </div>
     </div>
     

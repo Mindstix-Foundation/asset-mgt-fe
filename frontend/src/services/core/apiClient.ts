@@ -38,7 +38,7 @@ const isAuthEndpoint = (url?: string): boolean => {
 
 // Helper: Check if user is on a login/auth page
 const isOnAuthPage = (): boolean => {
-  if (typeof globalThis.window === 'undefined') return false
+  if (globalThis.window === undefined) return false
   const authPages = ['/', '/login', '/forgot-password', '/reset-password']
   return authPages.includes(globalThis.window.location.pathname)
 }

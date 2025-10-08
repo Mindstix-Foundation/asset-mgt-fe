@@ -11,8 +11,24 @@
  * Modal components and overlay styling
  */
 
-/* Modal Enhancements with rounded corners */
+/* =================================
+   MODAL Z-INDEX LAYERING
+   Ensure modals appear above all content including filters
+================================= */
+
+/* Modal container - higher than filters (1060) */
+.modal {
+  z-index: 1070 !important;
+}
+
+/* Modal backdrop - between filters and modal */
+.modal-backdrop {
+  z-index: 1065 !important;
+}
+
+/* Modal dialog - ensure it's above backdrop with positioning */
 .modal-dialog {
+  z-index: 1070 !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -580,6 +596,17 @@
 /* Modal Size Adjustments */
 .modal-lg .modal-body {
   padding: 1.5rem !important;
+}
+
+/* =================================
+   ALERT STYLES
+   Alert customization for modals
+================================= */
+
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: var(--mindstix-primary);
+  color: #0c5460;
 }
 
 /* Responsive Adjustments */

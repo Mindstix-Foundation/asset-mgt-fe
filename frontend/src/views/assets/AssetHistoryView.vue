@@ -1037,3 +1037,7 @@ onMounted(async () => {
 })
 </script>
 
+<style>
+@import '@/assets/styles/pages/assets.css';
+</style>
+

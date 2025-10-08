@@ -25,7 +25,7 @@
             </div>
             
             <!-- Form -->
-            <form v-else @submit.prevent="handleSubmit" class="needs-validation" :class="{ 'was-validated': wasValidated }" novalidate>
+            <form v-else ref="assetForm" @submit.prevent="handleSubmit" class="needs-validation" :class="{ 'was-validated': wasValidated }" @keydown.enter="handleEnterKey" novalidate autocomplete="off">
               
               <!-- Section 1: Basic Asset Information -->
               <fieldset class="form-fieldset">
@@ -61,14 +61,16 @@
                       class="form-control" 
                       id="serialNumber" 
                       v-model="formData.serialNumber"
+                      :class="getFieldClass('serialNumber')"
                       placeholder="Enter serial number" 
                       required 
                       minlength="3" 
                       maxlength="50" 
                       pattern="[A-Za-z0-9\-_]{3,50}"
                       title="Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)"
-                      @blur="validateSerialNumber"
-                      @input="clearFieldError('serialNumber')"
+                      @blur="validateFieldInline('serialNumber')"
+                      @focus="clearFieldValidation('serialNumber')"
+                      @input="handleFieldInput('serialNumber')"
                     >
                     <div class="form-text">3-50 characters (letters, numbers, hyphens, underscores only)</div>
                     <div class="invalid-feedback">{{ errors.serialNumber }}</div>
@@ -202,8 +204,8 @@
                       v-model="formData.purchaseDate"
                       :max="todayDate"
                       help-text="Cannot be future date"
-                      @change="clearFieldError('purchaseDate')"
-                      @blur="validateField('purchaseDate')"
+                      @change="handleFieldInput('purchaseDate')"
+                      @blur="validateFieldInline('purchaseDate')"
                     />
                   </div>
 
@@ -212,20 +214,22 @@
                     <label for="purchaseCost" class="form-label">
                       Purchase Cost <span class="text-muted">(Optional)</span>
                     </label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
+                    <div class="search-input-container">
+                      <span class="search-icon">₹</span>
                       <input 
                         type="number" 
-                        class="form-control" 
+                        class="form-control search-input" 
                         id="purchaseCost" 
                         v-model="formData.purchaseCost"
+                        :class="getFieldClass('purchaseCost')"
                         placeholder="0.00" 
                         step="0.01" 
                         min="0" 
                         max="1000000"
                         title="Purchase cost cannot exceed ₹10,00,000"
-                        @blur="validateField('purchaseCost')"
-                        @input="clearFieldError('purchaseCost')"
+                        @blur="validateFieldInline('purchaseCost')"
+                        @focus="clearFieldValidation('purchaseCost')"
+                        @input="handleFieldInput('purchaseCost')"
                       >
                     </div>
                     <div class="form-text">Enter amount in Indian Rupees (max ₹10,00,000)</div>
@@ -255,36 +259,26 @@
                 <div class="row g-4">
                   <!-- Warranty Start Date -->
                   <div class="col-md-6">
-                    <label for="warrantyStartDate" class="form-label">
-                      Warranty Start Date <span class="text-muted">(Optional)</span>
-                    </label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
+                    <DatePicker
                       id="warrantyStartDate" 
+                      label="Warranty Start Date (Optional)"
                       v-model="formData.warrantyStartDate"
-                      @blur="validateWarrantyDates"
-                      @input="clearFieldError('warrantyStartDate')"
-                    >
-                    <div class="form-text">When warranty coverage begins</div>
-                    <div class="invalid-feedback">{{ errors.warrantyStartDate }}</div>
+                      help-text="When warranty coverage begins"
+                      @change="handleFieldInput('warrantyStartDate')"
+                      @blur="validateFieldInline('warrantyStartDate')"
+                    />
                   </div>
 
                   <!-- Warranty End Date -->
                   <div class="col-md-6">
-                    <label for="warrantyEndDate" class="form-label">
-                      Warranty End Date <span class="text-muted">(Optional)</span>
-                    </label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
+                    <DatePicker
                       id="warrantyEndDate" 
+                      label="Warranty End Date (Optional)"
                       v-model="formData.warrantyEndDate"
-                      @blur="validateWarrantyDates"
-                      @input="clearFieldError('warrantyEndDate')"
-                    >
-                    <div class="form-text">When warranty coverage expires</div>
-                    <div class="invalid-feedback">{{ errors.warrantyEndDate }}</div>
+                      help-text="When warranty coverage expires"
+                      @change="handleFieldInput('warrantyEndDate')"
+                      @blur="validateFieldInline('warrantyEndDate')"
+                    />
                   </div>
                 </div>
               </fieldset>
@@ -303,13 +297,15 @@
                       class="form-control" 
                       id="location" 
                       v-model="formData.location"
+                      :class="getFieldClass('location')"
                       placeholder="e.g., Warehouse A, Shelf B2" 
                       required 
                       minlength="2" 
                       maxlength="100"
                       title="Location must be 2-100 characters"
-                      @blur="validateField('location')"
-                      @input="clearFieldError('location')"
+                      @blur="validateFieldInline('location')"
+                      @focus="clearFieldValidation('location')"
+                      @input="handleFieldInput('location')"
                     >
                     <div class="form-text">Physical location where asset is stored (2-100 characters)</div>
                   </div>
@@ -416,7 +412,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { assetService } from '@/services/business/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
@@ -431,6 +427,9 @@ import type { AssetType } from '@/services/api/assetTypeService'
 import type { Brand } from '@/services/api/brandService'
 import type { Model } from '@/services/api/modelService'
 import type { Vendor } from '@/types/vendor.types'
+
+// Type aliases
+type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
 // Props
 interface Props {
@@ -524,13 +523,19 @@ const errors = reactive({
   notes: ''
 })
 
+// Validation state management (following EmployeeForm pattern)
+const fieldValidation = reactive<Record<string, boolean | null>>({})
 const wasValidated = ref(false)
 const isSubmitting = ref(false)
 const isLoading = ref(false)
 const notesExpanded = ref(false)
+const formSubmitted = ref(false)
 
 // Store original asset data for comparison (only in edit mode)
 const originalAssetData = ref<any>(null)
+
+// Template refs
+const assetForm = ref<HTMLFormElement>()
 
 // API Data
 const categories = ref<AssetCategory[]>([])
@@ -700,52 +705,290 @@ const availableStatusOptions = computed(() => {
   }
 })
 
-// Methods
-const validateSerialNumber = async () => {
-  const field = document.getElementById('serialNumber') as HTMLInputElement
-  if (!field) return
+// Validation system (following EmployeeForm pattern)
+const getFieldClass = (fieldName: string) => {
+  if (!formSubmitted.value && fieldValidation[fieldName] === null) {
+    return {}
+  }
+  
+  return {
+    'is-valid': fieldValidation[fieldName] === true,
+    'is-invalid': fieldValidation[fieldName] === false || errors[fieldName as keyof typeof errors]
+  }
+}
 
-  // Clear previous validation state
-  field.classList.remove('is-invalid', 'is-valid')
-  errors.serialNumber = ''
+const setFieldError = (fieldName: string, message: string) => {
+  errors[fieldName as keyof typeof errors] = message
+  fieldValidation[fieldName] = false
+  
+  const element = document.getElementById(fieldName) as FormElement
+  if (element && 'setCustomValidity' in element) {
+    element.setCustomValidity(message)
+  }
+}
 
-  // Basic validation first
-  if (!formData.serialNumber || formData.serialNumber.trim() === '') {
-    errors.serialNumber = 'Serial number is required'
-    field.classList.add('is-invalid')
-    return
+const setFieldValid = (fieldName: string) => {
+  delete errors[fieldName as keyof typeof errors]
+  fieldValidation[fieldName] = true
+  
+  const element = document.getElementById(fieldName) as FormElement
+  if (element && 'setCustomValidity' in element) {
+    element.setCustomValidity('')
+  }
+}
+
+const clearFieldValidation = (fieldName: string) => {
+  if (fieldValidation[fieldName] === false) {
+    fieldValidation[fieldName] = null
+    delete errors[fieldName as keyof typeof errors]
+  }
+}
+
+const handleFieldInput = (fieldName: string) => {
+  if (fieldValidation[fieldName] === false && (formData as any)[fieldName]?.toString().trim()) {
+    validateFieldInline(fieldName)
+  }
+}
+
+const validateFieldInline = async (fieldName: string) => {
+  const value = (formData as any)[fieldName]
+  const element = document.getElementById(fieldName) as FormElement
+  
+  // Handle dropdown fields that don't have direct HTML form elements
+  const dropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'vendor', 'status']
+  if (dropdownFields.includes(fieldName)) {
+    const isFieldValid = await validateFieldType(fieldName, value)
+    return isFieldValid
+  }
+  
+  if (!element) return true
+
+  // Only call setCustomValidity if the element supports it
+  if ('setCustomValidity' in element) {
+    element.setCustomValidity('')
   }
 
-  if (formData.serialNumber.length < 3 || formData.serialNumber.length > 50) {
-    errors.serialNumber = 'Serial number must be 3-50 characters'
-    field.classList.add('is-invalid')
-    return
+  const isRequired = element.hasAttribute('required')
+  
+  if (isRequired && (!value || value.toString().trim() === '')) {
+    setFieldError(fieldName, '')
+    return false
   }
 
-  if (!/^[A-Za-z0-9\-_]{3,50}$/.test(formData.serialNumber)) {
-    errors.serialNumber = 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)'
-    field.classList.add('is-invalid')
-    return
+  const isFieldValid = await validateFieldType(fieldName, value)
+  if (!isFieldValid) {
+    return false
+  }
+
+  // Only call checkValidity if the element supports it
+  if ('checkValidity' in element) {
+    if (element.checkValidity()) {
+      setFieldValid(fieldName)
+      return true
+    } else {
+      setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+      return false
+    }
+  } else {
+    // For elements that don't support checkValidity, just use our validation result
+    setFieldValid(fieldName)
+    return true
+  }
+}
+
+const validateFieldType = async (fieldName: string, value: any): Promise<boolean> => {
+  switch (fieldName) {
+    case 'serialNumber':
+      return await validateSerialNumberField(value)
+    case 'location':
+      return validateLocationField(value)
+    case 'purchaseDate':
+      return validatePurchaseDateField(value)
+    case 'purchaseCost':
+      return validatePurchaseCostField(value)
+    case 'warrantyStartDate':
+    case 'warrantyEndDate':
+      return validateWarrantyDateField(fieldName, value)
+    case 'notes':
+      return validateNotesField(value)
+    case 'assetCategory':
+      return validateRequiredDropdownField('assetCategory', selectedCategory.value)
+    case 'assetType':
+      return validateRequiredDropdownField('assetType', selectedType.value)
+    case 'brand':
+      return validateRequiredDropdownField('brand', selectedBrand.value)
+    case 'model':
+      return validateRequiredDropdownField('model', selectedModel.value)
+    case 'condition':
+      return validateRequiredDropdownField('condition', selectedCondition.value)
+    case 'vendor':
+      return validateOptionalDropdownField('vendor', selectedVendor.value)
+    case 'status':
+      return validateOptionalDropdownField('status', selectedStatus.value)
+    default:
+      return true
+  }
+}
+
+const validateRequiredDropdownField = (fieldName: string, selectedValue: any): boolean => {
+  if (selectedValue) {
+    setFieldValid(fieldName)
+    return true
+  } else {
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+    return false
+  }
+}
+
+const validateOptionalDropdownField = (fieldName: string, selectedValue: any): boolean => {
+  // Optional fields are always valid
+  setFieldValid(fieldName)
+  return true
+}
+
+// Field validation functions (following EmployeeForm pattern)
+const validateSerialNumberField = async (value: any): Promise<boolean> => {
+  if (!value || value.toString().trim() === '') {
+    setFieldError('serialNumber', 'Serial number is required')
+    return false
+  }
+
+  const serialNumber = value.toString().trim()
+  if (serialNumber.length < 3 || serialNumber.length > 50) {
+    setFieldError('serialNumber', 'Serial number must be 3-50 characters')
+    return false
+  }
+
+  if (!/^[A-Za-z0-9\-_]{3,50}$/.test(serialNumber)) {
+    setFieldError('serialNumber', 'Serial number must be 3-50 characters (letters, numbers, hyphens, underscores only)')
+    return false
   }
 
   // Check uniqueness via API
   try {
     const excludeAssetId = props.isEditMode && props.asset ? props.asset.id : undefined
-    const result = await assetService.checkSerialNumberUnique(formData.serialNumber.trim(), excludeAssetId)
+    const result = await assetService.checkSerialNumberUnique(serialNumber, excludeAssetId)
     
     if (result.isUnique) {
-      errors.serialNumber = ''
-      field.classList.add('is-valid')
+      setFieldValid('serialNumber')
+      return true
     } else {
-      errors.serialNumber = `Serial number '${formData.serialNumber}' is already in use by asset ${result.existingAsset?.assetId || 'unknown'}`
-      field.classList.add('is-invalid')
+      setFieldError('serialNumber', `Serial number '${serialNumber}' is already in use by asset ${result.existingAsset?.assetId || 'unknown'}`)
+      return false
     }
   } catch (error) {
     console.error('Error checking serial number uniqueness:', error)
     // On error, assume it's valid to avoid blocking the user
-    errors.serialNumber = ''
-    field.classList.add('is-valid')
+    setFieldValid('serialNumber')
+    return true
   }
+}
+
+const validateLocationField = (value: any): boolean => {
+  if (!value || value.toString().trim() === '') {
+    setFieldError('location', 'Location is required')
+    return false
+  }
+  
+  const location = value.toString().trim()
+  if (location.length < 2 || location.length > 100) {
+    setFieldError('location', 'Location must be 2-100 characters')
+    return false
+  }
+  
+  setFieldValid('location')
+  return true
+}
+
+const validatePurchaseDateField = (value: any): boolean => {
+  if (!value) {
+    setFieldValid('purchaseDate')
+    return true
+  }
+  
+  if (value > todayDate.value) {
+    setFieldError('purchaseDate', 'Purchase date cannot be in the future')
+    return false
+  }
+  
+  setFieldValid('purchaseDate')
+  return true
+}
+
+const validatePurchaseCostField = (value: any): boolean => {
+  if (!value) {
+    setFieldValid('purchaseCost')
+    return true
+  }
+  
+  const cost = Number.parseFloat(value.toString())
+  if (Number.isNaN(cost) || cost < 0) {
+    setFieldError('purchaseCost', 'Purchase cost must be a valid positive number')
+    return false
+  }
+  
+  if (cost > 1000000) {
+    setFieldError('purchaseCost', 'Purchase cost cannot exceed ₹10,00,000')
+    return false
+  }
+  
+  setFieldValid('purchaseCost')
+  return true
+}
+
+const validateWarrantyDateField = (fieldName: string, value: any): boolean => {
+  if (!value) {
+    setFieldValid(fieldName)
+    return true
+  }
+  
+  // Validate that warranty start date is not in the future
+  if (fieldName === 'warrantyStartDate' && value > todayDate.value) {
+    setFieldError(fieldName, 'Warranty start date cannot be in the future')
+    return false
+  }
+  
+  // Validate that warranty end date is not in the future
+  if (fieldName === 'warrantyEndDate' && value > todayDate.value) {
+    setFieldError(fieldName, 'Warranty end date cannot be in the future')
+    return false
+  }
+  
+  // Validate that warranty end date is after start date (if both are provided)
+  if (fieldName === 'warrantyEndDate' && formData.warrantyStartDate && value < formData.warrantyStartDate) {
+    setFieldError(fieldName, 'Warranty end date must be after start date')
+    return false
+  }
+  
+  // Validate that warranty start date is before end date (if both are provided)
+  if (fieldName === 'warrantyStartDate' && formData.warrantyEndDate && value > formData.warrantyEndDate) {
+    setFieldError(fieldName, 'Warranty start date must be before end date')
+    return false
+  }
+  
+  setFieldValid(fieldName)
+  return true
+}
+
+const validateNotesField = (value: any): boolean => {
+  if (!value) {
+    setFieldValid('notes')
+    return true
+  }
+  
+  const notes = value.toString().trim()
+  if (notes.length > 1000) {
+    setFieldError('notes', 'Notes cannot exceed 1000 characters')
+    return false
+  }
+  
+  setFieldValid('notes')
+  return true
+}
+
+// Legacy validation function (kept for backward compatibility)
+const validateSerialNumber = async () => {
+  await validateFieldInline('serialNumber')
 }
 
 // Helper functions for field validation
@@ -800,15 +1043,15 @@ const validatePurchaseCost = (field: HTMLInputElement) => {
     field.classList.remove('is-valid')
   }
   
-  // Also add validation class to input group
-  const inputGroup = field.closest('.input-group')
-  if (inputGroup) {
+  // Also add validation class to search input container
+  const searchContainer = field.closest('.search-input-container')
+  if (searchContainer) {
     if (isValid) {
-      inputGroup.classList.add('is-valid')
-      inputGroup.classList.remove('is-invalid')
+      searchContainer.classList.add('is-valid')
+      searchContainer.classList.remove('is-invalid')
     } else {
-      inputGroup.classList.add('is-invalid')
-      inputGroup.classList.remove('is-valid')
+      searchContainer.classList.add('is-invalid')
+      searchContainer.classList.remove('is-valid')
     }
   }
 }
@@ -966,10 +1209,10 @@ const onCategoryChange = async (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('assetCategory')
+    clearFieldValidation('assetCategory')
   }
   
-  validateField('assetCategory')
+  validateFieldInline('assetCategory')
 }
 
 const onTypeChange = async (item: Item | null) => {
@@ -998,10 +1241,10 @@ const onTypeChange = async (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('assetType')
+    clearFieldValidation('assetType')
   }
   
-  validateField('assetType')
+  validateFieldInline('assetType')
 }
 
 const onBrandChange = async (item: Item | null) => {
@@ -1026,10 +1269,10 @@ const onBrandChange = async (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('brand')
+    clearFieldValidation('brand')
   }
   
-  validateField('brand')
+  validateFieldInline('brand')
 }
 
 const onModelChange = async (item: Item | null) => {
@@ -1041,10 +1284,10 @@ const onModelChange = async (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('model')
+    clearFieldValidation('model')
   }
   
-  validateField('model')
+  validateFieldInline('model')
 }
 
 const onVendorChange = (item: Item | null) => {
@@ -1053,10 +1296,10 @@ const onVendorChange = (item: Item | null) => {
   
   // Clear validation error when user makes a selection (vendor is optional)
   if (item) {
-    clearFieldError('vendor')
+    clearFieldValidation('vendor')
   }
   
-  validateField('vendor')
+  validateFieldInline('vendor')
 }
 
 const onConditionChange = (item: Item | null) => {
@@ -1065,10 +1308,10 @@ const onConditionChange = (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('condition')
+    clearFieldValidation('condition')
   }
   
-  validateField('condition')
+  validateFieldInline('condition')
 }
 
 const onStatusChange = (item: Item | null) => {
@@ -1077,37 +1320,53 @@ const onStatusChange = (item: Item | null) => {
   
   // Clear validation error when user makes a selection
   if (item) {
-    clearFieldError('status')
+    clearFieldValidation('status')
   }
   
-  validateField('status')
+  validateFieldInline('status')
+}
+
+// Helper function to get DatePicker input element
+const getDatePickerInput = (elementId: string): HTMLInputElement | null => {
+  const datePicker = document.getElementById(elementId)
+  return datePicker?.querySelector('input') as HTMLInputElement || null
+}
+
+// Helper function to set DatePicker validation state
+const setDatePickerValidation = (elementId: string, isValid: boolean, hasValue: boolean = false) => {
+  const input = getDatePickerInput(elementId)
+  if (!input) return
+  
+  if (isValid) {
+    input.classList.remove('is-invalid')
+    if (hasValue) input.classList.add('is-valid')
+  } else {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  }
+}
+
+// Helper function to validate warranty date relationship
+const isWarrantyDateRangeValid = (): boolean => {
+  return !formData.warrantyStartDate || 
+         !formData.warrantyEndDate || 
+         formData.warrantyEndDate >= formData.warrantyStartDate
 }
 
 // Warranty date validation
 const validateWarrantyDates = () => {
-  if (formData.warrantyStartDate && formData.warrantyEndDate && formData.warrantyEndDate < formData.warrantyStartDate) {
+  if (!isWarrantyDateRangeValid()) {
     errors.warrantyEndDate = 'Warranty end date must be after start date'
-    const field = document.getElementById('warrantyEndDate') as HTMLInputElement
-    if (field) {
-      field.classList.add('is-invalid')
-      field.classList.remove('is-valid')
-    }
+    setDatePickerValidation('warrantyEndDate', false)
     return false
-  } else {
-    errors.warrantyEndDate = ''
-    errors.warrantyStartDate = ''
-    const endField = document.getElementById('warrantyEndDate') as HTMLInputElement
-    const startField = document.getElementById('warrantyStartDate') as HTMLInputElement
-    if (endField) {
-      endField.classList.remove('is-invalid')
-      if (formData.warrantyEndDate) endField.classList.add('is-valid')
-    }
-    if (startField) {
-      startField.classList.remove('is-invalid')
-      if (formData.warrantyStartDate) startField.classList.add('is-valid')
-    }
-    return true
   }
+  
+  // Clear errors and set valid states
+  errors.warrantyEndDate = ''
+  errors.warrantyStartDate = ''
+  setDatePickerValidation('warrantyEndDate', true, !!formData.warrantyEndDate)
+  setDatePickerValidation('warrantyStartDate', true, !!formData.warrantyStartDate)
+  return true
 }
 
 const expandNotesField = () => {
@@ -1125,9 +1384,7 @@ const updateCharacterCount = () => {
   // Character count is computed automatically
 }
 
-const validateForm = async (): Promise<boolean> => {
-  let isValid = true
-  
+const validateAllFields = async (): Promise<boolean> => {
   // Validate required fields (exclude asset identity fields if disabled)
   const requiredFields = ['serialNumber', 'location', 'condition']
   
@@ -1136,35 +1393,78 @@ const validateForm = async (): Promise<boolean> => {
     requiredFields.push('assetCategory', 'assetType', 'brand', 'model')
   }
   
-  for (const fieldName of requiredFields) {
-    await validateField(fieldName)
-    if (errors[fieldName as keyof typeof errors]) {
-      isValid = false
-    }
-  }
+  const validationResults = await Promise.all(
+    requiredFields.map((fieldName) => validateFieldInline(fieldName))
+  )
 
   // Also validate optional fields to show green borders
-  const optionalFields = ['vendor', 'notes', 'purchaseDate', 'purchaseCost']
-  for (const fieldName of optionalFields) {
-    await validateField(fieldName)
-  }
+  const optionalFields = ['vendor', 'notes', 'purchaseDate', 'purchaseCost', 'warrantyStartDate', 'warrantyEndDate']
+  await Promise.all(
+    optionalFields.map((fieldName) => validateFieldInline(fieldName))
+  )
 
   // Validate warranty dates
   if (!validateWarrantyDates()) {
-    isValid = false
+    return false
   }
 
-  return isValid
+  return validationResults.every(Boolean)
+}
+
+const markFormInvalidAndFocus = async () => {
+  if (assetForm.value) {
+    assetForm.value.classList.add('was-validated')
+  }
+  await nextTick()
+  scrollToFirstError()
+}
+
+const scrollToFirstError = () => {
+  const firstInvalid = document.querySelector('input.is-invalid, select.is-invalid, textarea.is-invalid, input:invalid, select:invalid, textarea:invalid') as HTMLElement
+  
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'center' 
+    })
+    
+    setTimeout(() => {
+      firstInvalid.focus()
+    }, 500)
+  }
+}
+
+// Enter key navigation handler (following EmployeeForm pattern)
+const handleEnterKey = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
+  
+  if (target.tagName === 'TEXTAREA') {
+    return
+  }
+  
+  event.preventDefault()
+  
+  const form = assetForm.value
+  if (!form) return
+  
+  const focusableElements = form.querySelectorAll(
+    'input:not([readonly]):not([disabled]), select:not([disabled]), textarea:not([readonly]):not([disabled]), button:not([disabled])'
+  ) as NodeListOf<HTMLElement>
+  
+  const currentIndex = Array.from(focusableElements).indexOf(target)
+  const isLastField = currentIndex === focusableElements.length - 1
+  
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-primary')) {
+    handleSubmit()
+  } else {
+    const nextElement = focusableElements[currentIndex + 1]
+    if (nextElement) {
+      nextElement.focus()
+    }
+  }
 }
 
 // Helper functions for form submission
-const scrollToFirstError = () => {
-  const firstInvalid = document.querySelector('.is-invalid') as HTMLElement
-  if (firstInvalid) {
-    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    setTimeout(() => firstInvalid.focus(), 300)
-  }
-}
 
 const syncFormDataFromUI = () => {
   if (!formData.assetTypeId && uiFormData.assetType) {
@@ -1267,12 +1567,17 @@ const buildAddModeAssetData = (): any => {
   }
 }
 
-const handleSubmit = async (event: Event) => {
+const handleSubmit = async (event?: Event) => {
+  if (event) {
   event.preventDefault()
-  wasValidated.value = true
+    event.stopPropagation()
+  }
 
-  if (!(await validateForm())) {
-    scrollToFirstError()
+  formSubmitted.value = true
+
+  const isFormValid = await validateAllFields()
+  if (!isFormValid) {
+    await markFormInvalidAndFocus()
     return
   }
 
@@ -1532,307 +1837,14 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
 </script>
 
 <style scoped>
-/* Import the unified form styles */
-@import url('../../assets/unified-form-styles.css');
+/* Import form validation styles */
+@import url('../../assets/styles/formValidation.css');
 
-/* Additional component-specific styles */
-.expandable-notes {
-  transition: height 0.3s ease, border-color 0.2s ease;
-  cursor: pointer;
-  resize: none;
-}
 
-.expandable-notes:hover {
-  border-color: #999999;
-}
-
-.expandable-notes:focus {
-  cursor: text;
-  resize: vertical;
-}
-
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-.character-count .text-warning {
-  color: #FFC000 !important;
-}
-
-.character-count .text-danger {
-  color: #E97676 !important;
-  font-weight: 600;
-}
-
-/* Form fieldset styling */
-.form-fieldset {
-  border: 1px solid #B7B7B7 !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-  background: rgba(243, 243, 243, 0.3);
-  position: relative;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.form-fieldset:hover {
-  border-color: #B7B7B7 !important;
-  background: rgba(243, 243, 243, 0.5);
-  transition: all 0.2s ease;
-}
-
-.form-legend {
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  color: #666666 !important;
-  background-color: #FFFFFF !important;
-  padding: 0.375rem 0.75rem !important;
-  border: 1px solid #B7B7B7 !important;
-  border-radius: 0.5rem !important;
-  margin-bottom: 1rem !important;
-  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
-  width: auto !important;
-  float: none !important;
-}
-
-/* Enhanced form controls */
-.form-control, .form-select {
-  border: 2px solid #E0E0E0;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
-  color: #0A0A0A;
-}
-
-.form-control::placeholder {
-  color: #999999 !important;
-  opacity: 1;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: #331FEA;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
-  outline: 2px solid transparent;
-}
-
-.form-control:hover, .form-select:hover {
-  border-color: #E0E0E0;
-}
-
-/* Enhanced validation styling */
-.was-validated .form-control:valid,
-.was-validated .form-select:valid {
-  border-color: #21AF65 !important;
-  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
-}
-
-.was-validated .form-control:invalid,
-.was-validated .form-select:invalid,
-.form-control.is-invalid,
-.form-select.is-invalid {
-  border-color: #E97676 !important;
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out;
-}
-
-@keyframes subtle-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #E97676;
-  font-weight: 500;
-}
-
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
-}
-
-.form-text {
-  font-size: 0.875rem;
-  color: #666666 !important;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-
-.text-danger {
-  color: #E97676 !important;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.text-muted {
-  color: #666666 !important;
-  font-weight: 600;
-  font-size: 0.9em;
-}
-
-/* Input group styling */
-.input-group {
-  align-items: stretch;
-}
-
-.input-group-text {
-  background-color: #F3F3F3;
-  border: 2px solid #E0E0E0;
-  border-right: none;
-  border-radius: 0.5rem 0 0 0.5rem;
-  color: #666666;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px); /* Match form-control height */
-}
-
-.input-group .form-control {
-  border-left: none;
-  border-radius: 0 0.5rem 0.5rem 0;
-  display: flex;
-  align-items: center;
-}
-
-.input-group:focus-within .input-group-text {
-  border-color: #331FEA;
-  background-color: #F3F3F3;
-}
-
-.input-group:hover .input-group-text {
-  border-color: #E0E0E0;
-}
-
-/* Input group validation styling */
-/* When input-group has validation classes */
-.input-group.is-valid .input-group-text {
-  border-color: #21AF65 !important;
-  border: 2px solid #21AF65 !important;
-  border-right: none !important;
-  border-radius: 0.5rem 0 0 0.5rem !important;
-  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
-}
-
-.input-group.is-invalid .input-group-text {
-  border-color: #E97676 !important;
-  border: 2px solid #E97676 !important;
-  border-right: none !important;
-  border-radius: 0.5rem 0 0 0.5rem !important;
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: calc(0.75rem * 2 + 1.5rem + 4px) !important;
-}
-
-/* Ensure the form-control border connects properly */
-.input-group.is-valid .form-control {
-  border-color: #21AF65 !important;
-  border: 2px solid #21AF65 !important;
-  border-left: none !important;
-  border-radius: 0 0.5rem 0.5rem 0 !important;
-  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.input-group.is-invalid .form-control {
-  border-color: #E97676 !important;
-  border: 2px solid #E97676 !important;
-  border-left: none !important;
-  border-radius: 0 0.5rem 0.5rem 0 !important;
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* Action buttons */
-.form-actions {
-  padding: 1.5rem;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.card-footer {
-  background: #F3F3F3 !important;
-  border-top: 2px solid #B7B7B7 !important;
-  border-radius: 0 0 1.5rem 1.5rem !important;
-}
-
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background-color: #331FEA !important;
-  border-color: #331FEA !important;
-  color: #FFFFFF !important;
-}
-
-.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-}
-
-.btn-outline-secondary {
-  background-color: #f8f9fa !important;
-  border: 2px solid #6c757d !important;
-  color: #495057 !important;
-  font-weight: 600;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #FFFFFF !important;
-}
-
-.btn:focus-visible {
-  outline: 2px solid #331FEA;
-  outline-offset: 2px;
-}
-
-/* Responsive design */
+/* AssetForm-specific responsive adjustments */
 @media (max-width: 768px) {
   .card-body {
     padding: 1.5rem !important;
-  }
-  
-  .form-actions {
-    padding: 1rem;
-  }
-  
-  .form-fieldset {
-    padding: 1rem !important;
-    margin-bottom: 1rem !important;
-    border-radius: 0.5rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.9rem !important;
-    padding: 0.25rem 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .btn {
-    width: 100%;
-    margin-bottom: 0.75rem;
   }
   
   .d-flex.gap-3 {
@@ -1845,62 +1857,5 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
   .card-body {
     padding: 1rem !important;
   }
-  
-  .form-actions {
-    padding: 0.75rem;
-  }
-  
-  .form-fieldset {
-    padding: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-    border-radius: 0.5rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.85rem !important;
-    padding: 0.2rem 0.4rem !important;
-    margin-bottom: 0.5rem !important;
-  }
 }
-
-/* Disabled field styling */
-.form-searchable-dropdown .form-control:disabled {
-  background-color: #F8F9FA !important;
-  border-color: #DEE2E6 !important;
-  color: #6C757D !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
-
-.form-searchable-dropdown .form-control:disabled::placeholder {
-  color: #ADB5BD !important;
-  font-style: italic;
-}
-
-/* Disabled field label styling */
-.form-label.disabled-label {
-  color: #6C757D !important;
-  font-weight: 500;
-}
-
-/* 
-  SearchableDropdown Form Integration:
-  
-  To use SearchableDropdown in any form with consistent styling:
-  1. Import: @import url('../../assets/unified-form-styles.css');
-  2. Wrap SearchableDropdown with: <div class="form-searchable-dropdown">
-  3. The wrapper will automatically match form input styling
-  
-  Example:
-  <div class="form-searchable-dropdown">
-    <SearchableDropdown 
-      id="example"
-      label="Example Field"
-      placeholder="Search..."
-      :items="items"
-      v-model="selectedItem"
-      @change="onChange"
-    />
-  </div>
-*/
 </style>

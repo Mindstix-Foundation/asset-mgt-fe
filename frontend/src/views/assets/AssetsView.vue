@@ -58,7 +58,7 @@
                       <i class="fas fa-download me-2 text-success"></i>Export Assets
                     </button>
                   </li>
-                  <li><hr class="dropdown-divider"></li>
+               
                   <li>
                     <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
@@ -144,7 +144,7 @@
                         <i class="fas fa-download me-2 text-success"></i>Export Assets
                       </button>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+    
                     <li>
                       <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
@@ -2557,4 +2557,8 @@ onUnmounted(() => {
 <style scoped>
 /* AssetsView.vue now uses styles from assets.css */
 /* All styles have been moved to the proper CSS file structure */
+</style>
+
+<style>
+@import '@/assets/styles/pages/assets.css';
 </style>
