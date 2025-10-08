@@ -63,6 +63,12 @@
   color: var(--primary-black) !important; /* Dark text for yellow background */
 }
 
+/* Black badge variant */
+.badge.badge-black {
+  background-color: var(--primary-black) !important;
+  color: white !important;
+}
+
 /* Small badge variant */
 .badge.badge-sm {
   font-size: 0.65rem !important;

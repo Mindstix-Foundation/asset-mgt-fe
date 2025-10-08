@@ -114,6 +114,9 @@
   width: 280px !important;
   min-width: 280px !important;
   max-width: 280px !important;
+/* Asset actions button group spacing */
+.asset-actions {
+  gap: 0.25rem !important;
 }
 
 .asset-table th:nth-child(3),
@@ -160,6 +163,14 @@
   padding-right: 1.25rem !important;
   padding-left: 0.25rem !important;
   text-align: left !important;
+/* Vendor actions button group spacing */
+.vendor-actions {
+  gap: 0.25rem !important;
+}
+
+/* Employee actions button group spacing */
+.employee-actions {
+  gap: 0.25rem !important;
 }
 
 /* Responsive adjustments */

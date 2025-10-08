@@ -150,6 +150,9 @@ const handleLogin = async () => {
   // Set loading state
   isLoading.value = true
   
+  // Prevent global auth expired handler from redirecting during login
+  ;(globalThis as any).preventAuthExpiredRedirect = true
+  
   try {
     // Call the backend API
     const result = await authStore.login({
@@ -176,6 +179,8 @@ const handleLogin = async () => {
     console.error('Login error:', error)
     loginError.value = 'An error occurred during login. Please try again.'
   } finally {
+    // Re-enable global handler after login attempt completes
+    ;(globalThis as any).preventAuthExpiredRedirect = false
     isLoading.value = false
   }
 }

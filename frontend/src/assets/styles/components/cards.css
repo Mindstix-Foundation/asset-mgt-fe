@@ -1,3 +1,45 @@
+/* =================================
+   Stats Cards - Shared across pages
+   Used by Dashboard and Maintenance
+================================= */
+.stats-card-modern {
+  border-radius: 1.5rem !important;
+  border: 1px solid var(--element-gray) !important;
+  background-color: var(--primary-white) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: filter 0.2s ease;
+  overflow: hidden;
+  background-clip: padding-box;
+}
+
+/* Icon circle colors */
+.stats-icon.bg-primary { /* Generic primary - Purple */
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
+}
+.stats-icon.bg-warning { /* Under Maintenance */
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+}
+.stats-icon.bg-info { /* Scheduled */
+  background-color: var(--secondary-blue) !important;
+  color: white !important;
+}
+.stats-icon.bg-success { /* Completed */
+  background-color: var(--secondary-green) !important;
+  color: white !important;
+}
+.stats-icon.bg-secondary { /* Cancelled */
+  background-color: var(--secondary-red) !important;
+  color: white !important;
+}
+
+/* Progress bar colors below each card */
+.progress-bar.bg-primary { background-color: var(--secondary-purple) !important; }
+.progress-bar.bg-warning { background-color: var(--secondary-orange) !important; }
+.progress-bar.bg-info { background-color: var(--secondary-blue) !important; }
+.progress-bar.bg-success { background-color: var(--secondary-green) !important; }
+.progress-bar.bg-secondary { background-color: var(--secondary-red) !important; }
 /**
  * Card Styles - TrackStix Theme
  * Modern card components with consistent styling
@@ -181,13 +223,12 @@
 }
 
 /* Modern Stats Cards with more rounded corners */
-.stats-card-modern {
-  transition: filter 0.2s ease;
-  border-radius: 1.5rem !important;
-}
 
 .stats-card-modern:hover {
-  filter: brightness(0.95);
+  filter: none !important;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  cursor: default !important;
 }
 
 .stats-icon {

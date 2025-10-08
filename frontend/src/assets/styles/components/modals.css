@@ -1,3 +1,11 @@
+/* Remove animation for all modals */
+.modal.fade,
+.modal.show,
+.modal .modal-dialog,
+.modal .modal-content {
+  transition: none !important;
+  animation: none !important;
+}
 /**
  * Modal Styles - TrackStix Theme
  * Modal components and overlay styling
@@ -13,14 +21,22 @@
 }
 
 .modal-content {
-  border: 1px solid var(--mindstix-border);
-  border-radius: 1rem;
+  /* Global shared modal content styling */
+  border: none !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.75rem !important;
 }
 
 .modal-header {
-  background-color: var(--mindstix-light);
-  border-bottom: 1px solid var(--mindstix-border);
-  border-radius: 1rem 1rem 0 0;
+  /* Global shared modal header styling */
+  background-color: var(--primary-light-gray) !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+.modal-body {
+  /* Global shared modal body styling */
+  background-color: var(--primary-white) !important;
+  padding: 2rem !important;
 }
 
 .modal-xl {

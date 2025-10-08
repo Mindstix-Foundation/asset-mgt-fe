@@ -38,7 +38,6 @@
         :disabled="disabled"
         @keydown="handleKeydown"
       />
-      <!-- SonarQube: Using div with role="listbox" is appropriate for custom dropdowns with filtering -->
       <div
         class="dropdown-menu"
         :class="{ 
@@ -65,7 +64,6 @@
           No results found
         </div>
         <!-- Show filtered items when available -->
-        <!-- SonarQube false positive: aria-selected is present via Vue binding, button with role="option" is correct for interactive options -->
         <button
           v-else
           v-for="(item, index) in filteredItems"

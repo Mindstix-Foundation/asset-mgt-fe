@@ -2,12 +2,51 @@ import axios from 'axios'
 
 // Create a separate axios instance for auth operations with cookie support
 const authAxios = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
   withCredentials: true, // Enable sending cookies
   headers: {
     'Content-Type': 'application/json',
   },
 })
+
+// Generate browser fingerprint for additional security
+const generateFingerprint = (): string => {
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.textBaseline = 'top'
+    ctx.font = '14px Arial'
+    ctx.fillText('fingerprint', 2, 2)
+  }
+  
+  const data = [
+    navigator.userAgent,
+    navigator.language,
+    screen.colorDepth,
+    screen.width,
+    screen.height,
+    new Date().getTimezoneOffset(),
+    canvas.toDataURL(),
+  ].join('|')
+  
+  // Simple hash function using codePointAt for proper unicode support
+  let hash = 0
+  for (let i = 0; i < data.length; i++) {
+    const char = data.codePointAt(i) ?? 0
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+  return Math.abs(hash).toString(36)
+}
+
+// Add fingerprint to all requests
+authAxios.interceptors.request.use(
+  (config) => {
+    config.headers['X-Fingerprint'] = generateFingerprint()
+    return config
+  },
+  (error) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
+)
 
 // No Authorization header needed - cookies are sent automatically
 
@@ -195,12 +234,30 @@ class AuthService {
   }
 
   /**
-   * Check if user is authenticated
+   * Check if user is authenticated (client-side check)
    * With HTTP-only cookies, we can't check token directly
    * We rely on user data presence and let server validate on each request
    */
   isAuthenticated(): boolean {
     return this.isAuthenticatedCache && !!this.getUserData()
+  }
+
+  /**
+   * Verify authentication with server (server-side validation)
+   * Use this for critical operations that need real-time verification
+   */
+  async verifyAuthentication(): Promise<boolean> {
+    try {
+      await this.getProfile()
+      this.isAuthenticatedCache = true
+      return true
+    } catch (error) {
+      // Expected: getProfile() throws when authentication fails
+      // We catch this to return false instead of propagating the error
+      console.debug('[AuthService] Authentication verification failed:', error)
+      this.isAuthenticatedCache = false
+      return false
+    }
   }
 
   /**

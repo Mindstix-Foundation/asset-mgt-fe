@@ -421,3 +421,14 @@ i.text-brown {
       font-size: 12px;
   }
 }
+
+/* Single-line utilities for page headers/subtitles */
+.single-line {
+  white-space: nowrap !important;
+}
+
+.single-line-ellipsis {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}

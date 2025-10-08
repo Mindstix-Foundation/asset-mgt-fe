@@ -39,7 +39,7 @@
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body p-4">
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="stats-icon bg-info rounded-circle p-3">
+                <div class="stats-icon bg-primary rounded-circle p-3">
                   <i class="fas fa-calendar-alt fa-lg"></i>
                 </div>
                 <div class="text-end">
@@ -48,7 +48,7 @@
                 </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-info" :style="`width: ${stats.scheduledPercent}%`"></div>
+                <div class="progress-bar bg-primary" :style="`width: ${stats.scheduledPercent}%`"></div>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@
       <div class="row mb-2">
         <div class="col-12">
           <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
-            <div class="status-indicator me-2"></div>
+            <StatusIndicator variant="success" :size="8" class="me-2" />
             <small class="text-muted">
               Updated {{ lastStatsUpdated }}
             </small>
@@ -107,18 +107,17 @@
         </div>
       </div>
 
-      <!-- Filters (Assets-style) -->
+      <!-- Filters (match EmployeesView) -->
       <div class="mb-4">
         <div class="row align-items-end">
-          <!-- Search -->
+          <!-- Search Maintenance -->
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="mv-search">Search Maintenance</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input 
                 id="mv-search"
                 type="text" 
-                class="form-control" 
+                class="form-control search-with-icon" 
                 v-model="filters.search"
                 placeholder="Search by asset ID, issue..."
                 @input="filterMaintenances"
@@ -129,7 +128,7 @@
           <!-- Sort By -->
           <div class="col-12 col-lg-3 mb-3">
             <SearchableDropdown
-              id="maintenance-sort-by"
+              id="sort-by-filter"
               label="Sort By"
               placeholder="Select sort option..."
               :items="sortOptions"
@@ -138,14 +137,17 @@
             />
           </div>
 
-          <!-- Sort Order + Filters Toggle -->
+          <!-- Toggle Sort Order and Filter Button -->
           <div class="col-12 col-lg-2 mb-3">
             <div class="row g-3">
+              <!-- Toggle Sort Order -->
               <div class="col-4">
                 <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                 </button>
               </div>
+              
+              <!-- Filter Button -->
               <div class="col-8">
                 <button 
                   class="btn btn-outline-secondary btn-modern w-100" 
@@ -163,7 +165,9 @@
         <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
+              <!-- Responsive filter layout -->
               <div class="d-flex flex-column flex-md-row gap-2">
+                <!-- Maintenance Type Filter -->
                 <div class="flex-fill">
                   <SearchableDropdown
                     id="maintenance-type-filter"
@@ -174,6 +178,8 @@
                     @change="onTypeChange"
                   />
                 </div>
+                
+                <!-- Status Filter -->
                 <div class="flex-fill">
                   <SearchableDropdown
                     id="maintenance-status-filter"
@@ -185,9 +191,10 @@
                   />
                 </div>
                 
-                <div class="flex-shrink-0" style="width: 12.5%;">
+                <!-- Clear Button: responsive width -->
+                <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -212,10 +219,11 @@
           <thead class="table-light">
             <tr>
               <th>Asset ID</th>
+              <th>Asset Details</th>
               <th>Type</th>
-              <th>Status</th>
               <th>Date</th>
               <th>Est./Actual Cost</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -229,23 +237,26 @@
               
             >
               <td>
-                <strong>{{ maintenance.assetId }}</strong><br>
-                <small class="text-muted">{{ maintenance.assetName }}</small>
+                <strong>{{ maintenance.assetId }}</strong>
               </td>
               <td>
-                <span :class="`badge badge-type-${maintenance.type.toLowerCase()}`">
-                  {{ maintenance.type }}
-                </span>
+                <div class="d-flex flex-column">
+                  <span class="fw-semibold">{{ maintenance.assetName }}</span>
+                  <small class="text-muted">{{ maintenance.vendor }}</small>
+                </div>
               </td>
               <td>
-                <span :class="`badge badge-${maintenance.status.toLowerCase().replaceAll('_', '-')}`">
-                  {{ formatStatus(maintenance.status) }}
-                </span>
+                {{ maintenance.type }}
               </td>
               <td>{{ formatDate(maintenance.scheduledDate) }}</td>
               <td>
                 <strong>{{ maintenance.cost }}</strong><br>
                 <small class="text-muted">{{ maintenance.costType }}</small>
+              </td>
+              <td>
+                <span :class="['badge', getStatusBadgeClass(maintenance.status)]">
+                  {{ formatStatus(maintenance.status) }}
+                </span>
               </td>
               <td>
                 <div class="btn-group btn-group-sm maintenance-actions">
@@ -304,16 +315,15 @@
       </div>
 
       <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center mt-4">
-        <div class="text-muted">
-          <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} maintenance records</small>
-        </div>
-        <AppPagination 
-          :current-page="currentPage" 
-          :total-pages="totalPages" 
-          @change="changePage" 
-        />
-      </div>
+      <AppPagination 
+        :current-page="currentPage" 
+        :total-pages="totalPages"
+        :start="paginationInfo.start"
+        :end="paginationInfo.end"
+        :total="paginationInfo.total"
+        item-name="maintenance records"
+        @change="changePage" 
+      />
     </div>
 
     <!-- Maintenance Detail Modal -->
@@ -343,14 +353,12 @@
                     </div>
                     <div class="col-md-6">
                       <div class="info-label-compact">Maintenance Type</div>
-                      <div class="info-value-compact">
-                        <span :class="`badge badge-type-${selectedMaintenance.type.toLowerCase()}`">{{ selectedMaintenance.type }}</span>
-                      </div>
+                      <div class="info-value-compact">{{ selectedMaintenance.type }}</div>
                     </div>
                     <div class="col-md-6">
                       <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
-                        <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replaceAll('_', '-')}`">{{ formatStatus(selectedMaintenance.status) }}</span>
+                        <span :class="['badge', getStatusBadgeClass(selectedMaintenance.status)]">{{ formatStatus(selectedMaintenance.status) }}</span>
                       </div>
                     </div>
                   </div>
@@ -674,6 +682,7 @@ import { useToastStore } from '@/stores/toast'
 import { formatDateOnly } from '@/utils/date'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
+import { StatusIndicator } from '@/components/common'
 
 const router = useRouter()
 const route = useRoute()
@@ -1110,6 +1119,23 @@ const formatStatus = (status: string) => {
 
 const formatDate = (dateString: string) => formatDateOnly(dateString)
 
+// Map maintenance status to shared badge color classes from badges.css
+const getStatusBadgeClass = (status: string) => {
+  const normalized = (status || '').toUpperCase()
+  switch (normalized) {
+    case 'SCHEDULED':
+      return 'badge-purple'
+    case 'IN_PROGRESS':
+      return 'badge-orange'
+    case 'COMPLETED':
+      return 'badge-green'
+    case 'CANCELLED':
+      return 'badge-red'
+    default:
+      return 'badge-gray'
+  }
+}
+
 const navigateToSchedule = (maintenance?: any) => {
   // If a maintenance record (e.g., cancelled) is provided, pass external assetId as query param
   if (maintenance?.assetId) {
@@ -1434,38 +1460,8 @@ const isHistoryExpanded = ref(true)
   min-height: calc(100vh - 60px);
 }
 
-/* Stats Cards */
-.stats-card-modern {
-  border-radius: 0.75rem !important;
-  border: 1px solid var(--element-gray) !important;
-  background-color: var(--primary-white) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transition: none !important;
-  overflow: hidden; /* ensure perfect rounded corners */
-  background-clip: padding-box; /* prevent background bleed under border */
-  pointer-events: none;
-}
+/* Stats card visuals are centralized in assets/styles/components/cards.css */
 
-/* Status Indicator */
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  background-color: var(--secondary-green);
-  border-radius: 50%;
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(33, 175, 101, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0);
-  }
-}
 
 /* Make inner content respect rounded corners */
 .stats-card-modern .card-body {
@@ -1502,86 +1498,8 @@ const isHistoryExpanded = ref(true)
   transform: none !important;
 }
 
-.stats-icon.bg-warning {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-warning {
-  background-color: var(--secondary-orange) !important;
-}
-
-
-.stats-icon.bg-info {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-info {
-  background-color: var(--secondary-purple) !important;
-}
-
-.stats-icon.bg-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-success {
-  background-color: var(--secondary-green) !important;
-}
-
-.stats-icon.bg-secondary {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-secondary {
-  background-color: var(--secondary-red) !important;
-}
-
-
-/* Badges */
-.badge {
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-scheduled {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.badge-in-progress {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.badge-completed {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge-cancelled {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.badge-type-preventive {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge-type-corrective {
-  background-color: var(--secondary-pink) !important;
-  color: white !important;
-}
-
-.badge-type-emergency {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
+/* Icon and progress colors centralized in assets/styles/components/cards.css */
+/* Badge styles removed; using shared badges.css */
 
 /* Modern Button Styling */
 .btn-modern {
@@ -1686,66 +1604,52 @@ const isHistoryExpanded = ref(true)
 }
 
 /* Table styling */
-.table-hover tbody tr:hover {
-  background-color: var(--primary-light-gray) !important;
-  transition: all 0.2s ease !important;
-}
-
-.table td, .table th {
-  padding: 0.75rem !important;
-}
-
-/* Match table alignment with EmployeesView */
-.table th:first-child, .table td:first-child {
-  padding-left: 1.25rem !important;
-}
-
+/* Using shared table hover, cell padding, and responsive spacing from components/tables.css */
+/* Preserve right alignment for last column actions */
 .table th:last-child, .table td:last-child {
-  padding-right: 0.75rem !important; /* tighter like EmployeesView */
-  padding-left: 0.5rem !important;
-  text-align: right !important; /* push content to the right edge */
+  text-align: right !important;
 }
 
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Column width distribution for 6 columns (vendor column removed) */
+/* Column width distribution for 7 columns (Asset ID and Asset Details split) */
 /* 1: Asset ID */
 .table th:nth-child(1), .table td:nth-child(1) {
-  width: 22% !important;
-  min-width: 220px !important;
+  width: 12% !important;
+  min-width: 120px !important;
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
   overflow: hidden !important;
 }
-/* 2: Type */
+/* 2: Asset Details */
 .table th:nth-child(2), .table td:nth-child(2) { 
-  width: 14% !important; 
-  min-width: 140px !important;
+  width: 20% !important; 
+  min-width: 180px !important;
 }
-/* 3: Status */
+/* 3: Type */
 .table th:nth-child(3), .table td:nth-child(3) { 
   width: 14% !important; 
   min-width: 130px !important;
 }
 /* 4: Date */
 .table th:nth-child(4), .table td:nth-child(4) { 
-  width: 18% !important; 
-  min-width: 170px !important;
+  width: 12% !important; 
+  min-width: 120px !important;
 }
 /* 5: Cost */
 .table th:nth-child(5), .table td:nth-child(5) { 
-  width: 21% !important; 
-  min-width: 180px !important;
+  width: 16% !important; 
+  min-width: 160px !important;
+}
+/* 6: Status */
+.table th:nth-child(6), .table td:nth-child(6) { 
+  width: 14% !important; 
+  min-width: 130px !important;
 }
 
-/* 6: Actions column */
-.table th:nth-child(6), .table td:nth-child(6) {
-  width: 136px !important;
-  min-width: 136px !important;
-  max-width: 136px !important;
+/* 7: Actions column */
+.table th:nth-child(7), .table td:nth-child(7) {
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 220px !important;
   text-align: left !important;
 }
 
@@ -1770,56 +1674,6 @@ const isHistoryExpanded = ref(true)
 
 .card:hover:not(.stats-card-modern) {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* Pagination */
-.pagination-modern {
-  --bs-pagination-padding-x: 0.75rem;
-  --bs-pagination-padding-y: 0.5rem;
-  --bs-pagination-font-size: 0.875rem;
-  --bs-pagination-color: var(--primary-dark-gray);
-  --bs-pagination-bg: var(--primary-white);
-  --bs-pagination-border-width: 1px;
-  --bs-pagination-border-color: var(--element-gray);
-  --bs-pagination-border-radius: 0.5rem;
-  --bs-pagination-hover-color: var(--secondary-purple);
-  --bs-pagination-hover-bg: var(--primary-light-gray);
-  --bs-pagination-hover-border-color: var(--primary-mid-light);
-  --bs-pagination-focus-color: var(--secondary-purple);
-  --bs-pagination-focus-bg: var(--primary-light-gray);
-  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-  --bs-pagination-active-color: var(--primary-white);
-  --bs-pagination-active-bg: var(--secondary-purple);
-  --bs-pagination-active-border-color: var(--secondary-purple);
-  --bs-pagination-disabled-color: var(--primary-mid-gray);
-  --bs-pagination-disabled-bg: var(--primary-light-gray);
-  --bs-pagination-disabled-border-color: var(--element-gray);
-}
-
-.pagination-modern .page-link {
-  border-radius: 0.5rem !important;
-  margin: 0 0.125rem !important;
-  min-width: 40px !important;
-  height: 40px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
-}
-
-.pagination-modern .page-item:not(.active) .page-link:hover {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--secondary-purple) !important;
-  transform: translateY(-1px) !important;
 }
 
 /* Modal styling */

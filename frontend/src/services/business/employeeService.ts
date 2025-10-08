@@ -27,6 +27,7 @@ export interface AssignedAsset {
 }
 
 export interface CreateEmployeeData {
+  employeeId: string
   firstName: string
   lastName: string
   email: string
@@ -116,6 +117,19 @@ class EmployeeService {
     return apiService.get(`/employees/check-email?${query}`)
   }
 
+  /** Check if an employee ID is available */
+  async checkEmployeeIdAvailability(employeeId: string, excludeId?: string): Promise<ApiResponse<{ available: boolean }>> {
+    const queryParts: string[] = []
+    if (employeeId !== undefined && employeeId !== null) {
+      queryParts.push(`employeeId=${employeeId}`)
+    }
+    if (excludeId) {
+      queryParts.push(`excludeId=${excludeId}`)
+    }
+    const query = queryParts.join('&')
+    return apiService.get(`/employees/check-employee-id?${query}`)
+  }
+
   /**
    * Get all employees with optional filtering and pagination
    */
@@ -125,7 +139,14 @@ class EmployeeService {
     if (params?.page) searchParams.append('page', params.page.toString())
     if (params?.limit) searchParams.append('limit', params.limit.toString())
     if (params?.search) searchParams.append('search', params.search)
-    if (params?.status) searchParams.append('status', params.status)
+    // Normalize status to backend-expected enum values
+    if (params?.status) {
+      const normalizedStatus = String(params.status).toUpperCase()
+      // Only append if it's a valid value
+      if (normalizedStatus === 'ACTIVE' || normalizedStatus === 'INACTIVE') {
+        searchParams.append('status', normalizedStatus)
+      }
+    }
     if (params?.hasAssets !== undefined) searchParams.append('hasAssets', params.hasAssets.toString())
     if (params?.assetCountRange) searchParams.append('assetCountRange', params.assetCountRange)
     if (params?.sortBy) searchParams.append('sortBy', params.sortBy)
@@ -162,7 +183,7 @@ class EmployeeService {
    * Delete an employee
    */
   async deleteEmployee(
-    employeeId: string, 
+    employeeId: string | number, 
     reassignAssetsTo?: string
   ): Promise<ApiResponse<{ employee: Employee }>> {
     const data = reassignAssetsTo ? { reassign_assets_to: reassignAssetsTo } : undefined

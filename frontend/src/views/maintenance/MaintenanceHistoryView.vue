@@ -18,14 +18,13 @@
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="mh-search">Search</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
-              <input id="mh-search" type="text" class="form-control" v-model="filters.search" placeholder="Description/type/status" @keyup.enter="applyFilters" />
+              <input id="mh-search" type="text" class="form-control search-with-icon" v-model="filters.search" placeholder="Description/type/status" @keyup.enter="applyFilters" />
             </div>
           </div>
-          <!-- Sort By -->
+          <!-- Sort By (aligned with EmployeeAssetHistory) -->
           <div class="col-12 col-lg-3 mb-3">
             <SearchableDropdown
-              id="mh-sort-by"
+              id="sort-by-filter"
               label="Sort By"
               placeholder="Select sort field"
               :items="sortByOptions"
@@ -37,7 +36,7 @@
           <div class="col-12 col-lg-2 mb-3">
             <div class="row g-3">
               <div class="col-4">
-                <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" title="Toggle Sort Order" style="min-width: 40px; height: 38px;">
+                <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" title="Toggle Sort Order" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                 </button>
               </div>
@@ -106,7 +105,7 @@
       <div v-else class="maintenance-history-section">
         <h6 class="section-title d-flex align-items-center justify-content-between">
           <span><i class="fas fa-history me-2"></i>Timeline</span>
-          <span class="badge bg-primary">{{ totalRecords }} records</span>
+          <span class="badge badge-pink">{{ totalRecords }} records</span>
         </h6>
 
         <div class="history-timeline">
@@ -121,40 +120,53 @@
                 <div>
                   <h6 class="timeline-title mb-1">{{ item.description }}</h6>
                   <div class="timeline-meta">
-                    <span class="badge" :class="`badge-${item.status.toLowerCase().replaceAll('_', '-')}`">{{ formatStatus(item.status) }}</span>
-                    <span class="badge" :class="`badge-type-${item.maintenanceTypeName.toLowerCase()}`">{{ item.maintenanceTypeName }}</span>
+                    <span class="badge" :class="getStatusBadgeClass(item.status)">{{ formatStatus(item.status) }}</span>
                   </div>
                 </div>
-                <!-- Top-right date/time intentionally hidden per UX -->
+                <div class="timeline-badges">
+                  <span class="badge badge-purple">{{ formatDateTimeDisplay((item as any).date || item.scheduledDate) }}</span>
+                </div>
               </div>
-              <div class="timeline-details compact">
+                <div class="timeline-details compact">
                 <div class="row g-2">
                   <template v-if="item.status === 'SCHEDULED'">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <small class="text-muted">Scheduled Date</small>
                       <div>{{ formatDate((item as any).scheduledDateOnly || item.scheduledDate) }}</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <small class="text-muted">Scheduled At</small>
               <div>{{ formatDateTimeDisplay((item as any).date || item.scheduledDate) }}</div>
+                    </div>
+                    <div class="col-md-3">
+                      <small class="text-muted">Type</small>
+                      <div>{{ item.maintenanceTypeName }}</div>
                     </div>
                   </template>
 
                   <template v-else-if="item.status === 'COMPLETED'">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <small class="text-muted">Completed At</small>
               <div>{{ formatDateTimeDisplay((item as any).date) }}</div>
+                    </div>
+                    <div class="col-md-3">
+                      <small class="text-muted">Type</small>
+                      <div>{{ item.maintenanceTypeName }}</div>
                     </div>
                   </template>
 
                   <template v-else-if="item.status === 'CANCELLED'">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <small class="text-muted">Cancelled At</small>
               <div>{{ formatDateTimeDisplay((item as any).date) }}</div>
                     </div>
+                    <div class="col-md-3">
+                      <small class="text-muted">Type</small>
+                      <div>{{ item.maintenanceTypeName }}</div>
+                    </div>
                   </template>
 
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                     <small class="text-muted">Cost</small>
                     <div>
                       {{ item.actualCost ? `₹${item.actualCost.toFixed(2)} (Actual)` : item.estimatedCost ? `₹${item.estimatedCost.toFixed(2)} (Estimated)` : 'N/A' }}
@@ -174,7 +186,11 @@
         <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
           <AppPagination 
             :current-page="currentPage" 
-            :total-pages="totalPages" 
+            :total-pages="totalPages"
+            :start="paginationInfo.start"
+            :end="paginationInfo.end"
+            :total="totalRecords"
+            item-name="records"
             @change="onPageChange" 
           />
         </div>
@@ -289,6 +305,39 @@ const getNotesForStatus = (item: any) => {
       return null
   }
 }
+// Map status to standardized badge classes from badges.css
+const getStatusBadgeClass = (status?: string | null) => {
+  const v = (status || '').toUpperCase()
+  switch (v) {
+    case 'SCHEDULED':
+      return 'badge-purple'
+    case 'IN_PROGRESS':
+      return 'badge-orange'
+    case 'COMPLETED':
+      return 'badge-green'
+    case 'CANCELLED':
+      return 'badge-red'
+    default:
+      return 'badge-gray'
+  }
+}
+
+// Map maintenance type to standardized badge classes from badges.css
+const getTypeBadgeClass = (typeName?: string | null) => {
+  const v = (typeName || '').toUpperCase()
+  switch (v) {
+    case 'PREVENTIVE':
+      return 'badge-green'
+    case 'CORRECTIVE':
+      return 'badge-pink'
+    case 'EMERGENCY':
+      return 'badge-red'
+    case 'UPGRADE':
+      return 'badge-purple'
+    default:
+      return 'badge-gray'
+  }
+}
 const getTimelineDate = (item: HistoryItem) => item.status === 'IN_PROGRESS' ? (item.actualStartDate || item.scheduledDate) : item.scheduledDate
 const calcDurationDays = (start?: string | null, end?: string | null) => {
   if (!start || !end) return null
@@ -384,6 +433,16 @@ const applyFilters = async () => {
 
 const filteredHistory = computed(() => history.value)
 
+// Pagination info (start, end, total) with 20 per page
+const paginationInfo = computed(() => {
+  const total = totalRecords.value || 0
+  const current = currentPage.value || 1
+  const limit = pageSize.value || 20
+  const start = total === 0 ? 0 : (current - 1) * limit + 1
+  const end = Math.min(current * limit, total)
+  return { start, end }
+})
+
 // Debounced search
 let searchTimeout: number | null = null
 const debouncedSearch = () => {
@@ -445,65 +504,14 @@ onMounted(async () => {
   margin-bottom: 1rem !important;
 }
 
-.history-timeline {
-  position: relative;
-  padding-left: 2rem;
-}
-
-.history-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--element-gray);
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
-}
-
-.timeline-item:last-child { margin-bottom: 0; }
-
-.timeline-marker {
-  position: absolute;
-  left: -2.25rem;
-  top: 0.25rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-white);
-  background: var(--primary-mid-gray);
-}
+/* Timeline structure and card styles moved to shared assets/styles/components/timeline.css */
 
 .timeline-scheduled .timeline-marker { background: var(--secondary-purple); }
 .timeline-in-progress .timeline-marker { background: var(--secondary-orange); }
 .timeline-completed .timeline-marker { background: var(--secondary-green); }
 .timeline-cancelled .timeline-marker { background: var(--secondary-red); }
 
-.timeline-content { background: var(--primary-light-gray); border: 1px solid var(--element-gray); border-radius: 0.5rem; padding: 0.75rem; }
-.timeline-content.compact { padding: 0.6rem; }
-
-.timeline-title { color: var(--primary-black); font-size: 0.95rem; font-weight: 600; margin: 0; }
-.timeline-meta { display: flex; gap: 0.5rem; margin-top: 0.4rem; }
-.timeline-meta .badge { font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-weight: 500; }
-.badge-scheduled { background-color: var(--secondary-purple) !important; color: white !important; }
-.badge-in-progress { background-color: var(--secondary-orange) !important; color: white !important; }
-.badge-completed { background-color: var(--secondary-green) !important; color: white !important; }
-.badge-cancelled { background-color: var(--secondary-red) !important; color: white !important; }
-.badge-type-preventive { background-color: var(--secondary-green) !important; color: white !important; }
-.badge-type-corrective { background-color: var(--secondary-pink) !important; color: white !important; }
-.badge-type-emergency { background-color: var(--secondary-red) !important; color: white !important; }
-.badge-type-upgrade { background-color: var(--secondary-purple) !important; color: white !important; }
 .timeline-date { font-size: 0.8rem; color: var(--primary-mid-gray); font-weight: 500; }
-
-.timeline-details { margin-top: 0.5rem; font-size: 0.85rem; }
-.timeline-details.compact { margin-top: 0.4rem; }
-.timeline-details .text-muted { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.025em; font-weight: 500; }
-.timeline-notes { font-style: italic; color: var(--primary-dark-gray); font-size: 0.8rem; margin-top: 0.25rem; }
 
 /* Filter dropdown styling */
 .filter-dropdown { border: 1px solid #dee2e6; background-color: #f8f9fa !important; }

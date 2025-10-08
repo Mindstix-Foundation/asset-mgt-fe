@@ -212,6 +212,41 @@
     box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.1);
 }
 
+/* Global validation styling for all forms within form pages */
+.container-fluid.py-4 .was-validated .form-control:valid,
+.container-fluid.py-4 .was-validated .form-select:valid,
+.container-fluid.py-4 .form-control.is-valid,
+.container-fluid.py-4 .form-select.is-valid {
+    border-color: var(--secondary-green) !important;
+    box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.container-fluid.py-4 .was-validated .form-control:invalid,
+.container-fluid.py-4 .was-validated .form-select:invalid,
+.container-fluid.py-4 .form-control.is-invalid,
+.container-fluid.py-4 .form-select.is-invalid {
+    border-color: var(--secondary-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+}
+
+/* Ensure the green checkmark appears consistently for valid inputs */
+.container-fluid.py-4 .was-validated .form-control:valid,
+.container-fluid.py-4 .form-control.is-valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2321AF65' d='M2.3 6.73L.6 4.53c-.2-.26-.2-.62 0-.88.23-.26.6-.26.83 0L3 5.34l3.57-4.2c.23-.27.6-.3.86-.07.27.23.3.6.07.86L3.3 6.7c-.12.14-.3.22-.5.22-.18 0-.36-.08-.48-.2z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+    padding-right: calc(1.5em + .75rem);
+}
+
+.container-fluid.py-4 .was-validated .form-select:valid,
+.container-fluid.py-4 .form-select.is-valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2321AF65' d='M2.3 6.73L.6 4.53c-.2-.26-.2-.62 0-.88.23-.26.6-.26.83 0L3 5.34l3.57-4.2c.23-.27.6-.3.86-.07.27.23.3.6.07.86L3.3 6.7c-.12.14-.3.22-.5.22-.18 0-.36-.08-.48-.2z'/%3e%3c/svg%3e"), var(--bs-form-select-bg-icon, url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"));
+    background-position: right 1.5rem center, right .75rem center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem), 16px 12px;
+    padding-right: 3rem;
+}
+
 /* STANDARDIZED BUTTON SYSTEM - Perfect Consistency */
 /* EXCLUDE modals and other non-form components to prevent affecting asset view modals */
 .container-fluid.py-4 .btn:not(.modal .btn):not(.btn-sm):not(.btn-lg) {
@@ -364,7 +399,6 @@
 /* CONSISTENT BUTTON CONTAINER LAYOUTS */
 .container-fluid.py-4 .d-flex.justify-content-between,
 .container-fluid.py-4 .d-flex.gap-2,
-.container-fluid.py-4 .text-center,
 .container-fluid.py-4 .d-flex.justify-content-end {
     padding-top: 1.5rem;
     border-top: 1px solid var(--element-gray);
@@ -372,6 +406,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
+}
+
+/* Ensure form action areas stack text below buttons and center-align */
+.container-fluid.py-4 .form-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.container-fluid.py-4 .form-actions .d-flex {
+    justify-content: center !important;
 }
 
 /* Force consistent button spacing regardless of container */

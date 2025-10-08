@@ -5,12 +5,6 @@
       <div>
         <h2 class="mb-0" style="color: var(--primary-black);">Manage Employees</h2>
         <p class="text-muted mb-0">Manage deletable employees (employees without assigned assets)</p>
-        <PaginationInfo 
-          :start="paginationInfo.start" 
-          :end="paginationInfo.end" 
-          :total="paginationInfo.total" 
-          item-name="employees"
-        />
       </div>
       <div class="d-flex align-items-center gap-3">
         <button class="btn btn-outline-secondary btn-modern" @click="goBack">
@@ -47,10 +41,10 @@
                         class="form-control" 
                         v-model="singleEmployeeInput"
                         id="single-emp-input"
-                        placeholder="EMP-0001"
+                        placeholder="0001"
                         @keyup.enter="addSingleEmployee"
-                        pattern="EMP-\d{4}"
-                        title="Format: EMP-NNNN (e.g., EMP-0001)"
+                        pattern="\d{4}"
+                        title="Format: 4 digits (e.g., 0001)"
                       >
                     </div>
                     <div class="col-4">
@@ -65,7 +59,7 @@
                     </div>
                   </div>
                   <small class="form-text text-muted">
-                    Enter a single employee ID (e.g., EMP-0001) to add to deletion list
+                    Enter a single employee ID (e.g., 0001) to add to deletion list
                   </small>
                 </div>
                 <div class="col-7">
@@ -79,10 +73,10 @@
                           class="form-control" 
                           v-model="employeeFromInput"
                           id="employee-from-input"
-                          placeholder="EMP-0001"
+                          placeholder="0001"
                           @keyup.enter="addEmployeeRange"
-                          pattern="EMP-\d{4}"
-                          title="Format: EMP-NNNN (e.g., EMP-0001)"
+                          pattern="\d{4}"
+                          title="Format: 4 digits (e.g., 0001)"
                         >
                         <label class="text-muted mb-0" for="employee-to-input">to</label>
                         <input 
@@ -90,10 +84,10 @@
                           class="form-control" 
                           v-model="employeeToInput"
                           id="employee-to-input"
-                          placeholder="EMP-9999"
+                          placeholder="9999"
                           @keyup.enter="addEmployeeRange"
-                          pattern="EMP-\d{4}"
-                          title="Format: EMP-NNNN (e.g., EMP-9999)"
+                          pattern="\d{4}"
+                          title="Format: 4 digits (e.g., 9999)"
                         >
                       </div>
                     </div>
@@ -109,7 +103,7 @@
                     </div>
                   </div>
                   <small class="form-text text-muted">
-                    Enter employee ID range (e.g., EMP-0001 to EMP-9999) to add multiple employees for deletion
+                    Enter employee ID range (e.g., 0001 to 9999) to add multiple employees for deletion
                   </small>
                 </div>
                 <div class="col-12">
@@ -250,7 +244,7 @@
                   
                   <!-- Status column -->
                   <td>
-                    <span :class="employee.status === 'ACTIVE' ? 'badge badge-active' : 'badge badge-inactive'">
+                    <span :class="employee.status === 'ACTIVE' ? 'badge badge-green' : 'badge badge-red'">
                       {{ employee.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
                     </span>
                   </td>
@@ -274,16 +268,14 @@
           </div>
         </div>
         <!-- Pagination -->
-        <div class="card-footer d-flex justify-content-between align-items-center py-3" v-if="pagination.totalPages > 1">
-          <PaginationInfo 
-            :start="paginationInfo.start" 
-            :end="paginationInfo.end" 
-            :total="paginationInfo.total" 
-            item-name="employees"
-          />
-          <AppPagination 
-            :current-page="pagination.currentPage" 
+        <div class="card-footer py-3" v-if="pagination.totalPages > 1 || pagination.totalCount > 0">
+          <AppPagination
+            :current-page="pagination.currentPage"
             :total-pages="pagination.totalPages"
+            :start="paginationInfo.start"
+            :end="paginationInfo.end"
+            :total="paginationInfo.total"
+            item-name="employees"
             @change="handlePageChange"
           />
         </div>
@@ -453,7 +445,6 @@ import { useToastStore } from '@/stores/toast'
 import { employeeService } from '@/services/business/employeeService'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
-import PaginationInfo from '@/components/ui/pagination/PaginationInfo.vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -501,6 +492,8 @@ const paginationInfo = computed(() => {
   
   return { start, end, total }
 })
+
+// Pagination controls centralized in AppPagination
 
 // Delete confirmation modal state
 const showDeleteConfirmationModal = ref(false)
@@ -635,10 +628,10 @@ const addSingleEmployee = () => {
     return
   }
   
-  // Validate EMP-NNNN format
-  const empPattern = /^EMP-\d{4}$/
-  if (!empPattern.test(employeeId)) {
-    showErrorToast('Employee ID must be in format EMP-NNNN (e.g., EMP-0001)')
+  // Validate 4-digit format
+  const empPattern = /^\d{4}$/
+  if (!empPattern.test(employeeId) || employeeId === '0000') {
+    showErrorToast('Employee ID must be exactly 4 digits (0001–9999)')
     return
   }
   
@@ -663,8 +656,8 @@ const addSingleEmployee = () => {
 
 // Helper function to validate employee ID format
 const validateEmployeeIdFormat = (value: string): boolean => {
-  const empPattern = /^EMP-\d{4}$/
-  return empPattern.test(value)
+  const empPattern = /^\d{4}$/
+  return empPattern.test(value) && value !== '0000'
 }
 
 // Helper function to validate range inputs
@@ -675,7 +668,7 @@ const validateRangeInputs = (fromValue: string, toValue: string): boolean => {
   }
   
   if (!validateEmployeeIdFormat(fromValue) || !validateEmployeeIdFormat(toValue)) {
-    showErrorToast('Employee IDs must be in format EMP-NNNN (e.g., EMP-0001)')
+    showErrorToast('Employee IDs must be exactly 4 digits (0001–9999)')
     return false
   }
   
@@ -688,7 +681,7 @@ const processEmployeeRange = (fromValue: string, toValue: string) => {
   let alreadySelectedCount = 0
   
   for (const emp of items.value) {
-    if (emp.employeeId >= fromValue && emp.employeeId <= toValue) {
+    if (String(emp.employeeId) >= fromValue && String(emp.employeeId) <= toValue) {
       if (selectedEmployeesForDeletion.value.includes(emp.id)) {
         alreadySelectedCount++
       } else {
@@ -747,12 +740,12 @@ const executeBulkDelete = async () => {
     isBulkDeleting.value = true
 
     // Get employee IDs (database IDs)
-    const employeeIdsToDelete = selectedEmployeesForDeletion.value
+  const employeeIdsToDelete = selectedEmployeesForDeletion.value
       .map(selectedId => {
         const employee = items.value.find(item => item.id === selectedId)
         return employee?.id
       })
-      .filter(id => id !== undefined) as number[]
+      .filter((id): id is number => id !== undefined)
 
     if (employeeIdsToDelete.length === 0) {
       toastStore.showError('Error', 'No valid employees selected for deletion')
@@ -864,30 +857,7 @@ onMounted(async () => {
 <style scoped>
 /* Import all styles from ManageAssetCategoriesView.vue for consistency */
 
-/* Button styling */
-.btn {
-  border-radius: 0.375rem !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-modern {
-  border-radius: 0.375rem !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-danger {
-  background-color: var(--secondary-red);
-  border-color: var(--secondary-red);
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #d63447;
-  border-color: #d63447;
-  color: white;
-}
+/* Button styling moved to components/buttons.css */
 
 /* Form styling */
 .form-control, .form-select {
@@ -916,24 +886,7 @@ onMounted(async () => {
   margin-top: 0.25rem;
 }
 
-/* Badge styling */
-.badge-active {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-inactive {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
+/* Badge styling moved to components/badges.css */
 
 /* Form Card */
 .form-card {
@@ -999,15 +952,7 @@ onMounted(async () => {
   border-color: var(--secondary-purple) !important;
 }
 
-/* Employee selection chips styling */
-.badge.bg-warning {
-  background-color: #8B4513 !important;
-  color: white !important;
-  padding: 0.5rem 0.75rem !important;
-  font-size: 0.875rem !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-}
+/* Employee selection chips styling moved to pages/employees.css */
 
 /* Employee Add Buttons */
 .employee-add-btn {

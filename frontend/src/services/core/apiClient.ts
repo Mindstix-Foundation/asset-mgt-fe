@@ -23,32 +23,82 @@ apiClient.interceptors.request.use(
   }
 )
 
+// Add debounce for auth expired events to prevent multiple rapid redirects
+let authExpiredTimeout: number | null = null
+
+// Helper: Check if redirect should be prevented
+const shouldPreventRedirect = (): boolean => {
+  return (typeof globalThis !== 'undefined') && (globalThis as any).preventAuthExpiredRedirect === true
+}
+
+// Helper: Check if request is to auth endpoint
+const isAuthEndpoint = (url?: string): boolean => {
+  return url?.includes('/auth/') ?? false
+}
+
+// Helper: Check if user is on a login/auth page
+const isOnAuthPage = (): boolean => {
+  if (typeof globalThis.window === 'undefined') return false
+  const authPages = ['/', '/login', '/forgot-password', '/reset-password']
+  return authPages.includes(globalThis.window.location.pathname)
+}
+
+// Helper: Dispatch auth expired event with debounce
+const dispatchAuthExpired = (): void => {
+  if (authExpiredTimeout !== null) {
+    clearTimeout(authExpiredTimeout)
+    authExpiredTimeout = null
+  }
+  
+  authExpiredTimeout = globalThis.window.setTimeout(() => {
+    if (typeof globalThis !== 'undefined') {
+      globalThis.localStorage.removeItem('user_data')
+      globalThis.window.dispatchEvent(new CustomEvent('auth:expired'))
+      authExpiredTimeout = null
+    }
+  }, 100)
+}
+
+// Helper: Check if request should be retried
+const shouldRetryRequest = (originalRequest: any): boolean => {
+  return !shouldPreventRedirect() && !isAuthEndpoint(originalRequest.url) && 
+         !isOnAuthPage() && !originalRequest._retry
+}
+
+// Helper: Handle token refresh and retry
+const handleTokenRefresh = async (originalRequest: any) => {
+  console.log('[ApiClient] 401 error detected, attempting token refresh')
+  originalRequest._retry = true
+  
+  const refreshSuccess = await authService.refreshToken()
+  
+  if (refreshSuccess) {
+    console.log('[ApiClient] Token refresh successful, retrying original request')
+    return apiClient(originalRequest)
+  }
+  
+  console.log('[ApiClient] Token refresh failed, triggering auth expired event')
+  
+  if (!shouldPreventRedirect() && !isAuthEndpoint(originalRequest.url) && !isOnAuthPage()) {
+    dispatchAuthExpired()
+  }
+  
+  return null
+}
+
 // Add response interceptor for global error handling
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
 
-    // Skip retry for auth endpoints to avoid infinite loops
-    if (originalRequest.url?.includes('/auth/')) {
-      throw error
-    }
-
-    // On 401, attempt token refresh (cookies handle authentication automatically)
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('[ApiClient] 401 error detected, attempting token refresh')
-      originalRequest._retry = true
-      
-      const refreshSuccess = await authService.refreshToken()
-      
-      if (refreshSuccess) {
-        console.log('[ApiClient] Token refresh successful, retrying original request')
-        // New tokens are already in cookies - just retry the request
-        // No need to set Authorization header - cookies are sent automatically
-        return apiClient(originalRequest)
-      } else {
-        console.log('[ApiClient] Token refresh failed, logout will be triggered')
-        // authService.refreshToken() already handles logout on failure
+    // Handle 401 Unauthorized errors
+    if (error.response?.status === 401) {
+      if (shouldRetryRequest(originalRequest)) {
+        const result = await handleTokenRefresh(originalRequest)
+        if (result) return result
+      } else if (isAuthEndpoint(originalRequest.url)) {
+        console.log('[ApiClient] 401 on auth endpoint, not handling')
       }
     }
 

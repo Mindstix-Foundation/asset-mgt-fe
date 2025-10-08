@@ -5,13 +5,13 @@
       <!-- Page Header -->
       <div class="row align-items-center mb-4">
         <!-- Title Section -->
-        <div class="col-12 col-sm-12 col-md-6 col-lg-3 mb-3 mb-lg-0">
-          <h2 class="mb-0" style="color: var(--primary-black);">Employee Management</h2>
-          <p class="text-muted mb-0">Manage employee information and asset assignments</p>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-3 mb-lg-0">
+          <h2 class="mb-0 single-line">Employee Management</h2>
+          <p class="text-muted mb-0 single-line">Manage employee information and asset assignments</p>
         </div>
         
         <!-- Actions Section -->
-        <div class="col-12 col-md-6 col-lg-9">
+        <div class="col-12 col-md-6 col-lg-6">
           <!-- Small screens: Custom layout -->
           <div class="d-md-none">
             <div class="row g-2 mb-2">
@@ -155,11 +155,10 @@
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="employees-search">Search Employees</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input 
                 id="employees-search"
                 type="text" 
-                class="form-control" 
+                class="form-control search-with-icon" 
                 v-model="searchTerm"
                 placeholder="Search by name, ID, email..."
                 @input="filterEmployees"
@@ -260,8 +259,8 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Status</th>
                     <th>Assets</th>
+                    <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -288,12 +287,12 @@
                     </td>
                     <td>{{ employee.email }}</td>
                     <td>{{ employee.phone }}</td>
+                    <td>{{ employee.assetsCount }} Assets</td>
                     <td>
-                      <span :class="employee.status === 'active' ? 'badge badge-active' : 'badge badge-inactive'">
+                      <span :class="getStatusBadgeClass(employee.status)">
                         {{ employee.status === 'active' ? 'Active' : 'Inactive' }}
                       </span>
                     </td>
-                    <td>{{ employee.assetsCount }} Assets</td>
                     <td>
                       <div class="btn-group btn-group-sm employee-actions">
                         <button 
@@ -329,45 +328,15 @@
         
         <!-- Pagination for List View -->
         <div class="d-flex justify-content-between align-items-center mt-4" v-if="!isGridView">
-          <div class="text-muted">
-            <PaginationInfo 
-              :start="paginationInfo.start" 
-              :end="paginationInfo.end" 
-              :total="paginationInfo.total" 
-              item-name="employees"
-            />
-          </div>
-          <nav aria-label="Employee pagination">
-            <ul class="pagination pagination-modern mb-0">
-              <li :class="['page-item', { disabled: currentPage === 1 }]">
-                <button class="page-link" @click="goToPage(1)" :disabled="currentPage === 1" title="First Page">
-                  <i class="fas fa-angle-double-left"></i>
-                </button>
-              </li>
-              <li :class="['page-item', { disabled: currentPage === 1 }]">
-                <button class="page-link" @click="previousPage" :disabled="currentPage === 1" title="Previous Page">
-                  <i class="fas fa-chevron-left"></i>
-                </button>
-              </li>
-              <li 
-                v-for="page in visiblePages" 
-                :key="page"
-                :class="['page-item', { active: page === currentPage }]"
-              >
-                <button class="page-link" @click="goToPage(page)">{{ page }}</button>
-              </li>
-              <li :class="['page-item', { disabled: currentPage === totalPages }]">
-                <button class="page-link" @click="nextPage" :disabled="currentPage === totalPages" title="Next Page">
-                  <i class="fas fa-chevron-right"></i>
-                </button>
-              </li>
-              <li :class="['page-item', { disabled: currentPage === totalPages }]">
-                <button class="page-link" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Last Page">
-                  <i class="fas fa-angle-double-right"></i>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <AppPagination 
+            :current-page="currentPage" 
+            :total-pages="totalPages" 
+            :start="paginationInfo.start"
+            :end="paginationInfo.end"
+            :total="paginationInfo.total"
+            item-name="employees"
+            @change="changePage" 
+          />
         </div>
 
         <!-- Grid View -->
@@ -391,7 +360,7 @@
                       class="rounded-circle d-flex align-items-center justify-content-center me-2" 
                       :style="{ width: '36px', height: '36px', backgroundColor: getEmployeeIconColor(employee.id), flexShrink: 0 }"
                     >
-                      <i class="fas fa-user text-white" style="font-size: 0.9rem;"></i>
+                      <i class="fas fa-user text-white" style="font-size: 0.9rem; color: white !important;"></i>
                     </div>
                     <div class="flex-grow-1">
                       <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ employee.name }}</h6>
@@ -460,52 +429,22 @@
           
           <!-- Pagination for Grid View (bottom only) -->
           <div class="d-flex justify-content-between align-items-center mt-4" v-if="isGridView">
-            <div class="text-muted">
-              <PaginationInfo 
-              :start="paginationInfo.start" 
-              :end="paginationInfo.end" 
-              :total="paginationInfo.total" 
+            <AppPagination 
+              :current-page="currentPage" 
+              :total-pages="totalPages" 
+              :start="paginationInfo.start"
+              :end="paginationInfo.end"
+              :total="paginationInfo.total"
               item-name="employees"
+              @change="changePage" 
             />
-            </div>
-            <nav aria-label="Employee pagination">
-              <ul class="pagination pagination-modern mb-0">
-                <li :class="['page-item', { disabled: currentPage === 1 }]">
-                  <button class="page-link" @click="goToPage(1)" :disabled="currentPage === 1" title="First Page">
-                    <i class="fas fa-angle-double-left"></i>
-                  </button>
-                </li>
-                <li :class="['page-item', { disabled: currentPage === 1 }]">
-                  <button class="page-link" @click="previousPage" :disabled="currentPage === 1" title="Previous Page">
-                    <i class="fas fa-chevron-left"></i>
-                  </button>
-                </li>
-                <li 
-                  v-for="page in visiblePages" 
-                  :key="page"
-                  :class="['page-item', { active: page === currentPage }]"
-                >
-                  <button class="page-link" @click="goToPage(page)">{{ page }}</button>
-                </li>
-                <li :class="['page-item', { disabled: currentPage === totalPages }]">
-                  <button class="page-link" @click="nextPage" :disabled="currentPage === totalPages" title="Next Page">
-                    <i class="fas fa-chevron-right"></i>
-                  </button>
-                </li>
-                <li :class="['page-item', { disabled: currentPage === totalPages }]">
-                  <button class="page-link" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Last Page">
-                    <i class="fas fa-angle-double-right"></i>
-                  </button>
-                </li>
-              </ul>
-            </nav>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Employee Detail Modal -->
-    <div class="modal fade" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
+    <!-- Employee Detail Modal (no animation) -->
+    <div class="modal" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -545,7 +484,7 @@
                     <div class="col-md-6">
                       <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
-                        <span :class="['badge', selectedEmployee && selectedEmployee.status === 'active' ? 'badge-active' : 'badge-inactive']">
+                        <span :class="getStatusBadgeClass(selectedEmployee && selectedEmployee.status)">
                           {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Active' : 'Inactive' }}
                         </span>
                       </div>
@@ -564,7 +503,7 @@
                     <div class="col-md-12">
                       <div class="info-label-compact">Assigned Assets</div>
                       <div class="info-value-compact">
-                        <span class="badge badge-count">{{ selectedEmployee.assetsCount }} Assets</span>
+                        <span class="badge badge-pink">{{ selectedEmployee.assetsCount }} Assets</span>
                       </div>
                     </div>
                   </div>
@@ -675,13 +614,12 @@
               <button 
                 type="button" 
                 :class="[selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate']"
-                :disabled="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'"
                 @click="handleStatusButtonClick(selectedEmployee)"
                 :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
               >
                 <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                 {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
-                <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge bg-warning ms-2 admin-badge">Admin</span>
+                <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge badge-green ms-2 admin-badge">Admin</span>
               </button>
               <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedEmployee)">
@@ -707,13 +645,12 @@
                 <button 
                   type="button" 
                   :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate'" 
-                  :disabled="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'"
                   @click="handleStatusButtonClick(selectedEmployee)"
                   :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
                 >
                   <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                   {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
-                  <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge bg-warning ms-2 admin-badge">Admin</span>
+                  <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge badge-green ms-2 admin-badge">Admin</span>
                 </button>
               </div>
             </div>
@@ -784,7 +721,7 @@
               <button type="button" class="btn btn-cancel-confirm" @click="closeStatusModal">
                 <i class="fas fa-times me-1"></i>Cancel
               </button>
-              <button 
+                <button 
                 type="button" 
                 :class="statusChangeEmployee?.status === 'active' ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate'"
                 @click="confirmStatusChange"
@@ -808,7 +745,6 @@
   import { employeeService } from '@/services/business/employeeService'
   import { employeeApiService } from '@/services/api/employeeApi'
   import AppPagination from '@/components/ui/pagination/AppPagination.vue'
-  import PaginationInfo from '@/components/ui/pagination/PaginationInfo.vue'
   import BulkEmployeeUpload from '@/views/employees/BulkEmployeeUpload.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
   import ToastNotification from '@/components/common/ToastNotification.vue'
@@ -817,7 +753,7 @@
   
   export default {
     name: 'EmployeesView',
-    components: { AppPagination, PaginationInfo, BulkEmployeeUpload, SearchableDropdown, ToastNotification },
+    components: { AppPagination, BulkEmployeeUpload, SearchableDropdown, ToastNotification },
     setup() {
       const toastStore = useToastStore()
       useRouteToast()
@@ -891,16 +827,6 @@
         // For server-side pagination, we use the total count from server
         return { length: this.totalEmployees }
       },
-      visiblePages() {
-        const total = this.totalPages
-        const current = this.currentPage
-        
-        if (total <= 7) {
-          return this.generateAllPages(total)
-        }
-        
-        return this.generatePaginationPages(total, current)
-      },
       paginationInfo() {
         const total = this.totalEmployees
         const start = total === 0 ? 0 : (this.currentPage - 1) * this.itemsPerPage + 1
@@ -908,7 +834,7 @@
         
         return { start, end, total }
       },
-      // visiblePages is defined above; keep single source of truth
+      //
     },
     created() {
       this.loadEmployees()
@@ -1010,8 +936,8 @@
         return `${count} assets assigned to this employee`
       },
       getEmployeeIconColor(employeeId) {
-        const colors = [
-          'var(--secondary-purple)',
+        // Exclude secondary purple for avatar background per design feedback
+          const colors = [
           'var(--secondary-green)', 
           'var(--secondary-pink)',
           'var(--secondary-orange)',
@@ -1030,7 +956,7 @@
         return colors[Math.abs(hash) % colors.length]
       },
       getStatusBadgeClass(status) {
-        return status === 'active' ? 'badge badge-active' : 'badge badge-inactive'
+        return status === 'active' ? 'badge badge-green' : 'badge badge-red'
       },
       formatDate(dateString) {
         if (!dateString) return 'Not specified'
@@ -1088,29 +1014,14 @@
           this.loadEmployees()
         }
       },
-      goToPage(page) {
-        this.currentPage = page
-        this.loadEmployees()
-      },
-      previousPage() {
-        if (this.currentPage > 1) {
-          this.currentPage--
-          this.loadEmployees()
-        }
-      },
-      nextPage() {
-        if (this.currentPage < this.totalPages) {
-          this.currentPage++
-          this.loadEmployees()
-        }
-      },
+      // Pagination rendering is centralized in AppPagination; keep only changePage
       viewEmployee(employee) {
         this.selectedEmployee = employee
         this.isAssetsDetailsExpanded = false // Reset collapse state
         this.isAssetHistoryExpanded = false // Reset asset history state
         this.assetHistory = [] // Clear previous history
         this.$nextTick(() => {
-          const modal = new Modal(document.getElementById('employeeDetailModal'))
+          const modal = new Modal(document.getElementById('employeeDetailModal'), { backdrop: true, keyboard: true, focus: true })
           modal.show()
         })
       },
@@ -1129,8 +1040,8 @@
           return
         }
         
-        // Proceed with normal status confirmation
-        this.showStatusConfirmationModal(employee)
+        // Proceed with normal status confirmation (standard in-app modal)
+        this.showStatusConfirmation(employee)
       },
       showStatusConfirmation(employee) {
         // Check if trying to deactivate an admin employee
@@ -1261,7 +1172,8 @@
           this.totalEmployees = pagination.totalCount || 0
           this.serverTotalPages = pagination.totalPages || 1
           
-          const colorClasses = ['text-purple','text-success','text-info','text-warning','text-blue','text-danger','text-brown','text-muted']
+          // Exclude purple text color for avatar/icon per design guidance
+          const colorClasses = ['text-success','text-info','text-warning','text-blue','text-danger','text-brown','text-muted']
           this.employees = list.map((e, idx) => ({
             id: e.employeeId,
             databaseId: e.id, // Store the database ID for API calls
@@ -1421,41 +1333,6 @@
           button?.setAttribute('aria-expanded', 'false')
         }
       },
-      // Helper method to generate all pages when total <= 7
-      generateAllPages(total) {
-        const pages = []
-        for (let i = 1; i <= total; i++) {
-          pages.push(i)
-        }
-        return pages
-      },
-      // Helper method to generate pagination pages with ellipsis
-      generatePaginationPages(total, current) {
-        const pages = [1]
-        
-        if (current <= 4) {
-          // Near beginning: 1 2 3 4 5 ... total
-          this.addPageRange(pages, 2, 5)
-          pages.push('...', total)
-        } else if (current >= total - 3) {
-          // Near end: 1 ... (total-4) (total-3) (total-2) (total-1) total
-          pages.push('...')
-          this.addPageRange(pages, total - 4, total)
-        } else {
-          // Middle: 1 ... (current-1) current (current+1) ... total
-          pages.push('...')
-          this.addPageRange(pages, current - 1, current + 1)
-          pages.push('...', total)
-        }
-        
-        return pages
-      },
-      // Helper method to add a range of pages
-      addPageRange(pages, start, end) {
-        for (let i = start; i <= end; i++) {
-          pages.push(i)
-        }
-      }
     },
     mounted() {
       // Default to grid view on mobile screens
@@ -1511,21 +1388,7 @@
   </script>
   
 <style scoped>
-/* Align with global modal styling (see main.css) */
-.modal-content {
-    border: none !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-    border-radius: 0.75rem !important;
-}
-.modal-header {
-    background-color: var(--primary-light-gray) !important;
-    border-bottom: 1px solid var(--element-gray) !important;
-    border-radius: 0.75rem 0.75rem 0 0 !important;
-}
-.modal-body {
-    background-color: var(--primary-white) !important;
-    padding: 2rem !important;
-}
+/* Align with global modal styling moved to global modals.css */
 
 /* Asset Info Sections - Compact Design (matching MaintenanceView) */
 .asset-info-section-compact {
@@ -1714,10 +1577,7 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-/* Make button corners match input field corners for consistency */
-.btn {
-  border-radius: 0.375rem !important;
-}
+/* Make button corners match input field corners for consistency - moved to global buttons.css */
 
 /* Fix search input group border-radius consistency */
 .input-group .input-group-text {
@@ -1736,113 +1596,8 @@
 /* Component-specific styles are already included in main.css */
 /* Additional component-specific styles can be added here if needed */
 
-/* Modal Footer Button Styling */
-.modal-footer {
-    background-color: var(--primary-light-gray) !important;
-    border-top: 1px solid var(--element-gray) !important;
-    padding: 1rem 1.5rem !important;
-}
-
-.modal-footer .btn {
-    border-radius: 0.5rem !important;
-    font-weight: 500 !important;
-    transition: all 0.2s ease !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.modal-footer .btn:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-.modal-footer .btn-secondary {
-    background-color: var(--primary-light-gray) !important;
-    border: 1px solid var(--element-gray) !important;
-    color: var(--primary-dark-gray) !important;
-}
-
-.modal-footer .btn-secondary:hover {
-    background-color: var(--primary-white) !important;
-    border-color: var(--primary-mid-light) !important;
-    color: var(--primary-black) !important;
-}
-
-.modal-footer .btn-success {
-    background-color: var(--secondary-green) !important;
-    border-color: var(--secondary-green) !important;
-    color: white !important;
-}
-
-.modal-footer .btn-success:hover {
-    background-color: #1e9c5a !important;
-    border-color: #1e9c5a !important;
-    color: white !important;
-}
-
-.modal-footer .btn-primary-blue {
-    background-color: var(--secondary-purple) !important;
-    border-color: var(--secondary-purple) !important;
-    color: white !important;
-}
-
-.modal-footer .btn-primary-blue:hover {
-    background-color: #2415c7 !important;
-    border-color: #2415c7 !important;
-    color: white !important;
-}
-/* Badge Styling for Employee Modal */
-.badge-active {
-    background-color: var(--secondary-green) !important;
-    color: white !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    padding: 0.35rem 0.65rem !important;
-    border-radius: 0.375rem !important;
-}
-.badge-inactive {
-    background-color: var(--secondary-red) !important;
-    color: white !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    padding: 0.35rem 0.65rem !important;
-    border-radius: 0.375rem !important;
-}
-.btn-status-activate {
-    background-color: var(--secondary-green) !important;
-    border-color: var(--secondary-green) !important;
-    color: white !important;
-    border-radius: 0.5rem !important;
-    font-weight: 500 !important;
-}
-.btn-status-deactivate {
-    background-color: var(--secondary-red) !important;
-    border-color: var(--secondary-red) !important;
-    color: white !important;
-    border-radius: 0.5rem !important;
-    font-weight: 500 !important;
-}
-
-  .badge-count {
-      background-color: var(--secondary-pink) !important;
-      color: white !important;
-      font-size: 0.75rem !important;
-      font-weight: 500 !important;
-      padding: 0.35rem 0.65rem !important;
-      border-radius: 0.375rem !important;
-  }
-
-.badge-assigned {
-    background-color: var(--secondary-green) !important;
-    color: white !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
-    padding: 0.35rem 0.65rem !important;
-    border-radius: 0.375rem !important;
-}
-
-/* .badge-info earlier variant removed to avoid duplication. */
+/* Modal footer and button styling moved to components/modals.css and components/buttons.css */
+/* Badge styles moved to components/badges.css and pages/employees.css */
 
 
 /* Assets List Styling */
@@ -1922,24 +1677,14 @@
 }
 
 /* Table spacing adjustments */
-.table th:first-child, .table td:first-child {
-    padding-left: 1.25rem !important;
-}
-
-.table th:last-child, .table td:last-child {
-    padding-right: 0.75rem !important;
-    padding-left: 0.5rem !important;
-}
+/* Using shared first/last column paddings from components/tables.css */
 
 .employee-actions {
     justify-content: flex-end !important;
     gap: 0.25rem !important;
 }
 
-.table-responsive {
-    margin: 0 !important;
-    padding: 0 !important;
-}
+/* Using shared .table-responsive spacing from components/tables.css */
   /* Fixed column widths for consistent table layout */
   #employeesTable th:nth-child(1),
   #employeesTable td:nth-child(1) { /* Employee ID */
@@ -1978,17 +1723,17 @@
       overflow: hidden !important;
   }
   #employeesTable th:nth-child(5),
-  #employeesTable td:nth-child(5) { /* Status */
-      width: 110px !important;
-      min-width: 110px !important;
-      max-width: 110px !important;
-  }
-  #employeesTable th:nth-child(6),
-  #employeesTable td:nth-child(6) { /* Assets */
+  #employeesTable td:nth-child(5) { /* Assets */
       width: 110px !important;
       min-width: 110px !important;
       max-width: 110px !important;
       white-space: nowrap !important;
+  }
+  #employeesTable th:nth-child(6),
+  #employeesTable td:nth-child(6) { /* Status */
+      width: 110px !important;
+      min-width: 110px !important;
+      max-width: 110px !important;
   }
   #employeesTable th:nth-child(7),
   #employeesTable td:nth-child(7) { /* Actions */
@@ -2091,25 +1836,7 @@
   box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
 }
 
-/* Admin badge styling - make it stand out even when button is disabled */
-.admin-badge {
-  opacity: 1 !important;
-  background-color: #e91e63 !important;
-  color: #fff !important;
-  font-weight: 600 !important;
-  border: 1px solid #e91e63 !important;
-  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3) !important;
-}
-
-/* Ensure admin badge is visible even in disabled buttons */
-button:disabled .admin-badge {
-  opacity: 1 !important;
-  background-color: #e91e63 !important;
-  color: #fff !important;
-  font-weight: 600 !important;
-  border: 1px solid #e91e63 !important;
-  box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3) !important;
-}
+/* Admin badge styling moved to components/badges.css */
 
 /* Responsive Dropdown Improvements */
 .dropdown-menu {
@@ -2425,60 +2152,7 @@ button:disabled .admin-badge {
   }
 }
 
-/* Filter dropdown responsive styling */
-.filter-dropdown {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
-}
-
-/* Filter Clear Button Responsive Styling */
-.filter-clear-button-container {
-  flex-shrink: 0;
-  min-width: 120px;
-}
-
-.filter-clear-btn {
-  width: 100%;
-  min-width: 120px;
-  white-space: nowrap;
-}
-
-/* Mobile: Full width clear button */
-@media (max-width: 767.98px) {
-  .filter-clear-button-container {
-    width: 100%;
-    min-width: unset;
-    margin-top: 0.5rem;
-  }
-  
-  .filter-clear-btn {
-    width: 100%;
-    min-width: unset;
-  }
-}
-
-/* Tablet: Adequate width for clear button */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .filter-clear-button-container {
-    min-width: 140px;
-  }
-  
-  .filter-clear-btn {
-    min-width: 140px;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Filter dropdown responsive styling moved to global filters.css */
 
 /* Active filter button styling */
 .btn.active {
@@ -2518,6 +2192,16 @@ button:disabled .admin-badge {
   font-weight: 500;
 }
 
+/* Ensure disabled Deactivate button doesn't dim or recolor Admin badge */
+.btn-status-deactivate:disabled {
+  opacity: 1 !important; /* prevent global disabled opacity from dimming badge */
+}
+
+.btn-status-deactivate:disabled .admin-badge {
+  background-color: var(--primary-black) !important;
+  color: white !important;
+}
+
 /* Action buttons in employee cards */
 .employee-card-modern .btn-action {
   border: 1px solid #dee2e6;
@@ -2550,89 +2234,6 @@ button:disabled .admin-badge {
   /* Preserve original text color */
 }
 
- 
-
-/* Modern Pagination Styling */
-.pagination-modern {
-  gap: 0.25rem;
-}
-
-.pagination-modern .page-link {
-  border: 1px solid #dee2e6;
-  color: #495057;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
-  background-color: white;
-  margin: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.pagination-modern .page-link:hover {
-  background-color: #e9ecef;
-  border-color: #adb5bd;
-  color: #212529;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: white;
-}
-
-.pagination-modern .page-item.disabled .page-link {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-  color: #6c757d;
-  cursor: not-allowed;
-}
-
-/* Mobile pagination improvements */
-@media (max-width: 576px) {
-  .pagination-modern {
-    gap: 0.125rem;
-  }
-  
-  .pagination-modern .page-link {
-    padding: 0.375rem 0.5rem;
-    font-size: 0.8rem;
-    min-width: 36px;
-    height: 36px;
-  }
-  
-  .d-flex.justify-content-between {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .text-muted small {
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* Extra small screens - further reduce pagination size */
-@media (max-width: 400px) {
-  .pagination-modern .page-link {
-    padding: 0.25rem 0.375rem;
-    font-size: 0.75rem;
-    min-width: 32px;
-    height: 32px;
-  }
-}
-
-/* Tablet pagination improvements */
-@media (min-width: 577px) and (max-width: 991.98px) {
-  .pagination-modern {
-    gap: 0.5rem;
-  }
-  
-  .pagination-modern .page-link {
-    padding: 0.5rem 1rem;
-  }
-}
 
 /* Asset History Section Styling */
 .asset-history-section {
@@ -2814,30 +2415,7 @@ button:disabled .admin-badge {
   border-radius: 0.25rem !important;
 }
 
-.badge-success {
-  background-color: #28a745 !important;
-  color: white !important;
-}
-
-.badge-info {
-  background-color: #17a2b8 !important;
-  color: white !important;
-}
-
-.badge-warning {
-  background-color: #ffc107 !important;
-  color: #212529 !important;
-}
-
-.badge-danger {
-  background-color: #dc3545 !important;
-  color: white !important;
-}
-
-.badge-secondary {
-  background-color: #6c757d !important;
-  color: white !important;
-}
+/* Generic badge classes moved to components/badges.css */
 
 /* Mobile Timeline Adjustments */
 @media (max-width: 576px) {

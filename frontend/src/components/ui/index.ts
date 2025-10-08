@@ -11,5 +11,4 @@ export { default as NavBar } from './navigation/NavBar.vue'
 
 // Pagination Components
 export { default as AppPagination } from './pagination/AppPagination.vue'
-export { default as PaginationInfo } from './pagination/PaginationInfo.vue'
 

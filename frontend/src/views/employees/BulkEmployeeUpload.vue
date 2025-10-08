@@ -7,7 +7,8 @@
       title="Bulk Upload Employees"
       entity-name="Employees"
       :columns="employeeColumns"
-      :template-data="[]"
+      :template-data="sampleRows"
+      :helper-notes="helperNotes"
       upload-button-text="Upload Employees"
       :always-validate="true"
       @upload="handleBulkUpload"
@@ -29,12 +30,26 @@ const toastStore = useToastStore()
 
 // Employee columns configuration
 const employeeColumns = ref([
+  { key: 'employeeId', label: 'Employee ID', required: true },
   { key: 'firstName', label: 'First Name', required: true },
   { key: 'lastName', label: 'Last Name', required: true },
   { key: 'email', label: 'Email', required: true },
   { key: 'phone', label: 'Phone', required: false },
   { key: 'dateOfBirth', label: 'Date of Birth (YYYY-MM-DD)', required: false },
   { key: 'address', label: 'Address', required: false }
+])
+
+// Template sample row to guide users
+const sampleRows = ref([
+  { employeeId: '0001', firstName: 'Aarav', lastName: 'Sharma', email: 'aarav.sharma@example.com', phone: '+91 9876543210', dateOfBirth: '1995-06-15', address: '123 Street, City' }
+])
+
+// Helper notes to display in modal
+const helperNotes = ref([
+  'Employee ID: exactly 4 digits (0001–9999). Must be unique.',
+  'Email: must be a valid format and unique.',
+  "Phone (optional): format '+91 9999999999'.",
+  'Date of Birth (optional): format YYYY-MM-DD; must be at least 16 years old.'
 ])
 
 // Enhanced employee validation using backend API

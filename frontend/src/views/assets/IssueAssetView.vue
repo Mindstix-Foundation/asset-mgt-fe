@@ -608,7 +608,7 @@ const submitForm = async (event?: Event) => {
 // Helper methods
 const generateAssignmentDetails = () => {
   const selectedAsset = availableAssets.value.find(asset => asset.id.toString() === formData.assetId)
-  const selectedEmployee = activeEmployees.value.find(emp => emp.id === formData.employeeId)
+  const selectedEmployee = activeEmployees.value.find(emp => emp.id.toString() === formData.employeeId)
   
   let details = ''
   if (selectedAsset && selectedEmployee) {
@@ -854,8 +854,8 @@ onMounted(async () => {
     if (!fromQuery) {
       originPath.value = '/app/employees'
     }
-    const employeeId = Number.parseInt(employeeIdFromQuery)
-    const employee = activeEmployees.value.find(emp => emp.id === employeeId.toString())
+  const employeeId = Number.parseInt(employeeIdFromQuery)
+  const employee = activeEmployees.value.find(emp => Number(emp.id) === employeeId)
     if (employee) {
       // Set the selected employee for SearchableDropdown
       selectedEmployee.value = {

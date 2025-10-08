@@ -30,7 +30,7 @@
                   class="rounded-circle d-flex align-items-center justify-content-center me-3" 
                   :style="{ width: '40px', height: '40px', backgroundColor: getEmployeeIconColor(employee.id), flexShrink: 0 }"
                 >
-                  <i class="fas fa-user text-white" style="font-size: 1rem;"></i>
+                  <i class="fas fa-user" style="font-size: 1rem; color: white !important;"></i>
                 </div>
                 <div>
                   <h5 class="mb-0 fw-bold" style="color: var(--primary-black);">{{ employee.name }}</h5>
@@ -40,8 +40,8 @@
             </div>
             <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
               <div class="d-flex flex-column flex-md-row gap-2 justify-content-md-end">
-                <span class="badge badge-count">{{ returnedEventsCount }} Completed</span>
-                <span v-if="(employee?.assignedAssetsCount || 0) > 0" class="badge badge-assigned">{{ employee.assignedAssetsCount }} Currently Assigned</span>
+                <span class="badge badge-orange">{{ returnedEventsCount }} Completed</span>
+                <span v-if="(employee?.assignedAssetsCount || 0) > 0" class="badge badge-green">{{ employee.assignedAssetsCount }} Currently Assigned</span>
               </div>
             </div>
           </div>
@@ -176,8 +176,8 @@
                       </div>
                     </div>
                     <div class="timeline-badges">
-                      <span class="badge" :class="item.action === 'ASSIGNED' ? 'badge-assigned' : 'badge-returned'">{{ item.action === 'ASSIGNED' ? 'Assigned' : 'Returned' }}</span>
-                      <span class="badge badge-duration">{{ formatDateTime(item.timestamp) }}</span>
+                      <span class="badge" :class="item.action === 'ASSIGNED' ? 'badge-green' : 'badge-orange'">{{ item.action === 'ASSIGNED' ? 'Assigned' : 'Returned' }}</span>
+                      <span class="badge badge-purple">{{ formatDateTime(item.timestamp) }}</span>
                     </div>
                   </div>
                 </div>
@@ -193,9 +193,7 @@
                     <div class="col-6 col-sm-2">
                       <div class="info-item">
                         <span class="info-label small">Condition</span>
-                        <div class="info-value small">
-                          <span class="badge" :class="getConditionBadgeClass(item.condition || 'UNKNOWN')">{{ item.condition || 'Not specified' }}</span>
-                        </div>
+                        <div class="info-value small">{{ item.condition || 'Not specified' }}</div>
                       </div>
                     </div>
                     <div class="col-6 col-sm-4">
@@ -226,7 +224,11 @@
           <div v-if="pagination.totalPages > 1" class="d-flex justify-content-center mt-4">
             <AppPagination 
               :current-page="pagination.currentPage" 
-              :total-pages="pagination.totalPages" 
+              :total-pages="pagination.totalPages"
+              :start="paginationInfo.start"
+              :end="paginationInfo.end"
+              :total="paginationInfo.total"
+              item-name="events"
               @change="changePage" 
             />
           </div>
@@ -263,6 +265,14 @@ export default {
     },
     sortAscending() {
       return this.filters.sortOrder === 'asc'
+    },
+    paginationInfo() {
+      const total = this.pagination?.totalCount || 0
+      const currentPage = this.pagination?.currentPage || 1
+      const limit = this.filters?.limit || 20
+      const start = total === 0 ? 0 : (currentPage - 1) * limit + 1
+      const end = Math.min(currentPage * limit, total)
+      return { start, end, total }
     }
   },
   watch: {
@@ -519,16 +529,6 @@ export default {
       if (['phone', 'mobile', 'smartphone', 'cellphone'].includes(v)) return 'Phone'
       if (['tablet', 'ipad'].includes(v)) return 'Tablet'
       return 'Other'
-    },
-    getConditionBadgeClass(condition) {
-      const classes = {
-        'EXCELLENT': 'badge-success',
-        'GOOD': 'badge-info',
-        'FAIR': 'badge-warning',
-        'POOR': 'badge-danger',
-        'DAMAGED': 'badge-danger'
-      }
-      return classes[condition] || 'badge-secondary'
     }
   }
 }
@@ -552,65 +552,19 @@ export default {
   padding-left: 2rem;
 }
 
-.timeline-item {
-  position: relative;
-  margin-bottom: 1rem;
-}
-
-.timeline-item:last-child {
-  margin-bottom: 0;
-}
-
-.timeline-connector {
-  position: absolute;
-  left: -1.5rem;
-  top: 1.5rem;
-  width: 2px;
-  height: calc(100% + 0.5rem);
-  background-color: #dee2e6;
-  z-index: 1;
-}
-
-.timeline-dot {
-  position: absolute;
-  left: -2rem;
-  top: 0.25rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  border: 3px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.timeline-dot.returned {
-  background-color: var(--secondary-orange);
-  color: white;
-}
-
-.timeline-dot i {
-  font-size: 0.7rem;
-}
-
-.timeline-content {
-  background-color: white;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.timeline-content.compact {
-  padding: 0.75rem;
-}
-
-.timeline-header {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #f8f9fa;
+/* Defensive fixes to prevent layout regression from shared/global styles */
+.asset-history-timeline .timeline-item { position: relative; }
+.asset-history-timeline .timeline-badges .badge { display: inline-block !important; }
+.asset-history-timeline .timeline-dot { 
+  position: absolute !important; 
+  left: -2rem !important; 
+  top: 0.25rem !important; 
+  width: 1.5rem !important; 
+  height: 1.5rem !important; 
+  border-radius: 50% !important; 
+  display: flex !important; 
+  align-items: center !important; 
+  justify-content: center !important; 
 }
 
 .asset-icon-timeline {
@@ -650,22 +604,9 @@ export default {
   font-weight: 500 !important;
 }
 
-.timeline-badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: flex-end;
-}
+/* badges layout shared in global timeline.css */
 
-.timeline-details {
-  background-color: #f8f9fa;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-}
-
-.timeline-details.compact {
-  padding: 0.75rem;
-}
+/* details box defaults shared in global timeline.css */
 
 /* Info Items */
 .info-item {
@@ -702,67 +643,7 @@ export default {
   border: 1px solid #e9ecef;
 }
 
-/* Badge Styling */
-.badge-returned {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-  font-size: 0.7rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.6rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-duration {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  font-size: 0.7rem !important;
-  font-weight: 500 !important;
-  padding: 0.3rem 0.5rem !important;
-  border-radius: 0.25rem !important;
-}
-
-.badge-count {
-  background-color: var(--secondary-pink) !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.5rem 0.75rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-assigned {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.5rem 0.75rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-success {
-  background-color: #28a745 !important;
-  color: white !important;
-}
-
-.badge-info {
-  background-color: #17a2b8 !important;
-  color: white !important;
-}
-
-.badge-warning {
-  background-color: #ffc107 !important;
-  color: #212529 !important;
-}
-
-.badge-danger {
-  background-color: #dc3545 !important;
-  color: white !important;
-}
-
-.badge-secondary {
-  background-color: #6c757d !important;
-  color: white !important;
-}
+/* Badge styles moved to pages/employees.css and components/badges.css */
 
 /* Filter dropdown styling (parity with EmployeesView) */
 .filter-dropdown {

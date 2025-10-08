@@ -1157,26 +1157,7 @@ onMounted(async () => {
 }
 
 /* Enhanced validation styling */
-.was-validated .form-control:valid,
-.was-validated .form-select:valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
-}
-
-.was-validated .form-control:invalid,
-.was-validated .form-select:invalid,
-.form-control.is-invalid,
-.form-select.is-invalid {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out;
-}
-
-@keyframes subtle-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
+/* Validation styles removed; using unified-form-styles.css */
 
 .invalid-feedback {
   display: block;

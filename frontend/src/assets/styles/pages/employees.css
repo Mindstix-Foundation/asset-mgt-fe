@@ -209,6 +209,16 @@
   margin-bottom: 0.5rem;
 }
 
+/* Employee selection chips styling for Manage Employees */
+.badge.bg-warning {
+  background-color: #8B4513 !important;
+  color: white !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+}
+
 /* =================================
    EMPLOYEE MANAGEMENT TABLE STYLES
    For ManageEmployeesView.vue
@@ -594,6 +604,17 @@
   border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+/* Badge Styling for Timeline (moved from EmployeesView.vue) */
+.badge-returned {
+  background-color: var(--secondary-orange) !important;
+  color: white !important;
+}
+
+.badge-duration {
+  background-color: var(--secondary-purple) !important;
+  color: white !important;
 }
 
 /* Summary Stats */

@@ -41,6 +41,9 @@
               <i class="fas fa-info-circle me-1"></i>
               <small class="text-muted">Make sure your spreadsheet columns follow this exact sequence</small>
             </p>
+            <ul v-if="helperNotes && helperNotes.length" class="mt-2 mb-0 small text-muted">
+              <li v-for="(note, idx) in helperNotes" :key="idx">{{ note }}</li>
+            </ul>
           </div>
 
           <!-- Step 2: Upload File -->
@@ -242,12 +245,14 @@ interface Props {
   templateData?: any[]
   uploadButtonText?: string
   alwaysValidate?: boolean // New prop to always trigger comprehensive validation
+  helperNotes?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   uploadButtonText: 'Upload Data',
   templateData: () => [],
-  alwaysValidate: false
+  alwaysValidate: false,
+  helperNotes: () => []
 })
 
 // Emits

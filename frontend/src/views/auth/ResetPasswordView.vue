@@ -186,6 +186,9 @@ const resetPassword = async () => {
     return
   }
 
+  // Prevent global auth expired handler from redirecting during password reset
+  ;(globalThis as any).preventAuthExpiredRedirect = true
+
   try {
     isLoading.value = true
     const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
@@ -216,6 +219,8 @@ const resetPassword = async () => {
       errorMessage.value = 'Failed to reset password. Please try again.'
     }
   } finally {
+    // Re-enable global handler after request completes
+    ;(globalThis as any).preventAuthExpiredRedirect = false
     isLoading.value = false
   }
 }
