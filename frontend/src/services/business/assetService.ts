@@ -14,8 +14,8 @@ import type {
   AssetType,
   Brand,
   Model
-} from '../types/asset.types'
-import type { Vendor } from '../types/vendor.types'
+} from '../../types/asset.types'
+import type { Vendor } from '../../types/vendor.types'
 
 class AssetService {
   private readonly baseEndpoint = '/assets'
@@ -477,7 +477,7 @@ class AssetService {
   }
 
   // Export assets to CSV (client-side)
-  exportAssetsToCsv(assets: Asset[], filename: string = 'assets-export.csv'): void {
+  exportAssetsToCsv(assets: any[], filename: string = 'assets-export.csv'): void {
     const headers = [
       'Asset ID',
       'Serial Number',

@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AssetHistoryEvent } from '../../types/assetHistory.types'
+import type { AssetHistoryEvent } from '../../../types/assetHistory.types'
 
 interface Props {
   events: AssetHistoryEvent[]

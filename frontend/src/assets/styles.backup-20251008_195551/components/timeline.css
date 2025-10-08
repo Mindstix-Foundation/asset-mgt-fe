@@ -1,0 +1,110 @@
+/* Shared timeline card styles for history views */
+
+.history-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--primary-mid-gray);
+}
+
+/* Ensure icons inside timeline markers are visible on colored backgrounds */
+.timeline-dot i {
+  color: white !important;
+}
+
+.timeline-content {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-content.compact {
+  padding: 0.75rem;
+}
+
+.timeline-title {
+  color: var(--primary-black);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.timeline-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.timeline-meta .badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+.timeline-details {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+.timeline-details.compact {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+}
+
+.timeline-details .text-muted {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  font-weight: 500;
+}
+
+.timeline-notes {
+  font-style: italic;
+  color: var(--primary-dark-gray);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.timeline-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+

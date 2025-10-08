@@ -1227,8 +1227,8 @@ onMounted(async () => {
 </script> 
 
 <style scoped>
-/* Import form validation styles */
-@import url('../../assets/styles/formValidation.css');
+/* Import unified form styles (replaces old formValidation.css) */
+@import url('../../assets/unified-form-styles.css');
 
 /* Additional component-specific styles */
 

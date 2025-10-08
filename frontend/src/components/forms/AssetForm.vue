@@ -1837,8 +1837,8 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
 </script>
 
 <style scoped>
-/* Import form validation styles */
-@import url('../../assets/styles/formValidation.css');
+/* Import unified form styles (replaces old formValidation.css) */
+@import url('../../assets/unified-form-styles.css');
 
 
 /* AssetForm-specific responsive adjustments */

@@ -8,6 +8,8 @@
 .table {
   color: var(--text-secondary);
   /* Remove table-layout: fixed to allow Bootstrap's responsive behavior */
+  position: relative;
+  z-index: 0 !important;
 }
 
 .table thead th {
@@ -15,6 +17,8 @@
   border-bottom: 2px solid var(--element-gray);
   color: var(--text-primary);
   font-weight: 600;
+  position: relative;
+  z-index: 0 !important;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -32,6 +36,8 @@
   border: 1px solid var(--mindstix-border);
   margin: 0 !important;
   padding: 0 !important;
+  position: relative;
+  z-index: 0 !important;
 }
 
 /* Table cell padding adjustments for balanced spacing */
@@ -47,7 +53,7 @@
 /* Actions column (last column) padding adjustments */
 .table td:last-child, .table th:last-child {
   padding-right: 1.5rem !important;
-  text-align: center !important;
+  text-align: left !important;
 }
 
 /* Prevent text wrapping in table headers */
@@ -94,78 +100,9 @@
   min-width: 130px !important;
 }
 
-/* Asset-specific table styles - Consolidated from assets.css */
+/* Asset-specific table styles moved to assets.css for better organization */
 
 /* Table action button styling is now handled by buttons.css */
-
-/* Asset table column widths - Specific to AssetsView */
-.asset-table th:nth-child(1),
-.asset-table td:nth-child(1) { /* Asset ID */
-  width: 120px !important;
-  min-width: 120px !important;
-  max-width: 120px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.asset-table th:nth-child(2),
-.asset-table td:nth-child(2) { /* Name (Type - Brand - Model) */
-  width: 280px !important;
-  min-width: 280px !important;
-  max-width: 280px !important;
-}
-
-/* Asset actions button group spacing */
-.asset-actions {
-  gap: 0.25rem !important;
-}
-
-.asset-table th:nth-child(3),
-.asset-table td:nth-child(3) { /* Serial Number */
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 180px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.asset-table th:nth-child(4),
-.asset-table td:nth-child(4) { /* Status */
-  width: 140px !important;
-  min-width: 140px !important;
-  max-width: 140px !important;
-  white-space: nowrap !important;
-}
-
-.asset-table th:nth-child(5),
-.asset-table td:nth-child(5) { /* Assigned To */
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 180px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-
-.asset-table th:nth-child(6),
-.asset-table td:nth-child(6) { /* Condition */
-  width: 120px !important;
-  min-width: 120px !important;
-  max-width: 120px !important;
-  white-space: nowrap !important;
-}
-
-.asset-table th:nth-child(7),
-.asset-table td:nth-child(7) { /* Actions */
-  width: 200px !important;
-  min-width: 200px !important;
-  max-width: 200px !important;
-  padding-right: 1.25rem !important;
-  padding-left: 0.25rem !important;
-  text-align: left !important;
-}
 
 /* Vendor actions button group spacing */
 .vendor-actions {
@@ -175,6 +112,35 @@
 /* Employee actions button group spacing */
 .employee-actions {
   gap: 0.25rem !important;
+}
+
+/* =================================
+   Z-INDEX LAYERING FOR DROPDOWNS
+   Ensure tables don't interfere with filter dropdowns
+================================= */
+
+/* Override Bootstrap table stacking context */
+.table-responsive .table {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table body doesn't interfere with dropdowns */
+.table tbody {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table-hover doesn't interfere with dropdowns */
+.table-hover tbody tr {
+  position: relative;
+  z-index: 0 !important;
+}
+
+/* Ensure table-light header doesn't interfere with dropdowns */
+.table-light th {
+  position: relative;
+  z-index: 0 !important;
 }
 
 /* Responsive adjustments */

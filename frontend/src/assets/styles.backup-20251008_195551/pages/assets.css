@@ -787,6 +787,66 @@
    For AssetsView.vue
 ================================= */
 
+/* Asset Table Column Widths - Percentage-based for responsive design */
+.asset-table th,
+.asset-table td {
+  vertical-align: middle !important;
+}
+
+.asset-table th:nth-child(1),
+.asset-table td:nth-child(1) { /* Asset ID */
+  width: 5% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(2),
+.asset-table td:nth-child(2) { /* Asset Details */
+  width: 25% !important;
+}
+
+.asset-table th:nth-child(3),
+.asset-table td:nth-child(3) { /* Serial Number */
+  width: 18% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(4),
+.asset-table td:nth-child(4) { /* Assigned To */
+  width: 17.5% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(5),
+.asset-table td:nth-child(5) { /* Condition */
+  width: 7.5% !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(6),
+.asset-table td:nth-child(6) { /* Status */
+  width: 12% !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(7),
+.asset-table td:nth-child(7) { /* Actions */
+  width: 15% !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+}
+
+/* Asset actions button group spacing */
+.asset-actions {
+  gap: 0.25rem !important;
+}
+
 /* Form validation styles - Moved to forms.css */
 
 /* Modal-related styles moved to modals.css for better organization */
@@ -811,7 +871,7 @@
   left: 0 !important;
   right: auto !important;
   transform-origin: top center !important;
-  z-index: 1060 !important;
+  z-index: 1070 !important;
   
   /* Smooth animation properties */
   opacity: 0 !important;
@@ -819,28 +879,30 @@
   transform: translateY(10px) scale(0.95) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   
-  /* Enhanced styling */
+  /* Enhanced styling - Compact size */
   border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
   background-color: var(--primary-white) !important;
-  min-width: 200px !important;
+  min-width: 180px !important;
   max-width: 90vw !important;
-  padding: 0.5rem !important;
+  padding: 0.375rem !important;
+  max-height: 250px !important; /* Limit height */
+  overflow-y: auto !important;
 }
 
 /* Show state with smooth animation - consolidated below */
 
-/* Dropdown items styling */
+/* Dropdown items styling - Compact */
 .more-actions-dropdown .dropdown-item {
   display: flex !important;
   align-items: center !important;
-  padding: 0.75rem 1rem !important;
-  border-radius: 0.5rem !important;
-  margin: 0.125rem 0 !important;
+  padding: 0.5rem 0.75rem !important; /* Reduced padding */
+  border-radius: 0.375rem !important;
+  margin: 0 !important; /* No margin */
   color: var(--primary-black) !important;
   font-weight: 500 !important;
-  font-size: 0.9rem !important;
+  font-size: 0.875rem !important; /* Smaller font */
   transition: all 0.15s ease !important;
   border: none !important;
   background: transparent !important;
@@ -859,31 +921,32 @@
   transform: translateX(1px) !important;
 }
 
-/* Dropdown divider */
+/* Dropdown divider - Compact */
 .more-actions-dropdown .dropdown-divider {
-  margin: 0.5rem 0 !important;
+  margin: 0.25rem 0 !important; /* Reduced margin */
   border-color: var(--element-gray) !important;
   opacity: 0.5 !important;
 }
 
-/* Icon styling in dropdown items */
+/* Icon styling in dropdown items - Compact */
 .more-actions-dropdown .dropdown-item i {
-  width: 16px !important;
+  width: 14px !important; /* Smaller icon */
   text-align: center !important;
-  margin-right: 0.75rem !important;
-  font-size: 0.9rem !important;
+  margin-right: 0.5rem !important; /* Reduced margin */
+  font-size: 0.85rem !important; /* Smaller font */
 }
 
 /* Responsive adjustments */
 @media (max-width: 767.98px) {
   .more-actions-dropdown .dropdown-menu {
-    min-width: 180px !important;
+    min-width: 160px !important; /* Even smaller on mobile */
     max-width: 95vw !important;
+    padding: 0.25rem !important; /* Less padding on mobile */
   }
   
   .more-actions-dropdown .dropdown-item {
-    padding: 0.625rem 0.875rem !important;
-    font-size: 0.85rem !important;
+    padding: 0.5rem 0.625rem !important; /* Compact on mobile */
+    font-size: 0.8125rem !important; /* Slightly smaller font */
   }
 }
 

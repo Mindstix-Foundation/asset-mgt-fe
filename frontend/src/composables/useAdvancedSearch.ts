@@ -33,7 +33,7 @@ interface SearchIndex {
 
 class AdvancedSearchService {
   private searchIndex: SearchIndex = {}
-  private readonly debounceTimers = new Map<string, NodeJS.Timeout>()
+  private readonly debounceTimers = new Map<string, ReturnType<typeof setTimeout>>()
   private readonly defaultOptions: Required<SearchOptions> = {
     debounceMs: 300,
     minLength: 2,
@@ -256,7 +256,7 @@ class AdvancedSearchService {
         let highlightedValue = value
         
         // Sort matches by start index (descending) to avoid index shifting
-        const sortedMatches = fieldMatchesArr.toSorted((a, b) => b.startIndex - a.startIndex)
+        const sortedMatches = [...fieldMatchesArr].sort((a, b) => b.startIndex - a.startIndex)
         
         for (const match of sortedMatches) {
           const before = highlightedValue.substring(0, match.startIndex)

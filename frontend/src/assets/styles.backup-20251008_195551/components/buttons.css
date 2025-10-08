@@ -276,6 +276,20 @@
   background-color: rgba(255, 140, 97, 0.1) !important;
 }
 
+.asset-actions .btn-red:hover:not(:disabled),
+.btn-action.btn-red:hover:not(:disabled) {
+  color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
+  background-color: rgba(233, 118, 118, 0.1) !important;
+}
+
+.asset-actions .btn-blue:hover:not(:disabled),
+.btn-action.btn-blue:hover:not(:disabled) {
+  color: var(--secondary-blue) !important;
+  border-color: var(--secondary-blue) !important;
+  background-color: rgba(26, 35, 126, 0.1) !important;
+}
+
 .asset-actions .btn-gray:hover:not(:disabled),
 .btn-action.btn-gray:hover:not(:disabled) {
   color: var(--primary-mid-gray) !important;

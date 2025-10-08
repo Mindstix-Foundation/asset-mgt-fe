@@ -9,7 +9,7 @@ import type {
   VendorResponse,
   VendorSearchResponse,
   BulkUploadResponse
-} from '../types/vendor.types'
+} from '../../types/vendor.types'
 
 // Vendor API Service
 export class VendorApiService {
