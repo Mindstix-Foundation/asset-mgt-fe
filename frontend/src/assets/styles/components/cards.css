@@ -431,6 +431,57 @@
   }
   
   .login-logo i {
-      font-size: 1.5rem;
+    font-size: 1.5rem;
   }
+}
+
+/* =================================
+   ASSET CARDS COMPONENT STYLES
+   Moved from assets.css for better organization
+================================= */
+
+/* Grid view icon colors - ensure icons are white */
+.asset-card-modern .rounded-circle i {
+  color: white !important;
+}
+
+/* Assignment Status Compact */
+.assignment-status-compact {
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  background-color: var(--primary-white) !important;
+}
+
+.assignment-status-compact .bg-light {
+  background-color: var(--primary-light-gray) !important;
+}
+
+.assignment-icon {
+  width: 50px !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: rgba(33, 175, 101, 0.1) !important;
+  border-radius: 50% !important;
+}
+
+.qr-code-mini {
+  opacity: 0.6 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.qr-code-mini:hover {
+  opacity: 1 !important;
+  cursor: pointer !important;
+}
+
+/* Warranty Progress Indicator */
+.warranty-indicator .progress {
+  border-radius: 2px !important;
+  background-color: var(--element-gray) !important;
+}
+
+.warranty-indicator .progress-bar {
+  border-radius: 2px !important;
 }

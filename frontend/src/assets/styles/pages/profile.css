@@ -185,58 +185,7 @@
   border-top: 1px solid var(--element-gray);
 }
 
-.btn-edit {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.75rem 1.5rem !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-edit:hover {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-.btn-save {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.75rem 1.5rem !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-save:hover {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-.btn-cancel {
-  background-color: transparent !important;
-  border: 2px solid var(--primary-mid-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  border-radius: 0.375rem !important;
-  padding: 0.75rem 1.5rem !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-cancel:hover {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
+/* Profile action button styling is now handled by buttons.css */
 
 /* Activity Timeline */
 .activity-timeline {

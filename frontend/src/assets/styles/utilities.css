@@ -251,109 +251,7 @@ body .bg-dark,
   background-color: var(--primary-black) !important;
 }
 
-/* Bootstrap Button Class Overrides - Force Palette Colors */
-/* High specificity to override Bootstrap CDN */
-body .btn-primary,
-.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: var(--primary-white) !important;
-}
-
-body .btn-primary:hover,
-body .btn-primary:focus,
-body .btn-primary:active,
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-secondary {
-  background-color: var(--primary-mid-gray) !important;
-  border-color: var(--primary-mid-gray) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-secondary:hover,
-.btn-secondary:focus,
-.btn-secondary:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-success {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-success:hover,
-.btn-success:focus,
-.btn-success:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-danger {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-danger:hover,
-.btn-danger:focus,
-.btn-danger:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-warning:hover,
-.btn-warning:focus,
-.btn-warning:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-info {
-  background-color: var(--secondary-pink) !important;
-  border-color: var(--secondary-pink) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-info:hover,
-.btn-info:focus,
-.btn-info:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-brown {
-  background-color: var(--secondary-brown) !important;
-  border-color: var(--secondary-brown) !important;
-  color: var(--primary-white) !important;
-}
-
-.btn-brown:hover,
-.btn-brown:focus,
-.btn-brown:active {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+/* Button styling is now handled by buttons.css */
 
 /* FINAL OVERRIDE: Force all icons to use TrackStix palette colors */
 /* This section has the highest priority to override any external CSS */
@@ -430,15 +328,7 @@ i.text-brown {
   color: var(--secondary-brown) !important;
 }
 
-/* Override any remaining Bootstrap default colors */
-.btn-outline-primary i,
-.btn-outline-secondary i,
-.btn-outline-success i,
-.btn-outline-info i,
-.btn-outline-warning i,
-.btn-outline-danger i {
-  color: inherit !important;
-}
+/* Button icon styling is now handled by buttons.css */
 
 /* Force specific asset type icon colors */
 .asset-type-icon i {

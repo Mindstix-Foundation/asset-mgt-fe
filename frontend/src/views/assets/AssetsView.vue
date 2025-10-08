@@ -19,14 +19,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
+                    :class="['btn', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'grid' }]"
+                    :class="['btn', 'view-toggle', { active: currentView === 'grid' }]"
                     @click="setView('grid')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
@@ -37,9 +37,9 @@
             </div>
             <div class="col-6">
               <!-- Data Management Dropdown -->
-              <div class="dropdown">
+              <div class="dropdown more-actions-dropdown">
                 <button 
-                  class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                  class="btn btn-gray dropdown-toggle w-100" 
                   type="button" 
                   aria-expanded="false"
                   id="moreActionsDropdownSm"
@@ -47,7 +47,7 @@
                 >
                   <i class="fas fa-cog me-1"></i>More Actions
                 </button>
-                <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm" style="min-width: 200px;">
+                <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm">
                   <li>
                     <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
@@ -72,12 +72,12 @@
           <div class="row g-2 mb-2">
             <!-- Row 2: Add New Asset + Issue Asset -->
             <div class="col-6">
-              <button class="btn btn-primary btn-modern w-100" @click="navigateToAddAsset">
+              <button class="btn btn-purple w-100" @click="navigateToAddAsset">
                 <i class="fas fa-plus me-1"></i>Add New Asset
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-success btn-modern w-100" @click="navigateToIssueAsset">
+              <button class="btn btn-green w-100" @click="navigateToIssueAsset">
                 <i class="fas fa-user-plus me-1"></i>Issue Asset
               </button>
             </div>
@@ -86,12 +86,12 @@
           <div class="row g-2">
             <!-- Row 3: Collect Asset + Maintenance -->
             <div class="col-6">
-              <button class="btn btn-outline-warning btn-modern w-100" @click="navigateToCollectAsset">
+              <button class="btn btn-pink w-100" @click="navigateToCollectAsset">
                 <i class="fas fa-user-minus me-1"></i>Collect Asset
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-warning btn-modern w-100" @click="navigateToScheduleMaintenance">
+              <button class="btn btn-orange w-100" @click="navigateToScheduleMaintenance">
                 <i class="fas fa-wrench me-1"></i>Maintenance
               </button>
             </div>
@@ -107,14 +107,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
+                    :class="['btn', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
                     style="min-width: 40px;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'grid' }]"
+                    :class="['btn', 'view-toggle', { active: currentView === 'grid' }]"
                     @click="setView('grid')"
                     style="min-width: 40px;"
                   >
@@ -123,9 +123,9 @@
                 </fieldset>
                 
                 <!-- Data Management Dropdown -->
-                <div class="dropdown flex-fill">
+                <div class="dropdown more-actions-dropdown flex-fill">
                   <button 
-                    class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                    class="btn btn-gray dropdown-toggle w-100" 
                     type="button" 
                     aria-expanded="false"
                     id="moreActionsDropdown"
@@ -133,7 +133,7 @@
                   >
                     <i class="fas fa-cog me-1"></i>More Actions
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown" style="min-width: 200px; max-width: 90vw;">
+                  <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown">
                     <li>
                       <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
@@ -158,11 +158,11 @@
             <!-- Add New Asset + Issue Asset -->
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
-                <button class="btn btn-primary btn-modern flex-fill" @click="navigateToAddAsset">
+                <button class="btn btn-purple flex-fill" @click="navigateToAddAsset">
                   <i class="fas fa-plus me-1"></i>Add New Asset
                 </button>
                 
-                <button class="btn btn-success btn-modern flex-fill" @click="navigateToIssueAsset">
+                <button class="btn btn-green flex-fill" @click="navigateToIssueAsset">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
               </div>
@@ -171,10 +171,10 @@
             <!-- Collect Asset + Schedule Maintenance -->
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
-                <button class="btn btn-outline-warning btn-modern flex-fill" @click="navigateToCollectAsset">
+                <button class="btn btn-pink flex-fill" @click="navigateToCollectAsset">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
-                <button class="btn btn-warning btn-modern flex-fill" @click="navigateToScheduleMaintenance">
+                <button class="btn btn-orange flex-fill" @click="navigateToScheduleMaintenance">
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
               </div>
@@ -219,15 +219,15 @@
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
-                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
+              <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
+                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up', 'text-small-medium']"></i>
               </button>
             </div>
             
             <!-- Filter Button -->
             <div class="col-8">
               <button 
-                class="btn btn-outline-secondary btn-modern w-100" 
+                class="btn btn-filter w-100" 
                 @click="toggleFilterDropdown"
                 :class="{ active: showFilterDropdown }"
               >
@@ -239,7 +239,7 @@
       </div>
         
         <!-- Filter Dropdown -->
-        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 rounded">
           <div class="row">
             <div class="col-12">
               <!-- Bootstrap Flexbox for exact proportions -->
@@ -289,7 +289,7 @@
                 <!-- Clear Button: using filter-clear-button-container class -->
                 <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -357,7 +357,7 @@
                   <td>
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
-                        class="btn btn-outline-primary btn-modern btn-view-details" 
+                        class="btn btn-action btn-brown" 
                         @click="viewAssetDetails(asset)"
                         :title="getViewButtonTitle(asset.status)"
                       >
@@ -365,7 +365,7 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'RETIRED'"
-                        class="btn btn-outline-secondary btn-modern btn-edit-asset" 
+                        class="btn btn-action btn-purple" 
                         title="Edit Asset"
                         @click="editAsset(asset)"
                       >
@@ -373,7 +373,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'AVAILABLE'"
-                        class="btn btn-outline-success btn-modern btn-issue-asset" 
+                        class="btn btn-action btn-green" 
                         title="Issue Asset"
                         @click="issueAsset(asset)"
                       >
@@ -381,7 +381,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'ASSIGNED'"
-                        class="btn btn-outline-warning btn-modern btn-collect-asset" 
+                        class="btn btn-action btn-pink" 
                         title="Collect Asset"
                         @click="collectAsset(asset)"
                       >
@@ -389,13 +389,13 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                        class="btn btn-outline-warning btn-modern btn-maintenance-action" 
+                        class="btn btn-action btn-orange" 
                         :title="getMaintenanceButtonTitle(asset.status)"
                         @click="handleMaintenanceAction(asset)"
                       >
                         <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                       </button>
-                      <button class="btn btn-outline-info btn-modern btn-qr-code" title="View QR Code">
+                      <button class="btn btn-action btn-gray" title="View QR Code">
                         <i class="fas fa-qrcode"></i>
                       </button>
                     </div>
@@ -431,7 +431,7 @@
                     class="rounded-circle d-flex align-items-center justify-content-center me-2" 
                     :style="{ width: '36px', height: '36px', backgroundColor: getAssetTypeColor(asset.type), flexShrink: 0 }"
                   >
-                    <i :class="getAssetTypeIconClass(asset.type)" class="text-white" style="font-size: 0.9rem;"></i>
+                    <i :class="[getAssetTypeIconClass(asset.type), 'text-white', 'text-small-medium']"></i>
                   </div>
                   <div class="flex-grow-1">
                     <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ asset.id }}</h6>
@@ -467,7 +467,7 @@
                 <div class="asset-actions-footer mt-auto pt-2 border-top">
                   <div class="d-flex justify-content-center gap-1">
                     <button 
-                      class="btn btn-outline-primary btn-modern btn-view-details btn-sm" 
+                      class="btn btn-action btn-brown btn-sm" 
                       @click="viewAssetDetails(asset)"
                       :title="getViewButtonTitle(asset.status)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -476,7 +476,7 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'RETIRED'"
-                      class="btn btn-outline-secondary btn-modern btn-edit-asset btn-sm" 
+                      class="btn btn-action btn-purple btn-sm" 
                       title="Edit Asset"
                       @click="editAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -485,7 +485,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'AVAILABLE'"
-                      class="btn btn-outline-success btn-modern btn-issue-asset btn-sm" 
+                      class="btn btn-action btn-green btn-sm" 
                       title="Issue Asset"
                       @click="issueAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -494,7 +494,7 @@
                     </button>
                     <button 
                       v-if="asset.status === 'ASSIGNED'"
-                      class="btn btn-outline-warning btn-modern btn-collect-asset btn-sm" 
+                      class="btn btn-action btn-pink btn-sm" 
                       title="Collect Asset"
                       @click="collectAsset(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -503,14 +503,14 @@
                     </button>
                     <button 
                       v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                      class="btn btn-outline-warning btn-modern btn-maintenance-action btn-sm" 
+                      class="btn btn-action btn-orange btn-sm" 
                       :title="getMaintenanceButtonTitle(asset.status)"
                       @click="handleMaintenanceAction(asset)"
                       style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                     </button>
-                    <button class="btn btn-outline-info btn-modern btn-qr-code btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    <button class="btn btn-action btn-gray btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
                       <i class="fas fa-qrcode"></i>
                     </button>
                   </div>
@@ -642,9 +642,8 @@
             <div v-if="selectedAsset.status !== 'RETIRED'" class="row ">
               <div class="col-12">
                 <div class="assignment-status-combined">
-                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                      @click="toggleAssignmentDetails" 
-                      style="cursor: pointer;">
+                  <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
+                      @click="toggleAssignmentDetails">
                     <span><i :class="getStatusIcon(selectedAsset.status)" class="me-2"></i>{{ getStatusSectionTitle(selectedAsset.status) }}</span>
                     <i class="fas fa-chevron-down assignment-chevron" 
                        :class="{ 'rotated': isAssignmentDetailsExpanded }"
@@ -660,15 +659,15 @@
                       <div class="assignment-details">
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                            <span class="text-muted text-small">Status:</span>
                             <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
                           </div>
                           <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">{{ getStatusSecondaryLabel(selectedAsset.status) }}</span>
-                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ getStatusSecondaryValue(selectedAsset) }}</span>
+                            <span class="text-muted text-small">{{ getStatusSecondaryLabel(selectedAsset.status) }}</span>
+                            <span class="ms-1 fw-medium text-small-medium">{{ getStatusSecondaryValue(selectedAsset) }}</span>
                           </div>
                         </div>
-                        <div class="text-muted" style="font-size: 0.8rem;">{{ getAssignmentStatusDescription(selectedAsset.status) }}</div>
+                        <div class="text-muted text-small">{{ getAssignmentStatusDescription(selectedAsset.status) }}</div>
                       </div>
                     </div>
                     <div class="qr-code-mini">
@@ -761,9 +760,8 @@
             <div v-if="selectedAsset.status === 'RETIRED'" class="row">
               <div class="col-12">
                 <div class="retirement-status-combined">
-                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                      @click="toggleRetirementDetails" 
-                      style="cursor: pointer;">
+                    <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
+                        @click="toggleRetirementDetails">
                     <span><i class="fas fa-archive me-2"></i>Retirement Information</span>
                     <i class="fas fa-chevron-down retirement-chevron" 
                        :class="{ 'rotated': isRetirementDetailsExpanded }"
@@ -779,12 +777,12 @@
                       <div class="retirement-details">
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                            <span class="text-muted text-small">Status:</span>
                             <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
                           </div>
                           <div>
-                            <span class="text-muted" style="font-size: 0.8rem;">Retirement Date:</span>
-                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
+                            <span class="text-muted text-small">Retirement Date:</span>
+                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
                           </div>
                         </div>
                       </div>
@@ -835,9 +833,8 @@
             <div v-if="selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
               <div class="col-12">
                 <div class="retirement-status-combined">
-                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                        @click="toggleRefurbishmentDetails" 
-                        style="cursor: pointer;">
+                      <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
+                          @click="toggleRefurbishmentDetails">
                       <span><i class="fas fa-tools me-2"></i>Refurbishment Information</span>
                       <i class="fas fa-chevron-down assignment-chevron" 
                          :class="{ 'rotated': isRefurbishmentDetailsExpanded }"></i>
@@ -877,7 +874,7 @@
                       </div>
                       
                       <!-- Divider Line -->
-                      <hr class="my-3" style="border-color: #e9ecef; border-width: 1px;" v-if="selectedAsset.retirementReason && selectedAsset.reactivationReason">
+                      <hr class="my-3 modal-divider" v-if="selectedAsset.retirementReason && selectedAsset.reactivationReason">
                       
                       <!-- Reactivation Information -->
                       <div v-if="selectedAsset.reactivationReason">
@@ -916,33 +913,33 @@
           <div class="modal-footer">
             <div class="d-flex justify-content-between w-100">
               <div>
-                <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedAsset!)">
+                <button type="button" class="btn btn-brown btn-sm" @click="viewAssetHistory(selectedAsset!)">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-cancel" @click="closeDetailModal">Close</button>
-                <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-success" @click="issueAsset(selectedAsset!)">
+                <button type="button" class="btn btn-cancel btn-sm" @click="closeDetailModal">Close</button>
+                <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-green btn-sm" @click="issueAsset(selectedAsset!)">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
-                <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
+                <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink btn-sm" @click="collectAsset(selectedAsset!)">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
                 <button 
                   v-if="selectedAsset.status === 'AVAILABLE'"
                   type="button" 
-                  class="btn btn-warning" 
+                  class="btn btn-orange btn-sm" 
                   @click="handleMaintenanceAction(selectedAsset!)"
                 >
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
-              <button type="button" class="btn btn-primary-blue" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
+              <button type="button" class="btn btn-purple btn-sm" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
-              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-danger" @click="openRetireAssetModal">
+              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
                 <i class="fas fa-archive me-1"></i>Retire Asset
               </button>
-              <button v-if="selectedAsset.status === 'RETIRED'" type="button" class="btn btn-success" @click="openReactivateAssetModal">
+              <button v-if="selectedAsset.status === 'RETIRED'" type="button" class="btn btn-green btn-sm" @click="openReactivateAssetModal">
                 <i class="fas fa-power-off me-1"></i>Reactivate Asset
               </button>
             </div>
@@ -970,8 +967,8 @@
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
-              <i class="fas fa-archive me-2" style="color: var(--secondary-red);"></i>Retire Asset - {{ assetToRetire?.id }}
+            <h5 class="modal-title">
+              <i class="fas fa-archive me-2"></i>Retire Asset - {{ assetToRetire?.id }}
             </h5>
             <button type="button" class="btn-close" @click="closeRetireAssetModal"></button>
           </div>
@@ -1080,10 +1077,10 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeRetireAssetModal">Cancel</button>
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeRetireAssetModal">Cancel</button>
             <button 
               type="button" 
-              class="btn btn-danger" 
+              class="btn btn-red btn-sm" 
               @click="retireAsset" 
               :disabled="isRetiringAsset || !retireFormData.retirementDate || !retireFormData.retirementReason"
             >
@@ -1106,8 +1103,8 @@
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
-              <i class="fas fa-power-off me-2" style="color: var(--secondary-green);"></i>Reactivate Asset - {{ assetToReactivate?.id }}
+            <h5 class="modal-title">
+              <i class="fas fa-power-off me-2"></i>Reactivate Asset - {{ assetToReactivate?.id }}
             </h5>
             <button type="button" class="btn-close" @click="closeReactivateAssetModal"></button>
           </div>
@@ -1122,9 +1119,8 @@
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="retirement-status-combined">
-                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
-                        @click="toggleReactivateAssetSummary" 
-                        style="cursor: pointer;">
+                      <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
+                          @click="toggleReactivateAssetSummary">
                       <span><i class="fas fa-laptop me-2"></i>Asset Summary</span>
                       <i class="fas fa-chevron-down assignment-chevron" 
                          :class="{ 'rotated': isReactivateAssetSummaryExpanded }"></i>
@@ -1139,11 +1135,11 @@
                         <div class="retirement-details">
                           <div class="d-flex align-items-center gap-3 mb-1">
                             <div>
-                              <span class="text-muted" style="font-size: 0.8rem;">Asset ID:</span>
-                              <span class="ms-1 fw-bold" style="font-size: 0.9rem;">{{ assetToReactivate?.id }}</span>
+                              <span class="text-muted text-small">Asset ID:</span>
+                              <span class="ms-1 fw-bold text-small-medium">{{ assetToReactivate?.id }}</span>
                             </div>
                             <div>
-                              <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                              <span class="text-muted text-small">Status:</span>
                               <span :class="getStatusBadgeClass(assetToReactivate?.status || 'RETIRED')" class="ms-1">{{ getStatusText(assetToReactivate?.status || 'RETIRED') }}</span>
                             </div>
                           </div>
@@ -1274,11 +1270,10 @@
                           <label for="newCondition" class="form-label">Current Condition <span class="text-danger">*</span></label>
                           <input 
                             type="text" 
-                            class="form-control" 
+                            class="form-control readonly-input" 
                             id="newCondition"
                             value="REFURBISHED"
                             readonly
-                            style="background-color: #f8f9fa; color: #6c757d;"
                           >
                           <div class="form-text">Asset condition after refurbishment and repairs</div>
                         </div>
@@ -1288,11 +1283,10 @@
                           <label for="newStatus" class="form-label">New Status <span class="text-danger">*</span></label>
                           <input 
                             type="text" 
-                            class="form-control" 
+                            class="form-control readonly-input" 
                             id="newStatus"
                             value="AVAILABLE"
                             readonly
-                            style="background-color: #f8f9fa; color: #6c757d;"
                           >
                           <div class="form-text">Status after reactivation</div>
                         </div>
@@ -1322,10 +1316,10 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeReactivateAssetModal">Cancel</button>
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeReactivateAssetModal">Cancel</button>
             <button 
               type="button" 
-              class="btn btn-success" 
+              class="btn btn-green btn-sm" 
               @click="reactivateAsset"
               :disabled="isReactivatingAsset || !reactivateFormData.reactivationDate || !reactivateFormData.location || !reactivateFormData.reactivationReason"
             >
@@ -1993,48 +1987,94 @@ const handleMaintenanceAction = (asset: AssetDisplayItem) => {
   }
 }
 
-// Handle dropdown click with proper positioning
+// Helper: Close all dropdowns except the specified one
+const closeOtherDropdowns = (currentDropdown: HTMLElement, currentButton: HTMLButtonElement) => {
+  for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
+    if (menu !== currentDropdown) {
+      menu.classList.remove('show')
+    }
+  }
+  for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
+    if (btn !== currentButton) {
+      btn.setAttribute('aria-expanded', 'false')
+    }
+  }
+}
+
+// Helper: Position More Actions dropdown
+const positionMoreActionsDropdown = (dropdown: HTMLElement, button: HTMLButtonElement) => {
+  setTimeout(() => {
+    const buttonRect = button.getBoundingClientRect()
+    const dropdownRect = dropdown.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    
+    // Set default positioning
+    dropdown.style.top = '100%'
+    dropdown.style.bottom = 'auto'
+    dropdown.style.left = '0'
+    dropdown.style.right = 'auto'
+    dropdown.style.marginTop = '0'
+    dropdown.style.marginBottom = '0'
+    dropdown.style.transformOrigin = 'top center'
+    dropdown.style.transform = 'translateY(0) scale(1)'
+    
+    // Adjust if going off the right side
+    if (buttonRect.left + dropdownRect.width > viewportWidth) {
+      dropdown.style.left = 'auto'
+      dropdown.style.right = '0'
+    }
+    
+    // Adjust if going off the left side
+    if (buttonRect.right - dropdownRect.width < 0) {
+      dropdown.style.right = 'auto'
+      dropdown.style.left = '0'
+    }
+  }, 10)
+}
+
+// Helper: Position standard dropdown
+const positionStandardDropdown = (dropdown: HTMLElement) => {
+  setTimeout(() => {
+    const rect = dropdown.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    
+    // If dropdown goes off screen, adjust position
+    if (rect.right > viewportWidth) {
+      dropdown.style.right = '0'
+      dropdown.style.left = 'auto'
+    }
+  }, 10)
+}
+
+// Handle dropdown click with proper positioning and smooth animation
 const handleDropdownClick = (event: Event) => {
   event.preventDefault()
   event.stopPropagation()
   
   const button = event.currentTarget as HTMLButtonElement
   const dropdown = button.nextElementSibling as HTMLElement
+  const dropdownContainer = button.closest('.more-actions-dropdown') as HTMLElement
   
-  if (dropdown) {
-    // Close all other dropdowns first
-    for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
-      if (menu !== dropdown) {
-        menu.classList.remove('show')
-      }
-    }
-    for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
-      if (btn !== button) {
-        btn.setAttribute('aria-expanded', 'false')
-      }
-    }
+  if (!dropdown) return
+  
+  closeOtherDropdowns(dropdown, button)
+  
+  const isShown = dropdown.classList.contains('show')
+  
+  if (isShown) {
+    // Close dropdown with animation
+    dropdown.classList.remove('show')
+    button.setAttribute('aria-expanded', 'false')
+  } else {
+    // Open dropdown with animation
+    dropdown.classList.add('show')
+    button.setAttribute('aria-expanded', 'true')
     
-    // Toggle current dropdown
-    const isShown = dropdown.classList.contains('show')
-    
-    if (isShown) {
-      dropdown.classList.remove('show')
-      button.setAttribute('aria-expanded', 'false')
+    // Position dropdown based on type
+    if (dropdownContainer?.classList.contains('more-actions-dropdown')) {
+      positionMoreActionsDropdown(dropdown, button)
     } else {
-      dropdown.classList.add('show')
-      button.setAttribute('aria-expanded', 'true')
-      
-      // Ensure proper positioning
-      setTimeout(() => {
-        const rect = dropdown.getBoundingClientRect()
-        const viewportWidth = window.innerWidth
-        
-        // If dropdown goes off screen, adjust position
-        if (rect.right > viewportWidth) {
-          dropdown.style.right = '0'
-          dropdown.style.left = 'auto'
-        }
-      }, 10)
+      positionStandardDropdown(dropdown)
     }
   }
 }

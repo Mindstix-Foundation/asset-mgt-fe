@@ -2,5 +2,5 @@ projectKey=TrackStix-Frontend
 serverUrl=http://localhost:9000
 serverVersion=25.10.0.114319
 dashboardUrl=http://localhost:9000/dashboard?id=TrackStix-Frontend
-ceTaskId=82ac6b50-db5a-402b-819c-c0a10fcc5ba5
-ceTaskUrl=http://localhost:9000/api/ce/task?id=82ac6b50-db5a-402b-819c-c0a10fcc5ba5
+ceTaskId=1eac5e62-0a97-42d8-880a-6d20479560cd
+ceTaskUrl=http://localhost:9000/api/ce/task?id=1eac5e62-0a97-42d8-880a-6d20479560cd

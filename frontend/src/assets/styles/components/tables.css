@@ -94,32 +94,9 @@
   min-width: 130px !important;
 }
 
-/* Asset actions button group spacing */
-.asset-actions {
-  justify-content: flex-start !important;
-  gap: 0.25rem !important;
-}
-
-/* Vendor actions button group spacing */
-.vendor-actions {
-  justify-content: center !important;
-  gap: 0.25rem !important;
-}
-
-/* Employee actions button group spacing */
-.employee-actions {
-  justify-content: center !important;
-  gap: 0.25rem !important;
-}
-
 /* Asset-specific table styles - Consolidated from assets.css */
 
-
-.asset-actions .btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
-  padding: 0.25rem !important;
-}
+/* Table action button styling is now handled by buttons.css */
 
 /* Asset table column widths - Specific to AssetsView */
 .asset-table th:nth-child(1),

@@ -1,137 +1,17 @@
 /**
- * Button Styles - TrackStix Theme
- * Modern button components with consistent styling
+ * Simplified Button System - TrackStix Theme
+ * Consistent button styling across the entire application
  */
 
-/* Button Styles - TrackStix Theme with rounded corners */
-/* Only apply to buttons that don't have btn-modern class to avoid conflicts */
-.btn:not(.btn-modern) {
-  border-radius: 0.75rem;
-}
+/* ========================================
+   BASE BUTTON STYLES
+   ======================================== */
 
-.btn-primary {
-  background-color: var(--accent-navy);
-  border-color: var(--accent-navy);
-  color: var(--bg-primary);
-}
-
-.btn-primary:hover {
-  background-color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-}
-
-.btn-outline-primary {
-  color: var(--accent-navy);
-  border-color: var(--accent-navy);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--accent-navy);
-  border-color: var(--accent-navy);
-  /* Preserve original text color */
-}
-
-.btn-outline-light {
-  color: var(--primary-dark-gray);
-  border-color: var(--element-gray);
-}
-
-.btn-outline-light:hover {
-  background-color: var(--primary-dark-gray);
-  border-color: var(--primary-dark-gray);
-  /* Preserve original text color */
-}
-
-.btn-outline-secondary {
-  color: var(--primary-dark-gray);
-  border-color: var(--element-gray);
-}
-
-.btn-outline-secondary:hover {
-  background-color: var(--element-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  /* Preserve original text color */
-}
-
-.btn-outline-brown {
-  color: var(--secondary-brown);
-  border-color: var(--secondary-brown);
-}
-
-.btn-outline-brown:hover {
-  background-color: var(--secondary-brown);
-  border-color: var(--secondary-brown);
-  /* Preserve original text color */
-}
-
-/* Custom Button Styles with rounded corners */
-.btn-group-sm > .btn, .btn-sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-  border-radius: 0.5rem;
-}
-
-/* Cancel Button - Consistent styling across all forms */
-.btn-cancel {
-  background-color: #f8f9fa !important;
-  border: 2px solid #6c757d !important;
-  color: #495057 !important;
-  font-weight: 600;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.btn-cancel:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #FFFFFF !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-cancel:focus {
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25);
-  outline: 0;
-}
-
-.btn-cancel:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-/* History Button - Consistent styling across all modals */
-.btn-history {
-  background-color: var(--secondary-brown) !important;
-  border-color: var(--secondary-brown) !important;
-  color: white !important;
-  font-weight: 600;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.btn-history:hover {
-  filter: brightness(0.92);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-history:focus {
-  box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
-  outline: 0;
-}
-
-.btn-history:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-/* Modern Button Styling - Unified Compact Design */
-.btn-modern {
-  border-radius: 0.5rem !important;
+/* Base button styling - applied to all buttons */
+.btn {
+  border-radius: 0.375rem !important;
   padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   font-size: 0.875rem !important;
   text-transform: none !important;
   letter-spacing: 0.025em !important;
@@ -145,9 +25,11 @@
   align-items: center !important;
   justify-content: center !important;
   white-space: nowrap !important;
+  cursor: pointer !important;
 }
 
-.btn-modern:before {
+/* Shimmer effect for all buttons */
+.btn:before {
   content: '';
   position: absolute;
   top: 0;
@@ -158,175 +40,159 @@
   transition: left 0.5s;
 }
 
-.btn-modern:hover:before {
+.btn:hover:before {
   left: 100%;
 }
 
-.btn-modern:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.95);
+/* Universal hover effect for all buttons - now handled individually by each button type */
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Consistent Button Color System */
+/* ========================================
+   BUTTON SIZES
+   ======================================== */
 
-/* Add Vendor - Purple (Primary Action) */
-.btn-modern.btn-primary {
+.btn-sm {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 1rem !important;
+  min-height: 32px !important;
+  font-weight: 400 !important;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem !important;
+  font-size: 1rem !important;
+  min-height: 48px !important;
+}
+
+/* ========================================
+   SOLID COLOR BUTTONS (Color-wise naming)
+   ======================================== */
+
+/* PURPLE - Main actions like Add Asset */
+.btn-purple {
   background-color: var(--secondary-purple) !important;
   border-color: var(--secondary-purple) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
 }
 
-.btn-modern.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
+.btn-purple:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
 }
 
-/* Bulk Upload - Secondary */
-.btn-modern.btn-outline-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.btn-modern.btn-outline-secondary:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-/* Issue/Assign Actions - Green */
-.btn-modern.btn-success {
+/* GREEN - Positive actions like Issue Asset */
+.btn-green {
   background-color: var(--secondary-green) !important;
   border-color: var(--secondary-green) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
 }
 
-.btn-modern.btn-success:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
+.btn-green:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
 }
 
-/* Schedule/Maintenance Actions - Orange */
-.btn-modern.btn-warning {
+/* ORANGE - Maintenance actions */
+.btn-orange {
   background-color: var(--secondary-orange) !important;
   border-color: var(--secondary-orange) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(255, 140, 97, 0.25) !important;
 }
 
-.btn-modern.btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
+.btn-orange:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
+}
+
+/* RED - Destructive actions like Retire */
+.btn-red {
+  background-color: var(--secondary-red) !important;
+  border-color: var(--secondary-red) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
 }
 
-/* Collect/Return Actions - Pink */
-.btn-modern.btn-outline-warning {
+.btn-red:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
+}
+
+/* BLUE - Information actions */
+.btn-blue {
+  background-color: var(--secondary-blue) !important;
+  border-color: var(--secondary-blue) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(26, 35, 126, 0.25) !important;
+}
+
+.btn-blue:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
+}
+
+/* PINK - Special actions */
+.btn-pink {
   background-color: var(--secondary-pink) !important;
   border-color: var(--secondary-pink) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(255, 87, 159, 0.25) !important;
 }
 
-.btn-modern.btn-outline-warning:hover {
-  background-color: #e64d8f !important;
-  border-color: #e64d8f !important;
+.btn-pink:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
+}
+
+/* BROWN - History/Archive actions */
+.btn-brown {
+  background-color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(150, 114, 89, 0.25) !important;
 }
 
-/* Export/Download Actions - Green */
-.btn-modern.btn-outline-success {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
+.btn-brown:hover:not(:disabled) {
+  filter: brightness(0.95) !important;
 }
 
-.btn-modern.btn-outline-success:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-}
-
-/* Bulk/Upload Actions - Blue */
-.btn-modern.btn-outline-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.btn-modern.btn-outline-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-/* View Toggle/Secondary Actions - Gray */
-.btn-modern.btn-outline-secondary,
-.btn-modern.btn-secondary {
+/* GRAY - Secondary actions like More Actions */
+.btn-gray {
   background-color: var(--primary-light-gray) !important;
   border-color: var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
 }
 
-.btn-modern.btn-outline-secondary:hover,
-.btn-modern.btn-secondary:hover {
+.btn-gray:hover:not(:disabled) {
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
   color: var(--primary-black) !important;
 }
 
-/* Action Button Styles - Updated Design */
-.btn-action {
+/* ========================================
+   SPECIAL BUTTONS
+   ======================================== */
+
+/* Cancel Button - Consistent across all modals */
+.btn-cancel {
   background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
+  border-color: var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
+  font-weight: 600 !important;
 }
 
-.btn-action:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  filter: brightness(0.92);
+.btn-cancel:hover:not(:disabled) {
+  background-color: #E97676 !important;
+  border-color: #E97676 !important;
+  color: white !important;
 }
 
-/* Specific action button hover colors */
-.btn-view:hover {
-  /* Preserve original text color */
-  border-color: var(--secondary-purple) !important;
-}
-
-.btn-edit:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-}
-
-.btn-assign:hover {
-  color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-}
-
-.btn-maintenance:hover {
-  color: var(--secondary-pink) !important;
-  border-color: var(--secondary-pink) !important;
-}
-
-/* View toggle buttons - Consolidated */
+/* View Toggle Buttons */
 .view-toggle {
   background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
+  border-color: var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
 }
 
@@ -336,318 +202,144 @@
   color: white !important;
 }
 
-.view-toggle:hover:not(.active) {
+.view-toggle:hover:not(.active):not(:disabled) {
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
 }
 
-/* Status Toggle Buttons */
-.btn-status-activate {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.btn-status-activate:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-.btn-status-deactivate {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.btn-status-deactivate:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-/* Confirmation Modal Buttons */
-.btn-cancel-confirm {
+/* Filter Button - Same as inactive toggle button */
+.btn-filter {
   background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-}
-
-.btn-cancel-confirm:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-.btn-confirm-activate {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
-}
-
-.btn-confirm-activate:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-.btn-confirm-deactivate {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
-}
-
-.btn-confirm-deactivate:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-/* Template Download Button */
-.btn-template-download {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  /* Preserve original text color */
-  border-radius: 0.5rem !important;
-  padding: 0.5rem 1rem !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-template-download:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-/* Upload Primary Button */
-.btn-upload-primary {
-  background-color: var(--secondary-purple) !important;
-  border: 1px solid var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.15) !important;
-}
-
-.btn-upload-primary:hover:not(:disabled) {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  filter: brightness(0.92);
-}
-
-.btn-upload-primary:disabled {
-  background-color: var(--element-gray) !important;
   border-color: var(--element-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-}
-
-/* Login Button - TrackStix Design */
-.login-btn {
-  background: var(--secondary-purple); /* Primary purple background */
-  border: none;
-  border-radius: 8px;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem; /* Larger font size */
-  font-weight: 700; /* Bolder text */
-  color: var(--bg-primary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  min-height: 48px;
-  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1); /* Subtle shadow for depth */
-  text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2); /* Text shadow for better readability */
-}
-
-.login-btn:hover:not(:disabled) {
-  background: var(--accent-navy); /* Darker navy on hover */
-  text-decoration: none;
-  /* Preserve original text color */
-  box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
-}
-
-.login-btn:active:not(:disabled) {
-  background: var(--primary-dark-gray); /* Dark gray on active */
-  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
-}
-
-.login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-loader {
-  margin-left: 0.5rem;
-}
-
-/* Loading State for Login Button */
-.login-btn.loading .btn-text {
-  opacity: 0;
-}
-
-.login-btn.loading .btn-loader {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Improved Accessibility - Focus States for Keyboard Navigation */
-:focus-visible {
-  outline: 3px solid var(--secondary-purple);
-  outline-offset: 2px;
-}
-
-.login-btn:focus-visible {
-  outline: 3px solid var(--primary-white);
-  outline-offset: 3px;
-}
-
-/* Asset-specific button styles - Consolidated from assets.css */
-.asset-actions .btn {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
   color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
 }
 
-.asset-actions .btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+.btn-filter:hover:not(:disabled) {
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
-  filter: brightness(0.92);
 }
 
-/* Specific action button hover colors */
-.asset-actions .btn-outline-primary:hover {
-  /* Preserve original text color */
-  border-color: var(--secondary-purple) !important;
+/* ========================================
+   ACTION BUTTONS (Secondary palette with color hover effects)
+   ======================================== */
+
+/* Base action button styling - all use secondary gray palette */
+.asset-actions .btn,
+.btn-action {
+  background-color: var(--primary-light-gray) !important;
+  border-color: var(--element-gray) !important;
+  color: var(--primary-dark-gray) !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0.25rem !important;
 }
 
-.asset-actions .btn-outline-secondary:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
+.asset-actions .btn:hover:not(:disabled),
+.btn-action:hover:not(:disabled) {
+  background-color: var(--primary-white) !important;
+  border-color: var(--primary-mid-light) !important;
 }
 
-.asset-actions .btn-outline-success:hover {
-  color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-}
-
-.asset-actions .btn-outline-warning:hover {
-  color: var(--secondary-pink) !important;
-  border-color: var(--secondary-pink) !important;
-}
-
-.asset-actions .btn-outline-info:hover {
-  /* Preserve original text color */
-  border-color: var(--secondary-purple) !important;
-}
-
-/* Custom Action Button Hover Effects */
-.btn-view-details:hover {
+/* Specific action button hover colors - Only apply to action buttons */
+.asset-actions .btn-brown:hover:not(:disabled),
+.btn-action.btn-brown:hover:not(:disabled) {
   color: var(--secondary-brown) !important;
   border-color: var(--secondary-brown) !important;
   background-color: rgba(150, 114, 89, 0.1) !important;
 }
 
-.btn-edit-asset:hover {
+.asset-actions .btn-purple:hover:not(:disabled),
+.btn-action.btn-purple:hover:not(:disabled) {
   color: var(--secondary-purple) !important;
   border-color: var(--secondary-purple) !important;
   background-color: rgba(51, 31, 234, 0.1) !important;
 }
 
-.btn-issue-asset:hover {
+.asset-actions .btn-green:hover:not(:disabled),
+.btn-action.btn-green:hover:not(:disabled) {
   color: var(--secondary-green) !important;
   border-color: var(--secondary-green) !important;
   background-color: rgba(33, 175, 101, 0.1) !important;
 }
 
-.btn-collect-asset:hover {
+.asset-actions .btn-pink:hover:not(:disabled),
+.btn-action.btn-pink:hover:not(:disabled) {
   color: var(--secondary-pink) !important;
   border-color: var(--secondary-pink) !important;
   background-color: rgba(255, 87, 159, 0.1) !important;
 }
 
-.btn-maintenance-action:hover {
+.asset-actions .btn-orange:hover:not(:disabled),
+.btn-action.btn-orange:hover:not(:disabled) {
   color: var(--secondary-orange) !important;
   border-color: var(--secondary-orange) !important;
   background-color: rgba(255, 140, 97, 0.1) !important;
 }
 
-.btn-qr-code:hover {
+.asset-actions .btn-gray:hover:not(:disabled),
+.btn-action.btn-gray:hover:not(:disabled) {
   color: var(--primary-mid-gray) !important;
   border-color: var(--primary-mid-gray) !important;
   background-color: rgba(153, 153, 153, 0.1) !important;
   cursor: not-allowed !important;
   opacity: 0.6 !important;
+}
+
+/* ========================================
+   TABLE ACTION BUTTON GROUPS
+   ======================================== */
+
+/* Asset actions button group spacing */
+.asset-actions {
+  justify-content: flex-start !important;
+  gap: 0.25rem !important;
+}
+
+/* Vendor actions button group spacing */
+.vendor-actions {
+  justify-content: center !important;
+  gap: 0.25rem !important;
+}
+
+/* Employee actions button group spacing */
+.employee-actions {
+  justify-content: center !important;
+  gap: 0.25rem !important;
+}
+
+/* Table action button sizing is now handled in the base action button styling above */
+
+/* ========================================
+   FILTER BUTTONS
+   ======================================== */
+
+/* Filter clear button container - layout only */
+.filter-clear-button-container {
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+/* Mobile: Full width clear button */
+@media (max-width: 767.98px) {
+  .filter-clear-button-container {
+    width: 100%;
+    min-width: unset;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Tablet: Adequate width for clear button */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .filter-clear-button-container {
+    min-width: 140px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY & FOCUS STATES
+   ======================================== */
+
+.btn:focus-visible {
+  outline: 3px solid var(--secondary-purple) !important;
+  outline-offset: 2px !important;
 }

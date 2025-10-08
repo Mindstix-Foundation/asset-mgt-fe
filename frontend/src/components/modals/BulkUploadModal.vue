@@ -3,8 +3,8 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content bulk-upload-modal">
         <div class="modal-header">
-          <h5 class="modal-title" :id="`${modalId}Label`" style="color: var(--text-primary);">
-            <i class="fas fa-file-excel me-2" style="color: var(--secondary-purple);"></i>{{ title }}
+          <h5 class="modal-title" :id="`${modalId}Label`">
+            <i class="fas fa-file-excel me-2"></i>{{ title }}
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -12,14 +12,14 @@
           <!-- Step 1: Template Download -->
           <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="mb-0" style="color: var(--primary-black);">
-                <i class="fas fa-download me-2" style="color: var(--secondary-purple);"></i>Step 1: Download Template
+              <h6 class="mb-0 bulk-upload-step-header">
+                <i class="fas fa-download me-2"></i>Step 1: Download Template
               </h6>
               <div class="d-flex gap-2">
-                <button class="btn btn-modern btn-outline-secondary" @click="downloadTemplate('csv')" data-bs-toggle="tooltip" title="Download the CSV template with correct column format">
+                <button class="btn btn-gray" @click="downloadTemplate('csv')" data-bs-toggle="tooltip" title="Download the CSV template with correct column format">
                   <i class="fas fa-file-csv me-2"></i>CSV Template
                 </button>
-                <button class="btn btn-modern btn-outline-secondary" @click="downloadTemplate('excel')" data-bs-toggle="tooltip" title="Download the Excel (.xlsx) template with correct column format">
+                <button class="btn btn-gray" @click="downloadTemplate('excel')" data-bs-toggle="tooltip" title="Download the Excel (.xlsx) template with correct column format">
                   <i class="fas fa-file-excel me-2"></i>Excel Template
                 </button>
               </div>
@@ -77,16 +77,16 @@
             </div>
 
             <!-- File Info -->
-            <div class="file-info" v-if="fileName" style="margin-top: 0.75rem;">
-              <div class="d-flex align-items-center justify-content-between p-3" style="background-color: var(--primary-light-gray); border-radius: 0.5rem; border: 1px solid var(--element-gray);">
+            <div class="file-info bulk-upload-file-info" v-if="fileName">
+              <div class="d-flex align-items-center justify-content-between p-3 bulk-upload-file-container">
                 <div class="d-flex align-items-center">
-                  <i class="fas fa-file-csv me-2" style="color: var(--secondary-green);"></i>
+                  <i class="fas fa-file-csv me-2 bulk-upload-file-icon"></i>
                   <div>
-                    <div class="fw-semibold" style="color: var(--primary-black);">{{ fileName }}</div>
+                    <div class="fw-semibold bulk-upload-file-name">{{ fileName }}</div>
                     <small class="text-muted">{{ fileSize }}</small>
                   </div>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-danger" @click="removeFile" data-bs-toggle="tooltip" title="Remove file">
+                <button type="button" class="btn btn-sm btn-red" @click="removeFile" data-bs-toggle="tooltip" title="Remove file">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -126,11 +126,11 @@
               
               <!-- View All Errors Button -->
               <div v-if="validationComplete && hasValidationErrors && allValidationErrors.length > 5" class="mt-2">
-                <button 
-                  type="button" 
-                  class="btn btn-sm btn-outline-danger" 
-                  @click="toggleShowAllErrors"
-                >
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-red" 
+                    @click="toggleShowAllErrors"
+                  >
                   <i :class="showAllErrors ? 'fas fa-eye-slash me-1' : 'fas fa-eye me-1'"></i>
                   {{ showAllErrors ? 'Show First 5 Errors' : `View All ${allValidationErrors.length} Errors` }}
                 </button>
@@ -140,7 +140,7 @@
             <!-- Preview Table (first 5 rows) -->
             <div class="mt-3" v-if="preview.length">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0" style="color: var(--primary-black);">Preview (first 5 rows)</h6>
+                <h6 class="mb-0 bulk-upload-preview-header">Preview (first 5 rows)</h6>
                 <div class="d-flex align-items-center gap-2">
                   <span class="badge badge-preview">
                     <i class="fas fa-eye me-1"></i>Showing {{ Math.min(5, rows.length) }} of {{ rows.length }}
@@ -148,7 +148,7 @@
                 </div>
               </div>
               <div class="table-responsive preview-table-container">
-                <table class="table table-sm mb-0 preview-table" style="min-width: 1200px;">
+                <table class="table table-sm mb-0 preview-table bulk-upload-preview-table">
                   <thead class="table-light">
                     <tr>
                       <th class="row-number-col">#</th>
@@ -181,8 +181,8 @@
             <!-- Upload Progress -->
             <div class="upload-progress mt-3" v-if="uploading">
               <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-spinner fa-spin me-2" style="color: var(--secondary-purple);"></i>
-                <span style="color: var(--primary-black);">Processing your file...</span>
+                <i class="fas fa-spinner fa-spin me-2 bulk-upload-progress-icon"></i>
+                <span class="bulk-upload-progress-text">Processing your file...</span>
               </div>
               <div class="progress">
                 <progress 
@@ -197,12 +197,12 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
+          <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">
             Cancel
           </button>
           <button 
             type="button" 
-            class="btn btn-modern btn-primary" 
+            class="btn btn-purple btn-sm" 
             :disabled="!rows.length || isValidating || (validationComplete && hasValidationErrors)" 
             @click="handleUpload"
           >
@@ -911,11 +911,7 @@ defineExpose({
   margin-bottom: 0.25rem !important;
 }
 
-.column-chip:hover {
-  background-color: var(--element-light-gray) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-}
+/* Hover effect removed for column chips */
 
 .column-label {
   font-weight: 500 !important;

@@ -6,46 +6,29 @@
 /* Filter dropdown styling */
 .filter-dropdown {
   border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
+  background-color: var(--primary-white) !important;
+  animation: filterSlideDown 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+  transition: all 0.2s ease-out;
+  will-change: transform, opacity;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1055 !important;
 }
 
-/* Filter clear button container and button */
-.filter-clear-button-container {
-  flex-shrink: 0;
-  min-width: 120px;
+/* Filter dropdown content animation */
+.filter-dropdown .row {
+  animation: filterContentFadeIn 0.1s ease-out 0.05s both;
 }
 
-.filter-clear-btn {
-  width: 100%;
-  min-width: 120px;
-  white-space: nowrap;
+/* Filter dropdown form controls animation */
+.filter-dropdown .searchable-dropdown-wrapper,
+.filter-dropdown .form-select,
+.filter-dropdown .btn {
+  animation: filterControlSlideUp 0.1s ease-out 0.05s both;
 }
 
-/* Mobile: Full width clear button */
-@media (max-width: 767.98px) {
-  .filter-clear-button-container {
-    width: 100%;
-    min-width: unset;
-    margin-top: 0.5rem;
-  }
-
-  .filter-clear-btn {
-    width: 100%;
-    min-width: unset;
-  }
-}
-
-/* Tablet: Adequate width for clear button */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .filter-clear-button-container {
-    min-width: 140px;
-  }
-
-  .filter-clear-btn {
-    min-width: 140px;
-  }
-}
+/* Filter clear button styles moved to buttons.css */
 
 /* Animation keyframes moved to bottom of file */
 
@@ -140,8 +123,7 @@
 
 /* Filter dropdown panel: ensure same height, rounding, alignment */
 .filter-dropdown .searchable-dropdown-wrapper .form-control,
-.filter-dropdown .form-select,
-.filter-dropdown .btn.filter-clear-btn {
+.filter-dropdown .form-select {
   height: 40px !important;
   border-radius: 0.5rem !important;
 }
@@ -151,11 +133,25 @@
   padding-bottom: 0.375rem;
 }
 
-.filter-dropdown .btn.filter-clear-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* Filter dropdown clear button styling moved to buttons.css */
+
+/* Searchable dropdown z-index fix - ensure dropdowns appear above table */
+.filter-dropdown .searchable-dropdown-wrapper {
+  position: relative;
+  z-index: 1060 !important;
 }
+
+.filter-dropdown .searchable-dropdown-wrapper .dropdown-menu {
+  z-index: 1060 !important;
+  position: absolute !important;
+}
+
+/* Additional specificity for dropdown menu to ensure it appears above table */
+.filter-dropdown .searchable-dropdown-wrapper .dropdown-menu.show {
+  z-index: 1060 !important;
+  display: block !important;
+}
+
 
 /* =================================
    DATE PICKER STYLES
@@ -595,6 +591,43 @@
    ANIMATIONS
    Reusable keyframe animations
 ================================= */
+
+@keyframes filterSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scaleY(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(-5px) scaleY(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes filterContentFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes filterControlSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @keyframes slideDown {
   from {

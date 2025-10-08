@@ -235,50 +235,7 @@
   justify-content: center;
 }
 
-.btn-change-password {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem 2rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  transition: all 0.2s ease !important;
-  min-width: 150px !important;
-}
-
-.btn-change-password:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-.btn-change-password:disabled {
-  background-color: var(--primary-mid-gray) !important;
-  border-color: var(--primary-mid-gray) !important;
-  color: white !important;
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
-
-.btn-cancel {
-  background-color: transparent !important;
-  border: 2px solid var(--primary-mid-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem 2rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  transition: all 0.2s ease !important;
-  min-width: 150px !important;
-}
-
-.btn-cancel:hover {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
+/* Button styling is now handled by buttons.css */
 
 /* =================================
    FORGOT PASSWORD STYLES
@@ -340,50 +297,7 @@
   box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
 }
 
-.btn-send-reset {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem 2rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  transition: all 0.2s ease !important;
-  min-width: 150px !important;
-}
-
-.btn-send-reset:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-.btn-send-reset:disabled {
-  background-color: var(--primary-mid-gray) !important;
-  border-color: var(--primary-mid-gray) !important;
-  color: white !important;
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
-
-.btn-back-to-login {
-  background-color: transparent !important;
-  border: 2px solid var(--primary-mid-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem 2rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  transition: all 0.2s ease !important;
-  min-width: 150px !important;
-}
-
-.btn-back-to-login:hover {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
+/* Button styling is now handled by buttons.css */
 
 /* =================================
    RESET PASSWORD STYLES
@@ -421,32 +335,7 @@
   line-height: 1.5 !important;
 }
 
-.btn-reset-password {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem 2rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  transition: all 0.2s ease !important;
-  min-width: 150px !important;
-}
-
-.btn-reset-password:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-.btn-reset-password:disabled {
-  background-color: var(--primary-mid-gray) !important;
-  border-color: var(--primary-mid-gray) !important;
-  color: white !important;
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
+/* Button styling is now handled by buttons.css */
 
 /* =================================
    SHARED AUTH MESSAGE STYLES
@@ -635,14 +524,7 @@
     gap: 0.75rem;
   }
   
-  .btn-change-password,
-  .btn-cancel,
-  .btn-send-reset,
-  .btn-back-to-login,
-  .btn-reset-password {
-    width: 100% !important;
-    min-width: unset !important;
-  }
+  /* Button responsive styling is now handled by buttons.css */
 }
 
 @media (max-width: 576px) {

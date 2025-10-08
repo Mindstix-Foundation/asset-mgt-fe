@@ -15,53 +15,9 @@
    Matching Prototype Design Exactly
 ================================= */
 
-/* Individual asset action buttons - Moved to buttons.css */
+/* Individual asset action buttons - Now handled by buttons.css */
 
-/* Grid view icon colors - ensure icons are white */
-.asset-card-modern .rounded-circle i {
-  color: white !important;
-}
-
-/* Assignment Status Compact */
-.assignment-status-compact {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  background-color: var(--primary-white) !important;
-}
-
-.assignment-status-compact .bg-light {
-  background-color: var(--primary-light-gray) !important;
-}
-
-.assignment-icon {
-  width: 50px !important;
-  height: 50px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background-color: rgba(33, 175, 101, 0.1) !important;
-  border-radius: 50% !important;
-}
-
-.qr-code-mini {
-  opacity: 0.6 !important;
-  transition: opacity 0.2s ease !important;
-}
-
-.qr-code-mini:hover {
-  opacity: 1 !important;
-  cursor: pointer !important;
-}
-
-/* Warranty Progress Indicator */
-.warranty-indicator .progress {
-  border-radius: 2px !important;
-  background-color: var(--element-gray) !important;
-}
-
-.warranty-indicator .progress-bar {
-  border-radius: 2px !important;
-}
+/* Asset Cards Component styles moved to cards.css for better organization */
 
 /* =================================
    ASSET HISTORY STYLES
@@ -124,15 +80,15 @@
 }
 
 /* Timeline marker colors based on event type */
-.timeline-asset-created .timeline-marker { background: var(--secondary-green); }
-.timeline-asset-updated .timeline-marker { background: var(--secondary-purple); }
+.timeline-asset-created .timeline-marker { background: var(--secondary-blue); }
+.timeline-asset-updated .timeline-marker { background: var(--secondary-gray); }
 .timeline-asset-retired .timeline-marker { background: var(--secondary-red); }
-.timeline-asset-reactivated .timeline-marker { background: var(--secondary-green); }
-.timeline-asset-issued .timeline-marker { background: var(--secondary-purple); }
-.timeline-asset-collected .timeline-marker { background: var(--secondary-orange); }
+.timeline-asset-reactivated .timeline-marker { background: var(--secondary-blue); }
+.timeline-asset-issued .timeline-marker { background: var(--secondary-green); }
+.timeline-asset-collected .timeline-marker { background: var(--secondary-pink); }
 .timeline-maintenance-scheduled .timeline-marker { background: var(--secondary-orange); }
-.timeline-maintenance-updated .timeline-marker { background: var(--secondary-purple); }
-.timeline-maintenance-completed .timeline-marker { background: var(--secondary-green); }
+.timeline-maintenance-updated .timeline-marker { background: var(--secondary-gray); }
+.timeline-maintenance-completed .timeline-marker { background: var(--secondary-blue); }
 .timeline-maintenance-cancelled .timeline-marker { background: var(--secondary-red); }
 
 .timeline-content { 
@@ -233,9 +189,13 @@
 }
 
 .detail-line .detail-label {
-  font-weight: 600;
-  color: #000000;
+  font-weight: 600 !important;
+  color: #000000 !important;
+  font-size: 0.85rem !important;
   margin-right: 0.5rem;
+  margin-bottom: 0;
+  min-width: 140px;
+  flex-shrink: 0;
 }
 
 .detail-line .detail-value {
@@ -286,6 +246,367 @@
 
 .change-line .change-new {
   color: #000000;
+}
+
+/* =================================
+   ADDITIONAL ASSET HISTORY STYLES
+   Consolidated from AssetHistoryView.vue
+================================= */
+
+/* Event Info Row - Bootstrap Grid */
+.status-text, .condition-text, .user-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #495057;
+  display: block;
+}
+
+.status-text {
+  color: var(--mindstix-primary);
+}
+
+.condition-text {
+  color: var(--mindstix-success);
+}
+
+.user-text {
+  color: var(--primary-mid-gray);
+}
+
+/* Event Description Row - Clickable Heading Style */
+.event-description-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.event-description-row:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 0.25rem;
+}
+
+.event-description {
+  flex: 1;
+}
+
+.description-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+  line-height: 1.4;
+}
+
+/* Details Toggle - Matching AssetsView Modal Design */
+.details-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.details-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.event-description-simple {
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  margin-top: 0.5rem;
+}
+
+.event-description-simple .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+}
+
+.timeline-meta { 
+  display: flex; 
+  gap: 0.5rem; 
+  margin-top: 0.4rem; 
+}
+
+.timeline-meta .badge { 
+  font-size: 0.7rem; 
+  padding: 0.25rem 0.5rem; 
+  border-radius: 0.375rem; 
+  font-weight: 500; 
+}
+
+.timeline-details { 
+  margin-top: 0.5rem; 
+  font-size: 0.85rem; 
+}
+
+.timeline-details.compact { 
+  margin-top: 0.4rem; 
+}
+
+.timeline-details .text-muted { 
+  font-size: 0.72rem; 
+  text-transform: uppercase; 
+  letter-spacing: 0.025em; 
+  font-weight: 500; 
+}
+
+/* Enhanced Change Details Styles */
+.change-details {
+  background-color: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+.change-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.change-label {
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.change-values {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.old-value {
+  background-color: var(--secondary-red);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.new-value {
+  background-color: var(--secondary-green);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Grouped Changes Styles */
+.grouped-changes {
+  background-color: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+.change-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.25rem;
+}
+
+.change-item:last-child {
+  margin-bottom: 0;
+}
+
+.change-item .change-label {
+  font-weight: 600;
+  color: var(--primary-black);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* .change-item .change-values inherits from .change-values above */
+
+/* .change-item .old-value and .change-item .new-value inherit from .old-value and .new-value above */
+
+.user-info {
+  background-color: var(--primary-light-gray);
+  border-left: 3px solid var(--secondary-purple);
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.timestamp {
+  background-color: var(--primary-light-gray);
+  border-left: 3px solid var(--primary-mid-gray);
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+/* Timeline Timestamp Styles */
+.timeline-timestamp {
+  flex-shrink: 0;
+  text-align: right;
+  min-width: 140px;
+}
+
+.timestamp-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.timestamp-ist-main {
+  font-weight: 600;
+  color: var(--primary-black);
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+
+.timestamp-utc-main {
+  font-size: 0.75rem;
+  color: var(--primary-mid-gray);
+  font-family: 'Courier New', monospace;
+}
+
+.timestamp-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.timestamp-ist {
+  font-weight: 600;
+  color: var(--primary-black);
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+
+.timestamp-utc {
+  font-size: 0.75rem;
+  color: var(--primary-mid-gray);
+  font-family: 'Courier New', monospace;
+}
+
+/* Details Grid - Compact Design */
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.1rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  margin-bottom: 0;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 0;
+  text-align: right;
+  flex-grow: 1;
+  word-break: break-word;
+}
+
+.detail-description, .detail-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Minimal Changes Section - All Text Black */
+.changes-minimal {
+  margin-top: 0.25rem;
+}
+
+.changes-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.1rem;
+}
+
+.changes-inline {
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.change-inline {
+  display: inline;
+  margin-right: 0.75rem;
+}
+
+.change-inline strong {
+  color: #000000;
+  text-transform: capitalize;
+  margin-right: 0.25rem;
+}
+
+/* .change-old and .change-new styles consolidated above */
+
+.change-inline i {
+  color: #000000;
+  font-size: 0.7rem;
+  margin: 0 0.25rem;
+}
+
+.change-separator {
+  color: #000000;
+  margin: 0 0.5rem;
+  font-weight: bold;
+}
+
+/* Arrow icons within badges */
+.badge i.fas.fa-arrow-right {
+  font-size: 0.6rem;
+  margin: 0 0.25rem;
+  color: inherit;
+}
+
+/* Form Controls - Match SearchableDropdown border radius */
+.form-control {
+  border-radius: 0.375rem !important;
+}
+
+/* Buttons - Match SearchableDropdown border radius */
+.btn-modern {
+  border-radius: 0.375rem !important;
 }
 
 /* =================================
@@ -453,44 +774,8 @@
   opacity: 0.8 !important;
 }
 
-/* Add New Buttons */
-.add-new-btn {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 600 !important;
-  transition: all 0.2s ease !important;
-}
-
-.add-new-btn:hover {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  opacity: 0.9 !important;
-}
-
-/* Edit/Delete Buttons */
-.edit-btn {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.25rem 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-}
-
-.delete-btn {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.25rem 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-}
+/* Add New Buttons - Now use .btn-purple from buttons.css */
+/* Edit/Delete Buttons - Now use .btn-orange and .btn-red from buttons.css */
 
 
 /* =================================
@@ -505,297 +790,139 @@
 
 /* Form validation styles - Moved to forms.css */
 
-/* Asset Details Modal - Reduced Spacing and Better Warranty Display */
-.equal-height-columns {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.equal-height-columns > [class*="col-"] {
-  display: flex;
-  flex-direction: column;
-}
-
-.asset-info-section-compact {
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-  display: flex;
-  flex-direction: column;
-}
-
-.asset-info-section-compact .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.asset-info-section-compact .info-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex-grow: 1;
-}
-
-.asset-info-section-compact .info-item-compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.asset-info-section-compact .info-item-compact:last-child {
-  border-bottom: none;
-}
-
-.asset-info-section-compact .info-label-compact {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0 !important;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.asset-info-section-compact .info-value-compact {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: #212529 !important;
-  margin-bottom: 0 !important;
-  text-align: right;
-  flex-grow: 1;
-}
-
-/* Warranty info - Right aligned display design */
-.warranty-info-compact {
-  font-size: 0.9rem;
-  line-height: 1.3;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-
-.warranty-info-compact .warranty-row:last-child {
-  margin-bottom: 0;
-}
-
-.warranty-info-compact .warranty-label {
-  font-size: 0.85rem;
-  color: #6c757d;
-  min-width: 40px;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-value {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #28a745;
-}
-
-.warranty-info-compact .warranty-time {
-  margin-top: 0.25rem;
-  text-align: right;
-}
-
-.warranty-info-compact .warranty-time-text {
-  font-size: 0.8rem;
-  color: #6c757d;
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* Assignment Divider */
-.assignment-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 1rem 0;
-  opacity: 0.6;
-}
-
-/* Assignment Details Collapsible */
-.assignment-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.assignment-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-.assignment-details-expanded {
-  transition: all 0.3s ease;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-/* Assignment Notes Display Override */
-.assignment-details-expanded .info-value-compact :deep(.notes-display-container) {
-  margin: 0;
-  padding: 0;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-content) {
-  padding: 0;
-  min-height: auto;
-  align-items: flex-start;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-text) {
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.assignment-details-expanded .info-value-compact :deep(.notes-empty) {
-  font-size: 0.95rem;
-  font-style: italic;
-  opacity: 0.7;
-}
-
-/* Assignment status combined */
-.assignment-status-combined {
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.assignment-status-combined .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.assignment-status-combined .assignment-details {
-  flex-grow: 1;
-}
-
-.assignment-status-combined .assignment-icon {
-  flex-shrink: 0; 
-}
-
-.assignment-status-combined .qr-code-mini {
-  flex-shrink: 0;
-}
-
-.assignment-status-combined .assignment-details span {
-  font-size: 0.95rem !important;
-}
-
-.assignment-status-combined .assignment-details .fw-medium {
-  font-size: 1rem !important;
-}
-
-/* Retirement status combined */
-.retirement-status-combined {
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.retirement-status-combined .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.retirement-status-combined .retirement-details {
-  flex-grow: 1;
-}
-
-.retirement-status-combined .retirement-icon {
-  flex-shrink: 0;
-}
-
-.retirement-status-combined .retirement-details span {
-  font-size: 0.95rem !important;
-}
-
-.retirement-status-combined .retirement-details .fw-medium {
-  font-size: 1rem !important;
-}
-
-/* Retirement Details Expanded */
-.retirement-details-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-/* Retirement Divider */
-.retirement-divider {
-  border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 1rem 0;
-  opacity: 0.6;
-}
-
-/* Retirement Details Collapsible */
-.retirement-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.retirement-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-/* Retirement Notes Display Override */
-.retirement-details-expanded .info-value-compact :deep(.notes-display-container) {
-  margin: 0;
-  padding: 0;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-content) {
-  padding: 0;
-  min-height: auto;
-  align-items: flex-start;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-text) {
-  font-size: 0.95rem;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-.retirement-details-expanded .info-value-compact :deep(.notes-empty) {
-  font-size: 0.95rem;
-  font-style: italic;
-  opacity: 0.7;
-}
+/* Modal-related styles moved to modals.css for better organization */
 
 /* Table spacing adjustments - Moved to tables.css */
+
+/* =================================
+   MORE ACTIONS DROPDOWN STYLES
+   For AssetsView.vue More Actions dropdown
+================================= */
+
+/* More Actions Dropdown Container */
+.more-actions-dropdown {
+  position: relative;
+}
+
+/* More Actions Dropdown Menu - Opens downward */
+.more-actions-dropdown .dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  bottom: auto !important;
+  left: 0 !important;
+  right: auto !important;
+  transform-origin: top center !important;
+  z-index: 1060 !important;
+  
+  /* Smooth animation properties */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(10px) scale(0.95) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  /* Enhanced styling */
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--primary-white) !important;
+  min-width: 200px !important;
+  max-width: 90vw !important;
+  padding: 0.5rem !important;
+}
+
+/* Show state with smooth animation - consolidated below */
+
+/* Dropdown items styling */
+.more-actions-dropdown .dropdown-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0.5rem !important;
+  margin: 0.125rem 0 !important;
+  color: var(--primary-black) !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  transition: all 0.15s ease !important;
+  border: none !important;
+  background: transparent !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+.more-actions-dropdown .dropdown-item:hover {
+  background-color: var(--primary-light-gray) !important;
+  color: var(--primary-black) !important;
+  transform: translateX(2px) !important;
+}
+
+.more-actions-dropdown .dropdown-item:active {
+  background-color: var(--element-gray) !important;
+  transform: translateX(1px) !important;
+}
+
+/* Dropdown divider */
+.more-actions-dropdown .dropdown-divider {
+  margin: 0.5rem 0 !important;
+  border-color: var(--element-gray) !important;
+  opacity: 0.5 !important;
+}
+
+/* Icon styling in dropdown items */
+.more-actions-dropdown .dropdown-item i {
+  width: 16px !important;
+  text-align: center !important;
+  margin-right: 0.75rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .more-actions-dropdown .dropdown-menu {
+    min-width: 180px !important;
+    max-width: 95vw !important;
+  }
+  
+  .more-actions-dropdown .dropdown-item {
+    padding: 0.625rem 0.875rem !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* Animation keyframes for enhanced effect */
+@keyframes moreActionsSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes moreActionsSlideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.9);
+  }
+}
+
+/* Show state with smooth animation - consolidated */
+.more-actions-dropdown .dropdown-menu.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  animation: moreActionsSlideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Smooth closing animation */
+.more-actions-dropdown .dropdown-menu:not(.show) {
+  animation: moreActionsSlideUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 
 /* =================================
    RESPONSIVE STYLES
@@ -822,6 +949,45 @@
   
   .event-date {
     font-size: 0.8rem;
+  }
+  
+  /* Mobile: Stack status/condition vertically */
+  .row.justify-content-between .col-4 .row .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 0.25rem;
+  }
+  
+  .row.justify-content-between .col-3 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    text-align: left !important;
+    margin-top: 0.5rem;
+  }
+  
+  .event-description-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .details-toggle {
+    align-self: flex-end;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .changes-inline {
+    font-size: 0.75rem;
+  }
+  
+  .change-inline {
+    display: block;
+    margin-bottom: 0.25rem;
+    margin-right: 0;
   }
   
   .timeline-content {
@@ -862,6 +1028,10 @@
 
 @media (min-width: 768px) and (max-width: 991.98px) { 
   /* Filter styles moved to filters.css */
+  
+  .details-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 }
 
 @media (max-width: 576px) {
