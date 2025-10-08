@@ -158,7 +158,7 @@
                 <div class="row g-4">
                   <!-- Collection Date -->
                   <div class="col-md-6">
-                    <DateInput
+                    <DatePicker
                       id="collectionDate"
                       label="Collection Date *"
                       v-model="formData.collectionDate"
@@ -332,7 +332,7 @@ import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto
 import { employeeApiService, type Employee } from '../../services/api/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
-import DateInput from '../../components/ui/date/DateInput.vue'
+import DatePicker from '../../components/ui/date/DatePicker.vue'
 
 const router = useRouter()
 const route = useRoute()

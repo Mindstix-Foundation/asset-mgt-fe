@@ -271,13 +271,53 @@
 
         <!-- Recent Activity -->
         <div class="col-12 col-lg-4 mb-4">
-          <div class="compact-chart-card">
-            <RecentActivity 
-              :activities="recentActivities"
-              :isLoading="isLoadingAnalytics"
-              title="Recent Activity"
-              maxHeight="320px"
-            />
+          <div class="card compact-chart-card">
+            <div class="card-header compact-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h6>
+              <small class="text-muted">Last 24h</small>
+            </div>
+            <div class="card-body p-0">
+              <div class="activity-list">
+                <!-- Loading state -->
+                <div v-if="isLoadingAnalytics" class="activity-item" v-for="n in 4" :key="'loading-' + n">
+                  <div class="activity-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="placeholder-glow">
+                      <span class="placeholder col-6"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-8"></span>
+                    </div>
+                    <div class="placeholder-glow mt-1">
+                      <span class="placeholder col-4"></span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Actual data -->
+                <div v-else-if="recentActivities.length > 0" v-for="activity in recentActivities" :key="activity.id" 
+                     class="activity-item">
+                  <div class="activity-icon" :class="getActivityType(activity.title)">
+                    <i :class="getActivityIcon(activity.title)"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-text">{{ activity.title }}</div>
+                    <div class="activity-description">{{ activity.description }}</div>
+                    <div class="activity-time">{{ activity.timeAgo }}</div>
+                  </div>
+                </div>
+                
+                <!-- No data state -->
+                <div v-else class="activity-item text-center py-4">
+                  <div class="text-muted">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No recent activities found
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -368,14 +408,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
-import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/api/reportsApi'
-import { dashboardApi } from '@/services/api/dashboardApi'
-import { assetService } from '@/services/business/assetService'
-import { employeeService } from '@/services/business/employeeService'
-import { maintenanceService } from '@/services/business/maintenanceService'
+import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/reportsApi'
+import { dashboardApi } from '@/services/dashboardApi'
+import { assetService } from '@/services/assetService'
+import { employeeService } from '@/services/employeeService'
+import { maintenanceService } from '@/services/maintenanceService'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
-import { RecentActivity } from '@/components/common'
 
 Chart.register(...registerables)
 
@@ -587,17 +626,17 @@ const loadAnalyticsData = async () => {
     // Transform recent activities using dashboardApi
     if (analyticsData.value.recentActivity) {
       // Convert the reports API format to dashboard API format
-      const convertedActivities = analyticsData.value.recentActivity.map((raw: any) => ({
-        id: raw.id,
-        type: raw.type as any,
-        description: raw.description,
-        timestamp: new Date(raw.timestamp),
-        timeAgo: raw.timeAgo || 'Unknown', // Use the backend's timeAgo value
-        needsRealTimeUpdate: raw.needsRealTimeUpdate || false,
-        assetId: raw.assetId,
-        employeeId: raw.employeeId,
-        maintenanceId: raw.maintenanceId,
-        vendorId: raw.vendorId
+      const convertedActivities = analyticsData.value.recentActivity.map(activity => ({
+        id: activity.id,
+        type: activity.type as any,
+        description: activity.description,
+        timestamp: new Date(activity.timestamp),
+        timeAgo: activity.timeAgo || 'Unknown', // Use the backend's timeAgo value
+        needsRealTimeUpdate: activity.needsRealTimeUpdate || false,
+        assetId: activity.assetId,
+        employeeId: activity.employeeId,
+        maintenanceId: activity.maintenanceId,
+        vendorId: activity.vendorId
       }))
       recentActivities.value = dashboardApi.transformRecentActivity(convertedActivities)
     }
@@ -770,8 +809,7 @@ const handleCustomExport = async (format: string) => {
       maintenance: exportMaintenance
     }
 
-    const reportTypeKey = (customFilters.value.reportType as 'assets' | 'employees' | 'maintenance') || 'assets'
-    const handler = exportHandlers[reportTypeKey]
+    const handler = exportHandlers[customFilters.value.reportType]
     if (!handler) {
       throw new Error('Unknown report type')
     }
@@ -1047,22 +1085,20 @@ const getPreviewColumns = () => {
 
 const getBadgeClass = (status: string): string => {
   const classes: Record<string, string> = {
-    // Assets
-    'ASSIGNED': 'badge-purple',
-    'AVAILABLE': 'badge-green',
-    'MAINTENANCE': 'badge-orange',
-    'IN_MAINTENANCE': 'badge-orange',
-    'COMPLETED': 'badge-green',
-    'SCHEDULED': 'badge-blue',
-    'CANCELLED': 'badge-red',
-    'RETIRED': 'badge-gray',
-    // Employees
-    'ACTIVE': 'badge-green',
-    'INACTIVE': 'badge-red',
-    'TERMINATED': 'badge-red',
-    'ON_LEAVE': 'badge-orange'
+    'ASSIGNED': 'badge bg-primary text-white',
+    'AVAILABLE': 'badge bg-success text-white',
+    'MAINTENANCE': 'badge bg-warning text-dark',
+    'IN_MAINTENANCE': 'badge bg-warning text-dark',
+    'COMPLETED': 'badge bg-success text-white',
+    'SCHEDULED': 'badge bg-info text-white',
+    'CANCELLED': 'badge bg-danger text-white',
+    'RETIRED': 'badge bg-secondary text-white',
+    'ACTIVE': 'badge bg-success text-white',
+    'INACTIVE': 'badge bg-warning text-dark',
+    'TERMINATED': 'badge bg-danger text-white',
+    'ON_LEAVE': 'badge bg-info text-white'
   }
-  return classes[status] || 'badge-gray'
+  return classes[status] || 'badge bg-secondary text-white'
 }
 
 const formatCellValue = (value: any, type?: string): string => {
@@ -1090,6 +1126,25 @@ const showNotification = (message: string, type: 'success' | 'error' | 'info' = 
   console.log(`${type.toUpperCase()}: ${message}`)
 }
 
+// Helper functions for activity display
+const getActivityType = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'added'
+  if (title.includes('Asset Issued') || title.includes('Asset Collected')) return 'assigned'
+  if (title.includes('Maintenance')) return 'maintenance'
+  if (title.includes('Employee')) return 'added'
+  if (title.includes('Vendor')) return 'added'
+  return 'added'
+}
+
+const getActivityIcon = (title: string): string => {
+  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'fas fa-laptop'
+  if (title.includes('Asset Issued')) return 'fas fa-arrow-right'
+  if (title.includes('Asset Collected')) return 'fas fa-arrow-left'
+  if (title.includes('Maintenance')) return 'fas fa-tools'
+  if (title.includes('Employee')) return 'fas fa-user'
+  if (title.includes('Vendor')) return 'fas fa-building'
+  return 'fas fa-circle'
+}
 
 // Calculate total asset count from status overview
 const getTotalAssetCount = (): number => {
@@ -1197,7 +1252,6 @@ onUnmounted(() => {
   transition: all 0.3s ease;
   height: 100%;
   max-height: 400px;
-  overflow: hidden;
 }
 
 .compact-header {
@@ -1271,9 +1325,9 @@ onUnmounted(() => {
 }
 
 .status-mini-card.assigned .status-icon,
-.status-mini-card.assigned .status-count { color: var(--secondary-green); }
+.status-mini-card.assigned .status-count { color: var(--secondary-purple); }
 .status-mini-card.available .status-icon,
-.status-mini-card.available .status-count { color: var(--secondary-pink); }
+.status-mini-card.available .status-count { color: var(--secondary-green); }
 .status-mini-card.in_maintenance .status-icon,
 .status-mini-card.in_maintenance .status-count { color: var(--secondary-orange); }
 .status-mini-card.maintenance .status-icon,
@@ -1281,7 +1335,7 @@ onUnmounted(() => {
 .status-mini-card.retired .status-icon,
 .status-mini-card.retired .status-count { color: var(--primary-dark-gray); }
 .status-mini-card.total-assets .status-icon,
-.status-mini-card.total-assets .status-count { color: var(--secondary-purple); }
+.status-mini-card.total-assets .status-count { color: var(--secondary-blue); }
 
 /* Ensure maintenance status icons are orange colored */
 .status-mini-card.in_maintenance .status-icon { 
@@ -1310,6 +1364,63 @@ onUnmounted(() => {
 }
 
 
+.activity-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+  background-color: rgba(51, 31, 234, 0.02);
+}
+
+.activity-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  font-size: 0.75rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.activity-icon.assigned { background-color: var(--secondary-green); }
+.activity-icon.maintenance { background-color: var(--secondary-orange); }
+.activity-icon.added { background-color: var(--secondary-purple); }
+.activity-icon.returned { background-color: var(--secondary-pink); }
+.activity-icon.retired { background-color: var(--primary-dark-gray); }
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-text {
+  font-size: 0.8rem;
+  color: var(--primary-black);
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.activity-description {
+  font-size: 0.75rem;
+  color: var(--primary-dark-gray);
+  margin-bottom: 0.2rem;
+}
+
+.activity-time {
+  font-size: 0.7rem;
+  color: var(--primary-dark-gray);
+}
 
 /* Button Styles */
 .btn {
@@ -1549,6 +1660,15 @@ onUnmounted(() => {
     font-size: 1.5rem;
   }
   
+  .activity-item {
+    padding: 0.5rem;
+  }
+  
+  .activity-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
   
   .report-card {
     margin-bottom: 1.5rem;

@@ -196,7 +196,7 @@
                 <div class="row g-4">
                   <!-- Purchase Date -->
                   <div class="col-md-6">
-                    <DateInput
+                    <DatePicker
                       id="purchaseDate"
                       label="Purchase Date (Optional)"
                       v-model="formData.purchaseDate"
@@ -420,7 +420,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { assetService } from '@/services/business/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
-import DateInput from '../ui/date/DateInput.vue'
+import DatePicker from '../ui/date/DatePicker.vue'
 import { assetCategoryService } from '@/services/api/assetCategoryService'
 import { assetTypeService } from '@/services/api/assetTypeService'
 import { brandService } from '@/services/api/brandService'

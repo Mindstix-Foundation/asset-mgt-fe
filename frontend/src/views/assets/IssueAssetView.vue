@@ -126,7 +126,7 @@
 
                   <!-- Assignment Date -->
                   <div class="col-md-6">
-                    <DateInput
+                    <DatePicker
                       id="assignmentDate"
                       label="Assignment Date *"
                       v-model="formData.assignmentDate"
@@ -196,7 +196,7 @@ import { assetApiService, type Asset } from '../../services/api/assetApi'
 import { employeeApiService, type Employee } from '../../services/api/employeeApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
-import DateInput from '../../components/ui/date/DateInput.vue'
+import DatePicker from '../../components/ui/date/DatePicker.vue'
 
 const router = useRouter()
 const route = useRoute()

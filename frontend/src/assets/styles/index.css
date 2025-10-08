@@ -17,6 +17,7 @@
 @import './components/badges.css';
 @import './components/navigation.css';
 @import './components/filters.css';
+@import './components/timeline.css';
 
 /* 4. Page-Specific Styles */
 @import './pages/login.css';

@@ -112,7 +112,7 @@
 
                   <!-- Scheduled Date -->
                   <div class="col-md-6">
-                    <DateInput
+                    <DatePicker
                       id="scheduledDate"
                       label="Scheduled Date *"
                       v-model="formData.scheduledDate"
@@ -258,7 +258,7 @@ import { useToastStore } from '@/stores/toast'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import { assetApiService, type Asset as AssetApiAsset } from '@/services/api/assetApi'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
-import DateInput from '@/components/ui/date/DateInput.vue'
+import DatePicker from '@/components/ui/date/DatePicker.vue'
 import { formatDateForInput } from '@/utils/date'
 
 // Alias for form field elements to improve readability and reuse
