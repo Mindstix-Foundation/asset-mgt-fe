@@ -13,7 +13,7 @@
           </div>
           <button
             @click="showAddAdminModal"
-            class="btn btn-modern btn-primary"
+            class="btn btn-modern btn-purple"
             :disabled="isLoading"
           >
             <i class="fas fa-plus me-2"></i>
@@ -26,8 +26,8 @@
     <!-- Admins List -->
     <div class="row">
       <div class="col-12">
-        <div class="card border-0 shadow-sm">
-          <div class="card-header" style="background: transparent; border-bottom: none;">
+        <div class="card">
+          <div class="card-header">
             <h5 class="card-title mb-0" style="color: var(--primary-black);">
               <i class="fas fa-user-shield me-2"></i>
               Admin Users
@@ -81,11 +81,11 @@
                       <span class="text-muted text-truncate d-block">{{ admin.employee?.email }}</span>
                     </td>
                     <td>
-                      <span class="badge bg-light text-dark">{{ admin.employee?.employeeId }}</span>
+                      <span class="badge badge-gray">{{ admin.employee?.employeeId }}</span>
                     </td>
                     <td>
                       <span 
-                        :class="admin.isActive ? 'badge bg-success' : 'badge bg-danger'"
+                        :class="admin.isActive ? 'badge badge-green' : 'badge badge-red'"
                       >
                         {{ admin.isActive ? 'Active' : 'Inactive' }}
                       </span>
@@ -102,7 +102,7 @@
                         <button
                           v-if="admin.id !== currentUserId"
                           @click="removeAdmin(admin)"
-                          class="btn btn-outline-danger btn-sm"
+                          class="btn btn-action btn-red btn-sm"
                           :disabled="isLoading"
                           title="Remove Admin"
                         >
@@ -199,7 +199,7 @@
                   />
                   <button
                     type="button"
-                    class="btn btn-outline-secondary"
+                    class="btn btn-gray"
                     @click="togglePasswordVisibility"
                     :title="showPassword ? 'Hide password' : 'Show password'"
                   >
@@ -256,7 +256,7 @@
                   />
                   <button
                     type="button"
-                    class="btn btn-outline-secondary"
+                    class="btn btn-gray"
                     @click="toggleConfirmPasswordVisibility"
                     :title="showConfirmPassword ? 'Hide password' : 'Show password'"
                   >
@@ -274,14 +274,14 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
+            <button type="button" class="btn btn-modern btn-cancel" data-bs-dismiss="modal">
               <i class="fas fa-times me-2"></i>
               Cancel
             </button>
             <button
               type="button"
               @click="handleAddAdmin"
-              class="btn btn-modern btn-primary"
+              class="btn btn-modern btn-purple"
               :disabled="isSubmitting"
             >
               <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
@@ -317,7 +317,7 @@
             <button
               type="button"
               @click="confirmRemoveAdmin"
-              class="btn btn-modern btn-danger"
+              class="btn btn-modern btn-red"
               :disabled="isSubmitting"
             >
               <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
@@ -615,7 +615,7 @@ const handleAddAdmin = async () => {
       roles: ['ADMIN']
     })
 
-    if (response.data.success) {
+    if (response.status === 201 || response.data.success) {
       toast.showSuccess('Success', 'Admin user created successfully')
       
       // Reset form
@@ -684,18 +684,21 @@ const confirmRemoveAdmin = async () => {
 
     const response = await authAxios.delete(`/admin/users/${selectedAdmin.value.id}`)
 
-    if (response.data.success) {
-      toast.showSuccess('Success', 'Admin removed successfully')
-      
-      // Close modal
-      const modal = Modal.getInstance(document.getElementById('removeAdminModal')!)
-      modal?.hide()
-      
-      // Refresh admins list
-      await fetchAdmins()
-    } else {
-      throw new Error(response.data.message || 'Failed to remove admin')
+    // Backend returns 204 No Content on success. Treat 204 or explicit success as success.
+    const wasSuccessful = response.status === 204 || response.data?.success === true
+
+    if (!wasSuccessful) {
+      throw new Error(response.data?.message || 'Failed to remove admin')
     }
+
+    toast.showSuccess('Success', 'Admin removed successfully')
+    
+    // Close modal
+    const modal = Modal.getInstance(document.getElementById('removeAdminModal')!)
+    modal?.hide()
+    
+    // Refresh admins list
+    await fetchAdmins()
   } catch (err: any) {
     console.error('Error removing admin:', err)
     toast.showError('Error', err.response?.data?.message || 'Failed to remove admin')
@@ -828,13 +831,7 @@ onMounted(() => {
   letter-spacing: 0.5px;
 }
 
-.btn-group .btn {
-  margin-right: 2px;
-}
-
-.btn-group .btn:last-child {
-  margin-right: 0;
-}
+/* Removed local .btn spacing; rely on shared buttons.css */
 
 /* Admin table specific styling */
 .admin-table {
@@ -935,16 +932,7 @@ onMounted(() => {
   color: var(--bs-danger);
 }
 
-/* Input group button styling */
-.input-group .btn {
-  border-left: 0;
-  border-color: #ced4da;
-}
-
-.input-group .form-control:focus + .btn {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
+/* Removed local input-group .btn overrides; rely on shared buttons.css */
 
 /* Valid feedback styling */
 .valid-feedback {

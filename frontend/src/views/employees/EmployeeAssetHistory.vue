@@ -124,10 +124,10 @@
                 />
               </div>
               <div class="flex-fill">
-                <DateField id="history-date-from" label="From" v-model="filters.dateFrom" @change="applyFilters" />
+                <DatePicker :inputId="'history-date-from'" label="From" v-model="filters.dateFrom" @change="applyFilters" />
               </div>
               <div class="flex-fill">
-                <DateField id="history-date-to" label="To" v-model="filters.dateTo" @change="applyFilters" />
+                <DatePicker :inputId="'history-date-to'" label="To" v-model="filters.dateTo" @change="applyFilters" />
               </div>
               <div class="filter-clear-button-container">
                 <div class="d-flex align-items-end h-100">
@@ -245,13 +245,13 @@ import { employeeApiService } from '@/services/api/employeeApi'
 import { assetApiService } from '@/services/api/assetApi'
 import ToastNotification from '@/components/common/ToastNotification.vue'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateField from '@/components/ui/date/DateField.vue'
+import { DatePicker } from '@/components/ui'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import { useToastStore } from '@/stores/toast'
 
 export default {
   name: 'EmployeeAssetHistory',
-  components: { ToastNotification, SearchableDropdown, DateField, AppPagination },
+  components: { ToastNotification, SearchableDropdown, DatePicker, AppPagination },
   setup() {
     const toastStore = useToastStore()
     return {
@@ -535,26 +535,32 @@ export default {
 </script>
 
 <style scoped>
-/* Employee Info Card */
-.card {
-  border: 1px solid #e9ecef;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+/**
+ * EmployeeAssetHistory.vue - View-Specific Styles
+ * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css
+ */
+
+/* =================================
+   PAGE LAYOUT
+   Specific to asset history page
+================================= */
 
 .card-body {
   padding: 1.5rem;
 }
 
-/* Timeline Styling */
-.asset-history-timeline {
-  position: relative;
-  padding-left: 2rem;
-}
+/* =================================
+   TIMELINE CUSTOMIZATION
+   View-specific timeline adjustments
+================================= */
 
 /* Defensive fixes to prevent layout regression from shared/global styles */
-.asset-history-timeline .timeline-item { position: relative; }
-.asset-history-timeline .timeline-badges .badge { display: inline-block !important; }
+.asset-history-timeline .timeline-item { 
+  position: relative; 
+}
+
+/* uses shared .badge display rules from badges.css */
+
 .asset-history-timeline .timeline-dot { 
   position: absolute !important; 
   left: -2rem !important; 
@@ -604,11 +610,11 @@ export default {
   font-weight: 500 !important;
 }
 
-/* badges layout shared in global timeline.css */
+/* =================================
+   EVENT DETAILS
+   Specific to this page's event display
+================================= */
 
-/* details box defaults shared in global timeline.css */
-
-/* Info Items */
 .info-item {
   margin-bottom: 0.5rem;
 }
@@ -643,15 +649,16 @@ export default {
   border: 1px solid #e9ecef;
 }
 
-/* Badge styles moved to pages/employees.css and components/badges.css */
+/* =================================
+   FILTER SECTION
+   Specific to this page's filters
+================================= */
 
-/* Filter dropdown styling (parity with EmployeesView) */
 .filter-dropdown {
   border: 1px solid #dee2e6;
   background-color: #f8f9fa !important;
 }
 
-/* Align date inputs height with SearchableDropdown */
 .filter-dropdown .history-date-input {
   height: 37.6px !important;
   line-height: 1.5;
@@ -660,18 +667,15 @@ export default {
   border-radius: 0.375rem;
 }
 
-/* Ensure filter labels have 8px bottom spacing like others */
 .filter-dropdown .info-label {
-  margin-bottom: 0.5rem !important; /* 8px */
+  margin-bottom: 0.5rem !important;
 }
 
-/* Active filter button styling */
 .btn.active {
   background-color: #0d6efd;
   color: #fff;
 }
 
-/* Filter Clear Button Responsive Styling */
 .filter-clear-button-container {
   flex-shrink: 0;
   min-width: 120px;
@@ -681,6 +685,11 @@ export default {
   width: 100%;
   min-width: 120px;
 }
+
+/* =================================
+   RESPONSIVE STYLES
+   View-specific responsive adjustments
+================================= */
 
 @media (max-width: 767.98px) {
   .filter-clear-button-container { width: 100%; min-width: unset; }

@@ -286,6 +286,11 @@
   transform: translateY(-1px) !important;
 }
 
+/* Default inner padding for employee cards */
+.employee-card .card-body {
+  padding: 1rem;
+}
+
 /* Filter card styling */
 .filter-card {
   border: 1px solid var(--element-gray) !important;

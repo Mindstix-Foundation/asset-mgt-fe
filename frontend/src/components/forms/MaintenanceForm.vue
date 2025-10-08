@@ -113,14 +113,15 @@
                   <!-- Scheduled Date -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="scheduledDate"
+                      :inputId="'scheduledDate'"
                       label="Scheduled Date *"
                       v-model="formData.scheduledDate"
+                      :inputClass="getFieldClass('scheduledDate')"
                       :error-message="fieldErrors.scheduledDate"
                       help-text="Date when maintenance should be performed (required)"
                       :disabled="isSubmitting"
                       required
-                      @change="handleFieldInput('scheduledDate')"
+                      @change="validateFieldInline('scheduledDate')"
                       @blur="validateFieldInline('scheduledDate')"
                     />
                   </div>
@@ -499,7 +500,10 @@ const validateFieldInline = async (fieldName: string) => {
   
   if (!element) return true
 
-  element.setCustomValidity('')
+  // Guard: only call on native controls
+  if ('setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity('')
+  }
 
   const isRequired = element.hasAttribute('required')
   const isEmpty = value === undefined || value === null || value.toString().trim() === ''
@@ -517,13 +521,18 @@ const validateFieldInline = async (fieldName: string) => {
     }
   }
 
-  if (element.checkValidity()) {
-    setFieldValid(fieldName)
-    return true
-  } else {
-    setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+  if ('checkValidity' in element && typeof (element as any).checkValidity === 'function') {
+    if ((element as any).checkValidity()) {
+      setFieldValid(fieldName)
+      return true
+    }
+    setFieldError(fieldName, (element as any).validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
     return false
   }
+
+  // Non-native elements: treat as valid if our custom validation passed
+  setFieldValid(fieldName)
+  return true
 }
 
 const setFieldError = (fieldName: string, message: string) => {
@@ -531,8 +540,8 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldValidation[fieldName] = false
   
   const element = document.getElementById(fieldName) as FormFieldElement
-  if (element) {
-    element.setCustomValidity(message)
+  if (element && 'setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity(message)
   }
 }
 
@@ -541,8 +550,8 @@ const setFieldValid = (fieldName: string) => {
   fieldValidation[fieldName] = true
   
   const element = document.getElementById(fieldName) as FormFieldElement
-  if (element) {
-    element.setCustomValidity('')
+  if (element && 'setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity('')
   }
 }
 

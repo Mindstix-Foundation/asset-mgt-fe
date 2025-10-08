@@ -113,19 +113,19 @@ const getActivityIcon = (title: string): string => {
 .activity-item {
   display: flex;
   align-items: center;
-  padding: 0.15rem 0.75rem;
-  border-bottom: none;
+  padding: 0.5rem 0.75rem;
   background: transparent;
-  transition: background-color 0.1s ease;
+  border-bottom: 1px solid var(--element-gray);
+  border-radius: 0;
+  margin: 0;
+  transition: none;
 }
 
 .activity-item:last-child {
   border-bottom: none;
 }
 
-.activity-item:hover {
-  background-color: rgba(0, 0, 0, 0.01);
-}
+
 
 .activity-icon {
   width: 24px;

@@ -349,6 +349,7 @@
   }
 }
 
+
 /* ========================================
    ACCESSIBILITY & FOCUS STATES
    ======================================== */
@@ -356,4 +357,19 @@
 .btn:focus-visible {
   outline: 3px solid var(--secondary-purple) !important;
   outline-offset: 2px !important;
+}
+
+/* ========================================
+   RESPONSIVE BUTTON LAYOUT HELPERS
+   ======================================== */
+@media (max-width: 576px) {
+  /* Make modal footer buttons full-width on small screens */
+  .modal-footer .btn {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .modal-footer .btn:last-child {
+    margin-bottom: 0 !important;
+  }
 }

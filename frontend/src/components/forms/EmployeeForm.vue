@@ -29,7 +29,7 @@
               <fieldset class="form-fieldset">
                 <legend class="form-legend">Basic Information</legend>
                 <div class="row g-4">
-                  <!-- Employee ID (input in Add mode, readonly in Edit) -->
+                  <!-- Employee ID (editable in both modes, validated to 4 digits 0001-9999) -->
                   <div class="col-md-6">
                     <label for="employeeId" class="form-label">Employee ID</label>
                     <div class="position-relative">
@@ -38,13 +38,11 @@
                         class="form-control" 
                         id="employeeId" 
                         v-model="formData.employeeId"
-                        :readonly="isEditMode"
                         :disabled="isSubmitting"
                         :class="getFieldClass('employeeId')"
-                        :placeholder="isEditMode ? '' : '0001'"
-                        :title="isEditMode ? 'Employee ID is immutable' : 'Enter a 4-digit numeric Employee ID (0001-9999)'"
-                        :style="isEditMode ? 'background-color: #F3F3F3;' : ''"
-                        :required="!isEditMode"
+                        placeholder="0001"
+                        title="Enter a 4-digit numeric Employee ID (0001-9999)"
+                        required
                         inputmode="numeric"
                         maxlength="4"
                         @input="formatEmployeeId"
@@ -57,9 +55,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="form-text">
-                      {{ isEditMode ? 'Employee identification number' : '4 digits only (0001 to 9999)' }}
-                    </div>
+                    <div class="form-text">4 digits only (0001 to 9999)</div>
                     <div v-if="fieldErrors.employeeId" class="invalid-feedback">{{ fieldErrors.employeeId }}</div>
                   </div>
 
@@ -192,13 +188,14 @@
                   <!-- Date of Birth -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="dateOfBirth"
+                      :inputId="'dateOfBirth'"
                       label="Date of Birth (Optional)"
                       v-model="formData.dateOfBirth"
+                      :inputClass="getFieldClass('dateOfBirth')"
                       :error-message="fieldErrors.dateOfBirth"
                       :disabled="isSubmitting"
                       help-text="Used for HR records and birthday notifications"
-                      @change="handleFieldInput('dateOfBirth')"
+                      @change="validateFieldInline('dateOfBirth')"
                       @blur="validateFieldInline('dateOfBirth')"
                     />
                   </div>
@@ -433,9 +430,13 @@ const checkEmailAvailability = (value: any) => {
   }, 400)
 }
 
-// Check Employee ID availability (add mode only)
+// Check Employee ID availability (in add mode; in edit mode, check only if changed)
 const checkEmployeeIdAvailability = (value: any) => {
-  if (props.isEditMode) return
+  if (props.isEditMode && value === props.employeeId) {
+    // Unchanged employeeId in edit mode - treat as valid
+    setFieldValid('employeeId')
+    return
+  }
   if (employeeIdCheckTimer) globalThis.clearTimeout(employeeIdCheckTimer)
   isCheckingEmployeeId.value = true
   employeeIdCheckTimer = globalThis.setTimeout(async () => {
@@ -525,7 +526,6 @@ const validateDateOfBirthField = (value: any): boolean => {
 const validateFieldType = (fieldName: string, value: any): boolean => {
   switch (fieldName) {
     case 'employeeId': {
-      if (props.isEditMode) return true
       const v = String(value || '')
       if (!/^\d{4}$/.test(v)) {
         setFieldError('employeeId', 'Employee ID must be exactly 4 digits (0001-9999)')
@@ -558,7 +558,10 @@ const validateFieldInline = async (fieldName: string) => {
   
   if (!element) return true
 
-  element.setCustomValidity('')
+  // Only call setCustomValidity on native form controls
+  if ('setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity('')
+  }
 
   const isRequired = element.hasAttribute('required')
   
@@ -572,13 +575,19 @@ const validateFieldInline = async (fieldName: string) => {
     return false
   }
 
-  if (element.checkValidity()) {
-    setFieldValid(fieldName)
-    return true
-  } else {
-    setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+  // If the element supports native validity checking, use it; otherwise treat as valid
+  if ('checkValidity' in element && typeof (element as any).checkValidity === 'function') {
+    if ((element as any).checkValidity()) {
+      setFieldValid(fieldName)
+      return true
+    }
+    setFieldError(fieldName, (element as any).validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
     return false
   }
+
+  // Elements without native validity (e.g., custom components) are considered valid if our custom validation passed
+  setFieldValid(fieldName)
+  return true
 }
 
 const setFieldError = (fieldName: string, message: string) => {
@@ -586,8 +595,8 @@ const setFieldError = (fieldName: string, message: string) => {
   fieldValidation[fieldName] = false
   
   const element = document.getElementById(fieldName) as FormFieldElement
-  if (element) {
-    element.setCustomValidity(message)
+  if (element && 'setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity(message)
   }
 }
 
@@ -596,8 +605,8 @@ const setFieldValid = (fieldName: string) => {
   fieldValidation[fieldName] = true
   
   const element = document.getElementById(fieldName) as FormFieldElement
-  if (element) {
-    element.setCustomValidity('')
+  if (element && 'setCustomValidity' in element && typeof (element as any).setCustomValidity === 'function') {
+    ;(element as any).setCustomValidity('')
   }
 }
 
@@ -787,6 +796,11 @@ const buildUpdateEmployeeData = (): UpdateEmployeeData => {
   if (!isAdmin.value) {
     ;(payload as any).email = formData.email
   }
+  // Allow updating employeeId if changed and valid
+  const idStr = String(formData.employeeId || '')
+  if (/^\d{4}$/.test(idStr) && idStr !== props.employeeId && idStr !== '0000') {
+    ;(payload as any).employeeId = idStr
+  }
   return payload
 }
 
@@ -857,6 +871,17 @@ const resizeAllTextareas = () => {
       resizeTextarea(textarea)
     }
   }
+}
+
+// Run validation for all fields (used on initial load in edit mode)
+const runInitialValidation = async () => {
+  await nextTick()
+  formSubmitted.value = true
+  if (employeeForm.value) {
+    employeeForm.value.classList.add('was-validated')
+  }
+  const fields = Object.keys(formData)
+  await Promise.all(fields.map((f) => validateFieldInline(f)))
 }
 
 const getCounterClass = (length: number, maxLength: number) => {
@@ -931,6 +956,8 @@ watch(() => formData.address, (newValue) => {
 onMounted(async () => {
   if (props.isEditMode) {
     await loadEmployeeData()
+    // Immediately validate all fields on landing in edit mode
+    await runInitialValidation()
   }
   
   nextTick(() => {
@@ -1032,6 +1059,21 @@ onMounted(async () => {
 .was-validated .form-select:valid {
   border-color: #10b981 !important;
   box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Fix Bootstrap valid/invalid background icons tiling on selects */
+.form-select.is-valid,
+.was-validated .form-select:valid {
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1rem 1rem !important;
+}
+
+.form-select.is-invalid,
+.was-validated .form-select:invalid {
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 1rem 1rem !important;
 }
 
 .was-validated .form-control:invalid,

@@ -7,7 +7,7 @@
           <h2 class="mb-0" style="color: var(--primary-black);">Maintenance & Repairs</h2>
           <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
         </div>
-        <button class="btn btn-warning btn-modern" @click="navigateToSchedule">
+        <button class="btn btn-orange" @click="navigateToSchedule">
           <i class="fas fa-plus me-1"></i>Schedule Maintenance
         </button>
       </div>
@@ -150,7 +150,7 @@
               <!-- Filter Button -->
               <div class="col-8">
                 <button 
-                  class="btn btn-outline-secondary btn-modern w-100" 
+                  class="btn btn-filter w-100" 
                   @click="toggleFilterDropdown"
                   :class="{ active: showFilterDropdown }"
                 >
@@ -194,7 +194,7 @@
                 <!-- Clear Button: responsive width -->
                 <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -261,7 +261,7 @@
               <td>
                 <div class="btn-group btn-group-sm maintenance-actions">
                   <button 
-                    class="btn btn-action btn-view" 
+                    class="btn btn-action btn-purple" 
                     @click="showMaintenanceDetails(maintenance)"
                     title="View Details"
                   >
@@ -269,7 +269,7 @@
                   </button>
                   <button 
                     v-if="maintenance.status === 'IN_PROGRESS'"
-                    class="btn btn-action btn-complete" 
+                    class="btn btn-action btn-green" 
                     @click="openCompleteModal(maintenance)"
                     title="Complete Maintenance"
                   >
@@ -277,7 +277,7 @@
                   </button>
                   <button 
                     v-if="maintenance.status === 'SCHEDULED'"
-                    class="btn btn-action btn-edit" 
+                    class="btn btn-action btn-orange" 
                     @click="navigateToEdit(maintenance)"
                     title="Edit Maintenance"
                   >
@@ -285,7 +285,7 @@
                   </button>
                   <button 
                     v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
-                    class="btn btn-action btn-reschedule" 
+                    class="btn btn-action btn-purple" 
                     @click="navigateToSchedule(maintenance)"
                     title="Reschedule Maintenance"
                   >
@@ -294,7 +294,7 @@
                   
                   <button 
                     v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
-                    class="btn btn-action btn-cancel" 
+                    class="btn btn-action btn-red" 
                     @click="openCancelModal(maintenance)"
                     title="Cancel Maintenance"
                   >
@@ -427,7 +427,7 @@
               <button 
                 v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                 type="button" 
-                class="btn btn-success" 
+                class="btn btn-green" 
                 @click="closeDetailAndOpenComplete"
               >
                 <i class="fas fa-check me-1"></i>Complete
@@ -435,7 +435,7 @@
               <button 
                 v-if="selectedMaintenance?.status === 'SCHEDULED'"
                 type="button" 
-                class="btn btn-warning" 
+                class="btn btn-orange" 
                 @click="navigateToEdit(selectedMaintenance)"
               >
                 <i class="fas fa-edit me-1"></i>Edit
@@ -443,19 +443,19 @@
               <button 
                 v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                 type="button" 
-                class="btn btn-warning" 
+                class="btn btn-orange" 
                 @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
               >
                 <i class="fas fa-calendar-plus me-1"></i>Reschedule
               </button>
               <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-history" @click="openHistory">
+              <button type="button" class="btn btn-brown" @click="openHistory">
                 <i class="fas fa-history me-1"></i>History
               </button>
               <button 
                 v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
                 type="button" 
-                class="btn btn-danger" 
+                class="btn btn-red" 
                 @click="closeDetailAndOpenCancel"
               >
                 <i class="fas fa-times me-1"></i>Cancel
@@ -465,7 +465,7 @@
             <!-- Desktop: aligned like EmployeesView -->
             <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
               <div>
-                <button type="button" class="btn btn-history" @click="openHistory">
+                <button type="button" class="btn btn-brown" @click="openHistory">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
@@ -474,7 +474,7 @@
                 <button 
                   v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                   type="button" 
-                  class="btn btn-success" 
+                  class="btn btn-green" 
                   @click="closeDetailAndOpenComplete"
                 >
                   <i class="fas fa-check me-1"></i>Complete Maintenance
@@ -482,7 +482,7 @@
                 <button 
                   v-if="selectedMaintenance?.status === 'SCHEDULED'"
                   type="button" 
-                  class="btn btn-warning" 
+                  class="btn btn-orange" 
                   @click="navigateToEdit(selectedMaintenance)"
                 >
                   <i class="fas fa-edit me-1"></i>Edit Maintenance
@@ -490,7 +490,7 @@
                 <button 
                   v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                   type="button" 
-                  class="btn btn-warning" 
+                  class="btn btn-orange" 
                   @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
                 >
                   <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
@@ -498,7 +498,7 @@
                 <button 
                   v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
                   type="button" 
-                  class="btn btn-danger" 
+                  class="btn btn-red" 
                   @click="closeDetailAndOpenCancel"
                 >
                   <i class="fas fa-times me-1"></i>Cancel Maintenance
@@ -573,8 +573,8 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success" @click="completeMaintenance" :disabled="completeLoading">
+            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-green" @click="completeMaintenance" :disabled="completeLoading">
               <i :class="completeLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-check me-1'"></i>
               {{ completeLoading ? 'Completing...' : 'Complete Maintenance' }}
             </button>
@@ -655,12 +655,10 @@
             </div>
           </div>
           <div class="modal-footer border-0 pt-0" style="background-color: #f8f9fa;">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" 
-                    style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
               Keep Maintenance
             </button>
-            <button type="button" class="btn btn-danger" @click="cancelMaintenance" :disabled="cancelLoading"
-                    style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+            <button type="button" class="btn btn-red" @click="cancelMaintenance" :disabled="cancelLoading">
               <i :class="cancelLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-times me-1'"></i>
               {{ cancelLoading ? 'Cancelling...' : 'Confirm Cancellation' }}
             </button>
@@ -1455,157 +1453,42 @@ const isHistoryExpanded = ref(true)
 </script>
 
 <style scoped>
+/**
+ * MaintenanceView.vue - View-Specific Styles
+ * Styles unique to this view only - shared styles are in /assets/styles/pages/maintenance.css
+ */
+
+/* =================================
+   PAGE LAYOUT
+   Specific to main maintenance view
+================================= */
+
 .maintenance-page {
   background: var(--primary-white);
   min-height: calc(100vh - 60px);
 }
 
-/* Stats card visuals are centralized in assets/styles/components/cards.css */
+/* =================================
+   STATS CARDS
+   Using shared cards.css - no local card styles
+================================= */
 
-
-/* Make inner content respect rounded corners */
-.stats-card-modern .card-body {
-  border-radius: inherit;
-}
-
-/* Disable hover effects on stats cards */
-.stats-card-modern,
-.stats-card-modern *,
-.stats-card-modern:hover,
-.stats-card-modern:hover *,
-.stats-card-modern:focus,
-.stats-card-modern:active {
-  transition: none !important;
-  transform: none !important;
-  cursor: default !important;
-}
-
-/* Prevent hover interactions */
-
-/* Force same visuals on interactive states */
-.stats-card-modern,
-.stats-card-modern:hover,
-.card.stats-card-modern:hover,
-.stats-card-modern:focus,
-.card.stats-card-modern:focus,
-.stats-card-modern:active,
-.card.stats-card-modern:active,
-.stats-card-modern .card-body,
-.stats-card-modern:hover .card-body {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transform: none !important;
-}
-
-/* Icon and progress colors centralized in assets/styles/components/cards.css */
+/* Stats card visuals are centralized in /assets/styles/components/cards.css */
 /* Badge styles removed; using shared badges.css */
 
-/* Modern Button Styling */
-.btn-modern {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: none;
-  letter-spacing: 0.025em;
-  transition: all 0.2s ease;
-  border: 1.5px solid;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: relative;
-  overflow: hidden;
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+/* =================================
+   BUTTONS AND ACTIONS
+   Using shared buttons.css - no local button styles
+================================= */
 
-.btn-modern:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
+/* Button styles are now centralized in /assets/styles/components/buttons.css */
 
-.btn-modern:hover:before {
-  left: 100%;
-}
+/* =================================
+   TABLE LAYOUT
+   Specific column widths for this view's table
+================================= */
 
-.btn-modern:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-modern.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.btn-modern.btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
-  color: white !important;
-}
-
-/* Action buttons */
-.maintenance-actions .btn-action {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
-
-.maintenance-actions .btn-action:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-.btn-action.btn-view:hover {
-  border-color: var(--secondary-purple) !important;
-  /* Preserve original text color */
-}
-
-.btn-action.btn-edit:hover {
-  border-color: var(--secondary-orange) !important;
-  /* Preserve original text color */
-}
-
-.btn-action.btn-complete:hover {
-  border-color: var(--secondary-green) !important;
-  /* Preserve original text color */
-}
-
-.btn-action.btn-cancel:hover {
-  border-color: var(--secondary-red) !important;
-  /* Preserve original text color */
-}
-
-.btn-action.btn-reschedule:hover,
-.btn-action.btn-report:hover {
-  border-color: var(--secondary-purple) !important;
-  /* Preserve original text color */
-}
-
-/* Table styling */
 /* Using shared table hover, cell padding, and responsive spacing from components/tables.css */
-/* Preserve right alignment for last column actions */
 .table th:last-child, .table td:last-child {
   text-align: right !important;
 }
@@ -1653,48 +1536,24 @@ const isHistoryExpanded = ref(true)
   text-align: left !important;
 }
 
-/* Actions button group spacing */
+/* Actions button group spacing - using shared button styles */
 .maintenance-actions {
   justify-content: flex-end !important; /* align buttons to the right */
-  gap: 0.375rem !important;
+  gap: 0.25rem !important;
 }
 
-.maintenance-actions .btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
-  padding: 0.25rem !important;
-}
+/* =================================
+   CARDS AND MODALS
+   Using shared cards.css - no local card styles
+================================= */
 
-/* Card styling */
-.card {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-}
-
-.card:hover:not(.stats-card-modern) {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-}
+/* Card styles are centralized in /assets/styles/components/cards.css */
 
 /* Modal styling */
 .modal-footer {
   background-color: var(--primary-light-gray) !important;
   border-top: 1px solid var(--element-gray) !important;
   padding: 1rem 1.5rem !important;
-}
-
-.modal-footer .btn {
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.modal-footer .btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Maintenance Info sections */
@@ -1747,7 +1606,11 @@ const isHistoryExpanded = ref(true)
   font-size: 0.85rem !important;
 }
 
-/* Form styling */
+/* =================================
+   FORM STYLING
+   Specific to this view's modals
+================================= */
+
 .complete-maintenance-form .form-label,
 .cancel-maintenance-form .form-label,
 .generate-report-form .form-label {
@@ -1795,68 +1658,18 @@ const isHistoryExpanded = ref(true)
   transition: color 0.3s ease;
 }
 
-/* Button colors */
-.btn-success {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-}
+/* =================================
+   BUTTON COLORS
+   Using shared buttons.css color classes
+================================= */
 
-.btn-success:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-}
+/* Button colors are now centralized in /assets/styles/components/buttons.css */
 
-.btn-danger {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
+/* =================================
+   TEXT COLORS
+   View-specific text color utilities
+================================= */
 
-.btn-danger:hover {
-  background-color: #d63031 !important;
-  border-color: #d63031 !important;
-  color: white !important;
-}
-
-.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
-  color: white !important;
-}
-
-.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-.btn-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.btn-secondary:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-/* Text colors */
 .text-success {
   color: var(--secondary-green) !important;
 }
@@ -1873,8 +1686,10 @@ const isHistoryExpanded = ref(true)
   color: var(--secondary-red) !important;
 }
 
-/* Maintenance History Timeline */
-/* Duplicate timeline styles removed (see definitions above at lines 2026-2243) */
+/* =================================
+   MAINTENANCE HISTORY TIMELINE
+   Specific to modal history display
+================================= */
 
 /* Maintenance History Section (Collapsible) */
 .maintenance-history-section {
@@ -1986,7 +1801,11 @@ const isHistoryExpanded = ref(true)
   margin-top: 0.25rem;
 }
 
-/* Assignment Chevron */
+/* =================================
+   UI INTERACTIONS
+   Specific to this view's expandable sections
+================================= */
+
 .assignment-chevron {
   transition: transform 0.3s ease;
 }

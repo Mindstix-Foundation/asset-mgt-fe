@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-between align-items-center mt-4 w-100" v-if="totalPages > 1 || total > 0">
+  <div class="d-flex justify-content-between align-items-center mt-4 w-100" v-if="totalPages > 1">
     <div class="text-muted">
       <small>Showing {{ start }}-{{ end }} of {{ total }} {{ itemName }}</small>
     </div>

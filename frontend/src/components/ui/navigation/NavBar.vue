@@ -49,7 +49,7 @@
             </span>
           </div>
           <button
-            @click="handleLogout"
+            @click="showLogoutModal"
             class="btn btn-logout"
           >
             <i class="fas fa-sign-out-alt me-1"></i>
@@ -120,20 +120,51 @@
           <i class="fas fa-user me-2"></i>
           My Profile
         </button>
-        <button @click="handleLogout" class="sidebar-logout-btn">
+        <button @click="showLogoutModal" class="sidebar-logout-btn">
           <i class="fas fa-sign-out-alt me-2"></i>
           Logout
         </button>
       </div>
     </div>
   </nav>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal fade" id="navbarLogoutModal" tabindex="-1" aria-labelledby="navbarLogoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="navbarLogoutModalLabel" style="color: var(--primary-black);">
+            <i class="fas fa-exclamation-triangle me-2" style="color: var(--secondary-orange);"></i>
+            Confirm Logout
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0" style="color: var(--primary-dark-gray);">
+            Are you sure you want to log out? You will need to sign in again to access your account.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>
+            Cancel
+          </button>
+          <button type="button" class="btn btn-modern btn-danger" @click="handleConfirmLogout">
+            <i class="fas fa-sign-out-alt me-2"></i>
+            Yes, Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationDropdown from '@/components/notifications/NotificationDropdown.vue'
+import { Modal } from 'bootstrap'
 
 const router = useRouter()
 const route = useRoute()
@@ -183,9 +214,26 @@ const isActiveRoute = (path: string) => {
   return route.path === path || route.path.startsWith(path + '/')
 }
 
-const handleLogout = () => {
-  authStore.logout()
-  router.push('/')
+let logoutModal: Modal | null = null
+
+const showLogoutModal = () => {
+  if (logoutModal) {
+    logoutModal.show()
+  }
+}
+
+const handleConfirmLogout = async () => {
+  try {
+    if (logoutModal) {
+      logoutModal.hide()
+    }
+    await authStore.logout()
+    router.push('/')
+  } catch (error) {
+    // Even if logout fails, navigate to home/login
+    authStore.logout()
+    router.push('/')
+  }
 }
 
 const handleProfile = () => {
@@ -210,6 +258,13 @@ const getNavIcon = (itemName: string) => {
 // Close mobile menu when route changes
 watch(() => route.path, () => {
   closeMobileMenu()
+})
+
+onMounted(() => {
+  const modalElement = document.getElementById('navbarLogoutModal')
+  if (modalElement) {
+    logoutModal = new Modal(modalElement)
+  }
 })
 </script>
 
@@ -302,16 +357,28 @@ watch(() => route.path, () => {
   color: var(--primary-dark-gray);
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
-  transition: background-color 0.3s ease;
+  transition: none;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-left: none !important;
 }
 
-.user-info:hover {
-  background-color: rgba(102, 126, 234, 0.05);
+.user-info:hover,
+.user-info:focus,
+.user-info:active {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-left: none !important;
 }
 
 .user-icon {
   font-size: 1.2rem;
-  color: var(--secondary-purple);
+  color: var(--primary-dark-gray);
+  background: transparent !important;
 }
 
 .username {

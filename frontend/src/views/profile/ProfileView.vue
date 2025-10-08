@@ -129,13 +129,13 @@
             <button 
               v-if="userData?.roles?.includes('ADMIN')"
               @click="handleManageAdmins" 
-              class="btn btn-modern btn-outline-success"
+              class="btn btn-modern btn-green"
               :disabled="loading"
             >
               <i class="fas fa-users-cog me-2"></i>
               Manage Admins
             </button>
-            <button @click="handleChangePassword" class="btn btn-modern btn-outline-secondary">
+            <button @click="handleChangePassword" class="btn btn-modern btn-gray">
               <i class="fas fa-key me-2"></i>
               Change Password
             </button>
@@ -363,10 +363,6 @@ onMounted(() => {
     flex-direction: column;
   }
   
-  .profile-page .d-flex.gap-2 .btn {
-    width: 100%;
-  }
-  
   .profile-avatar-large {
     width: 60px;
     height: 60px;
@@ -375,8 +371,352 @@ onMounted(() => {
 }
 
 @media (max-width: 576px) {
-  .profile-page .card-body {
-    padding: 1.5rem;
+}
+
+/* Migrated from assets/styles/pages/profile.css */
+/* Profile Container */
+.profile-container {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.75rem !important;
+  padding: 2rem !important;
+  margin-bottom: 2rem !important;
+  box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08) !important;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--element-gray);
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 3rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  position: relative;
+  border: 4px solid var(--primary-white);
+  box-shadow: 0 4px 12px rgba(51, 31, 234, 0.2);
+}
+
+.profile-avatar.online::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--secondary-green);
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
+.profile-info h2 {
+  color: var(--primary-black) !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.profile-info p {
+  color: var(--primary-mid-gray) !important;
+  font-size: 1.125rem !important;
+  margin: 0 !important;
+}
+
+.profile-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Profile Sections */
+.profile-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.profile-section {
+  background-color: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--element-gray);
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.section-title {
+  color: var(--primary-black) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+/* Profile Details */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem;
+}
+
+.detail-label {
+  color: var(--primary-mid-gray) !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+
+.detail-value {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Edit Form */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+.form-control {
+  border: 2px solid var(--element-gray) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.75rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.form-control:focus {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--element-gray);
+}
+
+/* Activity Timeline */
+.activity-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.activity-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.activity-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.activity-item:last-child { 
+  margin-bottom: 0; 
+}
+
+.activity-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--secondary-purple);
+}
+
+.activity-content {
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+.activity-title {
+  color: var(--primary-black) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.activity-time {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.75rem !important;
+  margin: 0 !important;
+}
+
+/* Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--secondary-purple);
+  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.1);
+}
+
+.stat-number {
+  color: var(--secondary-purple);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--primary-mid-gray);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin: 0;
+}
+
+/* Responsive Design from profile.css */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .profile-actions {
+    margin-left: 0;
+    justify-content: center;
+  }
+  
+  .profile-sections {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-container {
+    padding: 1.5rem !important;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+  
+  .profile-info h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .profile-info p {
+    font-size: 1rem !important;
+  }
+  
+  .profile-section {
+    padding: 1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 </style>

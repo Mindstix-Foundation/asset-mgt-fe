@@ -22,14 +22,14 @@
                   <fieldset class="btn-group flex-shrink-0">
                     <legend class="visually-hidden">View toggle</legend>
                     <button 
-                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                      :class="['btn', 'view-toggle', { active: !isGridView }]"
                       @click="switchToListView"
                       style="min-width: 35px; padding: 0.375rem 0.5rem;"
                     >
                       <i class="fas fa-list"></i>
                     </button>
                     <button 
-                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                      :class="['btn', 'view-toggle', { active: isGridView }]"
                       @click="switchToGridView"
                       style="min-width: 35px; padding: 0.375rem 0.5rem;"
                     >
@@ -42,7 +42,7 @@
               <!-- More Actions Dropdown -->
               <div class="dropdown">
                 <button 
-                  class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                  class="btn btn-gray dropdown-toggle w-100" 
                   type="button" 
                   aria-expanded="false"
                   id="moreActionsDropdownSm"
@@ -75,7 +75,7 @@
             <div class="row g-2">
               <!-- Row 2: Add Employee -->
               <div class="col-12">
-                <router-link to="/app/employees/add" class="btn btn-primary btn-modern w-100">
+                <router-link to="/app/employees/add" class="btn btn-purple w-100">
                   <i class="fas fa-user-plus me-1"></i>Add Employee
                 </router-link>
               </div>
@@ -92,14 +92,14 @@
                   <fieldset class="btn-group flex-shrink-0">
                     <legend class="visually-hidden">View toggle</legend>
                     <button 
-                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                      :class="['btn', 'view-toggle', { active: !isGridView }]"
                       @click="switchToListView"
                       style="min-width: 40px;"
                     >
                       <i class="fas fa-list"></i>
                     </button>
                     <button 
-                      :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                      :class="['btn', 'view-toggle', { active: isGridView }]"
                       @click="switchToGridView"
                       style="min-width: 40px;"
                     >
@@ -110,7 +110,7 @@
                   <!-- More Actions Dropdown -->
                   <div class="dropdown flex-fill">
                     <button 
-                      class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
+                      class="btn btn-gray dropdown-toggle w-100" 
                       type="button" 
                       aria-expanded="false"
                       id="moreActionsDropdown"
@@ -138,7 +138,7 @@
                     </ul>
                   </div>
                   
-                  <router-link to="/app/employees/add" class="btn btn-primary btn-modern flex-fill">
+                  <router-link to="/app/employees/add" class="btn btn-purple flex-fill">
                     <i class="fas fa-user-plus me-1"></i>Add Employee
                   </router-link>
                 </div>
@@ -183,7 +183,7 @@
             <div class="row g-3">
               <!-- Toggle Sort Order -->
               <div class="col-4">
-                <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                 </button>
               </div>
@@ -191,7 +191,7 @@
               <!-- Filter Button -->
               <div class="col-8">
                 <button 
-                  class="btn btn-outline-secondary btn-modern w-100" 
+                  class="btn btn-filter w-100" 
                   @click="toggleFilterDropdown"
                   :class="{ active: showFilterDropdown }"
                 >
@@ -235,7 +235,7 @@
                 <!-- Clear Button: responsive width -->
                 <div class="filter-clear-button-container">
                   <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                    <button class="btn btn-gray" @click="clearFilters" title="Clear All Filters">
                       <i class="fas fa-times me-1"></i>Clear
                     </button>
                   </div>
@@ -296,21 +296,21 @@
                     <td>
                       <div class="btn-group btn-group-sm employee-actions">
                         <button 
-                          class="btn btn-action btn-view" 
+                          class="btn btn-action btn-brown" 
                           @click="viewEmployee(employee)"
                           title="View Employee Details"
                         >
                           <i class="fas fa-eye"></i>
                         </button>
                         <button 
-                          class="btn btn-action btn-edit" 
+                          class="btn btn-action btn-purple" 
                           @click="editEmployee(employee)"
                           title="Edit Employee"
                         >
                           <i class="fas fa-edit"></i>
                         </button>
                         <button 
-                          class="btn btn-action btn-assign" 
+                          class="btn btn-action btn-green" 
                           @click="issueAsset(employee)"
                           title="Issue Asset to Employee"
                         >
@@ -352,7 +352,7 @@
               v-for="employee in filteredEmployees" 
               :key="employee.id"
             >
-              <div class="card h-100 employee-card-modern">
+              <div class="card h-100 employee-card">
                 <div class="card-body p-2">
                   <!-- Header with icon, employee name and status -->
                   <div class="d-flex align-items-center mb-2">
@@ -396,7 +396,7 @@
                   <div class="employee-actions-footer mt-auto pt-2 border-top">
                     <div class="d-flex justify-content-center gap-1">
                       <button 
-                        class="btn btn-action btn-view btn-sm" 
+                        class="btn btn-action btn-brown btn-sm" 
                         @click="viewEmployee(employee)"
                         title="View Employee Details"
                         style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -404,7 +404,7 @@
                         <i class="fas fa-eye"></i>
                       </button>
                       <button 
-                        class="btn btn-action btn-edit btn-sm" 
+                        class="btn btn-action btn-purple btn-sm" 
                         title="Edit Employee"
                         @click="editEmployee(employee)"
                         style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -412,7 +412,7 @@
                         <i class="fas fa-edit"></i>
                       </button>
                       <button 
-                        class="btn btn-action btn-assign btn-sm" 
+                        class="btn btn-action btn-green btn-sm" 
                         title="Issue Asset to Employee"
                         @click="issueAsset(employee)"
                         style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -443,8 +443,8 @@
       </div>
     </div>
 
-    <!-- Employee Detail Modal (no animation) -->
-    <div class="modal" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
+    <!-- Employee Detail Modal (aligned to AssetsView modal design) -->
+    <div class="modal employee-modal" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -455,33 +455,33 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <!-- 2x2 grid layout to match MaintenanceView modal -->
-            <div class="row g-2">
+            <!-- Two equal-height columns using compact info grid (mirrors AssetsView) -->
+            <div class="row g-2 equal-height-columns">
               <div class="col-12 col-md-6">
                 <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-user me-2"></i>Basic Information</h6>
-                  <div class="row g-2">
-                    <div class="col-md-6">
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Employee ID</div>
                       <div class="info-value-compact fw-bold">{{ selectedEmployee.id }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Full Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedEmployee.name }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Email Address</div>
                       <div class="info-value-compact">{{ selectedEmployee.email }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Phone Number</div>
                       <div class="info-value-compact">{{ selectedEmployee.phone || 'Not specified' }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Date of Birth</div>
                       <div class="info-value-compact">{{ selectedEmployee.dateOfBirth || 'Not specified' }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
                         <span :class="getStatusBadgeClass(selectedEmployee && selectedEmployee.status)">
@@ -495,12 +495,12 @@
               <div class="col-12 col-md-6">
                 <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-map-marker-alt me-2"></i>Location & Assets</h6>
-                  <div class="row g-2">
-                    <div class="col-md-12">
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Address</div>
                       <div class="info-value-compact" style="white-space: pre-wrap; overflow-wrap: break-word;">{{ selectedEmployee.address || 'Not specified' }}</div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Assigned Assets</div>
                       <div class="info-value-compact">
                         <span class="badge badge-pink">{{ selectedEmployee.assetsCount }} Assets</span>
@@ -540,7 +540,7 @@
                           </div>
                           <!-- Desktop-only Collect button in header -->
                           <div class="d-none d-md-block">
-                            <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                            <button class="btn btn-pink btn-sm" @click="collectAsset(asset)">
                               <i class="fas fa-user-minus me-1"></i>Collect
                             </button>
                           </div>
@@ -593,7 +593,7 @@
 
                       <!-- Asset Actions Footer (mobile only) -->
                       <div class="asset-actions-footer border-top d-flex justify-content-end d-md-none">
-                        <button class="btn btn-outline-pink btn-sm" @click="collectAsset(asset)">
+                        <button class="btn btn-pink btn-sm" @click="collectAsset(asset)">
                           <i class="fas fa-user-minus me-1"></i>Collect
                         </button>
                       </div>
@@ -605,24 +605,27 @@
           <div class="modal-footer">
             <!-- Mobile: 2x2 grid of actions -->
             <div class="mobile-actions-grid d-md-none w-100">
-              <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
+              <button type="button" class="btn btn-green" @click="issueAsset(selectedEmployee)">
                 <i class="fas fa-laptop me-1"></i>Issue Asset
               </button>
-              <button type="button" class="btn btn-primary-blue" @click="editEmployee(selectedEmployee)">
+              <button type="button" class="btn btn-purple" @click="editEmployee(selectedEmployee)">
                 <i class="fas fa-edit me-1"></i>Edit Employee
               </button>
               <button 
                 type="button" 
-                :class="[selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate']"
+                :class="[selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-red' : 'btn btn-green']"
                 @click="handleStatusButtonClick(selectedEmployee)"
-                :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
+                :disabled="selectedEmployee && selectedEmployee.status === 'active' && (selectedEmployee.isAdmin || (selectedEmployee.assetsCount || 0) > 0)"
+                :title="selectedEmployee && selectedEmployee.status === 'active' && (selectedEmployee.assetsCount || 0) > 0 
+                  ? 'Cannot deactivate: employee has assigned assets'
+                  : (selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : '')"
               >
                 <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                 {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
-                <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge badge-green ms-2 admin-badge">Admin</span>
+                <span v-if="selectedEmployee && selectedEmployee.isAdmin" class="badge badge-green ms-2 admin-badge">Admin</span>
               </button>
               <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedEmployee)">
+              <button type="button" class="btn btn-brown" @click="viewAssetHistory(selectedEmployee)">
                 <i class="fas fa-history me-1"></i>History
               </button>
             </div>
@@ -630,27 +633,30 @@
             <!-- Desktop: Original layout -->
             <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
               <div>
-                <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedEmployee)">
+                <button type="button" class="btn btn-brown" @click="viewAssetHistory(selectedEmployee)">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" @click="issueAsset(selectedEmployee)">
+                <button type="button" class="btn btn-green" @click="issueAsset(selectedEmployee)">
                   <i class="fas fa-laptop me-1"></i>Issue Asset
                 </button>
-                <button type="button" class="btn btn-primary-blue" @click="editEmployee(selectedEmployee)">
+                <button type="button" class="btn btn-purple" @click="editEmployee(selectedEmployee)">
                   <i class="fas fa-edit me-1"></i>Edit Employee
                 </button>
                 <button 
                   type="button" 
-                  :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-status-deactivate' : 'btn btn-status-activate'" 
+                  :class="selectedEmployee && selectedEmployee.status === 'active' ? 'btn btn-red' : 'btn btn-green'" 
                   @click="handleStatusButtonClick(selectedEmployee)"
-                  :title="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : ''"
+                  :disabled="selectedEmployee && selectedEmployee.status === 'active' && (selectedEmployee.isAdmin || (selectedEmployee.assetsCount || 0) > 0)"
+                  :title="selectedEmployee && selectedEmployee.status === 'active' && (selectedEmployee.assetsCount || 0) > 0 
+                    ? 'Cannot deactivate: employee has assigned assets' 
+                    : (selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active' ? 'Cannot deactivate admin employees' : '')"
                 >
                   <i :class="selectedEmployee && selectedEmployee.status === 'active' ? 'fas fa-power-off me-1' : 'fas fa-check-circle me-1'"></i>
                   {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
-                  <span v-if="selectedEmployee && selectedEmployee.isAdmin && selectedEmployee.status === 'active'" class="badge badge-green ms-2 admin-badge">Admin</span>
+                  <span v-if="selectedEmployee && selectedEmployee.isAdmin" class="badge badge-green ms-2 admin-badge">Admin</span>
                 </button>
               </div>
             </div>
@@ -705,25 +711,25 @@
             <div class="d-block d-sm-none w-100">
               <button 
                 type="button" 
-                :class="['w-100 mb-2', statusChangeEmployee?.status === 'active' ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate']"
+                :class="['w-100 mb-2', statusChangeEmployee?.status === 'active' ? 'btn btn-red' : 'btn btn-green']"
                 @click="confirmStatusChange"
               >
                 <i class="fas fa-check me-1"></i>
                 {{ statusChangeEmployee?.status === 'active' ? 'Confirm Deactivate' : 'Confirm Activate' }}
               </button>
-              <button type="button" class="btn btn-cancel-confirm w-100" @click="closeStatusModal">
+              <button type="button" class="btn btn-cancel w-100" @click="closeStatusModal">
                 <i class="fas fa-times me-1"></i>Cancel
               </button>
             </div>
             
             <!-- Desktop: Original centered layout -->
             <div class="d-none d-sm-flex w-100 justify-content-center gap-3">
-              <button type="button" class="btn btn-cancel-confirm" @click="closeStatusModal">
+              <button type="button" class="btn btn-cancel" @click="closeStatusModal">
                 <i class="fas fa-times me-1"></i>Cancel
               </button>
                 <button 
                 type="button" 
-                :class="statusChangeEmployee?.status === 'active' ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate'"
+                :class="statusChangeEmployee?.status === 'active' ? 'btn btn-red' : 'btn btn-green'"
                 @click="confirmStatusChange"
               >
                 <i class="fas fa-check me-1"></i>
@@ -867,10 +873,10 @@
                   </div>
                 </div>
                 <div class="modal-footer justify-content-center" style="background-color: var(--primary-light-gray);">
-                  <button type="button" class="btn btn-cancel-confirm" data-bs-dismiss="modal">
+                  <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
                     <i class="fas fa-times me-1"></i>Cancel
                   </button>
-                  <button type="button" class="${isActivating ? 'btn btn-confirm-activate' : 'btn btn-confirm-deactivate'}" id="empConfirmBtn">
+                  <button type="button" class="${isActivating ? 'btn btn-green' : 'btn btn-red'}" id="empConfirmBtn">
                     <i class="fas ${isActivating ? 'fa-check' : 'fa-power-off'} me-1"></i>${isActivating ? 'Confirm Activate' : 'Confirm Deactivate'}
                   </button>
                 </div>
@@ -1030,11 +1036,20 @@
         this.$router.push(`/app/employees/edit/${employee.id}`)
       },
       handleStatusButtonClick(employee) {
-        // Check if trying to deactivate an admin employee
+        // Block deactivation for admin employees
         if (employee && employee.isAdmin && employee.status === 'active') {
           this.toastStore.showToast(
             'Cannot Deactivate Admin',
             'Admin employees cannot be deactivated. Admin users must remain active.',
+            'error'
+          )
+          return
+        }
+        // Block deactivation if employee has currently assigned assets
+        if (employee && employee.status === 'active' && (employee.assetsCount || 0) > 0) {
+          this.toastStore.showToast(
+            'Cannot Deactivate Employee',
+            'Employee has currently assigned assets. Please collect/reassign assets before deactivation.',
             'error'
           )
           return
@@ -1044,11 +1059,20 @@
         this.showStatusConfirmation(employee)
       },
       showStatusConfirmation(employee) {
-        // Check if trying to deactivate an admin employee
+        // Block deactivation for admin employees
         if (employee.isAdmin && employee.status === 'active') {
           this.toastStore.showToast(
             'Cannot Deactivate Admin',
             'Admin employees cannot be deactivated. Admin users must remain active.',
+            'error'
+          )
+          return
+        }
+        // Block deactivation if employee has currently assigned assets
+        if (employee.status === 'active' && (employee.assetsCount || 0) > 0) {
+          this.toastStore.showToast(
+            'Cannot Deactivate Employee',
+            'Employee has currently assigned assets. Please collect/reassign assets before deactivation.',
             'error'
           )
           return
@@ -1147,6 +1171,21 @@
         this.$router.push(`/app/employees/${employee.databaseId}/history`)
       },
       collectAsset(asset) {
+        // Close the employee detail modal and clean up any backdrops
+        const modalEl = document.getElementById('employeeDetailModal')
+        if (modalEl) {
+          const modalInstance = Modal.getInstance(modalEl) || new Modal(modalEl)
+          if (modalInstance && typeof modalInstance.hide === 'function') {
+            modalInstance.hide()
+          }
+        }
+
+        // Remove bootstrap modal classes/backdrops if any linger
+        document.body.classList.remove('modal-open')
+        for (const el of document.querySelectorAll('.modal-backdrop')) {
+          el.remove()
+        }
+
         const assetId = asset && asset.id ? asset.id : undefined
         const employeeId = this.selectedEmployee && this.selectedEmployee.databaseId ? this.selectedEmployee.databaseId : undefined
         this.$router.push({ path: '/app/assets/collect', query: { ...(assetId && { assetId }), ...(employeeId && { employeeId }) } })
@@ -1388,9 +1427,106 @@
   </script>
   
 <style scoped>
-/* Align with global modal styling moved to global modals.css */
+/**
+ * EmployeesView.vue - View-Specific Styles
+ * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css
+ */
 
-/* Asset Info Sections - Compact Design (matching MaintenanceView) */
+/* =================================
+   GRID VIEW - EMPLOYEE CARDS
+   Specific to grid view layout
+================================= */
+
+.employees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* moved to shared cards.css (.employee-card) */
+
+/* Employee actions footer in grid cards */
+.employee-actions-footer { 
+  border-top: 1px solid var(--primary-light-gray) !important; 
+  background-color: var(--primary-white) !important; 
+}
+
+/* =================================
+   EMPLOYEE TABLE - LIST VIEW
+   Specific table column widths for this view
+================================= */
+
+#employeesTable th:nth-child(1),
+#employeesTable td:nth-child(1) { /* Employee ID */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+#employeesTable th:nth-child(2),
+#employeesTable td:nth-child(2) { /* Name */
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+#employeesTable th:nth-child(3),
+#employeesTable td:nth-child(3) { /* Email */
+  width: 260px !important;
+  min-width: 260px !important;
+  max-width: 260px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+#employeesTable th:nth-child(4),
+#employeesTable td:nth-child(4) { /* Phone */
+  width: 160px !important;
+  min-width: 160px !important;
+  max-width: 160px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+#employeesTable th:nth-child(5),
+#employeesTable td:nth-child(5) { /* Assets */
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+  white-space: nowrap !important;
+}
+
+#employeesTable th:nth-child(6),
+#employeesTable td:nth-child(6) { /* Status */
+  width: 110px !important;
+  min-width: 110px !important;
+  max-width: 110px !important;
+}
+
+#employeesTable th:nth-child(7),
+#employeesTable td:nth-child(7) { /* Actions */
+  width: 125px !important;
+  min-width: 125px !important;
+  max-width: 125px !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+}
+
+/* =================================
+   EMPLOYEE DETAIL MODAL
+   Specific to the modal in this view
+================================= */
+
+/* Asset Info Sections - Compact Design */
 .asset-info-section-compact {
   margin-bottom: 0.5rem;
   padding: 0.75rem;
@@ -1427,7 +1563,7 @@
 /* Detailed Assets Information - Header styling (removed duplicate) */
 
 
-/* Assets Chevron */
+/* Expandable Assets Section */
 .assets-chevron {
   transition: transform 0.3s ease;
   font-size: 1.1rem;
@@ -1440,9 +1576,7 @@
   transform: rotate(180deg);
 }
 
-/* Assets Details Expanded - removed middle box styling */
-
-/* Detailed Asset Items */
+/* Detailed Asset Items in Modal */
 .assets-list-detailed {
   display: flex;
   flex-direction: column;
@@ -1543,13 +1677,62 @@
 
 /* Assets List Styling (moved to consolidated section below) */
 
-/* Keep actions area tidy */
-.employee-actions-footer { 
-  border-top: 1px solid var(--primary-light-gray) !important; 
-  background-color: var(--primary-white) !important; 
+/* =================================
+   DROPDOWN MENU STYLES
+   Specific to this view's action dropdowns
+================================= */
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  z-index: 1050;
 }
 
-/* Filter dropdown styling moved to responsive section */
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(51, 31, 234, 0.1);
+}
+
+.dropdown-item:active {
+  background-color: rgba(51, 31, 234, 0.2);
+  color: #331FEA;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-top: 1px solid #dee2e6;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu-responsive {
+  left: 0;
+  right: auto;
+}
+
+/* =================================
+   ANIMATIONS
+================================= */
 
 @keyframes slideDown {
   from {
@@ -1561,8 +1744,6 @@
     transform: translateY(0);
   }
 }
-
-/* Active filter button styling kept later to avoid duplication */
 
 /* Form styling consistency */
 :deep(.form-label) {
@@ -1656,44 +1837,168 @@
     flex-shrink: 0 !important;
 }
 
-.asset-actions .btn-sm {
-    font-size: 0.75rem !important;
-    padding: 0.25rem 0.5rem !important;
-    border-radius: 0.25rem !important;
+/* =================================
+   STATUS CONFIRMATION MODAL
+   Specific to this view
+================================= */
+
+.confirmation-icon {
+  animation: pulse 2s infinite;
 }
 
-.btn-outline-pink {
-    background-color: var(--primary-white) !important;
-    border: 1px solid var(--secondary-pink) !important;
-    color: var(--secondary-pink) !important;
-    font-weight: 500 !important;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.btn-outline-pink:hover {
-    background-color: var(--secondary-pink) !important;
-    border-color: var(--secondary-pink) !important;
-    color: white !important;
-    transform: translateY(-1px) !important;
+/* =================================
+   ASSET HISTORY IN MODAL
+   Timeline styles specific to modal view
+================================= */
+
+.asset-history-section {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
 }
 
-/* Table spacing adjustments */
-/* Using shared first/last column paddings from components/tables.css */
-
-.employee-actions {
-    justify-content: flex-end !important;
-    gap: 0.25rem !important;
+.history-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
 }
 
-/* Using shared .table-responsive spacing from components/tables.css */
-  /* Fixed column widths for consistent table layout */
-  #employeesTable th:nth-child(1),
-  #employeesTable td:nth-child(1) { /* Employee ID */
-      width: 120px !important;
-      min-width: 120px !important;
-      max-width: 120px !important;
-      white-space: nowrap !important;
-      text-overflow: ellipsis !important;
-      overflow: hidden !important;
+.history-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.asset-history-expanded {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.timeline-connector {
+  position: absolute;
+  left: -1.5rem;
+  top: 2rem;
+  width: 2px;
+  height: calc(100% + 1rem);
+  background-color: #dee2e6;
+  z-index: 1;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-dot.assigned {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.timeline-dot.returned {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.timeline-dot i {
+  font-size: 0.8rem;
+}
+
+.timeline-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.asset-icon-timeline {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.asset-icon-timeline i {
+  color: white !important;
+  font-size: 1.1rem !important;
+}
+
+.asset-basic-info-timeline {
+  min-width: 0 !important;
+  flex-grow: 1 !important;
+}
+
+.asset-name-timeline {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.asset-meta-timeline {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+}
+
+.timeline-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.timeline-details {
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+/* =================================
+   RESPONSIVE STYLES
+   View-specific responsive adjustments
+================================= */
+
+/* Small screens: right-aligned to prevent overflow */
+@media (max-width: 767.98px) {
+  .dropdown-menu-responsive {
+    left: auto;
+    right: 0;
+    max-width: calc(100vw - 2rem);
+    min-width: 200px;
+  }
+  
+  .employees-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
   #employeesTable th:nth-child(2),
   #employeesTable td:nth-child(2) { /* Name */
@@ -1744,30 +2049,9 @@
       padding-left: 0.25rem !important;
   }
 
-.employee-actions .btn {
-    min-width: 32px !important;
-    min-height: 32px !important;
-    padding: 0.25rem !important;
-}
+/* Employee action button sizing moved to components/buttons.css */
 
-/* Align activate/deactivate hover with 'Issue Asset' (simple darken, no extra effects) */
-.btn-status-activate:hover,
-.btn-confirm-activate:hover {
-    background-color: var(--secondary-green) !important;
-    border-color: var(--secondary-green) !important;
-    filter: brightness(0.92) !important;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-.btn-status-deactivate:hover,
-.btn-confirm-deactivate:hover {
-    background-color: var(--secondary-red) !important;
-    border-color: var(--secondary-red) !important;
-    filter: brightness(0.92) !important;
-    transform: none !important;
-    box-shadow: none !important;
-}
+/* Status button hover effects now handled by shared btn-green/btn-red in buttons.css */
 
 /* Status Confirmation Modal Styles */
 .confirmation-icon {
@@ -1780,61 +2064,7 @@
   100% { transform: scale(1); }
 }
 
-/* Confirmation Modal Buttons */
-.btn-cancel-confirm {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-}
-
-.btn-cancel-confirm:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-confirm-activate {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
-}
-
-.btn-confirm-activate:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
-}
-
-.btn-confirm-deactivate {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
-}
-
-.btn-confirm-deactivate:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
-}
+/* Confirmation modal button styles now use shared btn-cancel, btn-green, btn-red from buttons.css */
 
 /* Admin badge styling moved to components/badges.css */
 
@@ -1912,16 +2142,6 @@
     padding: 0.75rem !important;
   }
   
-  .btn {
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
-  }
-  
-  .btn-sm {
-    font-size: 0.8rem;
-    padding: 0.375rem 0.5rem;
-  }
-  
   .modal-dialog {
     margin: 0.5rem !important;
   }
@@ -1936,11 +2156,11 @@
     -webkit-overflow-scrolling: touch;
   }
   
-  .employee-card {
+  .employee-card-modern {
     margin-bottom: 1rem;
   }
   
-  .employee-card .card-body {
+  .employee-card-modern .card-body {
     padding: 1rem;
   }
 
@@ -1958,14 +2178,7 @@
     gap: 0.5rem !important;
   }
   
-  .modal-footer .btn {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .modal-footer .btn:last-child {
-    margin-bottom: 0 !important;
-  }
+  /* moved to shared buttons.css */
   
   .modal-footer .d-flex {
     flex-direction: column !important;
@@ -1990,14 +2203,14 @@
   .employee-info-section-compact .info-label-compact {
     font-size: 0.85rem !important;
     min-width: unset !important;
-    margin-bottom: 0.25rem !important; /* merged from duplicate selector */
+    margin-bottom: 0.25rem !important;
   }
   
   .employee-info-section-compact .info-value-compact {
     font-size: 0.9rem !important;
-    text-align: left !important; /* merged from duplicate selector */
-    word-break: break-word !important; /* merged from duplicate selector */
-    overflow-wrap: break-word !important; /* merged from duplicate selector */
+    text-align: left !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
   }
 
   /* Asset details mobile adjustments */
@@ -2057,8 +2270,6 @@
     align-items: flex-start !important;
     padding: 0.5rem 0 !important;
   }
-  
-  /* duplicate selector removed; override merged above */
 
   /* 2x2 buttons grid for mobile footer */
   .mobile-actions-grid {
@@ -2067,18 +2278,46 @@
     grid-auto-rows: minmax(44px, auto) !important;
     gap: 0.5rem !important;
   }
+  
   .mobile-actions-grid .btn {
     width: 100% !important;
+  }
+  
+  /* Timeline mobile adjustments */
+  .timeline-dot {
+    left: -1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .timeline-connector {
+    left: -1rem;
+  }
+  
+  .timeline-badges {
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .asset-icon-timeline {
+    width: 32px !important;
+    height: 32px !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .asset-name-timeline {
+    font-size: 0.9rem !important;
+  }
+  
+  .asset-meta-timeline {
+    font-size: 0.75rem !important;
   }
 }
 
 /* Tablet responsive improvements */
 @media (min-width: 577px) and (max-width: 991.98px) {
-  .btn-group .btn {
-    padding: 0.5rem 1rem;
-  }
-  
-  .employee-card {
+  .employee-card-modern {
     margin-bottom: 1.5rem;
   }
   
@@ -2118,7 +2357,6 @@
     min-width: 120px !important;
   }
   
-  /* Better text wrapping for tablet */
   .employee-info-section-compact .info-value-compact {
     word-break: break-word !important;
     overflow-wrap: break-word !important;
@@ -2133,342 +2371,12 @@
     padding: 0.85rem !important;
   }
   
-  /* Asset actions footer - tablet adjustments */
   .asset-actions-footer {
     padding: 0.65rem 0.85rem 0.4rem 0.85rem !important;
     margin-top: 0.4rem !important;
   }
-}
-
-/* Large tablet and small desktop adjustments */
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .modal-lg {
-    max-width: 95vw;
-  }
   
-  /* Two column layout adjustments for medium screens */
-  .row.g-2 .col-md-6 {
-    margin-bottom: 1rem;
-  }
-}
-
-/* Filter dropdown responsive styling moved to global filters.css */
-
-/* Active filter button styling */
-.btn.active {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: white;
-}
-
-.btn.active:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
-}
-
-/* Modern Employee Card Styling */
-.employee-card-modern {
-  border: 1px solid #e9ecef;
-  border-radius: 0.75rem;
-  transition: all 0.2s ease;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.employee-card-modern:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #dee2e6;
-}
-
-.employee-card-modern .card-body {
-  padding: 1rem;
-}
-
-/* Badge styling for employee cards */
-.badge-sm {
-  font-size: 0.7rem;
-  padding: 0.25rem 0.5rem;
-  font-weight: 500;
-}
-
-/* Ensure disabled Deactivate button doesn't dim or recolor Admin badge */
-.btn-status-deactivate:disabled {
-  opacity: 1 !important; /* prevent global disabled opacity from dimming badge */
-}
-
-.btn-status-deactivate:disabled .admin-badge {
-  background-color: var(--primary-black) !important;
-  color: white !important;
-}
-
-/* Action buttons in employee cards */
-.employee-card-modern .btn-action {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  color: #495057;
-  transition: all 0.2s ease;
-  border-radius: 0.375rem;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.employee-card-modern .btn-view:hover {
-  background-color: #007bff;
-  border-color: #007bff;
-  /* Preserve original text color */
-}
-
-.employee-card-modern .btn-edit:hover {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  /* Preserve original text color */
-}
-
-.employee-card-modern .btn-assign:hover {
-  background-color: #28a745;
-  border-color: #28a745;
-  /* Preserve original text color */
-}
-
-
-/* Asset History Section Styling */
-.asset-history-section {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.asset-history-section .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-/* History Chevron */
-.history-chevron {
-  transition: transform 0.3s ease;
-  font-size: 1.1rem;
-  color: #666666;
-  cursor: pointer;
-  padding: 0.2rem;
-}
-
-.history-chevron.rotated {
-  transform: rotate(180deg);
-}
-
-/* Asset History Expanded */
-.asset-history-expanded {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
-
-/* Timeline Styling */
-.asset-history-timeline {
-  position: relative;
-  padding-left: 2rem;
-  margin-top: 0.75rem;
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 2rem;
-}
-
-.timeline-item:last-child {
-  margin-bottom: 0;
-}
-
-.timeline-connector {
-  position: absolute;
-  left: -1.5rem;
-  top: 2rem;
-  width: 2px;
-  height: calc(100% + 1rem);
-  background-color: #dee2e6;
-  z-index: 1;
-}
-
-.timeline-dot {
-  position: absolute;
-  left: -2rem;
-  top: 0.5rem;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  border: 3px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.timeline-dot.assigned {
-  background-color: var(--secondary-green);
-  color: white;
-}
-
-.timeline-dot.returned {
-  background-color: var(--secondary-orange);
-  color: white;
-}
-
-.timeline-dot i {
-  font-size: 0.8rem;
-}
-
-.timeline-content {
-  background-color: white;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.timeline-header {
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.asset-icon-timeline {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 0.5rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-right: 0.75rem !important;
-  flex-shrink: 0 !important;
-}
-
-.asset-icon-timeline i {
-  color: white !important;
-  font-size: 1.1rem !important;
-}
-
-.asset-basic-info-timeline {
-  min-width: 0 !important;
-  flex-grow: 1 !important;
-}
-
-.asset-name-timeline {
-  color: var(--primary-black) !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.25rem !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.asset-meta-timeline {
-  color: var(--primary-mid-gray) !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-}
-
-.timeline-badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: flex-end;
-}
-
-.timeline-details {
-  background-color: #f8f9fa;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-}
-
-/* Badge Styling for Timeline */
-.badge-returned {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-duration {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  font-size: 0.7rem !important;
-  font-weight: 500 !important;
-  padding: 0.25rem 0.5rem !important;
-  border-radius: 0.25rem !important;
-}
-
-/* Generic badge classes moved to components/badges.css */
-
-/* Mobile Timeline Adjustments */
-@media (max-width: 576px) {
-  .asset-history-timeline {
-    padding-left: 1.5rem;
-  }
-  
-  .timeline-dot {
-    left: -1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-  
-  .timeline-connector {
-    left: -1rem;
-  }
-  
-  .timeline-content {
-    padding: 0.75rem;
-  }
-  
-  .timeline-header {
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-  }
-  
-  .asset-icon-timeline {
-    width: 32px !important;
-    height: 32px !important;
-    margin-right: 0.5rem !important;
-  }
-  
-  .asset-name-timeline {
-    font-size: 0.9rem !important;
-  }
-  
-  .asset-meta-timeline {
-    font-size: 0.75rem !important;
-  }
-  
-  .timeline-badges {
-    flex-direction: row;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  
-  .timeline-details {
-    padding: 0.5rem;
-  }
-}
-
-/* Tablet Timeline Adjustments */
-@media (min-width: 577px) and (max-width: 991.98px) {
+  /* Timeline tablet adjustments */
   .timeline-content {
     padding: 0.85rem;
   }
@@ -2478,5 +2386,16 @@
   }
 }
 
+/* Large tablet adjustments */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .modal-lg {
+    max-width: 95vw;
+  }
+  
+  .row.g-2 .col-md-6 {
+    margin-bottom: 1rem;
+  }
+}
+}
 </style>
   

@@ -315,15 +315,36 @@ const selectYear = (year: number) => {
   showYearPicker.value = false
 }
 
+const formatDateIso = (date: Date): string => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+const parseIsoDate = (value: string): Date | null => {
+  if (!value) return null
+  // Expecting YYYY-MM-DD
+  const m = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (!m) return null
+  const year = Number.parseInt(m[1], 10)
+  const month = Number.parseInt(m[2], 10) - 1
+  const day = Number.parseInt(m[3], 10)
+  const date = new Date(year, month, day)
+  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null
+  return date
+}
+
 const selectDate = (day: CalendarDay) => {
   if (day.isDisabled) return
   
   selectedDate.value = day.fullDate
   displayValue.value = formatDateForDisplay(day.fullDate)
   
-  // Emit the date in dd-mm-yyyy format
-  emit('update:modelValue', displayValue.value)
-  emit('change', displayValue.value)
+  // Emit the date in ISO (YYYY-MM-DD) format for modelValue/change
+  const iso = formatDateIso(day.fullDate)
+  emit('update:modelValue', iso)
+  emit('change', iso)
   
   closeCalendar()
 }
@@ -364,7 +385,8 @@ const onBlur = () => {
 // Initialize from modelValue
 const initializeFromModel = () => {
   if (props.modelValue) {
-    const date = parseDisplayDate(props.modelValue)
+    // Accept both ISO (YYYY-MM-DD) and display (dd-mm-yyyy) formats
+    const date = parseIsoDate(props.modelValue) || parseDisplayDate(props.modelValue)
     if (date) {
       selectedDate.value = date
       displayValue.value = formatDateForDisplay(date)

@@ -9,7 +9,8 @@
     "src/**/*.old.*",
     "src/views/assets/old_AssetsView.vue",
     "src/components/HelloWorld.vue",
-    "src/components/ui/date/DatePicker.vue"
+    "src/components/ui/date/DatePicker.vue",
+    "src/components/ui/date/DateInput.vue"
   ],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

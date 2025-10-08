@@ -18,7 +18,7 @@
               <h5 class="card-title">Asset Inventory Report</h5>
               <p class="card-text text-muted">Complete list of all assets with details</p>
               <button 
-                class="btn btn-primary"
+                class="btn btn-purple"
                 @click="handleQuickExport('asset-inventory')"
                 :disabled="isExporting"
               >
@@ -37,7 +37,7 @@
               <h5 class="card-title">Employee Asset Report</h5>
               <p class="card-text text-muted">Assets assigned to each employee</p>
               <button 
-                class="btn btn-success"
+                class="btn btn-green"
                 @click="handleQuickExport('employee-assets')"
                 :disabled="isExporting"
               >
@@ -56,7 +56,7 @@
               <h5 class="card-title">Maintenance Report</h5>
               <p class="card-text text-muted">Completed maintenance history and costs</p>
               <button 
-                class="btn btn-warning"
+                class="btn btn-orange"
                 @click="handleQuickExport('maintenance')"
                 :disabled="isExporting"
               >
@@ -166,7 +166,7 @@
                 <div class="d-flex flex-wrap gap-2">
                   <button 
                     type="button" 
-                    class="btn btn-custom-primary" 
+                    class="btn btn-purple" 
                     @click="showPreviewModal = true; loadPreviewData()"
                     :disabled="isLoadingPreview"
                   >
@@ -177,7 +177,7 @@
                   
                   <button 
                     type="button" 
-                    class="btn btn-custom-success" 
+                    class="btn btn-green" 
                     @click="handleCustomExport('excel')"
                     :disabled="isExporting"
                   >
@@ -188,7 +188,7 @@
                   
                   <button 
                     type="button" 
-                    class="btn btn-text-secondary" 
+                    class="btn btn-gray" 
                     @click="clearFilters"
                   >
                     <i class="fas fa-times me-1"></i>Clear Filters
@@ -342,11 +342,11 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-simple-secondary" @click="showPreviewModal = false">Close</button>
+            <button type="button" class="btn btn-cancel" @click="showPreviewModal = false">Close</button>
             <div class="d-flex gap-2">
               <button 
                 type="button" 
-                class="btn btn-simple-success" 
+                class="btn btn-green" 
                 @click="handleCustomExport('excel')"
                 :disabled="isExporting"
               >
@@ -1167,11 +1167,7 @@ onUnmounted(() => {
   transition: none !important;
 }
 
-.card {
-  border-radius: 0.75rem !important;
-  border: none !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-}
+/* .card styles removed — using global cards.css */
 
 .card-header {
   background: white !important;
@@ -1311,132 +1307,9 @@ onUnmounted(() => {
 
 
 
-/* Button Styles */
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  border: none !important;
-}
+/* Button Styles removed — using global buttons.css */
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.btn-primary:hover {
-  background-color: #2a19c7 !important;
-}
-
-.btn-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.btn-success:hover {
-  background-color: #1e9c5a !important;
-}
-
-.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.btn-warning:hover {
-  background-color: #e67d4d !important;
-}
-
-.btn-audit {
-  background-color: var(--secondary-pink) !important;
-  color: white !important;
-}
-
-.btn-audit:hover {
-  background-color: #e5499a !important;
-}
-
-.btn-custom-primary {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 600 !important;
-}
-
-.btn-custom-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 600 !important;
-}
-
-.btn-text-secondary {
-  background-color: transparent !important;
-  color: var(--primary-dark-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
-}
-
-.btn-text-secondary:hover {
-  background-color: #F5F5F5 !important;
-  color: var(--primary-black) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-.btn-simple-secondary {
-  background-color: var(--primary-dark-gray) !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
-}
-
-.btn-simple-success {
-  background-color: #28a745 !important;
-  color: white !important;
-  border-radius: 0.375rem !important;
-  padding: 0.5rem 1rem !important;
-  font-weight: 500 !important;
-}
-
-/* Badge Styles */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  white-space: nowrap;
-}
-
-.badge-available {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge-assigned {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.badge-under-repair {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.badge-retired {
-  background-color: var(--primary-dark-gray) !important;
-  color: white !important;
-}
+/* Badge styles removed — using global badges.css */
 
 /* Modal Styles */
 .modal-backdrop {
@@ -1555,16 +1428,7 @@ onUnmounted(() => {
   }
 }
 
-/* Dashboard-like stats cards for quick reports */
-.stats-card-modern {
-  border-radius: 0.75rem !important;
-  border: 1px solid var(--element-gray) !important;
-  background-color: var(--primary-white) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transition: none !important;
-  overflow: hidden;
-  background-clip: padding-box;
-}
+/* .stats-card-modern styles removed — using global cards.css */
 
 .stats-card-modern .card-body {
   border-radius: inherit;
@@ -1578,4 +1442,423 @@ onUnmounted(() => {
 .stats-icon.bg-primary { background-color: var(--secondary-purple) !important; color: white !important; }
 
 /* Keep buttons interactive; do not disable pointer events here */
+/* --- Migrated from frontend/src/assets/styles/pages/reports.css --- */
+/**
+ * Reports Page Styles (migrated)
+ * Specific styles for ReportsView.vue
+ */
+
+/* Reports Container */
+.reports-container {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Report Cards Grid */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Note: .report-card base styles already exist above; keeping hover from migrated file */
+.report-card:hover {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: 0 4px 20px rgba(51, 31, 234, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Report Card Header */
+.report-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.report-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.report-info h5 {
+  color: var(--primary-black) !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.report-info p {
+  color: var(--primary-mid-gray) !important;
+  margin: 0 !important;
+  font-size: 0.875rem !important;
+}
+
+/* Report Description */
+.report-description {
+  margin-bottom: 1rem;
+}
+
+.report-description p {
+  color: var(--primary-dark-gray) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Report Features */
+.report-features {
+  margin-bottom: 1rem;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--primary-dark-gray);
+}
+
+.feature-item:last-child {
+  margin-bottom: 0;
+}
+
+.feature-icon {
+  color: var(--secondary-green);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Report Actions */
+.report-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: var(--primary-mid-gray);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-light-gray);
+  color: var(--primary-black);
+}
+
+.action-btn.generate:hover {
+  background-color: var(--secondary-purple);
+  color: white;
+}
+
+.action-btn.download:hover {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.action-btn.schedule:hover {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+/* Report Status */
+.report-status {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-available {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.status-generating {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.status-scheduled {
+  background-color: var(--secondary-purple);
+  color: white;
+}
+
+.status-error {
+  background-color: var(--secondary-red);
+  color: white;
+}
+
+/* Report Categories */
+.report-category {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--secondary-purple);
+  color: white;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Report Filters */
+.report-filters {
+  background-color: var(--primary-white);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.search-input {
+  position: relative;
+}
+
+.search-input .form-control {
+  padding-left: 2.5rem;
+}
+
+.search-input .search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-mid-gray);
+  z-index: 2;
+}
+
+/* Report Generation Modal */
+.report-modal .modal-content {
+  border-radius: 0.75rem;
+  border: none;
+  box-shadow: 0 10px 40px rgba(10, 10, 10, 0.15);
+}
+
+.report-modal .modal-header {
+  background-color: var(--primary-light-gray);
+  border-bottom: 1px solid var(--element-gray);
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 1.5rem;
+}
+
+.report-modal .modal-title {
+  color: var(--primary-black);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.report-modal .modal-body {
+  padding: 2rem;
+}
+
+.report-modal .modal-footer {
+  background-color: var(--primary-light-gray);
+  border-top: 1px solid var(--element-gray);
+  border-radius: 0 0 0.75rem 0.75rem;
+  padding: 1.5rem;
+}
+
+/* Report Parameters */
+.report-parameters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.parameter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.parameter-label {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+.parameter-control {
+  border: 2px solid var(--element-gray) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.75rem !important;
+  font-size: 0.875rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.parameter-control:focus {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Report Preview */
+.report-preview {
+  background-color: var(--primary-light-gray);
+  border: 1px solid var(--element-gray);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--element-gray);
+}
+
+.preview-icon {
+  color: var(--secondary-purple);
+  font-size: 1rem;
+}
+
+.preview-title {
+  color: var(--primary-black) !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.preview-content {
+  color: var(--primary-dark-gray) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--primary-mid-gray);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h4 {
+  color: var(--primary-mid-gray);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--primary-mid-gray);
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Loading State */
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  color: var(--secondary-purple);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  color: var(--primary-mid-gray);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .reports-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .report-card {
+    padding: 1.25rem !important;
+  }
+  
+  .report-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .report-actions {
+    justify-content: center;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .report-status {
+    position: static;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .report-card {
+    padding: 1rem !important;
+  }
+  
+  .report-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .report-info h5 {
+    font-size: 1.1rem !important;
+  }
+  
+  .action-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+/* --- End migrated styles --- */
 </style> 

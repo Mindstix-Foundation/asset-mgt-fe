@@ -5,7 +5,7 @@
         <h2 class="mb-0" style="color: var(--primary-black);">Maintenance History</h2>
         <p class="text-muted mb-0">Asset {{ assetId }}</p>
       </div>
-      <button class="btn btn-outline-secondary" @click="goBack">
+      <button class="btn btn-gray" @click="goBack">
         <i class="fas fa-arrow-left me-1"></i>Back
       </button>
     </div>
@@ -36,12 +36,12 @@
           <div class="col-12 col-lg-2 mb-3">
             <div class="row g-3">
               <div class="col-4">
-                <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" title="Toggle Sort Order" style="min-width: 40px; height: 38px;">
+                <button type="button" class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" title="Toggle Sort Order" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                 </button>
               </div>
               <div class="col-8">
-                <button class="btn btn-outline-secondary btn-modern w-100" @click="showFilterDropdown = !showFilterDropdown" :class="{ active: showFilterDropdown }">
+                <button class="btn btn-filter w-100" @click="showFilterDropdown = !showFilterDropdown" :class="{ active: showFilterDropdown }">
                   <i class="fas fa-filter me-1"></i>Filters
                 </button>
               </div>
@@ -72,14 +72,19 @@
               />
             </div>
             <div class="flex-fill">
-              <DateField id="mh-from" label="From" v-model="filters.dateFrom" @change="applyFilters" />
+              <DatePicker id="mh-from" label="From" v-model="filters.dateFrom" />
             </div>
             <div class="flex-fill">
-              <DateField id="mh-to" label="To" v-model="filters.dateTo" @change="applyFilters" />
+              <DatePicker 
+                id="mh-to" 
+                label="To" 
+                v-model="filters.dateTo" 
+                :disabled="!filters.dateFrom"
+              />
             </div>
             <div class="filter-clear-button-container">
               <div class="d-flex align-items-end h-100">
-                <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                   <i class="fas fa-times me-1"></i>Clear
                 </button>
               </div>
@@ -102,13 +107,16 @@
         <h5 class="text-muted">No history found</h5>
       </div>
 
-      <div v-else class="maintenance-history-section">
-        <h6 class="section-title d-flex align-items-center justify-content-between">
-          <span><i class="fas fa-history me-2"></i>Timeline</span>
-          <span class="badge badge-pink">{{ totalRecords }} records</span>
-        </h6>
+      <div v-else class="card">
+        <div class="card-body">
+          <h6 class="section-title d-flex align-items-center justify-content-between mb-5">
+            <span><i class="fas fa-history me-2"></i>Timeline</span>
+            <span class="badge badge-pink">{{ totalRecords }} records</span>
+          </h6>
+          
+          <hr class="timeline-divider mt-3 mb-4">
 
-        <div class="history-timeline">
+          <div class="history-timeline">
           <div 
             v-for="item in filteredHistory" 
             :key="item.id" 
@@ -174,26 +182,32 @@
                   </div>
                 </div>
                 <div v-if="getNotesForStatus(item)" class="mt-2">
-                  <small class="text-muted">Notes</small>
-                  <div class="timeline-notes">{{ getNotesForStatus(item) }}</div>
+                  <NotesDisplay 
+                    :notes="getNotesForStatus(item)"
+                    label="Notes"
+                    :show-label="true"
+                    :show-icon="false"
+                    :preserve-formatting="true"
+                  />
                 </div>
               </div>
             </div>
           </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Pagination -->
-        <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
-          <AppPagination 
-            :current-page="currentPage" 
-            :total-pages="totalPages"
-            :start="paginationInfo.start"
-            :end="paginationInfo.end"
-            :total="totalRecords"
-            item-name="records"
-            @change="onPageChange" 
-          />
-        </div>
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
+        <AppPagination 
+          :current-page="currentPage" 
+          :total-pages="totalPages"
+          :start="paginationInfo.start"
+          :end="paginationInfo.end"
+          :total="totalRecords"
+          item-name="records"
+          @change="onPageChange" 
+        />
       </div>
     </div>
   </div>
@@ -204,8 +218,9 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
-import DateField from '@/components/ui/date/DateField.vue'
+import DatePicker from '@/components/ui/date/DatePicker.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import { formatDateOnly } from '@/utils/date'
 
 interface HistoryItem {
@@ -381,27 +396,83 @@ const applyFilters = async () => {
   
   try {
     loading.value = true
+    
+    // Prepare parameters with proper date formatting
     const params: any = {
       status: selectedStatus.value?.id || undefined,
       type: selectedType.value?.id || undefined,
       search: filters.value.search || undefined,
-      dateFrom: filters.value.dateFrom || undefined,
-      dateTo: filters.value.dateTo || undefined,
       sortBy: filters.value.sortBy,
       sortOrder: filters.value.sortOrder,
       page: currentPage.value,
       limit: pageSize.value,
     }
+    
+    // Add date filters only if BOTH dates are selected and valid
+    if (filters.value.dateFrom && filters.value.dateTo) {
+      const fromDate = new Date(filters.value.dateFrom)
+      const toDate = new Date(filters.value.dateTo)
+      
+      // Validate dates
+      if (toDate >= fromDate) {
+        // Format dates as YYYY-MM-DD for backend
+        // The DatePicker might return DD-MM-YYYY or YYYY-MM-DD format
+        const formatToYYYYMMDD = (dateStr: string) => {
+          // If already in YYYY-MM-DD format (has dash at position 4)
+          if (dateStr.charAt(4) === '-') {
+            return dateStr.split('T')[0] // Just remove time if present
+          }
+          // If in DD-MM-YYYY format (dash at position 2)
+          if (dateStr.charAt(2) === '-') {
+            const parts = dateStr.split('-')
+            return `${parts[2]}-${parts[1]}-${parts[0]}` // Convert to YYYY-MM-DD
+          }
+          // Fallback: try to parse and format
+          const date = new Date(dateStr)
+          if (!isNaN(date.getTime())) {
+            const year = date.getFullYear()
+            const month = String(date.getMonth() + 1).padStart(2, '0')
+            const day = String(date.getDate()).padStart(2, '0')
+            return `${year}-${month}-${day}`
+          }
+          return dateStr
+        }
+          
+        params.dateFrom = formatToYYYYMMDD(filters.value.dateFrom)
+        params.dateTo = formatToYYYYMMDD(filters.value.dateTo)
+      }
+    }
+    
+    console.log('Maintenance History API Call:', { 
+      assetId, 
+      params,
+      rawDates: {
+        dateFrom: filters.value.dateFrom,
+        dateTo: filters.value.dateTo
+      },
+      formattedDates: {
+        dateFrom: params.dateFrom,
+        dateTo: params.dateTo
+      }
+    })
     const res = await maintenanceService.getMaintenanceEvents(assetId, params)
+    console.log('Maintenance History API Response:', res)
     
     // Update pagination info
-    if (res.data.pagination) {
+    if (res.data?.pagination) {
       totalPages.value = res.data.pagination.totalPages
       totalRecords.value = res.data.pagination.totalCount
+    } else {
+      console.warn('No pagination data in response:', res.data)
+      totalPages.value = 0
+      totalRecords.value = 0
     }
     
     // Transform events to the HistoryItem-like shape expected by the template
-    history.value = (res.data.events || []).map((e: any, idx: number) => ({
+    const events = res.data?.events || []
+    console.log('Maintenance Events:', events)
+    
+    history.value = events.map((e: any, idx: number) => ({
       id: e.id || idx,
       assetId: assetId,
       assetName: '',
@@ -421,8 +492,13 @@ const applyFilters = async () => {
       date: e.date,
       scheduledDateOnly: e.scheduledDateOnly,
     }))
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching maintenance events:', error)
+    console.error('Error details:', {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data
+    })
     history.value = []
     totalPages.value = 0
     totalRecords.value = 0
@@ -443,45 +519,58 @@ const paginationInfo = computed(() => {
   return { start, end }
 })
 
-// Debounced search
+// Debounced search and filters
 let searchTimeout: number | null = null
+let filterTimeout: number | null = null
+
 const debouncedSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
+    currentPage.value = 1
     applyFilters()
   }, 500)
 }
 
+const debouncedFilter = () => {
+  if (filterTimeout) clearTimeout(filterTimeout)
+  filterTimeout = setTimeout(() => {
+    currentPage.value = 1
+    applyFilters()
+  }, 300)
+}
+
 // Watchers for automatic filtering
 watch(() => filters.value.search, () => {
-  currentPage.value = 1
   debouncedSearch()
 })
 
 watch(() => filters.value.dateFrom, (newFromDate) => {
-  currentPage.value = 1
   // Reset "To" date only if "From" date is after the "To" date
   if (newFromDate && filters.value.dateTo && new Date(newFromDate) > new Date(filters.value.dateTo)) {
     filters.value.dateTo = ''
-    // Optional: Show a brief toast notification
-    // toastStore.showToast('To date reset because From date is after To date', 'info')
   }
-  applyFilters()
+  // Don't call API yet - wait for To date to be selected
 })
 
-watch(() => filters.value.dateTo, () => {
-  currentPage.value = 1
-  applyFilters()
+watch(() => filters.value.dateTo, (newToDate) => {
+  // Only call API if both dates are selected and To date is >= From date
+  if (filters.value.dateFrom && newToDate) {
+    const fromDate = new Date(filters.value.dateFrom)
+    const toDate = new Date(newToDate)
+    
+    // Validate that To date is after or equal to From date
+    if (toDate >= fromDate) {
+      debouncedFilter()
+    }
+  }
 })
 
 watch(() => selectedStatus.value, () => {
-  currentPage.value = 1
-  applyFilters()
+  debouncedFilter()
 })
 
 watch(() => selectedType.value, () => {
-  currentPage.value = 1
-  applyFilters()
+  debouncedFilter()
 })
 
 onMounted(async () => {
@@ -496,30 +585,82 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.maintenance-history-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1rem !important;
-  margin-bottom: 1rem !important;
-}
+/**
+ * MaintenanceHistoryView.vue - View-Specific Styles
+ * Styles unique to this view only - shared styles are in /assets/styles/pages/maintenance.css
+ */
 
-/* Timeline structure and card styles moved to shared assets/styles/components/timeline.css */
+/* =================================
+   PAGE LAYOUT
+   Specific to maintenance history page
+================================= */
+
+/* Card styles are centralized in /assets/styles/components/cards.css */
+
+/* =================================
+   TIMELINE CUSTOMIZATION
+   View-specific timeline marker colors
+================================= */
+
+.timeline-divider {
+  border: none;
+  border-top: 1px solid var(--element-gray);
+  margin: 0;
+  opacity: 0.6;
+}
 
 .timeline-scheduled .timeline-marker { background: var(--secondary-purple); }
 .timeline-in-progress .timeline-marker { background: var(--secondary-orange); }
 .timeline-completed .timeline-marker { background: var(--secondary-green); }
 .timeline-cancelled .timeline-marker { background: var(--secondary-red); }
 
-.timeline-date { font-size: 0.8rem; color: var(--primary-mid-gray); font-weight: 500; }
+.timeline-date { 
+  font-size: 0.8rem; 
+  color: var(--primary-mid-gray); 
+  font-weight: 500; 
+}
 
-/* Filter dropdown styling */
-.filter-dropdown { border: 1px solid #dee2e6; background-color: #f8f9fa !important; }
-.btn.active { background-color: #0d6efd; color: #fff; }
-.filter-clear-button-container { flex-shrink: 0; min-width: 120px; }
-.filter-clear-btn { width: 100%; min-width: 120px; }
-@media (max-width: 767.98px) { .filter-clear-button-container { width: 100%; min-width: unset; } .filter-clear-btn { width: 100%; min-width: unset; } }
-@media (min-width: 768px) and (max-width: 991.98px) { .filter-clear-button-container { min-width: 140px; } .filter-clear-btn { min-width: 140px; } }
+/* =================================
+   FILTER SECTION
+   Specific to this page's filters
+================================= */
+
+/* Filter dropdown and button styles are centralized in shared CSS files */
+
+.filter-clear-button-container { 
+  flex-shrink: 0; 
+  min-width: 120px; 
+}
+
+.filter-clear-btn { 
+  width: 100%; 
+  min-width: 120px; 
+}
+
+/* =================================
+   RESPONSIVE STYLES
+   View-specific responsive adjustments
+================================= */
+
+@media (max-width: 767.98px) { 
+  .filter-clear-button-container { 
+    width: 100%; 
+    min-width: unset; 
+  } 
+  .filter-clear-btn { 
+    width: 100%; 
+    min-width: unset; 
+  } 
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) { 
+  .filter-clear-button-container { 
+    min-width: 140px; 
+  } 
+  .filter-clear-btn { 
+    min-width: 140px; 
+  } 
+}
 </style>
 
 

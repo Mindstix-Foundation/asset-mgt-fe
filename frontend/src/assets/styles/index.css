@@ -20,17 +20,16 @@
 @import './components/filters.css';
 @import './components/timeline.css';
 
-/* 4. Page-Specific Styles 
+/* 4. Page-Specific Styles */
 @import './pages/login.css';
-@import './pages/dashboard.css';
+/* dashboard.css migrated into DashboardView.vue */
 @import './pages/vendors.css';
 @import './pages/assets.css';
 @import './pages/employees.css';
 @import './pages/maintenance.css';
 @import './pages/notifications.css';
-@import './pages/profile.css';
-@import './pages/reports.css';
-*/
+/* profile.css migrated into ProfileView.vue */
+/* reports.css migrated into ReportsView.vue */
 /* 5. Utility Classes */
 @import './utilities.css';
 

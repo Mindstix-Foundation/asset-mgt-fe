@@ -171,7 +171,7 @@
           <RecentActivity 
             :activities="recentActivities"
             :isLoading="isLoadingAnalytics"
-            title="Last 20"
+            title="Recent Activity"
             maxHeight="400px"
           />
         </div>
@@ -453,3 +453,308 @@ const getCategoryBarClass = (name: string): string => {
   return `progress-bar-${base}`
 }
 </script>
+
+<style scoped>
+/**
+ * Dashboard Page Styles - TrackStix Theme
+ * Dashboard specific styling and layout
+ */
+
+/* Main Content Container - Responsive margins */
+.container-fluid.py-4 {
+  max-width: calc(100% - 4rem);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: var(--primary-white);
+  min-height: 100vh;
+}
+
+/* Dashboard-specific Asset Distribution Styles */
+.asset-distribution-item {
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.asset-distribution-item:hover {
+  background-color: var(--mindstix-light);
+}
+
+.asset-type-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.asset-type-icon.laptops {
+  background: var(--secondary-purple);
+}
+
+.asset-type-icon.monitors {
+  background: var(--secondary-green);
+}
+
+.asset-type-icon.mobile {
+  background: var(--secondary-pink);
+}
+
+.asset-type-icon.accessories {
+  background: var(--secondary-orange);
+}
+
+.asset-type-icon.desktops {
+  background: var(--secondary-blue);
+}
+
+.asset-type-icon.tablets {
+  background: var(--secondary-brown);
+}
+
+.asset-type-icon.others {
+  background: var(--primary-mid-gray);
+}
+
+.asset-progress {
+  height: 8px;
+  border-radius: 1rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.progress-bar-laptops {
+  background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--accent-navy) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-monitors {
+  background: linear-gradient(90deg, var(--secondary-green) 0%, var(--primary-dark-gray) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-mobile {
+  background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--secondary-pink) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-accessories {
+  background: linear-gradient(90deg, var(--secondary-orange) 0%, var(--secondary-red) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-desktops {
+  background: linear-gradient(90deg, var(--secondary-blue) 0%, var(--accent-navy) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-tablets {
+  background: linear-gradient(90deg, var(--secondary-brown) 0%, var(--primary-dark-gray) 100%);
+  border-radius: 1rem;
+}
+
+.progress-bar-others {
+  background: linear-gradient(90deg, var(--primary-mid-gray) 0%, var(--primary-dark-gray) 100%);
+  border-radius: 1rem;
+}
+
+/* Dashboard-specific Progress Circles */
+.progress-circle {
+  position: relative;
+  display: inline-block;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--mindstix-dark);
+}
+
+/* Dashboard-specific Progress Stacked Fix for Bootstrap 5 with rounded corners */
+.progress-stacked {
+  display: flex;
+  height: 20px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: var(--mindstix-light);
+}
+
+.progress-stacked .progress {
+  height: 100%;
+  background-color: transparent;
+}
+
+.progress-bar {
+  background-color: var(--mindstix-primary);
+}
+
+.progress {
+  border-radius: 1rem;
+  height: 0.5rem !important;
+  background-color: var(--element-gray) !important;
+}
+
+/* Dashboard-specific Chart Container */
+canvas {
+  max-height: 300px;
+}
+
+/* Dashboard-specific Employee Avatar */
+.employee-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Background color is set dynamically via :style binding */
+  color: white; /* White text for better contrast on colored backgrounds */
+}
+
+/* Dashboard-specific QR Code Placeholder */
+.qr-code-placeholder {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--mindstix-secondary);
+}
+
+/* Dashboard-specific Timeline Styles */
+.timeline {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--mindstix-border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -22px;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--mindstix-primary);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--mindstix-border);
+}
+
+.timeline-content {
+  padding-left: 15px;
+}
+
+/* Dashboard-specific Responsive Adjustments */
+@media (max-width: 1200px) {
+  .container-fluid.py-4 {
+      max-width: calc(100% - 2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .container-fluid.py-4 {
+      max-width: calc(100% - 1rem);
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+  }
+  
+  .timeline {
+      padding-left: 20px;
+  }
+  
+  .timeline-marker {
+      left: -17px;
+      width: 10px;
+      height: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container-fluid.py-4 {
+      max-width: 100%;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+  }
+}
+
+/* Dashboard Page Specific Styles */
+
+/* Override any card hover effects for stats cards - Dashboard specific */
+.stats-card-modern:hover {
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  cursor: default !important;
+}
+
+/* Dashboard-specific stats icon variants */
+.stats-icon.bg-pink { 
+  background-color: var(--secondary-pink) !important; 
+  color: white !important; 
+}
+
+.stats-icon.bg-primary { 
+  background-color: var(--secondary-purple) !important; 
+  color: white !important; 
+}
+
+/* Dashboard-specific progress bar variants */
+.progress-bar.bg-pink { 
+  background-color: var(--secondary-pink) !important; 
+}
+
+.progress-bar.bg-primary { 
+  background-color: var(--secondary-purple) !important; 
+}
+
+/* Dashboard-specific asset distribution list */
+.dashboard-page .asset-distribution-list {
+  height: 400px; /* Same fixed height as activity list */
+  overflow-y: auto; /* Always show scrollbar when content exceeds height */
+  padding: 1rem; /* Add padding since card-body padding was removed */
+}
+
+/* Dashboard-specific responsive adjustments */
+@media (max-width: 768px) {
+  .container-fluid.py-4 {
+    padding: 1rem 0;
+  }
+  
+  .dashboard-page .quick-action-card {
+    padding: 1.25rem 0.75rem;
+    min-height: 100px;
+  }
+  
+  .dashboard-page .quick-action-card .action-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .dashboard-page .quick-action-card .action-title {
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+}
+</style>

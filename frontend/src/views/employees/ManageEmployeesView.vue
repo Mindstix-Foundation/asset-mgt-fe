@@ -27,8 +27,8 @@
         </div>
       </div>
       <form @submit.prevent="confirmBulkDelete">
-        <!-- Form Card - Using same design as filter dropdown -->
-        <div v-if="showFormCard" class="form-card mt-3 p-3 bg-light rounded">
+        <!-- Form Card - Use shared filter-card styles -->
+        <div v-if="showFormCard" class="filter-card mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
               <div class="row g-3 justify-content-between">
@@ -138,10 +138,10 @@
           
           <!-- Form Action Buttons - Bottom Right -->
           <div class="d-flex justify-content-end gap-2 mt-4">
-            <button type="button" class="btn btn-outline-secondary btn-modern" @click="clearEmployeeSelection">
+            <button type="button" class="btn btn-cancel" @click="clearEmployeeSelection">
               <i class="fas fa-times me-1"></i>Clear
             </button>
-            <button type="button" class="btn btn-danger btn-modern" @click="confirmBulkDelete" :disabled="selectedEmployeesForDeletion.length === 0 || isBulkDeleting">
+            <button type="button" class="btn btn-red" @click="confirmBulkDelete" :disabled="selectedEmployeesForDeletion.length === 0 || isBulkDeleting">
               <i v-if="isBulkDeleting" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-trash me-1"></i>
               {{ isBulkDeleting ? 'Deleting...' : 'Delete' }}
@@ -253,7 +253,7 @@
                   <td>
                     <div class="btn-group btn-group-sm employee-actions">
                       <button 
-                        class="btn btn-outline-danger btn-delete-employee" 
+                        class="btn btn-action btn-red" 
                         @click="deleteSingleEmployee(employee)"
                         title="Delete Employee"
                         :disabled="employee.isAdmin"
@@ -355,12 +355,12 @@
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel-confirm" @click="closeDeleteConfirmationModal">
+            <button type="button" class="btn btn-cancel" @click="closeDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-confirm-delete"
+              class="btn btn-red"
               @click="confirmDelete"
               :disabled="isDeleting"
             >
@@ -411,12 +411,12 @@
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel-confirm" @click="closeBulkDeleteConfirmationModal">
+            <button type="button" class="btn btn-cancel" @click="closeBulkDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-confirm-delete"
+              class="btn btn-red"
               @click="executeBulkDelete"
               :disabled="isBulkDeleting"
             >
@@ -855,11 +855,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Import all styles from ManageAssetCategoriesView.vue for consistency */
+/**
+ * ManageEmployeesView.vue - View-Specific Styles
+ * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css
+ */
 
-/* Button styling moved to components/buttons.css */
-
-/* Form styling */
+/* =================================
+   FORM STYLES
+   Specific to bulk delete form
+================================= */
 .form-control, .form-select {
   border: 1px solid var(--element-gray);
   border-radius: 0.375rem !important;
@@ -886,14 +890,12 @@ onMounted(async () => {
   margin-top: 0.25rem;
 }
 
-/* Badge styling moved to components/badges.css */
+/* =================================
+   FORM CARD & ANIMATIONS
+   Specific to this view's form display
+================================= */
 
-/* Form Card */
-.form-card {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
-}
+/* moved to shared cards.css (use .filter-card) */
 
 @keyframes slideDown {
   from {
@@ -906,7 +908,11 @@ onMounted(async () => {
   }
 }
 
-/* Table styling */
+/* =================================
+   TABLE COLUMN WIDTHS
+   Specific to manage employees table with checkboxes
+================================= */
+
 .table-employee {
   table-layout: fixed;
 }
@@ -952,9 +958,11 @@ onMounted(async () => {
   border-color: var(--secondary-purple) !important;
 }
 
-/* Employee selection chips styling moved to pages/employees.css */
+/* =================================
+   EMPLOYEE ADD BUTTONS
+   Specific to bulk add functionality
+================================= */
 
-/* Employee Add Buttons */
 .employee-add-btn {
   width: 103px !important;
   height: 38px !important;
@@ -978,7 +986,11 @@ onMounted(async () => {
   cursor: not-allowed !important;
 }
 
-/* Modal styling */
+/* =================================
+   CONFIRMATION MODALS
+   Specific to delete confirmation
+================================= */
+
 .modal-content {
   border: 1px solid var(--element-gray);
   border-radius: 0.5rem;
@@ -995,45 +1007,7 @@ onMounted(async () => {
   opacity: 0.5;
 }
 
-/* Confirmation Modal Buttons */
-.btn-cancel-confirm {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.4rem 1rem !important;
-  font-size: 0.9rem !important;
-}
-
-.btn-cancel-confirm:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-confirm-delete {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.4rem 1rem !important;
-  font-size: 0.9rem !important;
-  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
-}
-
-.btn-confirm-delete:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
-}
-
+/* Confirmation modal buttons */
 .confirmation-icon {
   animation: pulse 2s infinite;
 }
@@ -1044,7 +1018,11 @@ onMounted(async () => {
   100% { transform: scale(1); }
 }
 
-/* Employee info section */
+/* =================================
+   EMPLOYEE INFO DISPLAY
+   Specific to delete confirmation modal
+================================= */
+
 .employee-info-section-compact {
   margin-bottom: 0.25rem;
   padding: 0.5rem;
@@ -1096,7 +1074,11 @@ onMounted(async () => {
   text-align: right;
 }
 
-/* Delete Button Hover Effect */
+/* =================================
+   DELETE BUTTON STYLING
+   Specific to this view's delete actions
+================================= */
+
 .btn-delete-employee:hover {
   color: var(--secondary-red) !important;
   border-color: var(--secondary-red) !important;
