@@ -286,9 +286,9 @@ class AssetService {
     }
   }
 
-  // Transform backend asset data to frontend display format
+  // Transform backend asset data to frontend display format (optimized for table)
   transformAssetForDisplay(asset: Asset): any {
-    // Get current assignment info
+    // Get current assignment info from the optimized API response
     const currentAssignment = asset.assetIssues && asset.assetIssues.length > 0 
       ? asset.assetIssues[0] 
       : null
@@ -297,67 +297,17 @@ class AssetService {
       ? `${currentAssignment.employee.firstName} ${currentAssignment.employee.lastName}`
       : undefined
 
-    // Normalize date to YYYY-MM-DD string if possible
-    const toDateString = (d: any): string => {
-      if (!d) return ''
-      try {
-        let dt: Date
-        if (typeof d === 'string') {
-          // Handle IST string format: DD/MM/YYYY, HH:mm:ss
-          const regex = /^(\d{2})\/(\d{2})\/(\d{4})(?:,\s*(\d{2}):(\d{2}):(\d{2}))?$/
-          const m = regex.exec(d)
-          if (m) {
-            const day = Number.parseInt(m[1], 10)
-            const month = Number.parseInt(m[2], 10) - 1
-            const year = Number.parseInt(m[3], 10)
-            const hh = Number.parseInt(m[4] || '0', 10)
-            const mm = Number.parseInt(m[5] || '0', 10)
-            const ss = Number.parseInt(m[6] || '0', 10)
-            dt = new Date(year, month, day, hh, mm, ss)
-          } else {
-            dt = new Date(d)
-          }
-        } else {
-          dt = d
-        }
-        if (Number.isNaN(dt.getTime())) return ''
-        return dt.toISOString().split('T')[0]
-      } catch {
-        return ''
-      }
-    }
-
     return {
       id: asset.assetId,
-      assetId: asset.assetId,
       type: asset.assetType.name,
       brand: asset.brand.name,
       model: asset.model.name,
-      brandModel: `${asset.brand.name} ${asset.model.name}`,
       serialNumber: asset.serialNumber,
       status: asset.status,
       assignedTo: assignedTo,
-      purchaseDate: toDateString(asset.purchaseDate),
-      location: asset.location,
-      category: asset.assetType.category.name,
-      condition: asset.condition,
-      purchaseCost: asset.purchaseCost,
-      vendor: asset.vendor?.name || 'N/A',
-      warrantyUntil: toDateString(asset.warrantyEndDate),
-      warrantyStartDate: toDateString(asset.warrantyStartDate),
-      notes: asset.notes || '',
-      // Assignment details (from AssetIssue - limited data available)
-      assignmentReason: '',
-      assignmentNotes: '',
-      assignmentDate: toDateString(currentAssignment?.issueDate),
-      assignedBy: (currentAssignment as any)?.issuedByUser?.username || '',
-      // Retirement details
-      retirementDate: toDateString(asset.retirementDate),
-      retirementReason: asset.retirementReason || '',
-      retirementNotes: asset.retirementNotes || '',
-      // Reactivation details
-      reactivationDate: toDateString(asset.reactivationDate),
-      reactivationReason: asset.reactivationReason || ''
+      condition: asset.condition
+      // Note: Other fields (purchaseDate, location, etc.) are only populated when viewing details
+      // This keeps the table data minimal and fast
     }
   }
 

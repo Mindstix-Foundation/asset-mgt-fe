@@ -14,7 +14,7 @@
   will-change: transform, opacity;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: 1060 !important; /* Above tables but below modals */
+  z-index: 1050 !important; /* Above tables but below searchable dropdowns and modals */
 }
 
 /* Filter dropdown content animation */
@@ -96,17 +96,33 @@
 /* Searchable dropdown z-index fix - ensure dropdowns appear above table and filter container */
 .filter-dropdown .searchable-dropdown-wrapper {
   position: relative;
-  z-index: 1065 !important; /* Higher than filter-dropdown itself */
+  z-index: 1070 !important; /* Higher than filter-dropdown itself */
 }
 
 .filter-dropdown .searchable-dropdown-wrapper .dropdown-menu {
-  z-index: 1065 !important; /* Match wrapper z-index */
+  z-index: 1070 !important; /* Match wrapper z-index - same as modals */
   position: absolute !important;
 }
 
 /* Additional specificity for dropdown menu to ensure it appears above table */
 .filter-dropdown .searchable-dropdown-wrapper .dropdown-menu.show {
-  z-index: 1065 !important; /* Match wrapper z-index */
+  z-index: 1070 !important; /* Match wrapper z-index */
+  display: block !important;
+}
+
+/* Ensure all searchable dropdowns (including Sort By outside filter panel) have highest z-index */
+.searchable-dropdown-wrapper {
+  position: relative;
+  z-index: 1060 !important;
+}
+
+.searchable-dropdown-wrapper .dropdown-menu {
+  z-index: 1070 !important; /* Above everything except other dropdowns */
+  position: absolute !important;
+}
+
+.searchable-dropdown-wrapper .dropdown-menu.show {
+  z-index: 1070 !important;
   display: block !important;
 }
 

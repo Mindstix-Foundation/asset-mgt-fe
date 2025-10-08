@@ -314,16 +314,16 @@
       <div class="card" v-show="currentView === 'list' && !isLoading">
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover asset-table mb-0">
               <thead class="table-light">
                 <tr>
                   <th>Asset ID</th>
                   <th>Asset Details</th>
                   <th>Serial Number</th>
-                  <th>Status</th>
                   <th>Assigned To</th>
                   <th>Condition</th>
-                  <th>Actions</th>
+                  <th>Status</th>
+                  <th class="text-start">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -337,24 +337,24 @@
                 >
                   <td><strong>{{ asset.id }}</strong></td>
                   <td>
-                    <div>
+                    <div style="line-height: 1.2;">
                       <strong style="color: var(--primary-black);">
                         {{ asset.model || 'Unknown Model' }}
                       </strong>
-                      <br>
-                      <small class="text-muted">
+                      <br style="margin: 0; line-height: 0.8;">
+                      <small class="text-muted" style="line-height: 1.1;">
                         {{ asset.type || 'Unknown Type' }} - 
                         {{ asset.brand || 'Unknown Brand' }}
                       </small>
                     </div>
                   </td>
                   <td>{{ asset.serialNumber }}</td>
-                  <td>
-                    <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
-                  </td>
                   <td>{{ asset.assignedTo || '-' }}</td>
                   <td>{{ getConditionText(asset.condition) }}</td>
                   <td>
+                    <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
+                  </td>
+                  <td class="text-start">
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
                         class="btn btn-action btn-brown" 
@@ -447,7 +447,7 @@
                   <div class="row g-1">
                     <div class="col-6">
                       <small class="text-muted d-block" style="font-size: 0.7rem;">Brand/Model</small>
-                      <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.brandModel }}</div>
+                      <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.brand }} {{ asset.model }}</div>
                     </div>
                     <div class="col-6">
                       <small class="text-muted d-block" style="font-size: 0.7rem;">Serial</small>
@@ -530,16 +530,15 @@
     </div>
 
     <!-- Pagination -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
-      <div class="text-muted">
-        <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} assets</small>
-      </div>
-      <AppPagination 
-        :current-page="currentPage" 
-        :total-pages="totalPages" 
-        @change="goToPage"
-      />
-    </div>
+    <AppPagination 
+      :current-page="currentPage" 
+      :total-pages="totalPages" 
+      :start="paginationInfo.start"
+      :end="paginationInfo.end"
+      :total="paginationInfo.total"
+      :item-name="'assets'"
+      @change="goToPage"
+    />
 
     <!-- Asset Detail Modal -->
     <div 
@@ -547,17 +546,25 @@
       :class="{ show: showDetailModal }" 
       :style="{ display: showDetailModal ? 'block' : 'none' }"
       tabindex="-1"
-      v-if="selectedAsset"
+      v-if="showDetailModal"
     >
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Asset Details - {{ selectedAsset.id }}</h5>
+            <h5 class="modal-title">Asset Details{{ selectedAsset ? ` - ${selectedAsset.id}` : '' }}</h5>
             <button type="button" class="btn-close" @click="closeDetailModal"></button>
           </div>
           <div class="modal-body">
+            <!-- Loading State -->
+            <div v-if="isLoadingAssetDetails" class="text-center py-5">
+              <div class="spinner-border text-primary">
+                <output class="visually-hidden">Loading...</output>
+              </div>
+              <p class="mt-3 text-muted">Loading asset details...</p>
+            </div>
+
             <!-- Asset Information - Compact Layout -->
-            <div class="row g-2 equal-height-columns">
+            <div v-else-if="selectedAsset" class="row g-2 equal-height-columns">
               <!-- Left Column: Basic Info -->
               <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
@@ -572,12 +579,12 @@
                       <div class="info-value-compact">{{ selectedAsset.category }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <div class="info-label-compact">Asset Type</div>
-                      <div class="info-value-compact fw-bold">{{ selectedAsset.type }}</div>
+                      <div class="info-label-compact">Asset Type & Brand</div>
+                      <div class="info-value-compact fw-bold">{{ selectedAsset.type }} {{ selectedAsset.brand }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <div class="info-label-compact">Brand & Model</div>
-                      <div class="info-value-compact fw-bold">{{ selectedAsset.brandModel }}</div>
+                      <div class="info-label-compact">Model</div>
+                      <div class="info-value-compact fw-bold">{{ selectedAsset.model || 'Unknown Model' }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Serial Number</div>
@@ -585,9 +592,7 @@
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Condition</div>
-                      <div class="info-value-compact">
-                        <span :class="getConditionBadgeClass(selectedAsset.condition)">{{ selectedAsset.condition }}</span>
-                      </div>
+                      <div class="info-value-compact">{{ getConditionText(selectedAsset.condition) }}</div>
                     </div>
                   </div>
                 </div>
@@ -608,7 +613,7 @@
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Purchase Cost</div>
-                      <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${selectedAsset.purchaseCost.toLocaleString()}` : 'Not specified' }}</div>
+                      <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${Number(selectedAsset.purchaseCost).toLocaleString()}` : 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Vendor</div>
@@ -620,14 +625,14 @@
                         <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyUntil" class="warranty-info-compact">
                           <div v-if="selectedAsset.warrantyStartDate" class="warranty-row">
                             <span class="warranty-label">Start:</span>
-                            <span class="warranty-value">{{ formatDate(selectedAsset.warrantyStartDate) }}</span>
+                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyStartDate) }}</span>
                           </div>
                           <div v-if="selectedAsset.warrantyUntil" class="warranty-row">
                             <span class="warranty-label">End:</span>
-                            <span class="warranty-value">{{ formatDate(selectedAsset.warrantyUntil) }}</span>
+                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyUntil) }}</span>
                           </div>
                           <div v-if="selectedAsset.warrantyUntil" class="warranty-time">
-                            <span class="warranty-time-text">{{ getWarrantyTimeLeft(selectedAsset.warrantyUntil) }}</span>
+                            <span class="warranty-time-text text-muted">{{ getWarrantyTimeLeft(selectedAsset.warrantyUntil) }}</span>
                           </div>
                         </div>
                         <div v-else class="text-muted">Not specified</div>
@@ -639,35 +644,35 @@
             </div>
 
             <!-- Assignment Status & Information - Combined -->
-            <div v-if="selectedAsset.status !== 'RETIRED'" class="row ">
+            <div v-if="selectedAsset && selectedAsset.status !== 'RETIRED'" class="row ">
               <div class="col-12">
                 <div class="assignment-status-combined">
                   <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
                       @click="toggleAssignmentDetails">
-                    <span><i :class="getStatusIcon(selectedAsset.status)" class="me-2"></i>{{ getStatusSectionTitle(selectedAsset.status) }}</span>
+                    <span><i :class="selectedAsset ? getStatusIcon(selectedAsset.status) : ''" class="me-2"></i>{{ selectedAsset ? getStatusSectionTitle(selectedAsset.status) : '' }}</span>
                     <i class="fas fa-chevron-down assignment-chevron" 
                        :class="{ 'rotated': isAssignmentDetailsExpanded }"
-                       v-if="selectedAsset.status === 'ASSIGNED' || selectedAsset.status === 'IN_MAINTENANCE' || selectedAsset.status === 'LOST'"></i>
+                       v-if="selectedAsset && (selectedAsset.status === 'ASSIGNED' || selectedAsset.status === 'IN_MAINTENANCE' || selectedAsset.status === 'LOST')"></i>
                   </h6>
                   
                   <!-- Basic Status Info -->
                   <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
                     <div class="d-flex align-items-center gap-3">
                       <div class="assignment-icon">
-                        <i :class="getAssignmentIcon(selectedAsset.status)" class="fa-lg"></i>
+                        <i :class="selectedAsset ? getAssignmentIcon(selectedAsset.status) : ''" class="fa-lg"></i>
                       </div>
                       <div class="assignment-details">
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
                             <span class="text-muted text-small">Status:</span>
-                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
+                            <span :class="selectedAsset ? getStatusBadgeClass(selectedAsset.status) : ''" class="ms-1">{{ selectedAsset ? getStatusText(selectedAsset.status) : '' }}</span>
                           </div>
                           <div>
-                            <span class="text-muted text-small">{{ getStatusSecondaryLabel(selectedAsset.status) }}</span>
-                            <span class="ms-1 fw-medium text-small-medium">{{ getStatusSecondaryValue(selectedAsset) }}</span>
+                            <span class="text-muted text-small">{{ selectedAsset ? getStatusSecondaryLabel(selectedAsset.status) : '' }}</span>
+                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset ? getStatusSecondaryValue(selectedAsset) : '' }}</span>
                           </div>
                         </div>
-                        <div class="text-muted text-small">{{ getAssignmentStatusDescription(selectedAsset.status) }}</div>
+                        <div class="text-muted text-small">{{ selectedAsset ? getAssignmentStatusDescription(selectedAsset.status) : '' }}</div>
                       </div>
                     </div>
                     <div class="qr-code-mini">
@@ -676,14 +681,14 @@
                   </div>
                   
                   <!-- Status Details (collapsible for ASSIGNED, IN_MAINTENANCE, LOST) -->
-                  <div v-if="(selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)) ||
+                  <div v-if="selectedAsset && ((selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)) ||
                              (selectedAsset.status === 'IN_MAINTENANCE' && selectedAsset.notes) ||
-                             (selectedAsset.status === 'LOST' && selectedAsset.notes)" 
+                             (selectedAsset.status === 'LOST' && selectedAsset.notes))" 
                        v-show="isAssignmentDetailsExpanded" 
                        class="assignment-details-expanded">
                     <div class="row g-2">
                       <!-- ASSIGNED Status Details -->
-                      <template v-if="selectedAsset.status === 'ASSIGNED'">
+                      <template v-if="selectedAsset && selectedAsset.status === 'ASSIGNED'">
                         <!-- Assignment Reason -->
                         <div class="col-md-6" v-if="selectedAsset.assignmentReason">
                           <div class="info-item-compact">
@@ -732,7 +737,7 @@
                       </template>
                       
                       <!-- IN_MAINTENANCE Status Details -->
-                      <template v-if="selectedAsset.status === 'IN_MAINTENANCE'">
+                      <template v-if="selectedAsset && selectedAsset.status === 'IN_MAINTENANCE'">
                         <div class="col-12">
                           <div class="alert alert-warning mb-0">
                             <i class="fas fa-wrench me-2"></i>
@@ -742,7 +747,7 @@
                       </template>
                       
                       <!-- LOST Status Details -->
-                      <template v-if="selectedAsset.status === 'LOST'">
+                      <template v-if="selectedAsset && selectedAsset.status === 'LOST'">
                         <div class="col-12">
                           <div class="alert alert-danger mb-0">
                             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -757,7 +762,7 @@
             </div>
 
             <!-- Retirement Information (if asset is retired) -->
-            <div v-if="selectedAsset.status === 'RETIRED'" class="row">
+            <div v-if="selectedAsset && selectedAsset.status === 'RETIRED'" class="row">
               <div class="col-12">
                 <div class="retirement-status-combined">
                     <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
@@ -765,7 +770,7 @@
                     <span><i class="fas fa-archive me-2"></i>Retirement Information</span>
                     <i class="fas fa-chevron-down retirement-chevron" 
                        :class="{ 'rotated': isRetirementDetailsExpanded }"
-                       v-if="selectedAsset.retirementNotes"></i>
+                       v-if="selectedAsset && selectedAsset.retirementNotes"></i>
                   </h6>
                   
                   <!-- Basic Retirement Info -->
@@ -778,11 +783,11 @@
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
                             <span class="text-muted text-small">Status:</span>
-                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
+                            <span :class="selectedAsset ? getStatusBadgeClass(selectedAsset.status) : ''" class="ms-1">{{ selectedAsset ? getStatusText(selectedAsset.status) : '' }}</span>
                           </div>
                           <div>
                             <span class="text-muted text-small">Retirement Date:</span>
-                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
+                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset && selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
                           </div>
                         </div>
                       </div>
@@ -790,12 +795,12 @@
                   </div>
                   
                   <!-- Retirement Details (only show if retirement notes exist) -->
-                  <div v-if="selectedAsset.retirementNotes" 
+                  <div v-if="selectedAsset && selectedAsset.retirementNotes" 
                        v-show="isRetirementDetailsExpanded" 
                        class="retirement-details-expanded">
                     <div class="row g-2">
                       <!-- Retirement Reason -->
-                      <div class="col-md-6" v-if="selectedAsset.retirementReason">
+                      <div class="col-md-6" v-if="selectedAsset && selectedAsset.retirementReason">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
@@ -803,12 +808,12 @@
                       </div>
                       
                       <!-- Divider between retirement details and notes -->
-                      <div class="col-12" v-if="selectedAsset.retirementNotes">
+                      <div class="col-12" v-if="selectedAsset && selectedAsset.retirementNotes">
                         <hr class="retirement-divider">
                       </div>
                       
                       <!-- Retirement Notes -->
-                      <div class="col-12" v-if="selectedAsset.retirementNotes">
+                      <div class="col-12" v-if="selectedAsset && selectedAsset.retirementNotes">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Notes</div>
                           <div class="info-value-compact">
@@ -830,7 +835,7 @@
             </div>
 
             <!-- Refurbishment Information (if condition is REFURBISHED) -->
-            <div v-if="selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
+            <div v-if="selectedAsset && selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
               <div class="col-12">
                 <div class="retirement-status-combined">
                       <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
@@ -848,11 +853,11 @@
                         </div>
                         <div class="retirement-details">
                           <div class="d-flex gap-4">
-                            <div v-if="selectedAsset.retirementDate">
+                            <div v-if="selectedAsset && selectedAsset.retirementDate">
                               <small class="text-muted">Retirement Date</small>
                               <div class="fw-semibold">{{ formatDate(selectedAsset.retirementDate) }}</div>
                             </div>
-                            <div v-if="selectedAsset.reactivationDate">
+                            <div v-if="selectedAsset && selectedAsset.reactivationDate">
                               <small class="text-muted">Reactivation Date</small>
                               <div class="fw-semibold">{{ formatDate(selectedAsset.reactivationDate) }}</div>
                             </div>
@@ -866,7 +871,7 @@
                          class="assignment-details-expanded">
                       
                       <!-- Retirement Information -->
-                      <div v-if="selectedAsset.retirementReason">
+                      <div v-if="selectedAsset && selectedAsset.retirementReason">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
@@ -874,10 +879,10 @@
                       </div>
                       
                       <!-- Divider Line -->
-                      <hr class="my-3 modal-divider" v-if="selectedAsset.retirementReason && selectedAsset.reactivationReason">
+                      <hr class="my-3 modal-divider" v-if="selectedAsset && selectedAsset.retirementReason && selectedAsset.reactivationReason">
                       
                       <!-- Reactivation Information -->
-                      <div v-if="selectedAsset.reactivationReason">
+                      <div v-if="selectedAsset && selectedAsset.reactivationReason">
                         <NotesDisplay 
                           :notes="selectedAsset.reactivationReason"
                           :label="'Reactivation Reason'"
@@ -899,7 +904,7 @@
                 <div class="asset-info-section-compact">
                   <h6 class="section-title-compact"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
                   <NotesDisplay 
-                    :notes="selectedAsset.notes"
+                    :notes="selectedAsset ? selectedAsset.notes : ''"
                     :fallback-text="'No additional notes provided.'"
                     :show-label="false"
                     :show-icon="false"
@@ -913,33 +918,33 @@
           <div class="modal-footer">
             <div class="d-flex justify-content-between w-100">
               <div>
-                <button type="button" class="btn btn-brown btn-sm" @click="viewAssetHistory(selectedAsset!)">
+                <button type="button" class="btn btn-brown btn-sm" @click="selectedAsset ? viewAssetHistory(selectedAsset) : null">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-cancel btn-sm" @click="closeDetailModal">Close</button>
-                <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-green btn-sm" @click="issueAsset(selectedAsset!)">
+                <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-green btn-sm" @click="selectedAsset ? issueAsset(selectedAsset) : null">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
-                <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink btn-sm" @click="collectAsset(selectedAsset!)">
+                <button v-if="selectedAsset && selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink btn-sm" @click="selectedAsset ? collectAsset(selectedAsset) : null">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
                 <button 
-                  v-if="selectedAsset.status === 'AVAILABLE'"
+                  v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'"
                   type="button" 
                   class="btn btn-orange btn-sm" 
-                  @click="handleMaintenanceAction(selectedAsset!)"
+                  @click="selectedAsset ? handleMaintenanceAction(selectedAsset) : null"
                 >
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
-              <button type="button" class="btn btn-purple btn-sm" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
+              <button type="button" class="btn btn-purple btn-sm" @click="selectedAsset ? editAsset(selectedAsset) : null" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
-              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
+              <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
                 <i class="fas fa-archive me-1"></i>Retire Asset
               </button>
-              <button v-if="selectedAsset.status === 'RETIRED'" type="button" class="btn btn-green btn-sm" @click="openReactivateAssetModal">
+              <button v-if="selectedAsset && selectedAsset.status === 'RETIRED'" type="button" class="btn btn-green btn-sm" @click="openReactivateAssetModal">
                 <i class="fas fa-power-off me-1"></i>Reactivate Asset
               </button>
             </div>
@@ -996,7 +1001,7 @@
                         </div>
                         <div class="info-item-compact">
                           <div class="info-label-compact">Brand & Model</div>
-                          <div class="info-value-compact">{{ assetToRetire?.brandModel }}</div>
+                          <div class="info-value-compact">{{ assetToRetire?.brand }} {{ assetToRetire?.model }}</div>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -1162,7 +1167,7 @@
                         <div class="col-md-6">
                           <div class="info-item-compact">
                             <div class="info-label-compact">Brand & Model</div>
-                            <div class="info-value-compact">{{ assetToReactivate?.brandModel }}</div>
+                            <div class="info-value-compact">{{ assetToReactivate?.brand }} {{ assetToReactivate?.model }}</div>
                           </div>
                         </div>
                         
@@ -1347,7 +1352,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
 import { assetService } from '../../services/business/assetService'
-import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
+import type { Asset, AssetQueryParams, FilterOptions, DetailedAsset } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
@@ -1359,22 +1364,23 @@ const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 
-// Local types for display
+// Local types for display (optimized for table)
 interface AssetDisplayItem {
   id: string
   type: string
   brand: string
-  brandModel: string
+  model: string
   serialNumber: string
   status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
   assignedTo?: string
-  purchaseDate: string
-  location: string
-  category: string
   condition: string
+  // Additional fields for modal (populated when viewing details)
+  purchaseDate?: string
+  location?: string
+  category?: string
   purchaseCost?: number
-  vendor: string
-  warrantyUntil: string
+  vendor?: string
+  warrantyUntil?: string
   warrantyStartDate?: string
   notes?: string
   // Assignment details
@@ -1410,6 +1416,7 @@ const isRetirementDetailsExpanded = ref(false)
 const isReactivateAssetSummaryExpanded = ref(false)
 const isRefurbishmentDetailsExpanded = ref(false)
 const selectedAsset = ref<AssetDisplayItem | null>(null)
+const isLoadingAssetDetails = ref(false)
 const assetToRetire = ref<AssetDisplayItem | null>(null)
 const isRetiringAsset = ref(false)
 const bulkAssetUploadRef = ref<InstanceType<typeof BulkAssetUpload> | null>(null)
@@ -1592,6 +1599,44 @@ const setView = (view: 'list' | 'grid') => {
   currentView.value = view
 }
 
+// Transform detailed asset data for modal display
+const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisplayItem => {
+  // Get current assignment info from the latest asset issue (only if not returned)
+  const currentAssignment = detailedAsset.assetIssues?.find(issue => !issue.returnDate)
+  
+  return {
+    id: detailedAsset.assetId,
+    type: detailedAsset.assetType.name,
+    brand: detailedAsset.brand.name,
+    model: detailedAsset.model.name,
+    serialNumber: detailedAsset.serialNumber,
+    status: detailedAsset.status as any,
+    assignedTo: currentAssignment ? `${currentAssignment.employee?.firstName} ${currentAssignment.employee?.lastName}` : undefined,
+    condition: detailedAsset.condition,
+    // Additional fields for modal
+    purchaseDate: detailedAsset.purchaseDate || '',
+    location: detailedAsset.location || 'Not specified',
+    category: detailedAsset.assetType.category.name,
+    purchaseCost: detailedAsset.purchaseCost || undefined,
+    vendor: detailedAsset.vendor?.name || 'Not specified',
+    warrantyUntil: detailedAsset.warrantyEndDate || '',
+    warrantyStartDate: detailedAsset.warrantyStartDate,
+    notes: detailedAsset.notes,
+    // Assignment details from current assignment
+    assignmentReason: currentAssignment?.issueReason,
+    assignmentNotes: currentAssignment?.notes,
+    assignmentDate: currentAssignment?.issueDate,
+    assignedBy: currentAssignment?.issuedByUser?.username || 'system',
+    // Retirement details from API
+    retirementDate: detailedAsset.retirementDate,
+    retirementReason: detailedAsset.retirementReason,
+    retirementNotes: detailedAsset.retirementNotes,
+    // Reactivation details from API
+    reactivationDate: detailedAsset.reactivationDate,
+    reactivationReason: detailedAsset.reactivationReason
+  }
+}
+
 // Set default view based on screen size
 const setDefaultView = () => {
   const screenWidth = window.innerWidth
@@ -1689,12 +1734,40 @@ const goToPage = (page: number) => {
   loadAssets()
 }
 
-const viewAssetDetails = (asset: AssetDisplayItem) => {
-  selectedAsset.value = asset
-  isAssignmentDetailsExpanded.value = false // Reset collapse state
-  isRetirementDetailsExpanded.value = false // Reset retirement collapse state
-  isRefurbishmentDetailsExpanded.value = false // Reset refurbishment collapse state
-  showDetailModal.value = true
+const viewAssetDetails = async (asset: AssetDisplayItem) => {
+  try {
+    // Find the original asset by matching the display asset ID (which is the assetId field)
+    const originalAsset = assets.value.find(a => a.assetId === asset.id)
+    if (!originalAsset) {
+      console.error('Could not find original asset with assetId:', asset.id)
+      toastStore.showError('Error', 'Could not load asset details')
+      return
+    }
+
+    // Show modal and loading state
+    showDetailModal.value = true
+    isLoadingAssetDetails.value = true
+    selectedAsset.value = null // Clear previous data
+    
+    // Reset collapse states
+    isAssignmentDetailsExpanded.value = false
+    isRetirementDetailsExpanded.value = false
+    isRefurbishmentDetailsExpanded.value = false
+
+    // Fetch detailed asset data
+    const response = await assetService.getAssetById(originalAsset.id)
+    const detailedAsset = response.data.asset
+    
+    // Transform the detailed asset data for the modal
+    selectedAsset.value = transformDetailedAssetForModal(detailedAsset)
+    
+  } catch (error) {
+    console.error('Error loading asset details:', error)
+    toastStore.showError('Error', 'Failed to load asset details')
+    showDetailModal.value = false
+  } finally {
+    isLoadingAssetDetails.value = false
+  }
 }
 
 const closeDetailModal = () => {
@@ -1970,7 +2043,7 @@ const handleMaintenanceAction = (asset: AssetDisplayItem) => {
       path: `/app/maintenance/${asset.id}/history`,
       query: { 
         returnTo: '/app/assets',
-        assetName: asset.brandModel,
+        assetName: `${asset.brand} ${asset.model}`,
         assetId: asset.id
       }
     })

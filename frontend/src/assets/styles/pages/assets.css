@@ -787,6 +787,66 @@
    For AssetsView.vue
 ================================= */
 
+/* Asset Table Column Widths - Percentage-based for responsive design */
+.asset-table th,
+.asset-table td {
+  vertical-align: middle !important;
+}
+
+.asset-table th:nth-child(1),
+.asset-table td:nth-child(1) { /* Asset ID */
+  width: 5% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(2),
+.asset-table td:nth-child(2) { /* Asset Details */
+  width: 25% !important;
+}
+
+.asset-table th:nth-child(3),
+.asset-table td:nth-child(3) { /* Serial Number */
+  width: 18% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(4),
+.asset-table td:nth-child(4) { /* Assigned To */
+  width: 17.5% !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.asset-table th:nth-child(5),
+.asset-table td:nth-child(5) { /* Condition */
+  width: 7.5% !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(6),
+.asset-table td:nth-child(6) { /* Status */
+  width: 12% !important;
+  white-space: nowrap !important;
+}
+
+.asset-table th:nth-child(7),
+.asset-table td:nth-child(7) { /* Actions */
+  width: 15% !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+}
+
+/* Asset actions button group spacing */
+.asset-actions {
+  gap: 0.25rem !important;
+}
+
 /* Form validation styles - Moved to forms.css */
 
 /* Modal-related styles moved to modals.css for better organization */
@@ -811,7 +871,7 @@
   left: 0 !important;
   right: auto !important;
   transform-origin: top center !important;
-  z-index: 1060 !important;
+  z-index: 1070 !important;
   
   /* Smooth animation properties */
   opacity: 0 !important;

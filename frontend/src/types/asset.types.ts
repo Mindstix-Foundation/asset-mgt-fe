@@ -33,6 +33,9 @@ export interface Model {
 export interface AssetIssue {
   id: number
   issueDate: string
+  returnDate?: string
+  issueReason?: string
+  notes?: string
   employee: {
     id: number
     employeeId: string
@@ -40,15 +43,32 @@ export interface AssetIssue {
     lastName: string
     email: string
   }
+  issuedByUser: {
+    username: string
+  }
 }
 
+// Optimized Asset interface for table display (minimal fields)
 export interface Asset {
   id: number
   assetId: string
   serialNumber: string
   status: AssetStatus
   condition: AssetCondition
-  location: string
+  assetType: AssetType
+  brand: Brand
+  model: Model
+  assetIssues?: AssetIssue[]
+}
+
+// Full Asset interface for detailed view (includes all fields)
+export interface DetailedAsset {
+  id: number
+  assetId: string
+  serialNumber: string
+  status: AssetStatus
+  condition: AssetCondition
+  location?: string
   purchaseDate?: string
   purchaseCost?: number
   warrantyStartDate?: string
@@ -158,22 +178,37 @@ export interface SearchResponse {
   data: SearchResult
 }
 
-// For the frontend display - computed properties
+// For the frontend display - computed properties (optimized for table)
 export interface AssetDisplayItem {
   id: string
   type: string
   brand: string
-  brandModel: string
+  model: string
   serialNumber: string
   status: AssetStatus
   assignedTo?: string
-  purchaseDate: string
-  location: string
-  category: string
   condition: AssetCondition
+  // Additional fields for modal (populated when viewing details)
+  purchaseDate?: string
+  location?: string
+  category?: string
   purchaseCost?: number
-  vendor: string
-  warrantyUntil: string
+  vendor?: string
+  warrantyUntil?: string
+  warrantyStartDate?: string
+  notes?: string
+  // Assignment details
+  assignmentReason?: string
+  assignmentNotes?: string
+  assignmentDate?: string
+  assignedBy?: string
+  // Retirement details
+  retirementDate?: string
+  retirementReason?: string
+  retirementNotes?: string
+  // Reactivation details
+  reactivationDate?: string
+  reactivationReason?: string
 }
 
 // Filter options for dropdowns
