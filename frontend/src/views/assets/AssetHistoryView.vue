@@ -21,15 +21,9 @@
 
       <!-- Asset Info -->
       <div v-if="assetInfo" class="mb-3">
-          <div class="row align-items-center">
+          <div class="row align-items-center mb-4">
             <div class="col-12 col-md-8">
               <div class="d-flex align-items-center">
-                <div 
-                  class="rounded-circle d-flex align-items-center justify-content-center me-3" 
-                  :style="{ width: '40px', height: '40px', backgroundColor: getAssetIconColor(assetInfo.assetType), flexShrink: 0 }"
-                >
-                  <i :class="getAssetTypeIcon(assetInfo.assetType)" style="font-size: 1rem; color: white;"></i>
-            </div>
                 <div>
                   <h5 class="mb-0 fw-bold" style="color: var(--primary-black);">{{ assetInfo.name }}</h5>
                   <p class="text-muted mb-0 small">{{ assetInfo.assetId }} • {{ assetInfo.assetType || 'Asset' }}</p>

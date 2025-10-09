@@ -74,3 +74,27 @@
   font-size: 0.65rem !important;
   padding: 0.25rem 0.5rem !important;
 }
+
+/* =================================
+   BADGE CLOSE BUTTON
+   Close button for removable badges
+================================= */
+
+.badge .btn-close {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-left: 0.5rem !important;
+  opacity: 0.8 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.badge .btn-close:hover {
+  opacity: 1 !important;
+}
+
+.badge .btn-close::before {
+  content: "×" !important;
+  font-size: 1.2em !important;
+  font-weight: bold !important;
+}
