@@ -229,6 +229,49 @@ textarea.form-control.is-invalid:focus,
 }
 
 /* =================================
+   ASSET SPECIFICATIONS VALIDATION
+   For readonly asset specifications display
+================================= */
+
+/* Valid state for asset specifications */
+.asset-specifications-wrapper :deep(.form-control.is-valid) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  background-color: #F3F3F3 !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: unset !important;
+  background-size: unset !important;
+  padding-right: 0.75rem !important;
+}
+
+/* Invalid state for asset specifications */
+.asset-specifications-wrapper :deep(.form-control.is-invalid) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+  background-color: #F3F3F3 !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: unset !important;
+  background-size: unset !important;
+  padding-right: 0.75rem !important;
+}
+
+/* Focus states for asset specifications */
+.asset-specifications-wrapper :deep(.form-control.is-valid:focus) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  background-color: #F3F3F3 !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control.is-invalid:focus) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  background-color: #F3F3F3 !important;
+}
+
+/* =================================
    WAS-VALIDATED FORM STATE
    For forms using Bootstrap's was-validated class
 ================================= */
@@ -271,6 +314,30 @@ textarea.form-control.is-invalid:focus,
   border-color: #E97676 !important;
   box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
   animation: subtle-shake 0.3s ease-in-out !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: unset !important;
+  background-size: unset !important;
+  padding-right: 0.75rem !important;
+}
+
+/* Was-validated state for asset specifications */
+.was-validated .asset-specifications-wrapper :deep(.form-control:valid) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  background-color: #F3F3F3 !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: unset !important;
+  background-size: unset !important;
+  padding-right: 0.75rem !important;
+}
+
+.was-validated .asset-specifications-wrapper :deep(.form-control:invalid) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+  background-color: #F3F3F3 !important;
   background-image: none !important;
   background-repeat: no-repeat !important;
   background-position: unset !important;

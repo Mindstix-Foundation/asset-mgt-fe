@@ -1050,10 +1050,6 @@ onMounted(async () => {
   outline: 2px solid transparent;
 }
 
-.form-control:hover, .form-select:hover {
-  border-color: #6b7280;
-}
-
 /* Enhanced validation styling */
 .was-validated .form-control:valid,
 .was-validated .form-select:valid {

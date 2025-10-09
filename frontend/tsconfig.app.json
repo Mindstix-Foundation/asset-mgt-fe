@@ -7,7 +7,6 @@
     "src/**/*_new.*",
     "src/**/*.backup.*",
     "src/**/*.old.*",
-    "src/views/assets/old_AssetsView.vue",
     "src/components/HelloWorld.vue",
     "src/components/ui/date/DatePicker.vue",
     "src/components/ui/date/DateInput.vue"

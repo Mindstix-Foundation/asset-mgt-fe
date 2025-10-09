@@ -712,6 +712,52 @@ textarea.form-control:disabled,
 }
 
 /* =================================
+   ASSET SPECIFICATIONS WRAPPER
+   For readonly asset specifications display
+================================= */
+
+/* Asset Specifications - Make it look like a non-editable input */
+.asset-specifications-wrapper :deep(.form-control) {
+  background-color: #F3F3F3 !important;
+  border: 2px solid #E0E0E0 !important;
+  color: #0A0A0A !important;
+  cursor: default !important;
+  resize: none !important;
+  min-height: 80px !important;
+  padding: 0.75rem !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control:hover) {
+  border-color: #E0E0E0 !important;
+  background-color: #F3F3F3 !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control:focus) {
+  border-color: #E0E0E0 !important;
+  box-shadow: none !important;
+  background-color: #F3F3F3 !important;
+  outline: none !important;
+}
+
+.asset-specifications-wrapper :deep(.form-control::placeholder) {
+  color: #999999 !important;
+  font-style: italic !important;
+}
+
+.asset-specifications-wrapper :deep(.character-count) {
+  display: none !important;
+}
+
+.asset-specifications-wrapper :deep(.form-label) {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* =================================
    RESPONSIVE DESIGN
 ================================= */
 
@@ -736,6 +782,11 @@ textarea.form-control:disabled,
   
   .year-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .asset-specifications-wrapper :deep(.form-control) {
+    min-height: 60px !important;
+    font-size: 0.85rem !important;
   }
 }
 

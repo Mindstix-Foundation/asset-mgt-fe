@@ -217,18 +217,6 @@
   color: var(--primary-mid-gray);
 }
 
-.date-input-container:hover .date-icon {
-  color: #495057;
-}
-
-.date-input-wrapper:hover .date-icon {
-  color: var(--primary-dark-gray);
-}
-
-.date-display:hover {
-  border-color: #adb5bd !important;
-}
-
 .date-display:focus {
   border-color: #331FEA !important;
   box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
@@ -325,10 +313,6 @@
   border-color: #198754 !important;
   box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
   background-image: none !important; /* remove Bootstrap green tick bg */
-}
-
-.date-display-input:hover {
-  border-color: #adb5bd !important;
 }
 
 .date-display-input:focus {
@@ -654,6 +638,139 @@
 }
 
 
+
+/* =================================
+   NOTES TEXTAREA STYLES
+   For NotesTextarea component
+================================= */
+
+/* Notes textarea container */
+.notes-textarea-container {
+  width: 100%;
+}
+
+/* Auto-expanding textarea */
+.auto-expand-textarea {
+  transition: height 0.2s ease, border-color 0.2s ease;
+  resize: none;
+  overflow: hidden;
+  min-height: 72px; /* 3 rows minimum */
+}
+
+/* Hover effect removed for NotesTextarea */
+
+/* Character count styling */
+.character-count {
+  margin-top: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.character-count .text-warning {
+  color: #f59e0b !important;
+}
+
+.character-count .text-danger {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* Form controls - Match form.css specifications (EXCLUDE readonly-notes-textarea) */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  resize: vertical !important;
+  min-height: 2.5rem !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control::placeholder {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Notes textarea validation states (EXCLUDE readonly-notes-textarea) */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid:focus,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  background-color: #fff !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid:focus,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  background-color: #fff !important;
+}
+
+/* Validation shake animation */
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Form control hover effect removed for NotesTextarea */
+
+/* Form labels - Match form.css specifications */
+.notes-textarea-container .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+.notes-textarea-container .form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.notes-textarea-container .text-danger {
+  color: #dc2626 !important;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.notes-textarea-container .text-muted {
+  color: #4b5563 !important;
+  font-weight: 600;
+  font-size: 0.9em;
+}
 
 /* Responsive Design */
 @media (max-width: 576px) {

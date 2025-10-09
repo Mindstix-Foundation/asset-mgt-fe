@@ -2,20 +2,18 @@
   <div class="container-fluid py-4">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
-        <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
-          <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
-            <div style="display: block;">
-              <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">
-                {{ isEditMode ? 'Edit Asset' : 'Add New Asset' }}
-              </h4>
-              <p class="text-muted mb-0 small" style="display: block;">
-                {{ isEditMode ? 'Update asset information in your system' : 'Register a new asset in your system' }}
-              </p>
-            </div>
+        <div class="card mx-auto">
+          <div class="card-header">
+            <h4 class="card-title">
+              {{ isEditMode ? 'Edit Asset' : 'Add New Asset' }}
+            </h4>
+            <p class="text-muted">
+              {{ isEditMode ? 'Update asset information in your system' : 'Register a new asset in your system' }}
+            </p>
           </div>
           
           <!-- Card Body -->
-          <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+          <div class="card-body">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
               <div class="spinner-border text-primary">
@@ -199,13 +197,16 @@
                   <!-- Purchase Date -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="purchaseDate"
+                      input-id="purchaseDate"
                       label="Purchase Date (Optional)"
                       v-model="formData.purchaseDate"
                       :max="todayDate"
                       help-text="Cannot be future date"
-                      @change="handleFieldInput('purchaseDate')"
+                      :error-message="errors.purchaseDate"
+                      :input-class="getFieldClass('purchaseDate') as any"
+                      @change="validateFieldInline('purchaseDate')"
                       @blur="validateFieldInline('purchaseDate')"
+                      @focus="clearFieldValidation('purchaseDate')"
                     />
                   </div>
 
@@ -260,24 +261,30 @@
                   <!-- Warranty Start Date -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="warrantyStartDate" 
+                      input-id="warrantyStartDate" 
                       label="Warranty Start Date (Optional)"
                       v-model="formData.warrantyStartDate"
                       help-text="When warranty coverage begins"
-                      @change="handleFieldInput('warrantyStartDate')"
+                      :error-message="errors.warrantyStartDate"
+                      :input-class="getFieldClass('warrantyStartDate') as any"
+                      @change="validateFieldInline('warrantyStartDate')"
                       @blur="validateFieldInline('warrantyStartDate')"
+                      @focus="clearFieldValidation('warrantyStartDate')"
                     />
                   </div>
 
                   <!-- Warranty End Date -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="warrantyEndDate" 
+                      input-id="warrantyEndDate" 
                       label="Warranty End Date (Optional)"
                       v-model="formData.warrantyEndDate"
                       help-text="When warranty coverage expires"
-                      @change="handleFieldInput('warrantyEndDate')"
+                      :error-message="errors.warrantyEndDate"
+                      :input-class="getFieldClass('warrantyEndDate') as any"
+                      @change="validateFieldInline('warrantyEndDate')"
                       @blur="validateFieldInline('warrantyEndDate')"
+                      @focus="clearFieldValidation('warrantyEndDate')"
                     />
                   </div>
                 </div>
@@ -377,9 +384,10 @@
           </div>
           
           <!-- Action Buttons -->
-          <div class="card-footer bg-light border-top">
+          <div class="card-footer">
             <div class="form-actions">
-              <div class="d-flex justify-content-center gap-3">
+              <!-- Buttons Row -->
+              <div class="d-flex justify-content-center gap-3 mb-3">
                 <button 
                   type="button" 
                   class="btn btn-cancel" 
@@ -390,15 +398,16 @@
                 </button>
                 <button 
                   type="submit" 
-                  class="btn btn-primary px-5 py-2" 
+                  class="btn btn-purple" 
                   @click="handleSubmit"
                   :disabled="isSubmitting"
                 >
                   <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
                   {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Registering...') : (isEditMode ? 'Update Asset' : 'Register Asset') }}
                 </button>
-              </div>
-              <div class="text-center mt-3">
+                </div>
+                <!-- Text Row -->
+              <div class="text-center">
                 <small class="text-muted">
                   Fields marked with <span class="text-danger">*</span> are required
                 </small>
@@ -705,7 +714,7 @@ const availableStatusOptions = computed(() => {
   }
 })
 
-// Validation system (following EmployeeForm pattern)
+// Validation system (following IssueAssetView/CollectAssetView pattern)
 const getFieldClass = (fieldName: string) => {
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
     return {}
@@ -717,6 +726,61 @@ const getFieldClass = (fieldName: string) => {
   }
 }
 
+// Helper function to apply validation classes to SearchableDropdown components
+const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Find the SearchableDropdown input by ID
+  const input = document.getElementById(fieldName) as HTMLInputElement
+  
+  if (!input) {
+    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+  }
+}
+
+// Helper functions for field validation
+const validateRequiredField = (fieldName: string, value: any, element: HTMLElement): boolean => {
+  const isRequired = element.hasAttribute('required')
+  
+  if (isRequired && (!value || value.toString().trim() === '')) {
+    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+    return false
+  }
+  
+  return true
+}
+
+const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
+  if (selectedValue) {
+    setFieldValid(fieldName)
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+    return true
+  } else {
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
+    return false
+  }
+}
+
+const validateStandardField = (fieldName: string, element: HTMLElement): boolean => {
+  const inputElement = element as FormElement
+  if (inputElement.checkValidity()) {
+    setFieldValid(fieldName)
+    return true
+  } else {
+    setFieldError(fieldName, inputElement.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+    return false
+  }
+}
+
 const setFieldError = (fieldName: string, message: string) => {
   errors[fieldName as keyof typeof errors] = message
   fieldValidation[fieldName] = false
@@ -724,6 +788,12 @@ const setFieldError = (fieldName: string, message: string) => {
   const element = document.getElementById(fieldName) as FormElement
   if (element && 'setCustomValidity' in element) {
     element.setCustomValidity(message)
+  }
+  
+  // Apply validation classes to SearchableDropdown fields
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  if (searchableDropdownFields.includes(fieldName)) {
+    applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
 }
 
@@ -735,12 +805,27 @@ const setFieldValid = (fieldName: string) => {
   if (element && 'setCustomValidity' in element) {
     element.setCustomValidity('')
   }
+  
+  // Apply validation classes to SearchableDropdown fields
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  if (searchableDropdownFields.includes(fieldName)) {
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+  }
 }
 
 const clearFieldValidation = (fieldName: string) => {
   if (fieldValidation[fieldName] === false) {
     fieldValidation[fieldName] = null
     delete errors[fieldName as keyof typeof errors]
+  }
+  
+  // Also clear validation for SearchableDropdown components
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  if (searchableDropdownFields.includes(fieldName)) {
+    const input = document.getElementById(fieldName) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid', 'is-valid')
+    }
   }
 }
 
@@ -754,46 +839,56 @@ const validateFieldInline = async (fieldName: string) => {
   const value = (formData as any)[fieldName]
   const element = document.getElementById(fieldName) as FormElement
   
-  // Handle dropdown fields that don't have direct HTML form elements
-  const dropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'vendor', 'status']
-  if (dropdownFields.includes(fieldName)) {
-    const isFieldValid = await validateFieldType(fieldName, value)
-    return isFieldValid
-  }
-  
-  if (!element) return true
-
-  // Only call setCustomValidity if the element supports it
-  if ('setCustomValidity' in element) {
-    element.setCustomValidity('')
-  }
-
-  const isRequired = element.hasAttribute('required')
-  
-  if (isRequired && (!value || value.toString().trim() === '')) {
-    setFieldError(fieldName, '')
+  if (!element) {
+    console.log(`Element not found for field: ${fieldName}`)
     return false
   }
 
-  const isFieldValid = await validateFieldType(fieldName, value)
-  if (!isFieldValid) {
+  // Clear previous custom validity
+  element.setCustomValidity('')
+
+  // Check if field is required
+  if (!validateRequiredField(fieldName, value, element)) {
+    console.log(`Field ${fieldName} failed required validation`)
     return false
   }
 
-  // Only call checkValidity if the element supports it
-  if ('checkValidity' in element) {
-    if (element.checkValidity()) {
-      setFieldValid(fieldName)
-      return true
+  // Handle specific field validations
+  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
+  if (handler) {
+    console.log(`Using specific handler for field: ${fieldName}`)
+    if (['purchaseDate', 'purchaseCost', 'warrantyStartDate', 'warrantyEndDate'].includes(fieldName)) {
+      return (handler as (value: any) => boolean)(value)
     } else {
-      setFieldError(fieldName, element.validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
-      return false
+      return (handler as () => boolean)()
     }
-  } else {
-    // For elements that don't support checkValidity, just use our validation result
-    setFieldValid(fieldName)
-    return true
   }
+
+  // For SearchableDropdown fields, we've already handled validation above
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  if (searchableDropdownFields.includes(fieldName)) {
+    console.log(`Field ${fieldName} is a SearchableDropdown, already validated`)
+    return true // Already validated above
+  }
+
+  // Use native validation for other fields
+  console.log(`Using standard validation for field: ${fieldName}`)
+  return validateStandardField(fieldName, element)
+}
+
+// Validation configuration mapping
+const validationHandlers = {
+  assetCategory: () => validateRequiredDropdown('assetCategory', selectedCategory.value),
+  assetType: () => validateRequiredDropdown('assetType', selectedType.value),
+  brand: () => validateRequiredDropdown('brand', selectedBrand.value),
+  model: () => validateRequiredDropdown('model', selectedModel.value),
+  condition: () => validateRequiredDropdown('condition', selectedCondition.value),
+  vendor: () => validateOptionalDropdown('vendor', selectedVendor.value),
+  status: () => validateOptionalDropdown('status', selectedStatus.value),
+  purchaseDate: (value: any) => validatePurchaseDateField(value),
+  purchaseCost: (value: any) => validatePurchaseCostField(value),
+  warrantyStartDate: (value: any) => validateWarrantyDateField('warrantyStartDate', value),
+  warrantyEndDate: (value: any) => validateWarrantyDateField('warrantyEndDate', value)
 }
 
 const validateFieldType = async (fieldName: string, value: any): Promise<boolean> => {
@@ -838,6 +933,12 @@ const validateRequiredDropdownField = (fieldName: string, selectedValue: any): b
     setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
     return false
   }
+}
+
+const validateOptionalDropdown = (fieldName: string, selectedValue: any): boolean => {
+  // Optional fields are always valid
+  setFieldValid(fieldName)
+  return true
 }
 
 const validateOptionalDropdownField = (fieldName: string, selectedValue: any): boolean => {
@@ -991,16 +1092,7 @@ const validateSerialNumber = async () => {
   await validateFieldInline('serialNumber')
 }
 
-// Helper functions for field validation
-const validateRequiredDropdown = (fieldName: string, selectedValue: any) => {
-  if (selectedValue) {
-    (errors as any)[fieldName] = ''
-    applyValidationToSearchableDropdown(fieldName, 'valid')
-  } else {
-    (errors as any)[fieldName] = `${getFieldDisplayName(fieldName)} is required`
-    applyValidationToSearchableDropdown(fieldName, 'invalid')
-  }
-}
+// Legacy validation functions removed - using new comprehensive validation system
 
 const validateLocation = (field: HTMLInputElement) => {
   if (!formData.location || formData.location.trim() === '') {
@@ -1056,87 +1148,7 @@ const validatePurchaseCost = (field: HTMLInputElement) => {
   }
 }
 
-const validateOptionalField = (fieldName: string, field: HTMLInputElement) => {
-  (errors as any)[fieldName] = ''
-  if (fieldName === 'notes') {
-    const textarea = document.getElementById('notes') as HTMLTextAreaElement
-    if (textarea) {
-      textarea.classList.add('is-valid')
-      textarea.classList.remove('is-invalid')
-    } else {
-      console.warn('Could not find notes textarea element')
-    }
-  } else {
-    applyValidationToSearchableDropdown(fieldName, 'valid')
-  }
-}
-
-// Validation configuration mapping
-const validationHandlers = {
-  serialNumber: async () => await validateSerialNumber(),
-  assetCategory: () => validateRequiredDropdown('assetCategory', selectedCategory.value),
-  assetType: () => validateRequiredDropdown('assetType', selectedType.value),
-  brand: () => validateRequiredDropdown('brand', selectedBrand.value),
-  model: () => validateRequiredDropdown('model', selectedModel.value),
-  location: (field: HTMLInputElement) => validateLocation(field),
-  condition: () => validateRequiredDropdown('condition', selectedCondition.value),
-  vendor: (field: HTMLInputElement) => validateOptionalField('vendor', field),
-  notes: (field: HTMLInputElement) => validateOptionalField('notes', field),
-  purchaseDate: (field: HTMLInputElement) => validatePurchaseDate(field),
-  purchaseCost: (field: HTMLInputElement) => validatePurchaseCost(field)
-}
-
-const validateField = async (fieldName: string) => {
-  const field = document.getElementById(fieldName) as HTMLInputElement
-  if (!field) return
-
-  const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
-  if (handler) {
-    await handler(field)
-  }
-}
-
-// Helper function to apply validation classes to SearchableDropdown components
-const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
-  // Try multiple ways to find the SearchableDropdown input
-  let input: HTMLInputElement | null = null
-  
-  // Method 1: Find by ID and then look for form-control in parent wrapper
-  const element = document.getElementById(fieldName)
-  if (element) {
-    const wrapper = element.closest('.form-searchable-dropdown')
-    if (wrapper) {
-      input = wrapper.querySelector('.form-control') as HTMLInputElement
-    }
-  }
-  
-  // Method 2: If not found, try direct selector
-  if (!input) {
-    input = document.querySelector(`#${fieldName} .form-control`) as HTMLInputElement
-  }
-  
-  // Method 3: If still not found, try finding by wrapper and then input
-  if (!input) {
-    const wrapper = document.querySelector(`#${fieldName}`)?.parentElement?.querySelector('.form-searchable-dropdown')
-    if (wrapper) {
-      input = wrapper.querySelector('.form-control') as HTMLInputElement
-    }
-  }
-  
-  if (!input) {
-    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
-    return
-  }
-
-  // Apply validation classes
-  if (validationType === 'invalid') {
-    input.classList.add('is-invalid')
-    input.classList.remove('is-valid')
-  } else {
-    input.classList.add('is-valid')
-    input.classList.remove('is-invalid')
-  }
-}
+// Old validation functions removed - using new comprehensive validation system
 
 const clearFieldError = (fieldName: string) => {
   if (errors[fieldName as keyof typeof errors]) {
@@ -1837,11 +1849,10 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
 </script>
 
 <style scoped>
-/* Import unified form styles (replaces old formValidation.css) */
+/* Import unified form styles */
 @import url('../../assets/unified-form-styles.css');
 
-
-/* AssetForm-specific responsive adjustments */
+/* Component-specific responsive adjustments only */
 @media (max-width: 768px) {
   .card-body {
     padding: 1.5rem !important;

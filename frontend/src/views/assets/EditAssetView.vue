@@ -22,9 +22,6 @@
             <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
             <h4 class="mt-3 text-dark">Asset Not Found</h4>
             <p class="text-muted">The asset you're trying to edit could not be found.</p>
-            <button class="btn btn-primary" @click="goBack">
-              <i class="fas fa-arrow-left me-2"></i>Back to Asset List
-            </button>
           </div>
         </div>
       </div>

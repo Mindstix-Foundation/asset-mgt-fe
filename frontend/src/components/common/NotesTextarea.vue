@@ -1,5 +1,5 @@
 <template>
-  <div class="notes-textarea-container">
+  <div class="notes-textarea-container" :class="{ 'readonly-notes-textarea': readonly }">
     <label v-if="showLabel" :for="inputId" class="form-label">
       {{ label }} 
       <span v-if="required" class="text-danger">*</span>
@@ -16,13 +16,24 @@
       :maxlength="maxLength"
       :required="required"
       :readonly="readonly"
+      :tabindex="readonly ? -1 : undefined"
       :title="`Notes cannot exceed ${maxLength} characters`"
       :value="modelValue"
+      :style="{
+        whiteSpace: 'pre-wrap',
+        overflowWrap: 'break-word',
+        ...(readonly ? {
+          backgroundColor: 'rgb(243, 243, 243)',
+          borderColor: 'rgb(224, 224, 224)',
+          cursor: 'default',
+          pointerEvents: 'none',
+          userSelect: 'none'
+        } : {})
+      }"
       @input="handleInput"
       @blur="handleBlur"
       @focus="handleFocus"
       @keydown="handleKeydown"
-      style="white-space: pre-wrap; overflow-wrap: break-word;"
     ></textarea>
     
     <div class="form-text">
@@ -159,10 +170,23 @@ const applySmartFormatting = (value: string, target: HTMLTextAreaElement): strin
 }
 
 const handleBlur = () => {
+  // Don't validate if readonly
+  if (props.readonly) {
+    return
+  }
   validateField()
 }
 
 const handleFocus = () => {
+  // Don't handle focus if readonly
+  if (props.readonly) {
+    // Immediately blur the field if it's readonly and somehow got focus
+    if (textareaRef.value) {
+      textareaRef.value.blur()
+    }
+    return
+  }
+  
   // Clear validation state on focus if field was invalid
   if (isValid.value === false) {
     isValid.value = null
@@ -197,9 +221,20 @@ const validateField = () => {
 }
 
 const getFieldClass = () => {
-  // Don't apply validation classes - let parent components handle validation styling
-  // This prevents Bootstrap's default checkmark/exclamation icons from appearing
-  return {}
+  // Don't apply validation classes for readonly fields
+  if (props.readonly) {
+    return {}
+  }
+  
+  // Apply validation classes to match standard input behavior
+  if (isValid.value === null) {
+    return {} // No validation styling before validation
+  }
+  
+  return {
+    'is-valid': isValid.value === true,
+    'is-invalid': isValid.value === false
+  }
 }
 
 const getCounterClass = () => {
@@ -276,84 +311,5 @@ defineExpose({
 </script>
 
 <style scoped>
-.notes-textarea-container {
-  width: 100%;
-}
-
-.auto-expand-textarea {
-  transition: height 0.2s ease, border-color 0.2s ease;
-  resize: none;
-  overflow: hidden;
-  min-height: 72px; /* 3 rows minimum */
-}
-
-.auto-expand-textarea:hover {
-  border-color: #999999;
-}
-
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-.character-count .text-warning {
-  color: #f59e0b !important;
-}
-
-.character-count .text-danger {
-  color: #dc2626 !important;
-  font-weight: 600;
-}
-
-/* Form controls */
-.form-control {
-  border: 2px solid #999999;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
-  color: #1f2937;
-}
-
-.form-control::placeholder {
-  color: #4b5563 !important;
-  opacity: 1;
-}
-
-.form-control:focus {
-  border-color: #331FEA;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
-  outline: 2px solid transparent;
-}
-
-.form-control:hover {
-  border-color: #6b7280;
-}
-
-/* Validation styling removed - now handled by formValidation.css for form pages only */
-
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
-}
-
-.form-text {
-  font-size: 0.875rem;
-  color: #666666 !important;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-
-.text-danger {
-  color: #dc2626 !important;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.text-muted {
-  color: #4b5563 !important;
-  font-weight: 600;
-  font-size: 0.9em;
-}
+/* All styles moved to filters.css for centralized management */
 </style>

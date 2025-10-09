@@ -2,14 +2,12 @@
   <div class="container-fluid py-4">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
-        <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(10, 10, 10, 0.3) !important;">
-          <div class="card-header bg-light border-bottom text-center py-3 py-md-4" style="border-radius: 1.5rem 1.5rem 0 0; background: #F3F3F3 !important;">
-            <div style="display: block;">
-              <h4 class="card-title mb-3 fw-bold text-dark" style="display: block;">Collect Asset from Employee</h4>
-              <p class="text-muted mb-0 small" style="display: block;">Retrieve an assigned asset from an employee</p>
-            </div>
+        <div class="card mx-auto">
+          <div class="card-header">
+            <h4 class="card-title">Collect Asset from Employee</h4>
+            <p class="text-muted">Retrieve an assigned asset from an employee</p>
           </div>
-          <div class="card-body px-3 px-md-4 px-lg-5 py-2 py-md-3 py-lg-4">
+          <div class="card-body">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-5">
               <div class="spinner-border text-primary">
@@ -31,48 +29,44 @@
                       <SearchableDropdown
                         id="employeeId"
                         label="Employee ID - Name"
-                        placeholder="Search employees..."
+                        placeholder="Search employees with assigned assets..."
                         :items="employeeItems"
                         v-model="selectedEmployee"
                         required
                         @change="onEmployeeChange"
                       />
                     </div>
-                    <div class="form-text">Select employee to filter their assigned assets (required)</div>
+                    <div class="form-text">Select employee who has assets assigned to them (required)</div>
                   </div>
                   
-                  <!-- Assignment Reason -->
+                  <!-- Issue Reason -->
                   <div v-if="selectedAssignmentReason" class="col-12">
-                    <div class="asset-specifications-wrapper">
-                      <NotesTextarea 
-                        :model-value="selectedAssignmentReason"
-                        label="Assignment Reason"
-                        placeholder="No assignment reason available"
-                        help-text=""
-                        :max-length="1000"
-                        :required="false"
-                        :show-label="true"
-                        :readonly="true"
-                        input-id="assignmentReason"
-                        @validation="() => {}"
-                      />
-                    </div>
+                    <label for="issueReason" class="form-label">Issue Reason</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="issueReason" 
+                      :value="selectedAssignmentReason"
+                      readonly 
+                      style="background-color: #F3F3F3; cursor: default;" 
+                      placeholder="No issue reason available"
+                    >
+                    <div class="form-text">Reason for the original asset assignment</div>
                   </div>
                   
-                  <!-- Assignment Notes -->
+                  <!-- Issue Notes -->
                   <div v-if="selectedAssignmentNotes" class="col-12">
                     <div class="asset-specifications-wrapper">
                       <NotesTextarea 
                         :model-value="selectedAssignmentNotes"
-                        label="Assignment Notes"
-                        placeholder="No assignment notes available"
+                        label="Issue Notes"
+                        placeholder="No issue notes available"
                         help-text=""
                         :max-length="1000"
                         :required="false"
                         :show-label="true"
                         :readonly="true"
                         input-id="assignmentNotes"
-                        @validation="() => {}"
                       />
                     </div>
                   </div>
@@ -109,28 +103,13 @@
                       id="assetBrandModel" 
                       v-model="formData.assetBrandModel"
                       readonly 
-                      style="background-color: #F3F3F3;" 
+                      style="background-color: #F3F3F3; cursor: default;" 
                       placeholder="Auto-filled from selection"
                     >
                     <div class="form-text">Automatically populated based on asset selection</div>
                   </div>
                 </div>
                 
-                <!-- Asset Condition When Assigned -->
-                <div v-if="selectedAssetCondition" class="mt-4">
-                  <div class="asset-specifications-wrapper">
-                    <label for="assetConditionWhenAssigned" class="form-label">Asset Condition When Assigned</label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="assetConditionWhenAssigned" 
-                      :value="selectedAssetCondition"
-                      disabled 
-                      placeholder="No condition information available"
-                    >
-                    <div class="form-text">Condition of the asset when it was originally assigned</div>
-                  </div>
-                </div>
 
                 <!-- Asset Specifications -->
                 <div v-if="selectedAssetSpecs" class="mt-4">
@@ -145,7 +124,6 @@
                       :show-label="true"
                       :readonly="true"
                       input-id="assetSpecifications"
-                      @validation="() => {}"
                     />
                   </div>
                 </div>
@@ -159,39 +137,33 @@
                   <!-- Collection Date -->
                   <div class="col-md-6">
                     <DatePicker
-                      id="collectionDate"
-                      label="Collection Date *"
                       v-model="formData.collectionDate"
-                      :error-message="fieldErrors.collectionDate"
+                      label="Collection Date"
+                      placeholder="dd-mm-yyyy"
                       help-text="Date when the asset will be collected (required)"
-                      required
+                      :required="true"
+                      input-id="collectionDate"
+                      :error-message="fieldErrors.collectionDate"
+                      :input-class="getFieldClass('collectionDate') as any"
                       @change="validateFieldInline('collectionDate')"
-                      @blur="clearFieldValidation('collectionDate')"
+                      @blur="validateFieldInline('collectionDate')"
+                      @focus="clearFieldValidation('collectionDate')"
                     />
                   </div>
 
-                  <!-- Collection Reason -->
+                  <!-- Issue Date -->
                   <div class="col-md-6">
-                    <label for="collectionReason" class="form-label">Collection Reason <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="collectionReason" 
-                      v-model="formData.collectionReason"
-                      :class="getFieldClass('collectionReason')"
-                      required
-                      @change="validateFieldInline('collectionReason')"
-                      @focus="clearFieldValidation('collectionReason')"
+                    <label for="issueDate" class="form-label">Issue Date</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="issueDate" 
+                      :value="selectedAssignmentDate"
+                      readonly 
+                      style="background-color: #F3F3F3; cursor: default;" 
+                      placeholder="Auto-filled from assignment"
                     >
-                      <option value="">Choose reason...</option>
-                      <option value="employee-left">Employee Left Company</option>
-                      <option value="reassignment">Asset Reassignment</option>
-                      <option value="maintenance">Maintenance Required</option>
-                      <option value="upgrade">Equipment Upgrade</option>
-                      <option value="return-request">Employee Return Request</option>
-                      <option value="other">Other Reason</option>
-                    </select>
-                    <div class="form-text">Select the reason for collecting this asset (required)</div>
-                    <div v-if="fieldErrors.collectionReason" class="invalid-feedback">{{ fieldErrors.collectionReason }}</div>
+                    <div class="form-text">Date when the asset was originally issued</div>
                   </div>
 
                   <!-- Asset Condition -->
@@ -208,6 +180,38 @@
                       />
                     </div>
                     <div class="form-text">Select the current condition of the asset (required)</div>
+                  </div>
+
+                  <!-- Issue Condition -->
+                  <div class="col-md-6">
+                    <label for="issueCondition" class="form-label">Issue Condition</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="issueCondition" 
+                      :value="selectedAssetCondition"
+                      readonly 
+                      style="background-color: #F3F3F3; cursor: default;" 
+                      placeholder="Auto-filled from assignment"
+                    >
+                    <div class="form-text">Condition of the asset when it was originally issued</div>
+                  </div>
+
+                  <!-- Collection Reason -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="collectionReason"
+                        label="Collection Reason"
+                        placeholder="Search collection reasons..."
+                        :items="collectionReasonItems"
+                        v-model="selectedCollectionReason"
+                        :required="true"
+                        @change="onCollectionReasonChange"
+                      />
+                    </div>
+                    <div class="form-text">Select the reason for collecting this asset (required)</div>
+                    <div v-if="fieldErrors.collectionReason" class="invalid-feedback">{{ fieldErrors.collectionReason }}</div>
                   </div>
 
                   <!-- Collection Notes -->
@@ -230,15 +234,16 @@
           </div>
           
           <!-- Action Buttons -->
-          <div class="card-footer bg-light border-top">
+          <div class="card-footer">
             <div class="form-actions">
-              <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-outline-secondary px-4 py-2" @click="goBack">
+              <!-- Buttons Row -->
+              <div class="d-flex justify-content-center gap-3 mb-3">
+                <button type="button" class="btn btn-cancel" @click="goBack">
                   Cancel
                 </button>
                 <button 
                   type="submit" 
-                  class="btn btn-pink px-5 py-2" 
+                  class="btn btn-pink" 
                   :disabled="isSubmitting"
                   @click="submitForm"
                 >
@@ -246,7 +251,9 @@
                   {{ isSubmitting ? 'Collecting Asset...' : 'Collect Asset' }}
                 </button>
               </div>
-              <div class="text-center mt-3">
+              <br>
+              <!-- Text Row -->
+              <div class="text-center">
                 <small class="text-muted">
                   Fields marked with <span class="text-danger">*</span> are required
                 </small>
@@ -297,17 +304,25 @@
                 <div class="col-4 fw-semibold text-muted">Reason:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.reason }}</div>
               </div>
+              <div class="row mb-2">
+                <div class="col-4 fw-semibold text-muted">Issue Date:</div>
+                <div class="col-8 fw-medium">{{ confirmationDetails.assignmentDate }}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-4 fw-semibold text-muted">Issue Condition:</div>
+                <div class="col-8 fw-medium">{{ confirmationDetails.assignmentCondition }}</div>
+              </div>
               <div class="row">
-                <div class="col-4 fw-semibold text-muted">Condition:</div>
+                <div class="col-4 fw-semibold text-muted">Current Condition:</div>
                 <div class="col-8 fw-medium">{{ confirmationDetails.condition }}</div>
               </div>
             </div>
           </div>
           <div class="modal-footer border-0 pt-0">
-            <button type="button" class="btn btn-outline-secondary px-4" @click="closeConfirmationModal">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeConfirmationModal">
               Cancel
             </button>
-            <button type="button" class="btn btn-pink px-4" @click="confirmCollection">
+            <button type="button" class="btn btn-pink btn-sm" @click="confirmCollection">
               Confirm Collection
             </button>
           </div>
@@ -356,6 +371,7 @@ const formData = reactive({
 const selectedEmployee = ref<Item | null>(null)
 const selectedAsset = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
+const selectedCollectionReason = ref<Item | null>(null)
 
 // Form state - Enhanced validation system like the prototype
 const fieldErrors = reactive<Record<string, string>>({})
@@ -397,6 +413,15 @@ const conditionItems = computed(() => [
   { id: 'FAIR', name: 'Fair', value: 'FAIR' },
   { id: 'POOR', name: 'Poor', value: 'POOR' },
   { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
+])
+
+const collectionReasonItems = computed(() => [
+  { id: 'employee-left', name: 'Employee Left Company', value: 'employee-left' },
+  { id: 'reassignment', name: 'Asset Reassignment', value: 'reassignment' },
+  { id: 'maintenance', name: 'Maintenance Required', value: 'maintenance' },
+  { id: 'upgrade', name: 'Equipment Upgrade', value: 'upgrade' },
+  { id: 'return-request', name: 'Employee Return Request', value: 'return-request' },
+  { id: 'other', name: 'Other Reason', value: 'other' }
 ])
 
 const reasonLabels = {
@@ -468,6 +493,8 @@ const confirmationDetails = computed(() => {
       day: 'numeric' 
     }) : '-',
     reason: reasonLabel || '-',
+    assignmentDate: selectedAssignmentDate.value || '-',
+    assignmentCondition: selectedAssetCondition.value || '-',
     condition: conditionLabel || '-'
   }
 })
@@ -546,6 +573,29 @@ const selectedAssetCondition = computed(() => {
   return conditionLabel
 })
 
+// Computed property for selected assignment date
+const selectedAssignmentDate = computed(() => {
+  if (!formData.assetId) return null
+  
+  const selectedAssignment = assignedAssets.value.find(assignment => 
+    assignment.id.toString() === formData.assetId.toString()
+  )
+  
+  if (!selectedAssignment?.issueDate) return null
+  
+  // Format the date for display (dd-mm-yyyy format)
+  try {
+    const date = new Date(selectedAssignment.issueDate)
+    const day = date.getDate().toString().padStart(2, '0')
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}-${month}-${year}`
+  } catch (error) {
+    console.warn('Failed to format issue date:', error)
+    return selectedAssignment.issueDate
+  }
+})
+
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
@@ -601,6 +651,18 @@ const onConditionChange = (item: Item | null) => {
   validateFieldInline('assetCondition')
 }
 
+const onCollectionReasonChange = (item: Item | null) => {
+  selectedCollectionReason.value = item
+  formData.collectionReason = item && item.value ? item.value.toString() : ''
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldValidation('collectionReason')
+  }
+  
+  validateFieldInline('collectionReason')
+}
+
 // Helper function to apply validation classes to SearchableDropdown components
 const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
   // Find the SearchableDropdown input by ID
@@ -608,6 +670,26 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   
   if (!input) {
     console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+  }
+}
+
+// Helper function to apply validation classes to DatePicker components
+const applyValidationToDatePicker = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Find the DatePicker input by ID
+  const input = document.getElementById(fieldName) as HTMLInputElement
+  
+  if (!input) {
+    console.warn(`Could not find input for DatePicker field: ${fieldName}`)
     return
   }
 
@@ -646,17 +728,60 @@ const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolea
 }
 
 const validateCollectionDate = (fieldName: string, value: any): boolean => {
-  if (!value) return true
+  console.log(`=== validateCollectionDate called ===`)
+  console.log(`Field: ${fieldName}, Value: ${value}`)
   
+  if (!value) {
+    console.log('No value provided, setting error')
+    setFieldError(fieldName, 'Collection date is required')
+    return false
+  }
+  
+  // Parse date from both dd-mm-yyyy and yyyy-mm-dd formats
+  const parseDate = (dateString: string): Date | null => {
+    const parts = dateString.split('-')
+    if (parts.length === 3) {
+      // Check if it's yyyy-mm-dd format (first part is 4 digits)
+      if (parts[0].length === 4) {
+        const [year, month, day] = parts.map(Number)
+        console.log(`Parsing yyyy-mm-dd: year=${year}, month=${month}, day=${day}`)
+        return new Date(year, month - 1, day) // month is 0-indexed
+      } else {
+        // Assume dd-mm-yyyy format
+        const [day, month, year] = parts.map(Number)
+        console.log(`Parsing dd-mm-yyyy: day=${day}, month=${month}, year=${year}`)
+        return new Date(year, month - 1, day) // month is 0-indexed
+      }
+    }
+    return null
+  }
+  
+  const selectedDate = parseDate(value)
+  console.log(`Parsed date: ${selectedDate}`)
+  
+  if (!selectedDate || Number.isNaN(selectedDate.getTime())) {
+    console.log('Invalid date format, setting error')
+    setFieldError(fieldName, 'Invalid date format')
+    return false
+  }
+  
+  // Check if date is more than 30 days in the future
   const futureLimit = new Date()
-  futureLimit.setDate(futureLimit.getDate() + 30) // Allow up to 30 days in future
-  const futureLimitStr = futureLimit.toISOString().split('T')[0]
+  futureLimit.setDate(futureLimit.getDate() + 30)
   
-  if (value > futureLimitStr) {
+  if (selectedDate > futureLimit) {
+    console.log('Date is too far in future, setting error')
     setFieldError(fieldName, 'Collection date cannot be more than 30 days in the future')
     return false
   }
   
+  console.log('Date validation:', { 
+    value, 
+    selectedDate: selectedDate.toISOString()
+  })
+  
+  console.log('Date is valid, setting valid state')
+  setFieldValid(fieldName)
   return true
 }
 
@@ -678,6 +803,7 @@ const validationHandlers = {
   employeeId: () => validateRequiredDropdown('employeeId', selectedEmployee.value),
   assetId: () => validateRequiredDropdown('assetId', selectedAsset.value),
   assetCondition: () => validateRequiredDropdown('assetCondition', selectedCondition.value),
+  collectionReason: () => validateRequiredDropdown('collectionReason', selectedCollectionReason.value),
   collectionDate: (value: any) => validateCollectionDate('collectionDate', value)
 }
 
@@ -706,7 +832,7 @@ const validateFieldInline = (fieldName: string) => {
   }
 
   // For SearchableDropdown fields, we've already handled validation above
-  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition', 'collectionReason']
   if (searchableDropdownFields.includes(fieldName)) {
     return true // Already validated above
   }
@@ -716,6 +842,7 @@ const validateFieldInline = (fieldName: string) => {
 }
 
 const setFieldError = (fieldName: string, message: string) => {
+  console.log(`setFieldError called for ${fieldName}:`, message)
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
@@ -725,13 +852,25 @@ const setFieldError = (fieldName: string, message: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition', 'collectionReason']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
+  
+  // Apply validation classes to DatePicker fields
+  const datePickerFields = ['collectionDate']
+  if (datePickerFields.includes(fieldName)) {
+    applyValidationToDatePicker(fieldName, 'invalid')
+  }
+  
+  console.log(`Field validation state after error:`, {
+    fieldErrors: fieldErrors[fieldName],
+    fieldValidation: fieldValidation[fieldName]
+  })
 }
 
 const setFieldValid = (fieldName: string) => {
+  console.log(`setFieldValid called for ${fieldName}`)
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
@@ -741,10 +880,21 @@ const setFieldValid = (fieldName: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition', 'collectionReason']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'valid')
   }
+  
+  // Apply validation classes to DatePicker fields
+  const datePickerFields = ['collectionDate']
+  if (datePickerFields.includes(fieldName)) {
+    applyValidationToDatePicker(fieldName, 'valid')
+  }
+  
+  console.log(`Field validation state after valid:`, {
+    fieldErrors: fieldErrors[fieldName],
+    fieldValidation: fieldValidation[fieldName]
+  })
 }
 
 const clearFieldValidation = (fieldName: string) => {
@@ -754,8 +904,17 @@ const clearFieldValidation = (fieldName: string) => {
   }
   
   // Also clear validation for SearchableDropdown components
-  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition']
+  const searchableDropdownFields = ['employeeId', 'assetId', 'assetCondition', 'collectionReason']
   if (searchableDropdownFields.includes(fieldName)) {
+    const input = document.getElementById(fieldName) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid', 'is-valid')
+    }
+  }
+  
+  // Also clear validation for DatePicker components
+  const datePickerFields = ['collectionDate']
+  if (datePickerFields.includes(fieldName)) {
     const input = document.getElementById(fieldName) as HTMLInputElement
     if (input) {
       input.classList.remove('is-invalid', 'is-valid')
@@ -794,14 +953,36 @@ const getFieldDisplayName = (fieldName: string): string => {
   return displayNames[fieldName] || fieldName
 }
 
+// Helper function to convert date from dd-mm-yyyy to yyyy-mm-dd
+const convertDateFormat = (dateString: string): string => {
+  if (!dateString) return ''
+  
+  // Check if it's already in yyyy-mm-dd format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    return dateString
+  }
+  
+  // Convert from dd-mm-yyyy to yyyy-mm-dd
+  const parts = dateString.split('-')
+  if (parts.length === 3) {
+    const [day, month, year] = parts
+    return `${year}-${month}-${day}`
+  }
+  
+  return dateString
+}
+
 // Form submission with enhanced validation
 const submitForm = async (event?: Event) => {
+  console.log('=== COLLECT ASSET SUBMIT FORM CALLED ===', event)
+  
   if (event) {
     event.preventDefault()
     event.stopPropagation()
   }
 
   formSubmitted.value = true
+  console.log('Form submitted flag set to true')
 
   // Validate all fields
   let isFormValid = true
@@ -814,6 +995,7 @@ const submitForm = async (event?: Event) => {
   }
 
   if (!isFormValid) {
+    console.log('Form validation failed')
     // Don't show error toast for validation errors - instead scroll to first error
     scrollToFirstError()
     // Add 'was-validated' class to show validation styling
@@ -823,6 +1005,7 @@ const submitForm = async (event?: Event) => {
     return
   }
 
+  console.log('Form validation passed, showing confirmation modal')
   // Show confirmation modal instead of direct submission
   showConfirmationModal.value = true
 }
@@ -839,11 +1022,13 @@ const confirmCollection = async () => {
   try {
     // Prepare return data for API
     const returnData: ReturnAssignmentDto = {
-      returnDate: formData.collectionDate,
+      returnDate: convertDateFormat(formData.collectionDate), // Convert date format
       returnCondition: formData.assetCondition as 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED', // Already uppercase from SearchableDropdown
       returnReason: formData.collectionReason,
       notes: formData.collectionNotes || undefined
     }
+    
+    console.log('Collection data being sent:', returnData)
 
     // Call the API to collect/return the asset
     await collectAssetApiService.collectAsset(Number.parseInt(formData.assetId), returnData)
@@ -1053,12 +1238,12 @@ watch(() => assignedAssets.value, (newAssignments) => {
 const loadActiveEmployees = async () => {
   try {
     isLoadingEmployees.value = true
-    // No limit - get all active employees
-    const response = await employeeApiService.getActiveEmployees()
+    // Get only employees who have assets assigned to them
+    const response = await employeeApiService.getEmployeesForDropdowns('ACTIVE', true)
     activeEmployees.value = response.data.employees
   } catch (error: any) {
-    console.error('Error loading active employees:', error)
-    toastStore.showError('Error', 'Failed to load active employees. Please try again.')
+    console.error('Error loading employees with assigned assets:', error)
+    toastStore.showError('Error', 'Failed to load employees with assigned assets. Please try again.')
   } finally {
     isLoadingEmployees.value = false
   }
@@ -1227,203 +1412,10 @@ onMounted(async () => {
 </script> 
 
 <style scoped>
-/* Import unified form styles (replaces old formValidation.css) */
+/* Import unified form styles */
 @import url('../../assets/unified-form-styles.css');
 
-/* Additional component-specific styles */
-
-/* Asset Specifications - Make it look like a non-editable input */
-.asset-specifications-wrapper :deep(.form-control) {
-  background-color: #F3F3F3 !important;
-  border: 2px solid #E0E0E0 !important;
-  color: #0A0A0A !important;
-  cursor: default !important;
-  resize: none !important;
-}
-
-.asset-specifications-wrapper :deep(.form-control:hover) {
-  border-color: #E0E0E0 !important;
-  background-color: #F3F3F3 !important;
-}
-
-.asset-specifications-wrapper :deep(.form-control:focus) {
-  border-color: #E0E0E0 !important;
-  box-shadow: none !important;
-  background-color: #F3F3F3 !important;
-  outline: none !important;
-}
-
-.asset-specifications-wrapper :deep(.form-control::placeholder) {
-  color: #999999 !important;
-}
-
-.asset-specifications-wrapper :deep(.character-count) {
-  display: none !important;
-}
-
-/* Form fieldset styling */
-.form-fieldset {
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-  background: rgba(248, 250, 252, 0.3);
-  position: relative;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.form-fieldset:hover {
-  border-color: #cbd5e1 !important;
-  background: rgba(248, 250, 252, 0.5);
-  transition: all 0.2s ease;
-}
-
-.form-legend {
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  color: #666666 !important;
-  background-color: #ffffff !important;
-  padding: 0.375rem 0.75rem !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 0.375rem !important;
-  margin-bottom: 1rem !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: auto !important;
-  float: none !important;
-}
-
-/* Enhanced form controls */
-.form-control, .form-select {
-  border: 2px solid #999999;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
-  color: #1f2937;
-}
-
-.form-control::placeholder {
-  color: #4b5563 !important;
-  opacity: 1;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: #331FEA;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
-  outline: 2px solid transparent;
-}
-
-.form-control:hover, .form-select:hover {
-  border-color: #6b7280;
-}
-
-/* Enhanced validation styling */
-.was-validated .form-control:valid,
-.was-validated .form-select:valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
-}
-
-.was-validated .form-control:invalid,
-.was-validated .form-select:invalid,
-.form-control.is-invalid,
-.form-select.is-invalid {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out;
-}
-
-@keyframes subtle-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc2626;
-  font-weight: 500;
-}
-
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
-}
-
-.form-text {
-  font-size: 0.875rem;
-  color: #666666 !important;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-
-.text-danger {
-  color: #dc2626 !important;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.text-muted {
-  color: #4b5563 !important;
-  font-weight: 600;
-  font-size: 0.9em;
-}
-
-/* Action buttons */
-.form-actions {
-  padding: 1.5rem;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.card-footer {
-  background: #F3F3F3 !important;
-  border-top: 2px solid #B7B7B7 !important;
-  border-radius: 0 0 1.5rem 1.5rem !important;
-}
-
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-pink {
-  background-color: #FF579F !important;
-  border-color: #FF579F !important;
-  color: #FFFFFF !important;
-}
-
-.btn-pink:hover {
-  background-color: #e04a8a !important;
-  border-color: #e04a8a !important;
-}
-
-.btn-outline-secondary {
-  background-color: #f8f9fa !important;
-  border: 2px solid #6c757d !important;
-  color: #495057 !important;
-  font-weight: 600;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #FFFFFF !important;
-}
-
-.btn:focus-visible {
-  outline: 2px solid #331FEA;
-  outline-offset: 2px;
-}
-
-
-/* Modal styling */
+/* Component-specific styles: Modal styling */
 .modal-content {
   border: none !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
@@ -1499,52 +1491,6 @@ onMounted(async () => {
   font-size: 0.95rem !important;
 }
 
-/* Modal Buttons */
-.modal-footer .btn {
-  padding: 0.75rem 1.5rem !important;
-  font-weight: 600 !important;
-  border-radius: 0.5rem !important;
-  min-width: 120px !important;
-}
-
-.modal-footer .btn-outline-secondary {
-  background-color: #ffffff !important;
-  border: 2px solid #666666 !important;
-  color: #666666 !important;
-}
-
-.modal-footer .btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #ffffff !important;
-}
-
-.modal-footer .btn-pink {
-  background-color: #FF579F !important;
-  border-color: #FF579F !important;
-  color: #ffffff !important;
-}
-
-.modal-footer .btn-pink:hover {
-  background-color: #e04a8a !important;
-  border-color: #e04a8a !important;
-}
-
-/* Close Button */
-.btn-close {
-  background: none !important;
-  border: none !important;
-  font-size: 1.25rem !important;
-  color: #666666 !important;
-  opacity: 0.8 !important;
-  transition: all 0.2s ease !important;
-}
-
-.btn-close:hover {
-  opacity: 1 !important;
-  color: #E97676 !important;
-}
-
 /* Description Text */
 .modal-body p {
   margin-bottom: 1rem !important;
@@ -1552,31 +1498,10 @@ onMounted(async () => {
   font-weight: 500 !important;
 }
 
-/* Responsive design */
+/* Component-specific responsive adjustments */
 @media (max-width: 768px) {
   .card-body {
     padding: 1.5rem !important;
-  }
-  
-  .form-actions {
-    padding: 1rem;
-  }
-  
-  .form-fieldset {
-    padding: 1rem !important;
-    margin-bottom: 1rem !important;
-    border-radius: 0.375rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.9rem !important;
-    padding: 0.25rem 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .btn {
-    width: 100%;
-    margin-bottom: 0.75rem;
   }
   
   .d-flex.gap-3 {
@@ -1599,15 +1524,6 @@ onMounted(async () => {
     gap: 0.5rem !important;
   }
   
-  .modal-footer .btn {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
-  }
-  
-  .modal-footer .btn:last-child {
-    margin-bottom: 0 !important;
-  }
-  
   .bg-light {
     padding: 1rem !important;
   }
@@ -1621,28 +1537,11 @@ onMounted(async () => {
     padding: 0.75rem !important;
     margin-bottom: 1rem !important;
   }
-  
 }
 
 @media (max-width: 576px) {
   .card-body {
     padding: 1rem !important;
-  }
-  
-  .form-actions {
-    padding: 0.75rem;
-  }
-  
-  .form-fieldset {
-    padding: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-    border-radius: 0.25rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.85rem !important;
-    padding: 0.2rem 0.4rem !important;
-    margin-bottom: 0.5rem !important;
   }
   
   /* Modal responsive adjustments for small screens */
@@ -1674,11 +1573,6 @@ onMounted(async () => {
   .alert-warning {
     padding: 0.5rem !important;
     margin-bottom: 0.75rem !important;
-  }
-  
-  .modal-footer .btn {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.9rem !important;
   }
 }
 </style> 
