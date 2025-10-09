@@ -130,6 +130,11 @@ class EmployeeService {
     return apiService.get(`/employees/check-employee-id?${query}`)
   }
 
+  /** Get the next available employee ID */
+  async getNextAvailableEmployeeId(): Promise<ApiResponse<{ employeeId: string }>> {
+    return apiService.get('/employees/next-available-id')
+  }
+
   /**
    * Get all employees with optional filtering and pagination
    */

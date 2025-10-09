@@ -40,7 +40,7 @@
                         v-model="formData.employeeId"
                         :disabled="isSubmitting"
                         :class="getFieldClass('employeeId')"
-                        placeholder="0001"
+                        :placeholder="nextAvailableEmployeeId"
                         title="Enter a 4-digit numeric Employee ID (0001-9999)"
                         required
                         inputmode="numeric"
@@ -55,7 +55,12 @@
                         </div>
                       </div>
                     </div>
-                    <div class="form-text">4 digits only (0001 to 9999)</div>
+                    <div class="form-text">
+                      4 digits only (0001 to 9999)
+                      <span v-if="isLoadingEmployeeIds && !isEditMode" class="text-muted ms-2">
+                        <i class="fas fa-spinner fa-spin me-1"></i>Finding next available ID...
+                      </span>
+                    </div>
                     <div v-if="fieldErrors.employeeId" class="invalid-feedback">{{ fieldErrors.employeeId }}</div>
                   </div>
 
@@ -265,7 +270,7 @@
               <div class="d-flex justify-content-center gap-3">
                 <button 
                   type="button" 
-                  class="btn btn-outline-secondary px-4 py-2" 
+                  class="btn btn-cancel px-4 py-2" 
                   @click="goBack"
                   :disabled="isSubmitting || isLoading"
                 >
@@ -273,7 +278,7 @@
                 </button>
                 <button 
                   type="submit" 
-                  class="btn btn-primary px-5 py-2" 
+                  class="btn btn-purple px-5 py-2" 
                   :disabled="isSubmitting || isLoading"
                   @click="submitForm"
                 >
@@ -338,6 +343,8 @@ const fieldValidation = reactive<Record<string, boolean | null>>({})
 const isSubmitting = ref(false)
 const isLoading = ref(false)
 const formSubmitted = ref(false)
+const nextAvailableEmployeeId = ref('0001')
+const isLoadingEmployeeIds = ref(false)
 
 // Store original email for validation (edit mode)
 const originalEmail = ref('')
@@ -351,6 +358,20 @@ const isCheckingEmployeeId = ref(false)
 
 // Template refs
 const employeeForm = ref<HTMLFormElement>()
+
+// Function to get the next available employee ID from backend
+const findLowestAvailableEmployeeId = async () => {
+  isLoadingEmployeeIds.value = true
+  try {
+    const response = await employeeService.getNextAvailableEmployeeId()
+    nextAvailableEmployeeId.value = response.data.employeeId
+  } catch (error) {
+    console.warn('Failed to fetch next available employee ID, using default placeholder:', error)
+    nextAvailableEmployeeId.value = '0001'
+  } finally {
+    isLoadingEmployeeIds.value = false
+  }
+}
 
 // Validation system
 const getFieldClass = (fieldName: string) => {
@@ -930,7 +951,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
   const currentIndex = Array.from(focusableElements).indexOf(target)
   const isLastField = currentIndex === focusableElements.length - 1
   
-  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-primary')) {
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-purple')) {
     submitForm()
   } else {
     const nextElement = focusableElements[currentIndex + 1]
@@ -958,6 +979,9 @@ onMounted(async () => {
     await loadEmployeeData()
     // Immediately validate all fields on landing in edit mode
     await runInitialValidation()
+  } else {
+    // In add mode, find the lowest available employee ID for placeholder
+    await findLowestAvailableEmployeeId()
   }
   
   nextTick(() => {

@@ -2,7 +2,7 @@
   <div class="change-password-page">
     <div class="container-fluid py-4">
       <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-4" style="border: none; border-bottom: none;">
         <div>
           <h2 class="mb-0" style="color: var(--primary-black);">
             <i class="fas fa-key me-2"></i>
@@ -16,12 +16,6 @@
       <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6 mb-4">
           <div class="card h-100">
-            <div class="card-header">
-              <h5 class="card-title mb-0" style="color: var(--primary-black);">
-                <i class="fas fa-key me-2"></i>
-                Change Password
-              </h5>
-            </div>
             <div class="card-body">
               <form @submit.prevent="handleChangePassword">
                 <!-- Current Password -->
@@ -145,11 +139,11 @@
       <!-- Action Buttons -->
       <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
-          <div class="d-flex gap-2 flex-wrap justify-content-end">
+          <div class="d-flex gap-2 flex-wrap justify-content-center">
             <button
               type="button"
               @click="handleCancel"
-              class="btn btn-modern btn-outline-secondary"
+              class="btn btn-cancel"
               :disabled="isLoading"
             >
               <i class="fas fa-times me-2"></i>
@@ -158,7 +152,7 @@
             <button
               type="button"
               @click="handleChangePassword"
-              class="btn btn-modern btn-primary"
+              class="btn btn-purple"
               :disabled="isLoading || !isFormValid"
             >
               <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
@@ -294,19 +288,39 @@ const handleCancel = () => {
 </script>
 
 <style scoped>
+@import url('../../assets/unified-form-styles.css');
+@import url('../../assets/styles/components/buttons.css');
 .change-password-page {
   background: var(--primary-white);
   min-height: 100vh;
 }
 
+/* Remove any borders from the page header */
+.change-password-page .d-flex.justify-content-between {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+}
+
 .password-field {
   position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.password-field .form-control {
+  padding-right: 45px !important; /* Ensure consistent space for eye icon */
+  height: 3rem !important; /* Fixed height to match unified form styles */
+  min-height: 3rem !important;
+  max-height: 3rem !important;
+  position: relative;
+  z-index: 1;
 }
 
 .password-toggle {
   position: absolute;
-  right: 10px;
-  top: 50%;
+  right: 12px;
+  top: 1.5rem; /* Fixed position: half of 3rem height */
   transform: translateY(-50%);
   background: none;
   border: none;
@@ -314,6 +328,38 @@ const handleCancel = () => {
   cursor: pointer;
   padding: 0;
   z-index: 10;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+/* Ensure proper spacing for error messages */
+.password-field .invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* Ensure proper spacing between form fields */
+.change-password-page .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+/* Create a wrapper for each form field to isolate layout */
+.change-password-page .mb-4 {
+  position: relative;
+  display: block;
+}
+
+/* Ensure error messages don't affect input positioning */
+.change-password-page .mb-4 .password-field {
+  margin-bottom: 0;
 }
 
 .password-toggle:hover {

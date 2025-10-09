@@ -239,6 +239,55 @@
     width: 100%;
 }
 
+/* Normalize custom DatePicker appearance across all forms */
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-input-wrapper) {
+    position: relative;
+}
+
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input) {
+    height: 3rem !important;                    /* 48px fixed height */
+    padding: 0.75rem 2.25rem 0.75rem 1rem !important; /* room for icon */
+    border: 2px solid var(--element-gray) !important;
+    border-radius: 0.5rem !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    background: var(--bg-primary) !important;
+    color: var(--text-secondary) !important;
+}
+
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input:hover) {
+    border-color: var(--element-light-gray) !important;
+}
+
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input:focus) {
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+    outline: 2px solid transparent !important;
+}
+
+/* Valid / invalid parity with other inputs */
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input.is-valid),
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input:valid) {
+    border-color: var(--secondary-green) !important;
+    box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input.is-invalid),
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input:invalid) {
+    border-color: var(--secondary-red) !important;
+    box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+}
+
+/* Icon alignment */
+.container-fluid.py-4 :deep(.custom-date-picker-container .date-icon) {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-mid-gray);
+    pointer-events: none;
+}
+
 .container-fluid.py-4 .form-floating .form-control, 
 .container-fluid.py-4 .form-floating .form-select {
     height: 3.5rem;

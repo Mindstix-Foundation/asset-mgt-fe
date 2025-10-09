@@ -221,7 +221,7 @@
               <div class="d-flex justify-content-center gap-3">
                 <button 
                   type="button" 
-                  class="btn btn-outline-secondary px-4 py-2" 
+                  class="btn btn-cancel px-4 py-2" 
                   @click="goBack"
                   :disabled="isSubmitting || isLoading"
                 >
@@ -229,7 +229,7 @@
                 </button>
                 <button 
                   type="submit" 
-                  class="btn btn-warning px-5 py-2" 
+                  class="btn btn-orange px-5 py-2" 
                   :disabled="isSubmitting || isLoading"
                   @click="submitForm"
                 >
@@ -968,7 +968,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
   const currentIndex = Array.from(focusableElements).indexOf(target)
   const isLastField = currentIndex === focusableElements.length - 1
   
-  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-warning')) {
+  if (isLastField || (target as HTMLInputElement).type === 'submit' || target.classList.contains('btn-orange')) {
     // Submit the form
     submitForm()
   } else {

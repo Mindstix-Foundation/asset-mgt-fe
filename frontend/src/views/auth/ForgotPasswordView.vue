@@ -52,18 +52,13 @@
                 <!-- Send Reset Link Button -->
                 <button
                   type="submit"
-                  class="login-btn w-100 mt-3"
-                  :class="{ loading: isLoading }"
+                  class="btn btn-purple w-100 mt-3"
                   :disabled="isLoading || !email"
                   aria-label="Send password reset link"
                 >
-                  <span class="btn-text" :class="{ 'opacity-0': isLoading }">
-                    <i class="fas fa-paper-plane me-2"></i>
-                    Send Reset Link
-                  </span>
-                  <div v-if="isLoading" class="btn-loader">
-                    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
-                  </div>
+                  <i v-if="isLoading" class="fas fa-spinner fa-spin me-2"></i>
+                  <i v-else class="fas fa-paper-plane me-2"></i>
+                  {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
                 </button>
 
                 <!-- Back to Login -->
@@ -159,6 +154,9 @@ const backToLogin = () => {
 </script>
 
 <style scoped>
+@import url('../../assets/styles/components/buttons.css');
+@import url('../../assets/unified-form-styles.css');
+
 /* Match login page theme and components */
 .login-page {
   background: var(--bg-secondary);
@@ -269,56 +267,7 @@ const backToLogin = () => {
   background: rgba(233, 118, 118, 0.08);
 }
 
-.login-btn {
-  background: var(--secondary-purple);
-  border: none;
-  border-radius: 8px;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--bg-primary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  min-height: 48px;
-  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2);
-}
-
-.login-btn:hover:not(:disabled) {
-  background: var(--accent-navy);
-  color: var(--bg-primary);
-  text-decoration: none;
-  box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
-}
-
-.login-btn:active:not(:disabled) {
-  background: var(--primary-dark-gray);
-  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
-}
-
-.login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.login-btn.loading {
-  pointer-events: none;
-}
-
-.btn-loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Custom button styles removed - using shared button system */
 
 .error-message {
   color: var(--secondary-red);

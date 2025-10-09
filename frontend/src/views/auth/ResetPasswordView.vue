@@ -100,7 +100,7 @@
                 <!-- Reset Password Button -->
                 <button
                   type="submit"
-                  class="reset-password-btn w-100 mb-3"
+                  class="btn btn-purple w-100 mb-3"
                   :disabled="isLoading || !isPasswordValid || !doPasswordsMatch"
                 >
                   <span class="btn-text" :class="{ 'opacity-0': isLoading }">
@@ -116,7 +116,7 @@
                 <div class="d-flex justify-content-center">
                   <button
                     type="button"
-                    class="back-to-login-link text-decoration-underline"
+                    class="btn btn-gray"
                     @click="backToLogin"
                     :disabled="isLoading"
                   >
@@ -231,6 +231,8 @@ const backToLogin = () => {
 </script>
 
 <style scoped>
+@import url('../../assets/unified-form-styles.css');
+@import url('../../assets/styles/components/buttons.css');
 /* Animations (match login) */
 @keyframes slideUp {
   from {
@@ -442,44 +444,7 @@ const backToLogin = () => {
   padding: 0.75rem;
 }
 
-/* Button aligned with login */
-.reset-password-btn {
-  background: var(--secondary-purple);
-  border: none;
-  border-radius: 8px;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--bg-primary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  min-height: 48px;
-  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2);
-}
-
-.reset-password-btn:hover:not(:disabled) {
-  background: var(--accent-navy);
-  color: var(--bg-primary);
-  text-decoration: none;
-  box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
-}
-
-.reset-password-btn:active:not(:disabled) {
-  background: var(--primary-dark-gray);
-  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
-}
-
-.reset-password-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+/* Button loader for reset password button */
 .btn-loader {
   position: absolute;
   top: 50%;
@@ -488,23 +453,6 @@ const backToLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.back-to-login-link {
-  color: var(--secondary-purple);
-  background: transparent;
-  border: none;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.back-to-login-link:hover:not(:disabled) {
-  color: var(--accent-navy);
-  background: rgba(51, 31, 234, 0.1);
-  text-decoration: underline;
 }
 
 /* Responsive adjustments (match login) */

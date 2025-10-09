@@ -468,4 +468,9 @@ onUnmounted(() => {
   border-color: #dee2e6;
   box-shadow: none;
 }
+
+/* Ensure error message inside this component is visible regardless of parent scoped styles */
+.invalid-feedback {
+  display: block;
+}
 </style>
