@@ -109,123 +109,9 @@
   box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
 }
 
-/* Password Strength Indicator */
-.password-strength {
-  margin-top: 0.5rem !important;
-}
+/* (Removed unused Password Strength Indicator styles) */
 
-.strength-bar {
-  height: 4px !important;
-  border-radius: 2px !important;
-  background-color: var(--primary-light-gray) !important;
-  overflow: hidden !important;
-  margin-bottom: 0.25rem !important;
-}
-
-.strength-fill {
-  height: 100% !important;
-  transition: all 0.3s ease !important;
-  border-radius: 2px !important;
-}
-
-.strength-weak .strength-fill {
-  background-color: var(--secondary-red) !important;
-  width: 25% !important;
-}
-
-.strength-fair .strength-fill {
-  background-color: var(--secondary-orange) !important;
-  width: 50% !important;
-}
-
-.strength-good .strength-fill {
-  background-color: var(--secondary-yellow) !important;
-  width: 75% !important;
-}
-
-.strength-strong .strength-fill {
-  background-color: var(--secondary-green) !important;
-  width: 100% !important;
-}
-
-.strength-text {
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-  margin: 0 !important;
-}
-
-.strength-weak .strength-text {
-  color: var(--secondary-red) !important;
-}
-
-.strength-fair .strength-text {
-  color: var(--secondary-orange) !important;
-}
-
-.strength-good .strength-text {
-  color: var(--secondary-yellow) !important;
-}
-
-.strength-strong .strength-text {
-  color: var(--secondary-green) !important;
-}
-
-/* Password Requirements */
-.password-requirements {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1rem !important;
-  margin-top: 1rem !important;
-}
-
-.requirements-title {
-  color: var(--primary-black) !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.requirement-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem !important;
-  font-size: 0.875rem !important;
-}
-
-.requirement-item:last-child {
-  margin-bottom: 0 !important;
-}
-
-.requirement-icon {
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 0.75rem !important;
-  flex-shrink: 0 !important;
-}
-
-.requirement-met .requirement-icon {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.requirement-unmet .requirement-icon {
-  background-color: var(--primary-mid-gray) !important;
-  color: white !important;
-}
-
-.requirement-text {
-  color: var(--primary-dark-gray) !important;
-}
-
-.requirement-met .requirement-text {
-  color: var(--secondary-green) !important;
-}
+/* (Removed unused Password Requirements styles) */
 
 /* Form Actions */
 .form-actions {
@@ -395,61 +281,9 @@
   opacity: 0.9 !important;
 }
 
-/* Info Message */
-.info-message {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1rem !important;
-  margin-bottom: 1.5rem !important;
-  text-align: center !important;
-}
+/* (Removed unused Info Message styles) */
 
-.info-message i {
-  color: var(--secondary-purple) !important;
-  font-size: 1.5rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.info-message h6 {
-  color: var(--primary-black) !important;
-  margin-bottom: 0.25rem !important;
-}
-
-.info-message p {
-  color: var(--primary-dark-gray) !important;
-  margin: 0 !important;
-  font-size: 0.875rem !important;
-  line-height: 1.4 !important;
-}
-
-/* Invalid Token Message */
-.invalid-token-message {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  padding: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
-  text-align: center !important;
-}
-
-.invalid-token-message i {
-  font-size: 2rem !important;
-  margin-bottom: 1rem !important;
-}
-
-.invalid-token-message h6 {
-  color: white !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 1.1rem !important;
-}
-
-.invalid-token-message p {
-  color: white !important;
-  margin: 0 !important;
-  opacity: 0.9 !important;
-  line-height: 1.5 !important;
-}
+/* (Removed unused Invalid Token Message styles) */
 
 /* Loading State */
 .loading-state {
@@ -496,11 +330,7 @@
 
 /* Responsive Design for Login */
 @media (max-width: 768px) {
-  .credentials-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-  
+  /* (Removed unused .credentials-grid responsive rule) */
   .forgot-password-link {
     font-size: 0.9rem;
   }
@@ -527,9 +357,7 @@
 }
 
 @media (max-width: 576px) {
-  .shape {
-    display: none;
-  }
+  /* (Removed unused .shape) */
   
   .change-password-container,
   .forgot-password-container,

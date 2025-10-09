@@ -370,9 +370,6 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 576px) {
-}
-
 /* Migrated from assets/styles/pages/profile.css */
 /* Profile Container */
 .profile-container {

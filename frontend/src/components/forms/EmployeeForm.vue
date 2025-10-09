@@ -227,36 +227,17 @@
 
                   <!-- Address -->
                   <div class="col-12">
-                    <label for="address" class="form-label">
-                      Address <span class="text-muted">(Optional)</span>
-                    </label>
-                    <textarea 
-                      class="form-control auto-expand-textarea" 
-                      id="address" 
+                    <NotesTextarea 
                       v-model="formData.address"
-                      :class="getFieldClass('address')"
-                      :disabled="isSubmitting"
-                      rows="3"
+                      label="Address"
                       placeholder="Enter complete address with street, city, state, and country..."
-                      autocomplete="off"
-                      autocapitalize="words"
-                      autocorrect="off"
-                      spellcheck="false"
-                      @input="autoExpandTextarea"
-                      @blur="validateFieldInline('address')"
-                      @focus="clearFieldValidation('address')"
-                      maxlength="500"
-                      title="Address cannot exceed 500 characters"
-                      style="white-space: pre-wrap; overflow-wrap: break-word;"
-                    ></textarea>
-                    <div class="form-text">
-                      Include street address, city, state, and country. Textarea expands automatically as you type.
-                    </div>
-                    <div class="character-count text-end">
-                      <small :class="getCounterClass(formData.address?.length || 0, 500)">
-                        {{ formData.address?.length || 0 }}/500 characters
-                      </small>
-                    </div>
+                      help-text="Include street address, city, state, and country. Textarea expands automatically as you type."
+                      :max-length="500"
+                      :required="false"
+                      :show-label="true"
+                      input-id="address"
+                      @validation="() => {}"
+                    />
                     <div v-if="fieldErrors.address" class="invalid-feedback">{{ fieldErrors.address }}</div>
                   </div>
                 </div>
@@ -349,6 +330,17 @@ const isLoadingEmployeeIds = ref(false)
 // Store original email for validation (edit mode)
 const originalEmail = ref('')
 const isAdmin = ref(false)
+// Keep a snapshot of the originally loaded employee data for diffing on update
+const originalData = ref<{
+  employeeId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone?: string
+  dateOfBirth?: string
+  address?: string
+  status: EmployeeStatus
+} | null>(null)
 
 // Debounce helpers for email and employeeId check
 let emailCheckTimer: number | undefined
@@ -736,6 +728,18 @@ const loadEmployeeData = async () => {
     originalEmail.value = employee.email
     isAdmin.value = employee.isAdmin || false
 
+    // Capture original values in a normalized shape for accurate diffing
+    originalData.value = {
+      employeeId: employee.employeeId,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      email: employee.email,
+      phone: normalizePhoneForSubmit(formatPhoneFromApi(employee.phone) as any),
+      dateOfBirth: employee.dateOfBirth || undefined,
+      address: employee.address || undefined,
+      status: (employee.status || 'ACTIVE') as EmployeeStatus
+    }
+
     nextTick(() => {
       resizeAllTextareas()
       setTimeout(() => resizeAllTextareas(), 100)
@@ -806,22 +810,46 @@ const markFormInvalidAndFocus = async () => {
 }
 
 const buildUpdateEmployeeData = (): UpdateEmployeeData => {
-  const payload: UpdateEmployeeData = {
+  const current = {
+    employeeId: String(formData.employeeId || ''),
     firstName: formData.firstName,
     lastName: formData.lastName,
+    email: formData.email,
     phone: normalizePhoneForSubmit(formData.phone),
     dateOfBirth: formData.dateOfBirth || undefined,
     address: formData.address || undefined,
-    status: formData.status
+    status: formData.status as EmployeeStatus
   }
-  if (!isAdmin.value) {
-    ;(payload as any).email = formData.email
+
+  const base = originalData.value || {
+    employeeId: props.employeeId || '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: undefined,
+    dateOfBirth: undefined,
+    address: undefined,
+    status: 'ACTIVE' as EmployeeStatus
   }
+
+  const payload: UpdateEmployeeData = {}
+
+  if (current.firstName !== base.firstName) payload.firstName = current.firstName
+  if (current.lastName !== base.lastName) payload.lastName = current.lastName
+
+  // Email can only be updated if not admin
+  if (!isAdmin.value && current.email !== base.email) (payload as any).email = current.email
+
+  if (current.phone !== base.phone) payload.phone = current.phone
+  if (current.dateOfBirth !== base.dateOfBirth) payload.dateOfBirth = current.dateOfBirth
+  if (current.address !== base.address) payload.address = current.address
+  if (current.status !== base.status) payload.status = current.status
+
   // Allow updating employeeId if changed and valid
-  const idStr = String(formData.employeeId || '')
-  if (/^\d{4}$/.test(idStr) && idStr !== props.employeeId && idStr !== '0000') {
-    ;(payload as any).employeeId = idStr
+  if (/^\d{4}$/.test(current.employeeId) && current.employeeId !== base.employeeId && current.employeeId !== '0000') {
+    ;(payload as any).employeeId = current.employeeId
   }
+
   return payload
 }
 

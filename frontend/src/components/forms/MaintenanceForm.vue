@@ -129,10 +129,10 @@
                   <!-- Frequency -->
                   <div class="col-md-6">
                     <label for="frequencyDays" class="form-label">Frequency <span class="text-muted">(Optional)</span></label>
-                    <div class="input-group">
+                    <div class="affix-input-wrapper">
                       <input 
                         type="number" 
-                        class="form-control" 
+                        class="form-control affix-has-suffix" 
                         id="frequencyDays" 
                         v-model="formData.frequencyDays"
                         :class="getFieldClass('frequencyDays')"
@@ -144,7 +144,7 @@
                         @focus="clearFieldValidation('frequencyDays')"
                         @input="handleFieldInput('frequencyDays')"
                       >
-                      <span class="input-group-text">days</span>
+                      <span class="affix affix-suffix">days</span>
                     </div>
                     <div class="form-text">Repeat every X days (e.g., 30 = monthly). Leave empty for one-time maintenance</div>
                     <div v-if="fieldErrors.frequencyDays" class="invalid-feedback">{{ fieldErrors.frequencyDays }}</div>
@@ -153,11 +153,11 @@
                   <!-- Estimated Cost -->
                   <div class="col-md-6">
                     <label for="estimatedCost" class="form-label">Estimated Cost <span class="text-muted">(Optional)</span></label>
-                    <div class="input-group">
-                      <span class="input-group-text">₹</span>
+                    <div class="affix-input-wrapper">
+                      <span class="affix affix-prefix">₹</span>
                       <input 
                         type="number" 
-                        class="form-control" 
+                        class="form-control affix-has-prefix" 
                         id="estimatedCost" 
                         v-model="formData.estimatedCost"
                         :class="getFieldClass('estimatedCost')"
@@ -181,33 +181,17 @@
 
                   <!-- Description -->
                   <div class="col-12">
-                    <label for="description" class="form-label">
-                      Maintenance Description <span class="text-danger">*</span>
-                    </label>
-                    <textarea 
-                      class="form-control auto-expand-textarea" 
-                      id="description" 
+                    <NotesTextarea 
                       v-model="formData.description"
-                      :class="getFieldClass('description')"
-                      :disabled="isSubmitting"
-                      rows="3" 
-                      placeholder="Describe the maintenance activity, any special requirements, or known issues..." 
-                      maxlength="1000" 
-                      required 
-                      minlength="10"
-                      @input="autoExpandTextarea"
-                      @blur="validateFieldInline('description')"
-                      @focus="clearFieldValidation('description')"
-                      style="white-space: pre-wrap; overflow-wrap: break-word;"
-                    ></textarea>
-                    <div class="form-text">
-                      Describe what maintenance is needed, any special requirements, or known issues (10-1000 characters, required)
-                    </div>
-                    <div class="character-count text-end">
-                      <small :class="getCounterClass(formData.description?.length || 0, 1000)">
-                        {{ formData.description?.length || 0 }}/1000 characters
-                      </small>
-                    </div>
+                      label="Maintenance Description"
+                      placeholder="Describe the maintenance activity, any special requirements, or known issues..."
+                      help-text="Describe what maintenance is needed, any special requirements, or known issues (10-1000 characters, required)"
+                      :max-length="1000"
+                      :required="true"
+                      :show-label="true"
+                      input-id="description"
+                      @validation="() => {}"
+                    />
                     <div v-if="fieldErrors.description" class="invalid-feedback">{{ fieldErrors.description }}</div>
                   </div>
                 </div>
@@ -300,6 +284,17 @@ const fieldValidation = reactive<Record<string, boolean | null>>({})
 const isSubmitting = ref(false)
 const isLoading = ref(false)
 const formSubmitted = ref(false)
+
+// Snapshot of originally loaded maintenance values for diffing during update
+const originalData = ref<{
+  assetId: number | null
+  maintenanceType: 'PREVENTIVE' | 'CORRECTIVE' | 'EMERGENCY' | 'UPGRADE' | null
+  scheduledDate: string | null
+  frequencyDays?: number
+  estimatedCost?: number
+  description: string | null
+  vendorId?: number
+} | null>(null)
 
 // Data sources
 const availableAssets = ref<AssetApiAsset[]>([])
@@ -711,6 +706,40 @@ const preselectMaintenanceTypeFromQuery = async () => {
   fieldValidation.maintenanceTypeId = true
 }
 
+// Apply selected asset into form and dropdown (handles not-found case as well)
+const applySelectedAsset = async (selectedAsset: AssetApiAsset | null, externalAssetId: string) => {
+  if (selectedAsset) {
+    formData.assetId = selectedAsset.id.toString()
+    const item = {
+      id: selectedAsset.id.toString(),
+      name: `${selectedAsset.assetId}${selectedAsset.serialNumber ? ' - ' + selectedAsset.serialNumber : ''}`.trim(),
+      value: selectedAsset.id.toString()
+    } as Item
+    selectedAssetItem.value = item
+    await nextTick()
+    onAssetChange(item)
+    delete fieldErrors.assetId
+    fieldValidation.assetId = true
+    return
+  }
+
+  console.warn('Asset not found for assetId:', externalAssetId)
+  formData.assetId = ''
+}
+
+// Apply maintenance type selection by id if it exists in loaded list
+const applyMaintenanceTypeSelectionById = async (typeId: string) => {
+  const typeMatch = maintenanceTypes.value.find(t => t.id === typeId)
+  if (!typeMatch) return
+
+  const typeItem = { id: typeMatch.id, name: `${typeMatch.name} - ${typeMatch.description}`, value: typeMatch.id } as Item
+  selectedTypeItem.value = typeItem
+  await nextTick()
+  onTypeChange(typeItem)
+  delete fieldErrors.maintenanceTypeId
+  fieldValidation.maintenanceTypeId = true
+}
+
 // Helper function to set default scheduled date
 const setDefaultScheduledDate = () => {
   if (props.isEditMode) {
@@ -754,47 +783,12 @@ const loadMaintenanceData = async () => {
     const response = await maintenanceService.getMaintenance(props.maintenanceId)
     const maintenance = response.data.maintenance
 
-    // Find the asset by assetId string to get the numeric id
-    let selectedAsset = availableAssets.value.find(asset => asset.assetId === maintenance.assetId)
-    if (!selectedAsset) {
-      // Fallback: query main assets endpoint by search string
-      try {
-        const listResp = await assetApiService.getAssets({ search: maintenance.assetId, limit: 5 }) as any
-        const found = (listResp?.data?.assets || listResp?.data?.data?.assets || []).find((a: any) => a.assetId === maintenance.assetId)
-        if (found) {
-          selectedAsset = found
-          if (!availableAssets.value.some(a => a.id === found.id)) {
-            availableAssets.value = [found, ...availableAssets.value]
-          }
-        }
-      } catch (error) {
-        console.debug('Fallback search for asset by assetId failed', error)
-      }
-    }
-    if (selectedAsset) {
-      formData.assetId = selectedAsset.id.toString() // Set the numeric id for the dropdown
-      const item = { id: selectedAsset.id.toString(), name: `${selectedAsset.assetId}${selectedAsset.serialNumber ? ' - ' + selectedAsset.serialNumber : ''}`.trim(), value: selectedAsset.id.toString() } as Item
-      selectedAssetItem.value = item
-      await nextTick()
-      onAssetChange(item)
-      delete fieldErrors.assetId
-      fieldValidation.assetId = true
-    } else {
-      console.warn('Asset not found for assetId:', maintenance.assetId)
-      formData.assetId = ''
-    }
+    // Find the asset by external assetId with a built-in fallback
+    const selectedAsset = await findAssetByExternalId(maintenance.assetId)
+    await applySelectedAsset(selectedAsset, maintenance.assetId)
 
     formData.maintenanceTypeId = maintenance.maintenanceTypeId
-    // Preselect maintenance type item in dropdown
-    const typeMatch = maintenanceTypes.value.find(t => t.id === maintenance.maintenanceTypeId)
-    if (typeMatch) {
-      const typeItem = { id: typeMatch.id, name: `${typeMatch.name} - ${typeMatch.description}`, value: typeMatch.id } as Item
-      selectedTypeItem.value = typeItem
-      await nextTick()
-      onTypeChange(typeItem)
-      delete fieldErrors.maintenanceTypeId
-      fieldValidation.maintenanceTypeId = true
-    }
+    await applyMaintenanceTypeSelectionById(maintenance.maintenanceTypeId)
     // Vendor selection removed
     formData.scheduledDate = formatDateForInput(maintenance.scheduledDate)
     formData.frequencyDays = maintenance.frequencyDays
@@ -806,6 +800,17 @@ const loadMaintenanceData = async () => {
     nextTick(() => {
       resizeAllTextareas()
     })
+
+    // Capture normalized original values for diff-based update
+    originalData.value = {
+      assetId: selectedAsset ? Number(selectedAsset.id) : null,
+      maintenanceType: (maintenance.maintenanceTypeId as any) || null,
+      scheduledDate: formData.scheduledDate || null,
+      frequencyDays: maintenance.frequencyDays ?? undefined,
+      estimatedCost: maintenance.estimatedCost ?? undefined,
+      description: maintenance.description || null
+      // vendorId intentionally omitted (UI removed)
+    }
   } catch (error: any) {
     console.error('Error loading maintenance data:', error)
     toastStore.showError('Error', 'Failed to load maintenance data. Please try again.')
@@ -845,14 +850,7 @@ const submitForm = async (event?: Event) => {
 
   try {
     if (props.isEditMode && props.maintenanceId) {
-      const payload: UpdateMaintenanceData = {
-        assetId: Number(formData.assetId),
-        maintenanceType: formData.maintenanceTypeId as MaintenanceTypeLiteral,
-        scheduledDate: formData.scheduledDate,
-        frequencyDays: formData.frequencyDays || undefined,
-        estimatedCost: formData.estimatedCost || undefined,
-        description: formData.description
-      }
+      const payload: UpdateMaintenanceData = buildUpdateMaintenanceData()
       await maintenanceService.updateMaintenance(props.maintenanceId, payload)
       const successMessage = generateMaintenanceDetails()
       router.push('/app/maintenance?refreshStats=true')
@@ -919,6 +917,38 @@ const generateMaintenanceDetails = () => {
   }
   
   return details || 'Maintenance'
+}
+
+// Build an update payload containing only changed fields compared to originalData
+const buildUpdateMaintenanceData = (): UpdateMaintenanceData => {
+  const current = {
+    assetId: formData.assetId ? Number(formData.assetId) : undefined,
+    maintenanceType: formData.maintenanceTypeId as MaintenanceTypeLiteral | undefined,
+    scheduledDate: formData.scheduledDate || undefined,
+    frequencyDays: formData.frequencyDays || undefined,
+    estimatedCost: formData.estimatedCost || undefined,
+    description: formData.description || undefined
+  }
+
+  const base = originalData.value || {
+    assetId: undefined,
+    maintenanceType: undefined,
+    scheduledDate: undefined,
+    frequencyDays: undefined,
+    estimatedCost: undefined,
+    description: undefined
+  }
+
+  const payload: UpdateMaintenanceData = {}
+
+  if (current.assetId !== undefined && current.assetId !== base.assetId) payload.assetId = current.assetId
+  if (current.maintenanceType !== undefined && current.maintenanceType !== base.maintenanceType) payload.maintenanceType = current.maintenanceType
+  if (current.scheduledDate !== undefined && current.scheduledDate !== base.scheduledDate) payload.scheduledDate = current.scheduledDate
+  if (current.frequencyDays !== base.frequencyDays) payload.frequencyDays = current.frequencyDays
+  if (current.estimatedCost !== base.estimatedCost) payload.estimatedCost = current.estimatedCost
+  if (current.description !== base.description) payload.description = current.description
+
+  return payload
 }
 
 

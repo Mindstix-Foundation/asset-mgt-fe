@@ -41,10 +41,10 @@ const toastClass = computed(() => {
 
 <style scoped>
 .toast-container {
-  z-index: 99999 !important;
+  z-index: var(--z-toast) !important;
 }
 
 .toast {
-  z-index: 99999 !important;
+  z-index: var(--z-toast) !important;
 }
 </style> 

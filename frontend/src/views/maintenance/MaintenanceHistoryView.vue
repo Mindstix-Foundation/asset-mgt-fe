@@ -72,7 +72,7 @@
               />
             </div>
             <div class="flex-fill">
-              <DatePicker id="mh-from" label="From" v-model="filters.dateFrom" />
+              <DatePicker id="mh-from" label="From" v-model="filters.dateFrom" :max="todayIso" @change="onFromDateChange" />
             </div>
             <div class="flex-fill">
               <DatePicker 
@@ -80,6 +80,9 @@
                 label="To" 
                 v-model="filters.dateTo" 
                 :disabled="!filters.dateFrom"
+                :min="filters.dateFrom || undefined"
+                :max="todayIso"
+                @change="onToDateChange"
               />
             </div>
             <div class="filter-clear-button-container">
@@ -131,8 +134,12 @@
                     <span class="badge" :class="getStatusBadgeClass(item.status)">{{ formatStatus(item.status) }}</span>
                   </div>
                 </div>
-                <div class="timeline-badges">
-                  <span class="badge badge-purple">{{ formatDateTimeDisplay((item as any).date || item.scheduledDate) }}</span>
+                <div class="d-flex flex-column align-items-end text-end">
+                  <div class="text-muted small">
+                    <template v-if="(item as any).performedByName || (item as any).performedBy">
+                      {{ (item as any).performedByName || (item as any).performedBy }} • 
+                    </template>{{ formatDateTimeDisplay((item as any).date || item.scheduledDate) }}
+                  </div>
                 </div>
               </div>
                 <div class="timeline-details compact">
@@ -239,6 +246,7 @@ interface HistoryItem {
   actualCompletionDate: string | null
   totalTimeTaken: string | null
   cancellationDate: string | null
+  performedBy: string | null
 }
 
 const route = useRoute()
@@ -247,6 +255,7 @@ const assetId = String(route.params.assetId || '')
 
 const loading = ref(false)
 const history = ref<HistoryItem[]>([])
+const todayIso = new Date().toISOString().split('T')[0]
 
 // Pagination state
 const currentPage = ref(1)
@@ -429,7 +438,7 @@ const applyFilters = async () => {
           }
           // Fallback: try to parse and format
           const date = new Date(dateStr)
-          if (!isNaN(date.getTime())) {
+          if (!Number.isNaN(date.getTime())) {
             const year = date.getFullYear()
             const month = String(date.getMonth() + 1).padStart(2, '0')
             const day = String(date.getDate()).padStart(2, '0')
@@ -491,6 +500,7 @@ const applyFilters = async () => {
       // extra fields for rendering
       date: e.date,
       scheduledDateOnly: e.scheduledDateOnly,
+      performedBy: (e.performedBy || e.performedByName || e.updatedBy || e.updatedByName || e.userDisplayName || null)
     }))
   } catch (error: any) {
     console.error('Error fetching maintenance events:', error)
@@ -544,25 +554,42 @@ watch(() => filters.value.search, () => {
   debouncedSearch()
 })
 
-watch(() => filters.value.dateFrom, (newFromDate) => {
-  // Reset "To" date only if "From" date is after the "To" date
-  if (newFromDate && filters.value.dateTo && new Date(newFromDate) > new Date(filters.value.dateTo)) {
+const onFromDateChange = (newFromDate: string) => {
+  // Clamp future dates
+  if (newFromDate && new Date(newFromDate) > new Date(todayIso)) {
+    filters.value.dateFrom = todayIso
+  }
+  // Reset "To" date if it becomes invalid
+  if (filters.value.dateTo && new Date(filters.value.dateTo) < new Date(filters.value.dateFrom)) {
     filters.value.dateTo = ''
   }
-  // Don't call API yet - wait for To date to be selected
+  // If To date already selected and valid, trigger API
+  if (filters.value.dateTo) {
+    debouncedFilter()
+  }
+}
+
+watch(() => filters.value.dateFrom, (newFromDate) => {
+  onFromDateChange(newFromDate)
 })
 
-watch(() => filters.value.dateTo, (newToDate) => {
-  // Only call API if both dates are selected and To date is >= From date
-  if (filters.value.dateFrom && newToDate) {
+const onToDateChange = (newToDate: string) => {
+  // Clamp to today if future
+  if (newToDate && new Date(newToDate) > new Date(todayIso)) {
+    filters.value.dateTo = todayIso
+  }
+  // Only call API if both dates valid and ordered
+  if (filters.value.dateFrom && filters.value.dateTo) {
     const fromDate = new Date(filters.value.dateFrom)
-    const toDate = new Date(newToDate)
-    
-    // Validate that To date is after or equal to From date
+    const toDate = new Date(filters.value.dateTo)
     if (toDate >= fromDate) {
       debouncedFilter()
     }
   }
+}
+
+watch(() => filters.value.dateTo, (newToDate) => {
+  onToDateChange(newToDate)
 })
 
 watch(() => selectedStatus.value, () => {
@@ -660,6 +687,13 @@ onMounted(async () => {
   .filter-clear-btn { 
     min-width: 140px; 
   } 
+}
+
+/* NotesDisplay: ensure white background and subtle border for visibility */
+.history-timeline :deep(.notes-content) {
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
 }
 </style>
 

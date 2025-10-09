@@ -44,5 +44,17 @@
   --mindstix-success: var(--secondary-green);
   --mindstix-warning: var(--secondary-orange);
   --mindstix-danger: var(--secondary-red);
+
+  /* Z-Index Scale (ordered low → high) */
+  --z-base: 1;
+  --z-navbar: 1020;            /* sticky top navigation */
+  --z-dropdown: 1000;          /* base dropdowns/menus */
+  --z-dropdown-menu: 1000;     /* ensure below modal/backdrop */
+  --z-backdrop: 1050;          /* modal/backdrop overlays */
+  --z-modal: 1060;             /* modals/offcanvas above backdrop */
+  --z-popover: 1070;           /* popovers */
+  --z-tooltip: 1080;           /* tooltips */
+  --z-offcanvas: 1050;         /* offcanvas/mobile sidebars */
+  --z-toast: 2100;             /* toasts, above everything else */
 }
 

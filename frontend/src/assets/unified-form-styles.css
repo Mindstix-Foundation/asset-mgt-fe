@@ -245,8 +245,8 @@
 }
 
 .container-fluid.py-4 :deep(.custom-date-picker-container .date-display-input) {
-    height: 3rem !important;                    /* 48px fixed height */
-    padding: 0.75rem 2.25rem 0.75rem 1rem !important; /* room for icon */
+    height: 40px !important;                    /* standardized height */
+    padding: 0.5rem 2.25rem 0.5rem 1rem !important; /* room for icon, slimmer */
     border: 2px solid var(--element-gray) !important;
     border-radius: 0.5rem !important;
     font-size: 1rem !important;
@@ -427,6 +427,65 @@
   box-sizing: border-box;
 }
 
+/* Keep input-group elements on a single row and prevent wrapping */
+.container-fluid.py-4 .input-group {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+/* Restore Bootstrap-like flex sizing inside input groups */
+.container-fluid.py-4 .input-group .form-control {
+  width: 1%; /* allow flex to compute width */
+  flex: 1 1 auto;
+}
+
+.container-fluid.py-4 .input-group .input-group-text {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* Affix (prefix/suffix) inputs - shared utility */
+.affix-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.affix-input-wrapper .form-control.affix-has-prefix {
+  padding-left: 2.25rem !important;
+}
+
+.affix-input-wrapper .form-control.affix-has-suffix {
+  padding-right: 4rem !important; /* more room for suffix + icon */
+}
+
+.affix-input-wrapper .affix {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666666;
+  background: transparent;
+  pointer-events: none;
+  font-weight: 600;
+}
+
+.affix-input-wrapper .affix-prefix {
+  left: 0.75rem;
+}
+
+.affix-input-wrapper .affix-suffix {
+  right: 2.5rem; /* more separation from validation icon */
+}
+
+/* When valid/invalid icons appear, add a bit more padding on the right */
+.affix-input-wrapper .form-control.affix-has-suffix.is-valid,
+.container-fluid.py-4 .was-validated .affix-input-wrapper .form-control.affix-has-suffix:valid,
+.affix-input-wrapper .form-control.affix-has-suffix.is-invalid,
+.container-fluid.py-4 .was-validated .affix-input-wrapper .form-control.affix-has-suffix:invalid {
+  padding-right: 5rem !important;
+}
+
 /* Remove the inner seam so the shared edge looks continuous */
 .container-fluid.py-4 .input-group .input-group-text:first-child {
   border-right: none !important;
@@ -596,9 +655,13 @@
 ================================ */
 
 .form-actions {
-  padding: 1.5rem;
+  padding: 1rem; /* reduced from 1.5rem */
   box-sizing: border-box;
   width: 100%;
+  /* Center buttons and stack helper text below without per-form markup */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Center align text in form actions */
@@ -621,6 +684,32 @@
   color: #666666;
   display: block;
   text-align: center;
+  margin-top: 0.375rem; /* reduced space below buttons */
+}
+
+/* Neutralize large utility margins that push text too far from buttons */
+.form-actions .text-center.mt-3,
+.form-actions .mt-3 {
+  margin-top: 0.25rem !important;
+}
+
+/* When forms place buttons directly under .form-actions without wrappers, keep them centered and spaced */
+.form-actions > .btn {
+  margin: 0 0.5rem;
+}
+
+/* If a flex container is used for buttons, ensure centering by default */
+.form-actions > .d-flex,
+.form-actions .buttons,
+.form-actions .btn-group,
+.form-actions .button-row {
+  justify-content: center !important;
+  width: 100%;
+}
+
+/* Slimmer card footer for form pages */
+.container-fluid.py-4 .card-footer {
+  padding: 0.75rem 1rem; /* reduce default footer height */
 }
 
 .card-footer {

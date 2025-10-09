@@ -134,47 +134,7 @@
   border-bottom: none !important;
 }
 
-/* =================================
-   SHARED STATUS BADGES
-   Used across all employee views
-================================= */
-
-.employee-status {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.status-active {
-  background-color: var(--secondary-green);
-  color: white;
-}
-
-.status-inactive {
-  background-color: var(--primary-mid-gray);
-  color: white;
-}
-
-.status-pending {
-  background-color: var(--secondary-orange);
-  color: white;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
+/* (Removed unused SHARED STATUS BADGES that were not referenced in employees views) */
 
 /* =================================
    SHARED EMPTY & LOADING STATES
@@ -286,16 +246,7 @@
   padding: 1rem; 
 }
 
-/* Timeline badges styling */
-.badge-returned {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.badge-duration {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
+/* (Removed unused timeline badge styles: .badge-returned, .badge-duration) */
 
 /* =================================
    SHARED MODAL EMPLOYEE STYLES

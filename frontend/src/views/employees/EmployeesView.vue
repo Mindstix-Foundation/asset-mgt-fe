@@ -1725,10 +1725,7 @@
   display: block;
 }
 
-.dropdown-menu-responsive {
-  left: 0;
-  right: auto;
-}
+ 
 
 /* =================================
    ANIMATIONS
@@ -1989,12 +1986,7 @@
 
 /* Small screens: right-aligned to prevent overflow */
 @media (max-width: 767.98px) {
-  .dropdown-menu-responsive {
-    left: auto;
-    right: 0;
-    max-width: calc(100vw - 2rem);
-    min-width: 200px;
-  }
+  
   
   .employees-grid {
     grid-template-columns: 1fr;

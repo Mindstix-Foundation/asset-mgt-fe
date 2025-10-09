@@ -228,10 +228,8 @@ const handleConfirmLogout = async () => {
       logoutModal.hide()
     }
     await authStore.logout()
-    router.push('/')
-  } catch (error) {
-    // Even if logout fails, navigate to home/login
-    authStore.logout()
+  } finally {
+    // Always navigate to home/login regardless of logout result
     router.push('/')
   }
 }
@@ -298,7 +296,7 @@ onMounted(() => {
 /* Navbar styling */
 .navbar {
   box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  z-index: 1000;
+  z-index: var(--z-navbar);
   background: var(--bg-primary) !important;
   border-bottom: 1px solid var(--element-gray);
 }
@@ -415,7 +413,7 @@ onMounted(() => {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1040;
+  z-index: var(--z-backdrop);
   backdrop-filter: blur(2px);
   animation: fadeIn 0.3s ease-out;
 }
@@ -433,7 +431,7 @@ onMounted(() => {
   width: 320px;
   height: 100vh;
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-light-gray) 100%);
-  z-index: 1050;
+  z-index: var(--z-offcanvas);
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   display: flex;

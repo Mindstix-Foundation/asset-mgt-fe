@@ -828,6 +828,7 @@ const loadEmployeesPreview = async (filters: any) => {
   const { items: employees, pagination } = extractResponseData(response, 'employees')
   
   const mapped = employees.map((e: any) => ({
+    employeeId: e.employeeId || e.id,
     employeeName: `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.employeeId,
     email: e.email,
     phoneNumber: e.phoneNumber || e.phone || '-',
@@ -1017,12 +1018,11 @@ const getPreviewColumns = () => {
         { key: 'model', label: 'Model', width: '120px' },
         { key: 'serialNumber', label: 'Serial Number', width: '120px' },
         { key: 'status', label: 'Status', width: '130px' },
-        { key: 'assignedTo', label: 'Assigned To', width: '120px' },
-        { key: 'location', label: 'Location', width: '130px' },
-        { key: 'purchaseDate', label: 'Purchase Date', width: '120px', type: 'date' }
+        { key: 'assignedTo', label: 'Assigned To', width: '120px' }
       ]
     case 'employees':
       return [
+        { key: 'employeeId', label: 'Employee ID', width: '120px' },
         { key: 'employeeName', label: 'Employee Name', width: '150px' },
         { key: 'email', label: 'Email', width: '180px' },
         { key: 'phoneNumber', label: 'Phone Number', width: '120px' },

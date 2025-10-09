@@ -299,6 +299,7 @@ class AssetService {
 
     return {
       id: asset.assetId,
+      assetId: asset.assetId,
       type: asset.assetType.name,
       brand: asset.brand.name,
       model: asset.model.name,

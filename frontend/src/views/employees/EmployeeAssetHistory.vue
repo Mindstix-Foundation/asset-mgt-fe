@@ -89,7 +89,7 @@
                 </div>
                 <div class="col-8">
                   <button 
-                    class="btn btn-outline-secondary btn-modern w-100" 
+                    class="btn btn-filter w-100" 
                     @click="showFilterDropdown = !showFilterDropdown"
                     :class="{ active: showFilterDropdown }"
                   >
@@ -101,7 +101,7 @@
           </div>
 
           <!-- Filter Dropdown -->
-          <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+          <div v-if="showFilterDropdown" class="filter-dropdown mt-3 mb-3 p-3 bg-light rounded">
             <div class="d-flex flex-column flex-md-row gap-2">
               <div class="flex-fill">
                 <SearchableDropdown
@@ -131,7 +131,7 @@
               </div>
               <div class="filter-clear-button-container">
                 <div class="d-flex align-items-end h-100">
-                  <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                  <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                     <i class="fas fa-times me-1"></i>Clear
                   </button>
                 </div>
@@ -175,9 +175,11 @@
                         <div class="asset-meta-timeline small">{{ item.assetType }} • {{ item.brand }} {{ item.model }} • {{ item.assetId }}</div>
                       </div>
                     </div>
-                    <div class="timeline-badges">
-                      <span class="badge" :class="item.action === 'ASSIGNED' ? 'badge-green' : 'badge-orange'">{{ item.action === 'ASSIGNED' ? 'Assigned' : 'Returned' }}</span>
-                      <span class="badge badge-purple">{{ formatDateTime(item.timestamp) }}</span>
+                    <div class="d-flex flex-column align-items-end text-end">
+                      <div class="text-muted small">{{ item.performedBy }} • {{ formatDateTime(item.timestamp) }}</div>
+                      <div class="mt-1">
+                        <span class="badge" :class="item.action === 'ASSIGNED' ? 'badge-green' : 'badge-orange'">{{ item.action === 'ASSIGNED' ? 'Assigned' : 'Returned' }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -202,12 +204,7 @@
                         <div class="info-value small">{{ item.reason || 'Not specified' }}</div>
                       </div>
                     </div>
-                    <div class="col-6 col-sm-3">
-                      <div class="info-item">
-                        <span class="info-label small">Performed By</span>
-                        <div class="info-value small">{{ item.performedBy }}</div>
-                      </div>
-                    </div>
+                    
                     <div class="col-12" v-if="getNotesForAction(item)">
                       <div class="info-item">
                         <span class="info-label small">Notes</span>

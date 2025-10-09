@@ -346,13 +346,9 @@ const handleCancel = () => {
   z-index: 0;
 }
 
-/* Ensure proper spacing between form fields */
+/* Ensure proper spacing and layout for each form field */
 .change-password-page .mb-4 {
   margin-bottom: 1rem !important;
-}
-
-/* Create a wrapper for each form field to isolate layout */
-.change-password-page .mb-4 {
   position: relative;
   display: block;
 }

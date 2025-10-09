@@ -278,6 +278,63 @@ const toggleCalendar = () => {
   }
   showCalendar.value = !showCalendar.value
   showYearPicker.value = false
+  if (showCalendar.value) {
+    // Ensure the input and calendar are fully visible within scrollable containers
+    nextTick(() => {
+      const inputEl = document.getElementById(props.inputId || 'customDatePicker')
+      if (inputEl) {
+        try {
+          inputEl.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
+        } catch {
+          inputEl.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+        }
+      }
+      ensureCalendarVisible()
+    })
+  }
+}
+
+// Ensure calendar dropdown is fully visible within scrollable ancestor
+const ensureCalendarVisible = () => {
+  const container = document.querySelector('.date-picker-positioning-wrapper') as HTMLElement | null
+  const popup = container?.querySelector('.calendar-dropdown') as HTMLElement | null
+  if (!container || !popup) return
+
+  const scrollParent = findScrollableAncestor(container)
+  if (!scrollParent) return
+
+  const popupRect = popup.getBoundingClientRect()
+  const parentRect = scrollParent.getBoundingClientRect()
+  const SAFE_MARGIN = 24 // leave comfortable space above modal footer
+  const overflowBelow = popupRect.bottom + SAFE_MARGIN - parentRect.bottom
+  const overflowAbove = parentRect.top + SAFE_MARGIN - popupRect.top
+
+  console.log('[DatePicker] ensureCalendarVisible', {
+    inputId: props.inputId,
+    popupRect,
+    parentRect,
+    overflowBelow,
+    overflowAbove,
+    scrollTop: (scrollParent as HTMLElement).scrollTop,
+  })
+
+  if (overflowBelow > 0) {
+    ;(scrollParent as HTMLElement).scrollTop += overflowBelow
+  } else if (overflowAbove > 0) {
+    ;(scrollParent as HTMLElement).scrollTop -= overflowAbove
+  }
+}
+
+const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
+  let el: HTMLElement | null = start
+  while (el) {
+    const style = globalThis.getComputedStyle(el)
+    const overflowY = style.overflowY
+    const canScroll = /(auto|scroll)/.test(overflowY) && el.scrollHeight > el.clientHeight
+    if (canScroll) return el
+    el = el.parentElement
+  }
+  return document.scrollingElement as HTMLElement | null
 }
 
 const closeCalendar = () => {
