@@ -676,7 +676,20 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   const input = document.getElementById(fieldName) as HTMLInputElement
   
   if (!input) {
-    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    // If input is not found, try again after a short delay to allow for component mounting
+    setTimeout(() => {
+      const delayedInput = document.getElementById(fieldName) as HTMLInputElement
+      if (delayedInput) {
+        // Apply validation classes
+        if (validationType === 'invalid') {
+          delayedInput.classList.add('is-invalid')
+          delayedInput.classList.remove('is-valid')
+        } else {
+          delayedInput.classList.add('is-valid')
+          delayedInput.classList.remove('is-invalid')
+        }
+      }
+    }, 100)
     return
   }
 

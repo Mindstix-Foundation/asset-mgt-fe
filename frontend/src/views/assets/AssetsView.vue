@@ -622,17 +622,17 @@
                     <div class="info-item-compact">
                       <div class="info-label-compact">Warranty Period</div>
                       <div class="info-value-compact">
-                        <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyUntil" class="warranty-info-compact">
+                        <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyEndDate" class="warranty-info-compact">
                           <div v-if="selectedAsset.warrantyStartDate" class="warranty-row">
                             <span class="warranty-label">Start:</span>
                             <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyStartDate) }}</span>
                           </div>
-                          <div v-if="selectedAsset.warrantyUntil" class="warranty-row">
+                          <div v-if="selectedAsset.warrantyEndDate" class="warranty-row">
                             <span class="warranty-label">End:</span>
-                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyUntil) }}</span>
+                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyEndDate) }}</span>
                           </div>
-                          <div v-if="selectedAsset.warrantyUntil" class="warranty-time">
-                            <span class="warranty-time-text text-muted">{{ getWarrantyTimeLeft(selectedAsset.warrantyUntil) }}</span>
+                          <div v-if="selectedAsset.warrantyEndDate" class="warranty-time">
+                            <span class="warranty-time-text text-muted">{{ getWarrantyTimeLeft(selectedAsset.warrantyEndDate) }}</span>
                           </div>
                         </div>
                         <div v-else class="text-muted">Not specified</div>
@@ -1380,7 +1380,7 @@ interface AssetDisplayItem {
   category?: string
   purchaseCost?: number
   vendor?: string
-  warrantyUntil?: string
+  warrantyEndDate?: string
   warrantyStartDate?: string
   notes?: string
   // Assignment details
@@ -1619,7 +1619,7 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
     category: detailedAsset.assetType.category.name,
     purchaseCost: detailedAsset.purchaseCost || undefined,
     vendor: detailedAsset.vendor?.name || 'Not specified',
-    warrantyUntil: detailedAsset.warrantyEndDate || '',
+    warrantyEndDate: detailedAsset.warrantyEndDate || '',
     warrantyStartDate: detailedAsset.warrantyStartDate,
     notes: detailedAsset.notes,
     // Assignment details from current assignment

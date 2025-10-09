@@ -79,7 +79,7 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="assetCategory"
-                        :label="props.disableAssetIdentity ? 'Asset Category (Read-only)' : 'Asset Category'"
+                        :label="'Asset Category'"
                         placeholder="Search categories..."
                         :items="categoryItems"
                         v-model="selectedCategory"
@@ -106,8 +106,8 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="assetType"
-                        :label="props.disableAssetIdentity ? 'Asset Type (Read-only)' : 'Asset Type'"
-                        :placeholder="props.disableAssetIdentity ? 'Asset type (read-only)' : (selectedCategory ? 'Search asset types...' : 'Select category first...')"
+                        :label="'Asset Type'"
+                        :placeholder="selectedCategory ? 'Search asset types...' : 'Select category first...'"
                         :items="typeItems"
                         v-model="selectedType"
                         :disabled="props.disableAssetIdentity || !selectedCategory"
@@ -135,8 +135,8 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="brand"
-                        :label="props.disableAssetIdentity ? 'Brand (Read-only)' : 'Brand'"
-                        :placeholder="props.disableAssetIdentity ? 'Brand (read-only)' : (selectedType ? 'Search brands...' : 'Select asset type first...')"
+                        :label="'Brand'"
+                        :placeholder="selectedType ? 'Search brands...' : 'Select asset type first...'"
                         :items="brandItems"
                         v-model="selectedBrand"
                         :disabled="props.disableAssetIdentity || !selectedType"
@@ -164,8 +164,8 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="model"
-                        :label="props.disableAssetIdentity ? 'Model (Read-only)' : 'Model'"
-                        :placeholder="props.disableAssetIdentity ? 'Model (read-only)' : (selectedBrand ? 'Search models...' : 'Select brand first...')"
+                        :label="'Model'"
+                        :placeholder="selectedBrand ? 'Search models...' : 'Select brand first...'"
                         :items="modelItems"
                         v-model="selectedModel"
                         :disabled="props.disableAssetIdentity || !selectedBrand"
@@ -267,7 +267,7 @@
                       help-text="When warranty coverage begins"
                       :error-message="errors.warrantyStartDate"
                       :input-class="getFieldClass('warrantyStartDate') as any"
-                      @change="validateFieldInline('warrantyStartDate')"
+                      @change="onWarrantyStartDateChange"
                       @blur="validateFieldInline('warrantyStartDate')"
                       @focus="clearFieldValidation('warrantyStartDate')"
                     />
@@ -279,9 +279,11 @@
                       input-id="warrantyEndDate" 
                       label="Warranty End Date (Optional)"
                       v-model="formData.warrantyEndDate"
-                      help-text="When warranty coverage expires"
+                      :help-text="formData.warrantyStartDate ? 'When warranty coverage expires' : 'Select warranty start date first'"
                       :error-message="errors.warrantyEndDate"
                       :input-class="getFieldClass('warrantyEndDate') as any"
+                      :min="warrantyEndDateMin"
+                      :disabled="!formData.warrantyStartDate"
                       @change="validateFieldInline('warrantyEndDate')"
                       @blur="validateFieldInline('warrantyEndDate')"
                       @focus="clearFieldValidation('warrantyEndDate')"
@@ -574,6 +576,11 @@ const characterCountClass = computed(() => {
 // Today's date for date validation
 const todayDate = computed(() => new Date().toISOString().split('T')[0])
 
+// Warranty end date minimum (based on warranty start date)
+const warrantyEndDateMin = computed(() => {
+  return formData.warrantyStartDate || ''
+})
+
 // Transform API data to SearchableDropdown format
 const categoryItems = computed(() => {
   return categories.value.map(category => ({
@@ -724,23 +731,46 @@ const availableStatusOptions = computed(() => {
 
 // Validation system (following IssueAssetView/CollectAssetView pattern)
 const getFieldClass = (fieldName: string) => {
+  // Don't apply validation classes to disabled asset identity fields
+  if (props.disableAssetIdentity && ['assetCategory', 'assetType', 'brand', 'model'].includes(fieldName)) {
+    return {}
+  }
+  
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
     return {}
   }
   
   return {
     'is-valid': fieldValidation[fieldName] === true,
-    'is-invalid': fieldValidation[fieldName] === false || errors[fieldName as keyof typeof errors]
+    'is-invalid': fieldValidation[fieldName] === false || (errors[fieldName as keyof typeof errors] && errors[fieldName as keyof typeof errors].trim() !== '')
   }
 }
 
 // Helper function to apply validation classes to SearchableDropdown components
 const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Don't apply validation classes to disabled asset identity fields
+  if (props.disableAssetIdentity && ['assetCategory', 'assetType', 'brand', 'model'].includes(fieldName)) {
+    return
+  }
+  
   // Find the SearchableDropdown input by ID
   const input = document.getElementById(fieldName) as HTMLInputElement
   
   if (!input) {
-    console.warn(`Could not find input for SearchableDropdown field: ${fieldName}`)
+    // If input is not found, try again after a short delay to allow for component mounting
+    setTimeout(() => {
+      const delayedInput = document.getElementById(fieldName) as HTMLInputElement
+      if (delayedInput) {
+        // Apply validation classes
+        if (validationType === 'invalid') {
+          delayedInput.classList.add('is-invalid')
+          delayedInput.classList.remove('is-valid')
+        } else {
+          delayedInput.classList.add('is-valid')
+          delayedInput.classList.remove('is-invalid')
+        }
+      }
+    }, 100)
     return
   }
 
@@ -759,7 +789,7 @@ const validateRequiredField = (fieldName: string, value: any, element: HTMLEleme
   const isRequired = element.hasAttribute('required')
   
   if (isRequired && (!value || value.toString().trim() === '')) {
-    setFieldError(fieldName, '') // No message needed - red styling shows it's required
+    setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
     return false
   }
   
@@ -790,6 +820,11 @@ const validateStandardField = (fieldName: string, element: HTMLElement): boolean
 }
 
 const setFieldError = (fieldName: string, message: string) => {
+  // Don't apply validation to disabled asset identity fields
+  if (props.disableAssetIdentity && ['assetCategory', 'assetType', 'brand', 'model'].includes(fieldName)) {
+    return
+  }
+  
   errors[fieldName as keyof typeof errors] = message
   fieldValidation[fieldName] = false
   
@@ -806,6 +841,11 @@ const setFieldError = (fieldName: string, message: string) => {
 }
 
 const setFieldValid = (fieldName: string) => {
+  // Don't apply validation to disabled asset identity fields
+  if (props.disableAssetIdentity && ['assetCategory', 'assetType', 'brand', 'model'].includes(fieldName)) {
+    return
+  }
+  
   delete errors[fieldName as keyof typeof errors]
   fieldValidation[fieldName] = true
   
@@ -822,18 +862,46 @@ const setFieldValid = (fieldName: string) => {
 }
 
 const clearFieldValidation = (fieldName: string) => {
-  if (fieldValidation[fieldName] === false) {
-    fieldValidation[fieldName] = null
-    delete errors[fieldName as keyof typeof errors]
+  // Don't clear validation for disabled asset identity fields
+  if (props.disableAssetIdentity && ['assetCategory', 'assetType', 'brand', 'model'].includes(fieldName)) {
+    return
   }
   
-  // Also clear validation for SearchableDropdown components
-  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
-  if (searchableDropdownFields.includes(fieldName)) {
-    const input = document.getElementById(fieldName) as HTMLInputElement
-    if (input) {
-      input.classList.remove('is-invalid', 'is-valid')
+  // Only clear validation if form hasn't been submitted yet
+  if (!formSubmitted.value) {
+    fieldValidation[fieldName] = null
+    delete errors[fieldName as keyof typeof errors]
+    
+    // Also clear validation for SearchableDropdown components
+    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+    if (searchableDropdownFields.includes(fieldName)) {
+      const input = document.getElementById(fieldName) as HTMLInputElement
+      if (input) {
+        input.classList.remove('is-invalid', 'is-valid')
+      }
     }
+  }
+}
+
+// Helper function to get selected value for a field
+const getSelectedValueForField = (fieldName: string) => {
+  switch (fieldName) {
+    case 'assetCategory':
+      return selectedCategory.value
+    case 'assetType':
+      return selectedType.value
+    case 'brand':
+      return selectedBrand.value
+    case 'model':
+      return selectedModel.value
+    case 'condition':
+      return selectedCondition.value
+    case 'status':
+      return selectedStatus.value
+    case 'vendor':
+      return selectedVendor.value
+    default:
+      return null
   }
 }
 
@@ -855,13 +923,7 @@ const validateFieldInline = async (fieldName: string) => {
   // Clear previous custom validity
   element.setCustomValidity('')
 
-  // Check if field is required
-  if (!validateRequiredField(fieldName, value, element)) {
-    console.log(`Field ${fieldName} failed required validation`)
-    return false
-  }
-
-  // Handle specific field validations
+  // Handle specific field validations first
   const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
   if (handler) {
     console.log(`Using specific handler for field: ${fieldName}`)
@@ -872,11 +934,26 @@ const validateFieldInline = async (fieldName: string) => {
     }
   }
 
-  // For SearchableDropdown fields, we've already handled validation above
+  // For SearchableDropdown fields, use the dropdown validation
   const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
   if (searchableDropdownFields.includes(fieldName)) {
-    console.log(`Field ${fieldName} is a SearchableDropdown, already validated`)
-    return true // Already validated above
+    console.log(`Field ${fieldName} is a SearchableDropdown, using dropdown validation`)
+    // For SearchableDropdown, check if it's required and has a value
+    const isRequired = !props.disableAssetIdentity || fieldName === 'condition'
+    if (isRequired) {
+      const selectedValue = getSelectedValueForField(fieldName)
+      return validateRequiredDropdown(fieldName, selectedValue)
+    } else {
+      // Optional field, always valid
+      setFieldValid(fieldName)
+      return true
+    }
+  }
+
+  // Check if field is required for standard fields
+  if (!validateRequiredField(fieldName, value, element)) {
+    console.log(`Field ${fieldName} failed required validation`)
+    return false
   }
 
   // Use native validation for other fields
@@ -1051,18 +1128,6 @@ const validateWarrantyDateField = (fieldName: string, value: any): boolean => {
     return true
   }
   
-  // Validate that warranty start date is not in the future
-  if (fieldName === 'warrantyStartDate' && value > todayDate.value) {
-    setFieldError(fieldName, 'Warranty start date cannot be in the future')
-    return false
-  }
-  
-  // Validate that warranty end date is not in the future
-  if (fieldName === 'warrantyEndDate' && value > todayDate.value) {
-    setFieldError(fieldName, 'Warranty end date cannot be in the future')
-    return false
-  }
-  
   // Validate that warranty end date is after start date (if both are provided)
   if (fieldName === 'warrantyEndDate' && formData.warrantyStartDate && value < formData.warrantyStartDate) {
     setFieldError(fieldName, 'Warranty end date must be after start date')
@@ -1227,8 +1292,11 @@ const onCategoryChange = async (item: Item | null) => {
     await loadAssetTypes(Number.parseInt(item.value.toString()))
   }
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('assetCategory')
+    applyValidationToSearchableDropdown('assetCategory', 'valid')
+  } else {
     clearFieldValidation('assetCategory')
   }
   
@@ -1259,8 +1327,11 @@ const onTypeChange = async (item: Item | null) => {
     await loadBrands()
   }
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('assetType')
+    applyValidationToSearchableDropdown('assetType', 'valid')
+  } else {
     clearFieldValidation('assetType')
   }
   
@@ -1287,8 +1358,11 @@ const onBrandChange = async (item: Item | null) => {
     await loadModelsByBrandAndAssetType(Number.parseInt(item.value.toString()), Number.parseInt(selectedType.value.value.toString()))
   }
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('brand')
+    applyValidationToSearchableDropdown('brand', 'valid')
+  } else {
     clearFieldValidation('brand')
   }
   
@@ -1302,8 +1376,11 @@ const onModelChange = async (item: Item | null) => {
   uiFormData.model = item && item.value ? item.value.toString() : ''
   formData.modelId = item && item.value ? item.value.toString() : ''
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('model')
+    applyValidationToSearchableDropdown('model', 'valid')
+  } else {
     clearFieldValidation('model')
   }
   
@@ -1314,8 +1391,11 @@ const onVendorChange = (item: Item | null) => {
   selectedVendor.value = item
   formData.vendorId = item && item.value ? item.value.toString() : undefined
   
-  // Clear validation error when user makes a selection (vendor is optional)
+  // Handle validation when user makes a selection (vendor is optional)
   if (item) {
+    setFieldValid('vendor')
+    applyValidationToSearchableDropdown('vendor', 'valid')
+  } else {
     clearFieldValidation('vendor')
   }
   
@@ -1326,8 +1406,11 @@ const onConditionChange = (item: Item | null) => {
   selectedCondition.value = item
   formData.condition = item && item.value ? item.value.toString() : 'NEW'
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('condition')
+    applyValidationToSearchableDropdown('condition', 'valid')
+  } else {
     clearFieldValidation('condition')
   }
   
@@ -1338,12 +1421,30 @@ const onStatusChange = (item: Item | null) => {
   selectedStatus.value = item
   formData.status = item && item.value ? item.value.toString() : 'AVAILABLE'
   
-  // Clear validation error when user makes a selection
+  // Handle validation when user makes a selection
   if (item) {
+    setFieldValid('status')
+    applyValidationToSearchableDropdown('status', 'valid')
+  } else {
     clearFieldValidation('status')
   }
   
   validateFieldInline('status')
+}
+
+// Warranty start date change handler
+const onWarrantyStartDateChange = (value: string) => {
+  formData.warrantyStartDate = value
+  
+  // If warranty end date exists and is before the new start date, clear it
+  if (formData.warrantyEndDate && value && formData.warrantyEndDate < value) {
+    formData.warrantyEndDate = ''
+    // Clear any validation errors for warranty end date
+    clearFieldValidation('warrantyEndDate')
+  }
+  
+  // Validate warranty start date
+  validateFieldInline('warrantyStartDate')
 }
 
 // Helper function to get DatePicker input element
@@ -1405,6 +1506,9 @@ const updateCharacterCount = () => {
 }
 
 const validateAllFields = async (): Promise<boolean> => {
+  // Mark form as submitted to enable validation styling
+  formSubmitted.value = true
+  
   // Validate required fields (exclude asset identity fields if disabled)
   const requiredFields = ['serialNumber', 'location', 'condition']
   
@@ -1806,6 +1910,13 @@ const loadDependentData = async (asset: any) => {
 const initializeNewAsset = async () => {
   await generateAssetId()
   selectedCondition.value = createDropdownItem('NEW', 'New')
+  
+  // Wait for DOM to be updated before applying validation
+  await nextTick()
+  
+  // Set condition as valid since it has a default value
+  setFieldValid('condition')
+  applyValidationToSearchableDropdown('condition', 'valid')
 }
 
 const initializeEditMode = async (asset: any) => {
@@ -1814,6 +1925,39 @@ const initializeEditMode = async (asset: any) => {
   setUIFormData(asset)
   setSelectedDropdownItems(asset)
   await loadDependentData(asset)
+  
+  // Wait for DOM to be updated before applying validation
+  await nextTick()
+  
+  // Set validation state for existing values in edit mode
+  if (selectedCategory.value) {
+    setFieldValid('assetCategory')
+    applyValidationToSearchableDropdown('assetCategory', 'valid')
+  }
+  if (selectedType.value) {
+    setFieldValid('assetType')
+    applyValidationToSearchableDropdown('assetType', 'valid')
+  }
+  if (selectedBrand.value) {
+    setFieldValid('brand')
+    applyValidationToSearchableDropdown('brand', 'valid')
+  }
+  if (selectedModel.value) {
+    setFieldValid('model')
+    applyValidationToSearchableDropdown('model', 'valid')
+  }
+  if (selectedCondition.value) {
+    setFieldValid('condition')
+    applyValidationToSearchableDropdown('condition', 'valid')
+  }
+  if (selectedVendor.value) {
+    setFieldValid('vendor')
+    applyValidationToSearchableDropdown('vendor', 'valid')
+  }
+  if (selectedStatus.value) {
+    setFieldValid('status')
+    applyValidationToSearchableDropdown('status', 'valid')
+  }
 }
 
 // Initialize form data if editing

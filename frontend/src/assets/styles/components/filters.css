@@ -313,8 +313,8 @@
 }
 
 .date-display-input.is-valid {
-  border-color: #198754 !important;
-  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
   background-image: none !important; /* remove Bootstrap green tick bg */
 }
 

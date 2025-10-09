@@ -7,19 +7,20 @@
     
     <!-- Positioning wrapper for input and calendar only -->
     <div class="date-picker-positioning-wrapper">
-      <div class="date-input-wrapper" @click="toggleCalendar">
+      <div class="date-input-wrapper" :class="{ 'disabled': disabled }" @click="!disabled && toggleCalendar()">
         <input 
           v-model="displayValue" 
           type="text" 
           class="form-control date-display-input"
-          :class="inputClass"
-          :placeholder="placeholder"
+          :class="[inputClass, { 'disabled': disabled }]"
+          :placeholder="disabled ? 'Select start date first' : placeholder"
           :id="inputId"
           readonly
-          @focus="onFocus"
-          @blur="onBlur"
+          :disabled="disabled"
+          @focus="!disabled && onFocus()"
+          @blur="!disabled && onBlur()"
         >
-        <i class="fas fa-calendar-alt date-icon"></i>
+        <i class="fas fa-calendar-alt date-icon" :class="{ 'disabled': disabled }"></i>
       </div>
       
       <!-- Custom Calendar Dropdown - Positioned relative to positioning wrapper -->
@@ -113,6 +114,7 @@ interface Props {
   min?: string
   max?: string
   cssClass?: string
+  disabled?: boolean
 }
 
 interface Emits {
@@ -127,7 +129,8 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   inputId: 'customDatePicker',
   inputClass: '',
-  cssClass: ''
+  cssClass: '',
+  disabled: false
 })
 
 const emit = defineEmits<Emits>()
@@ -263,6 +266,8 @@ const parseDisplayDate = (dateString: string): Date | null => {
 }
 
 const toggleCalendar = () => {
+  if (props.disabled) return
+  
   if (!showCalendar.value) {
     // When opening calendar, set currentDate to selected date or today
     if (selectedDate.value) {
@@ -426,4 +431,41 @@ onUnmounted(() => {
 
 <style scoped>
 /* Custom Date Picker styles will be added to filters.css */
+
+/* Disabled state styling */
+.date-input-wrapper.disabled {
+  opacity: 0.6;
+  cursor: default;
+  background-color: #f8f9fa;
+}
+
+.date-input-wrapper.disabled .form-control {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: default;
+  border-color: #dee2e6;
+}
+
+.date-input-wrapper.disabled .date-icon {
+  color: #6c757d !important;
+  cursor: default;
+}
+
+.date-input-wrapper.disabled:hover {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
+
+/* Ensure disabled input styling */
+.form-control.disabled {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  cursor: default;
+  border-color: #dee2e6;
+}
+
+.form-control.disabled:focus {
+  border-color: #dee2e6;
+  box-shadow: none;
+}
 </style>

@@ -244,8 +244,11 @@
 Processor: Intel i7-13700H
 RAM: 16GB DDR5
 Storage: 512GB SSD
-Display: 15.6&quot; FHD"
-                      help-text="Enter specifications as key-value pairs (one per line)"
+Display: 15.6&quot; FHD
+
+Or enter a simple description:
+FULL BLACK AND RED"
+                      help-text="Enter specifications as key-value pairs (one per line) or a simple description. Both formats will be saved as an object."
                       :max-length="1000"
                       :min-rows="4"
                       input-id="model-specifications"
@@ -948,7 +951,7 @@ Display: 15.6&quot; FHD"
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { assetCategoryService } from '../../services/api/assetCategoryService'
@@ -1264,7 +1267,17 @@ const saveEntity = async () => {
     if (selectedEntityType.value === 'model') {
       data.brandId = Number.parseInt(formData.brandId)
       data.assetTypeId = Number.parseInt(formData.assetTypeId)
-      data.specifications = parseSpecifications(formData.specifications)
+      
+      // Debug: Log the specifications input and output
+      console.log('DEBUG - formData.specifications:', formData.specifications)
+      console.log('DEBUG - formData.specifications type:', typeof formData.specifications)
+      console.log('DEBUG - formData.specifications length:', formData.specifications?.length)
+      
+      const parsedSpecs = parseSpecifications(formData.specifications)
+      console.log('DEBUG - parsedSpecs:', parsedSpecs)
+      console.log('DEBUG - parsedSpecs type:', typeof parsedSpecs)
+      
+      data.specifications = parsedSpecs
     }
     
     if (formData.id) {
@@ -1493,23 +1506,54 @@ const confirmDelete = async () => {
 }
 
 const parseSpecifications = (specsInput: string) => {
-  if (!specsInput.trim()) return undefined
+  console.log('DEBUG parseSpecifications - Input:', specsInput)
+  console.log('DEBUG parseSpecifications - Input type:', typeof specsInput)
+  console.log('DEBUG parseSpecifications - Input trimmed:', specsInput?.trim())
+  
+  if (!specsInput || !specsInput.trim()) {
+    console.log('DEBUG parseSpecifications - Returning undefined (empty input)')
+    return undefined
+  }
   
   const specs: Record<string, string> = {}
   const lines = specsInput.split('\n')
+  console.log('DEBUG parseSpecifications - Lines:', lines)
+  
+  let hasKeyValuePairs = false
   
   for (const line of lines) {
+    console.log('DEBUG parseSpecifications - Processing line:', line)
     const colonIndex = line.indexOf(':')
+    console.log('DEBUG parseSpecifications - Colon index:', colonIndex)
+    
     if (colonIndex > 0) {
+      hasKeyValuePairs = true
       const key = line.substring(0, colonIndex).trim()
       const value = line.substring(colonIndex + 1).trim()
+      console.log('DEBUG parseSpecifications - Key:', key, 'Value:', value)
+      
       if (key && value) {
         specs[key] = value
+        console.log('DEBUG parseSpecifications - Added to specs:', key, '=', value)
       }
     }
   }
   
-  return Object.keys(specs).length > 0 ? specs : undefined
+  console.log('DEBUG parseSpecifications - Final specs object:', specs)
+  console.log('DEBUG parseSpecifications - Specs keys count:', Object.keys(specs).length)
+  console.log('DEBUG parseSpecifications - Has key-value pairs:', hasKeyValuePairs)
+  
+  // If no key-value pairs found, treat the entire input as a description in an object
+  if (!hasKeyValuePairs && specsInput.trim()) {
+    console.log('DEBUG parseSpecifications - No key-value pairs found, treating as description')
+    const result = { description: specsInput.trim() }
+    console.log('DEBUG parseSpecifications - Returning description object:', result)
+    return result
+  }
+  
+  const result = Object.keys(specs).length > 0 ? specs : undefined
+  console.log('DEBUG parseSpecifications - Returning:', result)
+  return result
 }
 
 const formatSpecifications = (specifications: any) => {
@@ -2043,6 +2087,15 @@ const getAssetDisplayId = (id: string | number): string => {
 }
 
 
+// Debug watcher for specifications
+watch(() => formData.specifications, (newValue, oldValue) => {
+  console.log('DEBUG WATCHER - formData.specifications changed:')
+  console.log('  Old value:', oldValue)
+  console.log('  New value:', newValue)
+  console.log('  New value type:', typeof newValue)
+  console.log('  New value length:', newValue?.length)
+}, { deep: true })
+
 // Lifecycle
 onMounted(async () => {
   await loadInitialData()
@@ -2252,3 +2305,4 @@ onMounted(async () => {
 <style>
 @import '@/assets/styles/pages/assets.css';
 </style>
+

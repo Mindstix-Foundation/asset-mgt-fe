@@ -194,7 +194,7 @@ export interface AssetDisplayItem {
   category?: string
   purchaseCost?: number
   vendor?: string
-  warrantyUntil?: string
+  warrantyEndDate?: string
   warrantyStartDate?: string
   notes?: string
   // Assignment details

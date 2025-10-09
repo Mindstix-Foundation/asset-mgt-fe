@@ -114,7 +114,7 @@ const router = createRouter({
         {
           path: 'maintenance/:assetId/history',
           name: ROUTE_NAMES.MAINTENANCE_HISTORY,
-          component: () => import('../views/maintenance/MaintenanceHistoryView.vue'),
+          component: () => import('../views/maintenance/MaintenanceView.vue'),
         },
         {
           path: 'maintenance/schedule',

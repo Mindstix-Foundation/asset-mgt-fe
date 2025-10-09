@@ -595,8 +595,8 @@
 /* Notes textarea - valid state (green border) - editable only */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
   background-image: none !important; /* Remove Bootstrap's default checkmark icon */
   padding-right: 0.75rem !important; /* Reset padding (no icon) */
 }
@@ -614,8 +614,8 @@
 /* Notes textarea - valid state with focus (keep green) - editable only */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid:focus,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid:focus {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
 }
 
 /* Notes textarea - invalid state with focus (keep red) - editable only */

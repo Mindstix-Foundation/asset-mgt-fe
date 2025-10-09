@@ -41,6 +41,7 @@ export interface Asset {
   purchaseDate?: string
   purchaseCost?: number
   warrantyStartDate?: string
+  warrantyEndDate?: string
   warrantyUntil?: string
   notes?: string
 }

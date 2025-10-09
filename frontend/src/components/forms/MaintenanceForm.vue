@@ -345,7 +345,7 @@ const selectedAssetDetails = reactive({
   purchaseDate: '',
   purchaseCost: '',
   warrantyStartDate: '',
-  warrantyUntil: ''
+  warrantyEndDate: ''
 })
 const selectedAssetSpecs = ref<string | null>(null)
 
@@ -384,7 +384,7 @@ const clearAssetDetails = () => {
   selectedAssetDetails.purchaseDate = ''
   selectedAssetDetails.purchaseCost = ''
   selectedAssetDetails.warrantyStartDate = ''
-  selectedAssetDetails.warrantyUntil = ''
+  selectedAssetDetails.warrantyEndDate = ''
   selectedAssetSpecs.value = null
 }
 
@@ -438,7 +438,7 @@ const populateAssetDetails = (asset: any) => {
   selectedAssetDetails.purchaseDate = asset.purchaseDate || ''
   selectedAssetDetails.purchaseCost = asset.purchaseCost ? String(asset.purchaseCost) : ''
   selectedAssetDetails.warrantyStartDate = asset.warrantyStartDate || ''
-  selectedAssetDetails.warrantyUntil = asset.warrantyUntil || ''
+  selectedAssetDetails.warrantyEndDate = asset.warrantyEndDate || ''
   selectedAssetSpecs.value = parseAssetSpecs(asset.model?.specifications)
 }
 
