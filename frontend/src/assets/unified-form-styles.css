@@ -102,6 +102,32 @@
   font-size: 1rem !important;
 }
 
+/* DatePicker label styling to match other form labels */
+.custom-date-picker-container .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* DatePicker form-text styling to match other form elements */
+.custom-date-picker-container .form-text {
+  font-size: 0.875rem !important;
+  color: #666666 !important;
+  margin-top: 0.25rem !important;
+  font-weight: 500 !important;
+}
+
+/* DatePicker invalid-feedback styling to match other form elements */
+.custom-date-picker-container .invalid-feedback {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 0.25rem !important;
+  font-size: 0.875rem !important;
+  color: #dc2626 !important;
+  font-weight: 500 !important;
+}
+
 /* Ensure dropdown menu matches the form's styling context */
 .form-searchable-dropdown :deep(.dropdown-menu) {
   border: 1px solid rgba(0, 0, 0, 0.15) !important;

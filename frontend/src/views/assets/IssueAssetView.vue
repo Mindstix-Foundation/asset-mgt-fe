@@ -155,27 +155,35 @@
           <!-- Action Buttons -->
           <div class="card-footer">
             <div class="form-actions">
-              <!-- Buttons Row -->
-              <div class="d-flex justify-content-center gap-3 mb-3">
-                <button type="button" class="btn btn-cancel" @click="goBack">
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  class="btn btn-green" 
-                  :disabled="isSubmitting"
-                  @click="console.log('Button clicked!', { isSubmitting: isSubmitting, disabled: isSubmitting })"
-                >
-                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
-                  {{ isSubmitting ? 'Issuing Asset...' : 'Issue Asset' }}
-                </button>
+              <!-- Footer Start -->
+              <div class="container">
+                <!-- Row 1: Buttons -->
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-center gap-3 mb-3">
+                    <button type="button" class="btn btn-cancel" @click="goBack">
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="btn btn-green" 
+                      :disabled="isSubmitting"
+                      @click="submitForm"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
+                      {{ isSubmitting ? 'Issuing Asset...' : 'Issue Asset' }}
+                    </button>
+                  </div>
+                </div>
+                <!-- Row 2: Small Text -->
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <small class="text-muted">
+                      Fields marked with <span class="text-danger">*</span> are required
+                    </small>
+                  </div>
+                </div>
               </div>
-              <!-- Text Row -->
-              <div class="text-center">
-                <small class="text-muted">
-                  Fields marked with <span class="text-danger">*</span> are required
-                </small>
-              </div>
+              <!-- Container End -->
             </div>
           </div>
         </div>
@@ -349,6 +357,26 @@ const applyValidationToSearchableDropdown = (fieldName: string, validationType: 
   }
 }
 
+// Helper function to apply validation classes to DatePicker components
+const applyValidationToDatePicker = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Find the DatePicker input by ID
+  const input = document.getElementById(fieldName) as HTMLInputElement
+  
+  if (!input) {
+    console.warn(`Could not find input for DatePicker field: ${fieldName}`)
+    return
+  }
+
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
+  }
+}
+
 // Helper functions for field validation
 const validateRequiredField = (fieldName: string, value: any, element: HTMLElement): boolean => {
   const isRequired = element.hasAttribute('required')
@@ -507,6 +535,12 @@ const setFieldError = (fieldName: string, message: string) => {
     applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
   
+  // Apply validation classes to DatePicker fields
+  const datePickerFields = ['assignmentDate']
+  if (datePickerFields.includes(fieldName)) {
+    applyValidationToDatePicker(fieldName, 'invalid')
+  }
+  
   console.log(`Field validation state after error:`, {
     fieldErrors: fieldErrors[fieldName],
     fieldValidation: fieldValidation[fieldName]
@@ -529,6 +563,12 @@ const setFieldValid = (fieldName: string) => {
     applyValidationToSearchableDropdown(fieldName, 'valid')
   }
   
+  // Apply validation classes to DatePicker fields
+  const datePickerFields = ['assignmentDate']
+  if (datePickerFields.includes(fieldName)) {
+    applyValidationToDatePicker(fieldName, 'valid')
+  }
+  
   console.log(`Field validation state after valid:`, {
     fieldErrors: fieldErrors[fieldName],
     fieldValidation: fieldValidation[fieldName]
@@ -544,6 +584,15 @@ const clearFieldValidation = (fieldName: string) => {
   // Also clear validation for SearchableDropdown components
   const searchableDropdownFields = ['assetId', 'employeeId', 'assignmentReason']
   if (searchableDropdownFields.includes(fieldName)) {
+    const input = document.getElementById(fieldName) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid', 'is-valid')
+    }
+  }
+  
+  // Also clear validation for DatePicker components
+  const datePickerFields = ['assignmentDate']
+  if (datePickerFields.includes(fieldName)) {
     const input = document.getElementById(fieldName) as HTMLInputElement
     if (input) {
       input.classList.remove('is-invalid', 'is-valid')
@@ -617,10 +666,6 @@ const submitForm = async (event?: Event) => {
   }
   
   console.log('Form is valid:', isFormValid)
-
-  // TEMPORARY: Skip validation for testing
-  console.log('TEMPORARY: Skipping validation for testing')
-  isFormValid = true
 
   if (!isFormValid) {
     // Don't show error toast for validation errors - instead scroll to first error
@@ -927,12 +972,6 @@ onMounted(async () => {
   const year = today.getFullYear()
   formData.assignmentDate = `${day}-${month}-${year}`
   console.log('Default date set:', formData.assignmentDate)
-  
-  // Validate the default date to ensure it shows as valid
-  nextTick(() => {
-    console.log('Validating default date after nextTick')
-    validateFieldInline('assignmentDate')
-  })
   
   // Check if asset was pre-selected from assets page
   const selectedAssetId = localStorage.getItem('selectedAssetId')

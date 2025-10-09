@@ -236,28 +236,35 @@
           <!-- Action Buttons -->
           <div class="card-footer">
             <div class="form-actions">
-              <!-- Buttons Row -->
-              <div class="d-flex justify-content-center gap-3 mb-3">
-                <button type="button" class="btn btn-cancel" @click="goBack">
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  class="btn btn-pink" 
-                  :disabled="isSubmitting"
-                  @click="submitForm"
-                >
-                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
-                  {{ isSubmitting ? 'Collecting Asset...' : 'Collect Asset' }}
-                </button>
+              <!-- Footer Start -->
+              <div class="container">
+                <!-- Row 1: Buttons -->
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-center gap-3 mb-1">
+                    <button type="button" class="btn btn-cancel" @click="goBack">
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="btn btn-pink" 
+                      :disabled="isSubmitting"
+                      @click="submitForm"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
+                      {{ isSubmitting ? 'Collecting Asset...' : 'Collect Asset' }}
+                    </button>
+                  </div>
+                </div>
+                <!-- Row 2: Small Text -->
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <small class="text-muted">
+                      Fields marked with <span class="text-danger">*</span> are required
+                    </small>
+                  </div>
+                </div>
               </div>
-              <br>
-              <!-- Text Row -->
-              <div class="text-center">
-                <small class="text-muted">
-                  Fields marked with <span class="text-danger">*</span> are required
-                </small>
-              </div>
+              <!-- Container End -->
             </div>
           </div>
         </div>

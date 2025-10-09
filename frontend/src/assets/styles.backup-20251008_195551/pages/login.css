@@ -229,7 +229,6 @@
 
 /* Form Actions */
 .form-actions {
-  margin-top: 2rem !important;
   display: flex;
   gap: 1rem;
   justify-content: center;

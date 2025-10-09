@@ -241,7 +241,8 @@
 }
 
 /* Form Label for Date Picker */
-.date-picker-container .form-label {
+.date-picker-container .form-label,
+.custom-date-picker-container .form-label {
   font-weight: 600 !important;
   color: #666666 !important;
   margin-bottom: 0.5rem !important;
@@ -249,14 +250,16 @@
 }
 
 /* Form Text for Date Picker */
-.date-picker-container .form-text {
+.date-picker-container .form-text,
+.custom-date-picker-container .form-text {
   font-size: 0.875rem;
   color: #6c757d;
   margin-top: 0.25rem;
 }
 
 /* Invalid Feedback for Date Picker */
-.date-picker-container .invalid-feedback {
+.date-picker-container .invalid-feedback,
+.custom-date-picker-container .invalid-feedback {
   display: block;
   width: 100%;
   margin-top: 0.25rem;
