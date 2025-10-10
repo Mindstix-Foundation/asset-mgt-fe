@@ -2,6 +2,7 @@
   <VendorForm
     :is-edit-mode="false"
     :disable-status="true"
+    :initial-status="'ACTIVE'"
     @submit="handleSubmit"
     @cancel="handleCancel"
   />
@@ -22,7 +23,7 @@ const handleSubmit = async (vendorData: any) => {
     
     const vendorDetails = generateVendorDetails(vendorData)
     
-    // Navigate back to vendors list with success message
+    // Navigate with query params for toast
     router.push({
       path: '/app/vendors',
       query: {

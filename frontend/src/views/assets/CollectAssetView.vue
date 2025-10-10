@@ -1441,9 +1441,7 @@ onMounted(async () => {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
 }
 
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}
+/* Modal backdrop - Using Bootstrap default */
 
 /* Confirmation Modal Specific Styling */
 .modal-header {

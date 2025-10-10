@@ -327,14 +327,20 @@
     </div>
 
     <!-- Maintenance Detail Modal -->
-    <div class="modal fade" id="maintenanceDetailModal" tabindex="-1" ref="detailModal">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showDetailModal }" 
+      :style="{ display: showDetailModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               Maintenance Details - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
             <!-- 2x2 grid layout to match EmployeesView modal -->
@@ -448,7 +454,7 @@
               >
                 <i class="fas fa-calendar-plus me-1"></i>Reschedule
               </button>
-              <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
               <button type="button" class="btn btn-brown" @click="openHistory">
                 <i class="fas fa-history me-1"></i>History
               </button>
@@ -470,7 +476,7 @@
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
                 <button 
                   v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                   type="button" 
@@ -511,14 +517,20 @@
     </div>
 
     <!-- Complete Maintenance Modal -->
-    <div class="modal fade" id="completeMaintenanceModal" tabindex="-1" ref="completeModal">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showCompleteModal }" 
+      :style="{ display: showCompleteModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               Complete Maintenance - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
             <form @submit.prevent="completeMaintenance" class="needs-validation" novalidate ref="completeFormElement">
@@ -573,7 +585,7 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-cancel" @click="closeModals">Cancel</button>
             <button type="button" class="btn btn-green" @click="completeMaintenance" :disabled="completeLoading">
               <i :class="completeLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-check me-1'"></i>
               {{ completeLoading ? 'Completing...' : 'Complete Maintenance' }}
@@ -584,14 +596,20 @@
     </div>
 
     <!-- Cancel Maintenance Modal -->
-    <div class="modal fade" id="cancelMaintenanceModal" tabindex="-1" ref="cancelModal">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showCancelModal }" 
+      :style="{ display: showCancelModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header border-0 pb-0">
             <h5 class="modal-title d-flex align-items-center" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               <i class="fas fa-times-circle me-2 text-danger"></i>Cancel Maintenance - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body pt-3" v-if="selectedMaintenance">
             <div class="cancel-maintenance-form">
@@ -667,6 +685,8 @@
       </div>
     </div>
 
+    <!-- Modal Backdrop -->
+    <div v-if="showDetailModal || showCompleteModal || showCancelModal" class="modal-backdrop fade show" @click="closeModals"></div>
   </div>
 </template>
 
@@ -674,7 +694,6 @@
 import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
-import { Modal } from 'bootstrap'
 import { maintenanceService } from '@/services/business/maintenanceService'
 import { useToastStore } from '@/stores/toast'
 import { formatDateOnly } from '@/utils/date'
@@ -884,6 +903,11 @@ const generateProgressNotes = (maintenance: any): string[] => {
   
   return notes
 }
+
+// Modal state
+const showDetailModal = ref(false)
+const showCompleteModal = ref(false)
+const showCancelModal = ref(false)
 
 // Modal refs
 const detailModal = ref<HTMLElement>()
@@ -1276,8 +1300,7 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
     // Continue showing the modal even if history fails to load
   }
   
-  const modal = new Modal(detailModal.value!)
-  modal.show()
+  showDetailModal.value = true
 }
 
 const openCompleteModal = (maintenance: MaintenanceRow) => {
@@ -1285,48 +1308,38 @@ const openCompleteModal = (maintenance: MaintenanceRow) => {
   completeForm.actualCost = ''
   completeForm.completionNotes = ''
   completeFormErrors.actualCost = ''
-  const modal = new Modal(completeModal.value!)
-  modal.show()
+  showCompleteModal.value = true
 }
 
 const openCancelModal = (maintenance: MaintenanceRow) => {
   selectedMaintenance.value = maintenance
   cancelForm.cancelNotes = ''
   cancelFormErrors.cancelNotes = ''
-  const modal = new Modal(cancelModal.value!)
-  modal.show()
+  showCancelModal.value = true
+}
+
+const closeModals = () => {
+  showDetailModal.value = false
+  showCompleteModal.value = false
+  showCancelModal.value = false
+  selectedMaintenance.value = null
 }
 
 
 const closeDetailAndOpenComplete = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openCompleteModal(selectedMaintenance.value)
-    }
-  }, 300)
+  showDetailModal.value = false
+  showCompleteModal.value = true
 }
 
 const closeDetailAndOpenCancel = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openCancelModal(selectedMaintenance.value)
-    }
-  }, 300)
+  showDetailModal.value = false
+  showCancelModal.value = true
 }
 
 
 // Navigate to dedicated maintenance history page
 const viewMaintenanceHistory = (maintenance: MaintenanceRow) => {
-  const instance = Modal.getInstance(detailModal.value!)
-  if (instance) instance.hide()
+  showDetailModal.value = false
   router.push(`/app/maintenance/${maintenance.assetId}/history`)
 }
 
@@ -1368,8 +1381,7 @@ const completeMaintenance = async () => {
       const actual = Number.parseFloat(completeForm.actualCost)
       const noteSuffix = completeForm.completionNotes ? ` Notes: ${completeForm.completionNotes}` : ''
       toastStore.showSuccess('Success', `Maintenance completed successfully! Actual Cost: ₹${actual.toFixed(2)}${noteSuffix}`)
-      const modal = Modal.getInstance(completeModal.value!)
-      if (modal) modal.hide()
+      closeModals()
 
       // Refresh stats after completing maintenance
       await fetchStats()
@@ -1415,8 +1427,7 @@ const cancelMaintenance = async () => {
       }
 
       toastStore.showSuccess('Success', `Maintenance cancelled successfully! Notes: ${cancelForm.cancelNotes}`)
-      const modal = Modal.getInstance(cancelModal.value!)
-      if (modal) modal.hide()
+      closeModals()
 
       // Refresh stats after cancelling maintenance
       await fetchStats()

@@ -2,5 +2,5 @@ projectKey=asset-fronend
 serverUrl=http://localhost:9000
 serverVersion=25.10.0.114319
 dashboardUrl=http://localhost:9000/dashboard?id=asset-fronend
-ceTaskId=0038baff-0202-4e7c-9f1a-e0bec2ea5fcb
-ceTaskUrl=http://localhost:9000/api/ce/task?id=0038baff-0202-4e7c-9f1a-e0bec2ea5fcb
+ceTaskId=594328da-62cf-4cba-8dda-fed079d85d69
+ceTaskUrl=http://localhost:9000/api/ce/task?id=594328da-62cf-4cba-8dda-fed079d85d69

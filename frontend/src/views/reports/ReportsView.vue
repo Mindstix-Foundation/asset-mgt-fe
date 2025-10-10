@@ -361,7 +361,7 @@
     </div>
     
     <!-- Modal Backdrop -->
-    <div v-if="showPreviewModal" class="modal-backdrop fade show"></div>
+    <div v-if="showPreviewModal" class="modal-backdrop fade show" @click="showPreviewModal = false"></div>
   </div>
 </template>
 
@@ -1311,10 +1311,7 @@ onUnmounted(() => {
 
 /* Badge styles removed — using global badges.css */
 
-/* Modal Styles */
-.modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-}
+/* Modal Styles - Using Bootstrap default backdrop */
 
 .modal-content {
   background-color: var(--primary-white) !important;

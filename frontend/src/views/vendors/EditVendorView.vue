@@ -86,7 +86,7 @@ const handleSubmit = async (vendorData: any) => {
 
     const vendorName = `${updatedVendor.name || 'Vendor'}`
     
-    // Navigate back to vendors list with success message
+    // Navigate with query params for toast (consistent with asset pattern)
     router.push({
       path: '/app/vendors',
       query: {

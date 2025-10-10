@@ -444,7 +444,13 @@
     </div>
 
     <!-- Employee Detail Modal (aligned to AssetsView modal design) -->
-    <div class="modal employee-modal" id="employeeDetailModal" tabindex="-1" v-if="selectedEmployee">
+    <div 
+      v-if="selectedEmployee" 
+      class="modal fade" 
+      :class="{ show: showEmployeeModal }" 
+      :style="{ display: showEmployeeModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -452,7 +458,7 @@
               <span class="d-none d-md-inline">Employee Details - {{ selectedEmployee.name }} ({{ selectedEmployee.id }})</span>
               <span class="d-md-none">{{ selectedEmployee.name }}</span>
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body">
             <!-- Two equal-height columns using compact info grid (mirrors AssetsView) -->
@@ -624,7 +630,7 @@
                 {{ selectedEmployee && selectedEmployee.status === 'active' ? 'Deactivate' : 'Activate' }}
                 <span v-if="selectedEmployee && selectedEmployee.isAdmin" class="badge badge-green ms-2 admin-badge">Admin</span>
               </button>
-              <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
               <button type="button" class="btn btn-brown" @click="viewAssetHistory(selectedEmployee)">
                 <i class="fas fa-history me-1"></i>History
               </button>
@@ -638,7 +644,7 @@
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
                 <button type="button" class="btn btn-green" @click="issueAsset(selectedEmployee)">
                   <i class="fas fa-laptop me-1"></i>Issue Asset
                 </button>
@@ -672,7 +678,13 @@
     />
 
     <!-- Status Confirmation Modal -->
-    <div v-if="showStatusModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+    <div 
+      v-if="showStatusModal" 
+      class="modal fade" 
+      :class="{ show: showStatusModal }" 
+      :style="{ display: showStatusModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -741,13 +753,12 @@
       </div>
     </div>
 
-
-    
+    <!-- Modal Backdrop -->
+    <div v-if="showStatusModal || showEmployeeModal" class="modal-backdrop fade show" @click="closeModals"></div>
   </div>
 </template>
   
 <script>
-  import { Modal } from 'bootstrap'
   import { employeeService } from '@/services/business/employeeService'
   import { employeeApiService } from '@/services/api/employeeApi'
   import AppPagination from '@/components/ui/pagination/AppPagination.vue'
@@ -786,6 +797,7 @@
         isAssetHistoryExpanded: false,
         assetHistory: [],
         showStatusModal: false,
+        showEmployeeModal: false,
         statusChangeEmployee: null,
         isMobileView: window.innerWidth <= 576,
         isExporting: false
@@ -855,7 +867,7 @@
               <div class="modal-content">
                 <div class="modal-header" style="background-color: var(--primary-light-gray);">
                   <h5 class="modal-title" style="color: var(--primary-black);">${title}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  <button type="button" class="btn-close" @click="closeModals"></button>
                 </div>
                 <div class="modal-body">
                   <div class="text-center py-3">
@@ -1023,13 +1035,10 @@
       // Pagination rendering is centralized in AppPagination; keep only changePage
       viewEmployee(employee) {
         this.selectedEmployee = employee
+        this.showEmployeeModal = true
         this.isAssetsDetailsExpanded = false // Reset collapse state
         this.isAssetHistoryExpanded = false // Reset asset history state
         this.assetHistory = [] // Clear previous history
-        this.$nextTick(() => {
-          const modal = new Modal(document.getElementById('employeeDetailModal'), { backdrop: true, keyboard: true, focus: true })
-          modal.show()
-        })
       },
       editEmployee(employee) {
         // Navigate to edit employee page
@@ -1081,17 +1090,17 @@
         this.statusChangeEmployee = employee
         this.showStatusModal = true
         // Close the employee detail modal
-        const modal = document.getElementById('employeeDetailModal')
-        if (modal) {
-          const bsModal = Modal.getInstance(modal)
-          if (bsModal) {
-            bsModal.hide()
-          }
-        }
+        this.showEmployeeModal = false
       },
       closeStatusModal() {
         this.showStatusModal = false
         this.statusChangeEmployee = null
+      },
+      closeModals() {
+        this.showStatusModal = false
+        this.showEmployeeModal = false
+        this.statusChangeEmployee = null
+        this.selectedEmployee = null
       },
       async confirmStatusChange() {
         if (!this.statusChangeEmployee) return
@@ -1133,10 +1142,7 @@
         } finally {
           this.closeStatusModal()
           // Reopen the employee detail modal after status change
-          this.$nextTick(() => {
-            const modal = new Modal(document.getElementById('employeeDetailModal'))
-            modal.show()
-          })
+          this.showEmployeeModal = true
         }
       },
       openBulkUploadModal() {
@@ -1152,39 +1158,15 @@
         this.$router.push(`/app/assets/issue?employeeId=${employee.databaseId}`)
       },
       viewAssetHistory(employee) {
-        // Close the employee detail modal (if open) and clean up any backdrops
-        const modalEl = document.getElementById('employeeDetailModal')
-        if (modalEl) {
-          const modalInstance = Modal.getInstance(modalEl) || new Modal(modalEl)
-          if (modalInstance && typeof modalInstance.hide === 'function') {
-            modalInstance.hide()
-          }
-        }
-
-        // Remove bootstrap modal classes/backdrops if any linger
-        document.body.classList.remove('modal-open')
-        for (const el of document.querySelectorAll('.modal-backdrop')) {
-          el.remove()
-        }
+        // Close the employee detail modal
+        this.showEmployeeModal = false
 
         // Navigate to employee asset history page using database ID
         this.$router.push(`/app/employees/${employee.databaseId}/history`)
       },
       collectAsset(asset) {
-        // Close the employee detail modal and clean up any backdrops
-        const modalEl = document.getElementById('employeeDetailModal')
-        if (modalEl) {
-          const modalInstance = Modal.getInstance(modalEl) || new Modal(modalEl)
-          if (modalInstance && typeof modalInstance.hide === 'function') {
-            modalInstance.hide()
-          }
-        }
-
-        // Remove bootstrap modal classes/backdrops if any linger
-        document.body.classList.remove('modal-open')
-        for (const el of document.querySelectorAll('.modal-backdrop')) {
-          el.remove()
-        }
+        // Close the employee detail modal
+        this.showEmployeeModal = false
 
         const assetId = asset && asset.id ? asset.id : undefined
         const employeeId = this.selectedEmployee && this.selectedEmployee.databaseId ? this.selectedEmployee.databaseId : undefined
@@ -1400,27 +1382,15 @@
     },
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        document.body.classList.remove('modal-open')
-        for (const el of document.querySelectorAll('.modal-backdrop')) {
-          el.remove()
-        }
-        const modalEl = document.getElementById('employeeDetailModal')
-        if (modalEl) {
-          const inst = Modal.getInstance(modalEl)
-          if (inst && typeof inst.hide === 'function') inst.hide()
-        }
+        // Close any open modals
+        vm.showEmployeeModal = false
+        vm.showStatusModal = false
       })
     },
     beforeRouteLeave(to, from, next) {
-      const modalEl = document.getElementById('employeeDetailModal')
-      if (modalEl) {
-        const inst = Modal.getInstance(modalEl) || new Modal(modalEl)
-        if (inst && typeof inst.hide === 'function') inst.hide()
-      }
-      document.body.classList.remove('modal-open')
-      for (const el of document.querySelectorAll('.modal-backdrop')) {
-        el.remove()
-      }
+      // Close any open modals
+      this.showEmployeeModal = false
+      this.showStatusModal = false
       next()
     }
   }

@@ -44,8 +44,8 @@
                         required 
                         minlength="2" 
                         maxlength="100"
-                        pattern="[A-Za-z0-9\s.&-]{2,100}"
-                        title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)"
+                        pattern="[A-Za-z0-9\s.&,']{2,100}"
+                        title="Vendor name must be 2-100 characters (letters, numbers, spaces, periods, ampersands, commas, apostrophes only)"
                         @blur="validateField('vendorName')"
                         @focus="clearFieldError('vendorName')"
                         @input="formatToTitleCase"
@@ -322,12 +322,14 @@ interface Props {
   vendor?: Vendor
   isEditMode?: boolean
   disableStatus?: boolean
+  initialStatus?: VendorStatus
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isEditMode: false,
   vendor: undefined,
-  disableStatus: false
+  disableStatus: false,
+  initialStatus: 'ACTIVE' as VendorStatus
 })
 
 // Emits
@@ -340,7 +342,7 @@ const emit = defineEmits<{
 const formData = reactive({
   vendorName: '',
   vendorType: '' as VendorType | '',
-  status: 'ACTIVE' as VendorStatus,
+  status: props.initialStatus,
   contactPerson: '',
   email: '',
   phone: '',
@@ -368,6 +370,9 @@ const isSubmitting = ref(false)
 const isLoading = ref(false)
 const isCheckingName = ref(false)
 const nameCheckTimeout = ref<number | null>(null)
+
+// Store original vendor data for comparison (only in edit mode)
+const originalVendorData = ref<any>(null)
 
 // Selected items for SearchableDropdown components
 const selectedVendorType = ref<Item | null>(null)
@@ -443,10 +448,10 @@ const validateVendorName = (element: HTMLElement) => {
     setFieldValidation(element, false, '', 'vendorName')
   } else if (value.length < 2) {
     setFieldValidation(element, false, 'Vendor name must be at least 2 characters', 'vendorName')
-  } else if (/^[A-Za-z0-9\s.&-]{2,100}$/.test(value)) {
+  } else if (/^[A-Za-z0-9\s.&,']{2,100}$/.test(value)) {
     setFieldValidation(element, true, '', 'vendorName')
   } else {
-    setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, hyphens, ampersands, commas only)', 'vendorName')
+    setFieldValidation(element, false, 'Vendor name must be 2-100 characters (letters, numbers, spaces, periods, ampersands, commas, apostrophes only)', 'vendorName')
   }
 }
 
@@ -468,13 +473,10 @@ const validateEmail = (element: HTMLElement, value: any) => {
   }
 }
 
-const validatePhone = (element: HTMLElement): boolean => {
-  if (!formData.phone) {
-    setFieldValidation(element, true, '', 'phone')
-    return true
-  }
-
-  const strVal = String(formData.phone)
+const validatePhone = (element: HTMLElement, value: any): boolean => {
+  if (!value) return true
+  
+  const strVal = String(value)
   
   // Treat bare prefix as empty (optional field)
   if (/^\+91\s?$/.test(strVal)) {
@@ -484,24 +486,24 @@ const validatePhone = (element: HTMLElement): boolean => {
     setFieldValidation(element, true, '', 'phone')
     return true
   }
-
+  
   if (!strVal.startsWith('+91')) {
     setFieldValidation(element, false, "Phone number must start with '+91'", 'phone')
     return false
   }
-
-  const digits = (strVal as any).replaceAll(/^\+91\s?/, '').replaceAll(/\D/g, '')
+  
+  const digits = strVal.replace(/^\+91\s?/, '').replaceAll(/\D/g, '')
   
   if (digits.length < 10) {
     setFieldValidation(element, false, 'Phone number must be exactly 10 digits after +91', 'phone')
     return false
   }
-
+  
   if (digits.length > 10) {
     setFieldValidation(element, false, 'Phone number cannot exceed 10 digits after +91', 'phone')
     return false
   }
-
+  
   setFieldValidation(element, true, '', 'phone')
   return true
 }
@@ -563,7 +565,7 @@ const validationHandlers = {
   vendorName: (element: HTMLElement) => validateVendorName(element),
   contactPerson: (element: HTMLElement, value: any) => validateContactPerson(element, value),
   email: (element: HTMLElement, value: any) => validateEmail(element, value),
-  phone: (element: HTMLElement) => validatePhone(element),
+  phone: (element: HTMLElement, value: any) => validatePhone(element, value),
   taxId: (element: HTMLElement, value: any) => validateTaxId(element, value),
   panNumber: (element: HTMLElement, value: any) => validatePanNumber(element, value),
   address: (element: HTMLElement, value: any) => validateAddress(element, value),
@@ -583,9 +585,7 @@ const validateField = (fieldName: string) => {
 
   const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
   if (handler) {
-    if (fieldName === 'phone') {
-      return (handler as (element: HTMLElement) => boolean)(element)
-    } else if (['vendorType', 'status', 'notes'].includes(fieldName)) {
+    if (['vendorType', 'status', 'notes'].includes(fieldName)) {
       (handler as () => void)()
     } else {
       (handler as (element: HTMLElement, value: any) => void)(element, value)
@@ -718,16 +718,13 @@ const formatPhoneNumber = (event: Event) => {
   const prefix = '+91 '
   let raw = target.value || ''
 
-  // Always enforce prefix
   if (!raw.startsWith('+91')) {
     raw = prefix + raw.replace(/^[^0-9+]*/, '')
   }
 
-  // Keep only digits after the prefix, max 10
-  let digits = (raw as any).replaceAll(/^\+91\s?/, '').replaceAll(/\D/g, '')
+  let digits = raw.replace(/^\+91\s?/, '').replaceAll(/\D/g, '')
   if (digits.length > 10) digits = digits.slice(0, 10)
 
-  // Recompose
   const composed = digits.length ? `${prefix}${digits}` : prefix
   target.value = composed
   formData.phone = composed
@@ -735,7 +732,6 @@ const formatPhoneNumber = (event: Event) => {
   handleFieldInput('phone')
 }
 
-// Ensure prefix when focusing the phone field
 const onPhoneFocus = (event: FocusEvent) => {
   clearFieldError('phone')
   const target = event.target as HTMLInputElement
@@ -929,21 +925,22 @@ const handleSubmit = async (event: Event) => {
   isSubmitting.value = true
 
   try {
-    // Prepare vendor data for API
-    const vendorData = {
-      name: formData.vendorName,
-      vendorType: formData.vendorType as VendorType,
-      contactPerson: formData.contactPerson || undefined,
-      email: formData.email || undefined,
-      phone: normalizePhoneForSubmit(formData.phone),
-      address: formData.address || undefined,
-      taxId: formData.taxId || undefined,
-      panNumber: formData.panNumber || undefined,
-      notes: formData.notes || undefined,
-      status: formData.status
-    }
+    // Prepare vendor data based on mode
+    const vendorData = props.isEditMode && originalVendorData.value
+      ? buildEditModeVendorData()
+      : {
+          name: formData.vendorName,
+          vendorType: formData.vendorType as VendorType,
+          contactPerson: formData.contactPerson || undefined,
+          email: formData.email || undefined,
+          phone: normalizePhoneForSubmit(formData.phone),
+          address: formData.address || undefined,
+          taxId: formData.taxId || undefined,
+          panNumber: formData.panNumber || undefined,
+          notes: formData.notes || undefined,
+          status: formData.status
+        }
 
-    // Emit the form data
     emit('submit', vendorData)
   } catch (error) {
     console.error('Form submission error:', error)
@@ -956,12 +953,63 @@ const handleCancel = () => {
   emit('cancel')
 }
 
-// Normalize phone to '+91 9999999999' or undefined
+// Helper methods
 const normalizePhoneForSubmit = (val: string) => {
   if (!val) return undefined
   const match = val.match(/^\+91\s(\d{10})$/)
   if (match) return `+91 ${match[1]}`
   return undefined
+}
+
+const formatPhoneFromApi = (val?: string) => {
+  if (!val) return ''
+  const onlyDigits = val.replaceAll(/\D/g, '')
+  const match = val.match(/^\+91\s?(\d{10})$/)
+  if (match) return `+91 ${match[1]}`
+  if (onlyDigits.length === 10) return `+91 ${onlyDigits}`
+  if (onlyDigits.length === 12 && onlyDigits.startsWith('91')) return `+91 ${onlyDigits.slice(2)}`
+  return ''
+}
+
+const hasChanged = (newVal: any, oldVal: any): boolean => {
+  const normalizeEmpty = (val: any) => (!val || val === '' ? null : val)
+  const normalizedNew = normalizeEmpty(newVal)
+  const normalizedOld = normalizeEmpty(oldVal)
+  
+  if (typeof normalizedNew === 'number' || typeof normalizedOld === 'number') {
+    return String(normalizedNew) !== String(normalizedOld)
+  }
+  
+  return normalizedNew !== normalizedOld
+}
+
+const buildEditModeVendorData = (): any => {
+  const original = originalVendorData.value
+  const vendorData: any = {}
+
+  const fieldMappings = [
+    { formKey: 'vendorName', dataKey: 'name' },
+    { formKey: 'vendorType', dataKey: 'vendorType' },
+    { formKey: 'status', dataKey: 'status' },
+    { formKey: 'contactPerson', dataKey: 'contactPerson', transform: (val: any) => val || undefined },
+    { formKey: 'email', dataKey: 'email', transform: (val: any) => val || undefined },
+    { formKey: 'phone', dataKey: 'phone', transform: (val: any) => normalizePhoneForSubmit(val) },
+    { formKey: 'address', dataKey: 'address', transform: (val: any) => val || undefined },
+    { formKey: 'taxId', dataKey: 'taxId', transform: (val: any) => val || undefined },
+    { formKey: 'panNumber', dataKey: 'panNumber', transform: (val: any) => val || undefined },
+    { formKey: 'notes', dataKey: 'notes', transform: (val: any) => val || undefined }
+  ]
+
+  for (const { formKey, dataKey, transform } of fieldMappings) {
+    const formValue = (formData as any)[formKey]
+    const originalValue = (original as any)[formKey]
+    
+    if (hasChanged(formValue, originalValue)) {
+      vendorData[dataKey] = transform ? transform(formValue) : formValue
+    }
+  }
+
+  return vendorData
 }
 
 // Handle notes validation
@@ -981,11 +1029,25 @@ const populateFormDataFromVendor = (vendor: any) => {
   formData.status = vendor.status
   formData.contactPerson = vendor.contactPerson || ''
   formData.email = vendor.email || ''
-  formData.phone = vendor.phone || ''
+  formData.phone = formatPhoneFromApi(vendor.phone)
   formData.address = vendor.address || ''
   formData.taxId = vendor.taxId || ''
   formData.panNumber = vendor.panNumber || ''
   formData.notes = vendor.notes || ''
+  
+  // Store original data for change tracking
+  originalVendorData.value = {
+    vendorName: vendor.name,
+    vendorType: vendor.vendorType || '',
+    status: vendor.status,
+    contactPerson: vendor.contactPerson || '',
+    email: vendor.email || '',
+    phone: formatPhoneFromApi(vendor.phone),
+    address: vendor.address || '',
+    taxId: vendor.taxId || '',
+    panNumber: vendor.panNumber || '',
+    notes: vendor.notes || ''
+  }
 }
 
 const setSelectedDropdownItems = (vendor: any) => {
@@ -1077,7 +1139,7 @@ watch(() => props.vendor, (newVendor) => {
     formData.status = newVendor.status
     formData.contactPerson = newVendor.contactPerson || ''
     formData.email = newVendor.email || ''
-    formData.phone = newVendor.phone || ''
+    formData.phone = formatPhoneFromApi(newVendor.phone)
     formData.address = newVendor.address || ''
     formData.taxId = newVendor.taxId || ''
     formData.panNumber = newVendor.panNumber || ''
@@ -1135,248 +1197,5 @@ watch(() => formData.notes, (newValue) => {
 </script>
 
 <style scoped>
-/* Import unified form styles (replaces old formValidation.css) */
 @import url('../../assets/unified-form-styles.css');
-
-/* Additional component-specific styles */
-.auto-expand-textarea {
-  transition: height 0.2s ease, border-color 0.2s ease;
-  resize: none;
-  overflow: hidden;
-  min-height: 72px; /* 3 rows minimum */
-}
-
-.auto-expand-textarea:hover {
-  border-color: #999999;
-}
-
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-.character-count .text-warning {
-  color: #f59e0b !important;
-}
-
-.character-count .text-danger {
-  color: #dc2626 !important;
-  font-weight: 600;
-}
-
-/* Form fieldset styling */
-.form-fieldset {
-  border: 1px solid #B7B7B7 !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-  background: rgba(243, 243, 243, 0.3);
-  position: relative;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.form-fieldset:hover {
-  border-color: #B7B7B7 !important;
-  background: rgba(243, 243, 243, 0.5);
-  transition: all 0.2s ease;
-}
-
-.form-legend {
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  color: #666666 !important;
-  background-color: #FFFFFF !important;
-  padding: 0.375rem 0.75rem !important;
-  border: 1px solid #B7B7B7 !important;
-  border-radius: 0.5rem !important;
-  margin-bottom: 1rem !important;
-  box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
-  width: auto !important;
-  float: none !important;
-}
-
-/* Enhanced form controls */
-.form-control, .form-select {
-  border: 2px solid #E0E0E0;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
-  color: #0A0A0A;
-}
-
-.form-control::placeholder {
-  color: #999999 !important;
-  opacity: 1;
-}
-
-.form-control:focus, .form-select:focus {
-  border-color: #331FEA;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
-  outline: 2px solid transparent;
-}
-
-.form-control:hover, .form-select:hover {
-  border-color: #E0E0E0;
-}
-
-/* Enhanced validation styling */
-.was-validated .form-control:valid,
-.was-validated .form-select:valid {
-  border-color: #21AF65 !important;
-  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
-}
-
-.was-validated .form-control:invalid,
-.was-validated .form-select:invalid,
-.form-control.is-invalid,
-.form-select.is-invalid {
-  border-color: #E97676 !important;
-  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
-  animation: subtle-shake 0.3s ease-in-out;
-}
-
-@keyframes subtle-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-2px); }
-  75% { transform: translateX(2px); }
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #E97676;
-  font-weight: 500;
-}
-
-/* Form labels */
-.form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
-}
-
-.form-text {
-  font-size: 0.875rem;
-  color: #666666 !important;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-
-.text-danger {
-  color: #E97676 !important;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.text-muted {
-  color: #666666 !important;
-  font-weight: 600;
-  font-size: 0.9em;
-}
-
-/* Action buttons */
-.form-actions {
-  padding: 1.5rem;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.card-footer {
-  background: #F3F3F3 !important;
-  border-top: 2px solid #B7B7B7 !important;
-  border-radius: 0 0 1.5rem 1.5rem !important;
-}
-
-.btn {
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background-color: #331FEA !important;
-  border-color: #331FEA !important;
-  color: #FFFFFF !important;
-}
-
-.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-}
-
-.btn-outline-secondary {
-  background-color: #f8f9fa !important;
-  border: 2px solid #6c757d !important;
-  color: #495057 !important;
-  font-weight: 600;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
-  color: #FFFFFF !important;
-}
-
-.btn:focus-visible {
-  outline: 2px solid #331FEA;
-  outline-offset: 2px;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .card-body {
-    padding: 1.5rem !important;
-  }
-  
-  .form-actions {
-    padding: 1rem;
-  }
-  
-  .form-fieldset {
-    padding: 1rem !important;
-    margin-bottom: 1rem !important;
-    border-radius: 0.5rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.9rem !important;
-    padding: 0.25rem 0.5rem !important;
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .btn {
-    width: 100%;
-    margin-bottom: 0.75rem;
-  }
-  
-  .d-flex.gap-3 {
-    flex-direction: column;
-    gap: 0 !important;
-  }
-}
-
-@media (max-width: 576px) {
-  .card-body {
-    padding: 1rem !important;
-  }
-  
-  .form-actions {
-    padding: 0.75rem;
-  }
-  
-  .form-fieldset {
-    padding: 0.75rem !important;
-    margin-bottom: 0.75rem !important;
-    border-radius: 0.5rem !important;
-  }
-  
-  .form-legend {
-    font-size: 0.85rem !important;
-    padding: 0.2rem 0.4rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-}
 </style>

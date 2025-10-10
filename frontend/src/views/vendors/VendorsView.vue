@@ -19,14 +19,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                    :class="['btn', 'view-toggle', { active: !isGridView }]"
                     @click="toggleView('list')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                    :class="['btn', 'view-toggle', { active: isGridView }]"
                     @click="toggleView('grid')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
@@ -37,7 +37,7 @@
             </div>
             <div class="col-6">
               <button 
-                class="btn btn-outline-secondary btn-modern w-100" 
+                class="btn btn-gray w-100" 
                 @click="openBulkUploadModal"
               >
                 <i class="fas fa-file-excel me-1"></i>Bulk Upload
@@ -48,7 +48,7 @@
           <div class="row g-2">
             <!-- Row 2: Add Vendor -->
             <div class="col-12">
-              <RouterLink to="/app/vendors/add" class="btn btn-primary btn-modern w-100">
+              <RouterLink to="/app/vendors/add" class="btn btn-purple w-100">
                 <i class="fas fa-plus me-1"></i>Add Vendor
               </RouterLink>
             </div>
@@ -64,14 +64,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: !isGridView }]"
+                    :class="['btn', 'view-toggle', { active: !isGridView }]"
                     @click="toggleView('list')"
                     style="min-width: 40px;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: isGridView }]"
+                    :class="['btn', 'view-toggle', { active: isGridView }]"
                     @click="toggleView('grid')"
                     style="min-width: 40px;"
                   >
@@ -81,7 +81,7 @@
                 
                 <!-- Bulk Upload Button -->
                 <button 
-                  class="btn btn-outline-secondary btn-modern flex-fill" 
+                  class="btn btn-gray flex-fill" 
                   @click="openBulkUploadModal"
                 >
                   <i class="fas fa-file-excel me-1"></i>Bulk Upload
@@ -91,7 +91,7 @@
             
             <!-- Add Vendor -->
             <div class="col-md-12 col-lg-auto">
-              <RouterLink to="/app/vendors/add" class="btn btn-primary btn-modern w-100">
+              <RouterLink to="/app/vendors/add" class="btn btn-purple w-100">
                 <i class="fas fa-plus me-1"></i>Add Vendor
               </RouterLink>
             </div>
@@ -135,7 +135,7 @@
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
+              <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
                 <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
               </button>
             </div>
@@ -143,7 +143,7 @@
             <!-- Filter Button -->
             <div class="col-8">
               <button 
-                class="btn btn-outline-secondary btn-modern w-100" 
+                class="btn btn-gray w-100" 
                 @click="toggleFilterDropdown"
                 :class="{ active: showFilterDropdown }"
               >
@@ -185,7 +185,7 @@
               <!-- Clear Button: using filter-clear-button-container class -->
               <div class="filter-clear-button-container">
                 <div class="d-flex align-items-end h-100">
-                  <button class="btn btn-outline-secondary btn-modern filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                  <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
                     <i class="fas fa-times me-1"></i>Clear
                   </button>
                 </div>
@@ -208,7 +208,7 @@
       <div v-else-if="error" class="alert alert-danger" role="alert">
         <i class="fas fa-exclamation-triangle me-2"></i>
         {{ error }}
-        <button class="btn btn-outline-danger btn-sm ms-3" @click="fetchVendors">
+        <button class="btn btn-red btn-sm ms-3" @click="fetchVendors">
           <i class="fas fa-redo me-1"></i>Retry
         </button>
       </div>
@@ -219,7 +219,7 @@
         <div class="card" v-show="!isGridView">
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table table-hover mb-0">
+              <table class="table table-hover mb-0 vendor-table">
                 <thead class="table-light">
                   <tr>
                     <th style="width: 27%;">Vendor Name</th>
@@ -253,23 +253,21 @@
                     <td>{{ vendor.contactPerson || '-' }}</td>
                     <td>{{ vendor.email }}</td>
                     <td>{{ vendor.phone || '-' }}</td>
-                    <td>
-                      <span :class="getTypeBadgeClass(vendor.vendorType)">{{ getTypeLabel(vendor.vendorType) }}</span>
-                    </td>
+                    <td>{{ getTypeLabel(vendor.vendorType) }}</td>
                     <td>
                       <span :class="getStatusBadgeClass(vendor.status)">{{ getStatusLabel(vendor.status) }}</span>
                     </td>
                     <td>
                       <div class="btn-group btn-group-sm vendor-actions">
                         <button 
-                          class="btn btn-outline-primary" 
+                          class="btn btn-action btn-brown" 
                           @click="showVendorDetails(vendor)"
                           title="View Vendor Details"
                         >
                           <i class="fas fa-eye"></i>
                         </button>
                         <button 
-                          class="btn btn-outline-secondary" 
+                          class="btn btn-action btn-purple" 
                           title="Edit Vendor"
                           @click="editVendor(vendor)"
                         >
@@ -311,34 +309,28 @@
                       <i :class="getVendorTypeIcon(vendor.vendorType)" class="text-white" style="font-size: 0.9rem; color: white !important;"></i>
                     </div>
                     <div class="flex-grow-1">
-                      <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ vendor.name }}</h6>
+                      <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black);">{{ vendor.name }}</h6>
                       <small class="text-muted text-truncate d-block">{{ getTypeLabel(vendor.vendorType) }}</small>
                     </div>
-                    <span :class="[getStatusBadgeClass(vendor.status), 'badge-sm']" style="font-size: 0.7rem;">
+                    <span :class="getStatusBadgeClass(vendor.status)">
                       {{ getStatusLabel(vendor.status) }}
                     </span>
                   </div>
                   
-                  <!-- Vendor Details Grid - 2 columns for better space usage -->
+                  <!-- Vendor Details Grid - 3 fields in sequence -->
                   <div class="mb-2">
                     <div class="row g-1">
-                      <div class="col-6">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Contact Person</small>
-                        <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.contactPerson || 'Not specified' }}</div>
+                      <div class="col-12">
+                        <small class="text-muted d-block">Contact Person</small>
+                        <div class="fw-medium text-truncate" style="color: var(--primary-black);">{{ vendor.contactPerson || 'Not specified' }}</div>
                       </div>
-                      <div class="col-6">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Email</small>
-                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.email || 'Not specified' }}</div>
+                      <div class="col-12">
+                        <small class="text-muted d-block">Email</small>
+                        <div class="text-truncate" style="color: var(--primary-black);">{{ vendor.email || 'Not specified' }}</div>
                       </div>
-                      <div class="col-6">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Phone</small>
-                        <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ vendor.phone || 'Not specified' }}</div>
-                      </div>
-                      <div class="col-6">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Type</small>
-                        <div class="text-truncate">
-                          <span :class="getTypeBadgeClass(vendor.vendorType) + ' badge-sm'" style="font-size: 0.65rem;">{{ getTypeLabel(vendor.vendorType) }}</span>
-                        </div>
+                      <div class="col-12">
+                        <small class="text-muted d-block">Phone Number</small>
+                        <div class="text-truncate" style="color: var(--primary-black);">{{ vendor.phone || 'Not specified' }}</div>
                       </div>
                     </div>
                   </div>
@@ -346,7 +338,7 @@
                   <div class="vendor-actions-footer mt-auto pt-2 border-top">
                     <div class="d-flex justify-content-center gap-1">
                       <button 
-                        class="btn btn-action btn-view btn-sm" 
+                        class="btn btn-action btn-brown btn-sm" 
                         @click="showVendorDetails(vendor)"
                         title="View Vendor Details"
                         style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -354,7 +346,7 @@
                         <i class="fas fa-eye"></i>
                       </button>
                       <button 
-                        class="btn btn-action btn-edit btn-sm" 
+                        class="btn btn-action btn-purple btn-sm" 
                         title="Edit Vendor"
                         @click="editVendor(vendor)"
                         style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
@@ -378,16 +370,16 @@
       </div>
 
       <!-- Shared Pagination for Both Views -->
-      <div class="d-flex justify-content-between align-items-center mt-4" v-if="filteredVendors.length > 0">
-        <div class="text-muted">
-          <small>Showing <span>{{ paginationStart }}</span>-<span>{{ paginationEnd }}</span> of <span>{{ totalVendors }}</span> vendors</small>
-        </div>
-        <AppPagination 
-          :current-page="currentPage" 
-          :total-pages="totalPages" 
-          @change="changePage"
-        />
-      </div>
+      <AppPagination 
+        v-if="filteredVendors.length > 0"
+        :current-page="currentPage" 
+        :total-pages="totalPages" 
+        :start="paginationStart"
+        :end="paginationEnd"
+        :total="totalVendors"
+        :item-name="'vendors'"
+        @change="changePage"
+      />
     </div>
 
     <!-- Vendor Detail Modal -->
@@ -402,7 +394,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Vendor Details - {{ selectedVendor.name }}</h5>
-            <button type="button" class="btn-close" @click="closeVendorModal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body">
             <!-- Loading State -->
@@ -430,9 +422,7 @@
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Vendor Type</div>
-                      <div class="info-value-compact">
-                        <span :class="getTypeBadgeClass(selectedVendor.vendorType)">{{ getTypeLabel(selectedVendor.vendorType) }}</span>
-                      </div>
+                      <div class="info-value-compact">{{ getTypeLabel(selectedVendor.vendorType) }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Status</div>
@@ -505,13 +495,13 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeVendorModal">Close</button>
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Close</button>
             
             <!-- Vendor Management Buttons -->
             <div class="d-flex gap-2">
               <button 
                 type="button" 
-                class="btn btn-primary-blue" 
+                class="btn btn-purple btn-sm" 
                 @click="editVendor(selectedVendor!)"
                 :disabled="!selectedVendor"
               >
@@ -519,7 +509,7 @@
               </button>
               <button 
                 type="button" 
-                :class="selectedVendor?.status === VendorStatus.ACTIVE ? 'btn btn-status-deactivate' : 'btn btn-status-activate'"
+                :class="selectedVendor?.status === VendorStatus.ACTIVE ? 'btn btn-red btn-sm' : 'btn btn-green btn-sm'"
                 @click="showStatusConfirmation(selectedVendor!)"
                 :disabled="!selectedVendor"
               >
@@ -539,7 +529,13 @@
     />
 
     <!-- Status Confirmation Modal -->
-    <div v-if="showStatusModal" class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+    <div 
+      v-if="showStatusModal" 
+      class="modal fade" 
+      :class="{ show: showStatusModal }" 
+      :style="{ display: showStatusModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -573,12 +569,12 @@
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel-confirm" @click="closeStatusModal">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeStatusModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              :class="statusChangeVendor?.status === VendorStatus.ACTIVE ? 'btn btn-confirm-deactivate' : 'btn btn-confirm-activate'"
+              :class="statusChangeVendor?.status === VendorStatus.ACTIVE ? 'btn btn-red btn-sm' : 'btn btn-green btn-sm'"
               @click="confirmStatusChange"
             >
               <i class="fas fa-check me-1"></i>
@@ -609,6 +605,9 @@
         </div>
       </div>
   </div>
+
+  <!-- Modal Backdrop -->
+  <div v-if="showStatusModal || showVendorModal" class="modal-backdrop fade show" @click="closeModals"></div>
 </template>
 
 <script setup lang="ts">
@@ -869,24 +868,6 @@ const getVendorDescription = (type: string) => {
   }
 }
 
-const getTypeBadgeClass = (type: string) => {
-  switch (type) {
-    case 'SUPPLIER':
-      return 'badge badge-supplier'
-    case 'SERVICE':
-      return 'badge badge-service-provider'
-    case 'MANUFACTURER':
-      return 'badge badge-manufacturer'
-    case 'DISTRIBUTOR':
-      return 'badge badge-distributor'
-    case 'CONTRACTOR':
-      return 'badge badge-contractor'
-    case 'BOTH':
-      return 'badge badge-both'
-    default:
-      return 'badge badge-supplier'
-  }
-}
 
 const getTypeLabel = (type: string) => {
   switch (type) {
@@ -910,9 +891,9 @@ const getTypeLabel = (type: string) => {
 const getStatusBadgeClass = (status: VendorStatus) => {
   switch (status) {
     case VendorStatus.ACTIVE:
-      return 'badge badge-active'
+      return 'badge badge-green'
     case VendorStatus.INACTIVE:
-      return 'badge badge-inactive'
+      return 'badge badge-red'
     default:
       return 'badge badge-secondary'
   }
@@ -1035,6 +1016,13 @@ const closeVendorModal = () => {
   selectedVendor.value = null
 }
 
+const closeModals = () => {
+  showVendorModal.value = false
+  showStatusModal.value = false
+  selectedVendor.value = null
+  statusChangeVendor.value = null
+}
+
 const showStatusConfirmation = (vendor: Vendor) => {
   statusChangeVendor.value = vendor
   showStatusModal.value = true
@@ -1108,734 +1096,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Form styling consistency */
-:deep(.form-label) {
-  font-weight: 500;
-  color: #495057;
-  margin-bottom: 0.5rem;
-}
-
-:deep(.form-control) {
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-/* Make button corners match input field corners for consistency */
-.btn {
-  border-radius: 0.375rem !important;
-}
-
-/* Fix search input group border-radius consistency */
-.input-group .input-group-text {
-  border-radius: 0.375rem 0 0 0.375rem !important;
-}
-
-.input-group .form-control:not(:last-child) {
-  border-radius: 0 0.375rem 0.375rem 0 !important;
-}
-
-:deep(.form-control:focus) {
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-:deep(.dropdown-menu) {
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.375rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  z-index: 1050;
-}
-
-:deep(.dropdown-item:hover),
-:deep(.dropdown-item.active) {
-  background-color: #e9ecef;
-  color: #1e2125;
-}
-
-/* Filter dropdown styling */
-.filter-dropdown {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa !important;
-  animation: slideDown 0.2s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Active filter button styling */
-.btn.active {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  color: white;
-}
-
-.btn.active:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
-}
-
-
-/* Table Layout Optimization */
-.table {
-  table-layout: fixed !important;
-  width: 100% !important;
-}
-
-.table th {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.table td {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Allow text wrapping only for Vendor Name and Contact Person */
-.table td:nth-child(1), /* Vendor Name */
-.table td:nth-child(2) { /* Contact Person */
-  white-space: normal !important;
-  word-wrap: break-word;
-}
-
-/* Keep email on single line with ellipsis if too long */
-.table td:nth-child(3) { /* Email */
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  width: 24% !important;
-}
-
-/* Force column widths to be respected */
-.table th:nth-child(1) { width: 27% !important; }
-.table th:nth-child(2) { width: 15% !important; }
-.table th:nth-child(3) { width: 24% !important; }
-.table th:nth-child(4) { width: 14% !important; }
-.table th:nth-child(5) { width: 13% !important; }
-.table th:nth-child(6) { width: 8% !important; }
-.table th:nth-child(7) { width: 9% !important; }
-
-.table td:nth-child(1) { width: 27% !important; }
-.table td:nth-child(2) { width: 15% !important; }
-.table td:nth-child(4) { width: 14% !important; }
-.table td:nth-child(5) { width: 13% !important; }
-.table td:nth-child(6) { width: 8% !important; }
-.table td:nth-child(7) { width: 9% !important; }
-
-/* Custom Badge Styles - Updated Color Palette - Matching main.css */
-.badge.badge-supplier {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-service-provider {
-  background-color: var(--secondary-pink) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-service {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-manufacturer {
-  background-color: var(--secondary-gray) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-distributor {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-contractor {
-  background-color: var(--secondary-brown) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-both {
-  background-color: var(--primary-dark-gray) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-active {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge.badge-inactive {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-  border: none !important;
-  font-size: 0.75rem !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-/* Small badge variant */
-.badge.badge-sm {
-  font-size: 0.65rem !important;
-  padding: 0.25rem 0.5rem !important;
-}
-
-/* New Action Button Styles - Updated Design */
-.btn-action {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
-
-.btn-action:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-/* Specific action button hover colors */
-.btn-view:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-}
-
-.btn-edit:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-}
-
-.btn-delete:hover {
-  color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-}
-
-/* Card improvements */
-.vendor-card {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.2s ease !important;
-}
-
-.vendor-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-  transform: translateY(-1px) !important;
-}
-
-.vendor-actions-footer {
-  border-top: 1px solid var(--primary-light-gray) !important;
-  background-color: var(--primary-white) !important;
-}
-
-/* Vendor action buttons - Updated Design */
-.vendor-actions .btn {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.25rem 0.5rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
-
-.vendor-actions .btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-/* Specific vendor action button hover colors */
-.vendor-actions .btn-view:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-}
-
-.vendor-actions .btn-edit:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-}
-
-
-/* Table responsive container - no padding to avoid white border */
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Table cell padding adjustments for balanced spacing */
-.table td, .table th {
-  padding: 0.75rem !important;
-}
-
-/* First column padding adjustments */
-.table td:first-child, .table th:first-child {
-  padding-left: 1.5rem !important;
-}
-
-/* Actions column (last column) padding adjustments */
-.table td:last-child, .table th:last-child {
-  padding-right: 1.5rem !important;
-  text-align: center !important;
-}
-
-/* Vendor actions button group spacing */
-.vendor-actions {
-  justify-content: center !important;
-  gap: 0.25rem !important;
-}
-
-
-/* View toggle buttons */
-.view-toggle {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.view-toggle.active {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.view-toggle:hover:not(.active) {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-/* Modern Pagination Styles */
-.pagination-modern {
-  --bs-pagination-padding-x: 0.75rem;
-  --bs-pagination-padding-y: 0.5rem;
-  --bs-pagination-font-size: 0.875rem;
-  --bs-pagination-color: var(--primary-dark-gray);
-  --bs-pagination-bg: var(--primary-white);
-  --bs-pagination-border-width: 1px;
-  --bs-pagination-border-color: var(--element-gray);
-  --bs-pagination-border-radius: 0.5rem;
-  --bs-pagination-hover-color: var(--secondary-purple);
-  --bs-pagination-hover-bg: var(--primary-light-gray);
-  --bs-pagination-hover-border-color: var(--primary-mid-light);
-  --bs-pagination-focus-color: var(--secondary-purple);
-  --bs-pagination-focus-bg: var(--primary-light-gray);
-  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-  --bs-pagination-active-color: var(--primary-white);
-  --bs-pagination-active-bg: var(--secondary-purple);
-  --bs-pagination-active-border-color: var(--secondary-purple);
-  --bs-pagination-disabled-color: var(--primary-mid-gray);
-  --bs-pagination-disabled-bg: var(--primary-light-gray);
-  --bs-pagination-disabled-border-color: var(--element-gray);
-}
-
-.pagination-modern .page-link {
-  border-radius: 0.5rem !important;
-  margin: 0 0.125rem !important;
-  min-width: 40px !important;
-  height: 40px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
-}
-
-.pagination-modern .page-item:not(.active) .page-link:hover {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--secondary-purple) !important;
-  transform: translateY(-1px) !important;
-}
-
-.pagination-modern .page-item.disabled .page-link {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-mid-gray) !important;
-  cursor: not-allowed !important;
-}
-
-/* Toast Notification Styles */
-.toast-container {
-  z-index: 1100;
-}
-
-.toast {
-  background-color: var(--primary-white);
-  border: 1px solid var(--element-gray);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.toast-header {
-  background-color: var(--primary-light-gray);
-  border-bottom: 1px solid var(--element-gray);
-  border-radius: 0.5rem 0.5rem 0 0;
-}
-
-.toast-body {
-  color: var(--primary-black);
-}
-
-/* Vendor Detail Modal Styling - Matching AssetsView Design */
-
-/* Equal height columns for consistent layout */
-.equal-height-columns {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.equal-height-columns > [class*="col-"] {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Compact vendor info section - matching AssetsView */
-.vendor-info-section-compact {
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-  display: flex;
-  flex-direction: column;
-}
-
-.vendor-info-section-compact .section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.vendor-info-section-compact .info-grid-compact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex-grow: 1;
-}
-
-.vendor-info-section-compact .info-item-compact {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid #f8f9fa;
-}
-
-.vendor-info-section-compact .info-item-compact:last-child {
-  border-bottom: none;
-}
-
-.vendor-info-section-compact .info-label-compact {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0 !important;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.vendor-info-section-compact .info-value-compact {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: #212529 !important;
-  margin-bottom: 0 !important;
-  text-align: right;
-  flex-grow: 1;
-}
-
-/* Legacy vendor info section - keeping for backward compatibility */
-.vendor-info-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.vendor-info-section .section-title {
-  color: var(--primary-black) !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.75rem !important;
-  padding-bottom: 0.5rem !important;
-  border-bottom: 1px solid var(--element-gray) !important;
-}
-
-.vendor-info-section .info-label {
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  color: var(--primary-dark-gray) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  margin-bottom: 0.25rem !important;
-}
-
-.vendor-info-section .info-value {
-  font-size: 0.9rem !important;
-  color: var(--primary-black) !important;
-  font-weight: 500 !important;
-}
-
-.vendor-info-section .info-item {
-  margin-bottom: 1rem !important;
-}
-
-.vendor-info-section .info-item:last-child {
-  margin-bottom: 0 !important;
-}
-
-/* Modal styling */
-.modal-content {
-  border: none !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-  border-radius: 0.75rem !important;
-}
-
-.modal-header {
-  background-color: var(--primary-light-gray) !important;
-  border-bottom: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem 0.75rem 0 0 !important;
-}
-
-.modal-body {
-  background-color: var(--primary-white) !important;
-  padding: 2rem !important;
-}
-
-.modal-footer {
-  background-color: var(--primary-light-gray) !important;
-  border-top: 1px solid var(--element-gray) !important;
-  border-radius: 0 0 0.75rem 0.75rem !important;
-  padding: 1.25rem 2rem !important;
-}
-
-/* Button Styling for Vendor Modal */
-.modal-footer .btn-primary-blue {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.modal-footer .btn-primary-blue:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-.modal-footer .btn-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.modal-footer .btn-secondary:hover {
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-/* Status Toggle Buttons */
-.btn-status-activate {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.btn-status-activate:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.25) !important;
-}
-
-.btn-status-deactivate {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.btn-status-deactivate:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.25) !important;
-}
-
-/* Confirmation Modal Buttons */
-.btn-cancel-confirm {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-}
-
-.btn-cancel-confirm:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-  transform: translateY(-1px) !important;
-}
-
-.btn-confirm-activate {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(33, 175, 101, 0.25) !important;
-}
-
-.btn-confirm-activate:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(33, 175, 101, 0.35) !important;
-}
-
-.btn-confirm-deactivate {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  padding: 0.625rem 1.5rem !important;
-  box-shadow: 0 2px 8px rgba(233, 118, 118, 0.25) !important;
-}
-
-.btn-confirm-deactivate:hover {
-  background-color: #d63447 !important;
-  border-color: #d63447 !important;
-  color: white !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(233, 118, 118, 0.35) !important;
-}
-
-.confirmation-icon {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Bulk upload is now handled by BulkVendorUpload component */
-
-/* Disabled Button Styles */
-.btn:disabled {
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
-
-.btn.btn-info:disabled {
-  background-color: #6c757d !important;
-  border-color: #6c757d !important;
-  color: white !important;
-}
-
-.btn.btn-success:disabled {
-  background-color: #6c757d !important;
-  border-color: #6c757d !important;
-  color: white !important;
-}
-
-/* Modal Footer Button Spacing */
-.modal-footer .btn {
-  margin-left: 0.5rem !important;
-}
-
-.modal-footer .btn:first-child {
-  margin-left: 0 !important;
-}
+@import '@/assets/styles/pages/vendors.css';
 </style> 

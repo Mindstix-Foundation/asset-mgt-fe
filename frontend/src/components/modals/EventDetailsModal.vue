@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" @click.self="$emit('close')">
+  <div class="modal fade show" style="display: block;" @click.self="$emit('close')">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <!-- Modal Header -->
@@ -230,6 +230,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop fade show" @click="$emit('close')"></div>
 </template>
 
 <script setup lang="ts">

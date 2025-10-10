@@ -996,16 +996,7 @@ onMounted(async () => {
   border-radius: 0.5rem;
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1040;
-  width: 100vw;
-  height: 100vh;
-  background-color: #000;
-  opacity: 0.5;
-}
+/* Modal backdrop - Using Bootstrap default */
 
 /* Confirmation modal buttons */
 .confirmation-icon {

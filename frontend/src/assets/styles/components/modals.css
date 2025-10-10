@@ -112,10 +112,7 @@
   border-left: 4px solid var(--secondary-orange) !important;
 }
 
-/* Modal Backdrop for Confirmation */
-#statusConfirmationModal .modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-}
+/* Modal Backdrop for Confirmation - Using Bootstrap default */
 
 /* =================================
    MODAL CONTENT STYLES
