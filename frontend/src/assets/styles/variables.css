@@ -50,7 +50,7 @@
   --z-navbar: 1040;            /* sticky top navigation; above dropdowns, below backdrop */
   --z-dropdown: 1000;          /* base dropdowns/menus */
   --z-dropdown-menu: 1000;     /* ensure below modal/backdrop */
-  --z-date-dropdown: 1030;     /* date picker calendar overlay (above dropdowns, below backdrop) */
+  --z-date-dropdown: 1045;     /* date picker calendar overlay (above dropdowns and navbar, below backdrop) */
   --z-date-backdrop: 1025;     /* optional date picker backdrop (if used) */
   --z-backdrop: 1050;          /* modal/backdrop overlays */
   --z-modal: 1060;             /* modals/offcanvas above backdrop */

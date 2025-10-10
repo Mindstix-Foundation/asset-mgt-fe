@@ -687,6 +687,7 @@ const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
   overflow-x: hidden; /* Hide horizontal scroll */
   width: 100%;
   scroll-behavior: smooth;
+  z-index: var(--z-dropdown-menu);
   scrollbar-width: thin;
   scrollbar-color: #6c757d transparent;
   word-wrap: break-word;

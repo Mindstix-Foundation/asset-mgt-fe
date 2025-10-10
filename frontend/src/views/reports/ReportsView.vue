@@ -1277,21 +1277,33 @@ onUnmounted(() => {
 .status-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  height: 100%;
+  min-height: 280px;
 }
 
 .status-mini-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .status-icon {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .status-mini-card.assigned .status-icon,
@@ -1316,21 +1328,24 @@ onUnmounted(() => {
 }
 
 .status-count {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
+  line-height: 1.2;
 }
 
 .status-label {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary-dark-gray);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
+  line-height: 1.1;
 }
 
 .status-percent {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--primary-dark-gray);
+  font-weight: 500;
 }
 
 
@@ -1430,6 +1445,67 @@ onUnmounted(() => {
   
   .status-count {
     font-size: 1.2rem;
+  }
+}
+
+/* Responsive design for status cards */
+@media (max-width: 768px) {
+  .status-grid {
+    gap: 0.4rem;
+    padding: 0.2rem;
+    min-height: 240px;
+  }
+  
+  .status-mini-card {
+    min-height: 100px;
+    padding: 0.6rem 0.4rem;
+  }
+  
+  .status-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .status-count {
+    font-size: 1.4rem;
+  }
+  
+  .status-label {
+    font-size: 0.75rem;
+  }
+  
+  .status-percent {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .status-grid {
+    gap: 0.3rem;
+    padding: 0.15rem;
+    min-height: 200px;
+  }
+  
+  .status-mini-card {
+    min-height: 90px;
+    padding: 0.5rem 0.3rem;
+  }
+  
+  .status-icon {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .status-count {
+    font-size: 1.3rem;
+  }
+  
+  .status-label {
+    font-size: 0.7rem;
+  }
+  
+  .status-percent {
+    font-size: 0.65rem;
   }
 }
 

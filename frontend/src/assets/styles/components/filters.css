@@ -13,7 +13,7 @@
   will-change: transform, opacity;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  
+  z-index: var(--z-dropdown-menu);
 }
 
 /* Filter dropdown content animation */
@@ -85,13 +85,16 @@
   display: flex !important;
   align-items: center !important;
   border: none !important;
+  width: 100% !important;
 }
 
 .search-icon {
   position: absolute !important;
   left: 0.75rem !important;
-  color: #e0e0e0 !important; /* Custom light gray color */
-  
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #6c757d !important; /* Bootstrap's text-muted color for better visibility */
+  z-index: 1 !important;
   pointer-events: none !important;
   transition: color 0.2s ease !important;
   font-size: 1rem !important;
@@ -104,16 +107,45 @@
   padding-right: 0.75rem !important;
   height: 40px !important; /* Match other filter controls */
   border-radius: 0.5rem !important; /* Match other filter controls */
+  border: 1px solid #dee2e6 !important; /* Ensure border is visible */
+  background-color: white !important; /* Ensure background is white */
 }
 
 /* Dynamic icon color states */
 .search-input-container:focus-within .search-icon {
-  color: #000000 !important; /* Black when focused */
+  color: #331FEA !important; /* Primary color when focused */
 }
 
 .search-input-container .search-input:not(:placeholder-shown) ~ .search-icon,
 .search-input-container:has(.search-input:not(:placeholder-shown)) .search-icon {
-  color: #000000 !important; /* Black when typing */
+  color: #331FEA !important; /* Primary color when typing */
+}
+
+/* Ensure icon is always visible */
+.search-input-container .search-icon {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Specific override for AssetsView search icon */
+.row.align-items-end .search-input-container .search-icon {
+  position: absolute !important;
+  left: 0.75rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #6c757d !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+  font-size: 1rem !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Focus state for AssetsView search icon */
+.row.align-items-end .search-input-container:focus-within .search-icon {
+  color: #331FEA !important;
 }
 
 /* Legacy search input padding (for backward compatibility) */
@@ -138,11 +170,12 @@
 /* Searchable dropdown z-index fix - ensure dropdowns appear above table */
 .filter-dropdown .searchable-dropdown-wrapper {
   position: relative;
-  
+  z-index: var(--z-dropdown-menu);
 }
 
 .filter-dropdown .searchable-dropdown-wrapper .dropdown-menu {
   position: absolute !important;
+  z-index: var(--z-dropdown-menu);
 }
 
 /* Additional specificity for dropdown menu to ensure it appears above table */
@@ -329,7 +362,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: var(--z-date-dropdown);
+  z-index: var(--z-date-dropdown) !important;
   background: var(--primary-white);
   border: 1px solid var(--element-gray);
   border-radius: 0.5rem;
