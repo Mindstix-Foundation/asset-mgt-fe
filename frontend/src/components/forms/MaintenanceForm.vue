@@ -795,7 +795,7 @@ const loadMaintenanceData = async () => {
     formData.maintenanceTypeId = maintenance.maintenanceTypeId
     await applyMaintenanceTypeSelectionById(maintenance.maintenanceTypeId)
     // Vendor selection removed
-    formData.scheduledDate = formatDateForInput(maintenance.scheduledDate)
+    formData.scheduledDate = formatDateForInput(maintenance.relevantDate)
     formData.frequencyDays = maintenance.frequencyDays
     formData.estimatedCost = maintenance.estimatedCost
     formData.description = maintenance.description

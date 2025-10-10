@@ -143,7 +143,7 @@
             <div class="row g-3">
               <!-- Toggle Sort Order -->
               <div class="col-4">
-                <button type="button" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                <button type="button" class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                 </button>
               </div>
@@ -221,9 +221,9 @@
             <tr>
               <th>Asset ID</th>
               <th>Asset Details</th>
-              <th>Type</th>
-              <th>Date</th>
               <th>Est./Actual Cost</th>
+              <th>Date</th>
+              <th>Type</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -241,18 +241,25 @@
                 <strong>{{ maintenance.assetId }}</strong>
               </td>
               <td>
-                <div class="d-flex flex-column">
-                  <span class="fw-semibold">{{ maintenance.assetName }}</span>
-                  <small class="text-muted" v-if="maintenance.vendor !== 'Internal Team'">{{ maintenance.vendor }}</small>
+                <div class="asset-details-cell">
+                  <div class="asset-model">{{ maintenance.assetModel || 'Unknown Model' }}</div>
+                  <div class="asset-type-brand">{{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}</div>
                 </div>
               </td>
               <td>
-                {{ maintenance.type }}
+                <div class="cost-cell">
+                  <div class="cost-amount">{{ maintenance.cost }}</div>
+                  <div class="cost-type">{{ maintenance.costType }}</div>
+                </div>
               </td>
-              <td>{{ formatDate(maintenance.scheduledDate) }}</td>
               <td>
-                <strong>{{ maintenance.cost }}</strong><br>
-                <small class="text-muted">{{ maintenance.costType }}</small>
+                <div class="date-cell">
+            <div class="date-value">{{ formatDate(maintenance.relevantDate || '') }}</div>
+            <div class="date-label">{{ getDateTypeLabel(maintenance.dateType || '') }}</div>
+                </div>
+              </td>
+              <td>
+                {{ formatMaintenanceType(maintenance.type) }}
               </td>
               <td>
                 <span :class="['badge', getStatusBadgeClass(maintenance.status)]">
@@ -260,9 +267,9 @@
                 </span>
               </td>
               <td>
-                <div class="btn-group btn-group-sm maintenance-actions">
+                <div class="btn-group btn-group-sm asset-actions">
                   <button 
-                    class="btn btn-action btn-purple" 
+                    class="btn btn-action btn-brown" 
                     @click="showMaintenanceDetails(maintenance)"
                     title="View Details"
                   >
@@ -278,7 +285,7 @@
                   </button>
                   <button 
                     v-if="maintenance.status === 'SCHEDULED'"
-                    class="btn btn-action btn-orange" 
+                    class="btn btn-action btn-purple" 
                     @click="navigateToEdit(maintenance)"
                     title="Edit Maintenance"
                   >
@@ -380,7 +387,7 @@
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
                       <div class="info-label-compact">Scheduled Date</div>
-                      <div class="info-value-compact">{{ formatDate(selectedMaintenance.scheduledDate) }}</div>
+                      <div class="info-value-compact">{{ formatDate(selectedMaintenance.relevantDate || '') }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Frequency</div>
@@ -440,7 +447,7 @@
               <button 
                 v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                 type="button" 
-                class="btn btn-green" 
+                class="btn btn-green btn-sm" 
                 @click="closeDetailAndOpenComplete"
               >
                 <i class="fas fa-check me-1"></i>Complete
@@ -448,7 +455,7 @@
               <button 
                 v-if="selectedMaintenance?.status === 'SCHEDULED'"
                 type="button" 
-                class="btn btn-orange" 
+                class="btn btn-orange btn-sm" 
                 @click="navigateToEdit(selectedMaintenance)"
               >
                 <i class="fas fa-edit me-1"></i>Edit
@@ -456,19 +463,19 @@
               <button 
                 v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                 type="button" 
-                class="btn btn-orange" 
+                class="btn btn-orange btn-sm" 
                 @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
               >
                 <i class="fas fa-calendar-plus me-1"></i>Reschedule
               </button>
-              <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
-              <button type="button" class="btn btn-brown" @click="openHistory">
+              <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Close</button>
+              <button type="button" class="btn btn-brown btn-sm" @click="openHistory">
                 <i class="fas fa-history me-1"></i>History
               </button>
               <button 
                 v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
                 type="button" 
-                class="btn btn-red" 
+                class="btn btn-red btn-sm" 
                 @click="closeDetailAndOpenCancel"
               >
                 <i class="fas fa-times me-1"></i>Cancel
@@ -478,16 +485,16 @@
             <!-- Desktop: aligned like EmployeesView -->
             <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
               <div>
-                <button type="button" class="btn btn-brown" @click="openHistory">
+                <button type="button" class="btn btn-brown btn-sm" @click="openHistory">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-cancel" @click="closeModals">Close</button>
+                <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Close</button>
                 <button 
                   v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
                   type="button" 
-                  class="btn btn-green" 
+                  class="btn btn-green btn-sm" 
                   @click="closeDetailAndOpenComplete"
                 >
                   <i class="fas fa-check me-1"></i>Complete Maintenance
@@ -495,7 +502,7 @@
                 <button 
                   v-if="selectedMaintenance?.status === 'SCHEDULED'"
                   type="button" 
-                  class="btn btn-orange" 
+                  class="btn btn-orange btn-sm" 
                   @click="navigateToEdit(selectedMaintenance)"
                 >
                   <i class="fas fa-edit me-1"></i>Edit Maintenance
@@ -503,7 +510,7 @@
                 <button 
                   v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
                   type="button" 
-                  class="btn btn-orange" 
+                  class="btn btn-orange btn-sm" 
                   @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
                 >
                   <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
@@ -511,7 +518,7 @@
                 <button 
                   v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
                   type="button" 
-                  class="btn btn-red" 
+                  class="btn btn-red btn-sm" 
                   @click="closeDetailAndOpenCancel"
                 >
                   <i class="fas fa-times me-1"></i>Cancel Maintenance
@@ -592,8 +599,8 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-cancel" @click="closeModals">Cancel</button>
-            <button type="button" class="btn btn-green" @click="completeMaintenance" :disabled="completeLoading">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Cancel</button>
+            <button type="button" class="btn btn-green btn-sm" @click="completeMaintenance" :disabled="completeLoading">
               <i :class="completeLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-check me-1'"></i>
               {{ completeLoading ? 'Completing...' : 'Complete Maintenance' }}
             </button>
@@ -680,10 +687,10 @@
             </div>
           </div>
           <div class="modal-footer border-0 pt-0" style="background-color: #f8f9fa;">
-            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+            <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">
               Keep Maintenance
             </button>
-            <button type="button" class="btn btn-red" @click="cancelMaintenance" :disabled="cancelLoading">
+            <button type="button" class="btn btn-red btn-sm" @click="cancelMaintenance" :disabled="cancelLoading">
               <i :class="cancelLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-times me-1'"></i>
               {{ cancelLoading ? 'Cancelling...' : 'Confirm Cancellation' }}
             </button>
@@ -728,7 +735,8 @@ interface MaintenanceRow {
   vendor: string
   vendorName: string | null
   assignedTo: string | null
-  scheduledDate: string
+  relevantDate: string | null
+  dateType: 'scheduled' | 'completion' | 'cancellation' | null
   cost: string
   costType: 'Estimated' | 'Actual'
   estimatedCost: number | null
@@ -753,7 +761,7 @@ const filters = reactive({
   vendor: ''
 })
 
-const sortBy = ref('scheduledDate')
+const sortBy = ref('relevantDate')
 const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
@@ -789,7 +797,7 @@ const sortOptions = ref<Item[]>([
   { id: 'status', name: 'Status', value: 'status' },
   { id: 'type', name: 'Maintenance Type', value: 'type' },
   { id: 'vendor', name: 'Vendor', value: 'vendor' },
-  { id: 'scheduledDate', name: 'Date', value: 'scheduledDate' },
+  { id: 'relevantDate', name: 'Date', value: 'relevantDate' },
   { id: 'cost', name: 'Cost', value: 'cost' }
 ])
 
@@ -805,7 +813,7 @@ const sortOptions = ref<Item[]>([
         'cost': 'estimatedCost',
         'type': 'maintenanceType',
         
-        'assetId': 'scheduledDate' // Asset ID sorting not supported yet, fallback to date
+        'assetId': 'relevantDate' // Asset ID sorting not supported yet, fallback to date
       }
       
       // Map frontend maintenance type values to backend enum values
@@ -835,9 +843,9 @@ const sortOptions = ref<Item[]>([
         id: Number.parseInt(maintenance.id),
         assetId: maintenance.assetId,
         assetName: maintenance.assetName,
-        assetType: '', // Not provided in API response
-        assetBrand: '', // Not provided in API response  
-        assetModel: '', // Not provided in API response
+        assetType: maintenance.assetType || '',
+        assetBrand: maintenance.assetBrand || '',
+        assetModel: maintenance.assetModel || '',
         maintenanceTypeId: maintenance.maintenanceTypeId,
         maintenanceTypeName: maintenance.maintenanceTypeName,
         type: maintenance.maintenanceTypeName, // For backward compatibility
@@ -845,7 +853,8 @@ const sortOptions = ref<Item[]>([
         vendor: maintenance.vendorName || 'Internal Team',
         vendorName: maintenance.vendorName || null,
         assignedTo: maintenance.assignedTo || 'Not Assigned',
-        scheduledDate: maintenance.scheduledDate,
+        relevantDate: maintenance.relevantDate || null,
+        dateType: maintenance.dateType || null,
         cost: maintenance.actualCost 
           ? `₹${maintenance.actualCost.toFixed(2)}` 
           : `₹${maintenance.estimatedCost?.toFixed(2) || '0.00'}`,
@@ -1148,6 +1157,25 @@ const formatStatus = (status: string) => {
 
 const formatDate = (dateString: string) => formatDateOnly(dateString)
 
+// Format maintenance type to title case
+const formatMaintenanceType = (type: string) => {
+  if (!type) return 'Unknown'
+  return type.replaceAll(/\w\S*/g, (txt: string) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  })
+}
+
+// Get user-friendly label for date type
+const getDateTypeLabel = (dateType: string) => {
+  if (!dateType) return ''
+  const labels = {
+    'scheduled': 'Scheduled Date',
+    'completion': 'Completion Date',
+    'cancellation': 'Cancellation Date'
+  }
+  return labels[dateType as keyof typeof labels] || ''
+}
+
 // Map maintenance status to shared badge color classes from badges.css
 const getStatusBadgeClass = (status: string) => {
   const normalized = (status || '').toUpperCase()
@@ -1199,8 +1227,8 @@ const clearFilters = () => {
   selectedType.value = null
   selectedStatus.value = null
   
-  selectedSortBy.value = sortOptions.value.find(o => o.value === 'scheduledDate') || null
-  sortBy.value = 'scheduledDate'
+  selectedSortBy.value = sortOptions.value.find(o => o.value === 'relevantDate') || null
+  sortBy.value = 'relevantDate'
   fetchMaintenances()
 }
 
@@ -1283,7 +1311,8 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
         vendor: history.vendorName || 'Internal Team',
         vendorName: history.vendorName || null,
         assignedTo: history.assignedTo || 'Not Assigned',
-        scheduledDate: history.scheduledDate,
+        relevantDate: history.relevantDate || null,
+        dateType: history.dateType || null,
         cost: (() => {
           if (history.actualCost) {
             return `₹${history.actualCost.toFixed(2)}`
@@ -1472,364 +1501,4 @@ const isHistoryExpanded = ref(true)
 
 <style scoped>
 @import '@/assets/styles/pages/maintenance.css';
-/**
- * MaintenanceView.vue - View-Specific Styles
- * Styles unique to this view only - shared styles are in /assets/styles/pages/maintenance.css
- */
-
-/* =================================
-   PAGE LAYOUT
-   Specific to main maintenance view
-================================= */
-
-.maintenance-page {
-  background: var(--primary-white);
-  min-height: calc(100vh - 60px);
-}
-
-/* =================================
-   STATS CARDS
-   Using shared cards.css - no local card styles
-================================= */
-
-/* Stats card visuals are centralized in /assets/styles/components/cards.css */
-/* Badge styles removed; using shared badges.css */
-
-/* =================================
-   BUTTONS AND ACTIONS
-   Using shared buttons.css - no local button styles
-================================= */
-
-/* Button styles are now centralized in /assets/styles/components/buttons.css */
-
-/* =================================
-   TABLE LAYOUT
-   Specific column widths for this view's table
-================================= */
-
-/* Using shared table hover, cell padding, and responsive spacing from components/tables.css */
-.table th:last-child, .table td:last-child {
-  text-align: right !important;
-}
-
-/* Column width distribution for 7 columns (Asset ID and Asset Details split) */
-/* 1: Asset ID */
-.table th:nth-child(1), .table td:nth-child(1) {
-  width: 12% !important;
-  min-width: 120px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-/* 2: Asset Details */
-.table th:nth-child(2), .table td:nth-child(2) { 
-  width: 20% !important; 
-  min-width: 180px !important;
-}
-/* 3: Type */
-.table th:nth-child(3), .table td:nth-child(3) { 
-  width: 14% !important; 
-  min-width: 130px !important;
-}
-/* 4: Date */
-.table th:nth-child(4), .table td:nth-child(4) { 
-  width: 12% !important; 
-  min-width: 120px !important;
-}
-/* 5: Cost */
-.table th:nth-child(5), .table td:nth-child(5) { 
-  width: 16% !important; 
-  min-width: 160px !important;
-}
-/* 6: Status */
-.table th:nth-child(6), .table td:nth-child(6) { 
-  width: 14% !important; 
-  min-width: 130px !important;
-}
-
-/* 7: Actions column */
-.table th:nth-child(7), .table td:nth-child(7) {
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 220px !important;
-  text-align: left !important;
-}
-
-/* Actions button group spacing - using shared button styles */
-.maintenance-actions {
-  justify-content: flex-end !important; /* align buttons to the right */
-  gap: 0.25rem !important;
-}
-
-/* =================================
-   CARDS AND MODALS
-   Using shared cards.css - no local card styles
-================================= */
-
-/* Card styles are centralized in /assets/styles/components/cards.css */
-
-/* Modal styling */
-.modal-footer {
-  background-color: var(--primary-light-gray) !important;
-  border-top: 1px solid var(--element-gray) !important;
-  padding: 1rem 1.5rem !important;
-}
-
-/* Maintenance Info sections */
-.asset-info-section-compact {
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #e9ecef;
-  border-radius: 0.5rem;
-  background-color: #fafafa;
-}
-
-.section-title-compact {
-  font-size: 1.1rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0.5rem !important;
-  padding-bottom: 0.25rem;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.info-label-compact {
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  color: #495057 !important;
-  margin-bottom: 0 !important;
-  min-width: 140px;
-  flex-shrink: 0;
-}
-
-.info-value-compact {
-  font-size: 1rem !important;
-  font-weight: 500 !important;
-  color: #212529 !important;
-  margin-bottom: 0 !important;
-}
-
-.description-content {
-  color: var(--primary-black) !important;
-  font-size: 0.9rem !important;
-  line-height: 1.5 !important;
-}
-
-.service-notes {
-  margin: 0.5rem 0 0 1rem !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.service-notes li {
-  margin-bottom: 0.25rem !important;
-  font-size: 0.85rem !important;
-}
-
-/* =================================
-   FORM STYLING
-   Specific to this view's modals
-================================= */
-
-.complete-maintenance-form .form-label,
-.cancel-maintenance-form .form-label,
-.generate-report-form .form-label {
-  font-weight: 600 !important;
-  color: var(--primary-black) !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.complete-maintenance-form .form-control,
-.complete-maintenance-form .form-select,
-.cancel-maintenance-form .form-control,
-.generate-report-form .form-control,
-.generate-report-form .form-select {
-  border: 2px solid var(--primary-mid-light) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem !important;
-  font-size: 0.9rem !important;
-}
-
-.complete-maintenance-form .form-control:focus,
-.complete-maintenance-form .form-select:focus,
-.cancel-maintenance-form .form-control:focus,
-.generate-report-form .form-control:focus,
-.generate-report-form .form-select:focus {
-  border-color: var(--secondary-purple) !important;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
-}
-
-.complete-maintenance-form .input-group-text {
-  background-color: var(--primary-light-gray) !important;
-  border: 2px solid var(--primary-mid-light) !important;
-  border-right: none !important;
-  color: var(--primary-dark-gray) !important;
-  font-weight: 600 !important;
-}
-
-.form-text {
-  color: var(--primary-mid-gray) !important;
-  font-size: 0.8rem !important;
-  margin-top: 0.25rem !important;
-}
-
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-/* =================================
-   BUTTON COLORS
-   Using shared buttons.css color classes
-================================= */
-
-/* Button colors are now centralized in /assets/styles/components/buttons.css */
-
-/* =================================
-   TEXT COLORS
-   View-specific text color utilities
-================================= */
-
-.text-success {
-  color: var(--secondary-green) !important;
-}
-
-.text-info {
-  color: var(--secondary-purple) !important;
-}
-
-.text-warning {
-  color: var(--secondary-orange) !important;
-}
-
-.text-danger {
-  color: var(--secondary-red) !important;
-}
-
-/* =================================
-   MAINTENANCE HISTORY TIMELINE
-   Specific to modal history display
-================================= */
-
-/* Maintenance History Section (Collapsible) */
-.maintenance-history-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-}
-
-.history-timeline {
-  position: relative;
-  padding-left: 2rem;
-}
-
-.history-timeline::before {
-  content: '';
-  position: absolute;
-  left: 0.75rem;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--element-gray);
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
-}
-
-.timeline-item:last-child {
-  margin-bottom: 0;
-}
-
-.timeline-marker {
-  position: absolute;
-  left: -2.25rem;
-  top: 0.25rem;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-white);
-  background: var(--primary-mid-gray);
-}
-
-.timeline-scheduled .timeline-marker {
-  background: var(--secondary-purple);
-}
-
-.timeline-in-progress .timeline-marker {
-  background: var(--secondary-orange);
-}
-
-.timeline-completed .timeline-marker {
-  background: var(--secondary-green);
-}
-
-.timeline-cancelled .timeline-marker {
-  background: var(--secondary-red);
-}
-
-.timeline-content {
-  background: var(--primary-light-gray);
-  border: 1px solid var(--element-gray);
-  border-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.timeline-title {
-  color: var(--primary-black);
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.timeline-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.timeline-meta .badge {
-  font-size: 0.7rem;
-}
-
-.timeline-date {
-  font-size: 0.8rem;
-  color: var(--primary-mid-gray);
-  font-weight: 500;
-}
-
-.timeline-details {
-  margin-top: 0.75rem;
-  font-size: 0.85rem;
-}
-
-.timeline-details .text-muted {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-  font-weight: 500;
-}
-
-.timeline-notes {
-  font-style: italic;
-  color: var(--primary-dark-gray);
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
-
-/* =================================
-   UI INTERACTIONS
-   Specific to this view's expandable sections
-================================= */
-
-.assignment-chevron {
-  transition: transform 0.3s ease;
-}
-
-.assignment-chevron.rotated {
-  transform: rotate(180deg);
-}
 </style> 

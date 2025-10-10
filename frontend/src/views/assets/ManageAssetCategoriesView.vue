@@ -589,7 +589,7 @@ FULL BLACK AND RED"
                 <div class="btn-group btn-group-sm asset-actions">
                   <button 
                     v-if="selectedEntityType === 'model'"
-                    class="btn btn-brown" 
+                    class="btn btn-action btn-brown" 
                     @click="viewModelDetails(item)"
                     title="View Model Details"
                   >
@@ -597,7 +597,7 @@ FULL BLACK AND RED"
                   </button>
                   <button 
                     v-if="selectedEntityType !== 'asset'"
-                    class="btn btn-red" 
+                    class="btn btn-action btn-red" 
                     @click="deleteItem(item)"
                     title="Delete"
                   >
@@ -605,7 +605,7 @@ FULL BLACK AND RED"
                   </button>
                   <button 
                     v-if="selectedEntityType === 'asset'"
-                    class="btn btn-red" 
+                    class="btn btn-action btn-red" 
                     @click="deleteSingleAsset(item)"
                     title="Delete Asset"
                   >

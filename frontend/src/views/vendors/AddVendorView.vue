@@ -2,7 +2,7 @@
   <VendorForm
     :is-edit-mode="false"
     :disable-status="true"
-    :initial-status="'ACTIVE'"
+    :initial-status="VendorStatus.ACTIVE"
     @submit="handleSubmit"
     @cancel="handleCancel"
   />
@@ -13,6 +13,7 @@ import { useRouter } from 'vue-router'
 import VendorApiService from '@/services/api/vendorApi'
 import { useToastStore } from '@/stores/toast'
 import VendorForm from '@/components/forms/VendorForm.vue'
+import { VendorStatus } from '@/types/vendor.types'
 
 const router = useRouter()
 const toastStore = useToastStore()

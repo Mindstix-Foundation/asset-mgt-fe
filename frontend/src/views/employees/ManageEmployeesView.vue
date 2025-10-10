@@ -7,7 +7,7 @@
         <p class="text-muted mb-0">Manage deletable employees (employees without assigned assets)</p>
       </div>
       <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-outline-secondary btn-modern" @click="goBack">
+        <button class="btn btn-gray" @click="goBack">
           <i class="fas fa-arrow-left me-1"></i>Back to Employees
         </button>
       </div>
@@ -17,11 +17,9 @@
     <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h5 class="mb-1">Manage Employee Deletions</h5>
-          <p class="text-muted mb-0">Select employees to delete in bulk or individually</p>
         </div>
         <div class="d-flex gap-2">
-          <button class="btn btn-danger btn-modern" @click="startBulkDelete">
+          <button class="btn btn-red" @click="startBulkDelete">
             <i class="fas fa-trash me-1"></i>Bulk Delete
           </button>
         </div>
@@ -184,7 +182,7 @@
         
         <!-- Toggle Sort Order -->
         <div class="col-12 col-lg-2 mb-3">
-          <button class="btn btn-outline-secondary w-100" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="height: 38px;">
+          <button class="btn btn-gray w-100" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="height: 38px;">
             <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']"></i>
           </button>
         </div>
@@ -193,92 +191,89 @@
 
     <!-- Employees Table -->
     <div class="mt-5" v-if="items.length > 0">
-      <div class="card">
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0 table-employee" :class="{ 'show-checkboxes': showFormCard }">
-              <thead class="table-light">
-                <tr>
-                  <th v-if="showFormCard"></th>
-                  <th>Employee ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="employee in items" :key="employee.id">
-                  <!-- Checkbox column -->
-                  <td v-if="showFormCard">
-                    <input 
-                      type="checkbox" 
-                      class="form-check-input" 
-                      :checked="selectedEmployeesForDeletion.includes(employee.id)"
-                      @change="toggleEmployeeSelection(employee.id)"
-                    >
-                  </td>
-                  
-                  <!-- Employee ID column -->
-                  <td>
-                    <strong>{{ employee.employeeId }}</strong>
-                  </td>
-                  
-                  <!-- Name column -->
-                  <td>
-                    <strong style="color: var(--primary-black);">
-                      {{ employee.firstName }} {{ employee.lastName }}
-                    </strong>
-                  </td>
-                  
-                  <!-- Email column -->
-                  <td>
-                    <span class="text-muted">{{ employee.email }}</span>
-                  </td>
-                  
-                  <!-- Phone column -->
-                  <td>
-                    <span class="text-muted">{{ employee.phone || 'N/A' }}</span>
-                  </td>
-                  
-                  <!-- Status column -->
-                  <td>
-                    <span :class="employee.status === 'ACTIVE' ? 'badge badge-green' : 'badge badge-red'">
-                      {{ employee.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
-                    </span>
-                  </td>
-                  
-                  <!-- Actions column -->
-                  <td>
-                    <div class="btn-group btn-group-sm employee-actions">
-                      <button 
-                        class="btn btn-action btn-red" 
-                        @click="deleteSingleEmployee(employee)"
-                        title="Delete Employee"
-                        :disabled="employee.isAdmin"
-                      >
-                        <i class="fas fa-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- Pagination -->
-        <div class="card-footer py-3" v-if="pagination.totalPages > 1 || pagination.totalCount > 0">
-          <AppPagination
-            :current-page="pagination.currentPage"
-            :total-pages="pagination.totalPages"
-            :start="paginationInfo.start"
-            :end="paginationInfo.end"
-            :total="paginationInfo.total"
-            item-name="employees"
-            @change="handlePageChange"
-          />
-        </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 table-employee" :class="{ 'show-checkboxes': showFormCard }">
+          <thead class="table-light">
+            <tr>
+              <th v-if="showFormCard"></th>
+              <th>Employee ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="employee in items" :key="employee.id">
+              <!-- Checkbox column -->
+              <td v-if="showFormCard">
+                <input 
+                  type="checkbox" 
+                  class="form-check-input" 
+                  :checked="selectedEmployeesForDeletion.includes(employee.id)"
+                  @change="toggleEmployeeSelection(employee.id)"
+                >
+              </td>
+              
+              <!-- Employee ID column -->
+              <td>
+                <strong>{{ employee.employeeId }}</strong>
+              </td>
+              
+              <!-- Name column -->
+              <td>
+                <strong style="color: var(--primary-black);">
+                  {{ employee.firstName }} {{ employee.lastName }}
+                </strong>
+              </td>
+              
+              <!-- Email column -->
+              <td>
+                <span class="text-muted">{{ employee.email }}</span>
+              </td>
+              
+              <!-- Phone column -->
+              <td>
+                <span class="text-muted">{{ employee.phone || 'N/A' }}</span>
+              </td>
+              
+              <!-- Status column -->
+              <td>
+                <span :class="employee.status === 'ACTIVE' ? 'badge badge-green' : 'badge badge-red'">
+                  {{ employee.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              
+              <!-- Actions column -->
+              <td>
+                <div class="btn-group btn-group-sm employee-actions">
+                  <button 
+                    class="btn btn-action btn-red" 
+                    @click="deleteSingleEmployee(employee)"
+                    title="Delete Employee"
+                    :disabled="employee.isAdmin"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="mt-3" v-if="pagination.totalPages > 1 || pagination.totalCount > 0">
+        <AppPagination
+          :current-page="pagination.currentPage"
+          :total-pages="pagination.totalPages"
+          :start="paginationInfo.start"
+          :end="paginationInfo.end"
+          :total="paginationInfo.total"
+          item-name="employees"
+          @change="handlePageChange"
+        />
       </div>
     </div>
 
@@ -355,12 +350,12 @@
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel" @click="closeDeleteConfirmationModal">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-red"
+              class="btn btn-red btn-sm"
               @click="confirmDelete"
               :disabled="isDeleting"
             >
@@ -411,12 +406,12 @@
             </div>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-cancel" @click="closeBulkDeleteConfirmationModal">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeBulkDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
             <button 
               type="button" 
-              class="btn btn-red"
+              class="btn btn-red btn-sm"
               @click="executeBulkDelete"
               :disabled="isBulkDeleting"
             >

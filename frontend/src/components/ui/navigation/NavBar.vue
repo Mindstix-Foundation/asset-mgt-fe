@@ -145,12 +145,12 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-modern btn-outline-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-2"></i>
+          <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i>
             Cancel
           </button>
-          <button type="button" class="btn btn-modern btn-danger" @click="handleConfirmLogout">
-            <i class="fas fa-sign-out-alt me-2"></i>
+          <button type="button" class="btn btn-red btn-sm" @click="handleConfirmLogout">
+            <i class="fas fa-sign-out-alt me-1"></i>
             Yes, Logout
           </button>
         </div>

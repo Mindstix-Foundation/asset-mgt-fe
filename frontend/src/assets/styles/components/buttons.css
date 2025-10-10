@@ -245,6 +245,8 @@
 
 /* Base action button styling - all use secondary gray palette */
 .asset-actions .btn,
+.employee-actions .btn,
+.vendor-actions .btn,
 .btn-action {
   background-color: var(--primary-light-gray) !important;
   border-color: var(--element-gray) !important;
@@ -255,6 +257,8 @@
 }
 
 .asset-actions .btn:hover:not(:disabled),
+.employee-actions .btn:hover:not(:disabled),
+.vendor-actions .btn:hover:not(:disabled),
 .btn-action:hover:not(:disabled) {
   background-color: var(--primary-white) !important;
   border-color: var(--primary-mid-light) !important;
@@ -262,6 +266,8 @@
 
 /* Specific action button hover colors - Only apply to action buttons */
 .asset-actions .btn-brown:hover:not(:disabled),
+.employee-actions .btn-brown:hover:not(:disabled),
+.vendor-actions .btn-brown:hover:not(:disabled),
 .btn-action.btn-brown:hover:not(:disabled) {
   color: var(--secondary-brown) !important;
   border-color: var(--secondary-brown) !important;
@@ -269,6 +275,8 @@
 }
 
 .asset-actions .btn-purple:hover:not(:disabled),
+.employee-actions .btn-purple:hover:not(:disabled),
+.vendor-actions .btn-purple:hover:not(:disabled),
 .btn-action.btn-purple:hover:not(:disabled) {
   color: var(--secondary-purple) !important;
   border-color: var(--secondary-purple) !important;
@@ -276,6 +284,8 @@
 }
 
 .asset-actions .btn-green:hover:not(:disabled),
+.employee-actions .btn-green:hover:not(:disabled),
+.vendor-actions .btn-green:hover:not(:disabled),
 .btn-action.btn-green:hover:not(:disabled) {
   color: var(--secondary-green) !important;
   border-color: var(--secondary-green) !important;
@@ -283,6 +293,8 @@
 }
 
 .asset-actions .btn-pink:hover:not(:disabled),
+.employee-actions .btn-pink:hover:not(:disabled),
+.vendor-actions .btn-pink:hover:not(:disabled),
 .btn-action.btn-pink:hover:not(:disabled) {
   color: var(--secondary-pink) !important;
   border-color: var(--secondary-pink) !important;
@@ -290,6 +302,8 @@
 }
 
 .asset-actions .btn-orange:hover:not(:disabled),
+.employee-actions .btn-orange:hover:not(:disabled),
+.vendor-actions .btn-orange:hover:not(:disabled),
 .btn-action.btn-orange:hover:not(:disabled) {
   color: var(--secondary-orange) !important;
   border-color: var(--secondary-orange) !important;
@@ -297,6 +311,8 @@
 }
 
 .asset-actions .btn-red:hover:not(:disabled),
+.employee-actions .btn-red:hover:not(:disabled),
+.vendor-actions .btn-red:hover:not(:disabled),
 .btn-action.btn-red:hover:not(:disabled) {
   color: var(--secondary-red) !important;
   border-color: var(--secondary-red) !important;
@@ -304,6 +320,8 @@
 }
 
 .asset-actions .btn-blue:hover:not(:disabled),
+.employee-actions .btn-blue:hover:not(:disabled),
+.vendor-actions .btn-blue:hover:not(:disabled),
 .btn-action.btn-blue:hover:not(:disabled) {
   color: var(--secondary-blue) !important;
   border-color: var(--secondary-blue) !important;
@@ -311,6 +329,8 @@
 }
 
 .asset-actions .btn-gray:hover:not(:disabled),
+.employee-actions .btn-gray:hover:not(:disabled),
+.vendor-actions .btn-gray:hover:not(:disabled),
 .btn-action.btn-gray:hover:not(:disabled) {
   color: var(--primary-mid-gray) !important;
   border-color: var(--primary-mid-gray) !important;

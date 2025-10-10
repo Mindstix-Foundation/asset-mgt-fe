@@ -25,9 +25,13 @@ export interface Maintenance {
   id: string
   assetId: string
   assetName: string
+  assetType?: string
+  assetBrand?: string
+  assetModel?: string
   maintenanceTypeId: string
   maintenanceTypeName: string
-  scheduledDate: string
+  relevantDate?: string
+  dateType?: 'scheduled' | 'completion' | 'cancellation'
   frequencyDays?: number
   estimatedCost?: number
   description: string

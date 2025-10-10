@@ -335,6 +335,7 @@ const handleLogin = async () => {
   height: 36px;
   pointer-events: auto;
   outline: none;
+  appearance: none;
   -webkit-appearance: none;
 }
 

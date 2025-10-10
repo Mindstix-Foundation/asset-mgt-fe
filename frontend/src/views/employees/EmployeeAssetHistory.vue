@@ -13,7 +13,7 @@
         <!-- Actions Section -->
         <div class="col-12 col-md-6 col-lg-8">
           <div class="d-flex gap-2 justify-content-md-end">
-            <button class="btn btn-outline-secondary btn-modern" @click="goBackToEmployee">
+            <button class="btn btn-gray" @click="goBackToEmployee">
               <i class="fas fa-arrow-left me-1"></i>Back to Employee
             </button>
           </div>
@@ -83,7 +83,7 @@
             <div class="col-12 col-lg-2 mb-3">
               <div class="row g-3">
                 <div class="col-4">
-                  <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                  <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
                     <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
                   </button>
                 </div>
@@ -157,7 +157,7 @@
           <!-- Timeline -->
           <div v-else class="asset-history-timeline">
             <div class="timeline-item" v-for="(item, index) in assetEvents" :key="index + '-' + item.id + '-' + item.action">
-              <div class="timeline-connector" v-if="index < assetEvents.length - 1"></div>
+              
 
               <div class="timeline-dot returned" :style="{ backgroundColor: item.action === 'ASSIGNED' ? 'var(--secondary-green)' : 'var(--secondary-orange)' }">
                 <i :class="item.action === 'ASSIGNED' ? 'fas fa-arrow-right' : 'fas fa-arrow-left'"></i>
@@ -711,9 +711,7 @@ export default {
     height: 1.25rem;
   }
   
-  .timeline-connector {
-    left: -1rem;
-  }
+ 
   
   .timeline-content.compact {
     padding: 0.6rem;

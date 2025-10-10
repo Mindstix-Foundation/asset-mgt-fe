@@ -92,8 +92,8 @@ const handleValidation = async (file: File) => {
     // Transform the result to match BulkUploadModal expectations
     const transformedResult = {
       errors: validationResult.data.errors || [],
-      totalRows: validationResult.data.totalRows || 0,
-      validRows: validationResult.data.validRows || 0
+      totalRows: validationResult.data.summary?.totalRows || 0,
+      validRows: validationResult.data.summary?.successfulImports || 0
     }
     
     console.log('BulkVendorUpload: Transformed result:', transformedResult)
