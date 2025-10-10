@@ -234,7 +234,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--primary-mid-gray);
-  z-index: 2;
+  
 }
 
 /* Notification Stats */

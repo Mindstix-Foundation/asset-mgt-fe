@@ -1,4 +1,4 @@
-`<template>
+<template>
   <div class="container-fluid px-3 py-4">
     <!-- Page Header -->
     <div class="row align-items-center mb-4">
@@ -589,7 +589,7 @@
     <div 
       v-if="toast.show" 
       class="toast-container position-fixed top-0 end-0 p-3"
-      style="z-index: 1100;"
+      
     >
       <div class="toast show" role="alert">
         <div class="toast-header">

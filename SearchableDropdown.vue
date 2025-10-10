@@ -44,7 +44,6 @@
         :style="{ 
           position: 'absolute', 
           width: '100%', 
-          'z-index': '1000',
           'max-height': dropdownMaxHeight
         }"
         role="listbox"
@@ -600,7 +599,6 @@ const handleClick = () => {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
   display: none;
   min-width: 10rem;
   padding: 0.5rem 0;
@@ -631,7 +629,6 @@ const handleClick = () => {
 
 .dropdown-menu.show {
   display: block;
-  z-index: 9999 !important;
 }
 
 /* Custom scrollbar for webkit browsers */

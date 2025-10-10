@@ -308,7 +308,6 @@ const isMaintenanceEvent = (type: string): boolean => {
   font-size: 0.875rem;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 2;
   position: relative;
 }
 

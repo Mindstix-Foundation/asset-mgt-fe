@@ -237,8 +237,9 @@
             </div>
             <div class="card-body p-2">
               <div class="status-grid">
+                <!-- Always show all 4 status cards, even with 0 count -->
                 <div 
-                  v-for="status in analyticsData.statusOverview" 
+                  v-for="status in getCompleteStatusOverview()" 
                   :key="status.status"
                   class="status-mini-card"
                   :class="status.status.toLowerCase()"
@@ -250,18 +251,6 @@
                     <div class="status-count">{{ status.count }}</div>
                     <div class="status-label">{{ formatStatus(status.status) }}</div>
                     <div class="status-percent">{{ status.percentage }}%</div>
-                  </div>
-                </div>
-                
-                <!-- Total Assets Card -->
-                <div class="status-mini-card total-assets">
-                  <div class="status-icon">
-                    <i class="fas fa-laptop"></i>
-                  </div>
-                  <div class="status-info">
-                    <div class="status-count">{{ getTotalAssetCount() }}</div>
-                    <div class="status-label">Total Assets</div>
-                    <div class="status-percent">100%</div>
                   </div>
                 </div>
               </div>
@@ -276,7 +265,7 @@
               :activities="recentActivities"
               :isLoading="isLoadingAnalytics"
               title="Recent Activity"
-              maxHeight="320px"
+            maxHeight="360px"
             />
           </div>
         </div>
@@ -579,9 +568,9 @@ const loadAnalyticsData = async () => {
     isLoadingAnalytics.value = true
     analyticsData.value = await reportsApi.getAnalytics()
     
-    // Transform asset distribution to show all types even with 0 assets
+    // Use asset distribution exactly as returned by backend (only present categories)
     if (analyticsData.value.assetDistribution) {
-      analyticsData.value.assetDistribution = transformAssetDistributionForReports(analyticsData.value.assetDistribution)
+      analyticsData.value.assetDistribution = analyticsData.value.assetDistribution.filter(item => (item?.count ?? 0) > 0)
     }
     
     // Transform recent activities using dashboardApi
@@ -1097,6 +1086,45 @@ const getTotalAssetCount = (): number => {
   return analyticsData.value.statusOverview.reduce((total, status) => total + status.count, 0)
 }
 
+// Get complete status overview with all 4 cards, showing 0 for missing statuses
+const getCompleteStatusOverview = () => {
+  const backendData = analyticsData.value?.statusOverview || []
+  const totalCount = getTotalAssetCount()
+  
+  // Define all required statuses
+  const requiredStatuses = ['AVAILABLE', 'IN_MAINTENANCE', 'ASSIGNED']
+  
+  // Create a map of backend data
+  const statusMap = new Map()
+  for (const status of backendData) {
+    statusMap.set(status.status, status)
+  }
+  
+  // Build complete status array with all required statuses
+  const completeStatuses = requiredStatuses.map(status => {
+    const backendStatus = statusMap.get(status)
+    if (backendStatus) {
+      return backendStatus
+    } else {
+      // Return 0 values for missing statuses
+      return {
+        status: status,
+        count: 0,
+        percentage: 0
+      }
+    }
+  })
+  
+  // Add Total Assets card
+  completeStatuses.push({
+    status: 'TOTAL',
+    count: totalCount,
+    percentage: 100
+  })
+  
+  return completeStatuses
+}
+
 // Load dynamic dropdown data
 const loadDropdownData = async () => {
   try {
@@ -1192,7 +1220,7 @@ onUnmounted(() => {
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   height: 100%;
-  max-height: 400px;
+  max-height: 360px;
   overflow: hidden;
 }
 
@@ -1352,7 +1380,6 @@ onUnmounted(() => {
 .table thead th {
   position: sticky;
   top: 0;
-  z-index: 10;
 }
 
 /* Form Styles */
@@ -1659,7 +1686,7 @@ onUnmounted(() => {
   top: 50%;
   transform: translateY(-50%);
   color: var(--primary-mid-gray);
-  z-index: 2;
+  
 }
 
 /* Report Generation Modal */

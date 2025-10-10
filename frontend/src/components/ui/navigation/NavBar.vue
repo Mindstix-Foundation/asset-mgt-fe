@@ -50,7 +50,7 @@
           </div>
           <button
             @click="showLogoutModal"
-            class="btn btn-logout"
+            class="btn btn-navbar-logout"
           >
             <i class="fas fa-sign-out-alt me-1"></i>
             Logout
@@ -296,7 +296,6 @@ onMounted(() => {
 /* Navbar styling */
 .navbar {
   box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  z-index: var(--z-navbar);
   background: var(--bg-primary) !important;
   border-bottom: 1px solid var(--element-gray);
 }
@@ -330,9 +329,18 @@ onMounted(() => {
 }
 
 .navbar-nav .nav-link.active {
-  background-color: transparent !important;
+  background-color: var(--primary-light-gray) !important;
   color: var(--primary-black) !important;
   font-weight: 700;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Keep active state consistent on hover/focus */
+.navbar-nav .nav-link.active:hover,
+.navbar-nav .nav-link.active:focus {
+  background-color: var(--primary-light-gray) !important;
+  color: var(--primary-black) !important;
 }
 
 .navbar-nav .nav-link i {
@@ -366,11 +374,8 @@ onMounted(() => {
 .user-info:hover,
 .user-info:focus,
 .user-info:active {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  border-left: none !important;
+  background-color: var(--primary-light-gray) !important;
+  color: var(--primary-black) !important;
 }
 
 .user-icon {
@@ -385,25 +390,7 @@ onMounted(() => {
 }
 
 
-/* Logout button styling */
-.btn-logout {
-  border: 1px solid var(--element-gray);
-  background-color: transparent;
-  color: var(--primary-dark-gray);
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.btn-logout:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
+/* using shared .btn-navbar-logout from buttons.css */
 
 /* Mobile Sidebar Overlay */
 .mobile-sidebar-overlay {
@@ -413,7 +400,6 @@ onMounted(() => {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: var(--z-backdrop);
   backdrop-filter: blur(2px);
   animation: fadeIn 0.3s ease-out;
 }
@@ -431,7 +417,6 @@ onMounted(() => {
   width: 320px;
   height: 100vh;
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--primary-light-gray) 100%);
-  z-index: var(--z-offcanvas);
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -591,10 +576,10 @@ onMounted(() => {
 .sidebar-profile-btn {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: #667eea;
-  border: 1px solid #667eea;
+  background-color: transparent;
+  border: 1px solid var(--element-gray);
   border-radius: 0.5rem;
-  color: white;
+  color: var(--primary-dark-gray);
   font-weight: 500;
   font-size: 0.9rem;
   transition: all 0.2s ease;
@@ -605,10 +590,11 @@ onMounted(() => {
 }
 
 .sidebar-profile-btn:hover {
-  background-color: #5469d4;
-  border-color: #5469d4;
+  background-color: var(--primary-light-gray);
+  border-color: var(--element-gray);
+  color: var(--primary-black);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
 }
 
 

@@ -7,7 +7,7 @@
         </h5>
       </div>
       <div class="card-body p-0">
-        <div class="activity-list">
+        <div class="activity-list" :class="layoutClass">
           <!-- Loading state -->
           <div v-if="isLoading" class="activity-item" v-for="n in 4" :key="'loading-' + n">
             <div class="activity-icon">
@@ -77,6 +77,12 @@ const props = withDefaults(defineProps<Props>(), {
   maxHeight: '400px'
 })
 
+// Computed class for different layouts
+import { computed } from 'vue'
+const layoutClass = computed(() => {
+  return props.maxHeight === '400px' ? 'dashboard-layout' : 'reports-layout'
+})
+
 // Helper functions for activity display
 const getActivityType = (title: string): string => {
   if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'added'
@@ -107,22 +113,36 @@ const getActivityIcon = (title: string): string => {
 .activity-list {
   height: v-bind(maxHeight);
   overflow-y: auto;
-  padding: 0.75rem 0;
+  /* Remove extra vertical padding so rows align perfectly */
+  padding: 0;
 }
 
 .activity-item {
   display: flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.75rem;
+  /* Base calculation for activity items */
+  min-height: calc((v-bind(maxHeight) - 40.8px - 4px) / 4);
   background: transparent;
-  border-bottom: 1px solid var(--element-gray);
+  /* Use top border to avoid a divider line at the bottom of the viewport */
+  border-top: 1px solid var(--element-gray);
   border-radius: 0;
   margin: 0;
   transition: none;
 }
 
-.activity-item:last-child {
-  border-bottom: none;
+.activity-item:first-child {
+  border-top: none;
+}
+
+/* Dashboard layout: 5 items in 400px total height */
+.dashboard-layout .activity-item {
+  min-height: calc((400px - 4px) / 5);
+}
+
+/* Reports layout: 4 items in 360px */
+.reports-layout .activity-item {
+  min-height: calc((360px - 40.8px - 4px) / 4);
 }
 
 

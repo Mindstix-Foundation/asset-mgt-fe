@@ -239,7 +239,6 @@ onUnmounted(() => {
   border: 1px solid #dee2e6;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: var(--z-dropdown);
   margin-top: 8px;
   opacity: 0;
   visibility: hidden;

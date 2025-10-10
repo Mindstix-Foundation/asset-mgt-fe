@@ -154,13 +154,14 @@
           <!-- Search Employees -->
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="employees-search">Search Employees</label>
-            <div class="input-group">
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
               <input 
                 id="employees-search"
                 type="text" 
-                class="form-control search-with-icon" 
+                class="form-control search-input" 
                 v-model="searchTerm"
-                placeholder="Search by name, ID, email..."
+                placeholder="Search by name, ID, or email..."
                 @input="filterEmployees"
               >
             </div>
@@ -1397,6 +1398,7 @@
   </script>
   
 <style scoped>
+@import '@/assets/styles/pages/employees.css';
 /**
  * EmployeesView.vue - View-Specific Styles
  * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css
@@ -1658,7 +1660,6 @@
   border-radius: 0.5rem;
   padding: 0.5rem 0;
   min-width: 200px;
-  z-index: 1050;
 }
 
 .dropdown-item {
@@ -1861,7 +1862,7 @@
   width: 2px;
   height: calc(100% + 1rem);
   background-color: #dee2e6;
-  z-index: 1;
+  
 }
 
 .timeline-dot {
@@ -1874,7 +1875,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  
   border: 3px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -2031,13 +2032,12 @@
 /* Admin badge styling moved to components/badges.css */
 
 /* Responsive Dropdown Improvements */
-.dropdown-menu {
+  .dropdown-menu {
   border: none;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   border-radius: 0.5rem;
   padding: 0.5rem 0;
   min-width: 200px;
-  z-index: 1050;
 }
 
 .dropdown-item {

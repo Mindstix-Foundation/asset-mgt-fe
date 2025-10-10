@@ -17,8 +17,9 @@
           <!-- Search -->
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="mh-search">Search</label>
-            <div class="input-group">
-              <input id="mh-search" type="text" class="form-control search-with-icon" v-model="filters.search" placeholder="Description/type/status" @keyup.enter="applyFilters" />
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
+              <input id="mh-search" type="text" class="form-control search-input" v-model="filters.search" placeholder="Search by description, type, or status..." @keyup.enter="applyFilters" />
             </div>
           </div>
           <!-- Sort By (aligned with EmployeeAssetHistory) -->
@@ -612,6 +613,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+@import '@/assets/styles/pages/maintenance.css';
 /**
  * MaintenanceHistoryView.vue - View-Specific Styles
  * Styles unique to this view only - shared styles are in /assets/styles/pages/maintenance.css

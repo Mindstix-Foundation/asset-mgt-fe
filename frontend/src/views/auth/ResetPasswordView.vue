@@ -385,7 +385,7 @@ const backToLogin = () => {
   padding: 6px;
   border-radius: 4px;
   transition: all 0.2s ease;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   display: flex;
   align-items: center;
   justify-content: center;

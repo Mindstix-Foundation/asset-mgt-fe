@@ -314,7 +314,7 @@ const handleCancel = () => {
   min-height: 3rem !important;
   max-height: 3rem !important;
   position: relative;
-  z-index: 1;
+  
 }
 
 .password-toggle {
@@ -327,7 +327,7 @@ const handleCancel = () => {
   color: var(--primary-dark-gray);
   cursor: pointer;
   padding: 0;
-  z-index: 10;
+  
   width: 20px;
   height: 20px;
   display: flex;
@@ -343,7 +343,7 @@ const handleCancel = () => {
   margin-top: 0.25rem;
   margin-bottom: 0;
   position: relative;
-  z-index: 0;
+  
 }
 
 /* Ensure proper spacing and layout for each form field */

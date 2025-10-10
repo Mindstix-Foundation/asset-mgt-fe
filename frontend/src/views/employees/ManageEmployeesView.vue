@@ -855,6 +855,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+@import '@/assets/styles/pages/employees.css';
 /**
  * ManageEmployeesView.vue - View-Specific Styles
  * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css

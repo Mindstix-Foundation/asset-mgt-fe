@@ -56,14 +56,14 @@
             <!-- Search -->
             <div class="col-12 col-lg-7 mb-3">
               <label class="form-label" for="asset-history-search">Search</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <div class="search-input-container">
+                <i class="fas fa-search search-icon"></i>
                 <input 
                   type="text" 
-                  class="form-control" 
+                  class="form-control search-input" 
                   v-model="filters.search"
                   id="asset-history-search"
-                  placeholder="Asset/brand/model"
+                  placeholder="Search by asset, brand, or model..."
                   @keyup.enter="applyFilters"
                 >
               </div>
@@ -532,6 +532,7 @@ export default {
 </script>
 
 <style scoped>
+@import '@/assets/styles/pages/employees.css';
 /**
  * EmployeeAssetHistory.vue - View-Specific Styles
  * Styles unique to this view only - shared styles are in /assets/styles/pages/employees.css

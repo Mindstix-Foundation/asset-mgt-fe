@@ -24,8 +24,6 @@
 /* dashboard.css migrated into DashboardView.vue */
 @import './pages/vendors.css';
 @import './pages/assets.css';
-@import './pages/employees.css';
-@import './pages/maintenance.css';
 @import './pages/notifications.css';
 /* profile.css migrated into ProfileView.vue */
 /* reports.css migrated into ReportsView.vue */

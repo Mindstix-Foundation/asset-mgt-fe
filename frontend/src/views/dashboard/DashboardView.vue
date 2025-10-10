@@ -346,9 +346,10 @@ const loadAnalyticsData = async () => {
     isLoadingAnalytics.value = true
     const analytics = await dashboardApi.getAnalyticsData()
     
-    // Transform asset distribution data
-    const distribution = dashboardApi.transformAssetDistribution(analytics.assetDistribution)
-    assetDistribution.value = distribution
+    // Use only categories from backend and map to { name, percentage, count }
+    assetDistribution.value = (analytics.assetDistribution || [])
+      .filter((item: any) => (item?.count ?? 0) > 0)
+      .map((item: any) => ({ name: item.type, percentage: item.percentage, count: item.count }))
     
     // Transform status overview to update stats if needed
     const statusStats = dashboardApi.transformStatusOverview(analytics.statusOverview)

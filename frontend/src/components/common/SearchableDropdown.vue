@@ -47,7 +47,6 @@
         :style="{ 
           position: 'absolute', 
           width: '100%', 
-          'z-index': 'var(--z-dropdown-menu)',
           'max-height': dropdownMaxHeight
         }"
         :id="`${id}-listbox`"
@@ -671,7 +670,6 @@ const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: var(--z-dropdown);
   display: none;
   min-width: 10rem;
   padding: 0.5rem 0;
@@ -702,7 +700,6 @@ const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
 
 .dropdown-menu.show {
   display: block;
-  z-index: var(--z-dropdown-menu) !important;
 }
 
 /* Custom scrollbar for webkit browsers */

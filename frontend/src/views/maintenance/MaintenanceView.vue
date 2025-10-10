@@ -113,11 +113,12 @@
           <!-- Search Maintenance -->
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="mv-search">Search Maintenance</label>
-            <div class="input-group">
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
               <input 
                 id="mv-search"
                 type="text" 
-                class="form-control search-with-icon" 
+                class="form-control search-input" 
                 v-model="filters.search"
                 placeholder="Search by asset ID, issue..."
                 @input="filterMaintenances"
@@ -242,7 +243,7 @@
               <td>
                 <div class="d-flex flex-column">
                   <span class="fw-semibold">{{ maintenance.assetName }}</span>
-                  <small class="text-muted">{{ maintenance.vendor }}</small>
+                  <small class="text-muted" v-if="maintenance.vendor !== 'Internal Team'">{{ maintenance.vendor }}</small>
                 </div>
               </td>
               <td>
@@ -343,25 +344,26 @@
             <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
-            <!-- 2x2 grid layout to match EmployeesView modal -->
-            <div class="row g-2">
-              <div class="col-12 col-md-6">
+            <!-- Asset Information - Compact Layout (matching AssetsView.vue) -->
+            <div class="row g-2 equal-height-columns">
+              <!-- Left Column: Basic Info -->
+              <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-tools me-2"></i>Asset & Maintenance Information</h6>
-                  <div class="row g-2">
-                    <div class="col-md-6">
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Asset ID</div>
                       <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetId }}</div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="info-label-compact">Asset</div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Asset Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetName }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Maintenance Type</div>
                       <div class="info-value-compact">{{ selectedMaintenance.type }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Status</div>
                       <div class="info-value-compact">
                         <span :class="['badge', getStatusBadgeClass(selectedMaintenance.status)]">{{ formatStatus(selectedMaintenance.status) }}</span>
@@ -370,37 +372,42 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+
+              <!-- Right Column: Timeline & Assignment -->
+              <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-calendar-alt me-2"></i>Timeline & Assignment</h6>
-                  <div class="row g-2">
-                    <div class="col-md-6">
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Scheduled Date</div>
                       <div class="info-value-compact">{{ formatDate(selectedMaintenance.scheduledDate) }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">Frequency</div>
                       <div class="info-value-compact">One-time</div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="info-item-compact" v-if="selectedMaintenance.vendor !== 'Internal Team'">
                       <div class="info-label-compact">Assigned To</div>
-                      <div class="info-value-compact">{{ selectedMaintenance.assignedTo || 'Internal Team' }}</div>
+                      <div class="info-value-compact">
+                        {{ selectedMaintenance.assignedTo || 'Not Assigned' }}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- Cost & Description Row -->
             <div class="row g-2 mt-2">
-              <div class="col-12 col-md-6">
+              <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
-                  <h6 class="section-title-compact">₹ Cost Information</h6>
-                  <div class="row g-2">
-                    <div class="col-md-6">
+                  <h6 class="section-title-compact"><i class="fas fa-rupee-sign me-2"></i>Cost Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
                       <div class="info-value-compact">{{ selectedMaintenance.cost }}</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="info-item-compact">
                       <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Estimated Cost' : 'Actual Cost' }}</div>
                       <div class="info-value-compact" :class="selectedMaintenance.status === 'COMPLETED' ? '' : 'text-muted'">
                         {{ selectedMaintenance.status === 'COMPLETED' ? selectedMaintenance.cost : selectedMaintenance.status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion' }}
@@ -409,7 +416,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-6">
+              <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
                   <h6 class="section-title-compact"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
                   <div class="description-content">
@@ -1464,6 +1471,7 @@ const isHistoryExpanded = ref(true)
 </script>
 
 <style scoped>
+@import '@/assets/styles/pages/maintenance.css';
 /**
  * MaintenanceView.vue - View-Specific Styles
  * Styles unique to this view only - shared styles are in /assets/styles/pages/maintenance.css

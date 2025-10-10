@@ -13,7 +13,7 @@
   will-change: transform, opacity;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
-  z-index: var(--z-dropdown-menu) !important;
+  
 }
 
 /* Filter dropdown content animation */
@@ -91,7 +91,7 @@
   position: absolute !important;
   left: 0.75rem !important;
   color: #e0e0e0 !important; /* Custom light gray color */
-  z-index: var(--z-base) !important;
+  
   pointer-events: none !important;
   transition: color 0.2s ease !important;
   font-size: 1rem !important;
@@ -138,17 +138,15 @@
 /* Searchable dropdown z-index fix - ensure dropdowns appear above table */
 .filter-dropdown .searchable-dropdown-wrapper {
   position: relative;
-  z-index: var(--z-dropdown-menu) !important;
+  
 }
 
 .filter-dropdown .searchable-dropdown-wrapper .dropdown-menu {
-  z-index: var(--z-dropdown-menu) !important;
   position: absolute !important;
 }
 
 /* Additional specificity for dropdown menu to ensure it appears above table */
 .filter-dropdown .searchable-dropdown-wrapper .dropdown-menu.show {
-  z-index: var(--z-dropdown-menu) !important;
   display: block !important;
 }
 
@@ -195,7 +193,7 @@
   height: 100%;
   opacity: 0;
   cursor: pointer;
-  z-index: calc(var(--z-base) - 1);
+  
   border-radius: 0.5rem !important;
   pointer-events: none;
 }
@@ -206,7 +204,7 @@
   right: 10px;
   color: #6c757d;
   cursor: pointer;
-  z-index: var(--z-base);
+  
   pointer-events: none;
   font-size: 0.9rem;
 }
@@ -331,7 +329,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  z-index: var(--z-modal);
+  z-index: var(--z-date-dropdown);
   background: var(--primary-white);
   border: 1px solid var(--element-gray);
   border-radius: 0.5rem;
@@ -583,7 +581,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: var(--z-backdrop);
+  z-index: var(--z-date-backdrop);
   background: transparent;
 }
 
