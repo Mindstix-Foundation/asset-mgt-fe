@@ -623,20 +623,6 @@
   margin-bottom: 1.5rem !important;
 }
 
-/* Category Cards */
-.category-card {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.category-card:hover {
-  border-color: var(--secondary-purple) !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.1) !important;
-}
 
 .category-header {
   display: flex;
@@ -1098,9 +1084,6 @@
     padding: 1rem !important;
   }
   
-  .category-card {
-    padding: 1rem !important;
-  }
   
   .brands-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));

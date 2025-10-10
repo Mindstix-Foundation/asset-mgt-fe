@@ -246,32 +246,37 @@
           </div>
           
           <!-- Action Buttons -->
-          <div class="card-footer bg-light border-top">
+          <div class="card-footer">
             <div class="form-actions">
-              <div class="d-flex justify-content-center gap-3">
-                <button 
-                  type="button" 
-                  class="btn btn-cancel px-4 py-2" 
-                  @click="goBack"
-                  :disabled="isSubmitting || isLoading"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  class="btn btn-purple px-5 py-2" 
-                  :disabled="isSubmitting || isLoading"
-                  @click="submitForm"
-                >
-                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
-                  {{ isSubmitting ? (isEditMode ? 'Updating Employee...' : 'Adding Employee...') : (isEditMode ? 'Update Employee' : 'Add Employee') }}
-                </button>
+              <!-- Footer Start -->
+              <div class="container">
+                <!-- Row 1: Buttons -->
+                <div class="row">
+                  <div class="col-12 d-flex justify-content-center gap-3 mb-1">
+                    <button type="button" class="btn btn-cancel" @click="goBack">
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="btn btn-purple" 
+                      :disabled="isSubmitting"
+                      @click="submitForm"
+                    >
+                      <i v-if="isSubmitting" class="fas fa-spinner fa-spin me-2"></i>
+                      {{ isSubmitting ? (isEditMode ? 'Updating Employee...' : 'Adding Employee...') : (isEditMode ? 'Update Employee' : 'Add Employee') }}
+                    </button>
+                  </div>
+                </div>
+                <!-- Row 2: Small Text -->
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <small class="text-muted">
+                      Fields marked with <span class="text-danger">*</span> are required
+                    </small>
+                  </div>
+                </div>
               </div>
-              <div class="text-center mt-3">
-                <small class="text-muted">
-                  Fields marked with <span class="text-danger">*</span> are required
-                </small>
-              </div>
+              <!-- Container End -->
             </div>
           </div>
         </div>

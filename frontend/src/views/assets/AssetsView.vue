@@ -435,31 +435,31 @@
                   </div>
                   <div class="flex-grow-1">
                     <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ asset.id }}</h6>
-                    <small class="text-muted text-truncate d-block">{{ asset.type }}</small>
+                    <small class="text-muted text-truncate d-block">{{ asset.type }} - {{ asset.brand }}</small>
                   </div>
-                  <span :class="[getStatusBadgeClass(asset.status), 'badge-sm']" style="font-size: 0.7rem;">
+                  <span :class="getStatusBadgeClass(asset.status)">
                     {{ getStatusText(asset.status) }}
                   </span>
                 </div>
                 
-                <!-- Asset Details Grid - 2 columns for better space usage -->
+                <!-- Asset Details - Custom layout -->
                 <div class="mb-2">
                   <div class="row g-1">
-                    <div class="col-6">
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">Brand/Model</small>
-                      <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.brand }} {{ asset.model }}</div>
+                    <div class="col-12">
+                      <small class="text-muted d-block">Model</small>
+                      <div class="fw-medium text-truncate" style="color: var(--primary-black);">{{ asset.model }}</div>
+                    </div>
+                    <div class="col-12">
+                      <small class="text-muted d-block">Serial</small>
+                      <div class="text-truncate" style="color: var(--primary-black);">{{ asset.serialNumber }}</div>
                     </div>
                     <div class="col-6">
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">Serial</small>
-                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.serialNumber }}</div>
+                      <small class="text-muted d-block">Assigned To</small>
+                      <div class="text-truncate" style="color: var(--primary-black);">{{ asset.assignedTo || 'Not Assigned' }}</div>
                     </div>
                     <div class="col-6">
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">Assigned To</small>
-                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.assignedTo || 'Not Assigned' }}</div>
-                    </div>
-                    <div class="col-6">
-                      <small class="text-muted d-block" style="font-size: 0.7rem;">Condition</small>
-                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ getConditionText(asset.condition) }}</div>
+                      <small class="text-muted d-block">Condition</small>
+                      <div class="text-truncate" style="color: var(--primary-black);">{{ getConditionText(asset.condition) }}</div>
                     </div>
                   </div>
                 </div>
@@ -1759,7 +1759,7 @@ const viewAssetDetails = async (asset: AssetDisplayItem) => {
     const detailedAsset = response.data.asset
     
     // Transform the detailed asset data for the modal
-    selectedAsset.value = transformDetailedAssetForModal(detailedAsset)
+    selectedAsset.value = transformDetailedAssetForModal(detailedAsset as DetailedAsset)
     
   } catch (error) {
     console.error('Error loading asset details:', error)

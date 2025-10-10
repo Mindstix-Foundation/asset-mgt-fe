@@ -93,7 +93,7 @@
               <div v-if="selectedEntityType === 'category'">
                 <div class="row g-3">
                   <div class="col-12">
-                    <label for="category-name" class="form-label">Category Name <span class="text-danger">*</span></label>
+                    <label for="category-name" class="form-label">Category <span class="text-danger">*</span></label>
                     <input 
                       id="category-name"
                       type="text" 
@@ -134,7 +134,7 @@
                     />
                   </div>
                   <div class="col-md-6">
-                    <label for="asset-type-name" class="form-label">Asset Type Name <span class="text-danger">*</span></label>
+                    <label for="asset-type-name" class="form-label">Asset Type <span class="text-danger">*</span></label>
                     <input 
                       id="asset-type-name"
                       type="text" 
@@ -163,7 +163,7 @@
               <div v-if="selectedEntityType === 'brand'">
                 <div class="row g-3">
                   <div class="col-12">
-                    <label for="brand-name" class="form-label">Brand Name <span class="text-danger">*</span></label>
+                    <label for="brand-name" class="form-label">Brand <span class="text-danger">*</span></label>
                     <input 
                       id="brand-name"
                       type="text" 
@@ -225,7 +225,7 @@
                     </div>
                   </div>
                   <div class="col-5">
-                    <label for="model-name" class="form-label">Model Name <span class="text-danger">*</span></label>
+                    <label for="model-name" class="form-label">Model <span class="text-danger">*</span></label>
                     <input 
                       id="model-name"
                       type="text" 
@@ -261,10 +261,11 @@ FULL BLACK AND RED"
               <div v-if="selectedEntityType === 'asset'">
                 <div class="row g-3 justify-content-between">
                   <div class="col-4">
-                    <div class="form-label">Add Single Asset</div>
+                    <label for="single-asset-input" class="form-label">Single Asset <span class="text-danger">*</span></label>
                     <div class="row justify-content-around">
                       <div class="col-7">
                         <input 
+                          id="single-asset-input"
                           type="text" 
                           class="form-control" 
                           v-model="singleAssetInput"
@@ -275,14 +276,14 @@ FULL BLACK AND RED"
                         >
                       </div>
                       <div class="col-4">
-                  <button 
-                    class="btn btn-brown w-100" 
-                    type="button" 
-                    @click="addSingleAsset"
-                    :disabled="!singleAssetInput"
-                  >
-                    <i class="fas fa-plus"></i>
-                  </button>
+                        <button 
+                          class="btn btn-brown w-100" 
+                          type="button" 
+                          @click="addSingleAsset"
+                          :disabled="!singleAssetInput"
+                        >
+                          <i class="fas fa-plus"></i>
+                        </button>
                       </div>
                     </div>
                     <small class="form-text text-muted">
@@ -290,12 +291,13 @@ FULL BLACK AND RED"
                     </small>
                   </div>
                   <div class="col-7">
-                    <div class="form-label">Add Asset Range</div>
+                    <label for="asset-range-from" class="form-label">Asset Range <span class="text-danger">*</span></label>
                      <div class="row justify-content-around">
                        <div class="col-9">
                          <div class="d-flex align-items-center gap-2">
-                           <span class="text-muted">From</span>
+                           <label for="asset-range-from" class="text-muted">From</label>
                         <input 
+                          id="asset-range-from"
                           type="text" 
                           class="form-control" 
                           v-model="assetFromInput"
@@ -304,8 +306,9 @@ FULL BLACK AND RED"
                           pattern="AST-\d{4}"
                           title="Format: AST-XXXX (e.g., AST-0000)"
                         >
-                           <span class="text-muted">to</span>
+                           <label for="asset-range-to" class="text-muted">to</label>
                            <input 
+                             id="asset-range-to"
                              type="text" 
                              class="form-control" 
                              v-model="assetToInput"
@@ -317,15 +320,15 @@ FULL BLACK AND RED"
                          </div>
                        </div>
                        <div class="col-2">
-                  <button 
-                    class="btn btn-brown w-100" 
-                    type="button" 
-                    @click="addAssetRange"
-                    :disabled="!assetFromInput || !assetToInput"
-                  >
-                    <i class="fas fa-plus"></i>
-                  </button>
-                      </div>
+                         <button 
+                           class="btn btn-brown w-100" 
+                           type="button" 
+                           @click="addAssetRange"
+                           :disabled="!assetFromInput || !assetToInput"
+                         >
+                           <i class="fas fa-plus"></i>
+                         </button>
+                       </div>
                     </div>
                     <small class="form-text text-muted">
                       Enter asset ID range (e.g., AST-0000 to AST-9999) to add multiple assets for deletion
@@ -334,10 +337,10 @@ FULL BLACK AND RED"
                   <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
-                        <div class="form-label mb-1">Selected Assets for Deletion ({{ selectedAssetsForDeletion.length }})</div>
+                        <label for="selected-assets-display" class="form-label mb-1">Selected Assets ({{ selectedAssetsForDeletion.length }})</label>
                       </div>
                     </div>
-                    <div v-if="selectedAssetsForDeletion.length > 0" class="mt-3">
+                    <div id="selected-assets-display" v-if="selectedAssetsForDeletion.length > 0" class="mt-3">
                       <div class="d-flex flex-wrap gap-2">
                         <span 
                           v-for="assetId in selectedAssetsForDeletion" 
@@ -391,10 +394,11 @@ FULL BLACK AND RED"
       <div class="row align-items-end">
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
-          <div class="form-label">Search Assets</div>
+          <label for="asset-search-input" class="form-label">Search</label>
           <div class="search-input-container">
             <i class="fas fa-search search-icon"></i>
             <input 
+              id="asset-search-input"
               type="text" 
               class="form-control search-input" 
               v-model="searchTerm"
@@ -978,7 +982,7 @@ const showFormCard = ref(false)
 // Assets-specific state
 const selectedAssetsForDeletion = ref<(string | number)[]>([])
 const isBulkDeleting = ref(false)
-const singleAssetInput = ref('')
+const singleAssetInput = ref('AST-')
 const assetFromInput = ref('')
 const assetToInput = ref('')
 
@@ -1141,7 +1145,7 @@ const resetForm = () => {
   
   // Clear asset selection when resetting
   selectedAssetsForDeletion.value = []
-  singleAssetInput.value = ''
+  singleAssetInput.value = 'AST-'
   assetFromInput.value = ''
   assetToInput.value = ''
 }
@@ -1803,8 +1807,8 @@ const addSingleAsset = () => {
     showToast(`Added asset ${assetId} to selection`, 'success')
   }
   
-  // Clear the input
-  singleAssetInput.value = ''
+  // Clear the input but keep AST- prefix
+  singleAssetInput.value = 'AST-'
 }
 
 // Helper functions for asset range operations
@@ -2131,6 +2135,120 @@ onMounted(async () => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Consistent Form Label Styling - Based on section-title-compact */
+.form-label {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.15rem;
+  display: block;
+  line-height: 1.2;
+}
+
+/* Override for labels that shouldn't have border-bottom */
+.form-label.mb-1 {
+  border-bottom: none;
+  margin-bottom: 0.25rem !important;
+}
+
+/* Target NotesTextarea component labels */
+:deep(.notes-textarea-container .form-label) {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.15rem;
+  display: block;
+  line-height: 1.2;
+}
+
+/* Target SearchableDropdown component labels */
+:deep(.searchable-dropdown-wrapper .form-label) {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.15rem;
+  display: block;
+  line-height: 1.2;
+}
+
+/* Hide validation styling for NotesTextarea components in this page only */
+:deep(.notes-textarea-container .form-control.is-valid),
+:deep(.notes-textarea-container .form-control.is-invalid),
+:deep(.notes-textarea-container .form-control:valid),
+:deep(.notes-textarea-container .form-control:invalid) {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+  animation: none !important;
+}
+
+/* Hide validation styling for SearchableDropdown components in this page only */
+:deep(.searchable-dropdown-wrapper .form-control.is-valid),
+:deep(.searchable-dropdown-wrapper .form-control.is-invalid),
+:deep(.searchable-dropdown-wrapper .form-control:valid),
+:deep(.searchable-dropdown-wrapper .form-control:invalid) {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+/* Hide validation styling for regular form controls in this page only */
+.form-control.is-valid,
+.form-control.is-invalid,
+.form-control:valid,
+.form-control:invalid {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+/* Restore focus state effects for all form controls */
+.form-control:focus,
+:deep(.notes-textarea-container .form-control:focus),
+:deep(.searchable-dropdown-wrapper .form-control:focus) {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+  background-color: #fff !important;
+  outline: 0 !important;
+}
+
+/* Ensure focus states work even with validation classes */
+.form-control.is-valid:focus,
+.form-control.is-invalid:focus,
+.form-control:valid:focus,
+.form-control:invalid:focus,
+:deep(.notes-textarea-container .form-control.is-valid:focus),
+:deep(.notes-textarea-container .form-control.is-invalid:focus),
+:deep(.notes-textarea-container .form-control:valid:focus),
+:deep(.notes-textarea-container .form-control:invalid:focus),
+:deep(.searchable-dropdown-wrapper .form-control.is-valid:focus),
+:deep(.searchable-dropdown-wrapper .form-control.is-invalid:focus),
+:deep(.searchable-dropdown-wrapper .form-control:valid:focus),
+:deep(.searchable-dropdown-wrapper .form-control:invalid:focus) {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+  background-color: #fff !important;
+  outline: 0 !important;
+}
+
+/* Table row vertical center alignment */
+.table td {
+  vertical-align: middle !important;
+}
+
+.table th {
+  vertical-align: middle !important;
 }
 
 /* Entity Type Selection Buttons - Using --secondary-gray color */
