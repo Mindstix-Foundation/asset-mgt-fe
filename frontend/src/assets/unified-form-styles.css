@@ -94,8 +94,18 @@
   box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
 }
 
-/* Match form label styling */
+/* Match form label styling for SearchableDropdown */
 .form-searchable-dropdown :deep(.form-label) {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+}
+
+/* Match form label styling for NotesTextarea - using :deep() to penetrate scoped styles */
+.notes-textarea-container :deep(.form-label),
+:deep(.notes-textarea-container .form-label),
+:deep(.notes-textarea-container) .form-label {
   font-weight: 600 !important;
   color: #666666 !important;
   margin-bottom: 0.5rem !important;
@@ -513,12 +523,16 @@
 /* ================================
    FORM LABELS & TEXT
    Consistent typography across all forms
+   Note: Specific component labels (SearchableDropdown, NotesTextarea, DatePicker) 
+   are styled at the top of this file for consistency
 ================================ */
 
+.container-fluid.py-4 .form-label,
 .form-label {
-  font-weight: 600;
-  color: #666666;
-  margin-bottom: 0.5rem;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
 }
 
 .form-text {
@@ -632,32 +646,6 @@
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control::placeholder {
   color: #999999 !important;
   opacity: 1 !important;
-}
-
-/* Form labels - Match form.css specifications */
-.notes-textarea-container .form-label {
-  font-weight: 600 !important;
-  color: #666666 !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 1rem !important;
-}
-
-.notes-textarea-container .form-text {
-  font-size: 0.875rem;
-  color: #6c757d;
-  margin-top: 0.25rem;
-}
-
-.notes-textarea-container .text-danger {
-  color: #dc2626 !important;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
-.notes-textarea-container .text-muted {
-  color: #4b5563 !important;
-  font-weight: 600;
-  font-size: 0.9em;
 }
 
 /* Notes textarea - focus state (blue border) - editable only */
