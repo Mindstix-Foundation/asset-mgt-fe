@@ -292,6 +292,7 @@ import { employeeService } from '@/services/business/employeeService'
 import type { CreateEmployeeData, UpdateEmployeeData } from '@/services/business/employeeService'
 import { useToastStore } from '@/stores/toast'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
+import { NotesTextarea } from '@/components/common'
 
 // Type aliases
 type EmployeeStatus = 'ACTIVE' | 'INACTIVE'
