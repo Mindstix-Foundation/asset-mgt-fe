@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { usePopupVisibility } from '@/composables/usePopupVisibility'
 
 interface Props {
   modelValue?: string
@@ -142,10 +143,15 @@ const showYearPicker = ref(false)
 const currentDate = ref(new Date())
 const selectedDate = ref<Date | null>(null)
 const displayValue = ref('')
-const lastScrollPosition = ref<number | null>(null)
 const instanceId = ref<string>(`datepicker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
 // Toggle to enable verbose debug logs when needed
 const DEBUG = false
+
+// Use the popup visibility composable
+const { ensurePopupVisible: ensurePopupVisibleComposable, resetScrollTracking } = usePopupVisibility({
+  debug: DEBUG,
+  componentName: `DatePicker-${props.inputId}`,
+})
 
 // Day names
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -283,188 +289,17 @@ const toggleCalendar = () => {
   }
   showCalendar.value = !showCalendar.value
   showYearPicker.value = false
-  if (showCalendar.value) {
-    // Only ensure visibility if needed - check if calendar would be cut off
-    nextTick(() => {
-      ensureCalendarVisible()
-    })
+  if (showCalendar.value && rootRef.value) {
+    // Ensure calendar is visible within scrollable containers
+    ensurePopupVisibleComposable(rootRef.value, '.calendar-dropdown', 'input')
   }
-}
-
-// Constants for visibility calculations
-const SAFE_MARGIN = 24 // leave comfortable space above modal footer
-const VISIBILITY_MARGIN = 20 // Allow some margin for visibility
-const SCROLL_THRESHOLD = 50 // Only scroll if overflow is more than 50px
-const EXTRA_CUSHION = 50 // Additional space to prevent tight fit
-const RECENT_SCROLL_THRESHOLD = 20 // Minimum scroll difference to consider a new scroll
-
-interface VisibilityMetrics {
-  overflowBelow: number
-  overflowAbove: number
-  isFullyVisible: boolean
-}
-
-const getElements = () => {
-  const root = rootRef.value as HTMLElement | null
-  const container = root?.querySelector('.date-picker-positioning-wrapper') as HTMLElement | null
-  const popup = container?.querySelector('.calendar-dropdown') as HTMLElement | null
-  const scrollParent = container ? findScrollableAncestor(container) : null
-  
-  return { container, popup, scrollParent }
-}
-
-const calculateVisibilityMetrics = (popup: HTMLElement, scrollParent: HTMLElement): VisibilityMetrics => {
-  const popupRect = popup.getBoundingClientRect()
-  const parentRect = scrollParent.getBoundingClientRect()
-  
-  const overflowBelow = popupRect.bottom + SAFE_MARGIN - parentRect.bottom
-  const overflowAbove = parentRect.top + SAFE_MARGIN - popupRect.top
-  
-  const isFullyVisible = 
-    popupRect.top >= (parentRect.top - VISIBILITY_MARGIN) && 
-    popupRect.bottom <= (parentRect.bottom + VISIBILITY_MARGIN)
-    
-  return { overflowBelow, overflowAbove, isFullyVisible }
-}
-
-const shouldSkipScroll = (scrollParent: HTMLElement): boolean => {
-  const currentScrollTop = scrollParent.scrollTop
-  if (lastScrollPosition.value === null) return false
-  
-  const scrollDifference = Math.abs(currentScrollTop - lastScrollPosition.value)
-  return scrollDifference < RECENT_SCROLL_THRESHOLD
-}
-
-const adjustScroll = (
-  scrollParent: HTMLElement, 
-  popup: HTMLElement,
-  metrics: VisibilityMetrics
-) => {
-  const isMeaningfullyCutOffBelow = metrics.overflowBelow > SCROLL_THRESHOLD
-  const isMeaningfullyCutOffAbove = metrics.overflowAbove > SCROLL_THRESHOLD
-  const popupRect = popup.getBoundingClientRect()
-  
-  if (isMeaningfullyCutOffBelow) {
-    const scrollAmount = Math.min(
-      metrics.overflowBelow - SCROLL_THRESHOLD + EXTRA_CUSHION, 
-      popupRect.height * 0.8 + EXTRA_CUSHION
-    )
-    scrollParent.scrollTop += scrollAmount
-    if (DEBUG) console.log(`[DatePicker ${props.inputId}] Scrolled down by: ${scrollAmount}px`)
-  } else if (isMeaningfullyCutOffAbove) {
-    const scrollAmount = Math.min(
-      metrics.overflowAbove - SCROLL_THRESHOLD + EXTRA_CUSHION, 
-      popupRect.height * 0.8 + EXTRA_CUSHION
-    )
-    scrollParent.scrollTop -= scrollAmount
-    if (DEBUG) console.log(`[DatePicker ${props.inputId}] Scrolled up by: ${scrollAmount}px`)
-  }
-  
-  lastScrollPosition.value = scrollParent.scrollTop
-}
-
-const checkFallbackScroll = (popup: HTMLElement, scrollParent: HTMLElement) => {
-  nextTick(() => {
-    const { overflowBelow, overflowAbove } = calculateVisibilityMetrics(popup, scrollParent)
-    if (overflowBelow > SCROLL_THRESHOLD || overflowAbove > SCROLL_THRESHOLD) {
-      if (DEBUG) console.log(`[DatePicker ${props.inputId}] Using fallback scroll`)
-      popup.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
-    }
-  })
-}
-
-// Main function to ensure calendar visibility
-const ensureCalendarVisible = () => {
-  const { container, popup, scrollParent } = getElements()
-  
-  if (!container || !popup || !scrollParent) {
-    if (DEBUG) console.log('[DatePicker] Required elements not found')
-    return
-  }
-  
-  if (shouldSkipScroll(scrollParent)) {
-    if (DEBUG) console.log(`[DatePicker ${props.inputId}] Skipping recent scroll`)
-    return
-  }
-  
-  const metrics = calculateVisibilityMetrics(popup, scrollParent)
-  
-  if (metrics.isFullyVisible) {
-    if (DEBUG) console.log('[DatePicker] Calendar already fully visible')
-    return
-  }
-  
-  adjustScroll(scrollParent, popup, metrics)
-  checkFallbackScroll(popup, scrollParent)
-}
-
-// Check if an element can scroll in either direction
-const canElementScroll = (el: HTMLElement): boolean => {
-  const style = globalThis.getComputedStyle(el)
-  const hasScrollableOverflowY = /(auto|scroll)/.test(style.overflowY) && el.scrollHeight > el.clientHeight
-  const hasScrollableOverflowX = /(auto|scroll)/.test(style.overflowX) && el.scrollWidth > el.clientWidth
-  return hasScrollableOverflowY || hasScrollableOverflowX
-}
-
-// Log element details for debugging
-const logElementDetails = (el: HTMLElement, canScroll: boolean) => {
-  if (!DEBUG) return
-  
-  console.log('[DatePicker] Checking element:', {
-    tagName: el.tagName,
-    className: el.className,
-    id: el.id,
-    overflowY: globalThis.getComputedStyle(el).overflowY,
-    overflowX: globalThis.getComputedStyle(el).overflowX,
-    scrollHeight: el.scrollHeight,
-    clientHeight: el.clientHeight,
-    scrollWidth: el.scrollWidth,
-    clientWidth: el.clientWidth,
-    canScroll
-  })
-}
-
-// Find fallback container when no scrollable ancestor is found
-const findFallbackContainer = (): HTMLElement | null => {
-  const formContainer = document.querySelector('.card-body, .modal-body, .form-container, .scroll-container')
-  if (formContainer) {
-    DEBUG && console.log('[DatePicker] Using form container as fallback:', formContainer.className, formContainer.id)
-    return formContainer as HTMLElement
-  }
-  
-  DEBUG && console.log('[DatePicker] No scrollable ancestor found, using document body')
-  return document.scrollingElement as HTMLElement | null
-}
-
-// Main function to find scrollable ancestor
-const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
-  let el: HTMLElement | null = start
-  let attempts = 0
-  const maxAttempts = 10
-  
-  DEBUG && console.log('[DatePicker] Starting scroll container search from:', el.className, el.id)
-  
-  while (el && attempts < maxAttempts) {
-    const canScroll = canElementScroll(el)
-    logElementDetails(el, canScroll)
-    
-    if (canScroll) {
-      DEBUG && console.log('[DatePicker] Found scrollable ancestor:', el.className, el.id)
-      return el
-    }
-    
-    el = el.parentElement
-    attempts++
-  }
-  
-  return findFallbackContainer()
 }
 
 const closeCalendar = () => {
   showCalendar.value = false
   showYearPicker.value = false
   // Reset scroll position tracking when calendar closes
-  lastScrollPosition.value = null
+  resetScrollTracking()
 }
 
 const toggleYearPicker = () => {

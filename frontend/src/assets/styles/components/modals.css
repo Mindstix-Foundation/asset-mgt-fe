@@ -474,6 +474,59 @@
 }
 
 /* =================================
+   MODAL FORM LABEL STYLES
+   Ensure consistent label styling in modals
+================================= */
+
+/* Modal Form Labels - Match unified form styling */
+.modal .form-label,
+.modal-body .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+  display: inline-block !important;
+}
+
+/* Modal SearchableDropdown Label Override */
+.modal .form-searchable-dropdown .form-label,
+.modal .searchable-dropdown-wrapper .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+  display: inline-block !important;
+}
+
+/* Modal DatePicker Label Override */
+.modal .custom-date-picker-container .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+  display: inline-block !important;
+}
+
+/* Modal NotesTextarea Label Override */
+.modal .notes-textarea-container .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+  display: inline-block !important;
+}
+
+/* Asterisk styling for required fields in modals */
+.modal .form-label .text-danger {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+}
+
+/* =================================
    BULK UPLOAD MODAL STYLES
    Consolidated from BulkUploadModal.vue inline styles
 ================================= */

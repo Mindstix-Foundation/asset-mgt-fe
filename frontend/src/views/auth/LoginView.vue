@@ -19,7 +19,7 @@
                 <!-- Username Input with clear label -->
                 <div class="login-field-label mb-2">
                   <label for="username">
-                    <i class="fas fa-user me-2"></i>Employee ID or Email Address
+                    <i class="fas fa-user me-2"></i>Username, Employee ID, or Email Address
                   </label>
                 </div>
                 <div class="mb-4 position-relative">
@@ -28,8 +28,8 @@
                     v-model="loginForm.username"
                     type="text"
                     class="form-control login-input"
-                    placeholder="Enter your employee ID or email"
-                    aria-label="Employee ID or Email Address"
+                    placeholder="Enter your username, employee ID, or email"
+                    aria-label="Username, Employee ID, or Email Address"
                     :disabled="isLoading"
                     @input="clearError"
                   />
@@ -80,7 +80,7 @@
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="btn btn-purple w-100"
+                  class="btn btn-purple btn-lg w-100"
                   :class="{ loading: isLoading }"
                   aria-label="Sign in to your account"
                 >
@@ -280,7 +280,7 @@ const handleLogin = async () => {
   font-size: 1.1rem;
 }
 
-/* Login inputs matching prototype */
+/* Login inputs matching prototype - consistent styling for both username and password */
 .login-input {
   border: 2px solid var(--element-gray);
   border-radius: 8px;
@@ -291,6 +291,7 @@ const handleLogin = async () => {
   background: var(--bg-primary);
   color: var(--text-secondary);
   box-shadow: none;
+  width: 100%;
 }
 
 .login-input::placeholder {
@@ -298,12 +299,13 @@ const handleLogin = async () => {
   opacity: 0.8;
 }
 
+/* Consistent focus effect for both input fields */
 .login-input:focus {
-  border-color: var(--accent-navy);
-  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25);
-  outline: none;
-  background-color: var(--primary-white);
-  background-image: none;
+  border-color: var(--accent-navy) !important;
+  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25) !important;
+  outline: none !important;
+  background-color: var(--primary-white) !important;
+  background-image: none !important;
 }
 
 .login-input:hover {

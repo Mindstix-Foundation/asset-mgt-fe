@@ -52,7 +52,7 @@
                 <!-- Send Reset Link Button -->
                 <button
                   type="submit"
-                  class="btn btn-purple w-100 mt-3"
+                  class="btn btn-purple btn-lg w-100 mt-3"
                   :disabled="isLoading || !email"
                   aria-label="Send password reset link"
                 >
@@ -62,10 +62,10 @@
                 </button>
 
                 <!-- Back to Login -->
-                <div class="d-flex justify-content-center mt-3">
+                <div class="d-flex justify-content-end mt-3">
                   <button
                     type="button"
-                    class="btn btn-link text-decoration-underline forgot-password-link"
+                    class="btn btn-gray btn-sm"
                     @click="backToLogin"
                     :disabled="isLoading"
                   >

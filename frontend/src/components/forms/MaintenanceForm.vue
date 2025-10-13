@@ -129,10 +129,10 @@
                   <!-- Frequency -->
                   <div class="col-md-6">
                     <label for="frequencyDays" class="form-label">Frequency <span class="text-muted">(Optional)</span></label>
-                    <div class="affix-input-wrapper">
+                    <div class="search-input-container">
                       <input 
                         type="number" 
-                        class="form-control affix-has-suffix" 
+                        class="form-control search-input" 
                         id="frequencyDays" 
                         v-model="formData.frequencyDays"
                         :class="getFieldClass('frequencyDays')"
@@ -144,20 +144,20 @@
                         @focus="clearFieldValidation('frequencyDays')"
                         @input="handleFieldInput('frequencyDays')"
                       >
-                      <span class="affix affix-suffix">days</span>
+                      <span class="search-icon">Days</span>
                     </div>
-                    <div class="form-text">Repeat every X days (e.g., 30 = monthly). Leave empty for one-time maintenance</div>
+                    <div class="form-text">Repeat every X Days (e.g., 30 = monthly). Leave empty for one-time maintenance</div>
                     <div v-if="fieldErrors.frequencyDays" class="invalid-feedback">{{ fieldErrors.frequencyDays }}</div>
                   </div>
 
                   <!-- Estimated Cost -->
                   <div class="col-md-6">
                     <label for="estimatedCost" class="form-label">Estimated Cost <span class="text-muted">(Optional)</span></label>
-                    <div class="affix-input-wrapper">
-                      <span class="affix affix-prefix">₹</span>
+                    <div class="search-input-container">
+                      <span class="search-icon">₹</span>
                       <input 
                         type="number" 
-                        class="form-control affix-has-prefix" 
+                        class="form-control search-input" 
                         id="estimatedCost" 
                         v-model="formData.estimatedCost"
                         :class="getFieldClass('estimatedCost')"

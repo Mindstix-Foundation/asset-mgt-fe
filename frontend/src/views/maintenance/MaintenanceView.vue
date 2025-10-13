@@ -556,11 +556,11 @@
                 
                 <div class="mb-3">
                   <label for="actualCost" class="form-label">Actual Cost <span class="text-danger">*</span></label>
-                  <div class="input-group has-validation">
-                    <span class="input-group-text">₹</span>
+                  <div class="search-input-container">
+                    <span class="search-icon">₹</span>
                     <input 
                       type="number" 
-                      :class="['form-control', { 'is-invalid': completeFormErrors.actualCost }]"
+                      :class="['form-control search-input', { 'is-invalid': completeFormErrors.actualCost }]"
                       id="actualCost"
                       v-model.number="completeForm.actualCost"
                       placeholder="0.00" 
@@ -571,9 +571,9 @@
                       title="Please enter the actual cost for this maintenance"
                       @input="completeFormErrors.actualCost = ''"
                     >
-                    <div class="invalid-feedback" v-if="completeFormErrors.actualCost">
-                      {{ completeFormErrors.actualCost }}
-                    </div>
+                  </div>
+                  <div class="invalid-feedback" v-if="completeFormErrors.actualCost">
+                    {{ completeFormErrors.actualCost }}
                   </div>
                   <div class="form-text">Enter the actual cost incurred for this maintenance activity (required)</div>
                 </div>

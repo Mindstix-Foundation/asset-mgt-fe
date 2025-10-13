@@ -100,6 +100,12 @@
   font-size: 1rem !important;
 }
 
+/* Suffix icon positioning (for icons like "Days" on the right) */
+.search-input-container .search-icon:last-child {
+  left: auto !important;
+  right: 1.75rem !important; /* Move "Days" text further left to avoid validation checkmark */
+}
+
 /* Search input styling */
 .search-input-container .search-input,
 .search-input-container .form-control {
@@ -109,6 +115,13 @@
   border-radius: 0.5rem !important; /* Match other filter controls */
   border: 1px solid #dee2e6 !important; /* Ensure border is visible */
   background-color: white !important; /* Ensure background is white */
+}
+
+/* Search input with suffix icon (like "Days") */
+.search-input-container:has(.search-icon:last-child) .search-input,
+.search-input-container:has(.search-icon:last-child) .form-control {
+  padding-right: 4rem !important; /* Extra space for suffix icon + validation checkmark */
+  padding-left: 0.75rem !important; /* Normal left padding for suffix */
 }
 
 /* Dynamic icon color states */
@@ -368,9 +381,10 @@
   border-radius: 0.5rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  animation: slideDown 0.2s ease-out;
+  animation: slideDownSmooth 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   width: 280px;
   margin-top: 0;
+  transition: all 0.2s ease;
 }
 
 
@@ -440,6 +454,7 @@
   padding: 0.5rem;
   background: var(--primary-light-gray);
   border-bottom: 1px solid var(--element-gray);
+  animation: fadeInScale 0.1s ease-out;
 }
 
 .year-grid {
@@ -494,6 +509,7 @@
 /* Calendar Grid */
 .calendar-grid {
   padding: 0.5rem;
+  animation: fadeInUp 0.125s ease-out 0.05s both;
 }
 
 .day-header {
@@ -526,11 +542,12 @@
   padding: 0.25rem;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 24px;
+  animation: fadeInScale 0.1s ease-out;
 }
 
 .day-btn:hover:not(:disabled) {
@@ -616,6 +633,7 @@
   bottom: 0;
   z-index: var(--z-date-backdrop);
   background: transparent;
+  animation: fadeIn 0.1s ease-out;
 }
 
 /* =================================
@@ -668,6 +686,59 @@
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Enhanced smooth calendar animation */
+@keyframes slideDownSmooth {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-15px) scale(0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(-5px) scale(0.98);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Year picker fade in animation */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Calendar grid fade in up animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Simple fade in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

@@ -996,12 +996,12 @@
                           <div class="info-value-compact fw-bold">{{ assetToRetire?.id }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <div class="info-label-compact">Asset Type</div>
-                          <div class="info-value-compact">{{ assetToRetire?.type }}</div>
+                          <div class="info-label-compact">Asset Type & Brand</div>
+                          <div class="info-value-compact">{{ assetToRetire?.type }} - {{ assetToRetire?.brand }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <div class="info-label-compact">Brand & Model</div>
-                          <div class="info-value-compact">{{ assetToRetire?.brand }} {{ assetToRetire?.model }}</div>
+                          <div class="info-label-compact">Model</div>
+                          <div class="info-value-compact">{{ assetToRetire?.model }}</div>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -1035,9 +1035,11 @@
                         <div class="mb-3">
                           <DatePicker
                             id="retirementDate"
-                            label="Retirement Date *"
+                            label="Retirement Date"
                             v-model="retireFormData.retirementDate"
+                            :max="todayDate"
                             :error-message="!retireFormValidation.retirementDate.isValid ? retireFormValidation.retirementDate.message : ''"
+                            help-text="Date must be today or in the past"
                             required
                             @change="validateRetirementDate"
                             @blur="validateRetirementDate"
@@ -1475,6 +1477,15 @@ const reactivateFormValidation = ref({
   reactivationReason: 'valid'
 })
 
+// Date constraints
+const todayDate = computed(() => {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+})
+
 // API data
 const assets = ref<Asset[]>([])
 const filterOptions = ref<FilterOptions>({
@@ -1829,13 +1840,18 @@ const validateRetirementDate = () => {
     return false
   }
   
+  // Parse the date string (format: YYYY-MM-DD)
   const selectedDate = new Date(date)
   const today = new Date()
+  
+  // Set both dates to midnight for accurate comparison
+  selectedDate.setHours(0, 0, 0, 0)
   today.setHours(0, 0, 0, 0)
   
+  // Check if date is in the future
   if (selectedDate > today) {
     retireFormValidation.value.retirementDate.isValid = false
-    retireFormValidation.value.retirementDate.message = 'Retirement date cannot be in the future'
+    retireFormValidation.value.retirementDate.message = 'Retirement date must be today or in the past'
     return false
   }
   

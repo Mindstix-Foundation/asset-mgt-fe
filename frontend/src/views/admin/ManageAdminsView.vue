@@ -26,102 +26,92 @@
     <!-- Admins List -->
     <div class="row">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0" style="color: var(--primary-black);">
-              <i class="fas fa-user-shield me-2"></i>
-              Admin Users
-            </h5>
+        <!-- Loading State -->
+        <div v-if="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary">
+            <output class="visually-hidden">Loading...</output>
           </div>
-          <div class="card-body p-0">
-            <!-- Loading State -->
-            <div v-if="isLoading" class="text-center py-5">
-              <div class="spinner-border text-primary">
-                <output class="visually-hidden">Loading...</output>
-              </div>
-              <p class="mt-2 text-muted">Loading admins...</p>
-            </div>
+          <p class="mt-2 text-muted">Loading admins...</p>
+        </div>
 
-            <!-- Error State -->
-            <div v-else-if="error" class="alert alert-danger m-3" role="alert">
-              <i class="fas fa-exclamation-circle me-2"></i>
-              {{ error }}
-            </div>
+        <!-- Error State -->
+        <div v-else-if="error" class="alert alert-danger" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          {{ error }}
+        </div>
 
-            <!-- Admins Table -->
-            <div v-else-if="admins.length > 0" class="table-responsive">
-              <table class="table table-hover mb-0 admin-table">
-                <thead class="table-light">
-                  <tr>
-                    <th class="border-0">Admin</th>
-                    <th class="border-0">Email</th>
-                    <th class="border-0">Employee ID</th>
-                    <th class="border-0">Status</th>
-                    <th class="border-0">Last Login</th>
-                    <th class="border-0 text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="admin in admins" :key="admin.id">
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div 
-                          class="avatar-sm text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                          :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.username), flexShrink: 0 }"
-                        >
-                          <i class="fas fa-user"></i>
-                        </div>
-                        <div class="flex-grow-1 min-width-0">
-                          <div class="fw-semibold text-truncate">{{ admin.employee?.firstName }} {{ admin.employee?.lastName }}</div>
-                          <small class="text-muted text-truncate d-block">{{ admin.username }}</small>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span class="text-muted text-truncate d-block">{{ admin.employee?.email }}</span>
-                    </td>
-                    <td>
-                      <span class="badge badge-gray">{{ admin.employee?.employeeId }}</span>
-                    </td>
-                    <td>
-                      <span 
-                        :class="admin.isActive ? 'badge badge-green' : 'badge badge-red'"
-                      >
-                        {{ admin.isActive ? 'Active' : 'Inactive' }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="text-muted d-flex flex-column">
-                        <span>{{ admin.lastLogin ? formatDate(admin.lastLogin) : 'Never' }}</span>
-                        <small v-if="admin.lastLogin" class="text-muted">{{ formatTime(admin.lastLogin) }}</small>
-                      </span>
-                    </td>
-                    <td class="text-center">
-                      <div class="btn-group" aria-label="Admin actions">
-                        
-                        <button
-                          v-if="admin.id !== currentUserId"
-                          @click="removeAdmin(admin)"
-                          class="btn btn-action btn-red btn-sm"
-                          :disabled="isLoading"
-                          title="Remove Admin"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <!-- Admins Table -->
+        <div v-else-if="admins.length > 0" class="table-responsive">
+          <table class="table table-hover admin-table">
+            <thead class="table-light">
+              <tr>
+                <th>Admin</th>
+                <th>Email</th>
+                <th>Employee ID</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="admin in admins" :key="admin.id">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div 
+                      class="avatar-sm text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                      :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.username), flexShrink: 0 }"
+                    >
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="flex-grow-1 min-width-0">
+                      <div class="fw-semibold text-truncate">{{ admin.employee?.firstName }} {{ admin.employee?.lastName }}</div>
+                      <small class="text-muted text-truncate d-block">{{ admin.username }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-muted text-truncate d-block">{{ admin.employee?.email }}</span>
+                </td>
+                <td>
+                  <span class="text-muted">{{ admin.employee?.employeeId }}</span>
+                </td>
+                <td>
+                  <span 
+                    :class="admin.isActive ? 'badge badge-green' : 'badge badge-red'"
+                  >
+                    {{ admin.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex flex-column">
+                    <span class="fw-semibold">{{ admin.lastLogin ? formatDate(admin.lastLogin) : 'Never' }}</span>
+                    <small v-if="admin.lastLogin" class="text-muted">{{ formatTime(admin.lastLogin) }}</small>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" aria-label="Admin actions">
+                    
+                    <button
+                      v-if="admin.id !== currentUserId"
+                      @click="removeAdmin(admin)"
+                      class="btn btn-action btn-red btn-sm"
+                      :disabled="isLoading"
+                      title="Remove Admin"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-            <!-- Empty State -->
-            <div v-else class="text-center py-5">
-              <i class="fas fa-user-shield text-muted" style="font-size: 3rem;"></i>
-              <h5 class="mt-3 text-muted">No Admin Users Found</h5>
-              <p class="text-muted">Start by adding your first admin user.</p>
-            </div>
-          </div>
+        <!-- Empty State -->
+        <div v-else class="text-center py-5">
+          <i class="fas fa-user-shield text-muted" style="font-size: 3rem;"></i>
+          <h5 class="mt-3 text-muted">No Admin Users Found</h5>
+          <p class="text-muted">Start by adding your first admin user.</p>
         </div>
       </div>
     </div>
@@ -837,44 +827,57 @@ onMounted(() => {
 .admin-table {
   table-layout: fixed;
   width: 100%;
+  margin-bottom: 0 !important;
+}
+
+.admin-table th,
+.admin-table td {
+  vertical-align: middle !important;
+  text-align: left !important;
 }
 
 /* Column width adjustments - using fixed percentages */
 .admin-table th:nth-child(1),
 .admin-table td:nth-child(1) {
-  width: 32% !important; /* Admin column - reduced space */
-  min-width: 250px !important;
+  width: 25% !important; /* Admin column */
+  min-width: 200px !important;
   max-width: none !important;
+  text-align: left !important;
 }
 
 .admin-table th:nth-child(2),
 .admin-table td:nth-child(2) {
-  width: 25% !important; /* Email column - good space */
+  width: 25% !important; /* Email column */
   min-width: 200px !important;
+  text-align: left !important;
 }
 
 .admin-table th:nth-child(3),
 .admin-table td:nth-child(3) {
-  width: 18% !important; /* Employee ID column - increased */
-  min-width: 120px !important;
+  width: 10% !important; /* Employee ID column */
+  min-width: 100px !important;
+  text-align: left !important;
 }
 
 .admin-table th:nth-child(4),
 .admin-table td:nth-child(4) {
-  width: 8% !important; /* Status column - minimal */
-  min-width: 70px !important;
+  width: 8% !important; /* Status column */
+  min-width: 80px !important;
+  text-align: left !important;
 }
 
 .admin-table th:nth-child(5),
 .admin-table td:nth-child(5) {
-  width: 12% !important; /* Last Login column - minimal */
-  min-width: 100px !important;
+  width: 20% !important; /* Last Login column */
+  min-width: 150px !important;
+  text-align: left !important;
 }
 
 .admin-table th:nth-child(6),
 .admin-table td:nth-child(6) {
-  width: 15% !important; /* Actions column - minimal */
-  min-width: 120px !important;
+  width: 12% !important; /* Actions column */
+  min-width: 100px !important;
+  text-align: left !important; /* Left align actions column */
 }
 
 /* Ensure text truncation works properly */

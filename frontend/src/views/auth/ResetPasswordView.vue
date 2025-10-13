@@ -100,7 +100,7 @@
                 <!-- Reset Password Button -->
                 <button
                   type="submit"
-                  class="btn btn-purple w-100 mb-3"
+                  class="btn btn-purple btn-lg w-100 mb-3"
                   :disabled="isLoading || !isPasswordValid || !doPasswordsMatch"
                 >
                   <span class="btn-text" :class="{ 'opacity-0': isLoading }">
@@ -113,10 +113,10 @@
                 </button>
 
                 <!-- Back to Login -->
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-end">
                   <button
                     type="button"
-                    class="btn btn-gray"
+                    class="btn btn-gray btn-sm"
                     @click="backToLogin"
                     :disabled="isLoading"
                   >
@@ -323,7 +323,7 @@ const backToLogin = () => {
   font-size: 1.1rem;
 }
 
-/* Inputs aligned with login */
+/* Inputs aligned with login - consistent styling for both password fields */
 .reset-password-input {
   border: 2px solid var(--element-gray);
   border-radius: 8px;
@@ -334,6 +334,7 @@ const backToLogin = () => {
   background: var(--bg-primary);
   color: var(--text-secondary);
   box-shadow: none;
+  width: 100%;
 }
 
 .reset-password-input::placeholder {
@@ -341,12 +342,13 @@ const backToLogin = () => {
   opacity: 0.8;
 }
 
+/* Consistent focus effect for both input fields - matching LoginView */
 .reset-password-input:focus {
-  border-color: var(--accent-navy);
-  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25);
-  outline: none;
-  background-color: var(--primary-white);
-  background-image: none;
+  border-color: var(--accent-navy) !important;
+  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25) !important;
+  outline: none !important;
+  background-color: var(--primary-white) !important;
+  background-image: none !important;
 }
 
 .reset-password-input:hover {

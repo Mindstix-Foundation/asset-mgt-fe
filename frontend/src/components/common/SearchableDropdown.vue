@@ -87,6 +87,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { usePopupVisibility } from '@/composables/usePopupVisibility'
 
 export interface Item {
   id?: number | string
@@ -139,6 +140,12 @@ const showDropdown = ref(false)
 const selectedIndex = ref(-1)
 const dropdownRef = ref<HTMLElement | null>(null)
 const isFirstOpen = ref(true)
+
+// Use the popup visibility composable
+const { ensurePopupVisible: ensurePopupVisibleComposable, resetScrollTracking } = usePopupVisibility({
+  debug: false,
+  componentName: 'SearchableDropdown',
+})
 
 const getNestedValue = (obj: Record<string, unknown> | null | undefined, path: string): unknown => {
   if (!obj) return undefined
@@ -290,9 +297,11 @@ const handleInput = () => {
   selectedIndex.value = -1
   emit('update:modelValue', null)
   isFirstOpen.value = false // User is now typing, so disable first open behavior
+  
   // Ensure the dropdown is visible within scrollable containers (e.g., modal body)
-  scrollIntoViewIfNeeded()
-  ensurePopupVisible()
+  if (dropdownRef.value) {
+    ensurePopupVisibleComposable(dropdownRef.value, '.dropdown-menu', 'input')
+  }
   
   // Reset scroll position when filtering
   nextTick(() => {
@@ -459,6 +468,7 @@ const handleClickOutside = (event: MouseEvent) => {
       showDropdown.value = false
       selectedIndex.value = -1
       isFirstOpen.value = true // Reset for next open
+      resetScrollTracking() // Reset scroll tracking when dropdown closes
     }
   }
 }
@@ -472,6 +482,7 @@ const handleBlur = (event: FocusEvent) => {
       showDropdown.value = false
       selectedIndex.value = -1
       isFirstOpen.value = true // Reset for next open
+      resetScrollTracking() // Reset scroll tracking when dropdown closes
     }
   }, 200)
 }
@@ -536,77 +547,16 @@ defineExpose({
 const handleClick = () => {
   // Show dropdown and update selectedIndex to first item if input is empty and there are items
   showDropdown.value = true
+  
   // Ensure visibility within modals if partially hidden by footer
-  scrollIntoViewIfNeeded()
-  ensurePopupVisible()
+  if (dropdownRef.value) {
+    ensurePopupVisibleComposable(dropdownRef.value, '.dropdown-menu', 'input')
+  }
+  
   if (!searchText.value.trim() && filteredItems.value.length > 0) {
     selectedIndex.value = 0 // Pre-select the first item
     scrollToSelectedItem() // Ensure first item is visible
   }
-  
-}
-
-// Ensure the field (and its dropdown) is visible in the nearest scroll container
-const scrollIntoViewIfNeeded = () => {
-  nextTick(() => {
-    const root = dropdownRef.value
-    if (!root) return
-    const target = root.querySelector('input') as HTMLElement || root
-    try {
-      target.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
-    } catch {
-      // Fallback without smooth if not supported
-      target.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-    }
-  })
-}
-
-// Debug-friendly: ensure the popup (dropdown menu) is fully visible and autoscroll the nearest scrollable ancestor
-const ensurePopupVisible = () => {
-  nextTick(() => {
-    const root = dropdownRef.value
-    if (!root) return
-    const popup = root.querySelector('.dropdown-menu') as HTMLElement | null
-    if (!popup || !popup.classList.contains('show')) return
-
-    const scrollParent = findScrollableAncestor(root)
-    if (!scrollParent) return
-
-    const popupRect = popup.getBoundingClientRect()
-    const parentRect = scrollParent.getBoundingClientRect()
-
-    const overflowBelow = popupRect.bottom - parentRect.bottom
-    const overflowAbove = parentRect.top - popupRect.top
-
-    // Debug logs for retire asset modal
-    console.log('[SearchableDropdown] ensurePopupVisible', {
-      id: (root.querySelector('input') as HTMLInputElement | null)?.id,
-      popupRect,
-      parentRect,
-      overflowBelow,
-      overflowAbove,
-      scrollTop: (scrollParent as HTMLElement).scrollTop,
-    })
-
-    if (overflowBelow > 0) {
-      ;(scrollParent as HTMLElement).scrollTop += overflowBelow + 8
-    } else if (overflowAbove > 0) {
-      ;(scrollParent as HTMLElement).scrollTop -= overflowAbove + 8
-    }
-  })
-}
-
-// Find nearest scrollable ancestor (modal body typically)
-const findScrollableAncestor = (start: HTMLElement): HTMLElement | null => {
-  let el: HTMLElement | null = start
-  while (el) {
-    const style = globalThis.getComputedStyle(el)
-    const overflowY = style.overflowY
-    const canScroll = /(auto|scroll)/.test(overflowY) && el.scrollHeight > el.clientHeight
-    if (canScroll) return el
-    el = el.parentElement
-  }
-  return document.scrollingElement as HTMLElement | null
 }
 </script>
 
