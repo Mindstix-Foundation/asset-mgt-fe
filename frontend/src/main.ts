@@ -25,4 +25,5 @@ app.use(router)
 const authStore = useAuthStore()
 authStore.checkAuthStatus()
 
+
 app.mount('#app')

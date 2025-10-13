@@ -63,9 +63,11 @@
                     </div>
                     <div v-if="fieldErrors.employeeId" class="invalid-feedback">{{ fieldErrors.employeeId }}</div>
                   </div>
-
+                </div>
+                
+                <div class="row g-4 mt-2">
                   <!-- First Name -->
-                  <div :class="isEditMode ? 'col-md-6' : 'col-md-6'">
+                  <div class="col-md-6">
                     <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
                     <input 
                       type="text" 
@@ -119,7 +121,9 @@
                     <div class="form-text">2-50 characters (letters and spaces only)</div>
                     <div v-if="fieldErrors.lastName" class="invalid-feedback">{{ fieldErrors.lastName }}</div>
                   </div>
-
+                </div>
+                
+                <div class="row g-4 mt-2">
                   <!-- Email -->
                   <div class="col-md-6">
                     <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>

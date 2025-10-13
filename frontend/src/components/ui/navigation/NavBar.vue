@@ -298,6 +298,7 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
   background: var(--bg-primary) !important;
   border-bottom: 1px solid var(--element-gray);
+  z-index: 1050 !important; /* Force higher than date picker (1045) */
 }
 
 .navbar-brand {

@@ -24,8 +24,21 @@ export default defineConfig({
         '**/coverage/**',
         '**/.nyc_output/**',
         '**/tmp/**',
-        '**/temp/**'
-      ]
+        '**/temp/**',
+        '**/.vite/**',
+        '**/.vite-temp/**',
+        '**/uploads/**',
+        '**/Prototype/**',
+        '**/*.log',
+        '**/*.csv',
+        '**/*.md',
+        '**/*.pdf',
+        '**/*.html',
+        '**/*.css',
+        '**/*.js'
+      ],
+      usePolling: true,
+      interval: 1000
     },
     // Add security headers for development server
     headers: {

@@ -846,4 +846,15 @@ div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-
   -ms-user-select: none !important;
 }
 
+/* ================================
+   NAVBAR Z-INDEX FIX
+   Ensure navbar stays above calendar dropdowns on form pages
+================================ */
+
+/* Fix navbar z-index to ensure it stays above date picker calendar */
+.navbar.sticky-top {
+  z-index: 1050 !important; /* Higher than date picker (1045) to stay on top */
+}
+
+
 /* ================================ */
