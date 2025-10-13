@@ -13,7 +13,7 @@ export interface AssetQueryDto {
   modelId?: number
   vendorId?: number
   status?: AssetStatus
-  condition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
+  condition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
   location?: string
   sortBy?: string
   sortOrder?: 'asc' | 'desc'

@@ -17,7 +17,7 @@
             </div>
             
             <!-- Form -->
-            <form v-else ref="issueAssetForm" class="needs-validation" @submit.prevent="submitForm" @submit="console.log('Form submit event triggered')" novalidate>
+            <form v-else ref="issueAssetForm" class="needs-validation" @submit.prevent="submitForm" novalidate>
               
               <!-- Section 1: Asset Selection -->
               <fieldset class="form-fieldset">
@@ -284,12 +284,6 @@ const assignmentReasonItems = computed(() => [
 
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
-  console.log(`getFieldClass for ${fieldName}:`, {
-    formSubmitted: formSubmitted.value,
-    fieldValidation: fieldValidation[fieldName],
-    fieldErrors: fieldErrors[fieldName]
-  })
-  
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
     return {} // No validation styling before first submission attempt
   }
@@ -403,7 +397,6 @@ const validateRequiredField = (fieldName: string, value: any, element: HTMLEleme
 }
 
 const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
-  console.log(`Validating dropdown ${fieldName}:`, selectedValue)
   if (selectedValue) {
     setFieldValid(fieldName)
     applyValidationToSearchableDropdown(fieldName, 'valid')
@@ -417,11 +410,7 @@ const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolea
 
 
 const validateAssignmentDate = (fieldName: string, value: any): boolean => {
-  console.log(`=== validateAssignmentDate called ===`)
-  console.log(`Field: ${fieldName}, Value: ${value}`)
-  
   if (!value) {
-    console.log('No value provided, setting error')
     setFieldError(fieldName, 'Issue date is required')
     return false
   }
@@ -433,12 +422,10 @@ const validateAssignmentDate = (fieldName: string, value: any): boolean => {
       // Check if it's yyyy-mm-dd format (first part is 4 digits)
       if (parts[0].length === 4) {
         const [year, month, day] = parts.map(Number)
-        console.log(`Parsing yyyy-mm-dd: year=${year}, month=${month}, day=${day}`)
         return new Date(year, month - 1, day) // month is 0-indexed
       } else {
         // Assume dd-mm-yyyy format
         const [day, month, year] = parts.map(Number)
-        console.log(`Parsing dd-mm-yyyy: day=${day}, month=${month}, year=${year}`)
         return new Date(year, month - 1, day) // month is 0-indexed
       }
     }
@@ -446,20 +433,12 @@ const validateAssignmentDate = (fieldName: string, value: any): boolean => {
   }
   
   const selectedDate = parseDate(value)
-  console.log(`Parsed date: ${selectedDate}`)
   
   if (!selectedDate || Number.isNaN(selectedDate.getTime())) {
-    console.log('Invalid date format, setting error')
     setFieldError(fieldName, 'Invalid date format')
     return false
   }
   
-  console.log('Date validation:', { 
-    value, 
-    selectedDate: selectedDate.toISOString()
-  })
-  
-  console.log('Date is valid, setting valid state')
   setFieldValid(fieldName)
   return true
 }
@@ -489,14 +468,7 @@ const validateFieldInline = (fieldName: string) => {
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as FormElement
   
-  console.log(`=== validateFieldInline called ===`)
-  console.log(`Field: ${fieldName}`)
-  console.log(`Value: ${value}`)
-  console.log(`Value type: ${typeof value}`)
-  console.log(`Element found: ${!!element}`)
-  
   if (!element) {
-    console.log(`Element not found for field: ${fieldName}`)
     return false
   }
 
@@ -505,14 +477,12 @@ const validateFieldInline = (fieldName: string) => {
 
   // Check if field is required
   if (!validateRequiredField(fieldName, value, element)) {
-    console.log(`Field ${fieldName} failed required validation`)
     return false
   }
 
   // Handle specific field validations
   const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
   if (handler) {
-    console.log(`Using specific handler for field: ${fieldName}`)
     if (fieldName === 'assignmentDate') {
       return (handler as (value: any) => boolean)(value)
     } else {
@@ -523,17 +493,14 @@ const validateFieldInline = (fieldName: string) => {
   // For SearchableDropdown fields, we've already handled validation above
   const searchableDropdownFields = ['assetId', 'employeeId', 'assignmentReason']
   if (searchableDropdownFields.includes(fieldName)) {
-    console.log(`Field ${fieldName} is a SearchableDropdown, already validated`)
     return true // Already validated above
   }
 
   // Use native validation for other fields
-  console.log(`Using standard validation for field: ${fieldName}`)
   return validateStandardField(fieldName, element)
 }
 
 const setFieldError = (fieldName: string, message: string) => {
-  console.log(`setFieldError called for ${fieldName}:`, message)
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
@@ -553,15 +520,9 @@ const setFieldError = (fieldName: string, message: string) => {
   if (datePickerFields.includes(fieldName)) {
     applyValidationToDatePicker(fieldName, 'invalid')
   }
-  
-  console.log(`Field validation state after error:`, {
-    fieldErrors: fieldErrors[fieldName],
-    fieldValidation: fieldValidation[fieldName]
-  })
 }
 
 const setFieldValid = (fieldName: string) => {
-  console.log(`setFieldValid called for ${fieldName}`)
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
@@ -581,11 +542,6 @@ const setFieldValid = (fieldName: string) => {
   if (datePickerFields.includes(fieldName)) {
     applyValidationToDatePicker(fieldName, 'valid')
   }
-  
-  console.log(`Field validation state after valid:`, {
-    fieldErrors: fieldErrors[fieldName],
-    fieldValidation: fieldValidation[fieldName]
-  })
 }
 
 const clearFieldValidation = (fieldName: string) => {
@@ -647,38 +603,23 @@ const getFieldDisplayName = (fieldName: string): string => {
 
 // Form submission with enhanced validation
 const submitForm = async (event?: Event) => {
-  console.log('=== SUBMIT FORM CALLED ===', event)
-  console.log('Event type:', event?.type)
-  console.log('Event target:', event?.target)
-  
   if (event) {
     event.preventDefault()
     event.stopPropagation()
   }
 
   formSubmitted.value = true
-  console.log('Form submitted flag set to true')
 
   // Validate required fields only
   let isFormValid = true
   const requiredFields = ['assetId', 'employeeId', 'assignmentReason', 'assignmentDate']
-  console.log('Form data:', formData)
-  console.log('Required fields to validate:', requiredFields)
-  console.log('Selected values:', {
-    selectedAsset: selectedAsset.value,
-    selectedEmployee: selectedEmployee.value,
-    selectedAssignmentReason: selectedAssignmentReason.value
-  })
 
   for (const fieldName of requiredFields) {
     const isValid = validateFieldInline(fieldName)
-    console.log(`Field ${fieldName} validation:`, isValid)
     if (!isValid) {
       isFormValid = false
     }
   }
-  
-  console.log('Form is valid:', isFormValid)
 
   if (!isFormValid) {
     // Don't show error toast for validation errors - instead scroll to first error
@@ -691,16 +632,11 @@ const submitForm = async (event?: Event) => {
   }
 
   isSubmitting.value = true
-  console.log('=== STARTING API CALL ===')
 
   try {
     // Get the selected asset and employee IDs from the dropdown selections
     const selectedAssetId = selectedAsset.value?.value ? Number.parseInt(selectedAsset.value.value.toString()) : null
     const selectedEmployeeId = selectedEmployee.value?.value ? Number.parseInt(selectedEmployee.value.value.toString()) : null
-
-    console.log('Selected asset ID:', selectedAssetId)
-    console.log('Selected employee ID:', selectedEmployeeId)
-    console.log('About to call API...')
 
     if (!selectedAssetId || !selectedEmployeeId) {
       throw new Error('Please select both an asset and an employee')
@@ -738,8 +674,6 @@ const submitForm = async (event?: Event) => {
       issueReason: reasonLabels[formData.assignmentReason as keyof typeof reasonLabels] || formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
-    
-    console.log('Assignment data being sent:', assignmentData)
 
     // Call the API to create assignment
     await assignmentApiService.createAssignment(assignmentData)
@@ -882,10 +816,7 @@ const formatSpecifications = (specs: any): string | null => {
 
 const processAssetDetails = (asset: any) => {
   setAssetBrandModel(asset)
-  console.log('Asset details:', asset)
-  console.log('Model specifications:', asset.model?.specifications)
   selectedAssetSpecs.value = formatSpecifications(asset.model?.specifications)
-  console.log('Formatted specifications:', selectedAssetSpecs.value)
 }
 
 const loadAssetDetails = async (assetIdNumber: number) => {
@@ -984,7 +915,6 @@ onMounted(async () => {
   const month = (today.getMonth() + 1).toString().padStart(2, '0')
   const year = today.getFullYear()
   formData.assignmentDate = `${day}-${month}-${year}`
-  console.log('Default date set:', formData.assignmentDate)
   
   // Check if asset was pre-selected from assets page
   const selectedAssetId = localStorage.getItem('selectedAssetId')
@@ -1009,7 +939,6 @@ onMounted(async () => {
       // Show success message for pre-selection
       toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for issuing`)
     } else {
-      console.error('Asset not found:', selectedAssetId, 'Available assets:', availableAssets.value.map(a => a.assetId))
       toastStore.showError('Error', `Asset ${selectedAssetId} not found in available assets`)
     }
     
@@ -1038,7 +967,6 @@ onMounted(async () => {
       // Show success message for pre-selection
       toastStore.showInfo('Info', `Employee ${employee.firstName} ${employee.lastName} pre-selected for asset issue`)
     } else {
-      console.error('Employee not found:', employeeIdFromQuery, 'Available employees:', activeEmployees.value.map(e => e.id))
       toastStore.showError('Error', `Employee with ID ${employeeIdFromQuery} not found in active employees`)
     }
   }

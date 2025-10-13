@@ -5,14 +5,14 @@ export interface CreateAssignmentDto {
   assetId: number
   employeeId: number
   issueDate: string
-  issueCondition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
+  issueCondition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
   issueReason?: string
   notes?: string
 }
 
 export interface ReturnAssignmentDto {
   returnDate: string
-  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
+  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
   returnReason?: string
   notes?: string
 }

@@ -39,7 +39,7 @@ export interface ActiveAssignment {
 
 export interface ReturnAssignmentDto {
   returnDate: string
-  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED'
+  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
   returnReason?: string
   notes?: string
 }

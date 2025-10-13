@@ -171,10 +171,11 @@
                     <div class="form-searchable-dropdown">
                       <SearchableDropdown
                         id="assetCondition"
-                        label="Asset Condition"
+                        :label="isAssetIssuedAsRefurbished ? 'Asset Condition (Locked to Refurbished)' : 'Asset Condition'"
                         placeholder="Choose condition..."
                         :items="conditionItems"
                         v-model="selectedCondition"
+                        :disabled="isAssetIssuedAsRefurbished"
                         required
                         @change="onConditionChange"
                       />
@@ -445,7 +446,8 @@ const conditionLabels = {
   'GOOD': 'Good',
   'FAIR': 'Fair',
   'POOR': 'Poor',
-  'DAMAGED': 'Damaged'
+  'DAMAGED': 'Damaged',
+  'REFURBISHED': 'Refurbished'
 }
 
 // Computed properties
@@ -603,6 +605,19 @@ const selectedAssignmentDate = computed(() => {
   }
 })
 
+// Computed property to check if the selected asset was issued in REFURBISHED condition
+const isAssetIssuedAsRefurbished = computed(() => {
+  if (!formData.assetId) {
+    return false
+  }
+  
+  const selectedAssignment = assignedAssets.value.find(assignment => 
+    assignment.id.toString() === formData.assetId.toString()
+  )
+  
+  return selectedAssignment?.issueCondition === 'REFURBISHED'
+})
+
 // Enhanced validation system matching the prototype
 const getFieldClass = (fieldName: string) => {
   if (!formSubmitted.value && fieldValidation[fieldName] === null) {
@@ -647,6 +662,20 @@ const onAssetChange = (item: Item | null) => {
 }
 
 const onConditionChange = (item: Item | null) => {
+  // Prevent changing condition if asset was issued as REFURBISHED
+  if (isAssetIssuedAsRefurbished.value && item && item.value !== 'REFURBISHED') {
+    toastStore.showWarning('Warning', 'Cannot change condition. Asset was issued in REFURBISHED condition and must be collected as REFURBISHED.')
+    
+    // Reset to REFURBISHED
+    selectedCondition.value = {
+      id: 'REFURBISHED',
+      name: 'Refurbished',
+      value: 'REFURBISHED'
+    }
+    formData.assetCondition = 'REFURBISHED'
+    return
+  }
+  
   selectedCondition.value = item
   formData.assetCondition = item && item.value ? item.value.toString() : ''
   
@@ -736,11 +765,30 @@ const validateRequiredField = (fieldName: string, value: any, element: HTMLEleme
 }
 
 const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolean => {
+  // Extract the actual value from Proxy Object or use the value directly
+  const actualValue = selectedValue?.value || selectedValue
+  
   if (selectedValue) {
+    // Special validation for asset condition when asset was issued as REFURBISHED
+    if (fieldName === 'assetCondition' && isAssetIssuedAsRefurbished.value) {
+      if (actualValue !== 'REFURBISHED') {
+        setFieldError(fieldName, 'Collection condition must be REFURBISHED when asset was issued in REFURBISHED condition')
+        applyValidationToSearchableDropdown(fieldName, 'invalid')
+        return false
+      }
+    }
+    
     setFieldValid(fieldName)
     applyValidationToSearchableDropdown(fieldName, 'valid')
     return true
   } else {
+    // Special case: if asset was issued as REFURBISHED and no value is selected, it should be auto-validated
+    if (fieldName === 'assetCondition' && isAssetIssuedAsRefurbished.value) {
+      setFieldValid(fieldName)
+      applyValidationToSearchableDropdown(fieldName, 'valid')
+      return true
+    }
+    
     setFieldError(fieldName, `${getFieldDisplayName(fieldName)} is required`)
     applyValidationToSearchableDropdown(fieldName, 'invalid')
     return false
@@ -748,11 +796,7 @@ const validateRequiredDropdown = (fieldName: string, selectedValue: any): boolea
 }
 
 const validateCollectionDate = (fieldName: string, value: any): boolean => {
-  console.log(`=== validateCollectionDate called ===`)
-  console.log(`Field: ${fieldName}, Value: ${value}`)
-  
   if (!value) {
-    console.log('No value provided, setting error')
     setFieldError(fieldName, 'Collection date is required')
     return false
   }
@@ -764,12 +808,10 @@ const validateCollectionDate = (fieldName: string, value: any): boolean => {
       // Check if it's yyyy-mm-dd format (first part is 4 digits)
       if (parts[0].length === 4) {
         const [year, month, day] = parts.map(Number)
-        console.log(`Parsing yyyy-mm-dd: year=${year}, month=${month}, day=${day}`)
         return new Date(year, month - 1, day) // month is 0-indexed
       } else {
         // Assume dd-mm-yyyy format
         const [day, month, year] = parts.map(Number)
-        console.log(`Parsing dd-mm-yyyy: day=${day}, month=${month}, year=${year}`)
         return new Date(year, month - 1, day) // month is 0-indexed
       }
     }
@@ -777,10 +819,8 @@ const validateCollectionDate = (fieldName: string, value: any): boolean => {
   }
   
   const selectedDate = parseDate(value)
-  console.log(`Parsed date: ${selectedDate}`)
   
   if (!selectedDate || Number.isNaN(selectedDate.getTime())) {
-    console.log('Invalid date format, setting error')
     setFieldError(fieldName, 'Invalid date format')
     return false
   }
@@ -790,17 +830,10 @@ const validateCollectionDate = (fieldName: string, value: any): boolean => {
   futureLimit.setDate(futureLimit.getDate() + 30)
   
   if (selectedDate > futureLimit) {
-    console.log('Date is too far in future, setting error')
     setFieldError(fieldName, 'Collection date cannot be more than 30 days in the future')
     return false
   }
   
-  console.log('Date validation:', { 
-    value, 
-    selectedDate: selectedDate.toISOString()
-  })
-  
-  console.log('Date is valid, setting valid state')
   setFieldValid(fieldName)
   return true
 }
@@ -862,7 +895,6 @@ const validateFieldInline = (fieldName: string) => {
 }
 
 const setFieldError = (fieldName: string, message: string) => {
-  console.log(`setFieldError called for ${fieldName}:`, message)
   fieldErrors[fieldName] = message
   fieldValidation[fieldName] = false
   
@@ -882,15 +914,9 @@ const setFieldError = (fieldName: string, message: string) => {
   if (datePickerFields.includes(fieldName)) {
     applyValidationToDatePicker(fieldName, 'invalid')
   }
-  
-  console.log(`Field validation state after error:`, {
-    fieldErrors: fieldErrors[fieldName],
-    fieldValidation: fieldValidation[fieldName]
-  })
 }
 
 const setFieldValid = (fieldName: string) => {
-  console.log(`setFieldValid called for ${fieldName}`)
   delete fieldErrors[fieldName]
   fieldValidation[fieldName] = true
   
@@ -910,11 +936,6 @@ const setFieldValid = (fieldName: string) => {
   if (datePickerFields.includes(fieldName)) {
     applyValidationToDatePicker(fieldName, 'valid')
   }
-  
-  console.log(`Field validation state after valid:`, {
-    fieldErrors: fieldErrors[fieldName],
-    fieldValidation: fieldValidation[fieldName]
-  })
 }
 
 const clearFieldValidation = (fieldName: string) => {
@@ -994,15 +1015,12 @@ const convertDateFormat = (dateString: string): string => {
 
 // Form submission with enhanced validation
 const submitForm = async (event?: Event) => {
-  console.log('=== COLLECT ASSET SUBMIT FORM CALLED ===', event)
-  
   if (event) {
     event.preventDefault()
     event.stopPropagation()
   }
 
   formSubmitted.value = true
-  console.log('Form submitted flag set to true')
 
   // Validate all fields
   let isFormValid = true
@@ -1015,7 +1033,6 @@ const submitForm = async (event?: Event) => {
   }
 
   if (!isFormValid) {
-    console.log('Form validation failed')
     // Don't show error toast for validation errors - instead scroll to first error
     scrollToFirstError()
     // Add 'was-validated' class to show validation styling
@@ -1025,7 +1042,6 @@ const submitForm = async (event?: Event) => {
     return
   }
 
-  console.log('Form validation passed, showing confirmation modal')
   // Show confirmation modal instead of direct submission
   showConfirmationModal.value = true
 }
@@ -1043,12 +1059,11 @@ const confirmCollection = async () => {
     // Prepare return data for API
     const returnData: ReturnAssignmentDto = {
       returnDate: convertDateFormat(formData.collectionDate), // Convert date format
-      returnCondition: formData.assetCondition as 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED', // Already uppercase from SearchableDropdown
+      returnCondition: formData.assetCondition as 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED', // Already uppercase from SearchableDropdown
       returnReason: formData.collectionReason,
       notes: formData.collectionNotes || undefined
     }
     
-    console.log('Collection data being sent:', returnData)
 
     // Call the API to collect/return the asset
     await collectAssetApiService.collectAsset(Number.parseInt(formData.assetId), returnData)
@@ -1195,6 +1210,24 @@ watch(() => selectedAsset.value, (newValue) => {
         }
         formData.employeeId = selectedAssignment.employee.id.toString()
       }
+      
+      // Auto-select REFURBISHED condition if asset was issued in REFURBISHED condition
+      if (selectedAssignment.issueCondition === 'REFURBISHED') {
+        selectedCondition.value = {
+          id: 'REFURBISHED',
+          name: 'Refurbished',
+          value: 'REFURBISHED'
+        }
+        formData.assetCondition = 'REFURBISHED'
+        
+        // Trigger validation to mark the field as valid
+        nextTick(() => {
+          validateFieldInline('assetCondition')
+        })
+        
+        // Show info toast to inform user
+        toastStore.showInfo('Info', 'Asset was issued in REFURBISHED condition. Collection condition has been automatically set to REFURBISHED.')
+      }
     } else {
       formData.assetBrandModel = ''
     }
@@ -1239,6 +1272,21 @@ watch(() => assignedAssets.value, (newAssignments) => {
       formData.employeeId = selectedAssignment.employee.id.toString()
       formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
       
+      // Auto-select REFURBISHED condition if asset was issued in REFURBISHED condition
+      if (selectedAssignment.issueCondition === 'REFURBISHED') {
+        selectedCondition.value = {
+          id: 'REFURBISHED',
+          name: 'Refurbished',
+          value: 'REFURBISHED'
+        }
+        formData.assetCondition = 'REFURBISHED'
+        
+        // Trigger validation to mark the field as valid
+        nextTick(() => {
+          validateFieldInline('assetCondition')
+        })
+      }
+      
       // Clear pre-selection flag after a short delay
       nextTick(() => {
         setTimeout(() => {
@@ -1246,7 +1294,11 @@ watch(() => assignedAssets.value, (newAssignments) => {
         }, 100)
       })
       
-      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
+      const message = selectedAssignment.issueCondition === 'REFURBISHED' 
+        ? `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}. Condition automatically set to REFURBISHED.`
+        : `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`
+      
+      toastStore.showInfo('Info', message)
       
       localStorage.removeItem('selectedAssetId')
       localStorage.removeItem('currentEmployee')
@@ -1295,13 +1347,6 @@ const getQueryParameters = () => {
   const selectedAssetId = qpAssetId || localStorage.getItem('selectedAssetId') || ''
   const currentEmployee = qpEmployeeId || localStorage.getItem('currentEmployee') || ''
   
-  console.log('[Collect] onMounted origin detection:', { 
-    qpAssetId, 
-    qpEmployeeId, 
-    fromQuery, 
-    ls_selectedAssetId: localStorage.getItem('selectedAssetId'), 
-    ls_currentEmployee: localStorage.getItem('currentEmployee') 
-  })
   
   return { qpAssetId, qpEmployeeId, fromQuery, selectedAssetId, currentEmployee }
 }
@@ -1312,7 +1357,6 @@ const inferOriginPath = (fromQuery: string | undefined, qpEmployeeId: string, cu
   } else if (!fromQuery && (qpAssetId || localStorage.getItem('selectedAssetId'))) {
     originPath.value = '/app/assets'
   }
-  console.log('[Collect] inferred originPath (pre-explicit):', originPath.value)
 }
 
 const setPreselectedAssignment = (selectedAssignment: any, selectedAssetId: string) => {
@@ -1334,13 +1378,32 @@ const setPreselectedAssignment = (selectedAssignment: any, selectedAssetId: stri
   formData.employeeId = selectedAssignment.employee.id.toString()
   formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
   
+  // Auto-select REFURBISHED condition if asset was issued in REFURBISHED condition
+  if (selectedAssignment.issueCondition === 'REFURBISHED') {
+    selectedCondition.value = {
+      id: 'REFURBISHED',
+      name: 'Refurbished',
+      value: 'REFURBISHED'
+    }
+    formData.assetCondition = 'REFURBISHED'
+    
+    // Trigger validation to mark the field as valid
+    nextTick(() => {
+      validateFieldInline('assetCondition')
+    })
+  }
+  
   nextTick(() => {
     setTimeout(() => {
       isPreSelecting.value = false
     }, 100)
   })
   
-  toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`)
+  const message = selectedAssignment.issueCondition === 'REFURBISHED' 
+    ? `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}. Condition automatically set to REFURBISHED.`
+    : `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`
+  
+  toastStore.showInfo('Info', message)
 }
 
 const handleAssetPreselection = (selectedAssetId: string, qpAssetId: string, qpEmployeeId: string, currentEmployee: string, fromQuery: string | undefined) => {
@@ -1373,7 +1436,6 @@ const setFinalOriginPath = (fromQuery: string | undefined, qpEmployeeId: string)
     originPath.value = '/app/employees'
   }
   
-  console.log('[Collect] final originPath:', originPath.value)
 }
 
 const focusAppropriateField = () => {
