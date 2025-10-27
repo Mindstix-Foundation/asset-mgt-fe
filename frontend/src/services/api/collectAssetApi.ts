@@ -76,7 +76,8 @@ class CollectAssetApiService {
   async getActiveAssignments(query?: { search?: string; employeeId?: number }): Promise<ActiveAssignmentsResponse> {
     try {
       // Use the enhanced endpoint for collect asset page
-      const params = { ...query }
+      // Set limit to 10000 to get all assignments (backend max is 10000, default is only 10!)
+      const params = { ...query, limit: 10000 }
       const response = await apiClient.get<ActiveAssignmentsResponse>(`${this.baseURL}/active/collect`, { params })
       return response.data
     } catch (error: any) {
