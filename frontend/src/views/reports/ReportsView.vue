@@ -219,8 +219,8 @@
                 <canvas ref="assetDistributionChart" width="200" height="150"></canvas>
               </div>
               <div class="compact-stats">
-                <div class="stat-row" v-for="item in analyticsData.assetDistribution" :key="item.type">
-                  <div class="stat-dot" :style="{ backgroundColor: getColorForType(item.type) }"></div>
+                <div class="stat-row" v-for="(item, index) in analyticsData.assetDistribution" :key="item.type">
+                  <div class="stat-dot" :style="{ backgroundColor: getColorForIndex(index) }"></div>
                   <span class="stat-label">{{ item.type }}</span>
                   <span class="stat-value">{{ item.count }} ({{ item.percentage }}%)</span>
                 </div>
@@ -242,7 +242,7 @@
                   v-for="status in getCompleteStatusOverview()" 
                   :key="status.status"
                   class="status-mini-card"
-                  :class="status.status.toLowerCase()"
+                  :class="status.status === 'TOTAL' ? 'total-assets' : status.status.toLowerCase()"
                 >
                   <div class="status-icon">
                     <i :class="getStatusIcon(status.status)"></i>
@@ -391,6 +391,27 @@ const recentActivities = ref<Array<{
 
 // Real-time update intervals
 let realTimeUpdateId: number | undefined
+
+// Extended color palette for asset types (repeats after initial set)
+const assetTypeColors = [
+  'laptops',      // purple
+  'monitors',     // green
+  'mobile',       // pink
+  'accessories',  // orange
+  'desktops',     // blue
+  'tablets',      // brown
+  'laptops',      // purple (repeat)
+  'monitors',     // green (repeat)
+  'mobile',       // pink (repeat)
+  'accessories',  // orange (repeat)
+  'desktops',     // blue (repeat)
+  'tablets'       // brown (repeat)
+]
+
+// Get color class by index (supports repeating colors)
+const getCategoryClassByIndex = (index: number): string => {
+  return assetTypeColors[index % assetTypeColors.length]
+}
 
 // Chart refs
 const assetDistributionChart = ref<HTMLCanvasElement>()
@@ -569,8 +590,11 @@ const loadAnalyticsData = async () => {
     analyticsData.value = await reportsApi.getAnalytics()
     
     // Use asset distribution exactly as returned by backend (only present categories)
+    // Sort by percentage descending (highest first)
     if (analyticsData.value.assetDistribution) {
-      analyticsData.value.assetDistribution = analyticsData.value.assetDistribution.filter(item => (item?.count ?? 0) > 0)
+      analyticsData.value.assetDistribution = analyticsData.value.assetDistribution
+        .filter(item => (item?.count ?? 0) > 0)
+        .sort((a, b) => b.percentage - a.percentage) // Sort by percentage descending
     }
     
     // Transform recent activities using dashboardApi
@@ -947,6 +971,21 @@ const getColorForType = (type: string): string => {
   return colors[type] || 'var(--primary-mid-gray)'
 }
 
+// Get color for index-based assignment with rotation
+const getColorForIndex = (index: number): string => {
+  const colorMapping: Record<string, string> = {
+    'laptops': 'var(--secondary-purple)',
+    'monitors': 'var(--secondary-green)',
+    'mobile': 'var(--secondary-orange)',
+    'accessories': 'var(--secondary-red)',
+    'desktops': 'var(--secondary-blue)',
+    'tablets': 'var(--secondary-brown)'
+  }
+  
+  const colorClass = getCategoryClassByIndex(index)
+  return colorMapping[colorClass] || 'var(--primary-mid-gray)'
+}
+
 const getStatusIcon = (status: string): string => {
   const icons: Record<string, string> = {
     'ASSIGNED': 'fas fa-user-check',
@@ -960,7 +999,8 @@ const getStatusIcon = (status: string): string => {
     'ACTIVE': 'fas fa-user-check',
     'INACTIVE': 'fas fa-user-times',
     'TERMINATED': 'fas fa-user-slash',
-    'ON_LEAVE': 'fas fa-calendar-times'
+    'ON_LEAVE': 'fas fa-calendar-times',
+    'TOTAL': 'fas fa-layer-group'
   }
   return icons[status] || 'fas fa-question-circle'
 }
@@ -970,6 +1010,7 @@ const formatStatus = (status: string): string => {
   if (!status) return '-'
   const normalized = status.toUpperCase()
   if (normalized === 'IN_MAINTENANCE') return 'In Maintenance'
+  if (normalized === 'TOTAL') return 'Total Assets'
   return normalized.charAt(0) + normalized.slice(1).toLowerCase()
 }
 

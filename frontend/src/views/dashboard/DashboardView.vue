@@ -185,10 +185,10 @@
             </div>
             <div class="card-body p-0">
               <div class="asset-distribution-list">
-                <div v-for="item in assetDistribution" :key="item.name" class="asset-distribution-item mb-4">
+                <div v-for="(item, index) in assetDistribution" :key="item.name" class="asset-distribution-item mb-4">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <div class="d-flex align-items-center">
-                    <div class="asset-type-icon me-3" :class="getCategoryClass(item.name)">
+                    <div class="asset-type-icon me-3" :class="getCategoryClassByIndex(index)">
                       <i :class="getCategoryIcon(item.name)"></i>
                     </div>
                     <div>
@@ -200,7 +200,7 @@
                   </div>
                 </div>
                 <div class="progress asset-progress">
-                  <div class="progress-bar" :class="getCategoryBarClass(item.name)" :style="`width: ${item.percentage}%`"></div>
+                  <div class="progress-bar" :class="`progress-bar-${getCategoryClassByIndex(index)}`" :style="`width: ${item.percentage}%`"></div>
                 </div>
                 </div>
               </div>
@@ -258,6 +258,27 @@ const recentActivities = ref<Array<{
 
 // Asset distribution data (dynamic list from backend)
 const assetDistribution = ref<Array<{ name: string; percentage: number; count?: number }>>([])
+
+// Extended color palette for asset types (repeats after initial set)
+const assetTypeColors = [
+  'laptops',      // purple
+  'monitors',     // green
+  'mobile',       // pink
+  'accessories',  // orange
+  'desktops',     // blue
+  'tablets',      // brown
+  'laptops',      // purple (repeat)
+  'monitors',     // green (repeat)
+  'mobile',       // pink (repeat)
+  'accessories',  // orange (repeat)
+  'desktops',     // blue (repeat)
+  'tablets'       // brown (repeat)
+]
+
+// Get color class by index (supports repeating colors)
+const getCategoryClassByIndex = (index: number): string => {
+  return assetTypeColors[index % assetTypeColors.length]
+}
 
 // Percentages for top cards
 const assignedPercent = computed(() => {
@@ -346,10 +367,11 @@ const loadAnalyticsData = async () => {
     isLoadingAnalytics.value = true
     const analytics = await dashboardApi.getAnalyticsData()
     
-    // Use only categories from backend and map to { name, percentage, count }
+    // Use only categories from backend, sort by percentage descending, and map to { name, percentage, count }
     assetDistribution.value = (analytics.assetDistribution || [])
       .filter((item: any) => (item?.count ?? 0) > 0)
       .map((item: any) => ({ name: item.type, percentage: item.percentage, count: item.count }))
+      .sort((a, b) => b.percentage - a.percentage) // Sort by percentage descending (highest first)
     
     // Transform status overview to update stats if needed
     const statusStats = dashboardApi.transformStatusOverview(analytics.statusOverview)
