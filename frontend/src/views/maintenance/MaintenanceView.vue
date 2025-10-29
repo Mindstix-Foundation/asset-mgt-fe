@@ -221,6 +221,7 @@
             <tr>
               <th>Asset ID</th>
               <th>Asset Details</th>
+              <th>Serial Number</th>
               <th>Est./Actual Cost</th>
               <th>Date</th>
               <th>Type</th>
@@ -244,6 +245,11 @@
                 <div class="asset-details-cell">
                   <div class="asset-model">{{ maintenance.assetModel || 'Unknown Model' }}</div>
                   <div class="asset-type-brand">{{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}</div>
+                </div>
+              </td>
+              <td>
+                <div class="serial-cell">
+                  <div class="serial-number">{{ maintenance.serialNumber || 'N/A' }}</div>
                 </div>
               </td>
               <td>
@@ -365,6 +371,10 @@
                     <div class="info-item-compact">
                       <div class="info-label-compact">Asset Name</div>
                       <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetName }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Serial Number</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.serialNumber || 'N/A' }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Maintenance Type</div>
@@ -728,6 +738,7 @@ interface MaintenanceRow {
   assetType: string
   assetBrand: string
   assetModel: string
+  serialNumber: string // Add serial number field
   maintenanceTypeId: string
   maintenanceTypeName: string
   type: string // For backward compatibility with template
@@ -846,6 +857,7 @@ const sortOptions = ref<Item[]>([
         assetType: maintenance.assetType || '',
         assetBrand: maintenance.assetBrand || '',
         assetModel: maintenance.assetModel || '',
+        serialNumber: maintenance.serialNumber || '', // Add serial number field
         maintenanceTypeId: maintenance.maintenanceTypeId,
         maintenanceTypeName: maintenance.maintenanceTypeName,
         type: maintenance.maintenanceTypeName, // For backward compatibility
@@ -1501,4 +1513,14 @@ const isHistoryExpanded = ref(true)
 
 <style scoped>
 @import '@/assets/styles/pages/maintenance.css';
+
+/* Fix for rupee symbol overlapping with placeholder text in complete maintenance modal */
+.complete-maintenance-form .search-input-container .search-icon {
+  display: none !important;
+}
+
+.complete-maintenance-form .search-input-container .search-input,
+.complete-maintenance-form .search-input-container .form-control {
+  padding-left: 0.75rem !important;
+}
 </style> 

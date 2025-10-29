@@ -45,7 +45,7 @@
           <div class="user-info d-flex align-items-center" @click="handleProfile" style="cursor: pointer;" title="View Profile">
             <i class="fas fa-user-circle me-2 user-icon"></i>
             <span class="username">
-              {{ authStore.getUsername() || 'Admin User' }}
+              Profile
             </span>
           </div>
           <button
@@ -282,7 +282,7 @@ onMounted(() => {
 
 /* TrackStix brand styling */
 .brand-x {
-  background: linear-gradient(to right, var(--secondary-purple) 50%, var(--primary-black) 50%);
+  background: linear-gradient(to right, #0096FF 50%, var(--primary-black) 50%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -244,49 +244,55 @@
   color: var(--text-primary) !important;
 }
 
-/* Column width distribution for 7 columns: Asset ID → Details → Cost → Date → Type → Status → Actions */
-/* 1: Asset ID - 10% */
+/* Column width distribution for 8 columns: Asset ID → Details → Serial Number → Cost → Date → Type → Status → Actions */
+/* 1: Asset ID - 9% */
 .table th:nth-child(1), .table td:nth-child(1) {
-  width: 10% !important;
-  min-width: 100px !important;
+  width: 9% !important;
+  min-width: 90px !important;
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
   overflow: hidden !important;
   padding-left: 1.5rem !important;
 }
 
-/* 2: Asset Details - 27% */
+/* 2: Asset Details - 24% */
 .table th:nth-child(2), .table td:nth-child(2) { 
-  width: 27% !important; 
-  min-width: 200px !important;
+  width: 24% !important; 
+  min-width: 180px !important;
 }
 
-/* 3: Est./Actual Cost - 13% */
+/* 3: Serial Number - 12% */
 .table th:nth-child(3), .table td:nth-child(3) { 
-  width: 13% !important; 
-  min-width: 130px !important;
+  width: 12% !important; 
+  min-width: 120px !important;
 }
 
-/* 4: Date - 13% */
+/* 4: Est./Actual Cost - 11% */
 .table th:nth-child(4), .table td:nth-child(4) { 
-  width: 13% !important; 
-  min-width: 130px !important;
+  width: 11% !important; 
+  min-width: 110px !important;
 }
 
-/* 5: Type - 13% */
+/* 5: Date - 11% */
 .table th:nth-child(5), .table td:nth-child(5) { 
-  width: 13% !important; 
-  min-width: 130px !important;
+  width: 11% !important; 
+  min-width: 110px !important;
 }
 
-/* 6: Status - 13% */
+/* 6: Type - 11% */
 .table th:nth-child(6), .table td:nth-child(6) { 
-  width: 13% !important; 
-  min-width: 130px !important;
+  width: 11% !important; 
+  min-width: 110px !important;
 }
 
-/* 7: Actions - 11% */
-.table th:nth-child(7), .table td:nth-child(7) {
+/* 7: Status - 11% */
+.table th:nth-child(7), .table td:nth-child(7) { 
+  width: 11% !important; 
+  min-width: 110px !important;
+}
+
+/* 8: Actions - 11% */
+.table th:nth-child(8), .table td:nth-child(8) {
   width: 11% !important;
   min-width: 120px !important;
   max-width: 150px !important;
@@ -310,6 +316,17 @@
   font-size: 0.875rem;
   color: var(--primary-mid-gray);
   line-height: 1.2;
+}
+
+.serial-cell {
+  line-height: 1.4;
+}
+
+.serial-number {
+  font-weight: 500;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
 }
 
 .cost-cell {

@@ -104,7 +104,7 @@
                   </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-warning" style="width: 3.4%"></div>
+                <div class="progress-bar bg-warning" :style="{ width: `${maintenancePercent.toFixed(1)}%` }"></div>
               </div>
             </div>
           </div>
@@ -293,6 +293,13 @@ const availablePercent = computed(() => {
   if (!total || total <= 0) return 0
   const available = Math.max(0, Math.min(total, dashboardStats.value.availableAssets))
   return (available / total) * 100
+})
+
+const maintenancePercent = computed(() => {
+  const total = dashboardStats.value.totalAssets
+  if (!total || total <= 0) return 0
+  const maintenance = Math.max(0, Math.min(total, dashboardStats.value.maintenanceAssets))
+  return (maintenance / total) * 100
 })
 
 function formatRelativeUpdated(nowMs: number) {
@@ -552,38 +559,38 @@ const getCategoryBarClass = (name: string): string => {
   overflow: hidden;
 }
 
-.progress-bar-laptops {
-  background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--accent-navy) 100%);
+.asset-progress .progress-bar-laptops {
+  background-color: var(--secondary-purple) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-monitors {
-  background: linear-gradient(90deg, var(--secondary-green) 0%, var(--primary-dark-gray) 100%);
+.asset-progress .progress-bar-monitors {
+  background-color: var(--secondary-green) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-mobile {
-  background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--secondary-pink) 100%);
+.asset-progress .progress-bar-mobile {
+  background-color: var(--secondary-pink) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-accessories {
-  background: linear-gradient(90deg, var(--secondary-orange) 0%, var(--secondary-red) 100%);
+.asset-progress .progress-bar-accessories {
+  background-color: var(--secondary-orange) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-desktops {
-  background: linear-gradient(90deg, var(--secondary-blue) 0%, var(--accent-navy) 100%);
+.asset-progress .progress-bar-desktops {
+  background-color: var(--secondary-blue) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-tablets {
-  background: linear-gradient(90deg, var(--secondary-brown) 0%, var(--primary-dark-gray) 100%);
+.asset-progress .progress-bar-tablets {
+  background-color: var(--secondary-brown) !important;
   border-radius: 1rem;
 }
 
-.progress-bar-others {
-  background: linear-gradient(90deg, var(--primary-mid-gray) 0%, var(--primary-dark-gray) 100%);
+.asset-progress .progress-bar-others {
+  background-color: var(--primary-mid-gray) !important;
   border-radius: 1rem;
 }
 
