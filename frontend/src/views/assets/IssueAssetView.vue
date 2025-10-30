@@ -36,7 +36,9 @@
                         @change="onAssetChange"
                       />
                     </div>
-                    <div class="form-text">Select from available assets only (required)</div>
+                    <div class="form-text">Select from available assets only (required)
+                      <router-link to="/app/assets/add" class="ms-2">Add new asset</router-link>
+                    </div>
                   </div>
 
                   <!-- Asset Brand-Model -->
@@ -90,7 +92,9 @@
                         @change="onEmployeeChange"
                       />
                     </div>
-                    <div class="form-text">Select active employee from the list (required)</div>
+                    <div class="form-text">Select active employee from the list (required)
+                      <router-link to="/app/employees/add" class="ms-2">Add new employee</router-link>
+                    </div>
                   </div>
                 </div>
               </fieldset>

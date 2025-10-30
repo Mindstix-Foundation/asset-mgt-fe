@@ -543,7 +543,7 @@
                             </div>
                             <div class="asset-basic-info">
                               <div class="asset-name-detailed">{{ asset.name }}</div>
-                              <div class="asset-meta-detailed">{{ asset.type }} • Assigned on {{ asset.assignedDate }}</div>
+                              <div class="asset-meta-detailed">{{ asset.serialNumber || 'Serial not available' }} • Assigned on {{ formatDate(asset.assignedDate) }}</div>
                             </div>
                           </div>
                           <!-- Desktop-only Collect button in header -->
@@ -1214,6 +1214,7 @@
               name: `${a.assetId} - ${a.assetName}`,
               type: 'Asset',
               assignedDate: a.assignedDate,
+              serialNumber: a.serialNumber || null,
               assignmentReason: a.assignmentReason || null,
               assignedBy: a.assignedBy || null,
               assignmentNotes: a.assignmentNotes || null,
