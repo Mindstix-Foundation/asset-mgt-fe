@@ -1,0 +1,23 @@
+4.employee,,,,
+Purpose:Stores employee information including personal details employment information and organizational relationships,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for the employee
+employee_id,NOT NULL UNIQUE,VARCHAR(20),,Employee ID (EMP-001 etc.)
+first_name,NOT NULL,VARCHAR(50),,Employee first name
+last_name,NOT NULL,VARCHAR(50),,Employee last name
+email,NOT NULL UNIQUE,VARCHAR(255),,Employee email address
+phone,NULL,VARCHAR(20),,Employee phone number
+date_of_birth,NULL,DATE,,Employee date of birth
+position,NULL,VARCHAR(100),,Job position/title
+department_id,FK NOT NULL,INT,1-M,Department ID (Foreign Key referencing department.id)
+location_id,FK NOT NULL,INT,1-M,Work location ID (Foreign Key referencing location.id)
+manager_id,FK NULL,INT,1-M,Manager employee ID (Foreign Key referencing employee.id)
+join_date,NULL,DATE,,Employee join date
+employment_status,NOT NULL DEFAULT 'ACTIVE',VARCHAR(20),,Status: ACTIVE INACTIVE ON_LEAVE TERMINATED
+salary,NULL,DECIMAL(10,2),,Employee salary (if applicable)
+address_id,FK NULL,INT,1-1,Home address ID (Foreign Key referencing address.id)
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated 

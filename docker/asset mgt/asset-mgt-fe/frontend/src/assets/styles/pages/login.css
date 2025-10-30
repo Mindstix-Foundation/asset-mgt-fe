@@ -1,0 +1,387 @@
+/**
+ * Authentication Pages Styles - TrackStix Theme
+ * Consolidated styles for all authentication-related pages:
+ * - LoginView.vue
+ * - ChangePasswordView.vue
+ * - ForgotPasswordView.vue
+ * - ResetPasswordView.vue
+ */
+
+/* =================================
+   LOGIN PAGE STYLES
+   For LoginView.vue
+================================= */
+
+/* Login Page Background - Clean White */
+.login-page {
+  background: var(--bg-secondary);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Login page container alignment */
+.login-page .container-fluid {
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+/* Ensure proper spacing for error states */
+.login-page .row {
+  margin: 0;
+  width: 100%;
+}
+
+/* Forgot Password Link */
+.forgot-password-link {
+  color: var(--secondary-purple); /* Primary purple color */
+  text-decoration: underline; /* Underline for better accessibility */
+  font-size: 1rem; /* Increased font size */
+  font-weight: 600; /* Bolder text */
+  transition: all 0.2s ease;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.forgot-password-link:hover {
+  background: rgba(51, 31, 234, 0.1);
+  text-decoration: underline;
+  /* Preserve original text color */
+}
+
+/* =================================
+   CHANGE PASSWORD STYLES
+   For ChangePasswordView.vue
+================================= */
+
+/* Change Password Form Container */
+.change-password-container {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem auto !important;
+  max-width: 500px !important;
+  box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08) !important;
+}
+
+/* Form Header */
+.change-password-header {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.change-password-title {
+  color: var(--primary-black) !important;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.change-password-subtitle {
+  color: var(--primary-mid-gray) !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+/* Form Fields */
+.password-field {
+  margin-bottom: 1.5rem !important;
+}
+
+.password-field .form-label {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.password-field .form-control {
+  border: 2px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.password-field .form-control:focus {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* (Removed unused Password Strength Indicator styles) */
+
+/* (Removed unused Password Requirements styles) */
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Button styling is now handled by buttons.css */
+
+/* =================================
+   FORGOT PASSWORD STYLES
+   For ForgotPasswordView.vue
+================================= */
+
+/* Forgot Password Container */
+.forgot-password-container {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem auto !important;
+  max-width: 450px !important;
+  box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08) !important;
+}
+
+/* Form Header */
+.forgot-password-header {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.forgot-password-title {
+  color: var(--primary-black) !important;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.forgot-password-subtitle {
+  color: var(--primary-mid-gray) !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Form Fields */
+.email-field {
+  margin-bottom: 1.5rem !important;
+}
+
+.email-field .form-label {
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.email-field .form-control {
+  border: 2px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.email-field .form-control:focus {
+  border-color: var(--secondary-purple) !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Button styling is now handled by buttons.css */
+
+/* =================================
+   RESET PASSWORD STYLES
+   For ResetPasswordView.vue
+================================= */
+
+/* Reset Password Container */
+.reset-password-container {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 1rem !important;
+  padding: 2rem !important;
+  margin: 2rem auto !important;
+  max-width: 500px !important;
+  box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08) !important;
+}
+
+/* Form Header */
+.reset-password-header {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.reset-password-title {
+  color: var(--primary-black) !important;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.reset-password-subtitle {
+  color: var(--primary-mid-gray) !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Button styling is now handled by buttons.css */
+
+/* =================================
+   SHARED AUTH MESSAGE STYLES
+   Used across all auth pages
+================================= */
+
+/* Success Message */
+.success-message {
+  background-color: var(--secondary-green) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+}
+
+.success-message i {
+  font-size: 2rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.success-message h6 {
+  color: white !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1.1rem !important;
+}
+
+.success-message p {
+  color: white !important;
+  margin: 0 !important;
+  opacity: 0.9 !important;
+  line-height: 1.5 !important;
+}
+
+/* Error Message */
+.error-message {
+  background-color: var(--secondary-red) !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+}
+
+.error-message i {
+  font-size: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.error-message h6 {
+  color: white !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.error-message p {
+  color: white !important;
+  margin: 0 !important;
+  opacity: 0.9 !important;
+}
+
+/* (Removed unused Info Message styles) */
+
+/* (Removed unused Invalid Token Message styles) */
+
+/* Loading State */
+.loading-state {
+  text-align: center !important;
+  padding: 2rem !important;
+}
+
+.loading-spinner {
+  color: var(--secondary-purple) !important;
+  font-size: 2rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.loading-text {
+  color: var(--primary-mid-gray) !important;
+  font-size: 1rem !important;
+  margin: 0 !important;
+}
+
+/* Back to Login Link */
+.back-to-login-link {
+  text-align: center !important;
+  margin-top: 1.5rem !important;
+  padding-top: 1.5rem !important;
+  border-top: 1px solid var(--element-gray) !important;
+}
+
+.back-to-login-link a {
+  color: var(--secondary-purple) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: color 0.2s ease !important;
+}
+
+.back-to-login-link a:hover {
+  color: var(--secondary-purple) !important;
+  text-decoration: underline !important;
+}
+
+/* =================================
+   RESPONSIVE STYLES
+   For all auth pages
+================================= */
+
+/* Responsive Design for Login */
+@media (max-width: 768px) {
+  /* (Removed unused .credentials-grid responsive rule) */
+  .forgot-password-link {
+    font-size: 0.9rem;
+  }
+  
+  .change-password-container,
+  .forgot-password-container,
+  .reset-password-container {
+    margin: 1rem !important;
+    padding: 1.5rem !important;
+  }
+  
+  .change-password-title,
+  .forgot-password-title,
+  .reset-password-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  /* Button responsive styling is now handled by buttons.css */
+}
+
+@media (max-width: 576px) {
+  /* (Removed unused .shape) */
+  
+  .change-password-container,
+  .forgot-password-container,
+  .reset-password-container {
+    margin: 0.5rem !important;
+    padding: 1rem !important;
+  }
+  
+  .change-password-title,
+  .forgot-password-title,
+  .reset-password-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .change-password-subtitle,
+  .forgot-password-subtitle,
+  .reset-password-subtitle {
+    font-size: 0.875rem !important;
+  }
+  
+  .success-message,
+  .error-message,
+  .info-message,
+  .invalid-token-message {
+    padding: 1rem !important;
+  }
+}

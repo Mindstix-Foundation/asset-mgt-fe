@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    
+    <!-- Include navbar CSS -->
+    <link rel="stylesheet" href="../asset/navbar.css">
+</head>
+<body style="background-color: var(--primary-white);">
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Stats Cards - Modern Design -->
+        <div class="row mb-4">
+            <!-- Total Assets -->
+            <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-primary rounded-circle p-3">
+                                <i class="fas fa-laptop fa-lg"></i>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Total Assets</div>
+                                <div class="h3 mb-0 fw-bold text-dark">1,247</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-primary" style="width: 100%"></div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>8.5% increase in last month
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Assets -->
+            <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-success rounded-circle p-3">
+                                <i class="fas fa-user-check fa-lg"></i>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Assigned Assets</div>
+                                <div class="h3 mb-0 fw-bold text-dark">892</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-success" style="width: 71.5%"></div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>12.3% increase in last month
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Assets -->
+            <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-info rounded-circle p-3">
+                                <i class="fas fa-warehouse fa-lg"></i>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">Available Assets</div>
+                                <div class="h3 mb-0 fw-bold text-dark">312</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-info" style="width: 25%"></div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>5.7% increase in last month
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Under Maintenance -->
+            <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                <div class="card border-0 shadow-sm h-100 stats-card-modern">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="stats-icon bg-warning rounded-circle p-3">
+                                <i class="fas fa-tools fa-lg"></i>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-dark small mb-1 fw-semibold">In Maintenance</div>
+                                <div class="h3 mb-0 fw-bold text-dark">43</div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 4px;">
+                            <div class="progress-bar bg-warning" style="width: 3.4%"></div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-success">
+                                <i class="fas fa-arrow-up me-1"></i>2.1% increase in last month
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Updated Status Line -->
+        <div class="row mb-2">
+            <div class="col-12">
+                <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
+                    <div class="status-indicator me-2"></div>
+                    <small class="text-muted">Updated 1 Minute Ago</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-4" style="margin-top: -5px;">
+            <h5 class="mb-3" style="color: #0A0A0A;">
+                <i class="fas fa-bolt me-2"></i>Quick Actions
+            </h5>
+            <div class="row">
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="quick-action-card primary" onclick="window.location.href='../form_pages/register-asset.html'">
+                        <div class="action-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="action-title">Add New Asset</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="quick-action-card success" onclick="window.location.href='../form_pages/issue-asset.html'">
+                        <div class="action-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="action-title">Issue Asset</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="quick-action-card warning" onclick="window.location.href='../form_pages/collect-asset.html'">
+                        <div class="action-icon">
+                            <i class="fas fa-user-minus"></i>
+                        </div>
+                        <div class="action-title">Collect Asset</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="quick-action-card danger" onclick="window.location.href='../form_pages/schedule-maintenance.html'">
+                        <div class="action-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="action-title">Schedule Maintenance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities & Asset Overview -->
+        <div class="row">
+            <div class="col-12 col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Activities
+                        </h5>
+                        <a href="#" class="btn btn-sm btn-outline-primary dashboard-btn">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">Asset AST-001 assigned</div>
+                                    <small class="text-muted">MacBook Pro assigned to John Doe</small>
+                                </div>
+                                <small class="text-muted">2h ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">Maintenance completed</div>
+                                    <small class="text-muted">Dell Monitor AST-045 maintenance completed</small>
+                                </div>
+                                <small class="text-muted">4h ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">New asset added</div>
+                                    <small class="text-muted">iPhone 14 Pro added to inventory</small>
+                                </div>
+                                <small class="text-muted">1d ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-start border-0 px-0">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">Asset returned</div>
+                                    <small class="text-muted">Surface Tablet returned by Jane Smith</small>
+                                </div>
+                                <small class="text-muted">2d ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie me-2"></i>Asset Distribution
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Laptops -->
+                        <div class="asset-distribution-item mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="asset-type-icon laptops me-3">
+                                        <i class="fas fa-laptop"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Laptops</div>
+                                        <small class="text-muted">561/1000 allocated</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold" style="color: #0A0A0A;">56%</div>
+                                </div>
+                            </div>
+                            <div class="progress asset-progress">
+                                <div class="progress-bar progress-bar-laptops" style="width: 56%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Monitors -->
+                        <div class="asset-distribution-item mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="asset-type-icon monitors me-3">
+                                        <i class="fas fa-desktop"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Monitors</div>
+                                        <small class="text-muted">312/800 allocated</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold" style="color: #0A0A0A;">39%</div>
+                                </div>
+                            </div>
+                            <div class="progress asset-progress">
+                                <div class="progress-bar progress-bar-monitors" style="width: 39%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Devices -->
+                        <div class="asset-distribution-item mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="asset-type-icon mobile me-3">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Mobile Devices</div>
+                                        <small class="text-muted">249/350 allocated</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold" style="color: #0A0A0A;">71%</div>
+                                </div>
+                            </div>
+                            <div class="progress asset-progress">
+                                <div class="progress-bar progress-bar-mobile" style="width: 71%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Accessories -->
+                        <div class="asset-distribution-item">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="asset-type-icon accessories me-3">
+                                        <i class="fas fa-headphones"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Accessories</div>
+                                        <small class="text-muted">125/200 allocated</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold" style="color: #0A0A0A;">63%</div>
+                                </div>
+                            </div>
+                            <div class="progress asset-progress">
+                                <div class="progress-bar progress-bar-accessories" style="width: 63%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Include navbar JavaScript -->
+    <script src="../asset/navbar.js"></script>
+    <script src="../script.js"></script>
+    
+    <!-- Modern Dashboard Styles -->
+    <style>
+        /* Modern Card Styling - Updated Color Palette */
+        .card {
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .card:hover:not(.stats-card-modern):not(.asset-distribution-item) {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+        }
+        
+        /* Remove all hover effects from information cards */
+        .asset-distribution-item:hover {
+            background: none !important;
+            transform: none !important;
+        }
+        
+        .asset-distribution-item .asset-type-icon:hover {
+            background: none !important;
+            transform: none !important;
+        }
+
+        .card-header {
+            background-color: #F3F3F3FF !important;
+            border-bottom: 1px solid #E0E0E0 !important;
+            padding: 1rem 1.25rem !important;
+            min-height: 70px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        
+        .card-header .card-title,
+        .card-header h5,
+        .card-header h6 {
+            color: #0A0A0A !important;
+            margin: 0 !important;
+            flex-grow: 1;
+        }
+        
+        .card-header .card-title i,
+        .card-header h5 i,
+        .card-header h6 i {
+            color: #666666FF !important;
+        }
+
+        /* Stats Cards - Updated Color Palette */
+        .stats-card-modern {
+            border-radius: 0.75rem !important;
+            border: 1px solid #E0E0E0 !important;
+            background-color: #FFFFFF !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            cursor: default !important;
+            transition: none !important;
+        }
+
+        .stats-card-modern:hover {
+            transform: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            cursor: default !important;
+            background: none !important;
+            background-color: var(--primary-white) !important;
+        }
+        
+        /* Completely disable all hover effects on stats cards */
+        .stats-card-modern,
+        .stats-card-modern *,
+        .stats-card-modern:hover,
+        .stats-card-modern:hover *,
+        .stats-card-modern:focus,
+        .stats-card-modern:active {
+            transition: none !important;
+            transform: none !important;
+            cursor: default !important;
+            
+        }
+        
+        /* Override Bootstrap card hover effects specifically for stats cards */
+        .card.stats-card-modern:hover {
+            
+            transform: none !important;
+            transition: none !important;
+            cursor: default !important;
+            background: var(--primary-white) !important;
+            border: 1px solid #E0E0E0 !important;
+        }
+        
+      
+        
+        /* Nuclear option - disable all possible hover effects on stats cards */
+        .stats-card-modern:hover,
+        .card.border-0.shadow-sm.h-100.stats-card-modern:hover,
+        .stats-card-modern.card:hover {
+           
+            transform: scale(1) !important;
+            transition: none !important;
+            animation: none !important;
+            cursor: default !important;
+            background-color: #ffffff !important;
+            border: 1px solid #E0E0E0 !important;
+            filter: none !important;
+            opacity: 1 !important;
+        }
+
+        /* Stats Icons - Solid Colors from Palette */
+        .stats-icon.bg-primary {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-primary {
+            background-color: var(--secondary-purple) !important;
+        }
+        
+        .stats-icon.bg-success {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-success {
+            background-color: var(--secondary-green) !important;
+        }
+        
+        .stats-icon.bg-warning {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-warning {
+            background-color: var(--secondary-orange) !important;
+        }
+        
+        .stats-icon.bg-info {
+            background-color: var(--secondary-pink) !important;
+            color: white !important;
+        }
+        
+        .progress-bar.bg-info {
+            background-color: var(--secondary-pink) !important;
+        }
+
+        /* Quick Action Cards - Updated Colors with Consistent Hover Effects */
+        .quick-action-card.primary .action-icon {
+            background-color: var(--secondary-purple) !important;
+            color: white !important;
+        }
+        
+        .quick-action-card.primary:hover .action-icon {
+            background-color: #2415c7 !important;
+        }
+        
+        .quick-action-card.success .action-icon {
+            background-color: var(--secondary-green) !important;
+            color: white !important;
+        }
+        
+        .quick-action-card.success:hover .action-icon {
+            background-color: #1e9c5a !important;
+        }
+        
+        .quick-action-card.warning .action-icon {
+            background-color: var(--secondary-pink) !important;
+            color: white !important;
+        }
+        
+        .quick-action-card.warning:hover .action-icon {
+            background-color: #e64d8f !important;
+        }
+        
+        .quick-action-card.danger .action-icon {
+            background-color: var(--secondary-orange) !important;
+            color: white !important;
+        }
+        
+        .quick-action-card.danger:hover .action-icon {
+            background-color: #e67d4d !important;
+        }
+
+        /* Asset Distribution Progress Bars - Solid Colors */
+        .progress-bar-laptops {
+            background-color: var(--secondary-purple) !important;
+            background-image: none !important;
+        }
+        
+        .progress-bar-monitors {
+            background-color: var(--secondary-green) !important;
+            background-image: none !important;
+        }
+        
+        .progress-bar-mobile {
+            background-color: var(--secondary-pink) !important;
+            background-image: none !important;
+        }
+        
+        .progress-bar-accessories {
+            background-color: var(--secondary-orange) !important;
+            background-image: none !important;
+        }
+
+        /* Asset Type Icons - Solid Colors */
+        .asset-type-icon.laptops {
+            background-color: var(--secondary-purple) !important;
+            background-image: none !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+        }
+
+        .asset-type-icon.monitors {
+            background-color: var(--secondary-green) !important;
+            background-image: none !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+        }
+
+        .asset-type-icon.mobile {
+            background-color: var(--secondary-pink) !important;
+            background-image: none !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+        }
+
+        .asset-type-icon.accessories {
+            background-color: var(--secondary-orange) !important;
+            background-image: none !important;
+            color: white !important;
+            border-radius: 0.5rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: none !important;
+        }
+        
+        .asset-type-icon.accessories i {
+            color: white !important;
+        }
+
+        /* Remove hover effects from asset distribution icons */
+        .asset-type-icon {
+            transition: none !important;
+        }
+        
+        .asset-type-icon:hover {
+            transform: none !important;
+        }
+        
+        .asset-type-icon i {
+            transition: none !important;
+        }
+        
+        .asset-type-icon:hover i {
+            transform: none !important;
+        }
+
+        /* Dashboard Button - Updated Design */
+        .dashboard-btn.btn-outline-primary {
+            background-color: var(--primary-light-gray) !important;
+            border-color: var(--element-gray) !important;
+            color: var(--primary-dark-gray) !important;
+            border-radius: 0.5rem !important;
+            padding: 0.375rem 0.75rem !important;
+            font-weight: 500 !important;
+            font-size: 0.875rem !important;
+            transition: all 0.2s ease !important;
+            border: 1.5px solid !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+        }
+        
+        .dashboard-btn.btn-outline-primary:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
+            background-color: var(--primary-white) !important;
+            border-color: var(--primary-mid-light) !important;
+            color: var(--primary-black) !important;
+        }
+
+        /* Status Indicator - Updated Green */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-green);
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(33, 175, 101, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(33, 175, 101, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(33, 175, 101, 0);
+            }
+        }
+
+        /* Progress Bars General Styling */
+        .progress {
+            background-color: var(--primary-light-gray) !important;
+            border-radius: 0.25rem !important;
+        }
+
+        .asset-progress {
+            height: 8px !important;
+            background-color: var(--primary-light-gray) !important;
+            border-radius: 0.5rem !important;
+        }
+
+        /* Text Colors */
+        .text-dark {
+            color: var(--primary-black) !important;
+        }
+
+        .text-muted {
+            color: var(--primary-dark-gray) !important;
+        }
+
+        /* List Group Items */
+        .list-group-item {
+            border-color: var(--element-gray) !important;
+        }
+
+        .list-group-item:hover {
+            background-color: var(--primary-light-gray) !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* Asset Distribution Percentages */
+        .text-primary {
+            color: var(--secondary-purple) !important;
+        }
+
+        .text-success {
+            color: var(--secondary-green) !important;
+        }
+
+        .text-info {
+            color: var(--secondary-pink) !important;
+        }
+
+        .text-warning {
+            color: var(--secondary-orange) !important;
+        }
+
+        .text-danger {
+            color: var(--secondary-red) !important;
+        }
+    </style>
+</body>
+</html> 

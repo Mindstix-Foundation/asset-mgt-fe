@@ -1,0 +1,13 @@
+10.location,,,,
+Purpose:Stores office and warehouse locations where assets and employees are located,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for the office location
+name,NOT NULL,VARCHAR(100),,Location name (New York Office Remote etc.)
+address_id,FK NULL,INT,1-1,Address ID (Foreign Key referencing address.id)
+location_type,NOT NULL,VARCHAR(20),,Type: OFFICE WAREHOUSE REMOTE etc.
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,Location status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated

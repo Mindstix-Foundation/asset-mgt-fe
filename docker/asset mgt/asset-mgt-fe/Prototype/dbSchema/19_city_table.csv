@@ -1,0 +1,13 @@
+19.city,,,,
+Purpose:City information for address hierarchy and location-based reporting,,,,
+,,,,
+column name,constraint,data_type,relation_type,Description
+id,PK,SERIAL,,Unique identifier for the city
+state_id,FK NOT NULL,INT,1-M,State ID (Foreign Key referencing state.id)
+name,NOT NULL,VARCHAR(100),,City name
+postal_code,NULL,VARCHAR(20),,Primary postal code for the city
+is_active,NOT NULL DEFAULT TRUE,BOOLEAN,,City status
+created_by,FK NOT NULL,INT,1-M,User ID who created this record (Foreign Key referencing user.id)
+created_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was created
+updated_by,FK NOT NULL,INT,1-M,User ID who last updated this record (Foreign Key referencing user.id)
+updated_at,DEFAULT NOW(),TIMESTAMPTZ,,Timestamp when record was last updated

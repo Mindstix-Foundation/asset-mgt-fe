@@ -1,0 +1,1608 @@
+/* Custom styles for Asset Management Tool - TrackStix Theme */
+
+/* General Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #F5F5F5;
+    color: #222222;
+}
+
+/* TrackStix Theme Colors - Consistent Color Palette */
+:root {
+    /* Primary Palette */
+    --primary-white: #FFFFFF;
+    --primary-light-gray: #F3F3F3;
+    --primary-mid-light: #B7B7B7;
+    --primary-mid-gray: #999999;
+    --primary-dark-gray: #666666;
+    --primary-black: #0A0A0A;
+    
+    /* Secondary Palette */
+    --secondary-purple: #331FEA;
+    --secondary-pink: #FF579F;
+    --secondary-yellow: #FF8C61;
+    --secondary-green: #21AF65;
+    --secondary-orange: #FF8C61;
+    --secondary-red: #E97676;
+    
+    /* Role-based Colors */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --text-primary: #0A0A0A;
+    --text-secondary: #222222;
+    --accent-navy: #1A2A43;
+    --element-gray: #E0E0E0;
+    --element-light-gray: #CCCCCC;
+    
+    /* Legacy mappings for backward compatibility */
+    --mindstix-primary: var(--primary-dark-gray);
+    --mindstix-secondary: var(--primary-mid-light);
+    --mindstix-light: var(--primary-light-gray);
+    --mindstix-dark: var(--text-secondary);
+    --mindstix-accent: var(--accent-navy);
+    --mindstix-border: var(--element-gray);
+    --mindstix-hover: var(--element-light-gray);
+    --mindstix-blue: var(--accent-navy);
+    --mindstix-success: var(--secondary-green);
+    --mindstix-warning: var(--secondary-yellow);
+    --mindstix-danger: var(--secondary-red);
+}
+
+/* Main Content Container - Responsive margins */
+.container-fluid.py-4 {
+    max-width: calc(100% - 4rem);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Navigation Bar - TrackStix Theme */
+.navbar-dark.bg-primary {
+    background-color: var(--bg-primary) !important;
+    border-bottom: 1px solid var(--element-gray);
+    box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
+}
+
+.navbar-brand {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+    color: var(--primary-dark-gray) !important;
+    transition: all 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--text-primary) !important;
+    background-color: var(--primary-light-gray);
+    border-radius: 0.75rem;
+}
+
+.navbar-nav .nav-link.active {
+    color: inherit !important;
+    background-color: transparent;
+    border-radius: 0.75rem;
+    font-weight: 700;
+}
+
+/* Navbar text elements - for user info */
+.navbar .text-white {
+    color: var(--primary-dark-gray) !important;
+}
+
+/* Navbar toggler for mobile - dark icon */
+.navbar-toggler {
+    border-color: var(--element-gray);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2810, 10, 10, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Card Styles - TrackStix Theme with rounded corners */
+.card {
+    border: 1px solid var(--element-gray);
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+    background-color: var(--bg-primary);
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(10, 10, 10, 0.1);
+}
+
+/* Quick Action Cards - Modern Design */
+.quick-action-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--element-gray);
+    border-radius: 1.25rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: filter 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.quick-action-card:hover {
+    filter: brightness(0.95);
+    border-color: var(--mindstix-blue);
+}
+
+.quick-action-card .action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    transition: none;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+.quick-action-card .action-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mindstix-dark);
+    margin: 0;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.quick-action-card:hover .action-title {
+    color: var(--mindstix-dark);
+}
+
+/* Quick Action Card Variants - Updated with Consistent Color System */
+
+/* Add New Asset - Purple (Primary Action) */
+.quick-action-card.primary .action-icon {
+    background: var(--secondary-purple);
+    color: white;
+}
+
+.quick-action-card.primary:hover {
+    border-color: var(--secondary-purple);
+}
+
+.quick-action-card.primary:hover .action-icon {
+    background: var(--accent-navy);
+}
+
+/* Issue Asset - Green (Assign Action) */
+.quick-action-card.success .action-icon {
+    background: var(--secondary-green);
+    color: white;
+}
+
+.quick-action-card.success:hover {
+border-color: var(--secondary-green);
+}
+
+.quick-action-card.success:hover .action-icon {
+    background: var(--primary-dark-gray);
+}
+
+/* Schedule Maintenance - Pink (Maintenance Action) */
+.quick-action-card.warning .action-icon {
+    background: var(--secondary-pink);
+    color: white;
+}
+
+.quick-action-card.warning:hover {
+    border-color: var(--secondary-pink);
+}
+
+.quick-action-card.warning:hover .action-icon {
+    background: var(--secondary-red);
+}
+
+/* Collect Asset - Orange (Collect/Return Action) */
+.quick-action-card.collect .action-icon,
+.quick-action-card.danger .action-icon {
+    background: var(--secondary-orange);
+    color: white;
+}
+
+.quick-action-card.collect:hover,
+.quick-action-card.danger:hover {
+    border-color: var(--secondary-orange);
+}
+
+.quick-action-card.collect:hover .action-icon,
+.quick-action-card.danger:hover .action-icon {
+    background: var(--secondary-red);
+}
+
+.quick-action-card.info .action-icon {
+    background: var(--accent-navy);
+    color: white;
+}
+
+/* Quick Action Card Active State */
+.quick-action-card:active {
+    filter: brightness(0.9);
+}
+
+/* Asset Distribution Styles */
+.asset-distribution-item {
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+}
+
+.asset-distribution-item:hover {
+    background-color: var(--mindstix-light);
+}
+
+.asset-type-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.asset-type-icon.laptops {
+    background: var(--secondary-purple);
+}
+
+.asset-type-icon.monitors {
+    background: var(--secondary-green);
+}
+
+.asset-type-icon.mobile {
+    background: var(--secondary-pink);
+}
+
+.asset-type-icon.accessories {
+    background: var(--secondary-orange);
+}
+
+.asset-distribution-item:hover .asset-type-icon {
+    opacity: 0.9;
+}
+
+.asset-progress {
+    height: 8px;
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.progress-bar-laptops {
+    background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--accent-navy) 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-monitors {
+    background: linear-gradient(90deg, var(--secondary-green) 0%, var(--primary-dark-gray) 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-mobile {
+    background: linear-gradient(90deg, var(--secondary-purple) 0%, var(--secondary-pink) 100%);
+    border-radius: 1rem;
+}
+
+.progress-bar-accessories {
+    background: linear-gradient(90deg, var(--secondary-orange) 0%, var(--secondary-red) 100%);
+    border-radius: 1rem;
+}
+
+/* Stats Cards - Muted Professional Colors */
+.card.bg-primary {
+    background-color: var(--mindstix-primary) !important;
+    border-color: var(--mindstix-primary) !important;
+}
+
+.card.bg-success {
+    background-color: var(--secondary-green) !important;
+    border-color: var(--secondary-green) !important;
+}
+
+.card.bg-warning {
+    background-color: var(--secondary-orange) !important;
+    border-color: var(--secondary-orange) !important;
+    color: var(--primary-white) !important;
+}
+
+.card.bg-danger {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+}
+
+.card.bg-info {
+    background-color: var(--mindstix-blue) !important;
+    border-color: var(--mindstix-blue) !important;
+}
+
+.card.bg-secondary {
+    background-color: var(--mindstix-secondary) !important;
+    border-color: var(--mindstix-secondary) !important;
+}
+
+/* Button Styles - TrackStix Theme with rounded corners */
+.btn {
+    border-radius: 0.75rem;
+}
+
+.btn-primary {
+    background-color: var(--accent-navy);
+    border-color: var(--accent-navy);
+    color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-purple);
+    border-color: var(--secondary-purple);
+}
+
+.btn-outline-primary {
+    color: var(--accent-navy);
+    border-color: var(--accent-navy);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--accent-navy);
+    border-color: var(--accent-navy);
+    color: var(--bg-primary);
+}
+
+.btn-outline-light {
+    color: var(--primary-dark-gray);
+    border-color: var(--element-gray);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--primary-dark-gray);
+    border-color: var(--primary-dark-gray);
+    color: var(--bg-primary);
+}
+
+.btn-outline-secondary {
+    color: var(--primary-dark-gray);
+    border-color: var(--element-gray);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--element-light-gray);
+    border-color: var(--element-gray);
+    color: var(--text-primary);
+}
+
+/* Input Group Styling - Professional Theme with rounded corners */
+.input-group-text {
+    background-color: var(--mindstix-light);
+    border-color: var(--mindstix-border);
+    color: var(--mindstix-primary);
+    border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.input-group .form-control:not(:last-child) {
+    border-radius: 0 0.75rem 0.75rem 0;
+}
+
+/* Table Styles - Clean Professional Look */
+.table {
+    color: var(--text-secondary);
+}
+
+.table thead th {
+    background-color: var(--primary-light-gray);
+    border-bottom: 2px solid var(--element-gray);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(102, 102, 102, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--element-light-gray);
+}
+
+/* Badge Styles - TrackStix Colors with rounded corners */
+.badge {
+    border-radius: 0.75rem;
+}
+
+.badge.bg-available {
+    background-color: var(--secondary-green) !important;
+    color: var(--bg-primary) !important;
+}
+
+.badge.bg-assigned {
+    background-color: var(--accent-navy) !important;
+    color: var(--bg-primary) !important;
+}
+
+.badge.bg-maintenance {
+    background-color: var(--secondary-yellow) !important;
+    color: white !important;
+}
+
+.badge.bg-retired {
+    background-color: var(--primary-mid-light) !important;
+    color: var(--text-primary) !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--accent-navy) !important;
+    color: var(--bg-primary) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--secondary-green) !important;
+    color: var(--bg-primary) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--secondary-yellow) !important;
+    color: white !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--secondary-red) !important;
+    color: var(--bg-primary) !important;
+}
+
+/* Form Controls - TrackStix Styling with rounded corners */
+.form-control, .form-select {
+    border: 1px solid var(--element-gray);
+    border-radius: 0.75rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-primary);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--mindstix-blue);
+    box-shadow: 0 0 0 0.25rem rgba(108, 142, 179, 0.25);
+}
+
+/* Card Hover Effects */
+.asset-card, .employee-card, .report-card {
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.asset-card:hover, .employee-card:hover, .report-card:hover {
+    filter: brightness(0.95);
+}
+
+/* Progress Circles */
+.progress-circle {
+    position: relative;
+    display: inline-block;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--mindstix-dark);
+}
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--mindstix-border);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--mindstix-primary);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--mindstix-border);
+}
+
+.timeline-content {
+    padding-left: 15px;
+}
+
+/* QR Code Placeholder */
+.qr-code-placeholder {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--mindstix-secondary);
+}
+
+/* Employee Avatar */
+.employee-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mindstix-light);
+    color: var(--mindstix-primary);
+}
+
+/* Stats Cards Animation */
+.card.bg-primary, .card.bg-success, .card.bg-warning, .card.bg-danger, .card.bg-info, .card.bg-secondary {
+    transition: all 0.3s ease;
+}
+
+.card.bg-primary:hover, .card.bg-success:hover, .card.bg-warning:hover, 
+.card.bg-danger:hover, .card.bg-info:hover, .card.bg-secondary:hover {
+    transform: scale(1.02);
+}
+
+/* Modern Stats Cards with more rounded corners */
+.stats-card-modern {
+    transition: filter 0.2s ease;
+    border-radius: 1.5rem !important;
+}
+
+.stats-card-modern:hover {
+    filter: brightness(0.95);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats-card-modern .progress {
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.stats-card-modern .progress-bar {
+    border-radius: 1rem;
+}
+
+/* Modal Enhancements with rounded corners */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 2rem);
+    margin: 1rem auto;
+}
+
+.modal-content {
+    border: 1px solid var(--mindstix-border);
+    border-radius: 1rem;
+}
+
+.modal-header {
+    background-color: var(--mindstix-light);
+    border-bottom: 1px solid var(--mindstix-border);
+    border-radius: 1rem 1rem 0 0;
+}
+
+.modal-xl {
+    max-width: 95%;
+}
+
+.modal-lg {
+    max-width: 900px;
+}
+
+/* Table Responsive Enhancements with rounded corners */
+.table-responsive {
+    border-radius: 1rem;
+    border: 1px solid var(--mindstix-border);
+}
+
+/* Progress Stacked Fix for Bootstrap 5 with rounded corners */
+.progress-stacked {
+    display: flex;
+    height: 20px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: var(--mindstix-light);
+}
+
+.progress-stacked .progress {
+    height: 100%;
+    background-color: transparent;
+}
+
+.progress-bar {
+    background-color: var(--mindstix-primary);
+}
+
+.progress {
+    border-radius: 1rem;
+}
+
+/* Custom Button Styles with rounded corners */
+.btn-group-sm > .btn, .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Dropdown Menu Enhancements with rounded corners */
+.dropdown-menu {
+    border: 1px solid var(--mindstix-border);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    margin: 0.125rem;
+    color: var(--mindstix-dark);
+}
+
+.dropdown-item:hover {
+    background-color: var(--mindstix-hover);
+    color: var(--mindstix-dark);
+}
+
+/* Chart Container */
+canvas {
+    max-height: 300px;
+}
+
+/* Alert Styles - TrackStix Theme with rounded corners */
+.alert {
+    border-radius: 1rem;
+}
+
+.alert-primary {
+    color: var(--accent-navy);
+    background-color: rgba(26, 42, 67, 0.1);
+    border-color: rgba(26, 42, 67, 0.2);
+}
+
+.alert-success {
+    color: var(--secondary-green);
+    background-color: rgba(33, 175, 101, 0.1);
+    border-color: rgba(33, 175, 101, 0.2);
+}
+
+.alert-warning {
+    color: var(--secondary-orange);
+    background-color: rgba(255, 140, 97, 0.1);
+    border-color: rgba(255, 140, 97, 0.2);
+}
+
+.alert-danger {
+    color: var(--secondary-red);
+    background-color: rgba(233, 118, 118, 0.1);
+    border-color: rgba(233, 118, 118, 0.2);
+}
+
+/* TrackStix Spacing and Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.text-muted {
+    color: var(--mindstix-secondary) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .container-fluid.py-4 {
+        max-width: calc(100% - 2rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .container-fluid.py-4 {
+        max-width: calc(100% - 1rem);
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .btn-group-sm > .btn, .btn-sm {
+        padding: 0.125rem 0.25rem;
+        font-size: 0.75rem;
+    }
+    
+    .timeline {
+        padding-left: 20px;
+    }
+    
+    .timeline-marker {
+        left: -17px;
+        width: 10px;
+        height: 10px;
+    }
+    
+    /* Quick Action Cards - Mobile Adjustments */
+    .quick-action-card {
+        padding: 1.5rem 1rem;
+        min-height: 120px;
+    }
+    
+    .quick-action-card .action-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .quick-action-card .action-title {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid.py-4 {
+        max-width: 100%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 > * {
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.gap-2 > *:last-child {
+        margin-bottom: 0;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .modal-xl, .modal-lg {
+        max-width: 95%;
+    }
+    
+    /* Ensure filter row wraps properly on mobile */
+    .row .col-12.col-md-3,
+    .row .col-12.col-md-2 {
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Quick Action Cards - Small Mobile */
+    .quick-action-card {
+        padding: 1.25rem 0.75rem;
+        min-height: 100px;
+    }
+    
+    .quick-action-card .action-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .quick-action-card .action-title {
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar, .btn, .dropdown, .modal {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid var(--mindstix-border) !important;
+        break-inside: avoid;
+    }
+    
+    .table {
+        font-size: 12px;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== LOGIN PAGE STYLES ===== */
+
+/* Login Page Background - Clean White */
+.login-page {
+    background: var(--bg-secondary);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Login page container alignment */
+.login-page .container-fluid {
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* Ensure proper spacing for error states */
+.login-page .row {
+    margin: 0;
+    width: 100%;
+}
+
+/* Login Card */
+.login-card {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background: var(--bg-primary);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08);
+    border: 1px solid var(--element-gray);
+    position: relative;
+    z-index: 10;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card-body {
+    padding: 3rem;
+}
+
+/* Login Logo */
+.login-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-light-gray);
+    border: 2px solid var(--element-gray);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.login-logo i {
+    font-size: 2rem;
+    color: var(--accent-navy);
+}
+
+/* Brand Name */
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+}
+
+/* Login Title and Subtitle */
+.login-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    color: var(--primary-dark-gray);
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+/* Login Form */
+.login-form {
+    margin-top: 2rem;
+}
+
+/* Form Labels */
+label {
+    color: var(--primary-dark-gray); /* Darker gray for better contrast */
+    font-weight: 600; /* Bolder text */
+    font-size: 1.05rem; /* Slightly larger font */
+}
+
+/* Login Field Labels - For better accessibility */
+.login-field-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-field-label label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+}
+
+.login-field-label i {
+    color: var(--accent-navy);
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+
+
+/* Login Inputs */
+.login-input {
+    border: 2px solid var(--element-gray); /* Thicker border */
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    height: auto;
+    font-size: 1.05rem; /* Larger font size for better readability */
+    transition: all 0.2s ease;
+    background: var(--bg-primary);
+    color: var(--text-secondary); /* Darker text for better contrast */
+    box-shadow: none;
+}
+
+/* Password field styling */
+.password-field {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--primary-mid-gray); /* TrackStix secondary color */
+    cursor: pointer !important;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    z-index: 1000; /* Higher z-index to ensure it's above validation icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; /* Slightly larger touch target */
+    height: 36px; /* Slightly larger touch target */
+    pointer-events: auto;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.password-toggle:hover {
+    color: var(--primary-dark-gray); /* Darker gray on hover */
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--secondary-red); /* TrackStix danger color */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Center error message for login errors */
+#loginError {
+    text-align: center;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Remove Bootstrap's default validation styles and ensure consistent styling */
+.form-control {
+    background-image: none !important;
+    padding-right: 0.75rem !important;
+    border-color: var(--element-gray) !important;
+    background-color: var(--primary-white) !important;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
+    background-color: var(--primary-white) !important;
+    background-image: none !important;
+}
+
+/* Ensure no validation styling appears */
+.form-control:valid,
+.form-control:invalid {
+    border-color: var(--element-gray) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.form-control:valid:focus,
+.form-control:invalid:focus {
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
+}
+
+
+
+/* Ensure password field has proper padding */
+#password {
+    padding-right: 40px !important;
+}
+
+/* Ensure password field has proper padding and never gets validation styling */
+#password {
+    padding-right: 40px !important;
+    border-color: var(--element-gray) !important;
+    background-image: none !important;
+}
+
+#password:focus {
+    border-color: var(--secondary-purple) !important;
+    box-shadow: 0 0 0 3px rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Ensure password field can change type properly */
+#password[type="text"] {
+    -webkit-text-security: none !important;
+    text-security: none !important;
+}
+
+#password[type="password"] {
+    -webkit-text-security: disc !important;
+    text-security: disc !important;
+}
+
+/* Placeholder styles for better contrast */
+.login-input::placeholder {
+    color: var(--primary-mid-gray);
+    opacity: 0.8;
+}
+
+.login-input:focus {
+    border-color: var(--accent-navy); /* Darker blue for better contrast */
+    box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25); /* More visible focus ring */
+    outline: none;
+}
+
+.login-input:hover {
+    border-color: var(--primary-dark-gray); /* Darker border on hover for better visibility */
+}
+
+.login-input.is-invalid {
+    border-color: var(--secondary-red);
+    box-shadow: 0 0 0 3px rgba(233, 118, 118, 0.1);
+}
+
+/* Password Toggle Button */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--primary-dark-gray); /* Darker color for better contrast */
+    cursor: pointer !important;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    z-index: 1000; /* Higher z-index to ensure it's above validation icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; /* Slightly larger touch target */
+    height: 36px; /* Slightly larger touch target */
+    pointer-events: auto;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.password-toggle:hover {
+    color: var(--secondary-purple); /* Purple for better contrast */
+    background: rgba(51, 31, 234, 0.15); /* Slightly more visible hover state */
+}
+
+.password-toggle:focus {
+    outline: 2px solid var(--secondary-purple); /* Visible focus outline */
+    outline-offset: 2px;
+    color: var(--secondary-purple);
+    background: rgba(51, 31, 234, 0.15);
+}
+
+.password-toggle i {
+    font-size: 16px; /* Larger icon for better visibility */
+}
+
+
+
+/* Forgot Password Link */
+.forgot-password-link {
+    color: var(--secondary-purple); /* Primary purple color */
+    text-decoration: underline; /* Underline for better accessibility */
+    font-size: 1rem; /* Increased font size */
+    font-weight: 600; /* Bolder text */
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.forgot-password-link:hover {
+    color: var(--accent-navy); /* Navy on hover */
+    background: rgba(51, 31, 234, 0.1);
+    text-decoration: underline;
+}
+
+/* Login Button - TrackStix Design */
+.login-btn {
+    background: var(--secondary-purple); /* Primary purple background */
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem 2rem;
+    font-size: 1.1rem; /* Larger font size */
+    font-weight: 700; /* Bolder text */
+    color: var(--bg-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 48px;
+    box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1); /* Subtle shadow for depth */
+    text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2); /* Text shadow for better readability */
+}
+
+.login-btn:hover:not(:disabled) {
+    background: var(--accent-navy); /* Darker navy on hover */
+    color: var(--bg-primary);
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
+}
+
+.login-btn:active:not(:disabled) {
+    background: var(--primary-dark-gray); /* Dark gray on active */
+    box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
+}
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-loader {
+    margin-left: 0.5rem;
+}
+
+/* Login Error Alert */
+.alert-danger {
+    background: rgba(233, 118, 118, 0.1);
+    border: 1px solid rgba(233, 118, 118, 0.2);
+    color: var(--secondary-red);
+    border-radius: 8px;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.alert-danger i {
+    color: var(--secondary-red);
+}
+
+
+/* Loading State for Login Button */
+.login-btn.loading .btn-text {
+    opacity: 0;
+}
+
+.login-btn.loading .btn-loader {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Improved Accessibility - Focus States for Keyboard Navigation */
+:focus-visible {
+    outline: 3px solid var(--secondary-purple);
+    outline-offset: 2px;
+}
+
+.login-btn:focus-visible {
+    outline: 3px solid var(--primary-white);
+    outline-offset: 3px;
+}
+
+/* Invalid Feedback Styling */
+.form-floating .invalid-feedback {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--secondary-red);
+    font-weight: 500;
+}
+
+/* Bootstrap Text Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .text-primary,
+.text-primary {
+    color: var(--secondary-purple) !important;
+}
+
+body .text-secondary,
+.text-secondary {
+    color: var(--primary-mid-gray) !important;
+}
+
+body .text-success,
+.text-success {
+    color: var(--secondary-green) !important;
+}
+
+body .text-danger,
+.text-danger {
+    color: var(--secondary-red) !important;
+}
+
+body .text-warning,
+.text-warning {
+    color: var(--secondary-orange) !important;
+}
+
+body .text-info,
+.text-info {
+    color: var(--secondary-pink) !important;
+}
+
+body .text-light,
+.text-light {
+    color: var(--primary-light-gray) !important;
+}
+
+body .text-dark,
+.text-dark {
+    color: var(--primary-black) !important;
+}
+
+body .text-muted,
+.text-muted {
+    color: var(--primary-dark-gray) !important;
+}
+
+/* Bootstrap Background Utility Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .bg-primary,
+.bg-primary {
+    background-color: var(--secondary-purple) !important;
+}
+
+body .bg-secondary,
+.bg-secondary {
+    background-color: var(--primary-mid-gray) !important;
+}
+
+body .bg-success,
+.bg-success {
+    background-color: var(--secondary-green) !important;
+}
+
+body .bg-danger,
+.bg-danger {
+    background-color: var(--secondary-red) !important;
+}
+
+body .bg-warning,
+.bg-warning {
+    background-color: var(--secondary-orange) !important;
+}
+
+body .bg-info,
+.bg-info {
+    background-color: var(--secondary-pink) !important;
+}
+
+body .bg-light,
+.bg-light {
+    background-color: var(--primary-light-gray) !important;
+}
+
+body .bg-dark,
+.bg-dark {
+    background-color: var(--primary-black) !important;
+}
+
+/* Bootstrap Button Class Overrides - Force Palette Colors */
+/* High specificity to override Bootstrap CDN */
+body .btn-primary,
+.btn-primary {
+    background-color: var(--secondary-purple) !important;
+    border-color: var(--secondary-purple) !important;
+    color: var(--primary-white) !important;
+}
+
+body .btn-primary:hover,
+body .btn-primary:focus,
+body .btn-primary:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--accent-navy) !important;
+    border-color: var(--accent-navy) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-secondary {
+    background-color: var(--primary-mid-gray) !important;
+    border-color: var(--primary-mid-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-success {
+    background-color: var(--secondary-green) !important;
+    border-color: var(--secondary-green) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-danger {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+    background-color: var(--primary-dark-gray) !important;
+    border-color: var(--primary-dark-gray) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-warning {
+    background-color: var(--secondary-orange) !important;
+    border-color: var(--secondary-orange) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-info {
+    background-color: var(--secondary-pink) !important;
+    border-color: var(--secondary-pink) !important;
+    color: var(--primary-white) !important;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+    background-color: var(--secondary-red) !important;
+    border-color: var(--secondary-red) !important;
+    color: var(--primary-white) !important;
+}
+
+/* Responsive Design for Login */
+@media (max-width: 768px) {
+    .login-card-body {
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 1.75rem;
+    }
+    
+    .brand-name {
+        font-size: 1.25rem;
+    }
+    
+    .login-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .login-logo i {
+        font-size: 1.75rem;
+    }
+    
+    .credentials-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .forgot-password-link {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-card-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .login-title {
+        font-size: 1.5rem;
+    }
+    
+    .brand-name {
+        font-size: 1.1rem;
+    }
+    
+    .login-logo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .login-logo i {
+        font-size: 1.5rem;
+    }
+    
+    .shape {
+        display: none;
+    }
+}
+
+/* FINAL OVERRIDE: Force all icons to use TrackStix palette colors */
+/* This section has the highest priority to override any external CSS */
+
+/* Force FontAwesome icons to inherit color properly */
+.fas, .far, .fab, .fa {
+    color: inherit !important;
+}
+
+/* Specific icon color overrides for common patterns */
+.text-primary .fas,
+.text-primary .far,
+.text-primary .fab,
+.text-primary .fa,
+i.text-primary {
+    color: var(--secondary-purple) !important;
+}
+
+.text-success .fas,
+.text-success .far,
+.text-success .fab,
+.text-success .fa,
+i.text-success {
+    color: var(--secondary-green) !important;
+}
+
+.text-info .fas,
+.text-info .far,
+.text-info .fab,
+.text-info .fa,
+i.text-info {
+    color: var(--secondary-pink) !important;
+}
+
+.text-warning .fas,
+.text-warning .far,
+.text-warning .fab,
+.text-warning .fa,
+i.text-warning {
+    color: var(--secondary-orange) !important;
+}
+
+.text-danger .fas,
+.text-danger .far,
+.text-danger .fab,
+.text-danger .fa,
+i.text-danger {
+    color: var(--secondary-red) !important;
+}
+
+.text-muted .fas,
+.text-muted .far,
+.text-muted .fab,
+.text-muted .fa,
+i.text-muted {
+    color: var(--primary-dark-gray) !important;
+}
+
+/* Override any remaining Bootstrap default colors */
+.btn-outline-primary i,
+.btn-outline-secondary i,
+.btn-outline-success i,
+.btn-outline-info i,
+.btn-outline-warning i,
+.btn-outline-danger i {
+    color: inherit !important;
+}
+
+/* Force specific asset type icon colors */
+.asset-type-icon i {
+    color: white !important;
+}
+
+/* Ensure action icons use proper colors */
+.action-icon i {
+    color: white !important;
+}
+
+/* Stats icons force colors */
+.stats-icon i {
+    color: white !important;
+}
+
+/* Final catch-all for any missed icons */
+[class*="fa-"] {
+    color: inherit !important;
+} 

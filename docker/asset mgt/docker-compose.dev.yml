@@ -1,0 +1,127 @@
+version: '3.8'
+
+# Development environment configuration
+# Use: docker-compose -f docker-compose.dev.yml up
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: asset-mgt-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-asset_management}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - asset-mgt-network-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-asset_management}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Development mode with hot reload)
+  backend:
+    build:
+      context: ./asset-mgt-be
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: asset-mgt-backend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: ${BACKEND_PORT:-3000}
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-asset_management}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-key-not-for-production}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-1h}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-key-not-for-production}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-7d}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-noreply@trackstix.com}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-TrackStix Asset Management}
+    volumes:
+      # Mount source code for hot reload
+      - ./asset-mgt-be/src:/app/src:ro
+      - ./asset-mgt-be/prisma:/app/prisma:ro
+      - backend_uploads_dev:/app/uploads
+      - backend_node_modules:/app/node_modules
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+      - "9229:9229" # Debug port
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - asset-mgt-network-dev
+    command: npm run start:dev
+
+  # Frontend Application (Development mode with hot reload)
+  frontend:
+    build:
+      context: ./asset-mgt-fe/frontend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: asset-mgt-frontend-dev
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000/api}
+    volumes:
+      # Mount source code for hot reload
+      - ./asset-mgt-fe/frontend/src:/app/src:ro
+      - ./asset-mgt-fe/frontend/public:/app/public:ro
+      - ./asset-mgt-fe/frontend/index.html:/app/index.html:ro
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - backend
+    networks:
+      - asset-mgt-network-dev
+    command: npm run dev -- --host 0.0.0.0
+
+  # pgAdmin (Database management tool)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: asset-mgt-pgadmin-dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@trackstix.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - pgadmin_data_dev:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - postgres
+    networks:
+      - asset-mgt-network-dev
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  backend_uploads_dev:
+    driver: local
+  backend_node_modules:
+    driver: local
+  frontend_node_modules:
+    driver: local
+  pgadmin_data_dev:
+    driver: local
+
+networks:
+  asset-mgt-network-dev:
+    driver: bridge
+

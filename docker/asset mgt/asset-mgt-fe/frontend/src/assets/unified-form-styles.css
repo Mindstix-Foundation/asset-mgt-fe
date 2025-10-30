@@ -1,0 +1,860 @@
+/* =================================
+   UNIFIED FORM DESIGN SYSTEM
+   Asset Management - TrackStix Theme
+   ONLY FOR FORM PAGES
+================================= */
+
+/* =================================
+   SEARCHABLE DROPDOWN FORM INTEGRATION
+   Use .form-searchable-dropdown wrapper
+   to match SearchableDropdown with form styling
+================================= */
+
+/* High specificity override to ensure borders match exactly */
+.form-searchable-dropdown :deep(.searchable-dropdown-wrapper .form-control),
+.form-searchable-dropdown :deep(.dropdown .form-control),
+.form-searchable-dropdown :deep(.form-control) {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+}
+
+/* Override SearchableDropdown styles to match form controls */
+.form-searchable-dropdown :deep(.form-control),
+.form-searchable-dropdown :deep(input.form-control),
+.form-searchable-dropdown :deep(input[type="text"]) {
+  /* Match the form's input styling exactly */
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  transition: all 0.2s ease !important;
+  color: #212529 !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  height: 40px !important;            /* Fixed 40px height to match form controls */
+  box-sizing: border-box;              /* Include borders/padding in height */
+  width: 100% !important;
+}
+
+.form-searchable-dropdown :deep(.form-control::placeholder),
+.form-searchable-dropdown :deep(input.form-control::placeholder),
+.form-searchable-dropdown :deep(input[type="text"]::placeholder) {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+.form-searchable-dropdown :deep(.form-control:focus),
+.form-searchable-dropdown :deep(input.form-control:focus),
+.form-searchable-dropdown :deep(input[type="text"]:focus) {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+/* Removed hover border override to preserve focus state */
+
+.form-searchable-dropdown :deep(.form-control:disabled) {
+  background-color: #e9ecef !important;
+  opacity: 1 !important;
+  border-color: #ced4da !important;
+  color: #6c757d !important;
+}
+
+/* Match form validation styling */
+.form-searchable-dropdown :deep(.form-control.is-valid),
+.form-searchable-dropdown :deep(input.form-control.is-valid),
+.form-searchable-dropdown :deep(input[type="text"].is-valid) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-invalid),
+.form-searchable-dropdown :deep(input.form-control.is-invalid),
+.form-searchable-dropdown :deep(input[type="text"].is-invalid) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-valid:focus),
+.form-searchable-dropdown :deep(input.form-control.is-valid:focus),
+.form-searchable-dropdown :deep(input[type="text"].is-valid:focus) {
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.form-searchable-dropdown :deep(.form-control.is-invalid:focus),
+.form-searchable-dropdown :deep(input.form-control.is-invalid:focus),
+.form-searchable-dropdown :deep(input[type="text"].is-invalid:focus) {
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+}
+
+/* Match form label styling for SearchableDropdown */
+.form-searchable-dropdown :deep(.form-label) {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+}
+
+/* Match form label styling for NotesTextarea - using :deep() to penetrate scoped styles */
+.notes-textarea-container :deep(.form-label),
+:deep(.notes-textarea-container .form-label),
+:deep(.notes-textarea-container) .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+}
+
+/* DatePicker label styling to match other form labels */
+.custom-date-picker-container .form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+}
+
+/* DatePicker form-text styling to match other form elements */
+.custom-date-picker-container .form-text {
+  font-size: 0.875rem !important;
+  color: #666666 !important;
+  margin-top: 0.25rem !important;
+  font-weight: 500 !important;
+}
+
+/* DatePicker invalid-feedback styling to match other form elements */
+.custom-date-picker-container .invalid-feedback {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 0.25rem !important;
+  font-size: 0.875rem !important;
+  color: #dc2626 !important;
+  font-weight: 500 !important;
+}
+
+/* Ensure dropdown menu matches the form's styling context */
+.form-searchable-dropdown :deep(.dropdown-menu) {
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Modal-specific SearchableDropdown styling */
+.modal .form-searchable-dropdown :deep(.form-control),
+.modal .form-searchable-dropdown :deep(.searchable-dropdown-wrapper .form-control),
+.modal .form-searchable-dropdown :deep(.dropdown .form-control) {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+  height: 40px !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.modal .form-searchable-dropdown :deep(.form-control:focus) {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+  background-color: #fff !important;
+}
+
+.modal .form-searchable-dropdown :deep(.form-control::placeholder) {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+/* Validation animation for SearchableDropdown */
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* NOTE: CSS Variables are defined in variables.css - imported globally */
+
+/* ONLY target form containers, not affecting navbar */
+.container-fluid.py-4 {
+    background: var(--bg-primary);
+    min-height: calc(100vh - 80px);
+}
+
+/* Standardized Form Cards - Wider for Better Layout */
+.container-fluid.py-4 .card {
+    background: var(--bg-primary);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08);
+    border: 1px solid var(--element-gray);
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Consistent Form Headers */
+.container-fluid.py-4 .card-header {
+    background: var(--primary-light-gray);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--element-gray);
+    border-radius: 1rem 1rem 0 0;
+}
+
+.container-fluid.py-4 .card-header h1, 
+.container-fluid.py-4 .card-header h4,
+.container-fluid.py-4 .card-header .card-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+}
+
+/* Center align text-muted in header */
+.container-fluid.py-4 .card-header .text-muted {
+    text-align: center;
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--primary-dark-gray);
+}
+
+/* Consistent Form Body */
+.container-fluid.py-4 .card-body {
+    padding: 2rem;
+}
+
+/* ONLY target form inputs, not affecting other pages */
+.container-fluid.py-4 .form-control, 
+.container-fluid.py-4 .form-select {
+    height: 40px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    background: #fff;
+    color: #212529;
+    font-weight: 400;
+    line-height: 1.5;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.container-fluid.py-4 .form-floating .form-control, 
+.container-fluid.py-4 .form-floating .form-select {
+    height: 3.5rem;
+    padding: 1rem 1rem 0.25rem 1rem;
+}
+
+.container-fluid.py-4 .form-floating label {
+    padding: 1rem 1rem 0.25rem 1rem;
+    font-weight: 600;
+    color: var(--primary-dark-gray);
+    font-size: 0.9rem;
+}
+
+.container-fluid.py-4 .form-control:focus, 
+.container-fluid.py-4 .form-select:focus {
+    border-color: #331FEA;
+    box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+    outline: 2px solid transparent;
+    background-color: #fff;
+}
+
+/* Global validation styling for all forms within form pages */
+.container-fluid.py-4 .was-validated .form-control:valid,
+.container-fluid.py-4 .was-validated .form-select:valid,
+.container-fluid.py-4 .form-control.is-valid,
+.container-fluid.py-4 .form-select.is-valid {
+    border-color: #21AF65 !important;
+    box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+}
+
+.container-fluid.py-4 .was-validated .form-control:invalid,
+.container-fluid.py-4 .was-validated .form-select:invalid,
+.container-fluid.py-4 .form-control.is-invalid,
+.container-fluid.py-4 .form-select.is-invalid {
+    border-color: #E97676 !important;
+    box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
+}
+
+/* Ensure the green checkmark appears consistently for valid inputs */
+.container-fluid.py-4 .was-validated .form-control:valid,
+.container-fluid.py-4 .form-control.is-valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2321AF65' d='M2.3 6.73L.6 4.53c-.2-.26-.2-.62 0-.88.23-.26.6-.26.83 0L3 5.34l3.57-4.2c.23-.27.6-.3.86-.07.27.23.3.6.07.86L3.3 6.7c-.12.14-.3.22-.5.22-.18 0-.36-.08-.48-.2z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+    padding-right: calc(1.5em + .75rem);
+}
+
+.container-fluid.py-4 .was-validated .form-select:valid,
+.container-fluid.py-4 .form-select.is-valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2321AF65' d='M2.3 6.73L.6 4.53c-.2-.26-.2-.62 0-.88.23-.26.6-.26.83 0L3 5.34l3.57-4.2c.23-.27.6-.3.86-.07.27.23.3.6.07.86L3.3 6.7c-.12.14-.3.22-.5.22-.18 0-.36-.08-.48-.2z'/%3e%3c/svg%3e"), var(--bs-form-select-bg-icon, url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23666' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"));
+    background-position: right 1.5rem center, right .75rem center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem), 16px 12px;
+    padding-right: 3rem;
+}
+
+/* NOTE: Button styling is handled by buttons.css - no button CSS needed here */
+
+/* ONLY target form modals */
+.container-fluid.py-4 .modal-content {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 10px 40px rgba(10, 10, 10, 0.15);
+    background: var(--bg-primary);
+}
+
+.container-fluid.py-4 .modal-header {
+    background: var(--primary-light-gray);
+    border-bottom: 1px solid var(--element-gray);
+    padding: 1.5rem 2rem;
+}
+
+.container-fluid.py-4 .modal-body {
+    padding: 2rem;
+    background: var(--bg-primary);
+}
+
+.container-fluid.py-4 .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--element-gray);
+    background: var(--bg-primary);
+}
+
+/* RESPONSIVE DESIGN - Perfect Mobile Experience */
+@media (max-width: 768px) {
+    .container-fluid.py-4 .card {
+        max-width: 95%;
+        margin: 0 auto;
+    }
+    
+    .container-fluid.py-4 .card-header {
+        padding: 1.5rem;
+    }
+    
+    .container-fluid.py-4 .card-header h1, 
+    .container-fluid.py-4 .card-header h4,
+    .container-fluid.py-4 .card-header .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .container-fluid.py-4 .card-header .text-muted {
+        font-size: 0.85rem;
+    }
+    
+    .container-fluid.py-4 .card-body {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid.py-4 .card {
+        border-radius: 0.5rem;
+        max-width: 98%;
+    }
+    
+    .container-fluid.py-4 .card-header {
+        padding: 1rem;
+    }
+    
+    .container-fluid.py-4 .card-header .text-muted {
+        font-size: 0.8rem;
+    }
+    
+    .container-fluid.py-4 .card-body {
+        padding: 1rem;
+    }
+}
+
+/* ================================
+   INPUT GROUP NORMALIZATION (borders, radius, focus)
+   Applies to forms within .container-fluid.py-4 only
+================================ */
+.container-fluid.py-4 .input-group .form-control,
+.container-fluid.py-4 .input-group .input-group-text {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  box-sizing: border-box;
+}
+
+/* Remove the inner seam so the shared edge looks continuous */
+.container-fluid.py-4 .input-group .input-group-text:first-child {
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+}
+.container-fluid.py-4 .input-group .form-control:last-child {
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+/* For reversed order (form-control first, text last) */
+.container-fluid.py-4 .input-group .form-control:first-child {
+  border-right: none !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+}
+.container-fluid.py-4 .input-group .input-group-text:last-child {
+  border-left: none !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+/* Apply glow ONLY to the outer container, not the inner seam */
+.container-fluid.py-4 .input-group:focus-within {
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  border-radius: 0.5rem; /* matches children */
+}
+.container-fluid.py-4 .input-group:focus-within .form-control,
+.container-fluid.py-4 .input-group:focus-within .input-group-text {
+  border-color: #331FEA !important;
+  box-shadow: none !important; /* prevent inner vertical line glow */
+}
+
+/* Disabled state alignment */
+.container-fluid.py-4 .input-group .form-control:disabled,
+.container-fluid.py-4 .input-group .input-group-text:disabled {
+  border-color: #ced4da !important;
+}
+
+/* ================================
+   FORM FIELDSET & LEGEND STYLING
+   Consistent across all forms
+================================ */
+
+/* Form fieldset styling */
+.form-fieldset {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.5rem !important;
+  padding: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  background: rgba(248, 250, 252, 0.3);
+  position: relative;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-fieldset:hover {
+  border-color: #cbd5e1 !important;
+  background: rgba(248, 250, 252, 0.5);
+  transition: all 0.2s ease;
+}
+
+.form-legend {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: #666666 !important;
+  background-color: #ffffff !important;
+  padding: 0.375rem 0.75rem !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.375rem !important;
+  margin-bottom: 1rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: auto !important;
+  float: none !important;
+}
+
+/* ================================
+   ENHANCED FORM CONTROLS
+   Consistent styling for all form inputs
+================================ */
+
+.form-control, .form-select {
+  border: 2px solid #999999;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+  color: #1f2937;
+}
+
+.form-control::placeholder {
+  color: #4b5563 !important;
+  opacity: 1;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #331FEA;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25);
+  outline: 2px solid transparent;
+}
+
+/* ================================
+   ENHANCED VALIDATION STYLING
+   Consistent validation across all forms
+================================ */
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out;
+}
+
+@keyframes subtle-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* ================================
+   FORM LABELS & TEXT
+   Consistent typography across all forms
+   Note: Specific component labels (SearchableDropdown, NotesTextarea, DatePicker) 
+   are styled at the top of this file for consistency
+================================ */
+
+.container-fluid.py-4 .form-label,
+.form-label {
+  font-weight: 600 !important;
+  color: #666666 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  height: 24px !important;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #666666 !important;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.text-danger {
+  color: #dc2626 !important;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.text-muted {
+  color: #4b5563 !important;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* ================================
+   FORM ACTIONS & CARD FOOTER
+   Consistent button container styling
+================================ */
+
+.form-actions {
+  padding: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Center align text in form actions */
+.form-actions .text-center {
+  text-align: center;
+}
+
+.form-actions .text-center .text-muted {
+  font-size: 0.875rem;
+  color: #666666;
+  font-weight: 400 !important; /* Normal weight, not bold */
+  display: block;
+  width: 100%;
+}
+
+/* Ensure small text in footer is normal weight */
+.form-actions small.text-muted {
+  font-weight: 400 !important; /* Override any bold styling */
+  font-size: 0.875rem;
+  color: #666666;
+  display: block;
+  text-align: center;
+}
+
+.card-footer {
+  background: #F3F3F3 !important;
+  border-top: 1px solid var(--element-gray) !important;
+  border-radius: 0 0 1rem 1rem !important;
+}
+
+/* ================================
+   NOTES TEXTAREA VALIDATION STYLING
+   Complete NotesTextarea component styling moved from filters.css
+================================ */
+
+/* Notes textarea container */
+.notes-textarea-container {
+  width: 100%;
+}
+
+/* Auto-expanding textarea */
+.auto-expand-textarea {
+  transition: height 0.2s ease, border-color 0.2s ease;
+  resize: none;
+  overflow: hidden;
+  min-height: 72px; /* 3 rows minimum */
+}
+
+/* Character count styling */
+.character-count {
+  margin-top: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.character-count .text-warning {
+  color: #f59e0b !important;
+}
+
+.character-count .text-danger {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* Form controls - Match form.css specifications (EXCLUDE readonly-notes-textarea) */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control {
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  color: #212529 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  resize: vertical !important;
+  min-height: 2.5rem !important;
+}
+
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control::placeholder {
+  color: #999999 !important;
+  opacity: 1 !important;
+}
+
+/* Notes textarea - focus state (blue border) - editable only */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control:focus {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+  outline: 2px solid transparent !important;
+}
+
+/* Notes textarea - valid state (green border) - editable only */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+/* Notes textarea - invalid state (red border) - editable only */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  animation: subtle-shake 0.3s ease-in-out !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+  background-color: #fff !important;
+}
+
+/* Notes textarea - valid state with focus (keep green) - editable only */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid:focus,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  background-color: #fff !important;
+}
+
+/* Notes textarea - invalid state with focus (keep red) - editable only */
+.notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid:focus,
+.was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  background-color: #fff !important;
+}
+
+/* Character count color states */
+.notes-textarea-container .character-count .text-warning {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.notes-textarea-container .character-count .text-danger {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.notes-textarea-container .character-count .text-muted {
+  color: #666666 !important;
+  font-weight: 500;
+}
+
+/* ================================
+   RESPONSIVE DESIGN FOR FORMS
+   Mobile-friendly fieldset & legend
+================================ */
+
+@media (max-width: 768px) {
+  .form-actions {
+    padding: 1rem;
+  }
+  
+  .form-actions .text-center .text-muted,
+  .form-actions small.text-muted {
+    font-size: 0.8rem;
+  }
+  
+  .form-fieldset {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 0.375rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.9rem !important;
+    padding: 0.25rem 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-actions {
+    padding: 0.75rem;
+  }
+  
+  .form-actions .text-center .text-muted,
+  .form-actions small.text-muted {
+    font-size: 0.75rem;
+  }
+  
+  .form-fieldset {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 0.25rem !important;
+  }
+  
+  .form-legend {
+    font-size: 0.85rem !important;
+    padding: 0.2rem 0.4rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+/* ================================
+   READONLY NOTES TEXTAREA CLASS
+   Dedicated class for readonly NotesTextarea styling
+   Usage: Add class="readonly-notes-textarea" to notes-textarea-container
+================================ */
+
+/* Readonly NotesTextarea - Base styling with MAXIMUM specificity */
+div.notes-textarea-container.readonly-notes-textarea .form-control,
+div.notes-textarea-container.readonly-notes-textarea textarea,
+div.notes-textarea-container.readonly-notes-textarea .auto-expand-textarea,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly],
+.readonly-notes-textarea .form-control,
+.readonly-notes-textarea textarea,
+.readonly-notes-textarea .auto-expand-textarea,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly] {
+  background-color: rgb(243, 243, 243) !important;
+  border-color: rgb(224, 224, 224) !important;
+  color: rgb(33, 37, 41) !important;
+  cursor: default !important;
+  pointer-events: none !important; /* Prevent clicking/focusing */
+  user-select: none !important; /* Prevent text selection */
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Readonly NotesTextarea - Override all states with MAXIMUM specificity */
+div.notes-textarea-container.readonly-notes-textarea .form-control:focus,
+div.notes-textarea-container.readonly-notes-textarea .form-control:hover,
+div.notes-textarea-container.readonly-notes-textarea .form-control:active,
+div.notes-textarea-container.readonly-notes-textarea textarea:focus,
+div.notes-textarea-container.readonly-notes-textarea textarea:hover,
+div.notes-textarea-container.readonly-notes-textarea textarea:active,
+div.notes-textarea-container.readonly-notes-textarea .auto-expand-textarea:focus,
+div.notes-textarea-container.readonly-notes-textarea .auto-expand-textarea:hover,
+div.notes-textarea-container.readonly-notes-textarea .auto-expand-textarea:active,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control:focus,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control:hover,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control:active,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea:focus,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea:hover,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea:active,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly],
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly]:focus,
+div.notes-textarea-container.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly]:hover,
+.readonly-notes-textarea .form-control:focus,
+.readonly-notes-textarea .form-control:hover,
+.readonly-notes-textarea .form-control:active,
+.readonly-notes-textarea .form-control.is-valid,
+.readonly-notes-textarea .form-control.is-invalid,
+.readonly-notes-textarea .form-control.is-valid:focus,
+.readonly-notes-textarea .form-control.is-invalid:focus,
+.readonly-notes-textarea textarea:focus,
+.readonly-notes-textarea textarea:hover,
+.readonly-notes-textarea textarea:active,
+.readonly-notes-textarea .auto-expand-textarea:focus,
+.readonly-notes-textarea .auto-expand-textarea:hover,
+.readonly-notes-textarea .auto-expand-textarea:active,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea:focus,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea:hover,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea:active,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly],
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly]:focus,
+.readonly-notes-textarea textarea.form-control.auto-expand-textarea[readonly]:hover,
+.was-validated .readonly-notes-textarea .form-control:valid,
+.was-validated .readonly-notes-textarea .form-control:invalid,
+.was-validated div.notes-textarea-container.readonly-notes-textarea .form-control:valid,
+.was-validated div.notes-textarea-container.readonly-notes-textarea .form-control:invalid {
+  background-color: rgb(243, 243, 243) !important;
+  border-color: rgb(224, 224, 224) !important;
+  color: rgb(33, 37, 41) !important;
+  cursor: default !important;
+  box-shadow: none !important;
+  outline: none !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* ================================
+   NAVBAR Z-INDEX FIX
+   Ensure navbar stays above calendar dropdowns on form pages
+================================ */
+
+/* Fix navbar z-index to ensure it stays above date picker calendar */
+.navbar.sticky-top {
+  z-index: 1050 !important; /* Higher than date picker (1045) to stay on top */
+}
+
+
+/* ================================ */

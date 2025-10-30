@@ -1,0 +1,39 @@
+/**
+ * Main Styles Entry Point
+ * Imports all modular CSS files
+ */
+
+/* 1. Variables & Theme */
+@import './variables.css';
+
+/* 2. Base & Reset */
+@import './base.css';
+
+/* 3. Component Styles */
+@import './components/buttons.css';
+@import './components/cards.css';
+@import './components/tables.css';
+@import './components/modals.css';
+@import './components/badges.css';
+@import './components/navigation.css';
+@import './components/filters.css';
+@import './components/timeline.css';
+
+/* 4. Page-Specific Styles */
+@import './pages/login.css';
+/* dashboard.css migrated into DashboardView.vue */
+@import './pages/notifications.css';
+/* profile.css migrated into ProfileView.vue */
+/* reports.css migrated into ReportsView.vue */
+/* 5. Utility Classes */
+@import './utilities.css';
+
+/* 6. Form Validation Styles */
+/* formValidation.css is NOT imported here - it must be imported individually by form pages that need validation */
+
+/**
+ * Migration Complete!
+ * All styles have been successfully migrated from main.css to modular files.
+ * The main.css file can now be removed or kept as a backup.
+ */
+
