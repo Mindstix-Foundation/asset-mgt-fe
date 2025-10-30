@@ -204,7 +204,7 @@
         </div>
           
         <!-- Filter Dropdown -->
-        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
           <div class="row">
             <div class="col-12">
               <!-- Responsive filter layout -->

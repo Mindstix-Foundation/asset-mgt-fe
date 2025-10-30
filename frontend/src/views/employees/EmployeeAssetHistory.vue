@@ -101,7 +101,7 @@
           </div>
 
           <!-- Filter Dropdown -->
-          <div v-if="showFilterDropdown" class="filter-dropdown mt-3 mb-3 p-3 bg-light rounded">
+          <div v-if="showFilterDropdown" class="mt-3 mb-3 border rounded p-3 shadow-sm bg-white">
             <div class="d-flex flex-column flex-md-row gap-2">
               <div class="flex-fill">
                 <SearchableDropdown

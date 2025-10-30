@@ -11,9 +11,8 @@
     </div>
 
     <!-- Filters -->
-    <div class="card mb-3">
-      <div class="card-body py-3">
-        <div class="row align-items-end">
+    <div class="mb-3 border rounded p-3 shadow-sm bg-white">
+      <div class="row align-items-end">
           <!-- Search -->
           <div class="col-12 col-lg-7 mb-3">
             <label class="form-label" for="mh-search">Search</label>
@@ -50,7 +49,7 @@
           </div>
         </div>
 
-        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
           <div class="d-flex flex-column flex-md-row gap-2">
             <div class="flex-fill">
               <SearchableDropdown

@@ -95,7 +95,7 @@
     </div>
 
           <!-- Enhanced Filter Dropdown -->
-          <div v-if="showFilters" class="filter-dropdown mb-3 p-3 rounded">
+          <div v-if="showFilters" class="mb-3 border rounded p-3 shadow-sm bg-white">
             <div class="d-flex flex-column flex-md-row gap-2">
               <div class="flex-fill">
                 <SearchableDropdown

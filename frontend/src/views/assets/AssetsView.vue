@@ -238,62 +238,58 @@
         </div>
       </div>
         
-        <!-- Filter Dropdown -->
-        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 rounded">
-          <div class="row">
-            <div class="col-12">
-              <!-- Bootstrap Flexbox for exact proportions -->
-              <div class="d-flex flex-column flex-md-row gap-2">
-                <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="asset-type-filter"
-                    label="Asset Type"
-                    placeholder="Search asset types..."
-                    :items="assetTypes"
-                    v-model="selectedType"
-                    @change="onAssetTypeChange"
-                  />
-                </div>
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="brand-filter"
-                    label="Brand"
-                    placeholder="Search brands..."
-                    :items="brands"
-                    v-model="selectedBrand"
-                    @change="onBrandChange"
-                  />
-                </div>
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="status-filter"
-                    label="Status"
-                    placeholder="Search status..."
-                    :items="statusOptions"
-                    v-model="selectedStatus"
-                    @change="onStatusChange"
-                  />
-                </div>
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="condition-filter"
-                    label="Condition"
-                    placeholder="Search condition..."
-                    :items="conditionOptions"
-                    v-model="selectedCondition"
-                    @change="onConditionChange"
-                  />
-                </div>
-                
-                <!-- Clear Button: using filter-clear-button-container class -->
-                <div class="filter-clear-button-container">
-                  <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
-                      <i class="fas fa-times me-1"></i>Clear
-                    </button>
-                  </div>
-                </div>
+        <!-- Filter Section (inline, bordered container to mimic card) -->
+        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
+          <!-- Bootstrap Flexbox for exact proportions -->
+          <div class="d-flex flex-column flex-md-row gap-2">
+            <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="asset-type-filter"
+                label="Asset Type"
+                placeholder="Search asset types..."
+                :items="assetTypes"
+                v-model="selectedType"
+                @change="onAssetTypeChange"
+              />
+            </div>
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="brand-filter"
+                label="Brand"
+                placeholder="Search brands..."
+                :items="brands"
+                v-model="selectedBrand"
+                @change="onBrandChange"
+              />
+            </div>
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="status-filter"
+                label="Status"
+                placeholder="Search status..."
+                :items="statusOptions"
+                v-model="selectedStatus"
+                @change="onStatusChange"
+              />
+            </div>
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="condition-filter"
+                label="Condition"
+                placeholder="Search condition..."
+                :items="conditionOptions"
+                v-model="selectedCondition"
+                @change="onConditionChange"
+              />
+            </div>
+
+            <!-- Clear Button: using filter-clear-button-container class -->
+            <div class="filter-clear-button-container">
+              <div class="d-flex align-items-end h-100">
+                <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
+                  <i class="fas fa-times me-1"></i>Clear
+                </button>
               </div>
             </div>
           </div>
@@ -1407,7 +1403,7 @@ const selectedBrand = ref<Item | null>(null)
 const selectedStatus = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
 const selectedSortBy = ref<Item | null>(null)
-const sortAscending = ref(true)
+const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const showDetailModal = ref(false)
@@ -2623,8 +2619,9 @@ onMounted(async () => {
   // Add resize listener to update view on screen size change
   window.addEventListener('resize', handleResize)
   
-  // Initialize default sort option
-  selectedSortBy.value = sortOptions.value.find(option => option.value === 'assetId') || null
+  // Initialize default sort option: Created Date (newest first)
+  selectedSortBy.value = sortOptions.value.find(option => option.value === 'createdAt') || null
+  sortAscending.value = false
   
   await Promise.all([
     loadFilterOptions(),
