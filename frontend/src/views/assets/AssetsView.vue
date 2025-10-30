@@ -2044,26 +2044,16 @@ const collectAsset = (asset: AssetDisplayItem) => {
 
 const handleMaintenanceAction = (asset: AssetDisplayItem) => {
   if (asset.status === 'IN_MAINTENANCE') {
-    // If asset is already in maintenance, navigate to maintenance history for this specific asset
-    // This shows all maintenance records including the active one
+    // Redirect to Maintenance list with assetId prefilled in search
     router.push({
-      path: `/app/maintenance/${asset.id}/history`,
-      query: { 
-        returnTo: '/app/assets',
-        assetName: `${asset.brand} ${asset.model}`,
-        assetId: asset.id
-      }
+      path: '/app/maintenance',
+      query: { search: asset.id }
     })
   } else {
     // If asset is not in maintenance, navigate to schedule new maintenance with asset pre-selected
-    // Store asset info for pre-population (similar to issue/collect patterns)
     localStorage.setItem('selectedAssetForMaintenance', asset.id)
     localStorage.setItem('selectedAssetType', asset.type)
-    
-    router.push({
-      path: '/app/maintenance/schedule',
-      query: { assetId: asset.id }
-    })
+    router.push({ path: '/app/maintenance/schedule', query: { assetId: asset.id } })
   }
 }
 

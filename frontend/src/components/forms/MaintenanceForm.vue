@@ -795,7 +795,13 @@ const loadMaintenanceData = async () => {
     formData.maintenanceTypeId = maintenance.maintenanceTypeId
     await applyMaintenanceTypeSelectionById(maintenance.maintenanceTypeId)
     // Vendor selection removed
-    formData.scheduledDate = formatDateForInput(maintenance.relevantDate)
+    // Robustly resolve scheduled date from API fields
+    const rawScheduled =
+      (maintenance as any).scheduledDate ||
+      (maintenance as any).scheduledDateOnly ||
+      maintenance.relevantDate ||
+      (maintenance as any).date || null
+    formData.scheduledDate = rawScheduled ? formatDateForInput(rawScheduled) : ''
     formData.frequencyDays = maintenance.frequencyDays
     formData.estimatedCost = maintenance.estimatedCost
     formData.description = maintenance.description

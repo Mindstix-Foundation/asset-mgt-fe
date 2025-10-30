@@ -95,7 +95,6 @@
           </div>
         </div>
       </div>
-    </div>
 
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary">

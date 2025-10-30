@@ -1033,6 +1033,11 @@ let statsTimestampInterval: number | undefined
 
 // Initialize data on component mount
 onMounted(async () => {
+  // Prefill search from query (e.g., coming from AssetsView)
+  if (typeof route.query.search === 'string' && route.query.search.trim() !== '') {
+    filters.search = route.query.search
+  }
+
   await fetchMaintenances()
   // Fetch stats once after initial data load
   await fetchStats()
@@ -1049,6 +1054,14 @@ watch(() => route.query.refreshStats, async (newValue) => {
     await fetchStats()
     // Remove the query parameter to prevent repeated refreshes
     router.replace({ query: { ...route.query, refreshStats: undefined } })
+  }
+})
+
+// React to search query changes (e.g., deep links with ?search=ASSET123)
+watch(() => route.query.search, (newSearch) => {
+  if (typeof newSearch === 'string') {
+    filters.search = newSearch
+    filterMaintenancesImmediate()
   }
 })
 
