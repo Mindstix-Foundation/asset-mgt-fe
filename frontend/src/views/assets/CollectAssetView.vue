@@ -1186,124 +1186,160 @@ watch(() => selectedEmployee.value, (newValue) => {
   clearFieldValidation('assetId')
 })
 
+// Helper function to set brand model from assignment
+const setBrandModelFromAssignment = (selectedAssignment: ActiveAssignment) => {
+  if (selectedAssignment.asset.brand && selectedAssignment.asset.model) {
+    formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
+  } else {
+    formData.assetBrandModel = 'Brand/Model not available'
+  }
+}
+
+// Helper function to auto-select employee from assignment
+const autoSelectEmployeeFromAssignment = (selectedAssignment: ActiveAssignment) => {
+  if (!selectedEmployee.value) {
+    selectedEmployee.value = {
+      id: selectedAssignment.employee.id,
+      name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
+      value: selectedAssignment.employee.id.toString()
+    }
+    formData.employeeId = selectedAssignment.employee.id.toString()
+  }
+}
+
+// Helper function to handle refurbished condition auto-selection
+const handleRefurbishedConditionAutoSelect = () => {
+  selectedCondition.value = {
+    id: 'REFURBISHED',
+    name: 'Refurbished',
+    value: 'REFURBISHED'
+  }
+  formData.assetCondition = 'REFURBISHED'
+  
+  nextTick(() => {
+    validateFieldInline('assetCondition')
+  })
+  
+  toastStore.showInfo('Info', 'Asset was issued in REFURBISHED condition. Collection condition has been automatically set to REFURBISHED.')
+}
+
 // Asset selection handler - sync with employee dropdown
 watch(() => selectedAsset.value, (newValue) => {
-  if (newValue && newValue.value) {
-    const assignmentId = Number.parseInt(newValue.value.toString())
-    const selectedAssignment = assignedAssets.value.find(assignment => assignment.id === assignmentId)
-    
-    if (selectedAssignment) {
-      // Check if brand and model exist
-      if (selectedAssignment.asset.brand && selectedAssignment.asset.model) {
-        const brandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
-        formData.assetBrandModel = brandModel
-      } else {
-        formData.assetBrandModel = 'Brand/Model not available'
-      }
-      
-      // Auto-select employee if not already selected
-      if (!selectedEmployee.value) {
-        selectedEmployee.value = {
-          id: selectedAssignment.employee.id,
-          name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
-          value: selectedAssignment.employee.id.toString()
-        }
-        formData.employeeId = selectedAssignment.employee.id.toString()
-      }
-      
-      // Auto-select REFURBISHED condition if asset was issued in REFURBISHED condition
-      if (selectedAssignment.issueCondition === 'REFURBISHED') {
-        selectedCondition.value = {
-          id: 'REFURBISHED',
-          name: 'Refurbished',
-          value: 'REFURBISHED'
-        }
-        formData.assetCondition = 'REFURBISHED'
-        
-        // Trigger validation to mark the field as valid
-        nextTick(() => {
-          validateFieldInline('assetCondition')
-        })
-        
-        // Show info toast to inform user
-        toastStore.showInfo('Info', 'Asset was issued in REFURBISHED condition. Collection condition has been automatically set to REFURBISHED.')
-      }
-    } else {
-      formData.assetBrandModel = ''
-    }
-  } else {
+  if (!newValue?.value) {
     formData.assetBrandModel = ''
+    return
+  }
+  
+  const assignmentId = Number.parseInt(newValue.value.toString())
+  const selectedAssignment = assignedAssets.value.find(assignment => assignment.id === assignmentId)
+  
+  if (!selectedAssignment) {
+    formData.assetBrandModel = ''
+    return
+  }
+  
+  setBrandModelFromAssignment(selectedAssignment)
+  autoSelectEmployeeFromAssignment(selectedAssignment)
+  
+  if (selectedAssignment.issueCondition === 'REFURBISHED') {
+    handleRefurbishedConditionAutoSelect()
   }
 }, { immediate: true })
 
-// Watch for when assignedAssets are loaded to update brand-model if assetId is already set
-watch(() => assignedAssets.value, (newAssignments) => {
-  if (newAssignments.length > 0 && selectedAsset.value) {
-    if (selectedAsset.value.value) {
-      const assignmentId = Number.parseInt(selectedAsset.value.value.toString())
-      const selectedAssignment = newAssignments.find(assignment => assignment.id === assignmentId)
-      if (selectedAssignment && selectedAssignment.asset.brand && selectedAssignment.asset.model) {
-        const brandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
-        formData.assetBrandModel = brandModel
-      }
-    }
+// Helper function to update brand model for existing selection
+const updateBrandModelForExistingSelection = (newAssignments: ActiveAssignment[]) => {
+  if (!selectedAsset.value?.value || newAssignments.length === 0) {
+    return
   }
   
-  // Also check for pre-selection from localStorage when assignments are loaded
-  const selectedAssetId = localStorage.getItem('selectedAssetId')
-  if (selectedAssetId && newAssignments.length > 0 && !selectedAsset.value) {
-    const selectedAssignment = newAssignments.find(assignment => assignment.asset.assetId === selectedAssetId)
-    if (selectedAssignment) {
-      // Set pre-selection flag to prevent watchers from interfering
-      isPreSelecting.value = true
-      
-      // Set both values together
-      selectedAsset.value = {
-        id: selectedAssignment.id,
-        name: `${selectedAssignment.asset.assetId} - ${selectedAssignment.asset.serialNumber || 'No Serial'}`,
-        value: selectedAssignment.id.toString()
-      }
-      selectedEmployee.value = {
-        id: selectedAssignment.employee.id,
-        name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
-        value: selectedAssignment.employee.id.toString()
-      }
-      formData.assetId = selectedAssignment.id.toString()
-      formData.employeeId = selectedAssignment.employee.id.toString()
-      formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
-      
-      // Auto-select REFURBISHED condition if asset was issued in REFURBISHED condition
-      if (selectedAssignment.issueCondition === 'REFURBISHED') {
-        selectedCondition.value = {
-          id: 'REFURBISHED',
-          name: 'Refurbished',
-          value: 'REFURBISHED'
-        }
-        formData.assetCondition = 'REFURBISHED'
-        
-        // Trigger validation to mark the field as valid
-        nextTick(() => {
-          validateFieldInline('assetCondition')
-        })
-      }
-      
-      // Clear pre-selection flag after a short delay
-      nextTick(() => {
-        setTimeout(() => {
-          isPreSelecting.value = false
-        }, 100)
-      })
-      
-      const message = selectedAssignment.issueCondition === 'REFURBISHED' 
-        ? `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}. Condition automatically set to REFURBISHED.`
-        : `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`
-      
-      toastStore.showInfo('Info', message)
-      
-      localStorage.removeItem('selectedAssetId')
-      localStorage.removeItem('currentEmployee')
-    }
+  const assignmentId = Number.parseInt(selectedAsset.value.value.toString())
+  const selectedAssignment = newAssignments.find(assignment => assignment.id === assignmentId)
+  
+  if (selectedAssignment?.asset.brand && selectedAssignment?.asset.model) {
+    formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
   }
+}
+
+// Helper function to set pre-selection values from assignment
+const setPreSelectionValues = (selectedAssignment: ActiveAssignment, selectedAssetId: string) => {
+  isPreSelecting.value = true
+  
+  selectedAsset.value = {
+    id: selectedAssignment.id,
+    name: `${selectedAssignment.asset.assetId} - ${selectedAssignment.asset.serialNumber || 'No Serial'}`,
+    value: selectedAssignment.id.toString()
+  }
+  
+  selectedEmployee.value = {
+    id: selectedAssignment.employee.id,
+    name: `${selectedAssignment.employee.employeeId} - ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`,
+    value: selectedAssignment.employee.id.toString()
+  }
+  
+  formData.assetId = selectedAssignment.id.toString()
+  formData.employeeId = selectedAssignment.employee.id.toString()
+  formData.assetBrandModel = `${selectedAssignment.asset.brand.name} ${selectedAssignment.asset.model.name}`
+  
+  handlePreSelectionCondition(selectedAssignment, selectedAssetId)
+  clearPreSelectionFlag()
+  cleanupLocalStorage()
+}
+
+// Helper function to handle refurbished condition for pre-selection
+const handlePreSelectionCondition = (selectedAssignment: ActiveAssignment, selectedAssetId: string) => {
+  const isRefurbished = selectedAssignment.issueCondition === 'REFURBISHED'
+  
+  if (isRefurbished) {
+    selectedCondition.value = {
+      id: 'REFURBISHED',
+      name: 'Refurbished',
+      value: 'REFURBISHED'
+    }
+    formData.assetCondition = 'REFURBISHED'
+    nextTick(() => validateFieldInline('assetCondition'))
+  }
+  
+  const message = isRefurbished 
+    ? `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}. Condition automatically set to REFURBISHED.`
+    : `Asset ${selectedAssetId} pre-selected for collection from ${selectedAssignment.employee.firstName} ${selectedAssignment.employee.lastName}`
+  
+  toastStore.showInfo('Info', message)
+}
+
+// Helper function to clear pre-selection flag
+const clearPreSelectionFlag = () => {
+  nextTick(() => {
+    setTimeout(() => {
+      isPreSelecting.value = false
+    }, 100)
+  })
+}
+
+// Helper function to cleanup localStorage
+const cleanupLocalStorage = () => {
+  localStorage.removeItem('selectedAssetId')
+  localStorage.removeItem('currentEmployee')
+}
+
+// Helper function to handle localStorage pre-selection
+const handleLocalStoragePreSelection = (newAssignments: ActiveAssignment[]) => {
+  const selectedAssetId = localStorage.getItem('selectedAssetId')
+  
+  if (!selectedAssetId || newAssignments.length === 0 || selectedAsset.value) {
+    return
+  }
+  
+  const selectedAssignment = newAssignments.find(assignment => assignment.asset.assetId === selectedAssetId)
+  
+  if (selectedAssignment) {
+    setPreSelectionValues(selectedAssignment, selectedAssetId)
+  }
+}
+
+// Watch for when assignedAssets are loaded to update brand-model if assetId is already set
+watch(() => assignedAssets.value, (newAssignments) => {
+  updateBrandModelForExistingSelection(newAssignments)
+  handleLocalStoragePreSelection(newAssignments)
 }, { deep: true })
 
 // API loading functions

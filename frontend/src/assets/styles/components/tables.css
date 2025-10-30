@@ -98,20 +98,7 @@
 
 /* Table action button styling is now handled by buttons.css */
 
-/* Asset actions button group spacing */
-.asset-actions {
-  gap: 0.25rem !important;
-}
-
-/* Vendor actions button group spacing */
-.vendor-actions {
-  gap: 0.25rem !important;
-}
-
-/* Employee actions button group spacing */
-.employee-actions {
-  gap: 0.25rem !important;
-}
+/* Action button group spacing - handled in buttons.css to avoid conflicts */
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

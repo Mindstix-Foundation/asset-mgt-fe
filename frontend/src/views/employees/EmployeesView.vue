@@ -395,7 +395,6 @@
                         class="btn btn-action btn-brown btn-sm" 
                         @click="viewEmployee(employee)"
                         title="View Employee Details"
-                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-eye"></i>
                       </button>
@@ -403,7 +402,6 @@
                         class="btn btn-action btn-purple btn-sm" 
                         title="Edit Employee"
                         @click="editEmployee(employee)"
-                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-edit"></i>
                       </button>
@@ -411,7 +409,6 @@
                         class="btn btn-action btn-green btn-sm" 
                         title="Issue Asset to Employee"
                         @click="issueAsset(employee)"
-                        style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                       >
                         <i class="fas fa-laptop"></i>
                       </button>

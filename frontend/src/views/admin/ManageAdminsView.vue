@@ -766,14 +766,10 @@ const openStatusConfirm = (admin: any) => {
 }
 
 const confirmToggleAdminStatus = async () => {
-  try {
-    if (!selectedStatusAdmin.value) return
-    await toggleAdminStatus(selectedStatusAdmin.value)
-    const modal = Modal.getInstance(document.getElementById('statusConfirmModal')!)
-    modal?.hide()
-  } catch (e) {
-    // error handled in toggleAdminStatus
-  }
+  if (!selectedStatusAdmin.value) return
+  await toggleAdminStatus(selectedStatusAdmin.value)
+  const modal = Modal.getInstance(document.getElementById('statusConfirmModal')!)
+  modal?.hide()
 }
 
 const removeAdmin = (admin: any) => {

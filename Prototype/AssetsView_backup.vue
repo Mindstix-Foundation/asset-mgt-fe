@@ -19,14 +19,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'view-toggle', { active: currentView === 'list' }]"
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'view-toggle', { active: currentView === 'grid' }]"
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'grid' }]"
                     @click="setView('grid')"
                     style="min-width: 35px; padding: 0.375rem 0.5rem;"
                   >
@@ -37,9 +37,9 @@
             </div>
             <div class="col-6">
               <!-- Data Management Dropdown -->
-              <div class="dropdown more-actions-dropdown">
+              <div class="dropdown">
                 <button 
-                  class="btn btn-gray dropdown-toggle w-100" 
+                  class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
                   type="button" 
                   aria-expanded="false"
                   id="moreActionsDropdownSm"
@@ -47,7 +47,7 @@
                 >
                   <i class="fas fa-cog me-1"></i>More Actions
                 </button>
-                <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm">
+                <ul class="dropdown-menu dropdown-menu-responsive" aria-labelledby="moreActionsDropdownSm" style="min-width: 200px;">
                   <li>
                     <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
@@ -58,7 +58,7 @@
                       <i class="fas fa-download me-2 text-success"></i>Export Assets
                     </button>
                   </li>
-               
+                  <li><hr class="dropdown-divider"></li>
                   <li>
                     <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdownSm'); }">
                       <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
@@ -72,12 +72,12 @@
           <div class="row g-2 mb-2">
             <!-- Row 2: Add New Asset + Issue Asset -->
             <div class="col-6">
-              <button class="btn btn-purple w-100" @click="navigateToAddAsset">
+              <button class="btn btn-primary btn-modern w-100" @click="navigateToAddAsset">
                 <i class="fas fa-plus me-1"></i>Add New Asset
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-green w-100" @click="navigateToIssueAsset">
+              <button class="btn btn-success btn-modern w-100" @click="navigateToIssueAsset">
                 <i class="fas fa-user-plus me-1"></i>Issue Asset
               </button>
             </div>
@@ -86,12 +86,12 @@
           <div class="row g-2">
             <!-- Row 3: Collect Asset + Maintenance -->
             <div class="col-6">
-              <button class="btn btn-pink w-100" @click="navigateToCollectAsset">
+              <button class="btn btn-outline-warning btn-modern w-100" @click="navigateToCollectAsset">
                 <i class="fas fa-user-minus me-1"></i>Collect Asset
               </button>
             </div>
             <div class="col-6">
-              <button class="btn btn-orange w-100" @click="navigateToScheduleMaintenance">
+              <button class="btn btn-warning btn-modern w-100" @click="navigateToScheduleMaintenance">
                 <i class="fas fa-wrench me-1"></i>Maintenance
               </button>
             </div>
@@ -107,14 +107,14 @@
                 <!-- View Toggle -->
                 <fieldset class="btn-group flex-shrink-0" aria-label="View toggle">
                   <button 
-                    :class="['btn', 'view-toggle', { active: currentView === 'list' }]"
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'list' }]"
                     @click="setView('list')"
                     style="min-width: 40px;"
                   >
                     <i class="fas fa-list"></i>
                   </button>
                   <button 
-                    :class="['btn', 'view-toggle', { active: currentView === 'grid' }]"
+                    :class="['btn', 'btn-outline-secondary', 'btn-modern', 'view-toggle', { active: currentView === 'grid' }]"
                     @click="setView('grid')"
                     style="min-width: 40px;"
                   >
@@ -123,9 +123,9 @@
                 </fieldset>
                 
                 <!-- Data Management Dropdown -->
-                <div class="dropdown more-actions-dropdown flex-fill">
+                <div class="dropdown flex-fill">
                   <button 
-                    class="btn btn-gray dropdown-toggle w-100" 
+                    class="btn btn-outline-secondary btn-modern dropdown-toggle w-100" 
                     type="button" 
                     aria-expanded="false"
                     id="moreActionsDropdown"
@@ -133,7 +133,7 @@
                   >
                     <i class="fas fa-cog me-1"></i>More Actions
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown">
+                  <ul class="dropdown-menu" aria-labelledby="moreActionsDropdown" style="min-width: 200px; max-width: 90vw;">
                     <li>
                       <button class="dropdown-item" @click="() => { openBulkUploadModal(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-file-excel me-2 text-primary"></i>Bulk Upload Assets
@@ -144,7 +144,7 @@
                         <i class="fas fa-download me-2 text-success"></i>Export Assets
                       </button>
                     </li>
-    
+                    <li><hr class="dropdown-divider"></li>
                     <li>
                       <button class="dropdown-item" @click="() => { navigateToManageCategories(); closeDropdown('moreActionsDropdown'); }">
                         <i class="fas fa-cogs me-2 text-info"></i>Manage Asset Categories
@@ -158,11 +158,11 @@
             <!-- Add New Asset + Issue Asset -->
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
-                <button class="btn btn-purple flex-fill" @click="navigateToAddAsset">
+                <button class="btn btn-primary btn-modern flex-fill" @click="navigateToAddAsset">
                   <i class="fas fa-plus me-1"></i>Add New Asset
                 </button>
                 
-                <button class="btn btn-green flex-fill" @click="navigateToIssueAsset">
+                <button class="btn btn-success btn-modern flex-fill" @click="navigateToIssueAsset">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
               </div>
@@ -171,10 +171,10 @@
             <!-- Collect Asset + Schedule Maintenance -->
             <div class="col-md-12 col-lg-auto">
               <div class="d-flex gap-2 w-100">
-                <button class="btn btn-pink flex-fill" @click="navigateToCollectAsset">
+                <button class="btn btn-outline-warning btn-modern flex-fill" @click="navigateToCollectAsset">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
-                <button class="btn btn-orange flex-fill" @click="navigateToScheduleMaintenance">
+                <button class="btn btn-warning btn-modern flex-fill" @click="navigateToScheduleMaintenance">
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
               </div>
@@ -190,11 +190,11 @@
         <!-- Search Assets -->
         <div class="col-12 col-lg-7 mb-3">
           <div class="form-label">Search Assets</div>
-          <div class="search-input-container">
-            <i class="fas fa-search search-icon"></i>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
             <input 
               type="text" 
-              class="form-control search-input" 
+              class="form-control" 
               v-model="searchTerm"
               placeholder="Search by ID, model, brand, or serial number..."
               @input="debouncedLoadAssets"
@@ -219,15 +219,15 @@
           <div class="row g-3">
             <!-- Toggle Sort Order -->
             <div class="col-4">
-              <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
-                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up', 'text-small-medium']"></i>
+              <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
+                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
               </button>
             </div>
             
             <!-- Filter Button -->
             <div class="col-8">
               <button 
-                class="btn btn-filter w-100" 
+                class="btn btn-outline-secondary btn-modern w-100" 
                 @click="toggleFilterDropdown"
                 :class="{ active: showFilterDropdown }"
               >
@@ -238,58 +238,62 @@
         </div>
       </div>
         
-        <!-- Filter Section (inline, bordered container to mimic card) -->
-        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
-          <!-- Bootstrap Flexbox for exact proportions -->
-          <div class="d-flex flex-column flex-md-row gap-2">
-            <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="asset-type-filter"
-                label="Asset Type"
-                placeholder="Search asset types..."
-                :items="assetTypes"
-                v-model="selectedType"
-                @change="onAssetTypeChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="brand-filter"
-                label="Brand"
-                placeholder="Search brands..."
-                :items="brands"
-                v-model="selectedBrand"
-                @change="onBrandChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="status-filter"
-                label="Status"
-                placeholder="Search status..."
-                :items="statusOptions"
-                v-model="selectedStatus"
-                @change="onStatusChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="condition-filter"
-                label="Condition"
-                placeholder="Search condition..."
-                :items="conditionOptions"
-                v-model="selectedCondition"
-                @change="onConditionChange"
-              />
-            </div>
-
-            <!-- Clear Button: using filter-clear-button-container class -->
-            <div class="filter-clear-button-container">
-              <div class="d-flex align-items-end h-100">
-                <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
-                  <i class="fas fa-times me-1"></i>Clear
-                </button>
+        <!-- Filter Dropdown -->
+        <div v-if="showFilterDropdown" class="filter-dropdown mt-3 p-3 bg-light rounded">
+          <div class="row">
+            <div class="col-12">
+              <!-- Bootstrap Flexbox for exact proportions -->
+              <div class="d-flex flex-column flex-md-row gap-2">
+                <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="asset-type-filter"
+                    label="Asset Type"
+                    placeholder="Search asset types..."
+                    :items="assetTypes"
+                    v-model="selectedType"
+                    @change="onAssetTypeChange"
+                  />
+                </div>
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="brand-filter"
+                    label="Brand"
+                    placeholder="Search brands..."
+                    :items="brands"
+                    v-model="selectedBrand"
+                    @change="onBrandChange"
+                  />
+                </div>
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="status-filter"
+                    label="Status"
+                    placeholder="Search status..."
+                    :items="statusOptions"
+                    v-model="selectedStatus"
+                    @change="onStatusChange"
+                  />
+                </div>
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="condition-filter"
+                    label="Condition"
+                    placeholder="Search condition..."
+                    :items="conditionOptions"
+                    v-model="selectedCondition"
+                    @change="onConditionChange"
+                  />
+                </div>
+                
+                <!-- Clear Button: fixed width (1.5 columns = 12.5%) -->
+                <div class="flex-shrink-0" style="width: 12.5%;">
+                  <div class="d-flex align-items-end h-100">
+                    <button class="btn btn-outline-secondary btn-modern w-100" @click="clearFilters" title="Clear All Filters">
+                      <i class="fas fa-times me-1"></i>Clear
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -310,16 +314,16 @@
       <div class="card" v-show="currentView === 'list' && !isLoading">
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-hover asset-table mb-0">
+            <table class="table table-hover mb-0">
               <thead class="table-light">
                 <tr>
                   <th>Asset ID</th>
                   <th>Asset Details</th>
                   <th>Serial Number</th>
+                  <th>Status</th>
                   <th>Assigned To</th>
                   <th>Condition</th>
-                  <th>Status</th>
-                  <th class="text-start">Actions</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -333,27 +337,27 @@
                 >
                   <td><strong>{{ asset.id }}</strong></td>
                   <td>
-                    <div style="line-height: 1.2;">
+                    <div>
                       <strong style="color: var(--primary-black);">
                         {{ asset.model || 'Unknown Model' }}
                       </strong>
-                      <br style="margin: 0; line-height: 0.8;">
-                      <small class="text-muted" style="line-height: 1.1;">
+                      <br>
+                      <small class="text-muted">
                         {{ asset.type || 'Unknown Type' }} - 
                         {{ asset.brand || 'Unknown Brand' }}
                       </small>
                     </div>
                   </td>
                   <td>{{ asset.serialNumber }}</td>
-                  <td>{{ asset.assignedTo || '-' }}</td>
-                  <td>{{ getConditionText(asset.condition) }}</td>
                   <td>
                     <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
                   </td>
-                  <td class="text-start">
+                  <td>{{ asset.assignedTo || '-' }}</td>
+                  <td>{{ getConditionText(asset.condition) }}</td>
+                  <td>
                     <div class="btn-group btn-group-sm asset-actions">
                       <button 
-                        class="btn btn-action btn-brown" 
+                        class="btn btn-outline-primary btn-view-details" 
                         @click="viewAssetDetails(asset)"
                         :title="getViewButtonTitle(asset.status)"
                       >
@@ -361,7 +365,7 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'RETIRED'"
-                        class="btn btn-action btn-purple" 
+                        class="btn btn-outline-secondary btn-edit-asset" 
                         title="Edit Asset"
                         @click="editAsset(asset)"
                       >
@@ -369,7 +373,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'AVAILABLE'"
-                        class="btn btn-action btn-green" 
+                        class="btn btn-outline-success btn-issue-asset" 
                         title="Issue Asset"
                         @click="issueAsset(asset)"
                       >
@@ -377,7 +381,7 @@
                       </button>
                       <button 
                         v-if="asset.status === 'ASSIGNED'"
-                        class="btn btn-action btn-pink" 
+                        class="btn btn-outline-warning btn-collect-asset" 
                         title="Collect Asset"
                         @click="collectAsset(asset)"
                       >
@@ -385,13 +389,13 @@
                       </button>
                       <button 
                         v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                        class="btn btn-action btn-orange" 
+                        class="btn btn-outline-warning btn-maintenance-action" 
                         :title="getMaintenanceButtonTitle(asset.status)"
                         @click="handleMaintenanceAction(asset)"
                       >
                         <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                       </button>
-                      <button class="btn btn-action btn-gray" title="View QR Code">
+                      <button class="btn btn-outline-info btn-qr-code" title="View QR Code">
                         <i class="fas fa-qrcode"></i>
                       </button>
                     </div>
@@ -427,35 +431,35 @@
                     class="rounded-circle d-flex align-items-center justify-content-center me-2" 
                     :style="{ width: '36px', height: '36px', backgroundColor: getAssetTypeColor(asset.type), flexShrink: 0 }"
                   >
-                    <i :class="[getAssetTypeIconClass(asset.type), 'text-white', 'text-small-medium']"></i>
+                    <i :class="getAssetTypeIconClass(asset.type)" class="text-white" style="font-size: 0.9rem;"></i>
                   </div>
                   <div class="flex-grow-1">
                     <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ asset.id }}</h6>
-                    <small class="text-muted text-truncate d-block">{{ asset.type }} - {{ asset.brand }}</small>
+                    <small class="text-muted text-truncate d-block">{{ asset.type }}</small>
                   </div>
-                  <span :class="getStatusBadgeClass(asset.status)">
+                  <span :class="[getStatusBadgeClass(asset.status), 'badge-sm']" style="font-size: 0.7rem;">
                     {{ getStatusText(asset.status) }}
                   </span>
                 </div>
                 
-                <!-- Asset Details - Custom layout -->
+                <!-- Asset Details Grid - 2 columns for better space usage -->
                 <div class="mb-2">
                   <div class="row g-1">
-                    <div class="col-12">
-                      <small class="text-muted d-block">Model</small>
-                      <div class="fw-medium text-truncate" style="color: var(--primary-black);">{{ asset.model }}</div>
-                    </div>
-                    <div class="col-12">
-                      <small class="text-muted d-block">Serial</small>
-                      <div class="text-truncate" style="color: var(--primary-black);">{{ asset.serialNumber }}</div>
+                    <div class="col-6">
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">Brand/Model</small>
+                      <div class="fw-medium text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.brandModel }}</div>
                     </div>
                     <div class="col-6">
-                      <small class="text-muted d-block">Assigned To</small>
-                      <div class="text-truncate" style="color: var(--primary-black);">{{ asset.assignedTo || 'Not Assigned' }}</div>
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">Serial</small>
+                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.serialNumber }}</div>
                     </div>
                     <div class="col-6">
-                      <small class="text-muted d-block">Condition</small>
-                      <div class="text-truncate" style="color: var(--primary-black);">{{ getConditionText(asset.condition) }}</div>
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">Assigned To</small>
+                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ asset.assignedTo || 'Not Assigned' }}</div>
+                    </div>
+                    <div class="col-6">
+                      <small class="text-muted d-block" style="font-size: 0.7rem;">Condition</small>
+                      <div class="text-truncate" style="color: var(--primary-black); font-size: 0.8rem;">{{ getConditionText(asset.condition) }}</div>
                     </div>
                   </div>
                 </div>
@@ -463,45 +467,50 @@
                 <div class="asset-actions-footer mt-auto pt-2 border-top">
                   <div class="d-flex justify-content-center gap-1">
                     <button 
-                      class="btn btn-action btn-brown btn-sm" 
+                      class="btn btn-action btn-view-details btn-sm" 
                       @click="viewAssetDetails(asset)"
                       :title="getViewButtonTitle(asset.status)"
+                      style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i class="fas fa-eye"></i>
                     </button>
                     <button 
                       v-if="asset.status !== 'RETIRED'"
-                      class="btn btn-action btn-purple btn-sm" 
+                      class="btn btn-action btn-edit-asset btn-sm" 
                       title="Edit Asset"
                       @click="editAsset(asset)"
+                      style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i class="fas fa-edit"></i>
                     </button>
                     <button 
                       v-if="asset.status === 'AVAILABLE'"
-                      class="btn btn-action btn-green btn-sm" 
+                      class="btn btn-action btn-issue-asset btn-sm" 
                       title="Issue Asset"
                       @click="issueAsset(asset)"
+                      style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i class="fas fa-user-plus"></i>
                     </button>
                     <button 
                       v-if="asset.status === 'ASSIGNED'"
-                      class="btn btn-action btn-pink btn-sm" 
+                      class="btn btn-action btn-collect-asset btn-sm" 
                       title="Collect Asset"
                       @click="collectAsset(asset)"
+                      style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i class="fas fa-user-minus"></i>
                     </button>
                     <button 
                       v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                      class="btn btn-action btn-orange btn-sm" 
+                      class="btn btn-action btn-maintenance-action btn-sm" 
                       :title="getMaintenanceButtonTitle(asset.status)"
                       @click="handleMaintenanceAction(asset)"
+                      style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
                     >
                       <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                     </button>
-                    <button class="btn btn-action btn-gray btn-sm" title="View QR Code">
+                    <button class="btn btn-action btn-qr-code btn-sm" title="View QR Code" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
                       <i class="fas fa-qrcode"></i>
                     </button>
                   </div>
@@ -521,15 +530,16 @@
     </div>
 
     <!-- Pagination -->
-    <AppPagination 
-      :current-page="currentPage" 
-      :total-pages="totalPages" 
-      :start="paginationInfo.start"
-      :end="paginationInfo.end"
-      :total="paginationInfo.total"
-      :item-name="'assets'"
-      @change="goToPage"
-    />
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <div class="text-muted">
+        <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} assets</small>
+      </div>
+      <AppPagination 
+        :current-page="currentPage" 
+        :total-pages="totalPages" 
+        @change="goToPage"
+      />
+    </div>
 
     <!-- Asset Detail Modal -->
     <div 
@@ -537,25 +547,17 @@
       :class="{ show: showDetailModal }" 
       :style="{ display: showDetailModal ? 'block' : 'none' }"
       tabindex="-1"
-      v-if="showDetailModal"
+      v-if="selectedAsset"
     >
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Asset Details{{ selectedAsset ? ` - ${selectedAsset.id}` : '' }}</h5>
+            <h5 class="modal-title">Asset Details - {{ selectedAsset.id }}</h5>
             <button type="button" class="btn-close" @click="closeDetailModal"></button>
           </div>
           <div class="modal-body">
-            <!-- Loading State -->
-            <div v-if="isLoadingAssetDetails" class="text-center py-5">
-              <div class="spinner-border text-primary">
-                <output class="visually-hidden">Loading...</output>
-              </div>
-              <p class="mt-3 text-muted">Loading asset details...</p>
-            </div>
-
             <!-- Asset Information - Compact Layout -->
-            <div v-else-if="selectedAsset" class="row g-2 equal-height-columns">
+            <div class="row g-2 equal-height-columns">
               <!-- Left Column: Basic Info -->
               <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
@@ -570,12 +572,12 @@
                       <div class="info-value-compact">{{ selectedAsset.category }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <div class="info-label-compact">Asset Type & Brand</div>
-                      <div class="info-value-compact fw-bold">{{ selectedAsset.type }} {{ selectedAsset.brand }}</div>
+                      <div class="info-label-compact">Asset Type</div>
+                      <div class="info-value-compact fw-bold">{{ selectedAsset.type }}</div>
                     </div>
                     <div class="info-item-compact">
-                      <div class="info-label-compact">Model</div>
-                      <div class="info-value-compact fw-bold">{{ selectedAsset.model || 'Unknown Model' }}</div>
+                      <div class="info-label-compact">Brand & Model</div>
+                      <div class="info-value-compact fw-bold">{{ selectedAsset.brandModel }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Serial Number</div>
@@ -583,7 +585,9 @@
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Condition</div>
-                      <div class="info-value-compact">{{ getConditionText(selectedAsset.condition) }}</div>
+                      <div class="info-value-compact">
+                        <span :class="getConditionBadgeClass(selectedAsset.condition)">{{ selectedAsset.condition }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -604,7 +608,7 @@
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Purchase Cost</div>
-                      <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${Number(selectedAsset.purchaseCost).toLocaleString()}` : 'Not specified' }}</div>
+                      <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${selectedAsset.purchaseCost.toLocaleString()}` : 'Not specified' }}</div>
                     </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Vendor</div>
@@ -613,17 +617,17 @@
                     <div class="info-item-compact">
                       <div class="info-label-compact">Warranty Period</div>
                       <div class="info-value-compact">
-                        <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyEndDate" class="warranty-info-compact">
+                        <div v-if="selectedAsset.warrantyStartDate || selectedAsset.warrantyUntil" class="warranty-info-compact">
                           <div v-if="selectedAsset.warrantyStartDate" class="warranty-row">
                             <span class="warranty-label">Start:</span>
-                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyStartDate) }}</span>
+                            <span class="warranty-value">{{ formatDate(selectedAsset.warrantyStartDate) }}</span>
                           </div>
-                          <div v-if="selectedAsset.warrantyEndDate" class="warranty-row">
+                          <div v-if="selectedAsset.warrantyUntil" class="warranty-row">
                             <span class="warranty-label">End:</span>
-                            <span class="warranty-value" style="color: var(--primary-black);">{{ formatDate(selectedAsset.warrantyEndDate) }}</span>
+                            <span class="warranty-value">{{ formatDate(selectedAsset.warrantyUntil) }}</span>
                           </div>
-                          <div v-if="selectedAsset.warrantyEndDate" class="warranty-time">
-                            <span class="warranty-time-text text-muted">{{ getWarrantyTimeLeft(selectedAsset.warrantyEndDate) }}</span>
+                          <div v-if="selectedAsset.warrantyUntil" class="warranty-time">
+                            <span class="warranty-time-text">{{ getWarrantyTimeLeft(selectedAsset.warrantyUntil) }}</span>
                           </div>
                         </div>
                         <div v-else class="text-muted">Not specified</div>
@@ -635,35 +639,36 @@
             </div>
 
             <!-- Assignment Status & Information - Combined -->
-            <div v-if="selectedAsset && selectedAsset.status !== 'RETIRED'" class="row ">
+            <div v-if="selectedAsset.status !== 'RETIRED'" class="row ">
               <div class="col-12">
                 <div class="assignment-status-combined">
-                  <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
-                      @click="toggleAssignmentDetails">
-                    <span><i :class="selectedAsset ? getStatusIcon(selectedAsset.status) : ''" class="me-2"></i>{{ selectedAsset ? getStatusSectionTitle(selectedAsset.status) : '' }}</span>
+                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                      @click="toggleAssignmentDetails" 
+                      style="cursor: pointer;">
+                    <span><i :class="getStatusIcon(selectedAsset.status)" class="me-2"></i>{{ getStatusSectionTitle(selectedAsset.status) }}</span>
                     <i class="fas fa-chevron-down assignment-chevron" 
                        :class="{ 'rotated': isAssignmentDetailsExpanded }"
-                       v-if="selectedAsset && (selectedAsset.status === 'ASSIGNED' || selectedAsset.status === 'IN_MAINTENANCE' || selectedAsset.status === 'LOST')"></i>
+                       v-if="selectedAsset.status === 'ASSIGNED' || selectedAsset.status === 'IN_MAINTENANCE' || selectedAsset.status === 'LOST'"></i>
                   </h6>
                   
                   <!-- Basic Status Info -->
                   <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded mb-2">
                     <div class="d-flex align-items-center gap-3">
                       <div class="assignment-icon">
-                        <i :class="selectedAsset ? getAssignmentIcon(selectedAsset.status) : ''" class="fa-lg"></i>
+                        <i :class="getAssignmentIcon(selectedAsset.status)" class="fa-lg"></i>
                       </div>
                       <div class="assignment-details">
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
-                            <span class="text-muted text-small">Status:</span>
-                            <span :class="selectedAsset ? getStatusBadgeClass(selectedAsset.status) : ''" class="ms-1">{{ selectedAsset ? getStatusText(selectedAsset.status) : '' }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
                           </div>
                           <div>
-                            <span class="text-muted text-small">{{ selectedAsset ? getStatusSecondaryLabel(selectedAsset.status) : '' }}</span>
-                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset ? getStatusSecondaryValue(selectedAsset) : '' }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">{{ getStatusSecondaryLabel(selectedAsset.status) }}</span>
+                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ getStatusSecondaryValue(selectedAsset) }}</span>
                           </div>
                         </div>
-                        <div class="text-muted text-small">{{ selectedAsset ? getAssignmentStatusDescription(selectedAsset.status) : '' }}</div>
+                        <div class="text-muted" style="font-size: 0.8rem;">{{ getAssignmentStatusDescription(selectedAsset.status) }}</div>
                       </div>
                     </div>
                     <div class="qr-code-mini">
@@ -672,14 +677,14 @@
                   </div>
                   
                   <!-- Status Details (collapsible for ASSIGNED, IN_MAINTENANCE, LOST) -->
-                  <div v-if="selectedAsset && ((selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)) ||
+                  <div v-if="(selectedAsset.status === 'ASSIGNED' && (selectedAsset.assignmentReason || selectedAsset.assignmentNotes || selectedAsset.assignmentDate)) ||
                              (selectedAsset.status === 'IN_MAINTENANCE' && selectedAsset.notes) ||
-                             (selectedAsset.status === 'LOST' && selectedAsset.notes))" 
+                             (selectedAsset.status === 'LOST' && selectedAsset.notes)" 
                        v-show="isAssignmentDetailsExpanded" 
                        class="assignment-details-expanded">
                     <div class="row g-2">
                       <!-- ASSIGNED Status Details -->
-                      <template v-if="selectedAsset && selectedAsset.status === 'ASSIGNED'">
+                      <template v-if="selectedAsset.status === 'ASSIGNED'">
                         <!-- Assignment Reason -->
                         <div class="col-md-6" v-if="selectedAsset.assignmentReason">
                           <div class="info-item-compact">
@@ -728,7 +733,7 @@
                       </template>
                       
                       <!-- IN_MAINTENANCE Status Details -->
-                      <template v-if="selectedAsset && selectedAsset.status === 'IN_MAINTENANCE'">
+                      <template v-if="selectedAsset.status === 'IN_MAINTENANCE'">
                         <div class="col-12">
                           <div class="alert alert-warning mb-0">
                             <i class="fas fa-wrench me-2"></i>
@@ -738,7 +743,7 @@
                       </template>
                       
                       <!-- LOST Status Details -->
-                      <template v-if="selectedAsset && selectedAsset.status === 'LOST'">
+                      <template v-if="selectedAsset.status === 'LOST'">
                         <div class="col-12">
                           <div class="alert alert-danger mb-0">
                             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -753,15 +758,16 @@
             </div>
 
             <!-- Retirement Information (if asset is retired) -->
-            <div v-if="selectedAsset && selectedAsset.status === 'RETIRED'" class="row">
+            <div v-if="selectedAsset.status === 'RETIRED'" class="row">
               <div class="col-12">
                 <div class="retirement-status-combined">
-                    <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
-                        @click="toggleRetirementDetails">
+                  <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                      @click="toggleRetirementDetails" 
+                      style="cursor: pointer;">
                     <span><i class="fas fa-archive me-2"></i>Retirement Information</span>
                     <i class="fas fa-chevron-down retirement-chevron" 
                        :class="{ 'rotated': isRetirementDetailsExpanded }"
-                       v-if="selectedAsset && selectedAsset.retirementNotes"></i>
+                       v-if="selectedAsset.retirementNotes"></i>
                   </h6>
                   
                   <!-- Basic Retirement Info -->
@@ -773,12 +779,12 @@
                       <div class="retirement-details">
                         <div class="d-flex align-items-center gap-3 mb-1">
                           <div>
-                            <span class="text-muted text-small">Status:</span>
-                            <span :class="selectedAsset ? getStatusBadgeClass(selectedAsset.status) : ''" class="ms-1">{{ selectedAsset ? getStatusText(selectedAsset.status) : '' }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
+                            <span :class="getStatusBadgeClass(selectedAsset.status)" class="ms-1">{{ getStatusText(selectedAsset.status) }}</span>
                           </div>
                           <div>
-                            <span class="text-muted text-small">Retirement Date:</span>
-                            <span class="ms-1 fw-medium text-small-medium">{{ selectedAsset && selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">Retirement Date:</span>
+                            <span class="ms-1 fw-medium" style="font-size: 0.9rem;">{{ selectedAsset.retirementDate ? formatDate(selectedAsset.retirementDate) : 'Not specified' }}</span>
                           </div>
                         </div>
                       </div>
@@ -786,12 +792,12 @@
                   </div>
                   
                   <!-- Retirement Details (only show if retirement notes exist) -->
-                  <div v-if="selectedAsset && selectedAsset.retirementNotes" 
+                  <div v-if="selectedAsset.retirementNotes" 
                        v-show="isRetirementDetailsExpanded" 
                        class="retirement-details-expanded">
                     <div class="row g-2">
                       <!-- Retirement Reason -->
-                      <div class="col-md-6" v-if="selectedAsset && selectedAsset.retirementReason">
+                      <div class="col-md-6" v-if="selectedAsset.retirementReason">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
@@ -799,12 +805,12 @@
                       </div>
                       
                       <!-- Divider between retirement details and notes -->
-                      <div class="col-12" v-if="selectedAsset && selectedAsset.retirementNotes">
+                      <div class="col-12" v-if="selectedAsset.retirementNotes">
                         <hr class="retirement-divider">
                       </div>
                       
                       <!-- Retirement Notes -->
-                      <div class="col-12" v-if="selectedAsset && selectedAsset.retirementNotes">
+                      <div class="col-12" v-if="selectedAsset.retirementNotes">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Notes</div>
                           <div class="info-value-compact">
@@ -826,11 +832,12 @@
             </div>
 
             <!-- Refurbishment Information (if condition is REFURBISHED) -->
-            <div v-if="selectedAsset && selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
+            <div v-if="selectedAsset.condition === 'REFURBISHED'" class="row mt-2">
               <div class="col-12">
                 <div class="retirement-status-combined">
-                      <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
-                          @click="toggleRefurbishmentDetails">
+                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                        @click="toggleRefurbishmentDetails" 
+                        style="cursor: pointer;">
                       <span><i class="fas fa-tools me-2"></i>Refurbishment Information</span>
                       <i class="fas fa-chevron-down assignment-chevron" 
                          :class="{ 'rotated': isRefurbishmentDetailsExpanded }"></i>
@@ -844,11 +851,11 @@
                         </div>
                         <div class="retirement-details">
                           <div class="d-flex gap-4">
-                            <div v-if="selectedAsset && selectedAsset.retirementDate">
+                            <div v-if="selectedAsset.retirementDate">
                               <small class="text-muted">Retirement Date</small>
                               <div class="fw-semibold">{{ formatDate(selectedAsset.retirementDate) }}</div>
                             </div>
-                            <div v-if="selectedAsset && selectedAsset.reactivationDate">
+                            <div v-if="selectedAsset.reactivationDate">
                               <small class="text-muted">Reactivation Date</small>
                               <div class="fw-semibold">{{ formatDate(selectedAsset.reactivationDate) }}</div>
                             </div>
@@ -862,7 +869,7 @@
                          class="assignment-details-expanded">
                       
                       <!-- Retirement Information -->
-                      <div v-if="selectedAsset && selectedAsset.retirementReason">
+                      <div v-if="selectedAsset.retirementReason">
                         <div class="info-item-compact">
                           <div class="info-label-compact">Retirement Reason</div>
                           <div class="info-value-compact">{{ selectedAsset.retirementReason }}</div>
@@ -870,10 +877,10 @@
                       </div>
                       
                       <!-- Divider Line -->
-                      <hr class="my-3 modal-divider" v-if="selectedAsset && selectedAsset.retirementReason && selectedAsset.reactivationReason">
+                      <hr class="my-3" style="border-color: #e9ecef; border-width: 1px;" v-if="selectedAsset.retirementReason && selectedAsset.reactivationReason">
                       
                       <!-- Reactivation Information -->
-                      <div v-if="selectedAsset && selectedAsset.reactivationReason">
+                      <div v-if="selectedAsset.reactivationReason">
                         <NotesDisplay 
                           :notes="selectedAsset.reactivationReason"
                           :label="'Reactivation Reason'"
@@ -895,7 +902,7 @@
                 <div class="asset-info-section-compact">
                   <h6 class="section-title-compact"><i class="fas fa-sticky-note me-2"></i>Additional Notes</h6>
                   <NotesDisplay 
-                    :notes="selectedAsset ? selectedAsset.notes : ''"
+                    :notes="selectedAsset.notes"
                     :fallback-text="'No additional notes provided.'"
                     :show-label="false"
                     :show-icon="false"
@@ -909,33 +916,33 @@
           <div class="modal-footer">
             <div class="d-flex justify-content-between w-100">
               <div>
-                <button type="button" class="btn btn-brown btn-sm" @click="selectedAsset ? viewAssetHistory(selectedAsset) : null">
+                <button type="button" class="btn btn-history" @click="viewAssetHistory(selectedAsset!)">
                   <i class="fas fa-history me-1"></i>History
                 </button>
               </div>
               <div class="d-flex gap-2">
-                <button type="button" class="btn btn-cancel btn-sm" @click="closeDetailModal">Close</button>
-                <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-green btn-sm" @click="selectedAsset ? issueAsset(selectedAsset) : null">
+                <button type="button" class="btn btn-cancel" @click="closeDetailModal">Close</button>
+                <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-success" @click="issueAsset(selectedAsset!)">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
-                <button v-if="selectedAsset && selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink btn-sm" @click="selectedAsset ? collectAsset(selectedAsset) : null">
+                <button v-if="selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink" @click="collectAsset(selectedAsset!)">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
                 <button 
-                  v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'"
+                  v-if="selectedAsset.status === 'AVAILABLE'"
                   type="button" 
-                  class="btn btn-orange btn-sm" 
-                  @click="selectedAsset ? handleMaintenanceAction(selectedAsset) : null"
+                  class="btn btn-warning" 
+                  @click="handleMaintenanceAction(selectedAsset!)"
                 >
                   <i class="fas fa-wrench me-1"></i>Schedule Maintenance
                 </button>
-              <button type="button" class="btn btn-purple btn-sm" @click="selectedAsset ? editAsset(selectedAsset) : null" :disabled="!selectedAsset">
+              <button type="button" class="btn btn-primary-blue" @click="editAsset(selectedAsset!)" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
-              <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
+              <button v-if="selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-danger" @click="openRetireAssetModal">
                 <i class="fas fa-archive me-1"></i>Retire Asset
               </button>
-              <button v-if="selectedAsset && selectedAsset.status === 'RETIRED'" type="button" class="btn btn-green btn-sm" @click="openReactivateAssetModal">
+              <button v-if="selectedAsset.status === 'RETIRED'" type="button" class="btn btn-success" @click="openReactivateAssetModal">
                 <i class="fas fa-power-off me-1"></i>Reactivate Asset
               </button>
             </div>
@@ -963,8 +970,8 @@
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-archive me-2"></i>Retire Asset - {{ assetToRetire?.id }}
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              <i class="fas fa-archive me-2" style="color: var(--secondary-red);"></i>Retire Asset - {{ assetToRetire?.id }}
             </h5>
             <button type="button" class="btn-close" @click="closeRetireAssetModal"></button>
           </div>
@@ -987,12 +994,12 @@
                           <div class="info-value-compact fw-bold">{{ assetToRetire?.id }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <div class="info-label-compact">Asset Type & Brand</div>
-                          <div class="info-value-compact">{{ assetToRetire?.type }} - {{ assetToRetire?.brand }}</div>
+                          <div class="info-label-compact">Asset Type</div>
+                          <div class="info-value-compact">{{ assetToRetire?.type }}</div>
                         </div>
                         <div class="info-item-compact">
-                          <div class="info-label-compact">Model</div>
-                          <div class="info-value-compact">{{ assetToRetire?.model }}</div>
+                          <div class="info-label-compact">Brand & Model</div>
+                          <div class="info-value-compact">{{ assetToRetire?.brandModel }}</div>
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -1024,13 +1031,11 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <DatePicker
+                          <DateInput
                             id="retirementDate"
-                            label="Retirement Date"
+                            label="Retirement Date *"
                             v-model="retireFormData.retirementDate"
-                            :max="todayDate"
                             :error-message="!retireFormValidation.retirementDate.isValid ? retireFormValidation.retirementDate.message : ''"
-                            help-text="Date must be today or in the past"
                             required
                             @change="validateRetirementDate"
                             @blur="validateRetirementDate"
@@ -1075,10 +1080,10 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-cancel btn-sm" @click="closeRetireAssetModal">Cancel</button>
+            <button type="button" class="btn btn-secondary" @click="closeRetireAssetModal">Cancel</button>
             <button 
               type="button" 
-              class="btn btn-red btn-sm" 
+              class="btn btn-danger" 
               @click="retireAsset" 
               :disabled="isRetiringAsset || !retireFormData.retirementDate || !retireFormData.retirementReason"
             >
@@ -1101,8 +1106,8 @@
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-power-off me-2"></i>Reactivate Asset - {{ assetToReactivate?.id }}
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              <i class="fas fa-power-off me-2" style="color: var(--secondary-green);"></i>Reactivate Asset - {{ assetToReactivate?.id }}
             </h5>
             <button type="button" class="btn-close" @click="closeReactivateAssetModal"></button>
           </div>
@@ -1117,8 +1122,9 @@
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="retirement-status-combined">
-                      <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
-                          @click="toggleReactivateAssetSummary">
+                    <h6 class="section-title-compact d-flex align-items-center justify-content-between" 
+                        @click="toggleReactivateAssetSummary" 
+                        style="cursor: pointer;">
                       <span><i class="fas fa-laptop me-2"></i>Asset Summary</span>
                       <i class="fas fa-chevron-down assignment-chevron" 
                          :class="{ 'rotated': isReactivateAssetSummaryExpanded }"></i>
@@ -1133,11 +1139,11 @@
                         <div class="retirement-details">
                           <div class="d-flex align-items-center gap-3 mb-1">
                             <div>
-                              <span class="text-muted text-small">Asset ID:</span>
-                              <span class="ms-1 fw-bold text-small-medium">{{ assetToReactivate?.id }}</span>
+                              <span class="text-muted" style="font-size: 0.8rem;">Asset ID:</span>
+                              <span class="ms-1 fw-bold" style="font-size: 0.9rem;">{{ assetToReactivate?.id }}</span>
                             </div>
                             <div>
-                              <span class="text-muted text-small">Status:</span>
+                              <span class="text-muted" style="font-size: 0.8rem;">Status:</span>
                               <span :class="getStatusBadgeClass(assetToReactivate?.status || 'RETIRED')" class="ms-1">{{ getStatusText(assetToReactivate?.status || 'RETIRED') }}</span>
                             </div>
                           </div>
@@ -1160,7 +1166,7 @@
                         <div class="col-md-6">
                           <div class="info-item-compact">
                             <div class="info-label-compact">Brand & Model</div>
-                            <div class="info-value-compact">{{ assetToReactivate?.brand }} {{ assetToReactivate?.model }}</div>
+                            <div class="info-value-compact">{{ assetToReactivate?.brandModel }}</div>
                           </div>
                         </div>
                         
@@ -1233,7 +1239,7 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <DatePicker
+                          <DateInput
                             id="reactivationDate"
                             label="Reactivation Date *"
                             v-model="reactivateFormData.reactivationDate"
@@ -1268,10 +1274,11 @@
                           <label for="newCondition" class="form-label">Current Condition <span class="text-danger">*</span></label>
                           <input 
                             type="text" 
-                            class="form-control readonly-input" 
+                            class="form-control" 
                             id="newCondition"
                             value="REFURBISHED"
                             readonly
+                            style="background-color: #f8f9fa; color: #6c757d;"
                           >
                           <div class="form-text">Asset condition after refurbishment and repairs</div>
                         </div>
@@ -1281,10 +1288,11 @@
                           <label for="newStatus" class="form-label">New Status <span class="text-danger">*</span></label>
                           <input 
                             type="text" 
-                            class="form-control readonly-input" 
+                            class="form-control" 
                             id="newStatus"
                             value="AVAILABLE"
                             readonly
+                            style="background-color: #f8f9fa; color: #6c757d;"
                           >
                           <div class="form-text">Status after reactivation</div>
                         </div>
@@ -1314,10 +1322,10 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-cancel btn-sm" @click="closeReactivateAssetModal">Cancel</button>
+            <button type="button" class="btn btn-secondary" @click="closeReactivateAssetModal">Cancel</button>
             <button 
               type="button" 
-              class="btn btn-green btn-sm" 
+              class="btn btn-success" 
               @click="reactivateAsset"
               :disabled="isReactivatingAsset || !reactivateFormData.reactivationDate || !reactivateFormData.location || !reactivateFormData.reactivationReason"
             >
@@ -1344,36 +1352,35 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
-import { assetService } from '../../services/business/assetService'
-import type { Asset, AssetQueryParams, FilterOptions, DetailedAsset } from '../../types/asset.types'
+import { assetService } from '../../services/assetService'
+import type { Asset, AssetQueryParams, FilterOptions } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
-import DatePicker from '@/components/ui/date/DatePicker.vue'
+import DateInput from '@/components/common/DateInput.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
-import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+import AppPagination from '@/components/pagination/AppPagination.vue'
 
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 
-// Local types for display (optimized for table)
+// Local types for display
 interface AssetDisplayItem {
   id: string
   type: string
   brand: string
-  model: string
+  brandModel: string
   serialNumber: string
   status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
   assignedTo?: string
+  purchaseDate: string
+  location: string
+  category: string
   condition: string
-  // Additional fields for modal (populated when viewing details)
-  purchaseDate?: string
-  location?: string
-  category?: string
   purchaseCost?: number
-  vendor?: string
-  warrantyEndDate?: string
+  vendor: string
+  warrantyUntil: string
   warrantyStartDate?: string
   notes?: string
   // Assignment details
@@ -1398,7 +1405,7 @@ const selectedBrand = ref<Item | null>(null)
 const selectedStatus = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
 const selectedSortBy = ref<Item | null>(null)
-const sortAscending = ref(false)
+const sortAscending = ref(true)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const showDetailModal = ref(false)
@@ -1409,7 +1416,6 @@ const isRetirementDetailsExpanded = ref(false)
 const isReactivateAssetSummaryExpanded = ref(false)
 const isRefurbishmentDetailsExpanded = ref(false)
 const selectedAsset = ref<AssetDisplayItem | null>(null)
-const isLoadingAssetDetails = ref(false)
 const assetToRetire = ref<AssetDisplayItem | null>(null)
 const isRetiringAsset = ref(false)
 const bulkAssetUploadRef = ref<InstanceType<typeof BulkAssetUpload> | null>(null)
@@ -1466,15 +1472,6 @@ const reactivateFormValidation = ref({
   status: 'valid',
   location: 'valid',
   reactivationReason: 'valid'
-})
-
-// Date constraints
-const todayDate = computed(() => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 })
 
 // API data
@@ -1601,44 +1598,6 @@ const setView = (view: 'list' | 'grid') => {
   currentView.value = view
 }
 
-// Transform detailed asset data for modal display
-const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisplayItem => {
-  // Get current assignment info from the latest asset issue (only if not returned)
-  const currentAssignment = detailedAsset.assetIssues?.find(issue => !issue.returnDate)
-  
-  return {
-    id: detailedAsset.assetId,
-    type: detailedAsset.assetType.name,
-    brand: detailedAsset.brand.name,
-    model: detailedAsset.model.name,
-    serialNumber: detailedAsset.serialNumber,
-    status: detailedAsset.status as any,
-    assignedTo: currentAssignment ? `${currentAssignment.employee?.firstName} ${currentAssignment.employee?.lastName}` : undefined,
-    condition: detailedAsset.condition,
-    // Additional fields for modal
-    purchaseDate: detailedAsset.purchaseDate || '',
-    location: detailedAsset.location || 'Not specified',
-    category: detailedAsset.assetType.category.name,
-    purchaseCost: detailedAsset.purchaseCost || undefined,
-    vendor: detailedAsset.vendor?.name || 'Not specified',
-    warrantyEndDate: detailedAsset.warrantyEndDate || '',
-    warrantyStartDate: detailedAsset.warrantyStartDate,
-    notes: detailedAsset.notes,
-    // Assignment details from current assignment
-    assignmentReason: currentAssignment?.issueReason,
-    assignmentNotes: currentAssignment?.notes,
-    assignmentDate: currentAssignment?.issueDate,
-    assignedBy: currentAssignment?.issuedByUser?.username || 'system',
-    // Retirement details from API
-    retirementDate: detailedAsset.retirementDate,
-    retirementReason: detailedAsset.retirementReason,
-    retirementNotes: detailedAsset.retirementNotes,
-    // Reactivation details from API
-    reactivationDate: detailedAsset.reactivationDate,
-    reactivationReason: detailedAsset.reactivationReason
-  }
-}
-
 // Set default view based on screen size
 const setDefaultView = () => {
   const screenWidth = window.innerWidth
@@ -1736,40 +1695,12 @@ const goToPage = (page: number) => {
   loadAssets()
 }
 
-const viewAssetDetails = async (asset: AssetDisplayItem) => {
-  try {
-    // Find the original asset by matching the display asset ID (which is the assetId field)
-    const originalAsset = assets.value.find(a => a.assetId === asset.id)
-    if (!originalAsset) {
-      console.error('Could not find original asset with assetId:', asset.id)
-      toastStore.showError('Error', 'Could not load asset details')
-      return
-    }
-
-    // Show modal and loading state
-    showDetailModal.value = true
-    isLoadingAssetDetails.value = true
-    selectedAsset.value = null // Clear previous data
-    
-    // Reset collapse states
-    isAssignmentDetailsExpanded.value = false
-    isRetirementDetailsExpanded.value = false
-    isRefurbishmentDetailsExpanded.value = false
-
-    // Fetch detailed asset data
-    const response = await assetService.getAssetById(originalAsset.id)
-    const detailedAsset = response.data.asset
-    
-    // Transform the detailed asset data for the modal
-    selectedAsset.value = transformDetailedAssetForModal(detailedAsset as DetailedAsset)
-    
-  } catch (error) {
-    console.error('Error loading asset details:', error)
-    toastStore.showError('Error', 'Failed to load asset details')
-    showDetailModal.value = false
-  } finally {
-    isLoadingAssetDetails.value = false
-  }
+const viewAssetDetails = (asset: AssetDisplayItem) => {
+  selectedAsset.value = asset
+  isAssignmentDetailsExpanded.value = false // Reset collapse state
+  isRetirementDetailsExpanded.value = false // Reset retirement collapse state
+  isRefurbishmentDetailsExpanded.value = false // Reset refurbishment collapse state
+  showDetailModal.value = true
 }
 
 const closeDetailModal = () => {
@@ -1831,18 +1762,13 @@ const validateRetirementDate = () => {
     return false
   }
   
-  // Parse the date string (format: YYYY-MM-DD)
   const selectedDate = new Date(date)
   const today = new Date()
-  
-  // Set both dates to midnight for accurate comparison
-  selectedDate.setHours(0, 0, 0, 0)
   today.setHours(0, 0, 0, 0)
   
-  // Check if date is in the future
   if (selectedDate > today) {
     retireFormValidation.value.retirementDate.isValid = false
-    retireFormValidation.value.retirementDate.message = 'Retirement date must be today or in the past'
+    retireFormValidation.value.retirementDate.message = 'Retirement date cannot be in the future'
     return false
   }
   
@@ -2050,7 +1976,7 @@ const handleMaintenanceAction = (asset: AssetDisplayItem) => {
       path: `/app/maintenance/${asset.id}/history`,
       query: { 
         returnTo: '/app/assets',
-        assetName: `${asset.brand} ${asset.model}`,
+        assetName: asset.brandModel,
         assetId: asset.id
       }
     })
@@ -2067,94 +1993,48 @@ const handleMaintenanceAction = (asset: AssetDisplayItem) => {
   }
 }
 
-// Helper: Close all dropdowns except the specified one
-const closeOtherDropdowns = (currentDropdown: HTMLElement, currentButton: HTMLButtonElement) => {
-  for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
-    if (menu !== currentDropdown) {
-      menu.classList.remove('show')
-    }
-  }
-  for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
-    if (btn !== currentButton) {
-      btn.setAttribute('aria-expanded', 'false')
-    }
-  }
-}
-
-// Helper: Position More Actions dropdown
-const positionMoreActionsDropdown = (dropdown: HTMLElement, button: HTMLButtonElement) => {
-  setTimeout(() => {
-    const buttonRect = button.getBoundingClientRect()
-    const dropdownRect = dropdown.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    
-    // Set default positioning
-    dropdown.style.top = '100%'
-    dropdown.style.bottom = 'auto'
-    dropdown.style.left = '0'
-    dropdown.style.right = 'auto'
-    dropdown.style.marginTop = '0'
-    dropdown.style.marginBottom = '0'
-    dropdown.style.transformOrigin = 'top center'
-    dropdown.style.transform = 'translateY(0) scale(1)'
-    
-    // Adjust if going off the right side
-    if (buttonRect.left + dropdownRect.width > viewportWidth) {
-      dropdown.style.left = 'auto'
-      dropdown.style.right = '0'
-    }
-    
-    // Adjust if going off the left side
-    if (buttonRect.right - dropdownRect.width < 0) {
-      dropdown.style.right = 'auto'
-      dropdown.style.left = '0'
-    }
-  }, 10)
-}
-
-// Helper: Position standard dropdown
-const positionStandardDropdown = (dropdown: HTMLElement) => {
-  setTimeout(() => {
-    const rect = dropdown.getBoundingClientRect()
-    const viewportWidth = window.innerWidth
-    
-    // If dropdown goes off screen, adjust position
-    if (rect.right > viewportWidth) {
-      dropdown.style.right = '0'
-      dropdown.style.left = 'auto'
-    }
-  }, 10)
-}
-
-// Handle dropdown click with proper positioning and smooth animation
+// Handle dropdown click with proper positioning
 const handleDropdownClick = (event: Event) => {
   event.preventDefault()
   event.stopPropagation()
   
   const button = event.currentTarget as HTMLButtonElement
   const dropdown = button.nextElementSibling as HTMLElement
-  const dropdownContainer = button.closest('.more-actions-dropdown') as HTMLElement
   
-  if (!dropdown) return
-  
-  closeOtherDropdowns(dropdown, button)
-  
-  const isShown = dropdown.classList.contains('show')
-  
-  if (isShown) {
-    // Close dropdown with animation
-    dropdown.classList.remove('show')
-    button.setAttribute('aria-expanded', 'false')
-  } else {
-    // Open dropdown with animation
-    dropdown.classList.add('show')
-    button.setAttribute('aria-expanded', 'true')
+  if (dropdown) {
+    // Close all other dropdowns first
+    for (const menu of document.querySelectorAll('.dropdown-menu.show')) {
+      if (menu !== dropdown) {
+        menu.classList.remove('show')
+      }
+    }
+    for (const btn of document.querySelectorAll('[aria-expanded="true"]')) {
+      if (btn !== button) {
+        btn.setAttribute('aria-expanded', 'false')
+      }
+    }
     
-    // Position dropdown based on type
-    if (dropdownContainer?.classList.contains('more-actions-dropdown')) {
-      positionMoreActionsDropdown(dropdown, button)
+    // Toggle current dropdown
+    const isShown = dropdown.classList.contains('show')
+    
+    if (isShown) {
+      dropdown.classList.remove('show')
+      button.setAttribute('aria-expanded', 'false')
     } else {
-      positionStandardDropdown(dropdown)
+      dropdown.classList.add('show')
+      button.setAttribute('aria-expanded', 'true')
+      
+      // Ensure proper positioning
+      setTimeout(() => {
+        const rect = dropdown.getBoundingClientRect()
+        const viewportWidth = window.innerWidth
+        
+        // If dropdown goes off screen, adjust position
+        if (rect.right > viewportWidth) {
+          dropdown.style.right = '0'
+          dropdown.style.left = 'auto'
+        }
+      }, 10)
     }
   }
 }
@@ -2356,25 +2236,25 @@ const getAssetTypeColor = (type: string) => {
 
 const getStatusBadgeClass = (status: string) => {
   const classes = {
-    'AVAILABLE': 'badge badge-green',        // Green for available
-    'ASSIGNED': 'badge badge-blue',          // Blue for assigned
-    'IN_MAINTENANCE': 'badge badge-orange',  // Orange for maintenance
-    'RETIRED': 'badge badge-brown',          // Brown for retired
-    'LOST': 'badge badge-red'                // Red for lost
+    'AVAILABLE': 'badge badge-available',
+    'ASSIGNED': 'badge badge-assigned',
+    'IN_MAINTENANCE': 'badge badge-under-repair',
+    'RETIRED': 'badge badge-retired',
+    'LOST': 'badge badge-retired'
   }
-  return classes[status as keyof typeof classes] || 'badge badge-gray'
+  return classes[status as keyof typeof classes] || 'badge badge-retired'
 }
 
 const getConditionBadgeClass = (condition: string) => {
   const classes = {
-    'Good': 'badge badge-green',           // Green for good condition
-    'New': 'badge badge-purple',           // Purple for new
-    'Fair': 'badge badge-orange',          // Orange for fair
-    'Poor': 'badge badge-red',             // Red for poor
-    'Damaged': 'badge badge-red',          // Red for damaged
-    'Refurbished': 'badge badge-brown'     // Brown for refurbished
+    'Good': 'badge badge-condition-good',
+    'New': 'badge badge-condition-new',
+    'Fair': 'badge badge-condition-fair',
+    'Poor': 'badge badge-condition-poor',
+    'Damaged': 'badge badge-condition-poor',
+    'Refurbished': 'badge badge-condition-refurbished'
   }
-  return classes[condition as keyof typeof classes] || 'badge badge-gray'
+  return classes[condition as keyof typeof classes] || 'badge badge-condition-good'
 }
 
 const getStatusText = (status: string) => {
@@ -2614,9 +2494,8 @@ onMounted(async () => {
   // Add resize listener to update view on screen size change
   window.addEventListener('resize', handleResize)
   
-  // Initialize default sort option: Created Date (newest first)
-  selectedSortBy.value = sortOptions.value.find(option => option.value === 'createdAt') || null
-  sortAscending.value = false
+  // Initialize default sort option
+  selectedSortBy.value = sortOptions.value.find(option => option.value === 'assetId') || null
   
   await Promise.all([
     loadFilterOptions(),
@@ -2636,10 +2515,615 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* AssetsView.vue now uses styles from assets.css */
-/* All styles have been moved to the proper CSS file structure */
-</style>
+/* Form validation styles */
+.form-searchable-dropdown.is-invalid :deep(.form-control) {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
 
-<style>
-@import '@/assets/styles/pages/assets.css';
+.form-searchable-dropdown.is-valid :deep(.form-control) {
+  border-color: #198754 !important;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+/* Remove validation styling from optional notes textarea */
+.notes-no-validation :deep(.form-control.is-valid) {
+  border-color: #999999 !important;
+  box-shadow: none !important;
+}
+
+.notes-no-validation :deep(.form-control:focus) {
+  border-color: #331FEA !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
+}
+
+/* Dropdown improvements */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  z-index: 1050;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(51, 31, 234, 0.1);
+  /* Preserve original text color */
+}
+
+.dropdown-item:active {
+  background-color: rgba(51, 31, 234, 0.2);
+  color: #331FEA;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Ensure dropdown shows above other elements */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+
+
+:deep(.form-label) {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+:deep(.form-control) {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Make button corners match input field corners for consistency */
+.btn {
+  border-radius: 0.375rem !important;
+}
+
+/* Fix search input group border-radius consistency */
+.input-group .input-group-text {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+}
+
+.input-group .form-control:not(:last-child) {
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+:deep(.form-control:focus) {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+:deep(.dropdown-menu) {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  z-index: 1050;
+}
+
+:deep(.dropdown-item:hover),
+:deep(.dropdown-item.active) {
+  background-color: #e9ecef;
+  color: #1e2125;
+}
+
+/* Filter dropdown styling */
+.filter-dropdown {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa !important;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Active filter button styling */
+.btn.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.btn.active:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Filter badge styling */
+.badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.4rem;
+}
+
+/* Responsive dropdown positioning */
+.dropdown-menu-responsive {
+  /* Default: left-aligned for medium+ screens */
+  left: 0;
+  right: auto;
+}
+
+/* Small screens: right-aligned to prevent overflow */
+@media (max-width: 767.98px) {
+  .dropdown-menu-responsive {
+    left: auto;
+    right: 0;
+    max-width: calc(100vw - 2rem);
+    min-width: 200px;
+  }
+}
+
+/* Asset Details Modal - Reduced Spacing and Better Warranty Display */
+.equal-height-columns {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.equal-height-columns > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.asset-info-section-compact {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+.asset-info-section-compact .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.asset-info-section-compact .info-grid-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-grow: 1;
+}
+
+.asset-info-section-compact .info-item-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.asset-info-section-compact .info-item-compact:last-child {
+  border-bottom: none;
+}
+
+.asset-info-section-compact .info-label-compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.asset-info-section-compact .info-value-compact {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: #212529 !important;
+  margin-bottom: 0 !important;
+  text-align: right;
+  flex-grow: 1;
+}
+
+/* Warranty info - Right aligned display design */
+.warranty-info-compact {
+  font-size: 0.9rem;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.warranty-info-compact .warranty-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.warranty-info-compact .warranty-row:last-child {
+  margin-bottom: 0;
+}
+
+.warranty-info-compact .warranty-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  min-width: 40px;
+  text-align: right;
+}
+
+.warranty-info-compact .warranty-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #28a745;
+}
+
+.warranty-info-compact .warranty-time {
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+.warranty-info-compact .warranty-time-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Assignment Divider */
+.assignment-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Assignment Details Collapsible */
+.assignment-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.assignment-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.assignment-details-expanded {
+  transition: all 0.3s ease;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Assignment Notes Display Override */
+.assignment-details-expanded .info-value-compact :deep(.notes-display-container) {
+  margin: 0;
+  padding: 0;
+}
+
+.assignment-details-expanded .info-value-compact :deep(.notes-content) {
+  padding: 0;
+  min-height: auto;
+  align-items: flex-start;
+}
+
+.assignment-details-expanded .info-value-compact :deep(.notes-text) {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.assignment-details-expanded .info-value-compact :deep(.notes-empty) {
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+
+/* Assignment status combined */
+.assignment-status-combined {
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.assignment-status-combined .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.assignment-status-combined .assignment-details {
+  flex-grow: 1;
+}
+
+.assignment-status-combined .assignment-icon {
+  flex-shrink: 0;
+}
+
+.assignment-status-combined .qr-code-mini {
+  flex-shrink: 0;
+}
+
+.assignment-status-combined .assignment-details span {
+  font-size: 0.95rem !important;
+}
+
+.assignment-status-combined .assignment-details .fw-medium {
+  font-size: 1rem !important;
+}
+
+
+
+/* Retirement status combined */
+.retirement-status-combined {
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.retirement-status-combined .section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.retirement-status-combined .retirement-details {
+  flex-grow: 1;
+}
+
+.retirement-status-combined .retirement-icon {
+  flex-shrink: 0;
+}
+
+
+.retirement-status-combined .retirement-details span {
+  font-size: 0.95rem !important;
+}
+
+.retirement-status-combined .retirement-details .fw-medium {
+  font-size: 1rem !important;
+}
+
+/* Retirement Details Expanded */
+.retirement-details-expanded {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Retirement Divider */
+.retirement-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Retirement Details Collapsible */
+.retirement-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.retirement-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Retirement Notes Display Override */
+.retirement-details-expanded .info-value-compact :deep(.notes-display-container) {
+  margin: 0;
+  padding: 0;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-content) {
+  padding: 0;
+  min-height: auto;
+  align-items: flex-start;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-text) {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.retirement-details-expanded .info-value-compact :deep(.notes-empty) {
+  font-size: 0.95rem;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Table spacing adjustments */
+.table th:first-child, .table td:first-child {
+  padding-left: 1.25rem !important;
+}
+
+.table th:last-child, .table td:last-child {
+  padding-right: 0.75rem !important;
+  padding-left: 0.5rem !important;
+}
+
+.asset-actions {
+  justify-content: flex-start !important;
+  gap: 0.25rem !important;
+}
+
+.table-responsive {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fixed column widths for consistent table layout */
+.table th:nth-child(1),
+.table td:nth-child(1) { /* Asset ID */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) { /* Name (Type - Brand - Model) */
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) { /* Serial Number */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) { /* Status */
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  white-space: nowrap !important;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) { /* Assigned To */
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) { /* Condition */
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  white-space: nowrap !important;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) { /* Actions */
+  width: 200px !important;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+}
+
+.asset-actions .btn {
+  min-width: 32px !important;
+  min-height: 32px !important;
+  padding: 0.25rem !important;
+}
+
+/* Custom Action Button Hover Effects */
+/* View Details Button - Brown */
+.btn-view-details:hover {
+  color: var(--secondary-brown) !important;
+  border-color: var(--secondary-brown) !important;
+  background-color: rgba(150, 114, 89, 0.1) !important;
+}
+
+/* Edit Asset Button - Purple */
+.btn-edit-asset:hover {
+  color: var(--secondary-purple) !important;
+  border-color: var(--secondary-purple) !important;
+  background-color: rgba(51, 31, 234, 0.1) !important;
+}
+
+/* Issue Asset Button - Green */
+.btn-issue-asset:hover {
+  color: var(--secondary-green) !important;
+  border-color: var(--secondary-green) !important;
+  background-color: rgba(33, 175, 101, 0.1) !important;
+}
+
+/* Collect Asset Button - Pink */
+.btn-collect-asset:hover {
+  color: var(--secondary-pink) !important;
+  border-color: var(--secondary-pink) !important;
+  background-color: rgba(255, 87, 159, 0.1) !important;
+}
+
+/* Maintenance Button - Orange */
+.btn-maintenance-action:hover {
+  color: var(--secondary-orange) !important;
+  border-color: var(--secondary-orange) !important;
+  background-color: rgba(255, 140, 97, 0.1) !important;
+}
+
+/* QR Code Button - Non-clickable indicator */
+.btn-qr-code:hover {
+  color: var(--primary-mid-gray) !important;
+  border-color: var(--primary-mid-gray) !important;
+  background-color: rgba(153, 153, 153, 0.1) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+
+
 </style>

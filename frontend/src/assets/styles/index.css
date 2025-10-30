@@ -31,6 +31,9 @@
 /* 6. Form Validation Styles */
 /* formValidation.css is NOT imported here - it must be imported individually by form pages that need validation */
 
+/* 7. FINAL BOOTSTRAP OVERRIDES - MUST BE LAST! */
+@import './override-bootstrap-buttons.css';
+
 /**
  * Migration Complete!
  * All styles have been successfully migrated from main.css to modular files.
