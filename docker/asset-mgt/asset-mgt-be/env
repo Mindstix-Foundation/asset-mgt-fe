@@ -1,5 +1,14 @@
-# Database Configuration
-DATABASE_URL="postgresql://mindstix:Nish@9894@asset-db-instance.ceylq8xyz123.ap-south-1.rds.amazonaws.com:5432/asset_management_db?schema=public&sslmode=require"
+# # Database Configuration
+# DATABASE_URL="postgresql://mindstix:Nish@9894@asset-db-instance.ceylq8xyz123.ap-south-1.rds.amazonaws.com:5432/asset_management_db?schema=public&sslmode=require"
+DB_HOST=use2mindstixassetmgmtdatabase.cxnc4al5bl3e.us-east-2.rds.amazonaws.com
+DB_PORT=5432
+DB_USER=root
+DB_PASSWORD=vbUWpuJTjDknXtQx
+DB_NAME=use2mindstixassetmgmtdatabase
+
+# Constructed DATABASE_URL for Node.js / Prisma
+# (include sslmode=require for AWS RDS)
+DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public&sslmode=require"
 
 # JWT Configuration
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"

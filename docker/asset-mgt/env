@@ -8,13 +8,13 @@ NODE_ENV=production
 # ==============================================
 # Database Configuration (RDS)
 # ==============================================
-DB_USER=mindstix
-DB_PASSWORD=Nish@9894
-DB_NAME=asset_management_db
+DB_USER=root
+DB_PASSWORD=vbUWpuJTjDknXtQx
+DB_NAME=use2mindstixassetmgmtdatabase
 DB_PORT=5432
 
 # RDS Endpoint
-DB_HOST=asset-db-instance.ceylq8xyz123.ap-south-1.rds.amazonaws.com
+DB_HOST=http://use2mindstixassetmgmtdatabase.cxnc4al5bl3e.us-east-2.rds.amazonaws.com/
 
 # Constructed DATABASE_URL (for backend)
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public&sslmode=require
