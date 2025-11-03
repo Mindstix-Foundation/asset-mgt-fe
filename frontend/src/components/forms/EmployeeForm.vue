@@ -211,20 +211,17 @@
 
                   <!-- Status (for edit mode) -->
                   <div class="col-md-6" v-if="isEditMode">
-                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                    <select 
-                      class="form-select" 
-                      id="status" 
-                      v-model="formData.status"
-                      :class="getFieldClass('status')"
-                      :disabled="isSubmitting"
-                      required
-                      @change="validateFieldInline('status')"
-                      @focus="clearFieldValidation('status')"
-                    >
-                      <option value="ACTIVE">Active</option>
-                      <option value="INACTIVE">Inactive</option>
-                    </select>
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="status"
+                        label="Status"
+                        placeholder="Select status..."
+                        :items="statusItems"
+                        v-model="selectedStatus"
+                        required
+                        @change="onStatusChange"
+                      />
+                    </div>
                     <div class="form-text">Current status of the employee</div>
                     <div v-if="fieldErrors.status" class="invalid-feedback">{{ fieldErrors.status }}</div>
                   </div>
@@ -290,13 +287,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick, watch } from 'vue'
+import { ref, reactive, onMounted, nextTick, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { employeeService } from '@/services/business/employeeService'
 import type { CreateEmployeeData, UpdateEmployeeData } from '@/services/business/employeeService'
 import { useToastStore } from '@/stores/toast'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
 import { NotesTextarea } from '@/components/common'
+import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 
 // Type aliases
 type EmployeeStatus = 'ACTIVE' | 'INACTIVE'
@@ -340,6 +338,9 @@ const isLoadingEmployeeIds = ref(false)
 // Store original email for validation (edit mode)
 const originalEmail = ref('')
 const isAdmin = ref(false)
+
+// Selected items for SearchableDropdown components
+const selectedStatus = ref<Item | null>(null)
 // Keep a snapshot of the originally loaded employee data for diffing on update
 const originalData = ref<{
   employeeId: string
@@ -360,6 +361,28 @@ const isCheckingEmployeeId = ref(false)
 
 // Template refs
 const employeeForm = ref<HTMLFormElement>()
+
+// Computed properties for SearchableDropdown items
+const statusItems = computed(() => [
+  { id: 'ACTIVE', name: 'Active', value: 'ACTIVE' },
+  { id: 'INACTIVE', name: 'Inactive', value: 'INACTIVE' }
+])
+
+// SearchableDropdown change handlers
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  formData.status = item && item.value ? item.value.toString() as EmployeeStatus : 'ACTIVE' as EmployeeStatus
+  
+  // Clear validation error when user makes a selection
+  if (item) {
+    clearFieldValidation('status')
+    setFieldValid('status')
+    applyValidationToSearchableDropdown('status', 'valid')
+  } else {
+    setFieldError('status', 'Status is required')
+    applyValidationToSearchableDropdown('status', 'invalid')
+  }
+}
 
 // Function to get the next available employee ID from backend
 const findLowestAvailableEmployeeId = async () => {
@@ -576,6 +599,19 @@ const validateFieldType = (fieldName: string, value: any): boolean => {
 }
 
 const validateFieldInline = async (fieldName: string) => {
+  // Handle SearchableDropdown fields (status)
+  if (fieldName === 'status') {
+    if (selectedStatus.value) {
+      setFieldValid(fieldName)
+      applyValidationToSearchableDropdown(fieldName, 'valid')
+      return true
+    } else {
+      setFieldError(fieldName, 'Status is required')
+      applyValidationToSearchableDropdown(fieldName, 'invalid')
+      return false
+    }
+  }
+
   const value = formData[fieldName as keyof typeof formData]
   const element = document.getElementById(fieldName) as FormFieldElement
   
@@ -637,6 +673,52 @@ const clearFieldValidation = (fieldName: string) => {
   if (fieldValidation[fieldName] === false) {
     fieldValidation[fieldName] = null
     delete fieldErrors[fieldName]
+  }
+}
+
+// Helper function to apply validation classes to SearchableDropdown components
+const applyValidationToSearchableDropdown = (fieldName: string, validationType: 'valid' | 'invalid') => {
+  // Try multiple ways to find the SearchableDropdown input
+  let input: HTMLInputElement | null = null
+  
+  // Method 1: Find by ID and then look for form-control in parent wrapper
+  const element = document.getElementById(fieldName)
+  if (element) {
+    const wrapper = element.closest('.form-searchable-dropdown')
+    if (wrapper) {
+      input = wrapper.querySelector('.form-control') as HTMLInputElement
+    }
+  }
+  
+  // Method 2: If not found, try direct selector
+  if (!input) {
+    input = document.querySelector(`#${fieldName} .form-control`) as HTMLInputElement
+  }
+  
+  // Method 3: If still not found, try again after a short delay
+  if (!input) {
+    setTimeout(() => {
+      const delayedInput = document.querySelector(`#${fieldName} .form-control`) as HTMLInputElement
+      if (delayedInput) {
+        if (validationType === 'invalid') {
+          delayedInput.classList.add('is-invalid')
+          delayedInput.classList.remove('is-valid')
+        } else {
+          delayedInput.classList.add('is-valid')
+          delayedInput.classList.remove('is-invalid')
+        }
+      }
+    }, 100)
+    return
+  }
+  
+  // Apply validation classes
+  if (validationType === 'invalid') {
+    input.classList.add('is-invalid')
+    input.classList.remove('is-valid')
+  } else {
+    input.classList.add('is-valid')
+    input.classList.remove('is-invalid')
   }
 }
 
@@ -734,6 +816,12 @@ const loadEmployeeData = async () => {
     formData.dateOfBirth = employee.dateOfBirth || ''
     formData.address = employee.address || ''
     formData.status = employee.status || 'ACTIVE'
+
+    // Set selectedStatus for SearchableDropdown
+    const statusOption = statusItems.value.find(item => item.value === (employee.status || 'ACTIVE'))
+    if (statusOption) {
+      selectedStatus.value = statusOption
+    }
 
     originalEmail.value = employee.email
     isAdmin.value = employee.isAdmin || false
