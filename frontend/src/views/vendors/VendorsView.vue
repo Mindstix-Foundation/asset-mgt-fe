@@ -196,16 +196,8 @@
       </div>
     </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="text-center py-5">
-        <div class="spinner-border text-primary">
-          <output class="visually-hidden">Loading vendors...</output>
-        </div>
-        <p class="mt-3 text-muted">Loading vendors...</p>
-      </div>
-
-      <!-- Error State -->
-      <div v-else-if="error" class="alert alert-danger" role="alert">
+      <!-- Error State (only show when there's an error) -->
+      <div v-if="error" class="alert alert-danger" role="alert">
         <i class="fas fa-exclamation-triangle me-2"></i>
         {{ error }}
         <button class="btn btn-red btn-sm ms-3" @click="fetchVendors">
@@ -214,7 +206,7 @@
       </div>
 
       <!-- Vendors Content -->
-      <div id="vendorsContainer">
+      <div id="vendorsContainer" v-else>
         <!-- List View (Default) -->
         <div class="card" v-show="!isGridView">
           <div class="card-body p-0">

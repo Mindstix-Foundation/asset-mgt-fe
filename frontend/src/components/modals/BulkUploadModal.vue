@@ -676,25 +676,22 @@ const handleUpload = async () => {
   progress.value = 15
   
   try {
-    // Simulate progressive upload
-    const step = () => new Promise(r => setTimeout(r, 250))
-    for (let p = 15; p <= 90; p += 15) { 
-      await step()
-      progress.value = p 
-    }
-    
-    // Always emit the file for comprehensive validation
-    // The parent component (BulkAssetUpload) will handle detailed validation
+    // Validate file is selected
     if (!selectedFile.value) {
       validationMessages.value.push('No file selected for upload.')
       return
     }
     
-    progress.value = 100
+    // Set progress to uploading state
+    progress.value = 50
     
     // Emit the upload event with the original file
+    // The parent component (BulkAssetUpload) will handle detailed validation
     console.log('BulkUploadModal: Emitting file:', selectedFile.value.name, selectedFile.value.size)
     emit('upload', selectedFile.value)
+    
+    // Mark as complete
+    progress.value = 100
     
     // Close modal
     const modalEl = document.getElementById(props.modalId)

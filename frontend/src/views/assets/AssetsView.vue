@@ -298,16 +298,8 @@
 
     <!-- Assets/Inventory Content -->
     <div id="contentContainer">
-      <!-- Loading State -->
-      <div v-if="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary">
-          <output class="visually-hidden">Loading...</output>
-        </div>
-        <p class="mt-3 text-muted">Loading assets...</p>
-      </div>
-
       <!-- List View -->
-      <div class="card" v-show="currentView === 'list' && !isLoading">
+      <div class="card" v-show="currentView === 'list'">
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover asset-table mb-0">
@@ -412,7 +404,7 @@
       </div>
 
       <!-- Grid View -->
-      <div v-show="currentView === 'grid' && !isLoading">
+      <div v-show="currentView === 'grid'">
         <div class="row" v-if="filteredAssets.length > 0">
           <div 
             v-for="asset in filteredAssets" 
@@ -1080,7 +1072,7 @@
               type="button" 
               class="btn btn-red btn-sm" 
               @click="retireAsset" 
-              :disabled="isRetiringAsset || !retireFormData.retirementDate || !retireFormData.retirementReason"
+              :disabled="isRetiringAsset"
             >
               <i class="fas fa-archive me-1"></i>
               {{ isRetiringAsset ? 'Retiring...' : 'Confirm Retirement' }}
@@ -1235,11 +1227,13 @@
                         <div class="mb-3">
                           <DatePicker
                             id="reactivationDate"
-                            label="Reactivation Date *"
+                            label="Reactivation Date"
                             v-model="reactivateFormData.reactivationDate"
-                            :error-message="reactivateFormValidation.reactivationDate === 'invalid' ? 'Please select a valid reactivation date.' : ''"
+                            :error-message="reactivateFormSubmitted && reactivateFormValidation.reactivationDate === 'invalid' ? 'Please select a valid reactivation date.' : ''"
                             help-text="Date when asset returns to active status"
                             required
+                            @change="() => { if (reactivateFormSubmitted) validateReactivateDate() }"
+                            @blur="() => { if (reactivateFormSubmitted) validateReactivateDate() }"
                           />
                         </div>
                       </div>
@@ -1251,13 +1245,18 @@
                             class="form-control" 
                             id="newLocation"
                             v-model="reactivateFormData.location"
-                            :class="{ 'is-invalid': reactivateFormValidation.location === 'invalid', 'is-valid': reactivateFormValidation.location === 'valid' }"
+                            :class="{ 'is-invalid': reactivateFormSubmitted && reactivateFormValidation.location === 'invalid', 'is-valid': reactivateFormSubmitted && reactivateFormValidation.location === 'valid' }"
                             placeholder="e.g., Warehouse A, Shelf B2"
                             required
+                            minlength="2"
+                            maxlength="100"
+                            title="Location must be 2-100 characters"
+                            @input="() => { if (reactivateFormSubmitted) validateReactivateLocation() }"
+                            @blur="() => { if (reactivateFormSubmitted) validateReactivateLocation() }"
                           >
-                          <div class="form-text">Where the asset will be stored/used</div>
-                          <div v-if="reactivateFormValidation.location === 'invalid'" class="invalid-feedback">
-                            Please specify the new location.
+                          <div class="form-text">Where the asset will be stored/used (2-100 characters)</div>
+                          <div v-if="reactivateFormSubmitted && reactivateFormValidation.location === 'invalid'" class="invalid-feedback">
+                            {{ reactivateFormValidation.locationMessage || 'Please specify the new location.' }}
                           </div>
                         </div>
                       </div>
@@ -1291,19 +1290,29 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-12 notes-no-validation">
-                        <NotesTextarea
-                          ref="reactivationReasonTextarea"
+                      <div class="col-12">
+                        <label for="reactivationReason" class="form-label">
+                          Reactivation Reason <span class="text-danger">*</span>
+                        </label>
+                        <textarea
+                          id="reactivationReason"
+                          class="form-control"
+                          :class="{ 'is-invalid': reactivateFormSubmitted && reactivateFormValidation.reactivationReason === 'invalid', 'is-valid': reactivateFormSubmitted && reactivateFormValidation.reactivationReason === 'valid' }"
                           v-model="reactivateFormData.reactivationReason"
-                          label="Reactivation Reason"
                           placeholder="Describe why this asset is being reactivated and what repairs/improvements were made..."
-                          help-text="Explain why the asset is being reactivated (max 1000 characters)"
-                          :max-length="1000"
-                          :min-rows="3"
-                          input-id="reactivationReason"
-                          :required="true"
-                        />
-                        <div v-if="reactivateFormValidation.reactivationReason === 'invalid'" class="invalid-feedback d-block">
+                          rows="3"
+                          maxlength="1000"
+                          required
+                          @input="() => { if (reactivateFormSubmitted) validateReactivateReason() }"
+                          @blur="() => { if (reactivateFormSubmitted) validateReactivateReason() }"
+                        ></textarea>
+                        <div class="form-text">Explain why the asset is being reactivated (max 1000 characters)</div>
+                        <div class="character-count text-end">
+                          <small :class="{ 'text-danger': reactivateFormData.reactivationReason.length > 900, 'text-warning': reactivateFormData.reactivationReason.length > 750, 'text-muted': reactivateFormData.reactivationReason.length <= 750 }">
+                            {{ reactivateFormData.reactivationReason.length }}/1000 characters
+                          </small>
+                        </div>
+                        <div v-if="reactivateFormSubmitted && reactivateFormValidation.reactivationReason === 'invalid'" class="invalid-feedback d-block">
                           Please provide a reactivation reason.
                         </div>
                       </div>
@@ -1319,7 +1328,7 @@
               type="button" 
               class="btn btn-green btn-sm" 
               @click="reactivateAsset"
-              :disabled="isReactivatingAsset || !reactivateFormData.reactivationDate || !reactivateFormData.location || !reactivateFormData.reactivationReason"
+              :disabled="isReactivatingAsset"
             >
               <i v-if="isReactivatingAsset" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-power-off me-1"></i>
@@ -1465,8 +1474,12 @@ const reactivateFormValidation = ref({
   condition: 'valid',
   status: 'valid',
   location: 'valid',
-  reactivationReason: 'valid'
+  reactivationReason: 'valid',
+  locationMessage: '' // Error message for location validation
 })
+
+// Track if reactivation form has been submitted (for validation display)
+const reactivateFormSubmitted = ref(false)
 
 // Date constraints
 const todayDate = computed(() => {
@@ -2262,17 +2275,20 @@ const clearReactivateFormValidation = () => {
     condition: 'valid',
     status: 'valid',
     location: 'valid',
-    reactivationReason: 'valid'
+    reactivationReason: 'valid',
+    locationMessage: ''
   }
+  reactivateFormSubmitted.value = false
 }
 
 const reactivateAsset = async () => {
   if (!assetToReactivate.value) return
 
+  // Mark form as submitted to show validation errors
+  reactivateFormSubmitted.value = true
+
   // Validate form
-  if (!reactivateFormData.value.reactivationDate || 
-      !reactivateFormData.value.location || 
-      !reactivateFormData.value.reactivationReason) {
+  if (!validateReactivateForm()) {
     return
   }
 
@@ -2311,6 +2327,55 @@ const reactivateAsset = async () => {
 }
 
 // Utility functions
+// Reactivation form validation helpers
+const validateReactivateLocation = () => {
+  const value = reactivateFormData.value.location || ''
+  
+  if (!value || !value.trim()) {
+    reactivateFormValidation.value.location = 'invalid'
+    reactivateFormValidation.value.locationMessage = 'Location is required'
+    return false
+  }
+  
+  const location = value.toString().trim()
+  if (location.length < 2 || location.length > 100) {
+    reactivateFormValidation.value.location = 'invalid'
+    reactivateFormValidation.value.locationMessage = 'Location must be 2-100 characters'
+    return false
+  }
+  
+  reactivateFormValidation.value.location = 'valid'
+  reactivateFormValidation.value.locationMessage = ''
+  return true
+}
+
+const validateReactivateReason = () => {
+  const value = reactivateFormData.value.reactivationReason || ''
+  if (!value || !value.trim()) {
+    reactivateFormValidation.value.reactivationReason = 'invalid'
+    return false
+  }
+  reactivateFormValidation.value.reactivationReason = 'valid'
+  return true
+}
+
+const validateReactivateDate = () => {
+  const value = reactivateFormData.value.reactivationDate || ''
+  if (!value) {
+    reactivateFormValidation.value.reactivationDate = 'invalid'
+    return false
+  }
+  reactivateFormValidation.value.reactivationDate = 'valid'
+  return true
+}
+
+const validateReactivateForm = () => {
+  const isDateValid = validateReactivateDate()
+  const isLocationValid = validateReactivateLocation()
+  const isReasonValid = validateReactivateReason()
+  
+  return isDateValid && isLocationValid && isReasonValid
+}
 const getAssetTypeIcon = (type: string) => {
   const icons = {
     'Laptop': 'fas fa-laptop text-primary',
@@ -2628,6 +2693,12 @@ onUnmounted(() => {
 <style scoped>
 /* AssetsView.vue now uses styles from assets.css */
 /* All styles have been moved to the proper CSS file structure */
+
+/* Character count styling for reactivation reason */
+.character-count {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
 </style>
 
 <style>
