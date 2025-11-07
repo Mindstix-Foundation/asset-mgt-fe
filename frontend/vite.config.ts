@@ -16,6 +16,9 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: [
+    'use2mindstixassetmgmtalb-2121176886.us-east-2.elb.amazonaws.com',
+    ],
     watch: {
       ignored: [
         '**/node_modules/**',
