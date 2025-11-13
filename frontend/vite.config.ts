@@ -16,6 +16,9 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: [
+    'dlxq1ha1b01gx.cloudfront.net',
+    ],
     watch: {
       ignored: [
         '**/node_modules/**',
