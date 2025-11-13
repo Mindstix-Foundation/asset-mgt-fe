@@ -1326,6 +1326,7 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
         id: Number.parseInt(history.id),
         assetId: history.assetId,
         assetName: history.assetName,
+        serialNumber: history.serialNumber || '',
         assetType: '', 
         assetBrand: '', 
         assetModel: '', 

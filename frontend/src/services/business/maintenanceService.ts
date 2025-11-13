@@ -28,6 +28,7 @@ export interface Maintenance {
   assetType?: string
   assetBrand?: string
   assetModel?: string
+  serialNumber?: string
   maintenanceTypeId: string
   maintenanceTypeName: string
   relevantDate?: string
