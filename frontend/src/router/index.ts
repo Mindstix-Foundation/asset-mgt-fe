@@ -14,7 +14,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      redirect: '/'
+      redirect: '/',
     },
     {
       path: '/forgot-password',
@@ -29,7 +29,7 @@ const router = createRouter({
     {
       path: '/app',
       component: MainLayout,
-      redirect: '/app/dashboard',
+      redirect: { name: ROUTE_NAMES.DASHBOARD },
       children: [
         {
           path: 'dashboard',
@@ -176,32 +176,26 @@ const router = createRouter({
   ],
 })
 
-// Public routes that don't require authentication
 const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password']
 
-// Navigation guards
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
-  // Ensure auth status is up to date
   authStore.checkAuthStatus()
-  
-  // Check if user is authenticated
   const isAuthenticated = authStore.isAuthenticated
-  
-  // If going to login page but already authenticated, redirect to dashboard
-  if (to.path === '/' && isAuthenticated) {
-    next('/app/dashboard')
+
+  if (to.name === ROUTE_NAMES.LOGIN && isAuthenticated) {
+    next({ name: ROUTE_NAMES.DASHBOARD })
     return
   }
-  
-  // If going to protected routes but not authenticated, redirect to login
-  if (to.path.startsWith('/app') && !isAuthenticated) {
-    next('/')
+
+  const requiresAuth =
+    to.matched.some(record => record.path.startsWith('/app') || record.meta?.requiresAuth)
+
+  if (requiresAuth && !isAuthenticated) {
+    next({ name: ROUTE_NAMES.LOGIN })
     return
   }
-  
-  // Otherwise, allow navigation
+
   next()
 })
 
