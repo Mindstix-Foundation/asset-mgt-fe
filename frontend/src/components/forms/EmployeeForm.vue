@@ -58,7 +58,7 @@
                     <div class="form-text">
                       4 digits only (0001 to 9999)
                       <span v-if="isLoadingEmployeeIds && !isEditMode" class="text-muted ms-2">
-                        <i class="fas fa-spinner fa-spin me-1"></i>Finding next available ID...
+                        <i class="fas fa-spinner fa-spin me-1"></i>Loading next ID...
                       </span>
                     </div>
                     <div v-if="fieldErrors.employeeId" class="invalid-feedback">{{ fieldErrors.employeeId }}</div>
@@ -384,14 +384,14 @@ const onStatusChange = (item: Item | null) => {
   }
 }
 
-// Function to get the next available employee ID from backend
+// Function to get the next employee ID (last added + 1) from backend
 const findLowestAvailableEmployeeId = async () => {
   isLoadingEmployeeIds.value = true
   try {
     const response = await employeeService.getNextAvailableEmployeeId()
     nextAvailableEmployeeId.value = response.data.employeeId
   } catch (error) {
-    console.warn('Failed to fetch next available employee ID, using default placeholder:', error)
+    console.warn('Failed to fetch next employee ID, using default placeholder:', error)
     nextAvailableEmployeeId.value = '0001'
   } finally {
     isLoadingEmployeeIds.value = false
@@ -601,6 +601,11 @@ const validateFieldType = (fieldName: string, value: any): boolean => {
 const validateFieldInline = async (fieldName: string) => {
   // Handle SearchableDropdown fields (status)
   if (fieldName === 'status') {
+    // Status field is only required in edit mode
+    if (!props.isEditMode) {
+      return true
+    }
+    
     if (selectedStatus.value) {
       setFieldValid(fieldName)
       applyValidationToSearchableDropdown(fieldName, 'valid')
