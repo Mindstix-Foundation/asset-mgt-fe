@@ -190,6 +190,108 @@
                 </div>
               </fieldset>
 
+              <!-- Asset Specifications (Dynamic) -->
+              <fieldset class="form-fieldset" v-if="selectedType && specificationFields && specificationFields.length > 0">
+                <legend class="form-legend">
+                  Asset Specifications
+                </legend>
+                
+                <!-- If specification template is defined -->
+                <div class="row g-4">
+                  <!-- Dynamic fields based on assetType.specificationTemplate -->
+                  <div 
+                    v-for="(field, index) in specificationFields" 
+                    :key="field.key"
+                    :class="getSpecFieldColumnClass(index, specificationFields, field.type)"
+                  >
+                    <!-- Text Input -->
+                    <div v-if="field.type === 'text'">
+                      <label :for="`spec-${field.key}`" class="form-label">
+                        {{ field.label }}
+                        <span v-if="field.required" class="text-danger">*</span>
+                      </label>
+                      <input 
+                        type="text"
+                        :id="`spec-${field.key}`"
+                        class="form-control"
+                        :class="getSpecFieldClass(field.key)"
+                        v-model="formData.specifications[field.key]"
+                        :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
+                        :required="field.required"
+                        @blur="validateSpecField(field.key, field.type, field.required || false)"
+                        @focus="clearSpecFieldValidation(field.key)"
+                        @input="handleSpecFieldInput(field.key)"
+                      />
+                      <div class="form-text">
+                        {{ field.required ? 'Required field' : 'Optional' }}
+                      </div>
+                      <div class="invalid-feedback">{{ getSpecFieldError(field.key) }}</div>
+                    </div>
+                    
+                    <!-- Number Input -->
+                    <div v-else-if="field.type === 'number'">
+                      <label :for="`spec-${field.key}`" class="form-label">
+                        {{ field.label }}
+                        <span v-if="field.required" class="text-danger">*</span>
+                      </label>
+                      <input 
+                        type="number"
+                        :id="`spec-${field.key}`"
+                        class="form-control"
+                        :class="getSpecFieldClass(field.key)"
+                        v-model.number="formData.specifications[field.key]"
+                        :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
+                        :required="field.required"
+                        @blur="validateSpecField(field.key, field.type, field.required || false)"
+                        @focus="clearSpecFieldValidation(field.key)"
+                        @input="handleSpecFieldInput(field.key)"
+                      />
+                      <div class="form-text">
+                        {{ field.required ? 'Required field' : 'Optional' }}
+                      </div>
+                      <div class="invalid-feedback">{{ getSpecFieldError(field.key) }}</div>
+                    </div>
+                    
+                    <!-- Dropdown -->
+                    <div v-else-if="field.type === 'dropdown'">
+                      <div class="form-searchable-dropdown">
+                        <SearchableDropdown
+                          :id="`spec-${field.key}`"
+                          :label="field.label"
+                          :placeholder="field.placeholder || `Select ${field.label.toLowerCase()}...`"
+                          :items="getSpecDropdownItems(field)"
+                          :model-value="selectedSpecFields[field.key] ?? null"
+                          :required="field.required"
+                          label-key="label"
+                          @update:model-value="(item) => onSpecFieldChange(field.key, item)"
+                          @change="(item) => onSpecFieldChange(field.key, item)"
+                        />
+                      </div>
+                      <div class="form-text">
+                        {{ field.required ? 'Required field' : 'Optional' }}
+                      </div>
+                      <div class="invalid-feedback">{{ getSpecFieldError(field.key) }}</div>
+                    </div>
+                    
+                    <!-- Textarea -->
+                    <div v-else-if="field.type === 'textarea'">
+                      <NotesTextarea
+                        v-model="formData.specifications[field.key]"
+                        :label="field.label"
+                        :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
+                        :help-text="field.required ? 'Required field' : 'Optional'"
+                        :max-length="1000"
+                        :min-rows="3"
+                        :required="field.required"
+                        :show-label="true"
+                        :input-id="`spec-${field.key}`"
+                        @validation="(isValid, errorMessage) => handleSpecTextareaValidation(field.key, isValid, errorMessage)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
               <!-- Section 2: Purchase & Financial Information -->
               <fieldset class="form-fieldset">
                 <legend class="form-legend">Purchase & Financial Information</legend>
@@ -504,7 +606,10 @@ const formData = reactive({
   location: '',
   condition: 'NEW',
   status: 'AVAILABLE',
-  notes: ''
+  notes: '',
+  // PROTOTYPE: Specifications
+  specifications: {} as Record<string, any>,
+  specificationsText: ''
 })
 
 // UI form data for dropdowns (separate from API data)
@@ -521,6 +626,64 @@ const selectedCategory = ref<Item | null>(null)
 const selectedType = ref<Item | null>(null)
 const selectedBrand = ref<Item | null>(null)
 const selectedModel = ref<Item | null>(null)
+
+// PROTOTYPE: Specification fields (dynamic based on asset type)
+interface SpecDropdownOption {
+  value: string
+  deprecated?: boolean
+}
+
+interface SpecField {
+  key: string
+  label: string
+  type: 'text' | 'number' | 'dropdown' | 'textarea'
+  required?: boolean
+  placeholder?: string
+  options?: (string | SpecDropdownOption)[]
+}
+
+const specificationFields = ref<SpecField[]>([])
+const selectedSpecFields = reactive<Record<string, any>>({})
+
+interface SpecDropdownItem {
+  id: string
+  value: string
+  label: string
+  deprecated?: boolean
+}
+
+const getSpecDropdownItems = (field: SpecField): SpecDropdownItem[] => {
+  if (!field.options || field.type !== 'dropdown') {
+    return []
+  }
+
+  return field.options
+    .map((option) => {
+      const value =
+        typeof option === 'string'
+          ? option
+          : (option as SpecDropdownOption)?.value
+      const deprecated =
+        typeof option === 'string'
+          ? false
+          : Boolean((option as SpecDropdownOption)?.deprecated)
+
+      if (!value) {
+        return null
+      }
+
+      return {
+        id: value,
+        value,
+        label: value,
+        deprecated
+      } as SpecDropdownItem
+    })
+    .filter(
+      (item): item is SpecDropdownItem =>
+        item !== null && !item.deprecated
+    )
+}
 const selectedVendor = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
 const selectedStatus = ref<Item | null>(null)
@@ -1322,6 +1485,13 @@ const onTypeChange = async (item: Item | null) => {
   uiFormData.assetType = item && item.value ? item.value.toString() : ''
   formData.assetTypeId = item && item.value ? item.value.toString() : ''
   
+  // PROTOTYPE: Load specification template for this asset type
+  if (item && item.value) {
+    await loadAssetTypeTemplate(item.value as number)
+  } else {
+    specificationFields.value = []
+  }
+  
   // Load ALL brands (not filtered by asset type)
   if (item) {
     await loadBrands()
@@ -1532,7 +1702,10 @@ const validateAllFields = async (): Promise<boolean> => {
     return false
   }
 
-  return validationResults.every(Boolean)
+  // Validate specification fields
+  const specFieldsValid = await validateAllSpecFields()
+
+  return validationResults.every(Boolean) && specFieldsValid
 }
 
 const markFormInvalidAndFocus = async () => {
@@ -1665,12 +1838,34 @@ const buildEditModeAssetData = (): any => {
     }
   }
 
+  // Specifications changes
+  const originalSpecs = normalizeSpecifications(original?.specifications)
+  const newSpecs = normalizeSpecifications(buildSpecificationsData())
+  const originalSpecsSerialized = originalSpecs ? JSON.stringify(originalSpecs) : null
+  const newSpecsSerialized = newSpecs ? JSON.stringify(newSpecs) : null
+
+  if (originalSpecsSerialized !== newSpecsSerialized) {
+    assetData.specifications = newSpecs ?? {}
+  }
+
   return assetData
 }
 
 const buildAddModeAssetData = (): any => {
   const normalizeOptionalField = (val: any) => {
     return val && val.toString().trim() !== '' ? val : undefined
+  }
+
+  // Build specifications data
+  const specificationsData = buildSpecificationsData()
+  
+  // Log specifications
+  if (specificationsData) {
+    console.log('====================================')
+    console.log('Asset Specifications')
+    console.log('====================================')
+    console.log('Specifications:', JSON.stringify(specificationsData, null, 2))
+    console.log('====================================')
   }
 
   return {
@@ -1687,7 +1882,367 @@ const buildAddModeAssetData = (): any => {
     notes: normalizeOptionalField(formData.notes),
     assetTypeId: Number.parseInt(formData.assetTypeId!),
     brandId: Number.parseInt(formData.brandId!),
-    modelId: Number.parseInt(formData.modelId!)
+    modelId: Number.parseInt(formData.modelId!),
+    // Include specifications
+    ...(specificationsData ? { specifications: specificationsData } : {})
+  }
+}
+
+// ============================================
+// SPECIFICATION HANDLING
+// ============================================
+
+// Load specification template from asset type
+const loadAssetTypeTemplate = async (assetTypeId: number) => {
+  try {
+    const response = await assetTypeService.getAssetTypeById(assetTypeId)
+    const assetType = response.data.assetType
+    
+    if (assetType.specificationTemplate && assetType.specificationTemplate.fields) {
+      const template = assetType.specificationTemplate
+      specificationFields.value = template.fields || []
+      
+      // Initialize form data and validation state for each field
+      specificationFields.value.forEach(field => {
+        // Only initialize if the key doesn't exist (preserve existing values)
+        if (!(field.key in formData.specifications)) {
+          formData.specifications[field.key] = ''
+        } else {
+          // Ensure existing values are not null/undefined (convert to empty string for textarea/string fields)
+          if (formData.specifications[field.key] === null || formData.specifications[field.key] === undefined) {
+            formData.specifications[field.key] = ''
+          }
+        }
+        // Initialize selectedSpecFields for dropdowns (must be null, not undefined)
+        if (field.type === 'dropdown') {
+          const dropdownItems = getSpecDropdownItems(field)
+          const existingValue = formData.specifications[field.key]
+          const matchedItem =
+            dropdownItems.find(item => item.value === existingValue) || null
+          selectedSpecFields[field.key] =
+            matchedItem ?? selectedSpecFields[field.key] ?? null
+        }
+        // Initialize validation state
+        const validationKey = `spec_${field.key}`
+        fieldValidation[validationKey] = null
+      })
+      
+      console.log('Loaded specification template from backend:', template)
+    } else {
+      specificationFields.value = []
+      // Clear spec field errors when template is cleared
+      Object.keys(specFieldErrors).forEach(key => {
+        delete specFieldErrors[key]
+      })
+      console.log('No specification template found for asset type:', assetTypeId)
+    }
+  } catch (error) {
+    console.error('Error loading asset type template:', error)
+    specificationFields.value = []
+  }
+}
+
+// Handle spec field changes (for dropdowns)
+const onSpecFieldChange = (key: string, item: any) => {
+  // Ensure we always set to null if item is null/undefined, not undefined
+  selectedSpecFields[key] = item || null
+  formData.specifications[key] = item?.value || ''
+  
+  // Validate dropdown field after selection
+  const field = specificationFields.value.find(f => f.key === key)
+  if (field) {
+    // Use nextTick to ensure reactive updates are complete before validation
+    nextTick(() => {
+      validateSpecField(key, field.type, field.required || false)
+    })
+  }
+}
+
+// Parse free-form specifications (key-value pairs or free text)
+const parseSpecifications = (specsInput: string) => {
+  if (!specsInput || !specsInput.trim()) return undefined
+  
+  const specs: Record<string, string> = {}
+  const lines = specsInput.split('\n')
+  let hasKeyValuePairs = false
+  
+  for (const line of lines) {
+    const colonIndex = line.indexOf(':')
+    if (colonIndex > 0) {
+      hasKeyValuePairs = true
+      const key = line.substring(0, colonIndex).trim()
+      const value = line.substring(colonIndex + 1).trim()
+      if (key && value) {
+        specs[key] = value
+      }
+    }
+  }
+  
+  // If no key-value pairs, store as description
+  if (!hasKeyValuePairs && specsInput.trim()) {
+    return { description: specsInput.trim() }
+  }
+  
+  return Object.keys(specs).length > 0 ? specs : undefined
+}
+
+// Build specifications data for submission
+const buildSpecificationsData = () => {
+  // If template exists and fields are filled
+  if (specificationFields.value.length > 0) {
+    const specs: Record<string, any> = {}
+    specificationFields.value.forEach(field => {
+      const value = formData.specifications[field.key]
+      if (value !== undefined && value !== null && value !== '') {
+        specs[field.key] = value
+      }
+    })
+    return Object.keys(specs).length > 0 ? specs : undefined
+  }
+  
+  // If no template, parse free-form text
+  if (formData.specificationsText) {
+    return parseSpecifications(formData.specificationsText)
+  }
+  
+  return undefined
+}
+
+function normalizeSpecifications(specs: any): Record<string, any> | undefined {
+  if (!specs || typeof specs !== 'object') {
+    return undefined
+  }
+
+  const normalized: Record<string, any> = {}
+
+  Object.entries(specs)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .forEach(([key, value]) => {
+      if (value === undefined || value === null) {
+        return
+      }
+
+      if (typeof value === 'string') {
+        if (value.trim() === '') {
+          return
+        }
+        normalized[key] = value
+        return
+      }
+
+      normalized[key] = value
+    })
+
+  return Object.keys(normalized).length > 0 ? normalized : undefined
+}
+
+// Get column class for specification fields (2 per row, last field full width if odd number, textarea always full width)
+const getSpecFieldColumnClass = (index: number, allFields: SpecField[], fieldType: string): string => {
+  // Textarea fields always take full width
+  if (fieldType === 'textarea') {
+    return 'col-12'
+  }
+  
+  // Filter out textarea fields to calculate pairing for non-textarea fields only
+  const nonTextareaFields = allFields.filter(f => f.type !== 'textarea')
+  const nonTextareaCount = nonTextareaFields.length
+  
+  // Find the index of current field in the non-textarea array
+  // Count how many non-textarea fields are before the current index
+  let nonTextareaIndex = 0
+  for (let i = 0; i < index; i++) {
+    if (allFields[i].type !== 'textarea') {
+      nonTextareaIndex++
+    }
+  }
+  
+  // If it's the last non-textarea field and count is odd, make it full width
+  if (nonTextareaIndex === nonTextareaCount - 1 && nonTextareaCount % 2 !== 0) {
+    return 'col-12'
+  }
+  
+  // Otherwise, 2 fields per row
+  return 'col-md-6'
+}
+
+// ============================================
+// SPECIFICATION FIELD VALIDATION
+// ============================================
+
+// Reactive object to store specification field errors
+const specFieldErrors = reactive<Record<string, string>>({})
+
+// Get validation class for specification field
+const getSpecFieldClass = (fieldKey: string) => {
+  const fieldId = `spec-${fieldKey}`
+  const validationKey = `spec_${fieldKey}`
+  
+  if (!formSubmitted.value && fieldValidation[validationKey] === null) {
+    return {}
+  }
+  
+  return {
+    'is-valid': fieldValidation[validationKey] === true,
+    'is-invalid': fieldValidation[validationKey] === false || (specFieldErrors[fieldKey] && specFieldErrors[fieldKey].trim() !== '')
+  }
+}
+
+// Get error message for specification field
+const getSpecFieldError = (fieldKey: string): string => {
+  return specFieldErrors[fieldKey] || ''
+}
+
+// Set error for specification field
+const setSpecFieldError = (fieldKey: string, message: string) => {
+  const validationKey = `spec_${fieldKey}`
+  specFieldErrors[fieldKey] = message
+  fieldValidation[validationKey] = false
+  
+  const element = document.getElementById(`spec-${fieldKey}`) as FormElement
+  if (element && 'setCustomValidity' in element) {
+    element.setCustomValidity(message)
+  }
+  
+  // Always apply validation classes to SearchableDropdown fields
+  applyValidationToSearchableDropdown(`spec-${fieldKey}`, 'invalid')
+}
+
+// Set valid for specification field
+const setSpecFieldValid = (fieldKey: string) => {
+  const validationKey = `spec_${fieldKey}`
+  delete specFieldErrors[fieldKey]
+  fieldValidation[validationKey] = true
+  
+  const element = document.getElementById(`spec-${fieldKey}`) as FormElement
+  if (element && 'setCustomValidity' in element) {
+    element.setCustomValidity('')
+  }
+  
+  // Always apply validation classes to SearchableDropdown fields (even if element not found)
+  applyValidationToSearchableDropdown(`spec-${fieldKey}`, 'valid')
+}
+
+// Clear validation for specification field
+const clearSpecFieldValidation = (fieldKey: string) => {
+  const validationKey = `spec_${fieldKey}`
+  
+  // Only clear validation if form hasn't been submitted yet
+  if (!formSubmitted.value) {
+    fieldValidation[validationKey] = null
+    delete specFieldErrors[fieldKey]
+    
+    const element = document.getElementById(`spec-${fieldKey}`) as FormElement
+    if (element && 'setCustomValidity' in element) {
+      element.setCustomValidity('')
+    }
+    
+    // Clear validation classes for regular inputs
+    const input = document.getElementById(`spec-${fieldKey}`) as HTMLInputElement
+    if (input) {
+      input.classList.remove('is-invalid', 'is-valid')
+    }
+    
+    // Also clear validation for SearchableDropdown (for dropdown fields)
+    const field = specificationFields.value.find(f => f.key === fieldKey)
+    if (field && field.type === 'dropdown') {
+      // Find the SearchableDropdown input and clear classes
+      const dropdownInput = document.getElementById(`spec-${fieldKey}`) as HTMLInputElement
+      if (dropdownInput) {
+        dropdownInput.classList.remove('is-invalid', 'is-valid')
+      }
+    }
+  }
+}
+
+// Handle input for specification field
+const handleSpecFieldInput = (fieldKey: string) => {
+  const validationKey = `spec_${fieldKey}`
+  if (fieldValidation[validationKey] === false && formData.specifications[fieldKey]?.toString().trim()) {
+    const field = specificationFields.value.find(f => f.key === fieldKey)
+    if (field) {
+      validateSpecField(fieldKey, field.type, field.required || false)
+    }
+  }
+}
+
+// Validate specification field
+const validateSpecField = (fieldKey: string, fieldType: string, required: boolean): boolean => {
+  const value = formData.specifications[fieldKey]
+  const fieldId = `spec-${fieldKey}`
+  const element = document.getElementById(fieldId) as FormElement
+  
+  // Handle dropdown fields separately
+  if (fieldType === 'dropdown') {
+    const selectedValue = selectedSpecFields[fieldKey]
+    if (required && (!selectedValue || selectedValue === null)) {
+      const field = specificationFields.value.find(f => f.key === fieldKey)
+      setSpecFieldError(fieldKey, `${field?.label || 'This field'} is required`)
+      return false
+    } else if (selectedValue) {
+      // Value is selected, mark as valid
+      setSpecFieldValid(fieldKey)
+      return true
+    } else {
+      // Optional field with no value, mark as valid
+      setSpecFieldValid(fieldKey)
+      return true
+    }
+  }
+  
+  // For other field types, check if element exists
+  if (!element) {
+    return true
+  }
+  
+  // Check required validation
+  if (required) {
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      const field = specificationFields.value.find(f => f.key === fieldKey)
+      setSpecFieldError(fieldKey, `${field?.label || 'This field'} is required`)
+      return false
+    }
+  }
+  
+  // Use native validation for standard fields
+  if (element.checkValidity()) {
+    setSpecFieldValid(fieldKey)
+    return true
+  } else {
+    setSpecFieldError(fieldKey, element.validationMessage || `${specificationFields.value.find(f => f.key === fieldKey)?.label || 'This field'} is invalid`)
+    return false
+  }
+}
+
+// Validate all specification fields
+const validateAllSpecFields = async (): Promise<boolean> => {
+  const validationResults: boolean[] = []
+  
+  for (const field of specificationFields.value) {
+    if (field.required) {
+      const isValid = validateSpecField(field.key, field.type, field.required || false)
+      validationResults.push(isValid)
+    } else {
+      // Validate optional fields to show green borders
+      validateSpecField(field.key, field.type, field.required || false)
+    }
+  }
+  
+  return validationResults.every(Boolean)
+}
+
+// Handle validation for specification textarea fields
+const handleSpecTextareaValidation = (fieldKey: string, isValid: boolean, errorMessage?: string) => {
+  const validationKey = `spec_${fieldKey}`
+  
+  if (isValid) {
+    setSpecFieldValid(fieldKey)
+  } else {
+    if (errorMessage) {
+      setSpecFieldError(fieldKey, errorMessage)
+    } else {
+      const field = specificationFields.value.find(f => f.key === fieldKey)
+      setSpecFieldError(fieldKey, `${field?.label || 'This field'} is required`)
+    }
   }
 }
 
@@ -1830,6 +2385,17 @@ const populateFormDataFromAsset = (asset: any) => {
   formData.purchaseDate = ensureDateFormat(purchaseDate)
   formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
   formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
+  
+  // Convert null values to empty strings for string fields
+  formData.notes = formData.notes ?? ''
+  formData.location = formData.location ?? ''
+  formData.serialNumber = formData.serialNumber ?? ''
+  formData.assetId = formData.assetId ?? ''
+  
+  // Handle specifications - ensure it's an object, not null
+  if (!formData.specifications || typeof formData.specifications !== 'object') {
+    formData.specifications = {}
+  }
 }
 
 const storeOriginalAssetData = (asset: any) => {
@@ -1846,7 +2412,10 @@ const storeOriginalAssetData = (asset: any) => {
     vendorId: asset.vendorId,
     assetTypeId: asset.assetTypeId,
     brandId: asset.brandId,
-    modelId: asset.modelId
+    modelId: asset.modelId,
+    specifications: asset.specifications && typeof asset.specifications === 'object'
+      ? JSON.parse(JSON.stringify(asset.specifications))
+      : undefined
   }
 }
 
@@ -1925,6 +2494,58 @@ const initializeEditMode = async (asset: any) => {
   setUIFormData(asset)
   setSelectedDropdownItems(asset)
   await loadDependentData(asset)
+  
+  // Load asset type template if asset type is selected
+  if (asset.assetType?.id) {
+    // Preserve existing specifications before loading template
+    const existingSpecs = formData.specifications && typeof formData.specifications === 'object' 
+      ? { ...formData.specifications } 
+      : {}
+    
+    console.log('Preserved existing specifications before loading template:', existingSpecs)
+    
+    await loadAssetTypeTemplate(asset.assetType.id)
+    
+    // Restore and populate existing specifications from preserved data after template is loaded
+    if (existingSpecs && typeof existingSpecs === 'object' && Object.keys(existingSpecs).length > 0) {
+      console.log('Restoring specifications after template load:', existingSpecs)
+      // Populate specification fields with existing values
+      Object.keys(existingSpecs).forEach(key => {
+        let value = existingSpecs[key]
+        
+        // Convert null/undefined to empty string for string fields
+        if (value === null || value === undefined) {
+          value = ''
+        }
+        
+        // Find the field to determine its type
+        const field = specificationFields.value.find(f => f.key === key)
+        
+        // For textarea fields, ensure value is a string
+        if (field && field.type === 'textarea') {
+          formData.specifications[key] = value ?? ''
+        } else if (field && field.type === 'dropdown') {
+          // Handle dropdown fields - find the matching option
+          const option = field.options?.find(opt => opt === value || opt === String(value))
+          if (option) {
+            formData.specifications[key] = option
+            selectedSpecFields[key] = {
+              id: option,
+              name: option,
+              value: option
+            }
+          }
+        } else if (value !== undefined && value !== null && value !== '') {
+          // For other field types, only set if value is not empty
+          formData.specifications[key] = value
+        } else if (field) {
+          // Initialize empty string for fields that don't have values
+          formData.specifications[key] = ''
+        }
+      })
+      console.log('Form data specifications after restoration:', formData.specifications)
+    }
+  }
   
   // Wait for DOM to be updated before applying validation
   await nextTick()

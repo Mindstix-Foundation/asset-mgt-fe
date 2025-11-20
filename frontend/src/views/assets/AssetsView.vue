@@ -185,115 +185,139 @@
     </div>
 
     <!-- Search and Sort Bar -->
-    <div class="mb-4">
-      <div class="row align-items-end">
-        <!-- Search Assets -->
-        <div class="col-12 col-lg-7 mb-3">
-          <div class="form-label">Search Assets</div>
-          <div class="search-input-container">
-            <i class="fas fa-search search-icon"></i>
-            <input 
-              type="text" 
-              class="form-control search-input" 
-              v-model="searchTerm"
-              placeholder="Search by ID, model, brand, or serial number..."
-              @input="debouncedLoadAssets"
-            >
-          </div>
-        </div>
-        
-        <!-- Sort By -->
-        <div class="col-12 col-lg-3 mb-3">
-          <SearchableDropdown
-            id="sort-by-filter"
-            label="Sort By"
-            placeholder="Select sort option..."
-            :items="sortOptions"
-            v-model="selectedSortBy"
-            @change="onSortByChange"
+    <div class="row align-items-end mb-4">
+      <div class="col-12 col-lg-6 mb-3">
+        <div class="form-label">Search Assets</div>
+        <div class="search-input-container">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            v-model="searchTerm"
+            type="text"
+            class="form-control search-input"
+            placeholder="Search by ID, model, brand, or serial number..."
+            @input="debouncedLoadAssets"
           />
         </div>
-        
-        <!-- Toggle Sort Order and Filter Button -->
-        <div class="col-12 col-lg-2 mb-3">
-          <div class="row g-3">
-            <!-- Toggle Sort Order -->
-            <div class="col-4">
-              <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" :title="'Toggle Sort Order'">
-                <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up', 'text-small-medium']"></i>
-              </button>
-            </div>
-            
-            <!-- Filter Button -->
-            <div class="col-8">
-              <button 
-                class="btn btn-filter w-100" 
-                @click="toggleFilterDropdown"
-                :class="{ active: showFilterDropdown }"
-              >
-                <i class="fas fa-filter me-1"></i>Filters
-              </button>
-            </div>
+      </div>
+      <div class="col-12 col-lg-3 mb-3">
+        <SearchableDropdown
+          id="sort-by-filter"
+          label="Sort By"
+          placeholder="Select sort option..."
+          :items="sortOptions"
+          v-model="selectedSortBy"
+          @change="onSortByChange"
+        />
+      </div>
+      <div class="col-12 col-lg-3 mb-3">
+        <div class="row g-3">
+          <div class="col-2">
+            <button class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" title="Toggle Sort Order">
+              <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up', 'text-small-medium']"></i>
+            </button>
+          </div>
+          <div class="col-6">
+            <button
+              class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2"
+              @click="toggleAllSpecifications"
+              :title="areAllSpecsVisible ? 'Hide all specifications' : 'Show all specifications'"
+            >
+              <i class="fas" :class="areAllSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+              <span class="fw-semibold text-nowrap">{{ areAllSpecsVisible ? 'Hide Specs' : 'Show Specs' }}</span>
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn btn-filter w-100"
+              :class="{ active: showFilterDropdown }"
+              @click="toggleFilterDropdown"
+            >
+              <i class="fas fa-filter me-1"></i>Filters
+            </button>
           </div>
         </div>
       </div>
-        
-        <!-- Filter Section (inline, bordered container to mimic card) -->
-        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
-          <!-- Bootstrap Flexbox for exact proportions -->
-          <div class="d-flex flex-column flex-md-row gap-2">
-            <!-- 4 Filter Dropdowns: equal width (2.625 columns each) -->
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="asset-type-filter"
-                label="Asset Type"
-                placeholder="Search asset types..."
-                :items="assetTypes"
-                v-model="selectedType"
-                @change="onAssetTypeChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="brand-filter"
-                label="Brand"
-                placeholder="Search brands..."
-                :items="brands"
-                v-model="selectedBrand"
-                @change="onBrandChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="status-filter"
-                label="Status"
-                placeholder="Search status..."
-                :items="statusOptions"
-                v-model="selectedStatus"
-                @change="onStatusChange"
-              />
-            </div>
-            <div class="flex-fill">
-              <SearchableDropdown
-                id="condition-filter"
-                label="Condition"
-                placeholder="Search condition..."
-                :items="conditionOptions"
-                v-model="selectedCondition"
-                @change="onConditionChange"
-              />
-            </div>
+    </div>
 
-            <!-- Clear Button: using filter-clear-button-container class -->
-            <div class="filter-clear-button-container">
-              <div class="d-flex align-items-end h-100">
-                <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
-                  <i class="fas fa-times me-1"></i>Clear
-                </button>
-              </div>
-            </div>
+    <div v-if="showFilterDropdown" class="mb-4 border rounded p-3 shadow-sm bg-white">
+      <div class="d-flex flex-column flex-md-row gap-2">
+        <div class="flex-fill">
+          <SearchableDropdown
+            id="asset-type-filter"
+            label="Asset Type"
+            placeholder="Search asset types..."
+            :items="assetTypes"
+            v-model="selectedType"
+            @change="onAssetTypeChange"
+          />
+        </div>
+        <div class="flex-fill">
+          <SearchableDropdown
+            id="brand-filter"
+            label="Brand"
+            placeholder="Search brands..."
+            :items="brands"
+            v-model="selectedBrand"
+            @change="onBrandChange"
+          />
+        </div>
+        <div class="flex-fill">
+          <SearchableDropdown
+            id="status-filter"
+            label="Status"
+            placeholder="Search status..."
+            :items="statusOptions"
+            v-model="selectedStatus"
+            @change="onStatusChange"
+          />
+        </div>
+        <div class="flex-fill">
+          <SearchableDropdown
+            id="condition-filter"
+            label="Condition"
+            placeholder="Search condition..."
+            :items="conditionOptions"
+            v-model="selectedCondition"
+            @change="onConditionChange"
+          />
+        </div>
+        <div class="filter-clear-button-container">
+          <div class="d-flex align-items-end h-100">
+            <button class="btn btn-gray w-100" @click="clearFilters" title="Clear All Filters">
+              <i class="fas fa-times me-1"></i>Clear
+            </button>
           </div>
         </div>
+      </div>
+      <div v-if="selectedType" class="mt-3">
+        <div v-if="specificationFields.length === 0" class="text-muted small mb-0">
+          No specifications defined for the selected asset type.
+        </div>
+        <div v-else class="row g-3">
+          <template v-for="field in specificationFields" :key="field.key || field.label">
+            <div
+              v-if="field.key"
+              class="col-12 col-md-6 col-lg-4"
+            >
+              <SearchableDropdown
+                :id="`specification-filter-${field.key}`"
+                :label="field.label || formatLabel(field.key)"
+                :placeholder="`Filter by ${field.label || formatLabel(field.key)}...`"
+                :items="specificationFieldOptions[field.key] || []"
+                :disabled="(specificationFieldOptions[field.key] || []).length === 0"
+                v-model="specificationFilterSelections[field.key]"
+                @change="item => onSpecificationFieldChange(field.key!, item)"
+              />
+              <div
+                v-if="(specificationFieldOptions[field.key] || []).length === 0"
+                class="text-muted small mt-1"
+              >
+                No values found for this specification.
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
     </div>
 
     <!-- Assets/Inventory Content -->
@@ -315,80 +339,103 @@
                 </tr>
               </thead>
               <tbody>
-                <tr 
-                  v-for="asset in filteredAssets" 
-                  :key="asset.id"
-                  :data-type="asset.type"
-                  :data-brand="asset.brand"
-                  :data-status="asset.status"
-                  :data-location="asset.location"
-                >
-                  <td><strong>{{ asset.id }}</strong></td>
-                  <td>
-                    <div style="line-height: 1.2;">
-                      <strong style="color: var(--primary-black);">
-                        {{ asset.model || 'Unknown Model' }}
-                      </strong>
-                      <br style="margin: 0; line-height: 0.8;">
-                      <small class="text-muted" style="line-height: 1.1;">
-                        {{ asset.type || 'Unknown Type' }} - 
-                        {{ asset.brand || 'Unknown Brand' }}
-                      </small>
-                    </div>
-                  </td>
-                  <td>{{ asset.serialNumber }}</td>
-                  <td>{{ asset.assignedTo || '-' }}</td>
-                  <td>{{ getConditionText(asset.condition) }}</td>
-                  <td>
-                    <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
-                  </td>
-                  <td class="text-start">
-                    <div class="btn-group btn-group-sm asset-actions">
-                      <button 
-                        class="btn btn-action btn-brown" 
-                        @click="viewAssetDetails(asset)"
-                        :title="getViewButtonTitle(asset.status)"
-                      >
-                        <i class="fas fa-eye"></i>
-                      </button>
-                      <button 
-                        v-if="asset.status !== 'RETIRED'"
-                        class="btn btn-action btn-purple" 
-                        title="Edit Asset"
-                        @click="editAsset(asset)"
-                      >
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button 
-                        v-if="asset.status === 'AVAILABLE'"
-                        class="btn btn-action btn-green" 
-                        title="Issue Asset"
-                        @click="issueAsset(asset)"
-                      >
-                        <i class="fas fa-user-plus"></i>
-                      </button>
-                      <button 
-                        v-if="asset.status === 'ASSIGNED'"
-                        class="btn btn-action btn-pink" 
-                        title="Collect Asset"
-                        @click="collectAsset(asset)"
-                      >
-                        <i class="fas fa-user-minus"></i>
-                      </button>
-                      <button 
-                        v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
-                        class="btn btn-action btn-orange" 
-                        :title="getMaintenanceButtonTitle(asset.status)"
-                        @click="handleMaintenanceAction(asset)"
-                      >
-                        <i :class="getMaintenanceButtonIcon(asset.status)"></i>
-                      </button>
-                      <button class="btn btn-action btn-gray" title="View QR Code">
-                        <i class="fas fa-qrcode"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                <template v-for="asset in filteredAssets" :key="asset.id">
+                  <!-- Main Asset Row -->
+                  <tr 
+                    class="asset-row"
+                    :class="{ 
+                      'expanded': expandedAssetIds.includes(asset.id),
+                      'group-hover': hoveredGroupId === asset.id 
+                    }"
+                    :data-type="asset.type"
+                    :data-brand="asset.brand"
+                    :data-status="asset.status"
+                    :data-location="asset.location"
+                    @click="toggleAssetRow(asset.id)"
+                    @mouseenter="setHoveredGroup(asset.id)"
+                    @mouseleave="setHoveredGroup(null)"
+                    style="cursor: pointer;"
+                  >
+                    <td><strong>{{ asset.id }}</strong></td>
+                    <td>
+                      <div style="line-height: 1.2;">
+                        <strong style="color: var(--primary-black);">
+                          {{ asset.model || 'Unknown Model' }}
+                        </strong>
+                        
+                      </div>
+                    </td>
+                    <td>{{ asset.serialNumber }}</td>
+                    <td>{{ asset.assignedTo || '-' }}</td>
+                    <td>{{ getConditionText(asset.condition) }}</td>
+                    <td>
+                      <span :class="getStatusBadgeClass(asset.status)">{{ getStatusText(asset.status) }}</span>
+                    </td>
+                    <td class="text-start" @click.stop>
+                      <div class="btn-group btn-group-sm asset-actions">
+                        <button 
+                          class="btn btn-action btn-brown" 
+                          @click="viewAssetDetails(asset)"
+                          :title="getViewButtonTitle(asset.status)"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button 
+                          v-if="asset.status !== 'RETIRED'"
+                          class="btn btn-action btn-purple" 
+                          title="Edit Asset"
+                          @click="editAsset(asset)"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button 
+                          v-if="asset.status === 'AVAILABLE'"
+                          class="btn btn-action btn-green" 
+                          title="Issue Asset"
+                          @click="issueAsset(asset)"
+                        >
+                          <i class="fas fa-user-plus"></i>
+                        </button>
+                        <button 
+                          v-if="asset.status === 'ASSIGNED'"
+                          class="btn btn-action btn-pink" 
+                          title="Collect Asset"
+                          @click="collectAsset(asset)"
+                        >
+                          <i class="fas fa-user-minus"></i>
+                        </button>
+                        <button 
+                          v-if="asset.status !== 'LOST' && asset.status !== 'ASSIGNED' && asset.status !== 'RETIRED'"
+                          class="btn btn-action btn-orange" 
+                          :title="getMaintenanceButtonTitle(asset.status)"
+                          @click="handleMaintenanceAction(asset)"
+                        >
+                          <i :class="getMaintenanceButtonIcon(asset.status)"></i>
+                        </button>
+                        <button class="btn btn-action btn-gray" title="View QR Code">
+                          <i class="fas fa-qrcode"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  <!-- Specification Row -->
+                  <tr 
+                    v-if="expandedAssetIds.includes(asset.id)"
+                    class="spec-row"
+                    :class="{ 'group-hover': hoveredGroupId === asset.id }"
+                    @click.stop="toggleAssetRow(asset.id)"
+                    @mouseenter="setHoveredGroup(asset.id)"
+                    @mouseleave="setHoveredGroup(null)"
+                  >
+                    <td colspan="7">
+                      <div class="spec-row-content">
+                        <span v-html="formatSpecifications(asset)"></span>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                
                 <!-- No results row -->
                 <tr v-if="filteredAssets.length === 0">
                   <td colspan="7" class="text-center py-4">
@@ -626,8 +673,27 @@
               </div>
             </div>
 
+            <!-- Specifications -->
+            <div v-if="selectedAsset?.specifications && Object.keys(selectedAsset.specifications).length > 0" class="row mt-2">
+              <div class="col-12">
+                <div class="asset-info-section-compact">
+                  <h6 class="section-title-compact"><i class="fas fa-list-ul me-2"></i>Specifications</h6>
+                  <div class="info-grid-compact">
+                    <div
+                      class="info-item-compact"
+                      v-for="spec in getSpecificationEntries(selectedAsset?.specifications, selectedAsset?.specificationLabelMap)"
+                      :key="`${spec.label}-${spec.value}`"
+                    >
+                      <div class="info-label-compact">{{ spec.label }}</div>
+                      <div class="info-value-compact">{{ spec.value }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Assignment Status & Information - Combined -->
-            <div v-if="selectedAsset && selectedAsset.status !== 'RETIRED'" class="row ">
+            <div v-if="selectedAsset && selectedAsset.status !== 'RETIRED'" class="row mt-2">
               <div class="col-12">
                 <div class="assignment-status-combined">
                   <h6 class="section-title-compact d-flex align-items-center justify-content-between clickable" 
@@ -897,6 +963,7 @@
                 </div>
               </div>
             </div>
+
           </div>
           <div class="modal-footer">
             <div class="d-flex justify-content-between w-100">
@@ -1349,12 +1416,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { differenceInYears, differenceInMonths, differenceInDays, addYears, addMonths } from 'date-fns'
 import { assetService } from '../../services/business/assetService'
-import type { Asset, AssetQueryParams, FilterOptions, DetailedAsset } from '../../types/asset.types'
+import { assetTypeService } from '../../services/api/assetTypeService'
+import type { Asset, AssetQueryParams, FilterOptions, DetailedAsset, SpecificationFieldDefinition } from '../../types/asset.types'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
@@ -1376,6 +1444,8 @@ interface AssetDisplayItem {
   status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
   assignedTo?: string
   condition: string
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
   // Additional fields for modal (populated when viewing details)
   purchaseDate?: string
   location?: string
@@ -1418,6 +1488,11 @@ const isRetirementDetailsExpanded = ref(false)
 const isReactivateAssetSummaryExpanded = ref(false)
 const isRefurbishmentDetailsExpanded = ref(false)
 const selectedAsset = ref<AssetDisplayItem | null>(null)
+// Specification display state
+const expandedAssetIds = ref<string[]>([])
+const hoveredGroupId = ref<string | null>(null)
+const specificationFields = ref<SpecificationFieldDefinition[]>([])
+const specificationFilterSelections = reactive<Record<string, Item | null>>({})
 const isLoadingAssetDetails = ref(false)
 const assetToRetire = ref<AssetDisplayItem | null>(null)
 const isRetiringAsset = ref(false)
@@ -1568,8 +1643,181 @@ const paginationInfo = computed(() => {
 })
 
 // Computed properties for filter tracking
+const specificationFiltersPayload = computed<Record<string, string>>(() => {
+  const payload: Record<string, string> = {}
+  Object.entries(specificationFilterSelections).forEach(([key, item]) => {
+    if (item?.value) {
+      payload[key] = String(item.value)
+    }
+  })
+  return payload
+})
+
+const normalizeSpecificationValue = (value: unknown): string | null => {
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+  if (Array.isArray(value)) {
+    return value
+      .map(entry => (entry === null || entry === undefined ? '' : String(entry)))
+      .filter(Boolean)
+      .join(', ')
+  }
+  return String(value)
+}
+
+const assetMatchesSpecificationFilters = (asset: AssetDisplayItem, excludeKey?: string) => {
+  for (const [key, item] of Object.entries(specificationFilterSelections)) {
+    if (!item || key === excludeKey) continue
+    const assetValue = normalizeSpecificationValue(asset.specifications?.[key])
+    if (assetValue !== item.value) {
+      return false
+    }
+  }
+  return true
+}
+
+const getAssetsForSpecificationField = (excludeKey?: string) => {
+  return displayAssets.value.filter(asset => {
+    if (selectedType.value && asset.type !== selectedType.value.name) {
+      return false
+    }
+    if (selectedBrand.value && asset.brand !== selectedBrand.value.name) {
+      return false
+    }
+    return assetMatchesSpecificationFilters(asset, excludeKey)
+  })
+}
+
+const specificationFieldOptions = computed<Record<string, Item[]>>(() => {
+  const optionsMap: Record<string, Item[]> = {}
+
+  specificationFields.value.forEach(field => {
+    if (!field.key) {
+      return
+    }
+
+    const valuesMap = new Map<string, Item>()
+    const relevantAssets = getAssetsForSpecificationField(field.key)
+
+    relevantAssets.forEach(asset => {
+      const rawValue = normalizeSpecificationValue(asset.specifications?.[field.key!])
+      if (!rawValue) {
+        return
+      }
+      if (!valuesMap.has(rawValue)) {
+        valuesMap.set(rawValue, {
+          id: `${field.key}-${rawValue}`,
+          name: rawValue,
+          value: rawValue
+        })
+      }
+    })
+
+    if (Array.isArray(field.options)) {
+      field.options.forEach(option => {
+        const optionValue = typeof option === 'string' ? option : option?.value
+        if (!optionValue) return
+        if (!valuesMap.has(optionValue)) {
+          valuesMap.set(optionValue, {
+            id: `${field.key}-${optionValue}`,
+            name: optionValue,
+            value: optionValue
+          })
+        }
+      })
+    }
+
+    optionsMap[field.key] = Array.from(valuesMap.values())
+  })
+
+  return optionsMap
+})
+
+watch(specificationFieldOptions, newOptions => {
+  let selectionChanged = false
+  Object.entries(specificationFilterSelections).forEach(([key, item]) => {
+    if (!item) return
+    const options = newOptions[key] || []
+    const exists = options.some(option => option.value === item.value)
+    if (!exists) {
+      specificationFilterSelections[key] = null
+      selectionChanged = true
+    }
+  })
+
+  if (selectionChanged) {
+    debouncedLoadAssets()
+  }
+})
+
+const clearSpecificationState = () => {
+  specificationFields.value = []
+  Object.keys(specificationFilterSelections).forEach(key => {
+    delete specificationFilterSelections[key]
+  })
+}
+
+const resetSpecificationSelections = () => {
+  Object.keys(specificationFilterSelections).forEach(key => {
+    specificationFilterSelections[key] = null
+  })
+}
+
+const loadSpecificationFieldsForType = async (item: Item | null) => {
+  clearSpecificationState()
+  if (!item?.value) {
+    return
+  }
+
+  try {
+    const response = await assetTypeService.getAssetTypeById(Number(item.value))
+    let template = response.data.assetType?.specificationTemplate
+
+    if (typeof template === 'string') {
+      try {
+        template = JSON.parse(template)
+      } catch (error) {
+        console.error('Failed to parse specification template JSON:', error)
+        template = undefined
+      }
+    }
+
+    const fields: SpecificationFieldDefinition[] = Array.isArray(template?.fields)
+      ? template.fields.filter((field: SpecificationFieldDefinition) => Boolean(field?.key))
+      : []
+
+    specificationFields.value = fields
+    fields.forEach(field => {
+      if (field.key) {
+        specificationFilterSelections[field.key] = null
+      }
+    })
+  } catch (error) {
+    console.error('Error loading specification template:', error)
+    specificationFields.value = []
+  }
+}
+
+const onSpecificationFieldChange = (fieldKey: string, item: Item | null) => {
+  if (!fieldKey) return
+  specificationFilterSelections[fieldKey] = item
+  debouncedLoadAssets()
+}
+
 const hasActiveFilters = computed(() => {
-  return selectedType.value !== null || selectedBrand.value !== null || selectedStatus.value !== null || selectedCondition.value !== null
+  return (
+    selectedType.value !== null ||
+    selectedBrand.value !== null ||
+    selectedStatus.value !== null ||
+    selectedCondition.value !== null ||
+    Object.keys(specificationFiltersPayload.value).length > 0
+  )
+})
+
+const areAllSpecsVisible = computed(() => {
+  return filteredAssets.value.length > 0 && 
+         expandedAssetIds.value.length === filteredAssets.value.length
 })
 
 // API Methods
@@ -1587,6 +1835,11 @@ const loadAssets = async () => {
       condition: selectedCondition.value?.value as any || undefined,
       sortBy: selectedSortBy.value?.value as string || 'assetId',
       sortOrder: sortAscending.value ? 'asc' : 'desc'
+    }
+
+    const specFilters = specificationFiltersPayload.value
+    if (Object.keys(specFilters).length > 0) {
+      params.specificationFilters = specFilters
     }
 
     const response = await assetService.getAssets(params)
@@ -1619,6 +1872,14 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
   // Get current assignment info from the latest asset issue (only if not returned)
   const currentAssignment = detailedAsset.assetIssues?.find(issue => !issue.returnDate)
   
+  const templateFields = detailedAsset.assetType?.specificationTemplate?.fields ?? []
+  const labelMap: Record<string, string> = {}
+  templateFields.forEach(field => {
+    if (field?.key) {
+      labelMap[field.key] = field.label || formatLabel(field.key)
+    }
+  })
+  
   return {
     id: detailedAsset.assetId,
     type: detailedAsset.assetType.name,
@@ -1628,6 +1889,8 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
     status: detailedAsset.status as any,
     assignedTo: currentAssignment ? `${currentAssignment.employee?.firstName} ${currentAssignment.employee?.lastName}` : undefined,
     condition: detailedAsset.condition,
+    specifications: detailedAsset.specifications || undefined,
+    specificationLabelMap: Object.keys(labelMap).length > 0 ? labelMap : undefined,
     // Additional fields for modal
     purchaseDate: detailedAsset.purchaseDate || '',
     location: detailedAsset.location || 'Not specified',
@@ -1688,17 +1951,20 @@ const clearFilters = () => {
   selectedCondition.value = null
   selectedSortBy.value = null
   currentPage.value = 1
+  clearSpecificationState()
   loadAssets() // Reload with cleared filters
 }
 
 // Change handlers for searchable dropdowns
-const onAssetTypeChange = (item: Item | null) => {
+const onAssetTypeChange = async (item: Item | null) => {
   selectedType.value = item
+  await loadSpecificationFieldsForType(item)
   debouncedLoadAssets()
 }
 
 const onBrandChange = (item: Item | null) => {
   selectedBrand.value = item
+  resetSpecificationSelections()
   debouncedLoadAssets()
 }
 
@@ -2620,6 +2886,69 @@ const debouncedLoadAssets = () => {
     currentPage.value = 1 // Reset to first page when filtering
     loadAssets()
   }, 500) // 500ms debounce
+}
+
+// Specification display methods
+const toggleAssetRow = (assetId: string) => {
+  const index = expandedAssetIds.value.indexOf(assetId)
+  if (index === -1) {
+    expandedAssetIds.value.push(assetId)
+  } else {
+    expandedAssetIds.value.splice(index, 1)
+  }
+}
+
+const toggleAllSpecifications = () => {
+  if (areAllSpecsVisible.value) {
+    expandedAssetIds.value = []
+  } else {
+    expandedAssetIds.value = filteredAssets.value.map(asset => asset.id)
+  }
+}
+
+const setHoveredGroup = (assetId: string | null) => {
+  hoveredGroupId.value = assetId
+}
+
+const formatLabel = (key: string): string => {
+  return key
+    .split(/(?=[A-Z])|_/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+const formatSpecifications = (asset: any): string => {
+  const baseEntries: Array<[string, string | undefined]> = [
+    ['type', asset.type],
+    ['brand', asset.brand]
+  ]
+
+  const specEntries = asset.specifications ? Object.entries(asset.specifications) : []
+  const combined = [...baseEntries, ...specEntries].filter(([, value]) => Boolean(value))
+
+  if (combined.length === 0) {
+    return 'No specifications available'
+  }
+
+  return combined
+    .map(([key, value]) => `<span class="spec-item"><strong>${formatLabel(key)}:</strong> ${value}</span>`)
+    .join(' &nbsp;&nbsp;&nbsp;&nbsp;')
+}
+
+const getSpecificationEntries = (
+  specs?: Record<string, any> | null,
+  labelMap?: Record<string, string> | null,
+) => {
+  if (!specs) {
+    return []
+  }
+
+  return Object.entries(specs)
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
+    .map(([label, value]) => ({
+      label: labelMap?.[label] || formatLabel(label),
+      value: Array.isArray(value) ? value.join(', ') : String(value)
+    }))
 }
 
 // Watch for changes in filters

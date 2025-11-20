@@ -9,11 +9,27 @@ export interface AssetCategory {
   description?: string
 }
 
+export interface SpecificationFieldDefinition {
+  key?: string
+  label?: string
+  type?: string
+  required?: boolean
+  options?: Array<{ value: string; deprecated?: boolean } | string>
+}
+
+export interface SpecificationTemplate {
+  fields?: SpecificationFieldDefinition[]
+  version?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
 export interface AssetType {
   id: number
   name: string
   description?: string
   category: AssetCategory
+  specificationTemplate?: SpecificationTemplate
 }
 
 export interface Brand {
@@ -59,6 +75,7 @@ export interface Asset {
   brand: Brand
   model: Model
   assetIssues?: AssetIssue[]
+  specifications?: Record<string, string>
 }
 
 // Full Asset interface for detailed view (includes all fields)
@@ -84,6 +101,7 @@ export interface DetailedAsset {
   assetType: AssetType
   brand: Brand
   model: Model
+  specifications?: Record<string, any>
   vendor?: Vendor
   createdByUser: AppUser
   assetIssues?: AssetIssue[]
@@ -106,6 +124,7 @@ export interface AssetQueryParams {
   status?: AssetStatus
   condition?: AssetCondition
   location?: string
+  specificationFilters?: Record<string, string>
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
 }
@@ -188,6 +207,8 @@ export interface AssetDisplayItem {
   status: AssetStatus
   assignedTo?: string
   condition: AssetCondition
+  specifications?: Record<string, string>
+  specificationLabelMap?: Record<string, string>
   // Additional fields for modal (populated when viewing details)
   purchaseDate?: string
   location?: string
@@ -244,4 +265,17 @@ export interface AssetBulkUploadResult {
 export interface AssetBulkUploadResponse {
   message: string
   data: AssetBulkUploadResult
+}
+
+// Specification filter types
+export interface SpecificationCombination {
+  [key: string]: string
+}
+
+export interface UniqueSpecificationsResponse {
+  message: string
+  data: {
+    requiredSpecs: string[]
+    combinations: SpecificationCombination[]
+  }
 } 

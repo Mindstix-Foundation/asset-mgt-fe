@@ -519,7 +519,7 @@
   width: 100%;
   margin-top: 0.25rem;
   font-size: 0.875rem;
-  color: #dc2626;
+  color: #E97676;
   font-weight: 500;
 }
 
@@ -659,40 +659,40 @@
   outline: 2px solid transparent !important;
 }
 
-/* Notes textarea - valid state (green border) - editable only */
+/* Notes textarea - valid state (green border) - editable only - Match form validation colors */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
   background-image: none !important;
   padding-right: 0.75rem !important;
   background-color: #fff !important;
 }
 
-/* Notes textarea - invalid state (red border) - editable only */
+/* Notes textarea - invalid state (red border) - editable only - Match form validation colors */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
   animation: subtle-shake 0.3s ease-in-out !important;
   background-image: none !important;
   padding-right: 0.75rem !important;
   background-color: #fff !important;
 }
 
-/* Notes textarea - valid state with focus (keep green) - editable only */
+/* Notes textarea - valid state with focus (keep green) - editable only - Match form validation colors */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-valid:focus,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:valid:focus {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25) !important;
+  border-color: #21AF65 !important;
+  box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
   background-color: #fff !important;
 }
 
-/* Notes textarea - invalid state with focus (keep red) - editable only */
+/* Notes textarea - invalid state with focus (keep red) - editable only - Match form validation colors */
 .notes-textarea-container:not(.readonly-notes-textarea) .form-control.is-invalid:focus,
 .was-validated .notes-textarea-container:not(.readonly-notes-textarea) .form-control:invalid:focus {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25) !important;
+  border-color: #E97676 !important;
+  box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
   background-color: #fff !important;
 }
 
@@ -710,6 +710,16 @@
 .notes-textarea-container .character-count .text-muted {
   color: #666666 !important;
   font-weight: 500;
+}
+
+/* NotesTextarea invalid-feedback styling - Match form validation colors */
+.notes-textarea-container .invalid-feedback {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 0.25rem !important;
+  font-size: 0.875rem !important;
+  color: #E97676 !important;
+  font-weight: 500 !important;
 }
 
 /* ================================

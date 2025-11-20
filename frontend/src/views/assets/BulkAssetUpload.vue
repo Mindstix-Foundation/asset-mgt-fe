@@ -1,15 +1,71 @@
 <template>
   <div>
-    <!-- Asset-specific Bulk Upload Modal -->
+    <!-- Asset Type Selection Modal (Step 1) -->
+    <div class="modal fade" id="assetTypeSelectionModal" tabindex="-1" aria-labelledby="assetTypeSelectionModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="assetTypeSelectionModalLabel">
+              <i class="fas fa-layer-group me-2"></i>Select Asset Type for Bulk Upload
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-muted mb-3">
+              <i class="fas fa-info-circle me-1"></i>
+              Choose the asset type to generate a customized upload template with the correct columns and specifications.
+            </p>
+            
+            <!-- Asset Type Dropdown -->
+            <div class="form-group">
+              <label for="assetTypeSelect" class="form-label">Asset Type <span class="text-danger">*</span></label>
+              <SearchableDropdown
+                id="assetTypeSelect"
+                label=""
+                placeholder="Search and select asset type..."
+                :items="assetTypeItems"
+                v-model="selectedAssetType"
+                :required="true"
+              />
+              <small class="text-muted">
+                The template will include standard fields plus type-specific specifications
+              </small>
+            </div>
+
+            <!-- Loading State -->
+            <div v-if="isLoadingAssetType" class="text-center mt-3">
+              <i class="fas fa-spinner fa-spin me-2"></i>Loading asset type details...
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-purple btn-sm" 
+              :disabled="!selectedAssetType || isLoadingAssetType"
+              @click="proceedToBulkUpload"
+            >
+              <i class="fas fa-arrow-right me-2"></i>
+              Continue to Upload
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asset-specific Bulk Upload Modal (Step 2) -->
     <BulkUploadModal
       ref="bulkUploadModalRef"
       modal-id="bulkUploadAssetsModal"
       title="Bulk Upload Assets"
       entity-name="Assets"
-      :columns="assetColumns"
+      :columns="dynamicColumns"
       :template-data="[]"
       upload-button-text="Upload Assets"
       :always-validate="true"
+      :helper-notes="helperNotes"
       @upload="handleBulkUpload"
       @validate="handleValidation"
       @template-download="handleTemplateDownload"
@@ -18,17 +74,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { Modal } from 'bootstrap'
 import BulkUploadModal from '@/components/modals/BulkUploadModal.vue'
+import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import { assetService } from '@/services/business/assetService'
+import { assetTypeService } from '@/services/api/assetTypeService'
 import { useToastStore } from '@/stores/toast'
+import type { AssetType } from '@/services/api/assetTypeService'
 
 // Refs
 const bulkUploadModalRef = ref()
 const toastStore = useToastStore()
+const assetTypes = ref<AssetType[]>([])
+const selectedAssetType = ref<any>(null)
+const selectedAssetTypeDetails = ref<AssetType | null>(null)
+const isLoadingAssetType = ref(false)
 
-// Asset columns configuration
-const assetColumns = ref([
+// Base asset columns (always present)
+const baseAssetColumns = [
   { key: 'assetId', label: 'Asset ID', required: true },
   { key: 'serialNumber', label: 'Serial Number', required: true },
   { key: 'assetTypeId', label: 'Asset Type ID', required: true },
@@ -38,12 +102,111 @@ const assetColumns = ref([
   { key: 'status', label: 'Status', required: true },
   { key: 'condition', label: 'Condition', required: true },
   { key: 'location', label: 'Location', required: false },
-  { key: 'purchaseDate', label: 'Purchase Date', required: false },
+  { key: 'purchaseDate', label: 'Purchase Date (DD-MM-YYYY)', required: false },
   { key: 'purchaseCost', label: 'Purchase Cost', required: false },
-  { key: 'warrantyStartDate', label: 'Warranty Start Date', required: false },
-  { key: 'warrantyEndDate', label: 'Warranty End Date', required: false },
+  { key: 'warrantyStartDate', label: 'Warranty Start Date (DD-MM-YYYY)', required: false },
+  { key: 'warrantyEndDate', label: 'Warranty End Date (DD-MM-YYYY)', required: false },
   { key: 'notes', label: 'Notes', required: false }
-])
+]
+
+// Dynamic columns based on selected asset type
+const dynamicColumns = computed(() => {
+  const columns = [...baseAssetColumns]
+  
+  // Add specification columns if asset type has a specification template
+  if (selectedAssetTypeDetails.value?.specificationTemplate?.fields) {
+    const specFields = selectedAssetTypeDetails.value.specificationTemplate.fields
+    
+    specFields.forEach((field: any) => {
+      columns.push({
+        key: `spec_${field.key}`,
+        label: field.label,
+        required: field.required || false
+      })
+    })
+  }
+  
+  return columns
+})
+
+// Helper notes for the upload modal
+const helperNotes = computed(() => {
+  const notes = [
+    'Asset Type ID must match the selected asset type: ' + (selectedAssetTypeDetails.value?.id || 'N/A'),
+    'Status values: AVAILABLE, ASSIGNED, IN_MAINTENANCE, RETIRED, LOST',
+    'Condition values: NEW, GOOD, FAIR, POOR, DAMAGED',
+    'Date format: DD-MM-YYYY (e.g., 15-01-2024)',
+    'IDs (assetTypeId, brandId, modelId, vendorId) must be valid numeric IDs from the system'
+  ]
+  
+  if (selectedAssetTypeDetails.value?.specificationTemplate?.fields) {
+    const specFields = selectedAssetTypeDetails.value.specificationTemplate.fields
+    const specFieldNames = specFields.map((f: any) => f.label).join(', ')
+    notes.push(`Specification fields for ${selectedAssetTypeDetails.value.name}: ${specFieldNames}`)
+  }
+  
+  return notes
+})
+
+// Asset type items for dropdown
+const assetTypeItems = computed(() => {
+  return assetTypes.value.map(type => ({
+    id: type.id,
+    name: type.name,
+    value: type.id.toString()
+  }))
+})
+
+// Load asset types on mount
+onMounted(async () => {
+  await loadAssetTypes()
+})
+
+// Load all active asset types
+const loadAssetTypes = async () => {
+  try {
+    const response = await assetTypeService.getAssetTypes({ isActive: true })
+    assetTypes.value = response.data.assetTypes
+  } catch (error: any) {
+    console.error('Error loading asset types:', error)
+    toastStore.showError('Failed to Load Asset Types', error.message || 'Could not load asset types')
+  }
+}
+
+// Proceed to bulk upload after asset type selection
+const proceedToBulkUpload = async () => {
+  if (!selectedAssetType.value) {
+    toastStore.showError('Asset Type Required', 'Please select an asset type to continue')
+    return
+  }
+  
+  isLoadingAssetType.value = true
+  
+  try {
+    // Fetch detailed asset type information including specification template
+    const response = await assetTypeService.getAssetTypeById(Number(selectedAssetType.value.value))
+    selectedAssetTypeDetails.value = response.data.assetType
+    
+    console.log('Loaded asset type details:', selectedAssetTypeDetails.value)
+    
+    // Close asset type selection modal
+    const assetTypeModal = Modal.getInstance(document.getElementById('assetTypeSelectionModal')!)
+    if (assetTypeModal) {
+      assetTypeModal.hide()
+    }
+    
+    // Open bulk upload modal after a short delay
+    setTimeout(() => {
+      bulkUploadModalRef.value?.openModal()
+    }, 300)
+    
+  } catch (error: any) {
+    console.error('Error loading asset type details:', error)
+    toastStore.showError('Failed to Load Asset Type', error.message || 'Could not load asset type details')
+  } finally {
+    isLoadingAssetType.value = false
+  }
+}
 
 // Enhanced asset validation using backend API
 const validateAssetFile = async (file: File) => {
@@ -163,8 +326,21 @@ const handleTemplateDownload = (type: 'csv' | 'excel') => {
 
 // Public methods
 const openModal = () => {
-  console.log('BulkAssetUpload: openModal called, bulkUploadModalRef:', bulkUploadModalRef.value)
-  bulkUploadModalRef.value?.openModal()
+  console.log('BulkAssetUpload: openModal called')
+  
+  // Reset selection
+  selectedAssetType.value = null
+  selectedAssetTypeDetails.value = null
+  
+  // Show asset type selection modal first
+  const assetTypeModalEl = document.getElementById('assetTypeSelectionModal')
+  if (assetTypeModalEl) {
+    const modal = Modal.getInstance(assetTypeModalEl) || new Modal(assetTypeModalEl)
+    modal.show()
+    console.log('BulkAssetUpload: Asset type selection modal shown')
+  } else {
+    console.error('BulkAssetUpload: Asset type selection modal element not found')
+  }
 }
 
 // Emits

@@ -173,6 +173,12 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/prototypes/asset-spec-table',
+      name: 'AssetSpecificationTablePrototype',
+      component: () => import('../views/assets/prototypes/AssetSpecificationTablePrototype.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
@@ -188,15 +194,16 @@ router.beforeEach((to, from, next) => {
   
   // Check if user is authenticated
   const isAuthenticated = authStore.isAuthenticated
-  
+
   // If going to login page but already authenticated, redirect to dashboard
   if (to.path === '/' && isAuthenticated) {
     next('/app/dashboard')
     return
   }
-  
-  // If going to protected routes but not authenticated, redirect to login
-  if (to.path.startsWith('/app') && !isAuthenticated) {
+
+  const requiresAuth = to.path.startsWith('/app') || to.matched.some(record => record.meta?.requiresAuth)
+
+  if (requiresAuth && !isAuthenticated) {
     next('/')
     return
   }

@@ -606,6 +606,11 @@ const getColumnClass = (columnKey: string) => {
     'notes': 'col-notes'
   }
   
+  // Handle specification columns (spec_*)
+  if (columnKey.startsWith('spec_')) {
+    return `${baseClass} col-specification`
+  }
+  
   return `${baseClass} ${columnClasses[columnKey] || 'col-default'}`
 }
 
@@ -1075,6 +1080,12 @@ defineExpose({
   width: 120px !important;
   min-width: 120px !important;
   max-width: 120px !important;
+}
+
+.col-specification {
+  width: 150px !important;
+  min-width: 150px !important;
+  max-width: 150px !important;
 }
 
 /* Text truncation for all columns */

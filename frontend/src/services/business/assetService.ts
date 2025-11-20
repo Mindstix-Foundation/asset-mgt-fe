@@ -306,7 +306,8 @@ class AssetService {
       serialNumber: asset.serialNumber,
       status: asset.status,
       assignedTo: assignedTo,
-      condition: asset.condition
+      condition: asset.condition,
+      specifications: asset.specifications || undefined
       // Note: Other fields (purchaseDate, location, etc.) are only populated when viewing details
       // This keeps the table data minimal and fast
     }
@@ -428,6 +429,26 @@ class AssetService {
     errors.push(...this.validateRequiredFields(data), ...this.validatePurchaseDate(data), ...this.validateWarrantyDates(data))
 
     return errors
+  }
+
+  // Get unique specification combinations for filtering
+  async getUniqueSpecifications(assetTypeId: number, brandId: number): Promise<any> {
+    try {
+      const params = new URLSearchParams()
+      params.append('assetTypeId', assetTypeId.toString())
+      params.append('brandId', brandId.toString())
+      
+      return apiService.get<any>(`${this.baseEndpoint}/unique-specifications?${params.toString()}`)
+    } catch (error) {
+      console.error('Error getting unique specifications:', error)
+      return {
+        message: 'Failed to load specifications',
+        data: {
+          requiredSpecs: [],
+          combinations: []
+        }
+      }
+    }
   }
 
   // Export assets to Excel (server-side)

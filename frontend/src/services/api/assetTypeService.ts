@@ -5,6 +5,7 @@ export interface AssetType {
   name: string
   description?: string
   categoryId: number
+  specificationTemplate?: Record<string, any>
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -26,6 +27,7 @@ export interface CreateAssetTypeDto {
   name: string
   description?: string
   categoryId: number
+  specificationTemplate?: Record<string, any>
 }
 
 export interface UpdateAssetTypeDto extends Partial<CreateAssetTypeDto> {}

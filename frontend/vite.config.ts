@@ -48,6 +48,12 @@ export default defineConfig({
       'Referrer-Policy': 'strict-origin-when-cross-origin',
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     },
+    // Allow AWS ELB hostnames
+    allowedHosts: [
+      'testassetmanagement-1311631993.us-east-2.elb.amazonaws.com',
+      '.us-east-2.elb.amazonaws.com', // Allow all ELBs in this region
+      '.elb.amazonaws.com' // Allow all AWS ELBs (more permissive)
+    ],
   },
   preview: {
     // Also add to preview server
@@ -58,5 +64,11 @@ export default defineConfig({
       'Referrer-Policy': 'strict-origin-when-cross-origin',
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     },
+    // Allow AWS ELB hostnames for production/preview builds
+    allowedHosts: [
+      'testassetmanagement-1311631993.us-east-2.elb.amazonaws.com',
+      '.us-east-2.elb.amazonaws.com', // Allow all ELBs in this region
+      '.elb.amazonaws.com' // Allow all AWS ELBs (more permissive)
+    ],
   }
 })

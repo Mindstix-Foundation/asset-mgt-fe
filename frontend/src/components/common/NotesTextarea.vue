@@ -72,7 +72,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   label: 'Additional Notes',
   placeholder: 'Enter additional notes...',
-  helpText: 'Include payment terms, special requirements, or other relevant information.',
+  helpText: '',
   maxLength: 1000,
   minRows: 3,
   required: false,
@@ -199,9 +199,9 @@ const validateField = () => {
   
   // Check if field is required
   if (props.required && !value) {
-    errorMessage.value = ''
+    errorMessage.value = `${props.label || 'This field'} is required`
     isValid.value = false
-    emit('validation', false, '')
+    emit('validation', false, errorMessage.value)
     return false
   }
   

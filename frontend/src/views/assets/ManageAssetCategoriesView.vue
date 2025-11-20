@@ -85,7 +85,7 @@
       </div>
       <form @submit.prevent="saveEntity">
         <!-- Form Card - Using same design as filter dropdown in AssetsView.vue -->
-        <div v-if="showFormCard" class="form-card mt-3 p-3 bg-light rounded">
+        <div v-if="showFormCard" class="form-card scrollable-form mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
               
@@ -109,7 +109,6 @@
                       v-model="formData.description"
                       label="Description"
                       placeholder="Brief description of this category"
-                      help-text="Provide a detailed description of this category"
                       :max-length="100"
                       :min-rows="2"
                       input-id="category-description"
@@ -128,7 +127,7 @@
                       placeholder="Search categories..."
                       :items="categories"
                       v-model="selectedCategory"
-                      :disabled="isLoadingCategories"
+                      :disabled="isLoadingCategories || isTypeEditMode"
                       required
                       @change="onCategoryChange"
                     />
@@ -143,6 +142,7 @@
                       placeholder="Laptop, Monitor, Chair, Vehicle"
                       style="text-transform: capitalize;"
                       required
+                      :disabled="isTypeEditMode"
                     >
                   </div>
                   <div class="col-12">
@@ -150,11 +150,175 @@
                       v-model="formData.description"
                       label="Description"
                       placeholder="Brief description of this asset type"
-                      help-text="Provide a detailed description of this asset type"
                       :max-length="100"
                       :min-rows="2"
                       input-id="asset-type-description"
                     />
+                  </div>
+                  
+                  <!-- NEW: Specification Fields Builder -->
+                  <div class="col-12 mt-0">
+                    <div class="specification-builder">
+                      <label class="form-label mb-2">
+                        <i class="fas fa-list me-2"></i>Specification Fields
+                        <span class="text-muted">(Optional - Define custom fields for assets of this type)</span>
+                      </label>
+                      
+                      <div v-if="formData.specFields && formData.specFields.length > 0" class="spec-fields-list">
+                        <div 
+                          v-for="(field, index) in formData.specFields" 
+                          :key="field.key || `field-${index}`"
+                          class="spec-field-item"
+                        >
+                          <!-- Field Header Row -->
+                          <div class="row g-2 align-items-start mb-2">
+                            <div class="col-12 col-md-7 col-lg-7">
+                              <label class="form-label small fw-bold mb-2">Field Label</label>
+                              <input 
+                                type="text" 
+                                class="form-control" 
+                                v-model="field.label"
+                                placeholder="e.g., Operating System"
+                              >
+                            </div>
+                            <div class="col-6 col-md-3 col-lg-3">
+                              <label class="form-label small fw-bold mb-2">Type</label>
+                              <input 
+                                type="text" 
+                                class="form-control" 
+                                value="Dropdown"
+                                readonly
+                                disabled
+                              >
+                            </div>
+                            <div class="col-6 col-md-2 col-lg-1">
+                              <label class="form-label small fw-bold mb-2 d-block">Required</label>
+                              <div class="form-check form-switch">
+                                <input 
+                                  class="form-check-input" 
+                                  type="checkbox" 
+                                  v-model="field.required"
+                                  role="switch"
+                                >
+                                <label class="form-check-label small">
+                                  {{ field.required ? 'Yes' : 'No' }}
+                                </label>
+                              </div>
+                            </div>
+                            <div class="col-12 col-md-2 col-lg-1 text-md-end">
+                              <label class="form-label small fw-bold mb-2 d-block text-md-end">Actions</label>
+                              <button 
+                                type="button" 
+                                class="btn btn-sm btn-red" 
+                                @click="removeSpecField(index)"
+                                title="Remove this field"
+                                :disabled="field.isExisting"
+                                :class="{ 'disabled-button': field.isExisting }"
+                              >
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <!-- Dropdown Options Section -->
+                          <div class="mt-2">
+                            <label class="form-label small fw-bold mb-1">Options</label>
+                            
+                            <div class="row g-2 justify-content-between">
+                              <div 
+                                v-for="(option, optionIndex) in field.options" 
+                                :key="`${field.key || index}-${option.value}-${optionIndex}`" 
+                                class="col-12 col-md-12 col-lg-6 mb-1"
+                              >
+                                <div class="row g-2 me-3 align-items-center">
+                                  <!-- Input and Toggle -->
+                                  <div class="col-11">
+                                    <div class="row g-2">
+                                      <div class="col-10">
+                                        <input 
+                                          type="text" 
+                                          class="form-control" 
+                                          :class="{ 'bg-light': option.isExisting }"
+                                          v-model="option.value"
+                                          :readonly="option.isExisting"
+                                          :disabled="option.isExisting"
+                                          placeholder="Option value"
+                                        >
+                                      </div>
+                                      <div class="col-2">
+                                        <div class="form-check form-switch">
+                                          <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            v-model="option.deprecated"
+                                          >
+                                          <label class="form-check-label small">
+                                            {{ option.deprecated ? 'Hidden' : 'Visible' }}
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <!-- Remove button (only for new options) -->
+                                  <div class="col-1" v-if="!option.isExisting">
+                                    <button 
+                                      type="button" 
+                                      class="btn btn-sm btn-gray w-100" 
+                                      @click="removeNewOption(index, optionIndex)"
+                                    >
+                                      <i class="fas fa-times"></i>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Add New Option -->
+                            <label class="form-label small fw-bold mb-1 d-block mt-2">Add New Option</label>
+                            <div class="row g-2 align-items-center">
+                              <div class="col-sm-8 col-md-5">
+                                <input 
+                                  type="text" 
+                                  class="form-control" 
+                                  v-model="field.newOptionValue"
+                                  placeholder="Add new option"
+                                  @keyup.enter="addNewOption(index)"
+                                >
+                              </div>
+                              <div class="col-sm-4 col-md-2 col-lg-1">
+                                <button 
+                                  type="button" 
+                                  class="btn btn-sm btn-purple w-100" 
+                                  @click="addNewOption(index)"
+                                >
+                                  <i class="fas fa-plus me-1"></i>Add
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div v-else class="alert alert-info py-2 mb-2">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small><strong>No specification fields defined yet.</strong> Click "Add Field" below to define custom fields for this asset type.</small>
+                      </div>
+                      
+                      <div class="d-flex align-items-center justify-content-end gap-2 mt-2">
+                        <button 
+                          type="button" 
+                          class="btn btn-sm btn-purple" 
+                          @click="addSpecField"
+                          :disabled="formData.specFields && formData.specFields.length >= 20"
+                        >
+                          <i class="fas fa-plus me-1"></i>Add Field
+                        </button>
+                        <span v-if="formData.specFields && formData.specFields.length >= 20" class="text-warning small">
+                          <i class="fas fa-exclamation-triangle me-1"></i>Maximum 20 fields reached
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -239,16 +403,9 @@
                   <div class="col-12">
                     <NotesTextarea
                       v-model="formData.specifications"
-                      label="Specifications"
-                      placeholder="Enter specifications as key-value pairs:
-Processor: Intel i7-13700H
-RAM: 16GB DDR5
-Storage: 512GB SSD
-Display: 15.6&quot; FHD
-
-Or enter a simple description:
-FULL BLACK AND RED"
-                      help-text="Enter specifications as key-value pairs (one per line) or a simple description. Both formats will be saved as an object."
+                      label="Description"
+                      placeholder="Add a brief description or structured specs (e.g., Processor: Intel i7, RAM: 16GB)"
+                      help-text="Provide either a narrative description or structured key-value specs. Both formats are supported."
                       :max-length="1000"
                       :min-rows="4"
                       input-id="model-specifications"
@@ -587,6 +744,14 @@ FULL BLACK AND RED"
               <!-- Actions column -->
               <td>
                 <div class="btn-group btn-group-sm asset-actions">
+                  <button 
+                    v-if="selectedEntityType === 'type'"
+                    class="btn btn-action btn-purple" 
+                    @click="editAssetType(item)"
+                    title="Edit"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
                   <button 
                     v-if="selectedEntityType === 'model'"
                     class="btn btn-action btn-brown" 
@@ -978,6 +1143,8 @@ const toastStore = useToastStore()
 const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model' | 'asset'>('category')
 const isSaving = ref(false)
 const showFormCard = ref(false)
+const isEditingAssetType = ref(false)
+const originalSpecificationTemplate = ref<any>(null)
 
 // Assets-specific state
 const selectedAssetsForDeletion = ref<(string | number)[]>([])
@@ -994,6 +1161,7 @@ const showFilterDropdown = ref(false)
 const selectedAssetTypeFilter = ref<Item | null>(null)
 const selectedBrandFilter = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
+const isTypeEditMode = computed(() => selectedEntityType.value === 'type' && isEditingAssetType.value)
 
 // Filter options
 const sortOptions = ref<Item[]>([
@@ -1053,6 +1221,23 @@ const selectedCategory = ref<Item | null>(null)
 const selectedBrand = ref<Item | null>(null)
 const selectedAssetType = ref<Item | null>(null)
 
+// Specification field interface
+interface SpecOption {
+  value: string
+  deprecated?: boolean
+  isExisting?: boolean
+}
+
+interface SpecField {
+  key?: string
+  label: string
+  type?: string
+  required?: boolean
+  isExisting?: boolean
+  options: SpecOption[]
+  newOptionValue?: string
+}
+
 // Form data
 const formData = reactive({
   // Common fields
@@ -1066,6 +1251,9 @@ const formData = reactive({
   brandId: '',
   assetTypeId: '',
   specifications: '',
+  
+  // Asset Type specific - Specification Fields (PROTOTYPE)
+  specFields: [] as SpecField[],
   
   // Edit mode
   id: null as number | null
@@ -1132,6 +1320,8 @@ const resetForm = () => {
   for (const key of Object.keys(formData)) {
     if (key === 'id') {
       (formData as any)[key] = null
+    } else if (key === 'specFields') {
+      (formData as any)[key] = []
     } else {
       (formData as any)[key] = ''
     }
@@ -1148,15 +1338,288 @@ const resetForm = () => {
   singleAssetInput.value = 'AST-'
   assetFromInput.value = ''
   assetToInput.value = ''
+  isEditingAssetType.value = false
+  originalSpecificationTemplate.value = null
+}
+
+// ============================================
+// SPECIFICATION FIELDS MANAGEMENT (PROTOTYPE)
+// ============================================
+
+// Add new specification field
+const addSpecField = () => {
+  if (formData.specFields.length >= 20) {
+    toastStore.showWarning('Limit Reached', 'Maximum 20 specification fields allowed per asset type')
+    return
+  }
+  
+  formData.specFields.push({
+    label: '',
+    type: 'dropdown',
+    required: false,
+    options: [],
+    newOptionValue: '',
+    isExisting: false
+  })
+  
+  // Scroll to new field
+  setTimeout(() => {
+    const specFieldsList = document.querySelector('.spec-fields-list')
+    if (specFieldsList) {
+      specFieldsList.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, 100)
+}
+
+// Remove specification field
+const removeSpecField = (index: number) => {
+  const field = formData.specFields[index]
+  if (field?.isExisting) {
+    toastStore.showError('Locked Field', 'Existing specification fields cannot be removed')
+    return
+  }
+
+  formData.specFields.splice(index, 1)
+  toastStore.showInfo('Field Removed', 'Specification field removed')
+}
+
+const addNewOption = (fieldIndex: number) => {
+  const field = formData.specFields[fieldIndex]
+  const value = field.newOptionValue?.trim()
+  
+  if (!value) {
+    toastStore.showError('Invalid Option', 'Please enter an option value before adding it')
+    return
+  }
+  
+  const duplicate = field.options.some(option => option.value.toLowerCase() === value.toLowerCase())
+  if (duplicate) {
+    toastStore.showError('Duplicate Option', `Option "${value}" already exists in this field`)
+    return
+  }
+  
+  field.options.push({
+    value,
+    deprecated: false,
+    isExisting: false
+  })
+  field.newOptionValue = ''
+}
+
+const removeNewOption = (fieldIndex: number, optionIndex: number) => {
+  const field = formData.specFields[fieldIndex]
+  const option = field.options[optionIndex]
+  
+  if (option?.isExisting) {
+    toastStore.showError('Locked Option', 'Existing options cannot be removed')
+    return
+  }
+  
+  field.options.splice(optionIndex, 1)
+}
+
+const normalizeOptionFromTemplate = (option: any): SpecOption | null => {
+  if (typeof option === 'string') {
+    return { value: option, deprecated: false, isExisting: true }
+  }
+  
+  if (option?.value) {
+    return {
+      value: option.value,
+      deprecated: Boolean(option.deprecated),
+      isExisting: true
+    }
+  }
+  
+  return null
+}
+
+const buildSpecFieldsFromTemplate = (template: any): SpecField[] => {
+  if (!template || !Array.isArray(template.fields)) {
+    return []
+  }
+  
+  return template.fields
+    .filter((field: any) => (field.type || 'dropdown') === 'dropdown')
+    .map((field: any, index: number) => {
+      const normalizedOptions: (SpecOption | null)[] = Array.isArray(field.options)
+        ? field.options.map((rawOption: any) => normalizeOptionFromTemplate(rawOption))
+        : []
+
+      const options = normalizedOptions.filter(
+        (option): option is SpecOption => option !== null
+      )
+      
+      return {
+        key: field.key || `field_${index}`,
+        label: field.label || `Field ${index + 1}`,
+        type: 'dropdown',
+        required: field.required || false,
+        isExisting: true,
+        options,
+        newOptionValue: ''
+      }
+    })
+}
+
+// Validate all specification fields
+const validateSpecificationFields = (): boolean => {
+  if (formData.specFields.length === 0) {
+    return true  // No fields is OK
+  }
+  
+  for (const field of formData.specFields) {
+    if (!field.label || !field.label.trim()) {
+      toastStore.showError('Incomplete Fields', 'Each specification field must have a label')
+      return false
+    }
+    
+    if (!field.options || field.options.length === 0) {
+      toastStore.showError(
+        'Missing Options',
+        `Field "${field.label}" must have at least one dropdown option.`
+      )
+      return false
+    }
+
+    const seenOptions = new Set<string>()
+    for (const option of field.options) {
+      const value = option.value?.trim()
+      if (!value) {
+        toastStore.showError(
+          'Incomplete Option',
+          `One of the options in "${field.label}" is empty. Please provide a value.`
+        )
+        return false
+      }
+
+      const dedupeKey = value.toLowerCase()
+      const isDuplicate = seenOptions.has(dedupeKey)
+      if (isDuplicate && !option.isExisting) {
+        toastStore.showError(
+          'Duplicate Option',
+          `Option "${value}" already exists in "${field.label}".`
+        )
+        return false
+      }
+      seenOptions.add(dedupeKey)
+    }
+  }
+  
+  return true
+}
+
+// Build specification template JSON (for prototype - just console.log)
+const buildSpecificationTemplate = () => {
+  if (!validateSpecificationFields()) {
+    return null
+  }
+  
+  if (!isEditingAssetType.value && formData.specFields.length === 0) {
+    return null
+  }
+  
+  const baseTemplate = originalSpecificationTemplate.value
+    ? JSON.parse(JSON.stringify(originalSpecificationTemplate.value))
+    : { version: 1, fields: [] as any[] }
+
+  if (!Array.isArray(baseTemplate.fields)) {
+    baseTemplate.fields = []
+  }
+
+  const builderFieldsByKey = new Map(
+    formData.specFields
+      .filter(field => field.key)
+      .map(field => [field.key as string, field])
+  )
+
+  const normalizeOptions = (options: any[]): SpecOption[] => {
+    if (!Array.isArray(options)) {
+      return []
+    }
+
+    const mappedOptions: (SpecOption | null)[] = options.map((option: any) => {
+      if (typeof option === 'string') {
+        return { value: option, deprecated: false }
+      }
+
+      if (option?.value) {
+        return {
+          value: option.value.trim(),
+          deprecated: Boolean(option.deprecated)
+        }
+      }
+
+      return null
+    })
+
+    return mappedOptions.filter(
+      (option): option is SpecOption => option !== null
+    )
+  }
+
+  const updatedFields = baseTemplate.fields.map((field: any) => {
+    if (!field.key) {
+      return {
+        ...field,
+        options: (field.type || 'dropdown') === 'dropdown'
+          ? normalizeOptions(field.options)
+          : field.options
+      }
+    }
+    const builderField = builderFieldsByKey.get(field.key)
+    if (!builderField) {
+      return {
+        ...field,
+        options: (field.type || 'dropdown') === 'dropdown'
+          ? normalizeOptions(field.options)
+          : field.options
+      }
+    }
+    builderFieldsByKey.delete(field.key)
+    return {
+      ...field,
+      label: builderField.label.trim(),
+      type: builderField.type || field.type || 'dropdown',
+      required: builderField.required || false,
+      options: (builderField.type || field.type || 'dropdown') === 'dropdown'
+        ? builderField.options.map(option => ({
+            value: option.value.trim(),
+            deprecated: option.deprecated || false
+          }))
+        : builderField.options
+    }
+  })
+
+  const newFields = formData.specFields
+    .filter(field => !field.key)
+    .map(field => ({
+      label: field.label.trim(),
+      type: field.type || 'dropdown',
+      required: field.required || false,
+      options: (field.type || 'dropdown') === 'dropdown'
+        ? field.options.map(option => ({
+            value: option.value.trim(),
+            deprecated: option.deprecated || false
+          }))
+        : field.options
+    }))
+
+  baseTemplate.fields = [...updatedFields, ...newFields]
+
+  return baseTemplate
 }
 
 const startAdding = () => {
   showFormCard.value = !showFormCard.value
   if (showFormCard.value) {
+    isEditingAssetType.value = false
     // Clear form data without hiding the card
     for (const key of Object.keys(formData)) {
       if (key === 'id') {
         (formData as any)[key] = null
+      } else if (key === 'specFields') {
+        (formData as any)[key] = []
       } else {
         (formData as any)[key] = ''
       }
@@ -1174,6 +1637,43 @@ const startAdding = () => {
         (firstInput as HTMLElement).focus()
       }
     }, 100)
+  }
+}
+
+const editAssetType = async (assetType: any) => {
+  if (selectedEntityType.value !== 'type') {
+    return
+  }
+  
+  try {
+    const response = await assetTypeService.getAssetTypeById(assetType.id)
+    const detailedAssetType = response.data.assetType
+    
+    isEditingAssetType.value = true
+    showFormCard.value = true
+    originalSpecificationTemplate.value = detailedAssetType.specificationTemplate
+      ? JSON.parse(JSON.stringify(detailedAssetType.specificationTemplate))
+      : null
+    
+    formData.id = detailedAssetType.id
+    formData.name = detailedAssetType.name
+    formData.description = detailedAssetType.description || ''
+    formData.categoryId = detailedAssetType.categoryId?.toString() || ''
+    
+    if (detailedAssetType.category) {
+      selectedCategory.value = {
+        id: detailedAssetType.category.id,
+        value: detailedAssetType.category.name,
+        label: detailedAssetType.category.name
+      }
+    } else {
+      selectedCategory.value = null
+    }
+    
+    formData.specFields = buildSpecFieldsFromTemplate(detailedAssetType.specificationTemplate)
+  } catch (error: any) {
+    console.error('Error loading asset type details:', error)
+    toastStore.showError('Error', error.message || 'Failed to load asset type details for editing')
   }
 }
 
@@ -1263,9 +1763,21 @@ const saveEntity = async () => {
       description: formData.description.trim() || undefined
     }
     
+    if (isTypeEditMode.value && selectedEntityType.value === 'type') {
+      delete data.name
+    }
+    
     // Add entity-specific fields
     if (selectedEntityType.value === 'type') {
-      data.categoryId = Number.parseInt(formData.categoryId)
+      if (!isTypeEditMode.value) {
+        data.categoryId = Number.parseInt(formData.categoryId)
+      }
+      
+      // Build and save specification template
+      const template = buildSpecificationTemplate()
+      if (template) {
+        data.specificationTemplate = template
+      }
     }
     
     if (selectedEntityType.value === 'model') {
@@ -1273,13 +1785,7 @@ const saveEntity = async () => {
       data.assetTypeId = Number.parseInt(formData.assetTypeId)
       
       // Debug: Log the specifications input and output
-      console.log('DEBUG - formData.specifications:', formData.specifications)
-      console.log('DEBUG - formData.specifications type:', typeof formData.specifications)
-      console.log('DEBUG - formData.specifications length:', formData.specifications?.length)
-      
       const parsedSpecs = parseSpecifications(formData.specifications)
-      console.log('DEBUG - parsedSpecs:', parsedSpecs)
-      console.log('DEBUG - parsedSpecs type:', typeof parsedSpecs)
       
       data.specifications = parsedSpecs
     }
@@ -1332,10 +1838,13 @@ const saveEntity = async () => {
     for (const key of Object.keys(formData)) {
       if (key === 'id') {
         (formData as any)[key] = null
+      } else if (key === 'specFields') {
+        (formData as any)[key] = []
       } else {
         (formData as any)[key] = ''
       }
     }
+    isEditingAssetType.value = false
     showFormCard.value = false
     
     // Reset SearchableDropdown selections
@@ -1510,54 +2019,36 @@ const confirmDelete = async () => {
 }
 
 const parseSpecifications = (specsInput: string) => {
-  console.log('DEBUG parseSpecifications - Input:', specsInput)
-  console.log('DEBUG parseSpecifications - Input type:', typeof specsInput)
-  console.log('DEBUG parseSpecifications - Input trimmed:', specsInput?.trim())
-  
   if (!specsInput || !specsInput.trim()) {
-    console.log('DEBUG parseSpecifications - Returning undefined (empty input)')
     return undefined
   }
   
   const specs: Record<string, string> = {}
   const lines = specsInput.split('\n')
-  console.log('DEBUG parseSpecifications - Lines:', lines)
   
   let hasKeyValuePairs = false
   
   for (const line of lines) {
-    console.log('DEBUG parseSpecifications - Processing line:', line)
     const colonIndex = line.indexOf(':')
-    console.log('DEBUG parseSpecifications - Colon index:', colonIndex)
     
     if (colonIndex > 0) {
       hasKeyValuePairs = true
       const key = line.substring(0, colonIndex).trim()
       const value = line.substring(colonIndex + 1).trim()
-      console.log('DEBUG parseSpecifications - Key:', key, 'Value:', value)
       
       if (key && value) {
         specs[key] = value
-        console.log('DEBUG parseSpecifications - Added to specs:', key, '=', value)
       }
     }
   }
   
-  console.log('DEBUG parseSpecifications - Final specs object:', specs)
-  console.log('DEBUG parseSpecifications - Specs keys count:', Object.keys(specs).length)
-  console.log('DEBUG parseSpecifications - Has key-value pairs:', hasKeyValuePairs)
-  
   // If no key-value pairs found, treat the entire input as a description in an object
   if (!hasKeyValuePairs && specsInput.trim()) {
-    console.log('DEBUG parseSpecifications - No key-value pairs found, treating as description')
     const result = { description: specsInput.trim() }
-    console.log('DEBUG parseSpecifications - Returning description object:', result)
     return result
   }
   
-  const result = Object.keys(specs).length > 0 ? specs : undefined
-  console.log('DEBUG parseSpecifications - Returning:', result)
-  return result
+  return Object.keys(specs).length > 0 ? specs : undefined
 }
 
 const formatSpecifications = (specifications: any) => {
@@ -2092,12 +2583,8 @@ const getAssetDisplayId = (id: string | number): string => {
 
 
 // Debug watcher for specifications
-watch(() => formData.specifications, (newValue, oldValue) => {
-  console.log('DEBUG WATCHER - formData.specifications changed:')
-  console.log('  Old value:', oldValue)
-  console.log('  New value:', newValue)
-  console.log('  New value type:', typeof newValue)
-  console.log('  New value length:', newValue?.length)
+watch(() => formData.specifications, () => {
+  // No-op watcher retained for potential future side-effects
 }, { deep: true })
 
 // Lifecycle
@@ -2124,6 +2611,12 @@ onMounted(async () => {
   border: 1px solid #dee2e6;
   background-color: #f8f9fa !important;
   animation: slideDown 0.2s ease-out;
+}
+
+.scrollable-form {
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 @keyframes slideDown {
@@ -2416,6 +2909,81 @@ onMounted(async () => {
  * - Modal backdrop → modals.css
  * - Pulse animation → modals.css (.confirmation-icon)
  */
+
+/* ===================================== */
+/* SPECIFICATION BUILDER STYLES */
+/* ===================================== */
+
+.specification-builder {
+  overflow-x: hidden;
+}
+
+.spec-fields-list {
+  padding-right: 0.75rem;
+}
+
+.spec-field-item {
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.75rem 0;
+  margin-bottom: 0;
+}
+
+.spec-field-item:last-child {
+  border-bottom: none;
+}
+
+.spec-field-item:first-child {
+  padding-top: 0;
+}
+
+.spec-field-item .form-label.small {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.25rem;
+}
+
+.spec-field-item .form-control-sm,
+.spec-field-item .form-select-sm {
+  font-size: 0.9rem;
+}
+
+.specification-builder .alert-info {
+  border-left: 4px solid var(--secondary-purple);
+  background-color: #f0e7ff;
+  border-color: var(--secondary-purple);
+  color: var(--primary-dark-gray);
+  font-size: 0.85rem;
+}
+
+/* Scrollbar styling for spec fields list */
+.spec-fields-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.spec-fields-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.spec-fields-list::-webkit-scrollbar-thumb {
+  background: #ced4da;
+  border-radius: 10px;
+}
+
+.spec-fields-list::-webkit-scrollbar-thumb:hover {
+  background: #adb5bd;
+}
+
+/* Disabled button styling - show not-allowed cursor */
+.disabled-button {
+  cursor: not-allowed !important;
+  pointer-events: all !important;
+}
+
+.disabled-button:disabled {
+  cursor: not-allowed !important;
+}
 
 
 </style>

@@ -1089,3 +1089,95 @@
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
+
+/* =================================
+   ASSET SPECIFICATION DISPLAY
+   For expandable specification rows
+================================= */
+
+/* Asset specification row styling */
+.asset-row {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.asset-row.expanded > td {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+/* Override Bootstrap's default hover - disable it completely */
+.asset-row:hover {
+  --bs-table-accent-bg: transparent !important;
+}
+
+.asset-row:hover > * {
+  --bs-table-accent-bg: transparent !important;
+}
+
+/* Apply unified hover through group-hover class with Bootstrap's overlay approach */
+.asset-row.group-hover {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+  color: var(--bs-table-hover-color);
+}
+
+.asset-row.group-hover > * {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+}
+
+.spec-row {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.spec-row td {
+  background-color: var(--bs-table-bg, #fff);
+  border-top: none !important;
+  border-bottom: 1px solid var(--bs-table-border-color, rgba(0, 0, 0, 0.05));
+  padding: 0 0.5rem 0.6rem;
+  padding-top: 0 !important;
+  transition: all 0.15s ease;
+}
+
+/* Override Bootstrap's default hover for spec row */
+.spec-row:hover {
+  --bs-table-accent-bg: transparent !important;
+}
+
+.spec-row:hover > * {
+  --bs-table-accent-bg: transparent !important;
+}
+
+/* Apply unified hover through group-hover class with Bootstrap's overlay approach */
+.spec-row.group-hover {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+  color: var(--bs-table-hover-color);
+}
+
+.spec-row.group-hover > * {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+}
+
+.spec-row-content {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.4rem;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--primary-black);
+  padding: 0.1rem 0.6rem;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 0.4rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.spec-row-content :deep(.spec-item) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.01rem;
+}
+
+.spec-row-content strong {
+  font-weight: 600;
+}

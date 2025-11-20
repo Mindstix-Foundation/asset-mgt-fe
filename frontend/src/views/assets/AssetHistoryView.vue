@@ -843,6 +843,14 @@ const formatCurrency = (amount: number | string): string => {
 }
 
 const formatFieldName = (fieldName: string): string => {
+  if (!fieldName) return ''
+  
+  // If the field name already looks formatted (contains spaces or parentheses), return as-is
+  // This handles labels already formatted by the backend
+  if (fieldName.includes(' ') || fieldName.includes('(')) {
+    return fieldName
+  }
+  
   const fieldMap: Record<string, string> = {
     'maintenanceType': 'Maintenance Type',
     'scheduledDate': 'Scheduled Date',
@@ -884,9 +892,42 @@ const formatFieldName = (fieldName: string): string => {
     'actualCompletionDate': 'Completed Date',
     'cancellationDate': 'Cancelled Date',
     'completionNotes': 'Completion Notes',
-    'cancellationNotes': 'Cancellation Notes'
+    'cancellationNotes': 'Cancellation Notes',
+    // Specification fields - common laptop/desktop specs
+    'processor': 'Processor',
+    'ram': 'RAM',
+    'ram_gb': 'RAM (GB)',
+    'storage': 'Storage',
+    'storage_gb': 'Storage (GB)',
+    'storage_type': 'Storage Type',
+    'graphics': 'Graphics Card',
+    'graphics_card': 'Graphics Card',
+    'operating_system': 'Operating System',
+    'os': 'Operating System',
+    'generation': 'Generation',
+    'display': 'Display',
+    'screen_size': 'Screen Size',
+    'resolution': 'Resolution',
+    'battery': 'Battery',
+    'warranty': 'Warranty',
+    'color': 'Color',
+    'weight': 'Weight',
+    'dimensions': 'Dimensions',
+    'ports': 'Ports',
+    'connectivity': 'Connectivity',
+    'camera': 'Camera',
+    'audio': 'Audio',
+    'keyboard': 'Keyboard',
+    'touchpad': 'Touchpad',
+    'webcam': 'Webcam',
+    'microphone': 'Microphone',
+    'speakers': 'Speakers',
+    'network': 'Network',
+    'wifi': 'WiFi',
+    'bluetooth': 'Bluetooth',
+    'ethernet': 'Ethernet'
   }
-  return fieldMap[fieldName] || (fieldName as any).replaceAll(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase())
+  return fieldMap[fieldName] || (fieldName as any).replaceAll(/([A-Z_])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase()).trim().replace(/\s+/g, ' ')
 }
 
 const shouldDisplayDetail = (key: string, value: any): boolean => {
