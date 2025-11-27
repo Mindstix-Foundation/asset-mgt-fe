@@ -65,22 +65,37 @@
                   </div>
                 </div>
                 
-                <!-- Asset Specifications - Moved here from Maintenance Details -->
-                <div v-if="selectedAssetSpecs" class="row g-4 mt-3">
+                <!-- Asset Specifications & Notes -->
+                <div v-if="shouldShowAssetSpecsSection" class="row g-4 mt-3">
                   <div class="col-12">
                     <div class="asset-specifications-wrapper">
-                      <NotesTextarea 
-                        :model-value="selectedAssetSpecs"
-                        label="Asset Specifications"
-                        placeholder="No specifications available"
-                        help-text=""
-                        :max-length="1000"
-                        :required="false"
-                        :show-label="true"
-                        :readonly="true"
-                        input-id="assetSpecifications"
-                        @validation="() => {}"
-                      />
+                      <template v-if="hasSelectedAssetSpecifications">
+                        <div class="asset-specifications-header">
+                          <i class="fas fa-microchip me-2"></i>
+                          <span>Asset Specifications</span>
+                        </div>
+                        <div class="asset-spec-list">
+                          <div
+                            v-for="spec in selectedAssetSpecificationEntries"
+                            :key="`${spec.label}-${spec.value}`"
+                            class="asset-spec-pill"
+                          >
+                            <span class="spec-label">{{ spec.label }}:</span>
+                            <span class="spec-value">{{ spec.value }}</span>
+                          </div>
+                        </div>
+                      </template>
+                      <div v-else-if="!selectedAssetAdditionalNotes" class="text-muted small">
+                        Specifications not provided for this asset.
+                      </div>
+
+                      <div v-if="selectedAssetAdditionalNotes" class="asset-notes mt-3">
+                        <div class="asset-specifications-header small">
+                          <i class="fas fa-sticky-note me-2"></i>
+                          <span>Additional Notes</span>
+                        </div>
+                        <p class="asset-notes-text mb-0">{{ selectedAssetAdditionalNotes }}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -347,7 +362,16 @@ const selectedAssetDetails = reactive({
   warrantyStartDate: '',
   warrantyEndDate: ''
 })
-const selectedAssetSpecs = ref<string | null>(null)
+const selectedAssetSpecifications = ref<Record<string, any> | null>(null)
+const selectedAssetSpecificationLabelMap = ref<Record<string, string> | null>(null)
+const selectedAssetSpecificationEntries = computed(() =>
+  getAssetSpecificationEntries(selectedAssetSpecifications.value, selectedAssetSpecificationLabelMap.value)
+)
+const hasSelectedAssetSpecifications = computed(() => selectedAssetSpecificationEntries.value.length > 0)
+const selectedAssetAdditionalNotes = computed(() => selectedAssetDetails.notes?.trim() || '')
+const shouldShowAssetSpecsSection = computed(
+  () => hasSelectedAssetSpecifications.value || Boolean(selectedAssetAdditionalNotes.value)
+)
 
 const onAssetChange = (item: Item | null) => {
   formData.assetId = (item?.value as string) || ''
@@ -385,44 +409,8 @@ const clearAssetDetails = () => {
   selectedAssetDetails.purchaseCost = ''
   selectedAssetDetails.warrantyStartDate = ''
   selectedAssetDetails.warrantyEndDate = ''
-  selectedAssetSpecs.value = null
-}
-
-// Helper function to parse asset specifications
-const parseAssetSpecs = (specs: any): string | null => {
-  if (!specs) {
-    return null
-  }
-  
-  if (typeof specs === 'object') {
-    return formatSpecsObject(specs)
-  }
-  
-  if (typeof specs === 'string') {
-    return parseSpecsString(specs)
-  }
-  
-  return null
-}
-
-// Helper function to format specs object into display string
-const formatSpecsObject = (specs: Record<string, any>): string => {
-  return Object.entries(specs)
-    .map(([k, v]) => `${k}: ${v}`)
-    .join('\n')
-}
-
-// Helper function to parse specs string (may be JSON)
-const parseSpecsString = (specs: string): string => {
-  try {
-    const parsed = JSON.parse(specs)
-    if (parsed && typeof parsed === 'object') {
-      return formatSpecsObject(parsed)
-    }
-  } catch {
-    // If parsing fails, return the string as-is
-  }
-  return specs
+  selectedAssetSpecifications.value = null
+  selectedAssetSpecificationLabelMap.value = null
 }
 
 // Helper function to populate asset details from API response
@@ -439,7 +427,74 @@ const populateAssetDetails = (asset: any) => {
   selectedAssetDetails.purchaseCost = asset.purchaseCost ? String(asset.purchaseCost) : ''
   selectedAssetDetails.warrantyStartDate = asset.warrantyStartDate || ''
   selectedAssetDetails.warrantyEndDate = asset.warrantyEndDate || ''
-  selectedAssetSpecs.value = parseAssetSpecs(asset.model?.specifications)
+  const { specs } = processAssetSpecifications(asset.specifications || asset.model?.specifications)
+  selectedAssetSpecifications.value = specs
+  selectedAssetSpecificationLabelMap.value = asset.specificationLabelMap || asset.model?.specificationLabelMap || null
+}
+
+const processAssetSpecifications = (payload: unknown): { specs: Record<string, any> | null } => {
+  if (payload === null || payload === undefined) {
+    return { specs: null }
+  }
+
+  if (typeof payload === 'string') {
+    const trimmed = payload.trim()
+    if (!trimmed) {
+      return { specs: null }
+    }
+    try {
+      const parsed = JSON.parse(trimmed)
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return extractDescriptionFromSpecsObject(parsed as Record<string, any>)
+      }
+    } catch {
+      return { specs: null }
+    }
+    return { specs: null }
+  }
+
+  if (typeof payload === 'object' && !Array.isArray(payload)) {
+    return extractDescriptionFromSpecsObject(payload as Record<string, any>)
+  }
+
+  return { specs: null }
+}
+
+const extractDescriptionFromSpecsObject = (obj: Record<string, any>) => {
+  const clone = { ...obj }
+  Object.keys(clone).forEach(key => {
+    if (key.toLowerCase() === 'description') {
+      delete clone[key]
+    }
+  })
+  const specs = Object.keys(clone).length > 0 ? clone : null
+  return { specs }
+}
+
+const getAssetSpecificationEntries = (
+  specs?: Record<string, any> | null,
+  labelMap?: Record<string, string> | null
+) => {
+  if (!specs) {
+    return []
+  }
+
+  return Object.entries(specs)
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
+    .map(([label, value]) => ({
+      label: labelMap?.[label] || formatSpecificationLabel(label),
+      value: Array.isArray(value) ? value.join(', ') : String(value)
+    }))
+}
+
+const formatSpecificationLabel = (key: string): string => {
+  return key
+    .replace(/[_\s]+/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
 
 const loadAssetDetails = async (assetIdNumber: number) => {
@@ -1121,33 +1176,65 @@ onMounted(async () => {
 
 /* Using unified-form-styles for control sizing; no local height overrides */
 
-/* Asset Specifications - Make it look like a non-editable input */
-.asset-specifications-wrapper :deep(.form-control) {
-  background-color: #F3F3F3 !important;
-  border: 2px solid #E0E0E0 !important;
-  color: #0A0A0A !important;
-  cursor: default !important;
-  resize: none !important;
+.asset-specifications-wrapper {
+  border: 1px dashed #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.asset-specifications-wrapper :deep(.form-control:hover) {
-  border-color: #E0E0E0 !important;
-  background-color: #F3F3F3 !important;
+.asset-specifications-header {
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
-.asset-specifications-wrapper :deep(.form-control:focus) {
-  border-color: #E0E0E0 !important;
-  box-shadow: none !important;
-  background-color: #F3F3F3 !important;
-  outline: none !important;
+.asset-spec-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
 }
 
-.asset-specifications-wrapper :deep(.form-control::placeholder) {
-  color: #999999 !important;
+.asset-spec-pill {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
-.asset-specifications-wrapper :deep(.character-count) {
-  display: none !important;
+.spec-label {
+  font-weight: 600;
+  color: #6b7280;
+  margin-right: 0.25rem;
+}
+
+.spec-value {
+  color: #111827;
+}
+
+.asset-notes {
+  border-top: 1px dashed #e5e7eb;
+  padding-top: 0.75rem;
+}
+
+.asset-notes-text {
+  font-size: 0.95rem;
+  color: #1f2937;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  margin-top: 0.5rem;
 }
 
 /* Form fieldset styling */

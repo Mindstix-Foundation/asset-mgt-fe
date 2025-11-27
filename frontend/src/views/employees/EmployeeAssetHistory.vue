@@ -205,7 +205,25 @@
                       </div>
                     </div>
                     
-                    <div class="col-12" v-if="getNotesForAction(item)">
+                    <div class="col-12 mt-2" v-if="hasAssetSpecifications(item)">
+                      <div class="asset-specifications">
+                        <div class="d-flex align-items-center mb-2 spec-header">
+                          <span class="info-label small mb-0" style="font-weight: 600; color: #495057;">Specifications</span>
+                        </div>
+                        <div class="specifications-inline">
+                          <span
+                            class="spec-inline-item"
+                            v-for="(spec, specIndex) in getAssetSpecificationEntries(item)"
+                            :key="`${item.id}-spec-${specIndex}`"
+                          >
+                            <span class="spec-inline-label">{{ spec.label }}:</span>
+                            <span class="spec-inline-value">{{ spec.value }}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-12 mt-2" v-if="getNotesForAction(item)">
                       <div class="info-item">
                         <span class="info-label small">Notes</span>
                         <div class="info-value notes-display small">{{ getNotesForAction(item) }}</div>
@@ -526,6 +544,60 @@ export default {
       if (['phone', 'mobile', 'smartphone', 'cellphone'].includes(v)) return 'Phone'
       if (['tablet', 'ipad'].includes(v)) return 'Tablet'
       return 'Other'
+    },
+    normalizeSpecificationsForDisplay(specs) {
+      if (specs === null || specs === undefined || specs === '') {
+        return null
+      }
+      if (typeof specs === 'string') {
+        const trimmed = specs.trim()
+        if (!trimmed) return null
+        try {
+          const parsed = JSON.parse(trimmed)
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            return this.stripDescriptionField(parsed)
+          }
+        } catch (error) {
+          console.warn('Failed to parse specifications JSON for display:', error)
+          return { Details: trimmed }
+        }
+        return { Details: trimmed }
+      }
+      if (typeof specs === 'object' && !Array.isArray(specs)) {
+        return this.stripDescriptionField(specs)
+      }
+      return null
+    },
+    stripDescriptionField(obj) {
+      const clone = { ...obj }
+      if ('description' in clone) {
+        delete clone.description
+      }
+      return Object.keys(clone).length > 0 ? clone : null
+    },
+    formatSpecificationLabel(key) {
+      if (!key) return ''
+      return key
+        .replace(/[_\s]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+        .trim()
+    },
+    getAssetSpecificationEntries(item) {
+      if (!item) return []
+      const normalizedSpecs = this.normalizeSpecificationsForDisplay(item.specifications)
+      if (!normalizedSpecs || typeof normalizedSpecs !== 'object') {
+        return []
+      }
+      return Object.entries(normalizedSpecs)
+        .filter(([, value]) => value !== null && value !== undefined && value !== '')
+        .map(([key, value]) => {
+          const label = item.specificationLabelMap?.[key] || this.formatSpecificationLabel(key)
+          const formattedValue = Array.isArray(value) ? value.join(', ') : String(value)
+          return { label, value: formattedValue }
+        })
+    },
+    hasAssetSpecifications(item) {
+      return this.getAssetSpecificationEntries(item).length > 0
     }
   }
 }
@@ -645,6 +717,43 @@ export default {
   padding: 0.5rem;
   border-radius: 0.375rem;
   border: 1px solid #e9ecef;
+}
+
+/* Specifications in timeline */
+.asset-history-timeline .asset-specifications {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.asset-history-timeline .spec-header {
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.asset-history-timeline .specifications-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.asset-history-timeline .spec-inline-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.asset-history-timeline .spec-inline-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.asset-history-timeline .spec-inline-value {
+  color: #212529;
 }
 
 /* =================================

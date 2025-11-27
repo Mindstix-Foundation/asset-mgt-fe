@@ -214,13 +214,16 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { dashboardApi } from '@/services/api/dashboardApi'
 import { RecentActivity, StatusIndicator } from '@/components/common'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
+
+const buildReturnToParam = () => encodeURIComponent(route.fullPath || '/app/dashboard')
 
 const user = computed(() => authStore.user)
 
@@ -403,11 +406,17 @@ const navigateToAddAsset = () => {
 }
 
 const navigateToIssueAsset = () => {
-  router.push('/app/assets/issue')
+  router.push({
+    path: '/app/assets/issue',
+    query: { from: 'dashboard', returnTo: buildReturnToParam() },
+  })
 }
 
 const navigateToCollectAsset = () => {
-  router.push('/app/assets/collect')
+  router.push({
+    path: '/app/assets/collect',
+    query: { from: 'dashboard', returnTo: buildReturnToParam() },
+  })
 }
 
 const navigateToScheduleMaintenance = () => {

@@ -364,6 +364,17 @@ const toastStore = useToastStore()
 // Track the origin path to redirect back after success
 const originPath = ref<string>('/app/assets')
 
+const decodeReturnToQuery = (value: unknown): string | null => {
+  if (typeof value !== 'string' || !value.trim()) {
+    return null
+  }
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
 // Form data
 const formData = reactive({
   employeeId: '',
@@ -1070,8 +1081,8 @@ const confirmCollection = async () => {
     
     const collectionDetails = generateCollectionDetails()
     
-    // Redirect to asset list immediately after success
-    router.push('/app/assets')
+    // Redirect to the originating view immediately after success
+    router.push(originPath.value)
     
     // Show success toast after redirect (with a small delay to ensure page loads)
     setTimeout(() => {
@@ -1141,7 +1152,7 @@ const resetForm = () => {
 
 // Navigation methods
 const goBack = () => {
-  router.push('/app/assets')
+  router.push(originPath.value)
 }
 
 // Removed functions - no longer needed with simple toast notifications
@@ -1387,7 +1398,15 @@ const getQueryParameters = () => {
   return { qpAssetId, qpEmployeeId, fromQuery, selectedAssetId, currentEmployee }
 }
 
-const inferOriginPath = (fromQuery: string | undefined, qpEmployeeId: string, currentEmployee: string, qpAssetId: string) => {
+const inferOriginPath = (
+  fromQuery: string | undefined,
+  qpEmployeeId: string,
+  currentEmployee: string,
+  qpAssetId: string,
+  skipOriginUpdate: boolean
+) => {
+  if (skipOriginUpdate) return
+
   if (!fromQuery && (qpEmployeeId || currentEmployee)) {
     originPath.value = '/app/employees'
   } else if (!fromQuery && (qpAssetId || localStorage.getItem('selectedAssetId'))) {
@@ -1442,10 +1461,17 @@ const setPreselectedAssignment = (selectedAssignment: any, selectedAssetId: stri
   toastStore.showInfo('Info', message)
 }
 
-const handleAssetPreselection = (selectedAssetId: string, qpAssetId: string, qpEmployeeId: string, currentEmployee: string, fromQuery: string | undefined) => {
+const handleAssetPreselection = (
+  selectedAssetId: string,
+  qpAssetId: string,
+  qpEmployeeId: string,
+  currentEmployee: string,
+  fromQuery: string | undefined,
+  skipOriginUpdate: boolean
+) => {
   if (!selectedAssetId) return
   
-  inferOriginPath(fromQuery, qpEmployeeId, currentEmployee, qpAssetId)
+  inferOriginPath(fromQuery, qpEmployeeId, currentEmployee, qpAssetId, skipOriginUpdate)
   
   const selectedAssignment = assignedAssets.value.find(assignment => assignment.asset.assetId === selectedAssetId)
   
@@ -1461,7 +1487,9 @@ const handleAssetPreselection = (selectedAssetId: string, qpAssetId: string, qpE
   if (!qpEmployeeId) localStorage.removeItem('currentEmployee')
 }
 
-const setFinalOriginPath = (fromQuery: string | undefined, qpEmployeeId: string) => {
+const setFinalOriginPath = (fromQuery: string | undefined, qpEmployeeId: string, skipOriginUpdate: boolean) => {
+  if (skipOriginUpdate) return
+
   if (fromQuery === 'employees') {
     originPath.value = '/app/employees'
   } else if (fromQuery === 'assets') {
@@ -1517,12 +1545,18 @@ onMounted(async () => {
   
   // Get query parameters
   const { qpAssetId, qpEmployeeId, fromQuery, selectedAssetId, currentEmployee } = getQueryParameters()
+  const decodedReturnTo = decodeReturnToQuery(route.query.returnTo)
+  const hasExplicitReturnPath = !!decodedReturnTo
+
+  if (decodedReturnTo) {
+    originPath.value = decodedReturnTo
+  }
   
   // Handle asset preselection
-  handleAssetPreselection(selectedAssetId, qpAssetId, qpEmployeeId, currentEmployee, fromQuery)
+  handleAssetPreselection(selectedAssetId, qpAssetId, qpEmployeeId, currentEmployee, fromQuery, hasExplicitReturnPath)
   
   // Set final origin path
-  setFinalOriginPath(fromQuery, qpEmployeeId)
+  setFinalOriginPath(fromQuery, qpEmployeeId, hasExplicitReturnPath)
   
   // Focus appropriate field
   focusAppropriateField()

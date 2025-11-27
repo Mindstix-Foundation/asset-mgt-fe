@@ -1432,6 +1432,8 @@ import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 
 const router = useRouter()
 const route = useRoute()
+
+const buildReturnToParam = () => encodeURIComponent(route.fullPath || '/app/assets')
 const toastStore = useToastStore()
 
 // Local types for display (optimized for table)
@@ -2292,11 +2294,17 @@ const navigateToManageCategories = () => {
 }
 
 const navigateToIssueAsset = () => {
-  router.push('/app/assets/issue')
+  router.push({
+    path: '/app/assets/issue',
+    query: { from: 'assets', returnTo: buildReturnToParam() },
+  })
 }
 
 const navigateToCollectAsset = () => {
-  router.push('/app/assets/collect')
+  router.push({
+    path: '/app/assets/collect',
+    query: { from: 'assets', returnTo: buildReturnToParam() },
+  })
 }
 
 const navigateToScheduleMaintenance = () => {
@@ -2309,7 +2317,10 @@ const issueAsset = (asset: AssetDisplayItem) => {
   localStorage.setItem('selectedAssetType', asset.type)
   
   // Navigate to issue asset form
-  router.push('/app/assets/issue')
+  router.push({
+    path: '/app/assets/issue',
+    query: { from: 'assets', returnTo: buildReturnToParam() },
+  })
 }
 
 const collectAsset = (asset: AssetDisplayItem) => {
@@ -2318,7 +2329,10 @@ const collectAsset = (asset: AssetDisplayItem) => {
   localStorage.setItem('currentEmployee', asset.assignedTo || '')
   
   // Navigate to collect asset form
-  router.push('/app/assets/collect')
+  router.push({
+    path: '/app/assets/collect',
+    query: { from: 'assets', returnTo: buildReturnToParam() },
+  })
 }
 
 const handleMaintenanceAction = (asset: AssetDisplayItem) => {

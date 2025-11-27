@@ -67,6 +67,8 @@ export interface AssetEventItem {
   reason?: string
   notes?: string
   performedBy: string
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
 }
 
 export interface AssetEventsResponse {

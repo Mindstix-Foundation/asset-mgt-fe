@@ -100,19 +100,21 @@
         <div class="col-12">
           <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
             <StatusIndicator variant="success" :size="8" class="me-2" />
-            <small class="text-muted">
-              Updated {{ lastStatsUpdated }}
+            <small class="text-muted d-flex align-items-center gap-2">
+              <span>Updated {{ lastStatsUpdated }}</span>
+              <span v-if="isStatsRefreshing" class="d-inline-flex align-items-center text-primary fw-semibold">
+                <i class="fas fa-spinner fa-spin me-1"></i>Refreshing…
+              </span>
             </small>
           </div>
         </div>
       </div>
 
-      <!-- Filters (match EmployeesView) -->
+      <!-- Filters -->
       <div class="mb-4">
         <div class="row align-items-end">
-          <!-- Search Maintenance -->
-          <div class="col-12 col-lg-7 mb-3">
-            <label class="form-label" for="mv-search">Search Maintenance</label>
+          <div class="col-12 col-lg-6 mb-3">
+            <div class="form-label">Search Maintenance</div>
             <div class="search-input-container">
               <i class="fas fa-search search-icon"></i>
               <input 
@@ -126,7 +128,6 @@
             </div>
           </div>
 
-          <!-- Sort By -->
           <div class="col-12 col-lg-3 mb-3">
             <SearchableDropdown
               id="sort-by-filter"
@@ -138,20 +139,36 @@
             />
           </div>
 
-          <!-- Toggle Sort Order and Filter Button -->
-          <div class="col-12 col-lg-2 mb-3">
+          <div class="col-12 col-lg-3 mb-3">
             <div class="row g-3">
-              <!-- Toggle Sort Order -->
-              <div class="col-4">
-                <button type="button" class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click.prevent.stop="toggleSortOrder" :title="'Toggle Sort Order'" style="min-width: 40px; height: 38px;">
-                  <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>
+              <div class="col-2">
+                <button
+                  type="button"
+                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center"
+                  @click.prevent.stop="toggleSortOrder"
+                  :title="'Toggle Sort Order'"
+                >
+                  <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']"></i>
                 </button>
               </div>
-              
-              <!-- Filter Button -->
-              <div class="col-8">
-                <button 
-                  class="btn btn-filter w-100" 
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2"
+                  :class="{ disabled: !hasAnyMaintenanceSpecifications }"
+                  :disabled="!hasAnyMaintenanceSpecifications"
+                  @click.prevent.stop="toggleAllMaintenanceSpecifications"
+                  :title="areAllMaintenanceSpecsVisible ? 'Hide all specifications' : 'Show all specifications'"
+                >
+                  <i class="fas" :class="areAllMaintenanceSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  <span class="fw-semibold text-nowrap">
+                    {{ areAllMaintenanceSpecsVisible ? 'Hide Specs' : 'Show Specs' }}
+                  </span>
+                </button>
+              </div>
+              <div class="col-4">
+                <button
+                  class="btn btn-filter w-100"
                   @click="toggleFilterDropdown"
                   :class="{ active: showFilterDropdown }"
                 >
@@ -162,44 +179,35 @@
           </div>
         </div>
 
-        <!-- Filter Dropdown -->
         <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
-          <div class="row">
-            <div class="col-12">
-              <!-- Responsive filter layout -->
-              <div class="d-flex flex-column flex-md-row gap-2">
-                <!-- Maintenance Type Filter -->
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="maintenance-type-filter"
-                    label="Maintenance Type"
-                    placeholder="Search types..."
-                    :items="maintenanceTypeOptions"
-                    v-model="selectedType"
-                    @change="onTypeChange"
-                  />
-                </div>
-                
-                <!-- Status Filter -->
-                <div class="flex-fill">
-                  <SearchableDropdown
-                    id="maintenance-status-filter"
-                    label="Status"
-                    placeholder="Search status..."
-                    :items="statusOptions"
-                    v-model="selectedStatus"
-                    @change="onStatusChange"
-                  />
-                </div>
-                
-                <!-- Clear Button: responsive width -->
-                <div class="filter-clear-button-container">
-                  <div class="d-flex align-items-end h-100">
-                    <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
-                      <i class="fas fa-times me-1"></i>Clear
-                    </button>
-                  </div>
-                </div>
+          <div class="d-flex flex-column flex-md-row gap-2">
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="maintenance-type-filter"
+                label="Maintenance Type"
+                placeholder="Search types..."
+                :items="maintenanceTypeOptions"
+                v-model="selectedType"
+                @change="onTypeChange"
+              />
+            </div>
+            
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="maintenance-status-filter"
+                label="Status"
+                placeholder="Search status..."
+                :items="statusOptions"
+                v-model="selectedStatus"
+                @change="onStatusChange"
+              />
+            </div>
+            
+            <div class="filter-clear-button-container">
+              <div class="d-flex align-items-end h-100">
+                <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                  <i class="fas fa-times me-1"></i>Clear
+                </button>
               </div>
             </div>
           </div>
@@ -230,93 +238,121 @@
             </tr>
           </thead>
           <tbody>
-            <tr 
-              v-for="maintenance in filteredMaintenance" 
-              :key="maintenance.id"
-              :data-asset-id="maintenance.assetId"
-              :data-status="maintenance.status"
-              :data-type="maintenance.type"
-              
-            >
-              <td>
-                <strong>{{ maintenance.assetId }}</strong>
-              </td>
-              <td>
-                <div class="asset-details-cell">
-                  <div class="asset-model">{{ maintenance.assetModel || 'Unknown Model' }}</div>
-                  <div class="asset-type-brand">{{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}</div>
-                </div>
-              </td>
-              <td>
-                <div class="serial-cell">
-                  <div class="serial-number">{{ maintenance.serialNumber || 'N/A' }}</div>
-                </div>
-              </td>
-              <td>
-                <div class="cost-cell">
-                  <div class="cost-amount">{{ maintenance.cost }}</div>
-                  <div class="cost-type">{{ maintenance.costType }}</div>
-                </div>
-              </td>
-              <td>
-                <div class="date-cell">
-            <div class="date-value">{{ formatDate(maintenance.relevantDate || '') }}</div>
-            <div class="date-label">{{ getDateTypeLabel(maintenance.dateType || '') }}</div>
-                </div>
-              </td>
-              <td>
-                {{ formatMaintenanceType(maintenance.type) }}
-              </td>
-              <td>
-                <span :class="['badge', getStatusBadgeClass(maintenance.status)]">
-                  {{ formatStatus(maintenance.status) }}
-                </span>
-              </td>
-              <td>
-                <div class="btn-group btn-group-sm asset-actions">
-                  <button 
-                    class="btn btn-action btn-brown" 
-                    @click="showMaintenanceDetails(maintenance)"
-                    title="View Details"
-                  >
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'IN_PROGRESS'"
-                    class="btn btn-action btn-green" 
-                    @click="openCompleteModal(maintenance)"
-                    title="Complete Maintenance"
-                  >
-                    <i class="fas fa-check"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'SCHEDULED'"
-                    class="btn btn-action btn-purple" 
-                    @click="navigateToEdit(maintenance)"
-                    title="Edit Maintenance"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button 
-                    v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
-                    class="btn btn-action btn-purple" 
-                    @click="navigateToSchedule(maintenance)"
-                    title="Reschedule Maintenance"
-                  >
-                    <i class="fas fa-calendar-plus"></i>
-                  </button>
-                  
-                  <button 
-                    v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
-                    class="btn btn-action btn-red" 
-                    @click="openCancelModal(maintenance)"
-                    title="Cancel Maintenance"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+            <template v-for="maintenance in filteredMaintenance" :key="maintenance.id">
+              <tr 
+                :data-asset-id="maintenance.assetId"
+                :data-status="maintenance.status"
+                :data-type="maintenance.type"
+                class="maintenance-row"
+                :class="{
+                  'has-specs': hasMaintenanceSpecifications(maintenance),
+                  expanded: expandedMaintenanceIds.includes(maintenance.id),
+                  'group-hover': hoveredMaintenanceId === maintenance.id
+                }"
+                @click="toggleMaintenanceRow(maintenance)"
+                @mouseenter="setHoveredMaintenance(maintenance.id)"
+                @mouseleave="setHoveredMaintenance(null)"
+              >
+                <td>
+                  <strong>{{ maintenance.assetId }}</strong>
+                </td>
+                <td>
+                  <div class="asset-details-cell">
+                    <div class="asset-model">{{ maintenance.assetModel || 'Unknown Model' }}</div>
+                    <div class="asset-type-brand">{{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="serial-cell">
+                    <div class="serial-number">{{ maintenance.serialNumber || 'N/A' }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="cost-cell">
+                    <div class="cost-amount">{{ maintenance.cost }}</div>
+                    <div class="cost-type">{{ maintenance.costType }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="date-cell">
+                    <div class="date-value">{{ formatDate(maintenance.relevantDate || '') }}</div>
+                    <div class="date-label">{{ getDateTypeLabel(maintenance.dateType || '') }}</div>
+                  </div>
+                </td>
+                <td>
+                  {{ formatMaintenanceType(maintenance.type) }}
+                </td>
+                <td>
+                  <span :class="['badge', getStatusBadgeClass(maintenance.status)]">
+                    {{ formatStatus(maintenance.status) }}
+                  </span>
+                </td>
+                <td @click.stop>
+                  <div class="btn-group btn-group-sm asset-actions">
+                    <button 
+                      class="btn btn-action btn-brown" 
+                      @click="showMaintenanceDetails(maintenance)"
+                      title="View Details"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button 
+                      v-if="maintenance.status === 'IN_PROGRESS'"
+                      class="btn btn-action btn-green" 
+                      @click="openCompleteModal(maintenance)"
+                      title="Complete Maintenance"
+                    >
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button 
+                      v-if="maintenance.status === 'SCHEDULED'"
+                      class="btn btn-action btn-purple" 
+                      @click="navigateToEdit(maintenance)"
+                      title="Edit Maintenance"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button 
+                      v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
+                      class="btn btn-action btn-purple" 
+                      @click="navigateToSchedule(maintenance)"
+                      title="Reschedule Maintenance"
+                    >
+                      <i class="fas fa-calendar-plus"></i>
+                    </button>
+                    
+                    <button 
+                      v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
+                      class="btn btn-action btn-red" 
+                      @click="openCancelModal(maintenance)"
+                      title="Cancel Maintenance"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                v-if="hasMaintenanceSpecifications(maintenance) && expandedMaintenanceIds.includes(maintenance.id)"
+                class="spec-row"
+                :class="{ 'group-hover': hoveredMaintenanceId === maintenance.id }"
+                @click.stop="toggleMaintenanceRow(maintenance)"
+                @mouseenter="setHoveredMaintenance(maintenance.id)"
+                @mouseleave="setHoveredMaintenance(null)"
+              >
+                <td colspan="8">
+                  <div class="spec-row-content">
+                    <span
+                      class="spec-item"
+                      v-for="spec in getMaintenanceSpecificationEntries(maintenance)"
+                      :key="`${maintenance.id}-${spec.label}`"
+                    >
+                      <strong>{{ spec.label }}:</strong>&nbsp;{{ spec.value }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </template>
             <tr v-if="filteredMaintenance.length === 0">
               <td colspan="7" class="text-center py-4">
                 <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
@@ -359,10 +395,10 @@
           <div class="modal-body" v-if="selectedMaintenance">
             <!-- Asset Information - Compact Layout (matching AssetsView.vue) -->
             <div class="row g-2 equal-height-columns">
-              <!-- Left Column: Basic Info -->
+              <!-- Left Column: Asset Info -->
               <div class="col-md-6">
                 <div class="asset-info-section-compact h-100">
-                  <h6 class="section-title-compact"><i class="fas fa-tools me-2"></i>Asset & Maintenance Information</h6>
+                  <h6 class="section-title-compact"><i class="fas fa-laptop me-2"></i>Asset Information</h6>
                   <div class="info-grid-compact">
                     <div class="info-item-compact">
                       <div class="info-label-compact">Asset ID</div>
@@ -376,6 +412,27 @@
                       <div class="info-label-compact">Serial Number</div>
                       <div class="info-value-compact">{{ selectedMaintenance.serialNumber || 'N/A' }}</div>
                     </div>
+                  </div>
+                  <div
+                    v-if="hasMaintenanceSpecifications(selectedMaintenance)"
+                    class="spec-row-content mt-2"
+                  >
+                    <span
+                      class="spec-item"
+                      v-for="spec in getMaintenanceSpecificationEntries(selectedMaintenance)"
+                      :key="`selected-${spec.label}`"
+                    >
+                      <strong>{{ spec.label }}:</strong>&nbsp;{{ spec.value }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Maintenance Information -->
+              <div class="col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-calendar-alt me-2"></i>Maintenance Information</h6>
+                  <div class="info-grid-compact">
                     <div class="info-item-compact">
                       <div class="info-label-compact">Maintenance Type</div>
                       <div class="info-value-compact">{{ selectedMaintenance.type }}</div>
@@ -386,15 +443,6 @@
                         <span :class="['badge', getStatusBadgeClass(selectedMaintenance.status)]">{{ formatStatus(selectedMaintenance.status) }}</span>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Column: Timeline & Assignment -->
-              <div class="col-md-6">
-                <div class="asset-info-section-compact h-100">
-                  <h6 class="section-title-compact"><i class="fas fa-calendar-alt me-2"></i>Timeline & Assignment</h6>
-                  <div class="info-grid-compact">
                     <div class="info-item-compact">
                       <div class="info-label-compact">Scheduled Date</div>
                       <div class="info-value-compact">{{ formatDate(selectedMaintenance.relevantDate || '') }}</div>
@@ -729,6 +777,9 @@ const router = useRouter()
 const route = useRoute()
 useRouteToast()
 const toastStore = useToastStore()
+const MAINTENANCE_MODAL_STATE_KEY = 'maintenanceModalState'
+const MAINTENANCE_VIEW_STATE_KEY = 'maintenanceViewState'
+let isRestoringMaintenanceViewState = false
 
 // Local type representing a table row in this view
 interface MaintenanceRow {
@@ -739,6 +790,8 @@ interface MaintenanceRow {
   assetBrand: string
   assetModel: string
   serialNumber: string // Add serial number field
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
   maintenanceTypeId: string
   maintenanceTypeName: string
   type: string // For backward compatibility with template
@@ -761,6 +814,8 @@ interface MaintenanceRow {
 // Reactive data
 const maintenanceData: Ref<MaintenanceRow[]> = ref([])
 const isLoading = ref(false)
+const hasLoadedMaintenances = ref(false)
+const isStatsRefreshing = ref(false)
 const totalItems = ref(0)
 const totalPages = ref(1)
 // vendor state removed
@@ -772,7 +827,7 @@ const filters = reactive({
   vendor: ''
 })
 
-const sortBy = ref('relevantDate')
+const sortBy = ref('scheduledDate')
 const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
@@ -805,11 +860,10 @@ const statusOptions = computed<Item[]>(() => [
 
 const sortOptions = ref<Item[]>([
   { id: 'assetId', name: 'Asset ID', value: 'assetId' },
+  { id: 'estimatedCost', name: 'Cost', value: 'estimatedCost' },
+  { id: 'maintenanceType', name: 'Maintenance Type', value: 'maintenanceType' },
   { id: 'status', name: 'Status', value: 'status' },
-  { id: 'type', name: 'Maintenance Type', value: 'type' },
-  { id: 'vendor', name: 'Vendor', value: 'vendor' },
-  { id: 'relevantDate', name: 'Date', value: 'relevantDate' },
-  { id: 'cost', name: 'Cost', value: 'cost' }
+  { id: 'scheduledDate', name: 'Date', value: 'scheduledDate' }
 ])
 
 // API functions
@@ -817,14 +871,9 @@ const sortOptions = ref<Item[]>([
 
   const fetchMaintenances = async () => {
     try {
-      isLoading.value = true
-      
-      // Map frontend sort fields to backend fields
-      const sortFieldMap: Record<string, string> = {
-        'cost': 'estimatedCost',
-        'type': 'maintenanceType',
-        
-        'assetId': 'relevantDate' // Asset ID sorting not supported yet, fallback to date
+      const isInitialRequest = !hasLoadedMaintenances.value
+      if (isInitialRequest) {
+        isLoading.value = true
       }
       
       // Map frontend maintenance type values to backend enum values
@@ -842,7 +891,7 @@ const sortOptions = ref<Item[]>([
         status: filters.status || undefined,
         maintenanceType: filters.type ? maintenanceTypeMap[filters.type] || filters.type : undefined,
         
-        sortBy: sortFieldMap[sortBy.value] || sortBy.value,
+        sortBy: sortBy.value || 'scheduledDate',
         sortOrder: (sortAscending.value ? 'asc' : 'desc') as 'asc' | 'desc'
       }
 
@@ -858,6 +907,8 @@ const sortOptions = ref<Item[]>([
         assetBrand: maintenance.assetBrand || '',
         assetModel: maintenance.assetModel || '',
         serialNumber: maintenance.serialNumber || '', // Add serial number field
+        specifications: maintenance.specifications || undefined,
+        specificationLabelMap: maintenance.specificationLabelMap || undefined,
         maintenanceTypeId: maintenance.maintenanceTypeId,
         maintenanceTypeName: maintenance.maintenanceTypeName,
         type: maintenance.maintenanceTypeName, // For backward compatibility
@@ -885,6 +936,8 @@ const sortOptions = ref<Item[]>([
 
       totalPages.value = pagination.totalPages || Math.ceil((pagination.total || 0) / itemsPerPage)
       
+      tryOpenPendingMaintenance()
+      
       // Stats are fetched separately and don't need to be updated on every data load
     } else {
       toastStore.showError('Error', 'Failed to fetch maintenance data')
@@ -896,6 +949,9 @@ const sortOptions = ref<Item[]>([
     totalItems.value = 0
     totalPages.value = 1
   } finally {
+    if (!hasLoadedMaintenances.value) {
+      hasLoadedMaintenances.value = true
+    }
     isLoading.value = false
     // Start stats refresh interval only after initial load
     if (!statsInterval) {
@@ -936,6 +992,8 @@ const generateProgressNotes = (maintenance: any): string[] => {
 const showDetailModal = ref(false)
 const showCompleteModal = ref(false)
 const showCancelModal = ref(false)
+const expandedMaintenanceIds = ref<number[]>([])
+const hoveredMaintenanceId = ref<number | null>(null)
 
 // Modal refs
 const detailModal = ref<HTMLElement>()
@@ -946,6 +1004,7 @@ const completeFormElement = ref<HTMLFormElement>()
 // Selected maintenance for modals
 const selectedMaintenance = ref<MaintenanceRow | null>(null)
 const maintenanceHistory = ref<MaintenanceRow[]>([])
+const pendingMaintenanceAssetId = ref<string | null>(null)
 
 // Form data
 const completeForm = reactive({
@@ -1019,6 +1078,136 @@ const validateCancelForm = () => {
   return isValid
 }
 
+const persistMaintenanceModalSnapshot = (maintenance: MaintenanceRow | null) => {
+  if (typeof window === 'undefined' || !maintenance?.assetId) return
+  try {
+    const snapshot = {
+      assetId: maintenance.assetId,
+      data: maintenance,
+      timestamp: Date.now()
+    }
+    window.sessionStorage.setItem(MAINTENANCE_MODAL_STATE_KEY, JSON.stringify(snapshot))
+  } catch (error) {
+    console.warn('Failed to persist maintenance modal state:', error)
+  }
+}
+
+const clearMaintenanceModalSnapshot = () => {
+  if (typeof window === 'undefined') return
+  try {
+    window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+  } catch (error) {
+    console.warn('Failed to clear maintenance modal state:', error)
+  }
+}
+
+const restoreMaintenanceModalSnapshot = () => {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = window.sessionStorage.getItem(MAINTENANCE_MODAL_STATE_KEY)
+    if (!raw) return
+    window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+    const snapshot = JSON.parse(raw) as { assetId?: string; data?: MaintenanceRow }
+    if (snapshot?.assetId && snapshot?.data) {
+      pendingMaintenanceAssetId.value = snapshot.assetId
+      selectedMaintenance.value = snapshot.data
+      showDetailModal.value = true
+    }
+  } catch (error) {
+    console.warn('Failed to restore maintenance modal state:', error)
+  }
+}
+
+const tryOpenPendingMaintenance = () => {
+  if (!pendingMaintenanceAssetId.value) return
+  const match = maintenanceData.value.find(item => item.assetId === pendingMaintenanceAssetId.value)
+  if (match) {
+    selectedMaintenance.value = match
+    showDetailModal.value = true
+    pendingMaintenanceAssetId.value = null
+  }
+}
+
+const persistMaintenanceViewState = () => {
+  if (typeof window === 'undefined') return
+  try {
+    const state = {
+      filters: { ...filters },
+      selectedTypeValue: selectedType.value?.value ?? null,
+      selectedStatusValue: selectedStatus.value?.value ?? null,
+      selectedSortByValue: selectedSortBy.value?.value ?? null,
+      sortBy: sortBy.value,
+      sortAscending: sortAscending.value,
+      currentPage: currentPage.value,
+      showFilterDropdown: showFilterDropdown.value
+    }
+    window.sessionStorage.setItem(MAINTENANCE_VIEW_STATE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.warn('Failed to persist maintenance view state:', error)
+  }
+}
+
+const restoreMaintenanceViewState = () => {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = window.sessionStorage.getItem(MAINTENANCE_VIEW_STATE_KEY)
+    if (!raw) return
+    const state = JSON.parse(raw) as {
+      filters?: typeof filters,
+      selectedTypeValue?: string | null,
+      selectedStatusValue?: string | null,
+      selectedSortByValue?: string | null,
+      sortBy?: string,
+      sortAscending?: boolean,
+      currentPage?: number,
+      showFilterDropdown?: boolean
+    }
+    isRestoringMaintenanceViewState = true
+
+    if (state.filters) {
+      filters.search = state.filters.search ?? filters.search
+      filters.status = state.filters.status ?? filters.status
+      filters.type = state.filters.type ?? filters.type
+      filters.vendor = state.filters.vendor ?? filters.vendor
+    }
+
+    if (typeof state.sortBy === 'string') {
+      sortBy.value = state.sortBy
+    }
+    if (typeof state.sortAscending === 'boolean') {
+      sortAscending.value = state.sortAscending
+    }
+    if (typeof state.currentPage === 'number' && state.currentPage > 0) {
+      currentPage.value = state.currentPage
+    }
+    if (typeof state.showFilterDropdown === 'boolean') {
+      showFilterDropdown.value = state.showFilterDropdown
+    }
+
+    if ('selectedTypeValue' in state) {
+      selectedType.value = maintenanceTypeOptions.value.find(option => option.value === state.selectedTypeValue) || null
+      filters.type = state.selectedTypeValue || ''
+    }
+
+    if ('selectedStatusValue' in state) {
+      selectedStatus.value = statusOptions.value.find(option => option.value === state.selectedStatusValue) || null
+      filters.status = state.selectedStatusValue || ''
+    }
+
+    if ('selectedSortByValue' in state) {
+      const matchSort = sortOptions.value.find(option => option.value === state.selectedSortByValue) || null
+      selectedSortBy.value = matchSort
+      if (matchSort?.value) {
+        sortBy.value = matchSort.value as string
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to restore maintenance view state:', error)
+  } finally {
+    isRestoringMaintenanceViewState = false
+  }
+}
+
 // Loading states
 const completeLoading = ref(false)
 const cancelLoading = ref(false)
@@ -1037,6 +1226,9 @@ onMounted(async () => {
   if (typeof route.query.search === 'string' && route.query.search.trim() !== '') {
     filters.search = route.query.search
   }
+
+  restoreMaintenanceViewState()
+  restoreMaintenanceModalSnapshot()
 
   await fetchMaintenances()
   // Fetch stats once after initial data load
@@ -1064,6 +1256,27 @@ watch(() => route.query.search, (newSearch) => {
     filterMaintenancesImmediate()
   }
 })
+
+watch(
+  [
+    () => filters.search,
+    () => filters.status,
+    () => filters.type,
+    () => filters.vendor,
+    () => selectedType.value,
+    () => selectedStatus.value,
+    () => selectedSortBy.value,
+    () => sortBy.value,
+    () => sortAscending.value,
+    () => currentPage.value,
+    () => showFilterDropdown.value
+  ],
+  () => {
+    if (isRestoringMaintenanceViewState) return
+    persistMaintenanceViewState()
+  },
+  { deep: true }
+)
 
 onUnmounted(() => {
   if (statsInterval) {
@@ -1106,6 +1319,7 @@ function updateStatsTimestampDisplay() {
 
 const fetchStats = async () => {
   try {
+    isStatsRefreshing.value = true
     // Use dedicated stats endpoint for efficient data retrieval
     const response = await maintenanceService.getMaintenanceStats()
     
@@ -1154,6 +1368,8 @@ const fetchStats = async () => {
     // Update timestamp even for fallback
     lastStatsUpdatedAt = Date.now()
     updateStatsTimestampDisplay()
+  } finally {
+    isStatsRefreshing.value = false
   }
 }
 const stats = computed(() => statsData)
@@ -1161,6 +1377,87 @@ const stats = computed(() => statsData)
 // Since we're using server-side pagination, we just return the data from the API
 const filteredMaintenance = computed(() => {
   return maintenanceData.value
+})
+
+const formatMaintenanceSpecificationLabel = (key: string) => {
+  return key
+    .replace(/[_\s]+/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+const getMaintenanceSpecificationEntries = (maintenance: MaintenanceRow | null) => {
+  if (!maintenance || !maintenance.specifications) {
+    return []
+  }
+
+  return Object.entries(maintenance.specifications)
+    .filter(([key, value]) => {
+      if (!value && value !== 0) return false
+      return key.toLowerCase() !== 'description'
+    })
+    .map(([label, value]) => ({
+      label: maintenance.specificationLabelMap?.[label] || formatMaintenanceSpecificationLabel(label),
+      value: Array.isArray(value) ? value.join(', ') : String(value)
+    }))
+}
+
+const hasMaintenanceSpecifications = (maintenance: MaintenanceRow | null) => {
+  return getMaintenanceSpecificationEntries(maintenance).length > 0
+}
+
+const maintenanceWithSpecifications = computed(() =>
+  filteredMaintenance.value.filter(item => hasMaintenanceSpecifications(item))
+)
+
+const hasAnyMaintenanceSpecifications = computed(() => maintenanceWithSpecifications.value.length > 0)
+
+const areAllMaintenanceSpecsVisible = computed(() => {
+  const total = maintenanceWithSpecifications.value.length
+  if (total === 0) {
+    return false
+  }
+  return expandedMaintenanceIds.value.length === total
+})
+
+const toggleMaintenanceRow = (maintenance: MaintenanceRow) => {
+  if (!hasMaintenanceSpecifications(maintenance)) {
+    return
+  }
+
+  const index = expandedMaintenanceIds.value.indexOf(maintenance.id)
+  if (index === -1) {
+    expandedMaintenanceIds.value.push(maintenance.id)
+  } else {
+    expandedMaintenanceIds.value.splice(index, 1)
+  }
+}
+
+const setHoveredMaintenance = (rowId: number | null) => {
+  hoveredMaintenanceId.value = rowId
+}
+
+const toggleAllMaintenanceSpecifications = () => {
+  if (!hasAnyMaintenanceSpecifications.value) {
+    return
+  }
+
+  if (areAllMaintenanceSpecsVisible.value) {
+    expandedMaintenanceIds.value = []
+    return
+  }
+
+  expandedMaintenanceIds.value = maintenanceWithSpecifications.value.map(item => item.id)
+}
+
+watch(filteredMaintenance, (list) => {
+  const validIds = new Set(
+    list.filter(item => hasMaintenanceSpecifications(item)).map(item => item.id)
+  )
+  expandedMaintenanceIds.value = expandedMaintenanceIds.value.filter(id => validIds.has(id))
 })
 
 // Server-side pagination - totalPages is now a ref updated from API response
@@ -1252,8 +1549,8 @@ const clearFilters = () => {
   selectedType.value = null
   selectedStatus.value = null
   
-  selectedSortBy.value = sortOptions.value.find(o => o.value === 'relevantDate') || null
-  sortBy.value = 'relevantDate'
+  selectedSortBy.value = sortOptions.value.find(o => o.value === 'scheduledDate') || null
+  sortBy.value = 'scheduledDate'
   fetchMaintenances()
 }
 
@@ -1330,6 +1627,8 @@ const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
         assetBrand: '', 
         assetModel: '', 
         serialNumber: history.serialNumber || '',
+        specifications: history.specifications || undefined,
+        specificationLabelMap: history.specificationLabelMap || undefined,
         maintenanceTypeId: history.maintenanceTypeId,
         maintenanceTypeName: history.maintenanceTypeName,
         type: history.maintenanceTypeName,
@@ -1385,6 +1684,8 @@ const closeModals = () => {
   showCompleteModal.value = false
   showCancelModal.value = false
   selectedMaintenance.value = null
+  pendingMaintenanceAssetId.value = null
+  clearMaintenanceModalSnapshot()
 }
 
 
@@ -1401,6 +1702,7 @@ const closeDetailAndOpenCancel = () => {
 
 // Navigate to dedicated maintenance history page
 const viewMaintenanceHistory = (maintenance: MaintenanceRow) => {
+  persistMaintenanceModalSnapshot(maintenance)
   showDetailModal.value = false
   router.push(`/app/maintenance/${maintenance.assetId}/history`)
 }
@@ -1537,4 +1839,5 @@ const isHistoryExpanded = ref(true)
 .complete-maintenance-form .search-input-container .form-control {
   padding-left: 0.75rem !important;
 }
+
 </style> 

@@ -579,18 +579,38 @@
                             </div>
                           </div>
                           
-                          <!-- Divider for notes -->
-                          <div class="col-12" v-if="asset.assignmentNotes">
-                            <hr class="assignment-divider">
+                        </div>
+                        <div class="asset-specifications mt-3" v-if="hasAssetSpecifications(asset)">
+                          <div class="d-flex align-items-center mb-2 spec-header">
+                            <i class="fas fa-microchip me-2 text-muted"></i>
+                            <span class="info-label-compact mb-0">Specifications</span>
                           </div>
-                          
-                          <!-- Assignment Notes -->
-                          <div class="col-12" v-if="asset.assignmentNotes">
-                            <div class="info-item-compact">
-                      <span class="info-label-compact">Assignment Notes</span>
-                              <div class="info-value-compact notes-display">
-                                {{ asset.assignmentNotes }}
-                              </div>
+                          <div class="specifications-inline">
+                            <span
+                              class="spec-inline-item"
+                              v-for="(spec, specIndex) in getAssetSpecificationEntries(asset)"
+                              :key="`${asset.id}-spec-${specIndex}`"
+                            >
+                              <span class="spec-inline-label">{{ spec.label }}:</span>
+                              <span class="spec-inline-value">{{ spec.value }}</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="asset-spec-description mt-3" v-if="asset.specificationDescription">
+                          <div class="info-item-compact">
+                            <span class="info-label-compact">Description</span>
+                            <div class="info-value-compact spec-description-text">
+                              {{ asset.specificationDescription }}
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Assignment Notes -->
+                        <div v-if="asset.assignmentNotes" class="mt-3">
+                          <hr class="assignment-divider">
+                          <div class="info-item-compact">
+                            <span class="info-label-compact">Assignment Notes</span>
+                            <div class="info-value-compact notes-display">
+                              {{ asset.assignmentNotes }}
                             </div>
                           </div>
                         </div>
@@ -766,6 +786,9 @@
   import ToastNotification from '@/components/common/ToastNotification.vue'
   import { useToastStore } from '@/stores/toast'
   import { useRouteToast } from '@/composables/useRouteToast'
+
+  const EMPLOYEES_VIEW_STATE_KEY = 'employeesViewState'
+  const EMPLOYEES_MODAL_STATE_KEY = 'employeesModalState'
   
   export default {
     name: 'EmployeesView',
@@ -799,7 +822,8 @@
         showEmployeeModal: false,
         statusChangeEmployee: null,
         isMobileView: window.innerWidth <= 576,
-        isExporting: false
+        isExporting: false,
+        pendingEmployeeId: null
       }
     },
     computed: {
@@ -854,9 +878,39 @@
       //
     },
     created() {
+      this.restoreViewState()
+      this.initPendingEmployeeFromRoute()
+      this.restorePendingEmployeeSnapshot()
+      if (!this.selectedSortBy) {
+        // Default sort by creation date descending
+        this.selectedSortBy = this.sortOptions.find(option => option.value === 'createdAt') || null
+      }
       this.loadEmployees()
-      // Initialize default sort option - sort by creation date descending
-      this.selectedSortBy = this.sortOptions.find(option => option.value === 'createdAt') || null
+    },
+    watch: {
+      searchTerm: 'persistViewState',
+      selectedAssetCount: {
+        handler: 'persistViewState',
+        deep: false
+      },
+      selectedStatus: {
+        handler: 'persistViewState',
+        deep: false
+      },
+      selectedSortBy: {
+        handler: 'persistViewState',
+        deep: false
+      },
+      sortAscending: 'persistViewState',
+      currentPage: 'persistViewState',
+      '$route.query.open'(value) {
+        const openId = typeof value === 'string' && value ? value : null
+        this.pendingEmployeeId = openId
+        if (openId && !this.showEmployeeModal) {
+          this.showEmployeeModal = true
+        }
+        this.tryOpenPendingEmployee()
+      }
     },
     methods: {
       showStatusConfirmationModal({ title, message, details, isActivating, onConfirm, onCancel }) {
@@ -983,6 +1037,103 @@
           month: 'short', 
           day: 'numeric' 
         })
+      },
+      processAssignedAssetSpecs(payload) {
+        if (payload === null || payload === undefined) {
+          return { specs: null, description: null }
+        }
+        if (typeof payload === 'string') {
+          const trimmed = payload.trim()
+          if (!trimmed) {
+            return { specs: null, description: null }
+          }
+          try {
+            const parsed = JSON.parse(trimmed)
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              return this.extractDescriptionFromSpecsObject(parsed)
+            }
+          } catch (error) {
+            console.warn('Failed to parse assignment specifications JSON:', error)
+            return { specs: null, description: trimmed }
+          }
+          return { specs: null, description: trimmed }
+        }
+        if (typeof payload === 'object' && !Array.isArray(payload)) {
+          return this.extractDescriptionFromSpecsObject(payload)
+        }
+        return { specs: null, description: null }
+      },
+      extractDescriptionFromSpecsObject(obj) {
+        const clone = { ...obj }
+        let description = null
+        for (const key of Object.keys(clone)) {
+          if (key.toLowerCase() === 'description') {
+            const value = clone[key]
+            if (value !== null && value !== undefined && value !== '') {
+              description = String(value)
+            }
+            delete clone[key]
+          }
+        }
+        const hasSpecs = Object.keys(clone).length > 0 ? clone : null
+        return { specs: hasSpecs, description }
+      },
+      normalizeSpecificationsForDisplay(specs) {
+        if (specs === null || specs === undefined || specs === '') {
+          return null
+        }
+        if (typeof specs === 'string') {
+          const trimmed = specs.trim()
+          if (!trimmed) return null
+          try {
+            const parsed = JSON.parse(trimmed)
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              return this.stripDescriptionField(parsed)
+            }
+          } catch (error) {
+            console.warn('Failed to parse specifications JSON for display:', error)
+            return { Details: trimmed }
+          }
+          return { Details: trimmed }
+        }
+        if (typeof specs === 'object' && !Array.isArray(specs)) {
+          return this.stripDescriptionField(specs)
+        }
+        return null
+      },
+      stripDescriptionField(obj) {
+        const clone = { ...obj }
+        if ('description' in clone) {
+          delete clone.description
+        }
+        return Object.keys(clone).length > 0 ? clone : null
+      },
+      formatSpecificationLabel(key) {
+        if (!key) return ''
+        return key
+          .replace(/[_\s]+/g, ' ')
+          .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+          .split(' ')
+          .filter(Boolean)
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+      },
+      getAssetSpecificationEntries(asset) {
+        if (!asset) return []
+        const normalizedSpecs = this.normalizeSpecificationsForDisplay(asset.specifications)
+        if (!normalizedSpecs || typeof normalizedSpecs !== 'object') {
+          return []
+        }
+        return Object.entries(normalizedSpecs)
+          .filter(([, value]) => value !== null && value !== undefined && value !== '')
+          .map(([key, value]) => {
+            const label = asset.specificationLabelMap?.[key] || this.formatSpecificationLabel(key)
+            const formattedValue = Array.isArray(value) ? value.join(', ') : String(value)
+            return { label, value: formattedValue }
+          })
+      },
+      hasAssetSpecifications(asset) {
+        return this.getAssetSpecificationEntries(asset).length > 0
       },
       // Handle dropdown click with proper positioning
       handleDropdownClick(event) {
@@ -1153,23 +1304,153 @@
         this.loadEmployees()
       },
       issueAsset(employee) {
-        // Navigate to issue asset page using database ID
-        this.$router.push(`/app/assets/issue?employeeId=${employee.databaseId}`)
+        const targetEmployee = employee || this.selectedEmployee
+        if (!targetEmployee?.databaseId) {
+          return
+        }
+
+        this.persistModalSnapshot(targetEmployee)
+
+        const employeePublicId = targetEmployee.id
+        const returnPath = employeePublicId
+          ? `/app/employees?open=${encodeURIComponent(employeePublicId)}`
+          : this.$route.fullPath || '/app/employees'
+
+        this.$router.push({
+          path: '/app/assets/issue',
+          query: {
+            employeeId: targetEmployee.databaseId,
+            from: 'employees',
+            returnTo: encodeURIComponent(returnPath),
+          },
+        })
       },
       viewAssetHistory(employee) {
+        const targetEmployee = employee || this.selectedEmployee
+        if (!targetEmployee) {
+          return
+        }
+
+        // Persist modal snapshot so it reopens when user returns
+        this.persistModalSnapshot(targetEmployee)
+
         // Close the employee detail modal
         this.showEmployeeModal = false
 
         // Navigate to employee asset history page using database ID
-        this.$router.push(`/app/employees/${employee.databaseId}/history`)
+        this.$router.push(`/app/employees/${targetEmployee.databaseId}/history`)
       },
       collectAsset(asset) {
+        const snapshotEmployee = this.selectedEmployee
+        if (snapshotEmployee) {
+          this.persistModalSnapshot(snapshotEmployee)
+        }
+
         // Close the employee detail modal
         this.showEmployeeModal = false
 
-        const assetId = asset && asset.id ? asset.id : undefined
-        const employeeId = this.selectedEmployee && this.selectedEmployee.databaseId ? this.selectedEmployee.databaseId : undefined
-        this.$router.push({ path: '/app/assets/collect', query: { ...(assetId && { assetId }), ...(employeeId && { employeeId }) } })
+        const assetId = asset?.id
+        const employeeId = this.selectedEmployee?.databaseId
+        const employeePublicId = this.selectedEmployee?.id
+        const returnPath = employeePublicId
+          ? `/app/employees?open=${encodeURIComponent(employeePublicId)}`
+          : this.$route.fullPath || '/app/employees'
+
+        this.$router.push({
+          path: '/app/assets/collect',
+          query: {
+            ...(assetId && { assetId }),
+            ...(employeeId && { employeeId }),
+            from: 'employees',
+            returnTo: encodeURIComponent(returnPath),
+          },
+        })
+      },
+      persistModalSnapshot(employee) {
+        if (typeof window === 'undefined' || !employee?.id) return
+        try {
+          const snapshot = {
+            employeeId: employee.id,
+            data: employee,
+            timestamp: Date.now()
+          }
+          window.sessionStorage.setItem(EMPLOYEES_MODAL_STATE_KEY, JSON.stringify(snapshot))
+        } catch (error) {
+          console.warn('Failed to persist employees modal state:', error)
+        }
+      },
+      restorePendingEmployeeSnapshot() {
+        if (typeof window === 'undefined') return
+        try {
+          const raw = window.sessionStorage.getItem(EMPLOYEES_MODAL_STATE_KEY)
+          if (!raw) return
+          window.sessionStorage.removeItem(EMPLOYEES_MODAL_STATE_KEY)
+          const snapshot = JSON.parse(raw)
+          if (snapshot?.employeeId && snapshot?.data) {
+            this.pendingEmployeeId = snapshot.employeeId
+            this.selectedEmployee = snapshot.data
+            this.showEmployeeModal = true
+          }
+        } catch (error) {
+          console.warn('Failed to restore employees modal state:', error)
+        }
+      },
+      initPendingEmployeeFromRoute() {
+        const openId = this.$route?.query?.open
+        this.pendingEmployeeId = typeof openId === 'string' && openId ? openId : this.pendingEmployeeId
+        if (this.pendingEmployeeId) {
+          this.showEmployeeModal = true
+        }
+      },
+      tryOpenPendingEmployee() {
+        if (!this.pendingEmployeeId) return
+        const match = this.employees.find(emp => emp.id === this.pendingEmployeeId)
+        if (match) {
+          this.selectedEmployee = match
+          this.showEmployeeModal = true
+          this.pendingEmployeeId = null
+        }
+      },
+      persistViewState() {
+        if (typeof window === 'undefined') return
+        const state = {
+          searchTerm: this.searchTerm || '',
+          selectedAssetCount: this.selectedAssetCount?.value ?? null,
+          selectedStatus: this.selectedStatus?.value ?? null,
+          selectedSortBy: this.selectedSortBy?.value ?? null,
+          sortAscending: this.sortAscending,
+          currentPage: this.currentPage
+        }
+        try {
+          window.sessionStorage.setItem(EMPLOYEES_VIEW_STATE_KEY, JSON.stringify(state))
+        } catch (error) {
+          console.warn('Failed to persist employees view state:', error)
+        }
+      },
+      restoreViewState() {
+        if (typeof window === 'undefined') return
+        try {
+          const raw = window.sessionStorage.getItem(EMPLOYEES_VIEW_STATE_KEY)
+          if (!raw) return
+          const state = JSON.parse(raw)
+          if (!state || typeof state !== 'object') return
+
+          this.searchTerm = state.searchTerm ?? this.searchTerm
+          this.sortAscending = state.sortAscending ?? this.sortAscending
+          this.currentPage = state.currentPage ?? this.currentPage
+
+          if (state.selectedAssetCount !== undefined) {
+            this.selectedAssetCount = this.assetCountOptions.find(option => option.value === state.selectedAssetCount) || null
+          }
+          if (state.selectedStatus !== undefined) {
+            this.selectedStatus = this.statusOptions.find(option => option.value === state.selectedStatus) || null
+          }
+          if (state.selectedSortBy !== undefined) {
+            this.selectedSortBy = this.sortOptions.find(option => option.value === state.selectedSortBy) || this.selectedSortBy
+          }
+        } catch (error) {
+          console.warn('Failed to restore employees view state:', error)
+        }
       },
       async loadEmployees() {
         try {
@@ -1206,19 +1487,29 @@
             iconClass: `fas fa-user-circle ${colorClasses[idx % colorClasses.length]}`,
             dateOfBirth: e.dateOfBirth,
             address: e.address,
-            assets: (e.assignedAssets || []).map(a => ({
-              id: a.assetId,
-              name: `${a.assetId} - ${a.assetName}`,
-              type: 'Asset',
-              assignedDate: a.assignedDate,
-              serialNumber: a.serialNumber || null,
-              assignmentReason: a.assignmentReason || null,
-              assignedBy: a.assignedBy || null,
-              assignmentNotes: a.assignmentNotes || null,
-              iconClass: 'fas fa-laptop',
-              iconColor: 'var(--secondary-purple)'
-            }))
+            assets: (e.assignedAssets || []).map(a => {
+              const { specs, description } = this.processAssignedAssetSpecs(a.specifications)
+              return {
+                id: a.assetId,
+                name: `${a.assetId} - ${a.assetName}`,
+                type: 'Asset',
+                assignedDate: a.assignedDate,
+                serialNumber: a.serialNumber || null,
+                assignmentReason: a.assignmentReason || null,
+                assignedBy: a.assignedBy || null,
+                assignmentNotes: a.assignmentNotes || null,
+                assetType: a.assetType || null,
+                brand: a.brand || null,
+                model: a.model || null,
+                specifications: specs,
+                specificationLabelMap: a.specificationLabelMap || null,
+                specificationDescription: a.specificationDescription || description || null,
+                iconClass: 'fas fa-laptop',
+                iconColor: 'var(--secondary-purple)'
+              }
+            })
           }))
+          this.tryOpenPendingEmployee()
         } catch (err) {
           console.warn('Failed to load employees:', err)
           this.employees = []
@@ -1358,18 +1649,6 @@
     mounted() {
       // Default to grid view on mobile screens
       this.isGridView = window.innerWidth <= 576
-      this.loadEmployees()
-      // If navigated here with ?open=<employeeId>, open the employee modal automatically
-      const toOpen = this.$route?.query?.open
-      if (toOpen) {
-        // Delay to ensure employees are loaded
-        setTimeout(() => {
-          const match = this.employees.find(e => e.id === toOpen)
-          if (match) {
-            this.viewEmployee(match)
-          }
-        }, 300)
-      }
       // Add click outside listener for dropdown
       document.addEventListener('click', this.handleClickOutside)
       // Add resize listener for responsive pagination

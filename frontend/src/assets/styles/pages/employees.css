@@ -679,6 +679,38 @@
   min-width: 0 !important;
 }
 
+.asset-specifications .spec-header .info-label-compact {
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.specifications-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.spec-inline-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.spec-inline-label {
+  font-weight: 700;
+  color: var(--primary-black);
+}
+
+.spec-inline-value {
+  color: var(--primary-black);
+}
+
+.asset-spec-description .spec-description-text {
+  white-space: pre-wrap;
+  color: var(--primary-black);
+}
+
 .asset-name {
   color: var(--primary-black) !important;
   font-size: 0.9rem !important;

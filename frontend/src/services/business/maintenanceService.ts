@@ -29,6 +29,8 @@ export interface Maintenance {
   assetBrand?: string
   assetModel?: string
   serialNumber?: string
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
   maintenanceTypeId: string
   maintenanceTypeName: string
   relevantDate?: string

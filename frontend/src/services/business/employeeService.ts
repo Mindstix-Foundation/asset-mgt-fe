@@ -22,8 +22,18 @@ export interface Employee {
 export interface AssignedAsset {
   assetId: string
   assetName: string
+  serialNumber?: string
   assignedDate: string
   status: string
+  assetType?: string
+  brand?: string
+  model?: string
+  assignmentReason?: string
+  assignedBy?: string
+  assignmentNotes?: string
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
+  specificationDescription?: string
 }
 
 export interface CreateEmployeeData {

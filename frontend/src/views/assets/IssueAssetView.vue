@@ -213,6 +213,17 @@ const toastStore = useToastStore()
 
 // Track the origin path to redirect back after success
 const originPath = ref<string>('/app/assets')
+
+const decodeReturnToQuery = (value: unknown): string | null => {
+  if (typeof value !== 'string' || !value.trim()) {
+    return null
+  }
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
 // Form data
 const formData = reactive({
   assetId: '',
@@ -684,8 +695,8 @@ const submitForm = async (event?: Event) => {
     
     const assignmentDetails = generateAssignmentDetails()
     
-    // Redirect to asset list immediately after success
-    router.push('/app/assets')
+    // Redirect to the originating view immediately after success
+    router.push(originPath.value)
     
     // Show success toast after redirect (with a small delay to ensure page loads)
     setTimeout(() => {
@@ -750,7 +761,7 @@ const resetForm = () => {
 
 // Navigation methods
 const goBack = () => {
-  router.push('/app/assets')
+  router.push(originPath.value)
 }
 
 const scrollToFirstError = () => {
@@ -920,6 +931,13 @@ onMounted(async () => {
   const year = today.getFullYear()
   formData.assignmentDate = `${day}-${month}-${year}`
   
+  // Determine explicit return path if provided
+  const decodedReturnTo = decodeReturnToQuery(route.query.returnTo)
+  const hasExplicitReturnPath = !!decodedReturnTo
+  if (decodedReturnTo) {
+    originPath.value = decodedReturnTo
+  }
+
   // Check if asset was pre-selected from assets page
   const selectedAssetId = localStorage.getItem('selectedAssetId')
   const selectedAssetType = localStorage.getItem('selectedAssetType')
@@ -927,7 +945,9 @@ onMounted(async () => {
   
   if (selectedAssetId && selectedAssetType) {
     // Came from assets page
-    originPath.value = '/app/assets'
+    if (!hasExplicitReturnPath) {
+      originPath.value = '/app/assets'
+    }
     // Find the asset by assetId (not database ID)
     const asset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
     if (asset) {
@@ -954,7 +974,7 @@ onMounted(async () => {
   const employeeIdFromQuery = route.query.employeeId as string
   if (employeeIdFromQuery) {
     // Came from employees page unless explicitly overridden by from query
-    if (!fromQuery) {
+    if (!fromQuery && !hasExplicitReturnPath) {
       originPath.value = '/app/employees'
     }
   const employeeId = Number.parseInt(employeeIdFromQuery)
@@ -976,9 +996,11 @@ onMounted(async () => {
   }
   
   // If explicit origin provided in query, respect it
-  if (fromQuery === 'employees') originPath.value = '/app/employees'
-  else if (fromQuery === 'assets') originPath.value = '/app/assets'
-  else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
+  if (!hasExplicitReturnPath) {
+    if (fromQuery === 'employees') originPath.value = '/app/employees'
+    else if (fromQuery === 'assets') originPath.value = '/app/assets'
+    else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
+  }
   
   // Focus on appropriate field
   nextTick(() => {

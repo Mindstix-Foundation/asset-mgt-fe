@@ -173,12 +173,6 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/prototypes/asset-spec-table',
-      name: 'AssetSpecificationTablePrototype',
-      component: () => import('../views/assets/prototypes/AssetSpecificationTablePrototype.vue'),
-      meta: { requiresAuth: true },
-    },
   ],
 })
 

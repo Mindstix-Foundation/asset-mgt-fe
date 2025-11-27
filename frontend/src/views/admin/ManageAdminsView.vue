@@ -136,16 +136,18 @@
 
     <!-- Add Admin Modal -->
     <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addAdminModalLabel">
-              <i class="fas fa-user-plus me-2"></i>
-              Add New Admin
+      <div class="modal-dialog modal-dialog-centered add-admin-modal-dialog">
+        <div class="modal-content add-admin-modal">
+          <div class="modal-header modal-theme-header">
+            <h5 class="modal-title d-flex align-items-center gap-2" id="addAdminModalLabel">
+              <span class="modal-title-icon">
+                <i class="fas fa-user-plus"></i>
+              </span>
+              <span>Add New Admin</span>
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close rounded-circle shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body modal-theme-body">
             <form @submit.prevent="handleAddAdmin">
               <!-- Employee Selection -->
               <div class="mb-3">
@@ -166,40 +168,38 @@
 
               <!-- Username -->
               <div class="mb-3">
-                <label for="username" class="form-label fw-semibold">
-                  <i class="fas fa-at me-2"></i>Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  v-model="newAdmin.username"
-                  class="form-control"
-                  :class="getFieldClass('username')"
-                  placeholder="Enter username"
-                  name="username"
-                  autocomplete="username"
-                  required
-                  @input="clearFieldValidation('username')"
-                />
-                <div v-if="errors.username" class="invalid-feedback">
+                <label for="username" class="form-label field-label">Username</label>
+                <div class="input-with-icon">
+                  <i class="fas fa-at input-icon" aria-hidden="true"></i>
+                  <input
+                    type="text"
+                    id="username"
+                    v-model="newAdmin.username"
+                    :class="['form-control', getFieldClass('username')]"
+                    placeholder="Enter username"
+                    name="username"
+                    autocomplete="username"
+                    required
+                    @input="clearFieldValidation('username')"
+                  />
+                </div>
+                <div v-if="errors.username" class="invalid-feedback d-block">
                   {{ errors.username }}
                 </div>
               </div>
 
               <!-- Password -->
               <div class="mb-3">
-                <label for="password" class="form-label fw-semibold">
-                  <i class="fas fa-lock me-2"></i>Password
-                </label>
-                <div class="input-group">
+                <label for="password" class="form-label field-label">Password</label>
+                <div class="input-with-icon input-with-action">
+                  <i class="fas fa-lock input-icon" aria-hidden="true"></i>
                   <input
                     :type="showPassword ? 'text' : 'password'"
                     id="password"
                     v-model="newAdmin.password"
-                    class="form-control"
-                    :class="getFieldClass('password')"
+                    :class="['form-control', getFieldClass('password')]"
                     placeholder="Enter password"
-                  name="password"
+                    name="password"
                     :autocomplete="showPassword ? 'off' : 'new-password'"
                     required
                     @input="validatePassword"
@@ -207,14 +207,15 @@
                   />
                   <button
                     type="button"
-                    class="btn btn-gray"
+                    class="input-action-btn"
                     @click="togglePasswordVisibility"
                     :title="showPassword ? 'Hide password' : 'Show password'"
+                    :aria-label="showPassword ? 'Hide password' : 'Show password'"
                   >
                     <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                   </button>
                 </div>
-                <div v-if="errors.password" class="invalid-feedback">
+                <div v-if="errors.password" class="invalid-feedback d-block">
                   {{ errors.password }}
                 </div>
                 <div v-if="passwordStrength" class="mt-2">
@@ -245,33 +246,33 @@
 
               <!-- Confirm Password -->
               <div class="mb-3">
-                <label for="confirmPassword" class="form-label fw-semibold">
-                  <i class="fas fa-lock me-2"></i>Confirm Password
-                </label>
-                <div class="input-group">
+                <label for="confirmPassword" class="form-label field-label">Confirm Password</label>
+                <div class="input-with-icon input-with-action">
+                  <i class="fas fa-lock input-icon" aria-hidden="true"></i>
                   <input
                     :type="showConfirmPassword ? 'text' : 'password'"
                     id="confirmPassword"
                     v-model="newAdmin.confirmPassword"
-                    class="form-control"
-                    :class="getFieldClass('confirmPassword')"
+                    :class="['form-control', getFieldClass('confirmPassword')]"
                     placeholder="Confirm password"
-                  name="confirmPassword"
+                    name="confirmPassword"
                     :autocomplete="showConfirmPassword ? 'off' : 'new-password'"
                     required
-                    @input="validatePasswordMatch"
+                    @input="markFieldTouched('confirmPassword'); validatePasswordMatch()"
+                    @blur="markFieldTouched('confirmPassword'); validatePasswordMatch()"
                     @focus="clearFieldValidation('confirmPassword')"
                   />
                   <button
                     type="button"
-                    class="btn btn-gray"
+                    class="input-action-btn"
                     @click="toggleConfirmPasswordVisibility"
                     :title="showConfirmPassword ? 'Hide password' : 'Show password'"
+                    :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
                   >
                     <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                   </button>
                 </div>
-                <div v-if="errors.confirmPassword" class="invalid-feedback">
+                <div v-if="errors.confirmPassword" class="invalid-feedback d-block">
                   {{ errors.confirmPassword }}
                 </div>
                 <div v-else-if="passwordsMatch" class="valid-feedback d-block">
@@ -281,7 +282,7 @@
               </div>
             </form>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer modal-theme-footer">
             <button type="button" class="btn btn-modern btn-cancel" data-bs-dismiss="modal">
               <i class="fas fa-times me-2"></i>
               Cancel
@@ -437,6 +438,7 @@ const newAdmin = ref({
 })
 
 const errors = ref<Record<string, string>>({})
+const touchedFields = ref<Record<string, boolean>>({})
 
 // Get current user ID
 const currentUserId = ref<number | null>(authService.getUserId())
@@ -476,33 +478,12 @@ const fetchAdmins = async () => {
     const response = await authAxios.get('/admin/users')
     
     if (response.data.success) {
-      const adminUsers = response.data.data.filter((user: any) => 
-        user.roles && user.roles.includes('ADMIN')
-      )
+      const adminUsers = response.data.data.map((admin: any) => ({
+        ...admin,
+        canBeDeleted: Boolean(admin.canBeDeleted)
+      }))
       
-      // Check deletion eligibility for each admin
-      const adminsWithDeletionStatus = await Promise.all(
-        adminUsers.map(async (admin: any) => {
-          try {
-            const checkResponse = await authAxios.get(`/admin/users/${admin.id}/can-delete`)
-            return {
-              ...admin,
-              canBeDeleted: checkResponse.data.data?.canBeDeleted || false,
-              deletionInfo: checkResponse.data.data
-            }
-          } catch (err) {
-            // If check fails, default to not deletable for safety
-            console.error(`Error checking deletion status for admin ${admin.id}:`, err)
-            return {
-              ...admin,
-              canBeDeleted: false,
-              deletionInfo: null
-            }
-          }
-        })
-      )
-      
-      admins.value = adminsWithDeletionStatus
+      admins.value = adminUsers
     } else {
       throw new Error('Failed to load admin users')
     }
@@ -538,9 +519,8 @@ const onEmployeeChange = (employee: any) => {
   selectedEmployee.value = employee
   if (employee) {
     newAdmin.value.employeeId = employee.id
-    // Auto-fill username with employee ID
-    newAdmin.value.username = employee.employeeId
-    // Clear validation errors when employee is selected
+    // Keep username empty so admins must choose their own value
+    newAdmin.value.username = ''
     clearFieldValidation('employeeId')
   } else {
     newAdmin.value.employeeId = ''
@@ -579,23 +559,26 @@ const validatePassword = () => {
 }
 
 const validatePasswordMatch = () => {
+  const confirmTouched = touchedFields.value.confirmPassword || !!newAdmin.value.confirmPassword
+  
   if (!newAdmin.value.password) {
-    // If no password, clear confirm password errors
+    delete errors.value.confirmPassword
+    return
+  }
+  
+  if (!confirmTouched) {
     delete errors.value.confirmPassword
     return
   }
   
   if (!newAdmin.value.confirmPassword) {
-    // If password exists but no confirm password
     errors.value.confirmPassword = 'Please confirm your password'
     return
   }
   
   if (newAdmin.value.password === newAdmin.value.confirmPassword) {
-    // Passwords match
     delete errors.value.confirmPassword
   } else {
-    // Passwords don't match
     errors.value.confirmPassword = 'Passwords do not match'
   }
 }
@@ -644,6 +627,10 @@ const getFieldClass = (fieldName: string) => {
   }
   
   return ''
+}
+
+const markFieldTouched = (fieldName: string) => {
+  touchedFields.value[fieldName] = true
 }
 
 const clearFieldValidation = (fieldName: string) => {
@@ -711,6 +698,7 @@ const handleAddAdmin = async () => {
         password: '',
         confirmPassword: ''
       }
+      touchedFields.value = {}
       selectedEmployee.value = null
       
       // Close modal
@@ -913,6 +901,142 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.add-admin-modal-dialog {
+  max-width: 620px !important;
+}
+
+.add-admin-modal {
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.12);
+  background: var(--primary-white, #fff);
+}
+
+.modal-theme-header {
+  border-bottom: none;
+  padding: 1.5rem 1.75rem 0.75rem;
+  background: linear-gradient(135deg, rgba(51, 31, 234, 0.08), rgba(118, 75, 255, 0.08));
+}
+
+.modal-theme-header .modal-title {
+  font-weight: 600;
+  color: var(--primary-black, #1b1f3a);
+}
+
+.modal-title-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary-white, #fff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color, #331fea);
+  box-shadow: inset 0 0 0 1px rgba(51, 31, 234, 0.15);
+}
+
+.modal-theme-body {
+  padding: 1.75rem;
+  background: var(--primary-white, #fff);
+}
+
+.modal-theme-footer {
+  border-top: none;
+  padding: 0.75rem 1.75rem 1.75rem;
+  background: var(--primary-white, #fff);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.field-label {
+  font-weight: 600 !important;
+  color: var(--text-secondary, #5b5f7b);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .form-control {
+  padding-left: 2.6rem;
+  min-height: 44px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--element-gray, #dee2e6);
+  box-shadow: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-with-icon.input-with-action .form-control {
+  padding-right: 2.75rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.9rem;
+  color: var(--primary-mid-gray, #6c757d);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.input-with-icon:focus-within .input-icon {
+  color: var(--primary-color, #331fea);
+}
+
+.input-action-btn {
+  position: absolute;
+  right: 0.5rem;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  color: var(--primary-mid-gray, #6c757d);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-action-btn:hover {
+  background: rgba(51, 31, 234, 0.1);
+  color: var(--primary-color, #331fea);
+}
+
+.input-action-btn:focus-visible {
+  outline: 2px solid rgba(51, 31, 234, 0.6);
+  outline-offset: 2px;
+}
+
+.add-admin-modal .form-control:focus {
+  border-color: var(--primary-color, #331fea);
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.15);
+}
+
+.add-admin-modal :deep(.searchable-dropdown-wrapper .form-control),
+.add-admin-modal :deep(.searchable-dropdown-wrapper .dropdown-toggle) {
+  border-radius: 0.5rem !important;
+  min-height: 44px !important;
+  padding-top: 0.45rem !important;
+  padding-bottom: 0.45rem !important;
+  border: 1px solid var(--element-gray, #dee2e6) !important;
+  box-shadow: none !important;
+}
+
+.add-admin-modal :deep(.searchable-dropdown-wrapper .dropdown-menu) {
+  border-radius: 0.75rem !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15) !important;
+}
+
+.modal-theme-body :deep(.searchable-dropdown-wrapper .form-control:focus),
+.modal-theme-body :deep(.searchable-dropdown-wrapper .dropdown-toggle:focus) {
+  border-color: var(--primary-color, #331fea) !important;
+  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.15) !important;
+}
+
 .avatar-sm {
   width: 40px !important;
   height: 40px !important;
@@ -1021,15 +1145,20 @@ onMounted(() => {
 .password-strength {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   font-size: 0.875rem;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: rgba(51, 31, 234, 0.05);
+  border: 1px dashed rgba(51, 31, 234, 0.15);
 }
 
 .strength-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  padding: 0.2rem 0;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .strength-item i {
@@ -1038,11 +1167,12 @@ onMounted(() => {
 }
 
 .strength-item.valid {
-  color: var(--bs-success);
+  color: #1c9d64;
 }
 
 .strength-item:not(.valid) {
-  color: var(--bs-danger);
+  color: #d9534f;
+  opacity: 0.85;
 }
 
 /* Removed local input-group .btn overrides; rely on shared buttons.css */
@@ -1062,12 +1192,16 @@ onMounted(() => {
 .modal-body .form-control.is-valid {
   border-color: #21AF65 !important;
   box-shadow: 0 0 0 0.2rem rgba(33, 175, 101, 0.25) !important;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
 }
 
 .modal-body .form-control.is-invalid {
   border-color: #E97676 !important;
   box-shadow: 0 0 0 0.2rem rgba(233, 118, 118, 0.25) !important;
   animation: subtle-shake 0.3s ease-in-out;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
 }
 
 .modal-body .form-control.is-valid:focus {

@@ -1,17 +1,52 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid py-4 maintenance-history-page">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <h2 class="mb-0" style="color: var(--primary-black);">Maintenance History</h2>
-        <p class="text-muted mb-0">Asset {{ assetId }}</p>
       </div>
       <button class="btn btn-gray" @click="goBack">
         <i class="fas fa-arrow-left me-1"></i>Back
       </button>
     </div>
 
+    <div class="card mb-3 asset-summary-card" v-if="assetDetails">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-8">
+            <h5 class="mb-1">{{ assetDetails.name }}</h5>
+            <p class="asset-meta mb-0">
+              <span v-if="assetDetails.assetType">{{ assetDetails.assetType }} • </span>
+              <span>{{ assetDetails.brand }} {{ assetDetails.model }}</span>
+              <span class="text-muted"> • {{ assetDetails.assetId }}</span>
+            </p>
+          </div>
+          <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="info-item mb-0">
+              <small class="text-muted d-block">Serial Number</small>
+              <span class="fw-semibold">{{ assetDetails.serialNumber || 'Not specified' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="asset-specifications mt-3" v-if="hasAssetSpecifications(assetDetails)">
+          <div class="spec-header">
+            <span class="info-label small mb-0">Specifications</span>
+          </div>
+          <div class="specifications-inline">
+            <span
+              class="spec-inline-item"
+              v-for="(spec, specIndex) in getAssetSpecificationEntries(assetDetails)"
+              :key="`asset-spec-${specIndex}`"
+            >
+              <span class="spec-inline-label">{{ spec.label }}:</span>
+              <span class="spec-inline-value">{{ spec.value }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Filters -->
-    <div class="mb-3 border rounded p-3 shadow-sm bg-white">
+    <div class="mb-3 border rounded p-3 shadow-sm bg-white filter-panel">
       <div class="row align-items-end">
           <!-- Search -->
           <div class="col-12 col-lg-7 mb-3">
@@ -49,7 +84,7 @@
           </div>
         </div>
 
-        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
+        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white filter-panel">
           <div class="d-flex flex-column flex-md-row gap-2">
             <div class="flex-fill">
               <SearchableDropdown
@@ -111,12 +146,12 @@
 
       <div v-else class="card">
         <div class="card-body">
-          <h6 class="section-title d-flex align-items-center justify-content-between mb-5">
+          <h6 class="section-title d-flex align-items-center justify-content-between mb-3">
             <span><i class="fas fa-history me-2"></i>Timeline</span>
             <span class="badge badge-pink">{{ totalRecords }} records</span>
           </h6>
           
-          <hr class="timeline-divider mt-3 mb-4">
+          <hr class="timeline-divider mt-2 mb-3">
 
           <div class="history-timeline">
           <div 
@@ -187,14 +222,11 @@
                     </div>
                   </div>
                 </div>
-                <div v-if="getNotesForStatus(item)" class="mt-2">
-                  <NotesDisplay 
-                    :notes="getNotesForStatus(item)"
-                    label="Notes"
-                    :show-label="true"
-                    :show-icon="false"
-                    :preserve-formatting="true"
-                  />
+                <div class="col-12 mt-2" v-if="getNotesForStatus(item)">
+                  <div class="info-item">
+                    <span class="info-label small">Notes</span>
+                    <div class="info-value notes-display small">{{ getNotesForStatus(item) }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -226,7 +258,6 @@ import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
-import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import { formatDateOnly } from '@/utils/date'
 
 interface HistoryItem {
@@ -248,12 +279,27 @@ interface HistoryItem {
   performedBy: string | null
 }
 
+interface AssetSummary {
+  id: number
+  assetId: string
+  name: string
+  assetType?: string
+  brand?: string
+  model?: string
+  serialNumber?: string
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
+}
+
 const route = useRoute()
 const router = useRouter()
 const assetId = String(route.params.assetId || '')
+const MAINTENANCE_HISTORY_STATE_KEY = 'maintenanceHistoryViewState'
+let isRestoringViewState = false
 
 const loading = ref(false)
 const history = ref<HistoryItem[]>([])
+const assetDetails = ref<AssetSummary | null>(null)
 const todayIso = new Date().toISOString().split('T')[0]
 
 // Pagination state
@@ -289,6 +335,82 @@ const typeOptions = [
   { id: 'EMERGENCY', name: 'Emergency' },
   { id: 'UPGRADE', name: 'Upgrade' },
 ]
+
+const persistViewState = () => {
+  if (typeof window === 'undefined') return
+  try {
+    const state = {
+      filters: { ...filters.value },
+      selectedStatusId: selectedStatus.value?.id ?? null,
+      selectedTypeId: selectedType.value?.id ?? null,
+      selectedSortById: selectedSortBy.value?.id ?? 'date',
+      currentPage: currentPage.value,
+      showFilterDropdown: showFilterDropdown.value
+    }
+    window.sessionStorage.setItem(MAINTENANCE_HISTORY_STATE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.warn('Failed to persist maintenance history view state:', error)
+  }
+}
+
+const restoreViewState = () => {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = window.sessionStorage.getItem(MAINTENANCE_HISTORY_STATE_KEY)
+    if (!raw) return
+    const state = JSON.parse(raw) as {
+      filters?: typeof filters.value,
+      selectedStatusId?: string | null,
+      selectedTypeId?: string | null,
+      selectedSortById?: string | null,
+      currentPage?: number,
+      showFilterDropdown?: boolean
+    }
+    isRestoringViewState = true
+
+    if (state.filters) {
+      filters.value = {
+        ...filters.value,
+        ...state.filters,
+        sortBy: state.filters.sortBy || filters.value.sortBy,
+        sortOrder: state.filters.sortOrder === 'asc' ? 'asc' : 'desc'
+      }
+    }
+
+    if ('currentPage' in state && typeof state.currentPage === 'number' && state.currentPage > 0) {
+      currentPage.value = state.currentPage
+    }
+
+    if ('showFilterDropdown' in state) {
+      showFilterDropdown.value = Boolean(state.showFilterDropdown)
+    }
+
+    if ('selectedStatusId' in state) {
+      const matchStatus = statusOptions.find(option => option.id === state.selectedStatusId) || null
+      selectedStatus.value = matchStatus
+    }
+
+    if ('selectedTypeId' in state) {
+      const matchType = typeOptions.find(option => option.id === state.selectedTypeId) || null
+      selectedType.value = matchType
+    }
+
+    if ('selectedSortById' in state) {
+      const matchSort = sortByOptions.find(option => option.id === state.selectedSortById) || null
+      if (matchSort) {
+        selectedSortBy.value = matchSort
+        filters.value.sortBy = matchSort.id
+      }
+    }
+
+    onFromDateChange(filters.value.dateFrom)
+    onToDateChange(filters.value.dateTo)
+  } catch (error) {
+    console.warn('Failed to restore maintenance history view state:', error)
+  } finally {
+    isRestoringViewState = false
+  }
+}
 
 const sortAscending = computed(() => filters.value.sortOrder === 'asc')
 
@@ -373,6 +495,63 @@ const calcDurationDays = (start?: string | null, end?: string | null) => {
 }
 
 const goBack = () => router.back()
+
+const normalizeSpecificationsForDisplay = (specs: any) => {
+  if (specs === null || specs === undefined || specs === '') {
+    return null
+  }
+  if (typeof specs === 'string') {
+    const trimmed = specs.trim()
+    if (!trimmed) return null
+    try {
+      const parsed = JSON.parse(trimmed)
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return stripDescriptionField(parsed)
+      }
+    } catch (error) {
+      console.warn('Failed to parse specifications JSON for display:', error)
+      return { Details: trimmed }
+    }
+    return { Details: trimmed }
+  }
+  if (typeof specs === 'object' && !Array.isArray(specs)) {
+    return stripDescriptionField(specs)
+  }
+  return null
+}
+
+const stripDescriptionField = (obj: Record<string, any>) => {
+  const clone = { ...obj }
+  if ('description' in clone) {
+    delete clone.description
+  }
+  return Object.keys(clone).length > 0 ? clone : null
+}
+
+const formatSpecificationLabel = (key?: string) => {
+  if (!key) return ''
+  return key
+    .replace(/[_\s]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .trim()
+}
+
+const getAssetSpecificationEntries = (asset?: AssetSummary | null) => {
+  if (!asset) return []
+  const normalizedSpecs = normalizeSpecificationsForDisplay(asset.specifications)
+  if (!normalizedSpecs || typeof normalizedSpecs !== 'object') {
+    return []
+  }
+  return Object.entries(normalizedSpecs)
+    .filter(([, value]) => value !== null && value !== undefined && value !== '')
+    .map(([key, value]) => {
+      const label = asset.specificationLabelMap?.[key] || formatSpecificationLabel(key)
+      const formattedValue = Array.isArray(value) ? value.join(', ') : String(value)
+      return { label, value: formattedValue }
+    })
+}
+
+const hasAssetSpecifications = (asset?: AssetSummary | null) => getAssetSpecificationEntries(asset).length > 0
 
 const onSortByChange = (item: any) => {
   selectedSortBy.value = item
@@ -466,6 +645,8 @@ const applyFilters = async () => {
     const res = await maintenanceService.getMaintenanceEvents(assetId, params)
     console.log('Maintenance History API Response:', res)
     
+    assetDetails.value = (res.data as any)?.asset || null
+
     // Update pagination info
     if (res.data?.pagination) {
       totalPages.value = res.data.pagination.totalPages
@@ -599,8 +780,25 @@ watch(() => selectedType.value, () => {
   debouncedFilter()
 })
 
+watch(
+  [
+    () => filters.value,
+    () => selectedStatus.value,
+    () => selectedType.value,
+    () => selectedSortBy.value,
+    () => currentPage.value,
+    () => showFilterDropdown.value
+  ],
+  () => {
+    if (isRestoringViewState) return
+    persistViewState()
+  },
+  { deep: true }
+)
+
 onMounted(async () => {
   if (!assetId) return
+  restoreViewState()
   try {
     loading.value = true
     await applyFilters()
@@ -612,6 +810,93 @@ onMounted(async () => {
 
 <style scoped>
 @import '@/assets/styles/pages/maintenance.css';
+
+.maintenance-history-page .card {
+  border-radius: 0.75rem;
+}
+
+.maintenance-history-page .filter-panel {
+  border-radius: 0.75rem !important;
+}
+
+.history-timeline .timeline-content {
+  background: #fafafa;
+}
+
+.asset-summary-card .asset-meta {
+  color: var(--primary-mid-gray);
+  font-size: 0.95rem;
+}
+
+.asset-summary-card .info-item {
+  margin-bottom: 0;
+}
+
+.asset-specifications {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 0.75rem;
+}
+
+.asset-specifications .spec-header {
+  margin-bottom: 0.5rem;
+}
+
+.asset-specifications .info-label {
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.specifications-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.spec-inline-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.spec-inline-label {
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.spec-inline-value {
+  color: var(--primary-black);
+}
+
+.info-item {
+  margin-bottom: 0.5rem;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #212529;
+}
+
+.notes-display {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  color: #495057;
+  background-color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #e9ecef;
+}
 </style>
 
 
