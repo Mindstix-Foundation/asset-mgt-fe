@@ -44,6 +44,7 @@ export interface Asset {
   warrantyEndDate?: string
   warrantyUntil?: string
   notes?: string
+  specifications?: Record<string, any>
 }
 
 export interface AssetResponse {

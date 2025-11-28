@@ -58,7 +58,82 @@
                 </div>
 
                 <!-- Asset Specifications -->
-                <div v-if="selectedAsset" class="mt-4">
+                <div v-if="selectedAsset && specificationFields.length > 0" class="mt-4">
+                  <div class="row g-4">
+                    <!-- Dynamic readonly fields based on assetType.specificationTemplate -->
+                    <div 
+                      v-for="(field, index) in specificationFields" 
+                      :key="field.key"
+                      :class="getSpecFieldColumnClass(index, specificationFields, field.type)"
+                    >
+                      <!-- Text Input (Readonly) -->
+                      <div v-if="field.type === 'text'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="text"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Number Input (Readonly) -->
+                      <div v-else-if="field.type === 'number'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="number"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Dropdown (Readonly) -->
+                      <div v-else-if="field.type === 'dropdown'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="text"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Textarea (Readonly) -->
+                      <div v-else-if="field.type === 'textarea'">
+                        <NotesTextarea
+                          :model-value="assetSpecifications[field.key] || ''"
+                          :label="field.label"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                          help-text=""
+                          :max-length="1000"
+                          :required="false"
+                          :show-label="true"
+                          :readonly="true"
+                          :input-id="`spec-${field.key}`"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Fallback: Show formatted specifications if no template fields -->
+                <div v-else-if="selectedAsset && specificationFields.length === 0 && selectedAssetSpecs" class="mt-4">
                   <div class="asset-specifications-wrapper">
                     <NotesTextarea 
                       :model-value="selectedAssetSpecs || 'No specifications available'"
@@ -71,6 +146,26 @@
                       :readonly="true"
                       input-id="assetSpecifications"
                     />
+                  </div>
+                </div>
+
+                <!-- Asset Condition -->
+                <div v-if="selectedAsset" class="mt-4">
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label for="assetCondition" class="form-label">
+                        Asset Condition
+                      </label>
+                      <input 
+                        type="text"
+                        id="assetCondition"
+                        class="form-control"
+                        :value="assetCondition || ''"
+                        readonly
+                        style="background-color: #F3F3F3;"
+                        placeholder="No condition specified"
+                      />
+                    </div>
                   </div>
                 </div>
               </fieldset>
@@ -203,6 +298,7 @@ import { useToastStore } from '@/stores/toast'
 import { assignmentApiService, type CreateAssignmentDto } from '../../services/api/assignmentApi'
 import { assetApiService, type Asset } from '../../services/api/assetApi'
 import { employeeApiService, type Employee } from '../../services/api/employeeApi'
+import { assetTypeService } from '../../services/api/assetTypeService'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
 import DatePicker from '../../components/ui/date/DatePicker.vue'
@@ -250,8 +346,22 @@ const selectedAsset = ref<Item | null>(null)
 const selectedEmployee = ref<Item | null>(null)
 const selectedAssignmentReason = ref<Item | null>(null)
 
-// Computed property for selected asset specifications
+// Computed property for selected asset specifications (fallback for old format)
 const selectedAssetSpecs = ref<string | null>(null)
+
+// Specification fields (dynamic based on asset type)
+interface SpecField {
+  key: string
+  label: string
+  type: 'text' | 'number' | 'dropdown' | 'textarea'
+  required?: boolean
+  placeholder?: string
+  options?: (string | { value: string; deprecated?: boolean })[]
+}
+
+const specificationFields = ref<SpecField[]>([])
+const assetSpecifications = reactive<Record<string, any>>({})
+const assetCondition = ref<string>('')
 
 // Form state - Enhanced validation system like the prototype
 const fieldErrors = reactive<Record<string, string>>({})
@@ -792,6 +902,51 @@ const scrollToFirstError = () => {
 const clearSelectedAssetInfo = () => {
   formData.assetBrandModel = ''
   selectedAssetSpecs.value = null
+  assetCondition.value = ''
+  // Clear specification fields
+  specificationFields.value = []
+  Object.keys(assetSpecifications).forEach(key => {
+    delete assetSpecifications[key]
+  })
+}
+
+// Load specification template from asset type
+const loadAssetTypeTemplate = async (assetTypeId: number) => {
+  try {
+    const response = await assetTypeService.getAssetTypeById(assetTypeId)
+    let assetType = response.data.assetType
+    
+    // Handle case where specificationTemplate might be a string
+    let template = assetType.specificationTemplate
+    if (typeof template === 'string') {
+      try {
+        template = JSON.parse(template)
+      } catch (error) {
+        console.error('Failed to parse specification template JSON:', error)
+        template = undefined
+      }
+    }
+    
+    if (template && template.fields && Array.isArray(template.fields)) {
+      specificationFields.value = template.fields.filter((field: SpecField) => Boolean(field?.key))
+    } else {
+      specificationFields.value = []
+    }
+  } catch (error) {
+    console.error('Error loading asset type template:', error)
+    specificationFields.value = []
+  }
+}
+
+// Helper function to get column class for specification fields
+const getSpecFieldColumnClass = (index: number, fields: SpecField[], fieldType: string): string => {
+  // For textarea fields, use full width
+  if (fieldType === 'textarea') {
+    return 'col-12'
+  }
+  
+  // For other fields, use half width on medium screens and up
+  return 'col-md-6'
 }
 
 // Helper functions for asset details loading
@@ -829,9 +984,50 @@ const formatSpecifications = (specs: any): string | null => {
   return null
 }
 
-const processAssetDetails = (asset: any) => {
+const processAssetDetails = async (asset: any) => {
   setAssetBrandModel(asset)
-  selectedAssetSpecs.value = formatSpecifications(asset.model?.specifications)
+  
+  // Set asset condition
+  if (asset.condition) {
+    // Format condition: capitalize first letter, rest lowercase
+    assetCondition.value = asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase()
+  } else {
+    assetCondition.value = ''
+  }
+  
+  // Load asset type template if asset type is available
+  if (asset.assetType?.id) {
+    await loadAssetTypeTemplate(asset.assetType.id)
+    
+    // Populate asset specifications from the asset data
+    if (asset.specifications && typeof asset.specifications === 'object') {
+      // Clear previous specifications
+      Object.keys(assetSpecifications).forEach(key => {
+        delete assetSpecifications[key]
+      })
+      
+      // Populate with asset specifications
+      Object.keys(asset.specifications).forEach(key => {
+        const value = asset.specifications[key]
+        // Convert null/undefined to empty string for display
+        assetSpecifications[key] = value !== null && value !== undefined ? value : ''
+      })
+    } else {
+      // Clear specifications if none available
+      Object.keys(assetSpecifications).forEach(key => {
+        delete assetSpecifications[key]
+      })
+    }
+  } else {
+    specificationFields.value = []
+  }
+  
+  // Fallback: format specifications as text for display if no template fields
+  if (specificationFields.value.length === 0) {
+    selectedAssetSpecs.value = formatSpecifications(asset.specifications)
+  } else {
+    selectedAssetSpecs.value = null
+  }
 }
 
 const loadAssetDetails = async (assetIdNumber: number) => {
@@ -840,7 +1036,7 @@ const loadAssetDetails = async (assetIdNumber: number) => {
     const asset = response.data.asset
 
     if (asset) {
-      processAssetDetails(asset)
+      await processAssetDetails(asset)
     } else {
       clearSelectedAssetInfo()
     }

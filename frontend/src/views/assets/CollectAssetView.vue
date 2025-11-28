@@ -112,7 +112,82 @@
                 
 
                 <!-- Asset Specifications -->
-                <div v-if="selectedAssetSpecs" class="mt-4">
+                <div v-if="selectedAssetObject && specificationFields.length > 0" class="mt-4">
+                  <div class="row g-4">
+                    <!-- Dynamic readonly fields based on assetType.specificationTemplate -->
+                    <div 
+                      v-for="(field, index) in specificationFields" 
+                      :key="field.key"
+                      :class="getSpecFieldColumnClass(index, specificationFields, field.type)"
+                    >
+                      <!-- Text Input (Readonly) -->
+                      <div v-if="field.type === 'text'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="text"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Number Input (Readonly) -->
+                      <div v-else-if="field.type === 'number'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="number"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Dropdown (Readonly) -->
+                      <div v-else-if="field.type === 'dropdown'">
+                        <label :for="`spec-${field.key}`" class="form-label">
+                          {{ field.label }}
+                        </label>
+                        <input 
+                          type="text"
+                          :id="`spec-${field.key}`"
+                          class="form-control"
+                          :value="assetSpecifications[field.key] || ''"
+                          readonly
+                          style="background-color: #F3F3F3;"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                        />
+                      </div>
+                      
+                      <!-- Textarea (Readonly) -->
+                      <div v-else-if="field.type === 'textarea'">
+                        <NotesTextarea
+                          :model-value="assetSpecifications[field.key] || ''"
+                          :label="field.label"
+                          :placeholder="`No ${field.label.toLowerCase()} specified`"
+                          help-text=""
+                          :max-length="1000"
+                          :required="false"
+                          :show-label="true"
+                          :readonly="true"
+                          :input-id="`spec-${field.key}`"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Fallback: Show formatted specifications if no template fields -->
+                <div v-else-if="selectedAssetObject && specificationFields.length === 0 && selectedAssetSpecs" class="mt-4">
                   <div class="asset-specifications-wrapper">
                     <NotesTextarea 
                       :model-value="selectedAssetSpecs"
@@ -353,6 +428,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { collectAssetApiService, type ActiveAssignment, type ReturnAssignmentDto } from '../../services/api/collectAssetApi'
 import { employeeApiService, type Employee } from '../../services/api/employeeApi'
+import { assetTypeService } from '../../services/api/assetTypeService'
+import { assetApiService } from '../../services/api/assetApi'
 import SearchableDropdown, { type Item } from '../../components/common/SearchableDropdown.vue'
 import NotesTextarea from '../../components/common/NotesTextarea.vue'
 import DatePicker from '../../components/ui/date/DatePicker.vue'
@@ -519,7 +596,30 @@ const confirmationDetails = computed(() => {
   }
 })
 
-// Computed property for selected asset specifications
+// Specification fields (dynamic based on asset type)
+interface SpecField {
+  key: string
+  label: string
+  type: 'text' | 'number' | 'dropdown' | 'textarea'
+  required?: boolean
+  placeholder?: string
+  options?: (string | { value: string; deprecated?: boolean })[]
+}
+
+const specificationFields = ref<SpecField[]>([])
+const assetSpecifications = reactive<Record<string, any>>({})
+const assetConditionDisplay = ref<string>('')
+
+// Computed property for selected asset object (for template condition)
+const selectedAssetObject = computed(() => {
+  if (!formData.assetId) return null
+  const selectedAssignment = assignedAssets.value.find(assignment => 
+    assignment.id.toString() === formData.assetId.toString()
+  )
+  return selectedAssignment?.asset || null
+})
+
+// Computed property for selected asset specifications (fallback)
 const selectedAssetSpecs = computed(() => {
   if (!formData.assetId) return null
   
@@ -527,7 +627,8 @@ const selectedAssetSpecs = computed(() => {
     assignment.id.toString() === formData.assetId.toString()
   )
   
-  const specs = selectedAssignment?.asset?.model?.specifications
+  // Use asset.specifications instead of model.specifications
+  const specs = selectedAssignment?.asset?.specifications
   if (!specs) return null
   
   // Handle different types of specifications
@@ -1234,10 +1335,112 @@ const handleRefurbishedConditionAutoSelect = () => {
   toastStore.showInfo('Info', 'Asset was issued in REFURBISHED condition. Collection condition has been automatically set to REFURBISHED.')
 }
 
+// Load specification template from asset type
+const loadAssetTypeTemplate = async (assetTypeId: number) => {
+  try {
+    const response = await assetTypeService.getAssetTypeById(assetTypeId)
+    let assetType = response.data.assetType
+    
+    // Handle case where specificationTemplate might be a string
+    let template = assetType.specificationTemplate
+    if (typeof template === 'string') {
+      try {
+        template = JSON.parse(template)
+      } catch (error) {
+        console.error('Failed to parse specification template JSON:', error)
+        template = undefined
+      }
+    }
+    
+    if (template && template.fields && Array.isArray(template.fields)) {
+      specificationFields.value = template.fields.filter((field: SpecField) => Boolean(field?.key))
+    } else {
+      specificationFields.value = []
+    }
+  } catch (error) {
+    console.error('Error loading asset type template:', error)
+    specificationFields.value = []
+  }
+}
+
+// Helper function to get column class for specification fields
+const getSpecFieldColumnClass = (index: number, fields: SpecField[], fieldType: string): string => {
+  // For textarea fields, use full width
+  if (fieldType === 'textarea') {
+    return 'col-12'
+  }
+  
+  // For other fields, use half width on medium screens and up
+  return 'col-md-6'
+}
+
+// Load asset details and populate specifications
+const loadAssetDetails = async (assetId: number) => {
+  try {
+    const response = await assetApiService.getAssetById(assetId)
+    const asset = response.data.asset
+
+    if (asset) {
+      // Set asset condition
+      if (asset.condition) {
+        // Format condition: capitalize first letter, rest lowercase
+        assetConditionDisplay.value = asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase()
+      } else {
+        assetConditionDisplay.value = ''
+      }
+      
+      // Load asset type template if asset type is available
+      if (asset.assetType?.id) {
+        await loadAssetTypeTemplate(asset.assetType.id)
+        
+        // Populate asset specifications from the asset data
+        if (asset.specifications && typeof asset.specifications === 'object') {
+          // Clear previous specifications
+          Object.keys(assetSpecifications).forEach(key => {
+            delete assetSpecifications[key]
+          })
+          
+          // Populate with asset specifications
+          Object.keys(asset.specifications).forEach(key => {
+            const value = asset.specifications[key]
+            // Convert null/undefined to empty string for display
+            assetSpecifications[key] = value !== null && value !== undefined ? value : ''
+          })
+        } else {
+          // Clear specifications if none available
+          Object.keys(assetSpecifications).forEach(key => {
+            delete assetSpecifications[key]
+          })
+        }
+      } else {
+        specificationFields.value = []
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching asset details:', error)
+    // Clear on error
+    specificationFields.value = []
+    Object.keys(assetSpecifications).forEach(key => {
+      delete assetSpecifications[key]
+    })
+    assetConditionDisplay.value = ''
+  }
+}
+
+// Clear asset details
+const clearAssetDetails = () => {
+  specificationFields.value = []
+  Object.keys(assetSpecifications).forEach(key => {
+    delete assetSpecifications[key]
+  })
+  assetConditionDisplay.value = ''
+}
+
 // Asset selection handler - sync with employee dropdown
-watch(() => selectedAsset.value, (newValue) => {
+watch(() => selectedAsset.value, async (newValue) => {
   if (!newValue?.value) {
     formData.assetBrandModel = ''
+    clearAssetDetails()
     return
   }
   
@@ -1246,16 +1449,37 @@ watch(() => selectedAsset.value, (newValue) => {
   
   if (!selectedAssignment) {
     formData.assetBrandModel = ''
+    clearAssetDetails()
     return
   }
   
   setBrandModelFromAssignment(selectedAssignment)
   autoSelectEmployeeFromAssignment(selectedAssignment)
   
+  // Load asset details for specifications
+  if (selectedAssignment.asset?.id) {
+    await loadAssetDetails(selectedAssignment.asset.id)
+  }
+  
   if (selectedAssignment.issueCondition === 'REFURBISHED') {
     handleRefurbishedConditionAutoSelect()
   }
 }, { immediate: true })
+
+// Also watch formData.assetId to load specifications when asset changes
+watch(() => formData.assetId, async (newAssetId) => {
+  if (!newAssetId) {
+    clearAssetDetails()
+    return
+  }
+  
+  const assignmentId = Number.parseInt(newAssetId.toString())
+  const selectedAssignment = assignedAssets.value.find(assignment => assignment.id === assignmentId)
+  
+  if (selectedAssignment?.asset?.id) {
+    await loadAssetDetails(selectedAssignment.asset.id)
+  }
+})
 
 // Helper function to update brand model for existing selection
 const updateBrandModelForExistingSelection = (newAssignments: ActiveAssignment[]) => {
