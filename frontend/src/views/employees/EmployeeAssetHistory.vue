@@ -577,9 +577,13 @@ export default {
     },
     formatSpecificationLabel(key) {
       if (!key) return ''
-      return key
-        .replace(/[_\s]+/g, ' ')
-        .replace(/\b\w/g, (char) => char.toUpperCase())
+      let formatted = key
+      formatted = formatted.replaceAll('_', ' ')
+      formatted = formatted.replaceAll(/\s+/g, ' ')
+      return formatted
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
         .trim()
     },
     getAssetSpecificationEntries(item) {

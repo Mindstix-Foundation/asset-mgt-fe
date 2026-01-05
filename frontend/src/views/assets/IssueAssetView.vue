@@ -905,9 +905,9 @@ const clearSelectedAssetInfo = () => {
   assetCondition.value = ''
   // Clear specification fields
   specificationFields.value = []
-  Object.keys(assetSpecifications).forEach(key => {
+  for (const key of Object.keys(assetSpecifications)) {
     delete assetSpecifications[key]
-  })
+  }
 }
 
 // Load specification template from asset type
@@ -984,50 +984,56 @@ const formatSpecifications = (specs: any): string | null => {
   return null
 }
 
-const processAssetDetails = async (asset: any) => {
-  setAssetBrandModel(asset)
-  
-  // Set asset condition
-  if (asset.condition) {
-    // Format condition: capitalize first letter, rest lowercase
-    assetCondition.value = asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase()
-  } else {
-    assetCondition.value = ''
+const formatAssetCondition = (condition: string | null | undefined): string => {
+  if (!condition) {
+    return ''
   }
+  return condition.charAt(0).toUpperCase() + condition.slice(1).toLowerCase()
+}
+
+const clearAssetSpecifications = () => {
+  for (const key of Object.keys(assetSpecifications)) {
+    delete assetSpecifications[key]
+  }
+}
+
+const populateAssetSpecifications = (specifications: Record<string, any>) => {
+  clearAssetSpecifications()
   
-  // Load asset type template if asset type is available
-  if (asset.assetType?.id) {
-    await loadAssetTypeTemplate(asset.assetType.id)
-    
-    // Populate asset specifications from the asset data
-    if (asset.specifications && typeof asset.specifications === 'object') {
-      // Clear previous specifications
-      Object.keys(assetSpecifications).forEach(key => {
-        delete assetSpecifications[key]
-      })
-      
-      // Populate with asset specifications
-      Object.keys(asset.specifications).forEach(key => {
-        const value = asset.specifications[key]
-        // Convert null/undefined to empty string for display
-        assetSpecifications[key] = value !== null && value !== undefined ? value : ''
-      })
-    } else {
-      // Clear specifications if none available
-      Object.keys(assetSpecifications).forEach(key => {
-        delete assetSpecifications[key]
-      })
-    }
-  } else {
+  for (const key of Object.keys(specifications)) {
+    const value = specifications[key]
+    assetSpecifications[key] = value !== null && value !== undefined ? value : ''
+  }
+}
+
+const handleAssetTypeAndSpecifications = async (asset: any) => {
+  if (!asset.assetType?.id) {
     specificationFields.value = []
+    return
   }
-  
-  // Fallback: format specifications as text for display if no template fields
+
+  await loadAssetTypeTemplate(asset.assetType.id)
+
+  if (asset.specifications && typeof asset.specifications === 'object') {
+    populateAssetSpecifications(asset.specifications)
+  } else {
+    clearAssetSpecifications()
+  }
+}
+
+const handleFallbackSpecifications = (asset: any) => {
   if (specificationFields.value.length === 0) {
     selectedAssetSpecs.value = formatSpecifications(asset.specifications)
   } else {
     selectedAssetSpecs.value = null
   }
+}
+
+const processAssetDetails = async (asset: any) => {
+  setAssetBrandModel(asset)
+  assetCondition.value = formatAssetCondition(asset.condition)
+  await handleAssetTypeAndSpecifications(asset)
+  handleFallbackSpecifications(asset)
 }
 
 const loadAssetDetails = async (assetIdNumber: number) => {
@@ -1100,16 +1106,101 @@ const loadActiveEmployees = async () => {
   }
 }
 
+// Helper functions for onMounted
+const setDefaultAssignmentDate = () => {
+  const today = new Date()
+  const day = today.getDate().toString().padStart(2, '0')
+  const month = (today.getMonth() + 1).toString().padStart(2, '0')
+  const year = today.getFullYear()
+  formData.assignmentDate = `${day}-${month}-${year}`
+}
+
+const handlePreSelectedAsset = (hasExplicitReturnPath: boolean) => {
+  const selectedAssetId = localStorage.getItem('selectedAssetId')
+  const selectedAssetType = localStorage.getItem('selectedAssetType')
+  
+  if (!selectedAssetId || !selectedAssetType) {
+    return false
+  }
+  
+  if (!hasExplicitReturnPath) {
+    originPath.value = '/app/assets'
+  }
+  
+  const asset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
+  if (asset) {
+    selectedAsset.value = {
+      id: asset.id,
+      name: `${asset.assetId} - ${asset.serialNumber}`,
+      value: asset.id.toString()
+    }
+    formData.assetId = asset.id.toString()
+    formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
+    toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for issuing`)
+  } else {
+    toastStore.showError('Error', `Asset ${selectedAssetId} not found in available assets`)
+  }
+  
+  localStorage.removeItem('selectedAssetId')
+  localStorage.removeItem('selectedAssetType')
+  return true
+}
+
+const handlePreSelectedEmployee = (fromQuery: string | undefined, hasExplicitReturnPath: boolean) => {
+  const employeeIdFromQuery = route.query.employeeId as string
+  if (!employeeIdFromQuery) {
+    return false
+  }
+  
+  if (!fromQuery && !hasExplicitReturnPath) {
+    originPath.value = '/app/employees'
+  }
+  
+  const employeeId = Number.parseInt(employeeIdFromQuery)
+  const employee = activeEmployees.value.find(emp => Number(emp.id) === employeeId)
+  if (employee) {
+    selectedEmployee.value = {
+      id: employee.id,
+      name: `${employee.employeeId} - ${employee.firstName} ${employee.lastName}`,
+      value: employee.id.toString()
+    }
+    formData.employeeId = employee.id.toString()
+    toastStore.showInfo('Info', `Employee ${employee.firstName} ${employee.lastName} pre-selected for asset issue`)
+  } else {
+    toastStore.showError('Error', `Employee with ID ${employeeIdFromQuery} not found in active employees`)
+  }
+  return true
+}
+
+const determineOriginPath = (fromQuery: string | undefined, hasExplicitReturnPath: boolean) => {
+  if (hasExplicitReturnPath) {
+    return
+  }
+  
+  if (fromQuery === 'employees') {
+    originPath.value = '/app/employees'
+  } else if (fromQuery === 'assets') {
+    originPath.value = '/app/assets'
+  } else if (fromQuery === 'dashboard') {
+    originPath.value = '/app/dashboard'
+  }
+}
+
+const focusAppropriateField = (assetWasPreSelected: boolean) => {
+  nextTick(() => {
+    const focusField = assetWasPreSelected ? 'employeeId' : 'assetId'
+    const field = document.getElementById(focusField)
+    if (field) field.focus()
+  })
+}
+
 // Lifecycle
 onMounted(async () => {
-  // Make functions available globally
   ;(globalThis as any).scrollToFirstError = scrollToFirstError
   
-  // Set loading state
   isLoading.value = true
   
   try {
-    // Load data from APIs in parallel
     await Promise.all([
       loadAvailableAssets(),
       loadActiveEmployees()
@@ -1120,98 +1211,20 @@ onMounted(async () => {
     isLoading.value = false
   }
   
-  // Set today's date as default in dd-mm-yyyy format
-  const today = new Date()
-  const day = today.getDate().toString().padStart(2, '0')
-  const month = (today.getMonth() + 1).toString().padStart(2, '0')
-  const year = today.getFullYear()
-  formData.assignmentDate = `${day}-${month}-${year}`
+  setDefaultAssignmentDate()
   
-  // Determine explicit return path if provided
   const decodedReturnTo = decodeReturnToQuery(route.query.returnTo)
   const hasExplicitReturnPath = !!decodedReturnTo
   if (decodedReturnTo) {
     originPath.value = decodedReturnTo
   }
 
-  // Check if asset was pre-selected from assets page
-  const selectedAssetId = localStorage.getItem('selectedAssetId')
-  const selectedAssetType = localStorage.getItem('selectedAssetType')
   const fromQuery = route.query.from as string | undefined
+  const assetWasPreSelected = handlePreSelectedAsset(hasExplicitReturnPath)
   
-  if (selectedAssetId && selectedAssetType) {
-    // Came from assets page
-    if (!hasExplicitReturnPath) {
-      originPath.value = '/app/assets'
-    }
-    // Find the asset by assetId (not database ID)
-    const asset = availableAssets.value.find(asset => asset.assetId === selectedAssetId)
-    if (asset) {
-      // Set the selected asset for SearchableDropdown
-      selectedAsset.value = {
-        id: asset.id,
-        name: `${asset.assetId} - ${asset.serialNumber}`,
-        value: asset.id.toString()
-      }
-      formData.assetId = asset.id.toString()
-      formData.assetBrandModel = `${asset.brand.name} ${asset.model.name}`
-      
-      // Show success message for pre-selection
-      toastStore.showInfo('Info', `Asset ${selectedAssetId} pre-selected for issuing`)
-    } else {
-      toastStore.showError('Error', `Asset ${selectedAssetId} not found in available assets`)
-    }
-    
-    localStorage.removeItem('selectedAssetId')
-    localStorage.removeItem('selectedAssetType')
-  }
-  
-  // Check if employee was pre-selected from employee page
-  const employeeIdFromQuery = route.query.employeeId as string
-  if (employeeIdFromQuery) {
-    // Came from employees page unless explicitly overridden by from query
-    if (!fromQuery && !hasExplicitReturnPath) {
-      originPath.value = '/app/employees'
-    }
-  const employeeId = Number.parseInt(employeeIdFromQuery)
-  const employee = activeEmployees.value.find(emp => Number(emp.id) === employeeId)
-    if (employee) {
-      // Set the selected employee for SearchableDropdown
-      selectedEmployee.value = {
-        id: employee.id,
-        name: `${employee.employeeId} - ${employee.firstName} ${employee.lastName}`,
-        value: employee.id.toString()
-      }
-      formData.employeeId = employee.id.toString()
-      
-      // Show success message for pre-selection
-      toastStore.showInfo('Info', `Employee ${employee.firstName} ${employee.lastName} pre-selected for asset issue`)
-    } else {
-      toastStore.showError('Error', `Employee with ID ${employeeIdFromQuery} not found in active employees`)
-    }
-  }
-  
-  // If explicit origin provided in query, respect it
-  if (!hasExplicitReturnPath) {
-    if (fromQuery === 'employees') originPath.value = '/app/employees'
-    else if (fromQuery === 'assets') originPath.value = '/app/assets'
-    else if (fromQuery === 'dashboard') originPath.value = '/app/dashboard'
-  }
-  
-  // Focus on appropriate field
-  nextTick(() => {
-    // Determine which field to focus based on what was pre-selected
-    let focusField = 'assetId' // Default to asset field
-    
-    if (selectedAssetId && selectedAssetType) {
-      // Asset was pre-selected, focus on employee field
-      focusField = 'employeeId'
-    }
-    // Note: If employee was pre-selected, we keep the default 'assetId' focus
-    
-    const field = document.getElementById(focusField)
-    if (field) field.focus()
-  })
+  handlePreSelectedEmployee(fromQuery, hasExplicitReturnPath)
+  determineOriginPath(fromQuery, hasExplicitReturnPath)
+  focusAppropriateField(assetWasPreSelected)
 })
 
 </script>

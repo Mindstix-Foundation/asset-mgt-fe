@@ -117,13 +117,13 @@ const dynamicColumns = computed(() => {
   if (selectedAssetTypeDetails.value?.specificationTemplate?.fields) {
     const specFields = selectedAssetTypeDetails.value.specificationTemplate.fields
     
-    specFields.forEach((field: any) => {
+    for (const field of specFields) {
       columns.push({
         key: `spec_${field.key}`,
         label: field.label,
         required: field.required || false
       })
-    })
+    }
   }
   
   return columns

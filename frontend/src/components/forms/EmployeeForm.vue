@@ -598,23 +598,40 @@ const validateFieldType = (fieldName: string, value: any): boolean => {
   }
 }
 
-const validateFieldInline = async (fieldName: string) => {
-  // Handle SearchableDropdown fields (status)
-  if (fieldName === 'status') {
-    // Status field is only required in edit mode
-    if (!props.isEditMode) {
-      return true
-    }
-    
-    if (selectedStatus.value) {
+const validateStatusField = (fieldName: string): boolean => {
+  if (!props.isEditMode) {
+    return true
+  }
+  
+  if (selectedStatus.value) {
+    setFieldValid(fieldName)
+    applyValidationToSearchableDropdown(fieldName, 'valid')
+    return true
+  }
+  
+  setFieldError(fieldName, 'Status is required')
+  applyValidationToSearchableDropdown(fieldName, 'invalid')
+  return false
+}
+
+const validateNativeValidity = (fieldName: string, element: FormFieldElement): boolean => {
+  if ('checkValidity' in element && typeof (element as any).checkValidity === 'function') {
+    if ((element as any).checkValidity()) {
       setFieldValid(fieldName)
-      applyValidationToSearchableDropdown(fieldName, 'valid')
       return true
-    } else {
-      setFieldError(fieldName, 'Status is required')
-      applyValidationToSearchableDropdown(fieldName, 'invalid')
-      return false
     }
+    setFieldError(fieldName, (element as any).validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
+    return false
+  }
+  
+  // Elements without native validity (e.g., custom components) are considered valid if our custom validation passed
+  setFieldValid(fieldName)
+  return true
+}
+
+const validateFieldInline = async (fieldName: string) => {
+  if (fieldName === 'status') {
+    return validateStatusField(fieldName)
   }
 
   const value = formData[fieldName as keyof typeof formData]
@@ -639,19 +656,7 @@ const validateFieldInline = async (fieldName: string) => {
     return false
   }
 
-  // If the element supports native validity checking, use it; otherwise treat as valid
-  if ('checkValidity' in element && typeof (element as any).checkValidity === 'function') {
-    if ((element as any).checkValidity()) {
-      setFieldValid(fieldName)
-      return true
-    }
-    setFieldError(fieldName, (element as any).validationMessage || `${getFieldDisplayName(fieldName)} is invalid`)
-    return false
-  }
-
-  // Elements without native validity (e.g., custom components) are considered valid if our custom validation passed
-  setFieldValid(fieldName)
-  return true
+  return validateNativeValidity(fieldName, element)
 }
 
 const setFieldError = (fieldName: string, message: string) => {

@@ -821,7 +821,7 @@
         showStatusModal: false,
         showEmployeeModal: false,
         statusChangeEmployee: null,
-        isMobileView: window.innerWidth <= 576,
+        isMobileView: globalThis.window.innerWidth <= 576,
         isExporting: false,
         pendingEmployeeId: null
       }
@@ -1110,9 +1110,11 @@
       },
       formatSpecificationLabel(key) {
         if (!key) return ''
-        return key
-          .replace(/[_\s]+/g, ' ')
-          .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        let formatted = key
+        formatted = formatted.replaceAll('_', ' ')
+        formatted = formatted.replaceAll(/\s+/g, ' ')
+        formatted = formatted.replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
+        return formatted
           .split(' ')
           .filter(Boolean)
           .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -1367,24 +1369,24 @@
         })
       },
       persistModalSnapshot(employee) {
-        if (typeof window === 'undefined' || !employee?.id) return
+        if (globalThis.window === undefined || !employee?.id) return
         try {
           const snapshot = {
             employeeId: employee.id,
             data: employee,
             timestamp: Date.now()
           }
-          window.sessionStorage.setItem(EMPLOYEES_MODAL_STATE_KEY, JSON.stringify(snapshot))
+          globalThis.window.sessionStorage.setItem(EMPLOYEES_MODAL_STATE_KEY, JSON.stringify(snapshot))
         } catch (error) {
           console.warn('Failed to persist employees modal state:', error)
         }
       },
       restorePendingEmployeeSnapshot() {
-        if (typeof window === 'undefined') return
+        if (globalThis === undefined) return
         try {
-          const raw = window.sessionStorage.getItem(EMPLOYEES_MODAL_STATE_KEY)
+          const raw = globalThis.window.sessionStorage.getItem(EMPLOYEES_MODAL_STATE_KEY)
           if (!raw) return
-          window.sessionStorage.removeItem(EMPLOYEES_MODAL_STATE_KEY)
+          globalThis.window.sessionStorage.removeItem(EMPLOYEES_MODAL_STATE_KEY)
           const snapshot = JSON.parse(raw)
           if (snapshot?.employeeId && snapshot?.data) {
             this.pendingEmployeeId = snapshot.employeeId
@@ -1412,7 +1414,7 @@
         }
       },
       persistViewState() {
-        if (typeof window === 'undefined') return
+        if (globalThis === undefined) return
         const state = {
           searchTerm: this.searchTerm || '',
           selectedAssetCount: this.selectedAssetCount?.value ?? null,
@@ -1422,15 +1424,15 @@
           currentPage: this.currentPage
         }
         try {
-          window.sessionStorage.setItem(EMPLOYEES_VIEW_STATE_KEY, JSON.stringify(state))
+          globalThis.window.sessionStorage.setItem(EMPLOYEES_VIEW_STATE_KEY, JSON.stringify(state))
         } catch (error) {
           console.warn('Failed to persist employees view state:', error)
         }
       },
       restoreViewState() {
-        if (typeof window === 'undefined') return
+        if (globalThis === undefined) return
         try {
-          const raw = window.sessionStorage.getItem(EMPLOYEES_VIEW_STATE_KEY)
+          const raw = globalThis.window.sessionStorage.getItem(EMPLOYEES_VIEW_STATE_KEY)
           if (!raw) return
           const state = JSON.parse(raw)
           if (!state || typeof state !== 'object') return
@@ -1546,7 +1548,7 @@
       },
       // Handle window resize for responsive pagination
       handleResize() {
-        this.isMobileView = window.innerWidth <= 576
+        this.isMobileView = globalThis.window.innerWidth <= 576
       },
       // Load asset history for the selected employee
       async loadAssetHistory() {
@@ -1648,16 +1650,16 @@
     },
     mounted() {
       // Default to grid view on mobile screens
-      this.isGridView = window.innerWidth <= 576
+      this.isGridView = globalThis.window.innerWidth <= 576
       // Add click outside listener for dropdown
       document.addEventListener('click', this.handleClickOutside)
       // Add resize listener for responsive pagination
-      window.addEventListener('resize', this.handleResize)
+      globalThis.window.addEventListener('resize', this.handleResize)
     },
     unmounted() {
       // Cleanup event listeners
       document.removeEventListener('click', this.handleClickOutside)
-      window.removeEventListener('resize', this.handleResize)
+      globalThis.window.removeEventListener('resize', this.handleResize)
     },
     beforeRouteEnter(to, from, next) {
       next(vm => {

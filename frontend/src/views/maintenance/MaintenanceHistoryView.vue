@@ -337,7 +337,7 @@ const typeOptions = [
 ]
 
 const persistViewState = () => {
-  if (typeof window === 'undefined') return
+  if (globalThis.window === undefined) return
   try {
     const state = {
       filters: { ...filters.value },
@@ -347,16 +347,16 @@ const persistViewState = () => {
       currentPage: currentPage.value,
       showFilterDropdown: showFilterDropdown.value
     }
-    window.sessionStorage.setItem(MAINTENANCE_HISTORY_STATE_KEY, JSON.stringify(state))
+    globalThis.window.sessionStorage.setItem(MAINTENANCE_HISTORY_STATE_KEY, JSON.stringify(state))
   } catch (error) {
     console.warn('Failed to persist maintenance history view state:', error)
   }
 }
 
 const restoreViewState = () => {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis === 'undefined') return
   try {
-    const raw = window.sessionStorage.getItem(MAINTENANCE_HISTORY_STATE_KEY)
+    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_HISTORY_STATE_KEY)
     if (!raw) return
     const state = JSON.parse(raw) as {
       filters?: typeof filters.value,
@@ -530,9 +530,13 @@ const stripDescriptionField = (obj: Record<string, any>) => {
 
 const formatSpecificationLabel = (key?: string) => {
   if (!key) return ''
-  return key
-    .replace(/[_\s]+/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase())
+  let formatted = key
+  formatted = formatted.replaceAll('_', ' ')
+  formatted = formatted.replaceAll(/\s+/g, ' ')
+  return formatted
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
     .trim()
 }
 

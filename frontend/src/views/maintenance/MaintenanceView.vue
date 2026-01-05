@@ -1079,34 +1079,34 @@ const validateCancelForm = () => {
 }
 
 const persistMaintenanceModalSnapshot = (maintenance: MaintenanceRow | null) => {
-  if (typeof window === 'undefined' || !maintenance?.assetId) return
+  if (globalThis.window === undefined || !maintenance?.assetId) return
   try {
     const snapshot = {
       assetId: maintenance.assetId,
       data: maintenance,
       timestamp: Date.now()
     }
-    window.sessionStorage.setItem(MAINTENANCE_MODAL_STATE_KEY, JSON.stringify(snapshot))
+    globalThis.window.sessionStorage.setItem(MAINTENANCE_MODAL_STATE_KEY, JSON.stringify(snapshot))
   } catch (error) {
     console.warn('Failed to persist maintenance modal state:', error)
   }
 }
 
 const clearMaintenanceModalSnapshot = () => {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis === 'undefined') return
   try {
-    window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+    globalThis.window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
   } catch (error) {
     console.warn('Failed to clear maintenance modal state:', error)
   }
 }
 
 const restoreMaintenanceModalSnapshot = () => {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis === 'undefined') return
   try {
-    const raw = window.sessionStorage.getItem(MAINTENANCE_MODAL_STATE_KEY)
+    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_MODAL_STATE_KEY)
     if (!raw) return
-    window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+    globalThis.window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
     const snapshot = JSON.parse(raw) as { assetId?: string; data?: MaintenanceRow }
     if (snapshot?.assetId && snapshot?.data) {
       pendingMaintenanceAssetId.value = snapshot.assetId
@@ -1129,7 +1129,7 @@ const tryOpenPendingMaintenance = () => {
 }
 
 const persistMaintenanceViewState = () => {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis === 'undefined') return
   try {
     const state = {
       filters: { ...filters },
@@ -1141,16 +1141,16 @@ const persistMaintenanceViewState = () => {
       currentPage: currentPage.value,
       showFilterDropdown: showFilterDropdown.value
     }
-    window.sessionStorage.setItem(MAINTENANCE_VIEW_STATE_KEY, JSON.stringify(state))
+    globalThis.window.sessionStorage.setItem(MAINTENANCE_VIEW_STATE_KEY, JSON.stringify(state))
   } catch (error) {
     console.warn('Failed to persist maintenance view state:', error)
   }
 }
 
 const restoreMaintenanceViewState = () => {
-  if (typeof window === 'undefined') return
+  if (typeof globalThis === 'undefined') return
   try {
-    const raw = window.sessionStorage.getItem(MAINTENANCE_VIEW_STATE_KEY)
+    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_VIEW_STATE_KEY)
     if (!raw) return
     const state = JSON.parse(raw) as {
       filters?: typeof filters,
@@ -1380,9 +1380,11 @@ const filteredMaintenance = computed(() => {
 })
 
 const formatMaintenanceSpecificationLabel = (key: string) => {
-  return key
-    .replace(/[_\s]+/g, ' ')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  let formatted = key
+  formatted = formatted.replaceAll('_', ' ')
+  formatted = formatted.replaceAll(/\s+/g, ' ')
+  formatted = formatted.replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
+  return formatted
     .split(' ')
     .filter(Boolean)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

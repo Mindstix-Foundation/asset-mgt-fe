@@ -159,10 +159,10 @@
                   <!-- NEW: Specification Fields Builder -->
                   <div class="col-12 mt-0">
                     <div class="specification-builder">
-                      <label class="form-label mb-2">
+                      <div class="form-label mb-2">
                         <i class="fas fa-list me-2"></i>Specification Fields
                         <span class="text-muted">(Optional - Define custom fields for assets of this type)</span>
-                      </label>
+                      </div>
                       
                       <div v-if="formData.specFields && formData.specFields.length > 0" class="spec-fields-list">
                         <div 
@@ -173,18 +173,20 @@
                           <!-- Field Header Row -->
                           <div class="row g-2 align-items-start mb-2">
                             <div class="col-12 col-md-7 col-lg-7">
-                              <label class="form-label small fw-bold mb-2">Field Label</label>
+                              <label :for="`field-label-${index}`" class="form-label small fw-bold mb-2">Field Label</label>
                               <input 
                                 type="text" 
+                                :id="`field-label-${index}`"
                                 class="form-control" 
                                 v-model="field.label"
                                 placeholder="e.g., Operating System"
                               >
                             </div>
                             <div class="col-6 col-md-3 col-lg-3">
-                              <label class="form-label small fw-bold mb-2">Type</label>
+                              <label :for="`field-type-${index}`" class="form-label small fw-bold mb-2">Type</label>
                               <input 
                                 type="text" 
+                                :id="`field-type-${index}`"
                                 class="form-control" 
                                 value="Dropdown"
                                 readonly
@@ -192,21 +194,25 @@
                               >
                             </div>
                             <div class="col-6 col-md-2 col-lg-1">
-                              <label class="form-label small fw-bold mb-2 d-block">Required</label>
+                              <div class="form-label small fw-bold mb-2 d-block">Required</div>
                               <div class="form-check form-switch">
+                                <!-- NOSONAR: aria-checked is present via Vue binding on line 205, SonarQube static analyzer doesn't recognize Vue template syntax -->
                                 <input 
+                                  :id="`field-required-${index}`"
                                   class="form-check-input" 
                                   type="checkbox" 
                                   v-model="field.required"
                                   role="switch"
+                                  :aria-checked="field.required ? 'true' : 'false'"
+                                  aria-label="Required field"
                                 >
-                                <label class="form-check-label small">
+                                <label :for="`field-required-${index}`" class="form-check-label small">
                                   {{ field.required ? 'Yes' : 'No' }}
                                 </label>
                               </div>
                             </div>
                             <div class="col-12 col-md-2 col-lg-1 text-md-end">
-                              <label class="form-label small fw-bold mb-2 d-block text-md-end">Actions</label>
+                              <div class="form-label small fw-bold mb-2 d-block text-md-end">Actions</div>
                               <button 
                                 type="button" 
                                 class="btn btn-sm btn-red" 
@@ -222,7 +228,7 @@
                           
                           <!-- Dropdown Options Section -->
                           <div class="mt-2">
-                            <label class="form-label small fw-bold mb-1">Options</label>
+                            <div class="form-label small fw-bold mb-1">Options</div>
                             
                             <div class="row g-2 justify-content-between">
                               <div 
@@ -237,6 +243,7 @@
                                       <div class="col-10">
                                         <input 
                                           type="text" 
+                                          :id="`option-value-${index}-${optionIndex}`"
                                           class="form-control" 
                                           :class="{ 'bg-light': option.isExisting }"
                                           v-model="option.value"
@@ -248,11 +255,12 @@
                                       <div class="col-2">
                                         <div class="form-check form-switch">
                                           <input 
+                                            :id="`option-deprecated-${index}-${optionIndex}`"
                                             class="form-check-input" 
                                             type="checkbox" 
                                             v-model="option.deprecated"
                                           >
-                                          <label class="form-check-label small">
+                                          <label :for="`option-deprecated-${index}-${optionIndex}`" class="form-check-label small">
                                             {{ option.deprecated ? 'Hidden' : 'Visible' }}
                                           </label>
                                         </div>
@@ -275,11 +283,12 @@
                             </div>
 
                             <!-- Add New Option -->
-                            <label class="form-label small fw-bold mb-1 d-block mt-2">Add New Option</label>
+                            <label :for="`new-option-${index}`" class="form-label small fw-bold mb-1 d-block mt-2">Add New Option</label>
                             <div class="row g-2 align-items-center">
                               <div class="col-sm-8 col-md-5">
                                 <input 
                                   type="text" 
+                                  :id="`new-option-${index}`"
                                   class="form-control" 
                                   v-model="field.newOptionValue"
                                   placeholder="Add new option"
@@ -1520,7 +1529,7 @@ const buildSpecificationTemplate = () => {
   }
   
   const baseTemplate = originalSpecificationTemplate.value
-    ? JSON.parse(JSON.stringify(originalSpecificationTemplate.value))
+    ? structuredClone(originalSpecificationTemplate.value)
     : { version: 1, fields: [] as any[] }
 
   if (!Array.isArray(baseTemplate.fields)) {
@@ -1652,7 +1661,7 @@ const editAssetType = async (assetType: any) => {
     isEditingAssetType.value = true
     showFormCard.value = true
     originalSpecificationTemplate.value = detailedAssetType.specificationTemplate
-      ? JSON.parse(JSON.stringify(detailedAssetType.specificationTemplate))
+      ? structuredClone(detailedAssetType.specificationTemplate)
       : null
     
     formData.id = detailedAssetType.id
@@ -1748,6 +1757,106 @@ const loadItems = async () => {
   }
 }
 
+const buildEntityData = (): any => {
+  const data: any = {
+    name: formData.name.trim(),
+    description: formData.description.trim() || undefined
+  }
+  
+  if (isTypeEditMode.value && selectedEntityType.value === 'type') {
+    delete data.name
+  }
+  
+  if (selectedEntityType.value === 'type') {
+    if (!isTypeEditMode.value) {
+      data.categoryId = Number.parseInt(formData.categoryId)
+    }
+    
+    const template = buildSpecificationTemplate()
+    if (template) {
+      data.specificationTemplate = template
+    }
+  }
+  
+  if (selectedEntityType.value === 'model') {
+    data.brandId = Number.parseInt(formData.brandId)
+    data.assetTypeId = Number.parseInt(formData.assetTypeId)
+    data.specifications = parseSpecifications(formData.specifications)
+  }
+  
+  return data
+}
+
+const updateEntity = async (data: any) => {
+  switch (selectedEntityType.value) {
+    case 'category':
+      await assetCategoryService.updateAssetCategory(formData.id, data)
+      break
+    case 'type':
+      await assetTypeService.updateAssetType(formData.id, data)
+      break
+    case 'brand':
+      await brandService.updateBrand(formData.id, data)
+      break
+    case 'model':
+      await modelService.updateModel(formData.id, data)
+      break
+  }
+  toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} updated successfully!`)
+}
+
+const createEntity = async (data: any) => {
+  switch (selectedEntityType.value) {
+    case 'category':
+      await assetCategoryService.createAssetCategory(data)
+      break
+    case 'type':
+      await assetTypeService.createAssetType(data)
+      break
+    case 'brand':
+      await brandService.createBrand(data)
+      break
+    case 'model':
+      await modelService.createModel(data)
+      break
+  }
+  toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} created successfully!`)
+}
+
+const clearForm = () => {
+  for (const key of Object.keys(formData)) {
+    if (key === 'id') {
+      (formData as any)[key] = null
+    } else if (key === 'specFields') {
+      (formData as any)[key] = []
+    } else {
+      (formData as any)[key] = ''
+    }
+  }
+  isEditingAssetType.value = false
+  showFormCard.value = false
+  
+  selectedCategory.value = null
+  selectedBrand.value = null
+  selectedAssetType.value = null
+}
+
+const refreshDropdowns = async () => {
+  switch (selectedEntityType.value) {
+    case 'category':
+      await refreshCategories()
+      break
+    case 'type':
+      await refreshAssetTypes()
+      break
+    case 'brand':
+      await refreshBrands()
+      break
+    case 'model':
+      break
+  }
+}
+
 const saveEntity = async () => {
   if (!formData.name.trim()) {
     toastStore.showError('Error', 'Name is required')
@@ -1757,118 +1866,17 @@ const saveEntity = async () => {
   isSaving.value = true
   
   try {
-    let response
-    const data: any = {
-      name: formData.name.trim(),
-      description: formData.description.trim() || undefined
-    }
-    
-    if (isTypeEditMode.value && selectedEntityType.value === 'type') {
-      delete data.name
-    }
-    
-    // Add entity-specific fields
-    if (selectedEntityType.value === 'type') {
-      if (!isTypeEditMode.value) {
-        data.categoryId = Number.parseInt(formData.categoryId)
-      }
-      
-      // Build and save specification template
-      const template = buildSpecificationTemplate()
-      if (template) {
-        data.specificationTemplate = template
-      }
-    }
-    
-    if (selectedEntityType.value === 'model') {
-      data.brandId = Number.parseInt(formData.brandId)
-      data.assetTypeId = Number.parseInt(formData.assetTypeId)
-      
-      // Debug: Log the specifications input and output
-      const parsedSpecs = parseSpecifications(formData.specifications)
-      
-      data.specifications = parsedSpecs
-    }
+    const data = buildEntityData()
     
     if (formData.id) {
-      // Update existing item
-      switch (selectedEntityType.value) {
-        case 'category': {
-          await assetCategoryService.updateAssetCategory(formData.id, data)
-          break
-        }
-        case 'type': {
-          await assetTypeService.updateAssetType(formData.id, data)
-          break
-        }
-        case 'brand': {
-          await brandService.updateBrand(formData.id, data)
-          break
-        }
-        case 'model': {
-          await modelService.updateModel(formData.id, data)
-          break
-        }
-      }
-      toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} updated successfully!`)
+      await updateEntity(data)
     } else {
-      // Create new item
-      switch (selectedEntityType.value) {
-        case 'category': {
-          await assetCategoryService.createAssetCategory(data)
-          break
-        }
-        case 'type': {
-          await assetTypeService.createAssetType(data)
-          break
-        }
-        case 'brand': {
-          await brandService.createBrand(data)
-          break
-        }
-        case 'model': {
-          await modelService.createModel(data)
-          break
-        }
-      }
-      toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} created successfully!`)
+      await createEntity(data)
     }
     
-    // Clear form and hide card
-    for (const key of Object.keys(formData)) {
-      if (key === 'id') {
-        (formData as any)[key] = null
-      } else if (key === 'specFields') {
-        (formData as any)[key] = []
-      } else {
-        (formData as any)[key] = ''
-      }
-    }
-    isEditingAssetType.value = false
-    showFormCard.value = false
-    
-    // Reset SearchableDropdown selections
-    selectedCategory.value = null
-    selectedBrand.value = null
-    selectedAssetType.value = null
-    
+    clearForm()
     await loadItems()
-    
-    // Refresh relevant dropdowns after creating new items
-    switch (selectedEntityType.value) {
-      case 'category':
-        await refreshCategories()
-        break
-      case 'type':
-        await refreshAssetTypes()
-        break
-      case 'brand':
-        await refreshBrands()
-        break
-      case 'model':
-        // Models don't affect other dropdowns
-        break
-    }
+    await refreshDropdowns()
     
   } catch (error: any) {
     console.error('Error saving entity:', error)

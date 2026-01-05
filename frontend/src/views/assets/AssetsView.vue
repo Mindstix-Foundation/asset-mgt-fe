@@ -1647,11 +1647,11 @@ const paginationInfo = computed(() => {
 // Computed properties for filter tracking
 const specificationFiltersPayload = computed<Record<string, string>>(() => {
   const payload: Record<string, string> = {}
-  Object.entries(specificationFilterSelections).forEach(([key, item]) => {
+  for (const [key, item] of Object.entries(specificationFilterSelections)) {
     if (item?.value) {
       payload[key] = String(item.value)
     }
-  })
+  }
   return payload
 })
 
@@ -1691,62 +1691,70 @@ const getAssetsForSpecificationField = (excludeKey?: string) => {
   })
 }
 
+const createSpecificationItem = (fieldKey: string, value: string): Item => ({
+  id: `${fieldKey}-${value}`,
+  name: value,
+  value: value
+})
+
+const addAssetValuesToMap = (valuesMap: Map<string, Item>, fieldKey: string, assets: AssetDisplayItem[]) => {
+  for (const asset of assets) {
+    const rawValue = normalizeSpecificationValue(asset.specifications?.[fieldKey])
+    if (rawValue && !valuesMap.has(rawValue)) {
+      valuesMap.set(rawValue, createSpecificationItem(fieldKey, rawValue))
+    }
+  }
+}
+
+const addFieldOptionsToMap = (valuesMap: Map<string, Item>, fieldKey: string, options: (string | { value?: string })[]) => {
+  for (const option of options) {
+    const optionValue = typeof option === 'string' ? option : option?.value
+    if (optionValue && !valuesMap.has(optionValue)) {
+      valuesMap.set(optionValue, createSpecificationItem(fieldKey, optionValue))
+    }
+  }
+}
+
+const buildOptionsForField = (field: SpecificationFieldDefinition): Item[] => {
+  if (!field.key) {
+    return []
+  }
+
+  const valuesMap = new Map<string, Item>()
+  const relevantAssets = getAssetsForSpecificationField(field.key)
+
+  addAssetValuesToMap(valuesMap, field.key, relevantAssets)
+
+  if (Array.isArray(field.options)) {
+    addFieldOptionsToMap(valuesMap, field.key, field.options)
+  }
+
+  return Array.from(valuesMap.values())
+}
+
 const specificationFieldOptions = computed<Record<string, Item[]>>(() => {
   const optionsMap: Record<string, Item[]> = {}
 
-  specificationFields.value.forEach(field => {
-    if (!field.key) {
-      return
+  for (const field of specificationFields.value) {
+    if (field.key) {
+      optionsMap[field.key] = buildOptionsForField(field)
     }
-
-    const valuesMap = new Map<string, Item>()
-    const relevantAssets = getAssetsForSpecificationField(field.key)
-
-    relevantAssets.forEach(asset => {
-      const rawValue = normalizeSpecificationValue(asset.specifications?.[field.key!])
-      if (!rawValue) {
-        return
-      }
-      if (!valuesMap.has(rawValue)) {
-        valuesMap.set(rawValue, {
-          id: `${field.key}-${rawValue}`,
-          name: rawValue,
-          value: rawValue
-        })
-      }
-    })
-
-    if (Array.isArray(field.options)) {
-      field.options.forEach(option => {
-        const optionValue = typeof option === 'string' ? option : option?.value
-        if (!optionValue) return
-        if (!valuesMap.has(optionValue)) {
-          valuesMap.set(optionValue, {
-            id: `${field.key}-${optionValue}`,
-            name: optionValue,
-            value: optionValue
-          })
-        }
-      })
-    }
-
-    optionsMap[field.key] = Array.from(valuesMap.values())
-  })
+  }
 
   return optionsMap
 })
 
 watch(specificationFieldOptions, newOptions => {
   let selectionChanged = false
-  Object.entries(specificationFilterSelections).forEach(([key, item]) => {
-    if (!item) return
+  for (const [key, item] of Object.entries(specificationFilterSelections)) {
+    if (!item) continue
     const options = newOptions[key] || []
     const exists = options.some(option => option.value === item.value)
     if (!exists) {
       specificationFilterSelections[key] = null
       selectionChanged = true
     }
-  })
+  }
 
   if (selectionChanged) {
     debouncedLoadAssets()
@@ -1755,15 +1763,15 @@ watch(specificationFieldOptions, newOptions => {
 
 const clearSpecificationState = () => {
   specificationFields.value = []
-  Object.keys(specificationFilterSelections).forEach(key => {
+  for (const key of Object.keys(specificationFilterSelections)) {
     delete specificationFilterSelections[key]
-  })
+  }
 }
 
 const resetSpecificationSelections = () => {
-  Object.keys(specificationFilterSelections).forEach(key => {
+  for (const key of Object.keys(specificationFilterSelections)) {
     specificationFilterSelections[key] = null
-  })
+  }
 }
 
 const loadSpecificationFieldsForType = async (item: Item | null) => {
@@ -1790,11 +1798,11 @@ const loadSpecificationFieldsForType = async (item: Item | null) => {
       : []
 
     specificationFields.value = fields
-    fields.forEach(field => {
+    for (const field of fields) {
       if (field.key) {
         specificationFilterSelections[field.key] = null
       }
-    })
+    }
   } catch (error) {
     console.error('Error loading specification template:', error)
     specificationFields.value = []
@@ -1876,11 +1884,11 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
   
   const templateFields = detailedAsset.assetType?.specificationTemplate?.fields ?? []
   const labelMap: Record<string, string> = {}
-  templateFields.forEach(field => {
+  for (const field of templateFields) {
     if (field?.key) {
       labelMap[field.key] = field.label || formatLabel(field.key)
     }
-  })
+  }
   
   return {
     id: detailedAsset.assetId,

@@ -927,7 +927,7 @@ const formatFieldName = (fieldName: string): string => {
     'bluetooth': 'Bluetooth',
     'ethernet': 'Ethernet'
   }
-  return fieldMap[fieldName] || (fieldName as any).replaceAll(/([A-Z_])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase()).trim().replace(/\s+/g, ' ')
+  return fieldMap[fieldName] || (fieldName as any).replaceAll(/([A-Z_])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase()).trim().replaceAll(/\s+/g, ' ')
 }
 
 const shouldDisplayDetail = (key: string, value: any): boolean => {

@@ -462,11 +462,11 @@ const processAssetSpecifications = (payload: unknown): { specs: Record<string, a
 
 const extractDescriptionFromSpecsObject = (obj: Record<string, any>) => {
   const clone = { ...obj }
-  Object.keys(clone).forEach(key => {
+  for (const key of Object.keys(clone)) {
     if (key.toLowerCase() === 'description') {
       delete clone[key]
     }
-  })
+  }
   const specs = Object.keys(clone).length > 0 ? clone : null
   return { specs }
 }
@@ -488,9 +488,14 @@ const getAssetSpecificationEntries = (
 }
 
 const formatSpecificationLabel = (key: string): string => {
-  return key
-    .replace(/[_\s]+/g, ' ')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  let formatted = key
+  // Replace underscores with spaces
+  formatted = formatted.replaceAll('_', ' ')
+  // Replace multiple consecutive spaces with single space (regex needed for pattern matching)
+  formatted = formatted.replaceAll(/\s+/g, ' ')
+  // Add space between lowercase/number and uppercase (regex needed for pattern matching)
+  formatted = formatted.replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
+  return formatted
     .split(' ')
     .filter(Boolean)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))

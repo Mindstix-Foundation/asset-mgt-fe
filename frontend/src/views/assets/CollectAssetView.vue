@@ -1374,65 +1374,73 @@ const getSpecFieldColumnClass = (index: number, fields: SpecField[], fieldType: 
   return 'col-md-6'
 }
 
+const formatAssetCondition = (condition: string | null | undefined): string => {
+  if (!condition) {
+    return ''
+  }
+  return condition.charAt(0).toUpperCase() + condition.slice(1).toLowerCase()
+}
+
+const clearAssetSpecifications = () => {
+  for (const key of Object.keys(assetSpecifications)) {
+    delete assetSpecifications[key]
+  }
+}
+
+const populateAssetSpecifications = (specifications: Record<string, any>) => {
+  clearAssetSpecifications()
+  
+  for (const key of Object.keys(specifications)) {
+    const value = specifications[key]
+    assetSpecifications[key] = value !== null && value !== undefined ? value : ''
+  }
+}
+
+const handleAssetTypeAndSpecifications = async (asset: any) => {
+  if (!asset.assetType?.id) {
+    specificationFields.value = []
+    return
+  }
+
+  await loadAssetTypeTemplate(asset.assetType.id)
+
+  if (asset.specifications && typeof asset.specifications === 'object') {
+    populateAssetSpecifications(asset.specifications)
+  } else {
+    clearAssetSpecifications()
+  }
+}
+
+const handleLoadAssetError = (error: any) => {
+  console.error('Error fetching asset details:', error)
+  specificationFields.value = []
+  clearAssetSpecifications()
+  assetConditionDisplay.value = ''
+}
+
 // Load asset details and populate specifications
 const loadAssetDetails = async (assetId: number) => {
   try {
     const response = await assetApiService.getAssetById(assetId)
     const asset = response.data.asset
 
-    if (asset) {
-      // Set asset condition
-      if (asset.condition) {
-        // Format condition: capitalize first letter, rest lowercase
-        assetConditionDisplay.value = asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase()
-      } else {
-        assetConditionDisplay.value = ''
-      }
-      
-      // Load asset type template if asset type is available
-      if (asset.assetType?.id) {
-        await loadAssetTypeTemplate(asset.assetType.id)
-        
-        // Populate asset specifications from the asset data
-        if (asset.specifications && typeof asset.specifications === 'object') {
-          // Clear previous specifications
-          Object.keys(assetSpecifications).forEach(key => {
-            delete assetSpecifications[key]
-          })
-          
-          // Populate with asset specifications
-          Object.keys(asset.specifications).forEach(key => {
-            const value = asset.specifications[key]
-            // Convert null/undefined to empty string for display
-            assetSpecifications[key] = value !== null && value !== undefined ? value : ''
-          })
-        } else {
-          // Clear specifications if none available
-          Object.keys(assetSpecifications).forEach(key => {
-            delete assetSpecifications[key]
-          })
-        }
-      } else {
-        specificationFields.value = []
-      }
+    if (!asset) {
+      return
     }
+
+    assetConditionDisplay.value = formatAssetCondition(asset.condition)
+    await handleAssetTypeAndSpecifications(asset)
   } catch (error) {
-    console.error('Error fetching asset details:', error)
-    // Clear on error
-    specificationFields.value = []
-    Object.keys(assetSpecifications).forEach(key => {
-      delete assetSpecifications[key]
-    })
-    assetConditionDisplay.value = ''
+    handleLoadAssetError(error)
   }
 }
 
 // Clear asset details
 const clearAssetDetails = () => {
   specificationFields.value = []
-  Object.keys(assetSpecifications).forEach(key => {
+  for (const key of Object.keys(assetSpecifications)) {
     delete assetSpecifications[key]
-  })
+  }
   assetConditionDisplay.value = ''
 }
 
