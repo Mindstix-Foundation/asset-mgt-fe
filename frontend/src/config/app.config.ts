@@ -6,7 +6,7 @@
 export const appConfig = {
   // Application metadata
   app: {
-    name: 'TrackStix',
+    name: 'Pebble Asset Tracker',
     version: '1.0.0',
     description: 'Asset Management System',
   },

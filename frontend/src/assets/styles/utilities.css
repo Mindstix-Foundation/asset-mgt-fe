@@ -1,5 +1,5 @@
 /**
- * Utility Classes - TrackStix Theme
+ * Utility Classes - Pebble Asset Tracker Theme
  * Utility classes and helper styles
  */
 
@@ -24,7 +24,7 @@ body {
   padding-right: 1rem;
 }
 
-/* TrackStix Spacing and Typography */
+/* Pebble Asset Tracker Spacing and Typography */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 600;
@@ -108,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: scale(1); }
 }
 
-/* Alert Styles - TrackStix Theme with rounded corners */
+/* Alert Styles - Pebble Asset Tracker Theme with rounded corners */
 .alert {
   border-radius: 1rem;
 }
@@ -253,7 +253,7 @@ body .bg-dark,
 
 /* Button styling is now handled by buttons.css */
 
-/* FINAL OVERRIDE: Force all icons to use TrackStix palette colors */
+/* FINAL OVERRIDE: Force all icons to use Pebble Asset Tracker palette colors */
 /* This section has the highest priority to override any external CSS */
 
 /* Force FontAwesome icons to inherit color properly */

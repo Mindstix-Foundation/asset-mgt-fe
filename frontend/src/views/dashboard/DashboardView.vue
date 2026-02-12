@@ -495,7 +495,7 @@ const getCategoryBarClass = (name: string): string => {
 
 <style scoped>
 /**
- * Dashboard Page Styles - TrackStix Theme
+ * Dashboard Page Styles - Pebble Asset Tracker Theme
  * Dashboard specific styling and layout
  */
 

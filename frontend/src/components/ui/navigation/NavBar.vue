@@ -2,8 +2,13 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" aria-label="Main navigation">
     <div class="container-fluid">
       <!-- Logo and Brand -->
-      <RouterLink to="/app/dashboard" class="navbar-brand fw-bold">
-        Track<span class="brand-s">S</span>ti<span class="brand-x">x</span>
+      <RouterLink to="/app/dashboard" class="navbar-brand fw-bold d-flex align-items-center">
+        <img
+          :src="navLogo"
+          alt="Pebble Asset Tracker logo"
+          class="navbar-logo"
+        />
+        <span>Pebble Asset Tracker</span>
       </RouterLink>
       
       <!-- Mobile menu button -->
@@ -30,7 +35,7 @@
               {{ item.name }}
             </RouterLink>
           </li>
-          <li class="nav-item">
+          <li class="nav-item nav-item-disabled">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
               QR Scanner
             </a>
@@ -71,7 +76,7 @@
       <!-- Sidebar Header -->
       <div class="sidebar-header">
         <div class="sidebar-brand">
-          Track<span class="brand-s">S</span>ti<span class="brand-x">x</span>
+          Pebble Asset Tracker
         </div>
         <button class="sidebar-close-btn" @click="closeMobileMenu">
           <i class="fas fa-times"></i>
@@ -164,6 +169,7 @@ import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationDropdown from '@/components/notifications/NotificationDropdown.vue'
+import navLogo from '@/assets/logos/secondary/secondary-symbol.png'
 import { Modal } from 'bootstrap'
 
 const router = useRouter()
@@ -267,7 +273,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* TrackStix Color Variables */
+/* Pebble Asset Tracker Color Variables */
 :root {
   --bg-primary: #FFFFFF;
   --primary-light-gray: #F3F3F3;
@@ -280,7 +286,7 @@ onMounted(() => {
   --secondary-red: #E97676;
 }
 
-/* TrackStix brand styling */
+/* Pebble Asset Tracker brand styling */
 .brand-x {
   background: linear-gradient(to right, #0096FF 50%, var(--primary-black) 50%);
   -webkit-background-clip: text;
@@ -305,6 +311,13 @@ onMounted(() => {
   font-weight: 700;
   font-size: 1.25rem;
   color: var(--primary-black) !important;
+}
+
+.navbar-logo {
+  height: 42px;
+  width: 42px;
+  object-fit: contain;
+  margin-right: 0;
 }
 
 .navbar-brand i {
@@ -342,6 +355,21 @@ onMounted(() => {
 .navbar-nav .nav-link.active:focus {
   background-color: var(--primary-light-gray) !important;
   color: var(--primary-black) !important;
+}
+
+.navbar-nav .nav-item-disabled,
+.navbar-nav .nav-item-disabled .nav-link.disabled {
+  cursor: not-allowed !important;
+}
+
+.navbar-nav .nav-link.disabled {
+  cursor: not-allowed !important;
+  pointer-events: auto !important;
+}
+
+.navbar-nav .nav-link.disabled:hover,
+.navbar-nav .nav-link.disabled:focus {
+  cursor: not-allowed !important;
 }
 
 .navbar-nav .nav-link i {

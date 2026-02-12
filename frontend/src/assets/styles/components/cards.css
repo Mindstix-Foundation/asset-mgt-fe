@@ -41,11 +41,11 @@
 .progress-bar.bg-success { background-color: var(--secondary-green) !important; }
 .progress-bar.bg-secondary { background-color: var(--secondary-red) !important; }
 /**
- * Card Styles - TrackStix Theme
+ * Card Styles - Pebble Asset Tracker Theme
  * Modern card components with consistent styling
  */
 
-/* Card Styles - TrackStix Theme with rounded corners */
+/* Card Styles - Pebble Asset Tracker Theme with rounded corners */
 .card {
   border: 1px solid var(--element-gray);
   border-radius: 1rem;

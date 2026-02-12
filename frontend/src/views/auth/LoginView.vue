@@ -8,9 +8,11 @@
               <!-- Logo and Header -->
               <div class="text-center mb-4">
                 <div class="login-logo mb-3">
-                  <i class="fas fa-clipboard-check"></i>
+                  <img :src="loginLogo" alt="Pebble Asset Tracker logo" class="login-logo-img" />
                 </div>
-                <div class="brand-name mb-2">TrackStix</div>
+                <div class="brand-name mb-2">
+                  <img :src="brandLogo" alt="Pebble Asset Tracker wordmark" class="brand-logo-img" />
+                </div>
                 <p class="login-subtitle">Sign in to your Asset Management portal</p>
               </div>
 
@@ -104,6 +106,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import loginLogo from '@/assets/logos/primary/primary-symbol.png'
+import brandLogo from '@/assets/logos/primary/primary-wordmark.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -231,26 +235,30 @@ const handleLogin = async () => {
 .login-logo {
   width: 80px;
   height: 80px;
-  background: var(--primary-light-gray);
-  border: 2px solid var(--element-gray);
-  border-radius: 16px;
+  margin: 0 auto;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
 }
 
-.login-logo i {
-  font-size: 2rem;
-  color: var(--accent-navy);
+.login-logo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .brand-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.025em;
   margin-bottom: 0.5rem;
+}
+
+.brand-logo-img {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
 }
 
 .login-subtitle {
@@ -422,16 +430,12 @@ const handleLogin = async () => {
   }
   
   .brand-name {
-    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
   }
   
   .login-logo {
     width: 70px;
     height: 70px;
-  }
-  
-  .login-logo i {
-    font-size: 1.75rem;
   }
 }
 
@@ -441,16 +445,12 @@ const handleLogin = async () => {
   }
   
   .brand-name {
-    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
   }
   
   .login-logo {
     width: 60px;
     height: 60px;
-  }
-  
-  .login-logo i {
-    font-size: 1.5rem;
   }
 }
 </style> 

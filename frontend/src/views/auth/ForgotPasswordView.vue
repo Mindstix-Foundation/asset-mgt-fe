@@ -10,7 +10,7 @@
                 <div class="login-logo mb-3">
                   <i class="fas fa-key"></i>
                 </div>
-                <div class="brand-name mb-2">TrackStix</div>
+                <div class="brand-name mb-2">Pebble Asset Tracker</div>
                 <p class="login-subtitle">Reset your account password</p>
                 <p class="forgot-password-description">Enter your email address and we'll send you a link to reset your password.</p>
               </div>

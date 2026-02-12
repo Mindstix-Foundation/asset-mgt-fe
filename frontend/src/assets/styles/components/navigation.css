@@ -1,9 +1,9 @@
 /**
- * Navigation Styles - TrackStix Theme
+ * Navigation Styles - Pebble Asset Tracker Theme
  * Navigation bar and menu components
  */
 
-/* Navigation Bar - TrackStix Theme */
+/* Navigation Bar - Pebble Asset Tracker Theme */
 .navbar-dark.bg-primary {
   background-color: var(--bg-primary) !important;
   border-bottom: 1px solid var(--element-gray);

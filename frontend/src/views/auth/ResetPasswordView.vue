@@ -10,7 +10,7 @@
                 <div class="reset-password-logo mb-3">
                   <i class="fas fa-clipboard-check"></i>
                 </div>
-                <div class="brand-name mb-2">TrackStix</div>
+                <div class="brand-name mb-2">Pebble Asset Tracker</div>
                 <p class="reset-password-subtitle">Create your new password</p>
                 <p class="reset-password-description">Use at least 8 characters with a mix of letters, numbers, and symbols.</p>
               </div>
