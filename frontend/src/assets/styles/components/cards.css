@@ -246,6 +246,7 @@
 
 .stats-card-modern .progress-bar {
   border-radius: 1rem;
+  transition: width 0.5s ease;
 }
 
 /* Card Hover Effects */

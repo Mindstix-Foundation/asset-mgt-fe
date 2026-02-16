@@ -29,7 +29,7 @@
                   </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-primary" style="width: 100%"></div>
+                <div class="progress-bar bg-primary" :style="{ width: `${totalPercent.toFixed(1)}%` }"></div>
               </div>
             </div>
           </div>
@@ -200,7 +200,7 @@
                   </div>
                 </div>
                 <div class="progress asset-progress">
-                  <div class="progress-bar" :class="`progress-bar-${getCategoryClassByIndex(index)}`" :style="`width: ${item.percentage}%`"></div>
+                  <div class="progress-bar" :class="`progress-bar-${getCategoryClassByIndex(index)}`" :style="{ width: `${(assetDistributionDisplayPercent[index] ?? 0).toFixed(1)}%` }"></div>
                 </div>
                 </div>
               </div>
@@ -213,7 +213,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { dashboardApi } from '@/services/api/dashboardApi'
@@ -261,6 +261,21 @@ const recentActivities = ref<Array<{
 
 // Asset distribution data (dynamic list from backend)
 const assetDistribution = ref<Array<{ name: string; percentage: number; count?: number }>>([])
+// Animated widths for distribution bars (0 → percentage on load)
+const assetDistributionDisplayPercent = ref<number[]>([])
+
+watch(assetDistribution, (list) => {
+  const targetPercentages = list.map((item) => item.percentage)
+  assetDistributionDisplayPercent.value = list.map(() => 0)
+  nextTick(() => {
+    // Double rAF so the 0% state is painted before we set final widths (transition then runs)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        assetDistributionDisplayPercent.value = targetPercentages
+      })
+    })
+  })
+}, { immediate: true })
 
 // Extended color palette for asset types (repeats after initial set)
 const assetTypeColors = [
@@ -283,7 +298,13 @@ const getCategoryClassByIndex = (index: number): string => {
   return assetTypeColors[index % assetTypeColors.length]
 }
 
-// Percentages for top cards
+// Percentages for top cards (Total Assets: 100% when loaded, 0 when loading – animates on load)
+const totalPercent = computed(() => {
+  const total = dashboardStats.value.totalAssets
+  if (isLoadingStats.value || !total || total <= 0) return 0
+  return 100
+})
+
 const assignedPercent = computed(() => {
   const total = dashboardStats.value.totalAssets
   if (!total || total <= 0) return 0
@@ -566,6 +587,20 @@ const getCategoryBarClass = (name: string): string => {
   border-radius: 1rem;
   background-color: rgba(0, 0, 0, 0.05);
   overflow: hidden;
+}
+
+.asset-progress .progress-bar {
+  transition: width 0.6s ease-out;
+}
+
+.asset-progress .progress-bar-laptops,
+.asset-progress .progress-bar-monitors,
+.asset-progress .progress-bar-mobile,
+.asset-progress .progress-bar-accessories,
+.asset-progress .progress-bar-desktops,
+.asset-progress .progress-bar-tablets,
+.asset-progress .progress-bar-others {
+  transition: width 0.6s ease-out;
 }
 
 .asset-progress .progress-bar-laptops {

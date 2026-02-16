@@ -1,6 +1,6 @@
-# TrackStix - Intelligent Asset Management Platform
+# Pebble Asset Tracker - Intelligent Asset Management Platform
 
-> **🌟 An enterprise asset management system developed by Mindstix Foundation that simplifies and automates the complete lifecycle management of organizational assets. TrackStix provides comprehensive tracking, maintenance scheduling, and analytics for efficient asset management across educational institutions and enterprises.**
+> **🌟 An enterprise asset management system developed by Mindstix Foundation that simplifies and automates the complete lifecycle management of organizational assets. Pebble Asset Tracker provides comprehensive tracking, maintenance scheduling, and analytics for efficient asset management across educational institutions and enterprises.**
 
 ## 🎯 Project Vision & Problem Statement
 
@@ -15,7 +15,7 @@ Traditional asset management is a complex, time-consuming process that burdens o
 - 🎯 **Compliance Issues** - Difficulty maintaining audit trails and documentation
 
 ### Our Innovative Solution
-TrackStix revolutionizes asset management by providing an intelligent, automated platform that:
+Pebble Asset Tracker revolutionizes asset management by providing an intelligent, automated platform that:
 
 - 🚀 **Reduces Administrative Time by 70%+** - From hours to minutes
 - 🎯 **Real-time Visibility** - Complete asset lifecycle tracking and status monitoring
@@ -24,11 +24,11 @@ TrackStix revolutionizes asset management by providing an intelligent, automated
 - 🔔 **Proactive Alerts** - Maintenance reminders and overdue notifications
 - 🏢 **Enterprise-Ready** - Scalable for organizations of all sizes
 
-## 🌟 The TrackStix Difference
+## 🌟 The Pebble Asset Tracker Difference
 
-### Traditional Method vs TrackStix Solution
+### Traditional Method vs Pebble Asset Tracker Solution
 
-| Aspect | Traditional Method | TrackStix Solution |
+| Aspect | Traditional Method | Pebble Asset Tracker Solution |
 |--------|-------------------|-------------------|
 | **Asset Tracking** | Manual spreadsheets | Real-time digital tracking |
 | **Assignment Process** | 30+ minutes per asset | 2-3 minutes per asset |
@@ -40,7 +40,7 @@ TrackStix revolutionizes asset management by providing an intelligent, automated
 
 ## 🎯 Platform Overview
 
-TrackStix is a comprehensive SaaS platform designed to address key challenges in organizational asset management:
+Pebble Asset Tracker is a comprehensive SaaS platform designed to address key challenges in organizational asset management:
 
 ### 🎯 **Core Objectives**
 - **Complete Lifecycle Management** - Track assets from procurement to retirement
@@ -203,7 +203,7 @@ frontend/
    Create a `.env` file in the root directory:
    ```env
    VITE_API_BASE_URL=http://localhost:3000/api
-   VITE_APP_TITLE=TrackStix
+   VITE_APP_TITLE=Pebble Asset Tracker
    VITE_APP_VERSION=1.0.0
    ```
 
@@ -322,7 +322,7 @@ VITE_API_BASE_URL=http://localhost:3000/api
 VITE_API_TIMEOUT=30000
 
 # Application Settings
-VITE_APP_TITLE=TrackStix - Asset Management
+VITE_APP_TITLE=Pebble Asset Tracker - Asset Management
 VITE_APP_VERSION=1.0.0
 VITE_APP_ENVIRONMENT=development
 
@@ -414,7 +414,7 @@ Use Pinia stores for:
 ## 📖 API Integration & Backend
 
 ### Backend API Repository
-- **TrackStix Backend**: [asset-mgt-be](../asset-mgt-be) - NestJS backend providing robust APIs
+- **Pebble Asset Tracker Backend**: [asset-mgt-be](../asset-mgt-be) - NestJS backend providing robust APIs
 
 ### API Documentation
 The backend provides comprehensive REST APIs documented with Swagger:
@@ -527,7 +527,7 @@ VITE_ENABLE_DEBUG=true
 
 ## 🙏 Acknowledgments
 
-Special thanks to the Mindstix Foundation team for their contributions to making TrackStix a reality.
+Special thanks to the Mindstix Foundation team for their contributions to making Pebble Asset Tracker a reality.
 
 ---
 
@@ -541,7 +541,7 @@ Special thanks to the Mindstix Foundation team for their contributions to making
 
 ## 🔗 Related Repositories
 
-- **⚙️ Backend Repository**: [TrackStix Backend](../asset-mgt-be) - NestJS API server providing robust backend services
+- **⚙️ Backend Repository**: [Pebble Asset Tracker Backend](../asset-mgt-be) - NestJS API server providing robust backend services
 
 ---
 

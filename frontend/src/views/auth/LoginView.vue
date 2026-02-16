@@ -106,7 +106,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import loginLogo from '@/assets/logos/primary/primary-symbol.png'
+import loginLogo from '@/assets/logos/secondary/secondary-symbol.png'
 import brandLogo from '@/assets/logos/primary/primary-wordmark.png'
 
 const router = useRouter()
