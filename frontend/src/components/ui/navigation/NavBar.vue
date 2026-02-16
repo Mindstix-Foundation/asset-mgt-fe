@@ -8,7 +8,6 @@
           alt="Pebble Asset Tracker logo"
           class="navbar-logo"
         />
-        <span>Pebble Asset Tracker</span>
       </RouterLink>
       
       <!-- Mobile menu button -->
@@ -314,8 +313,8 @@ onMounted(() => {
 }
 
 .navbar-logo {
-  height: 42px;
-  width: 42px;
+  height: 40px;
+  width: 40px;
   object-fit: contain;
   margin-right: 0;
 }

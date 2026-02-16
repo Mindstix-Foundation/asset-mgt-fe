@@ -1106,6 +1106,14 @@ const validateFieldInline = async (fieldName: string) => {
     }
   }
 
+  // Check for custom field types that need API validation (serialNumber, location, notes)
+  // Note: purchaseDate, purchaseCost, warrantyStartDate, warrantyEndDate are handled by validationHandlers above
+  const customValidationFields = ['serialNumber', 'location', 'notes']
+  if (customValidationFields.includes(fieldName)) {
+    console.log(`Field ${fieldName} uses custom validation, calling validateFieldType`)
+    return await validateFieldType(fieldName, value)
+  }
+
   // Check if field is required for standard fields
   if (!validateRequiredField(fieldName, value, element)) {
     console.log(`Field ${fieldName} failed required validation`)

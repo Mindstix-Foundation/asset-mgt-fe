@@ -1238,9 +1238,16 @@ onUnmounted(() => {
 
 /* .card styles removed — using global cards.css */
 
+/* Custom Report Builder Card - Ensure corners are visible */
+.reports-page .card.mb-5 {
+  border-radius: 1rem !important;
+  overflow: hidden !important; /* Keep overflow hidden for proper shadow/border containment */
+}
+
 .card-header {
   background: white !important;
   border-bottom: 1px solid var(--element-gray) !important;
+  border-radius: 1rem 1rem 0 0 !important;
   padding: 1rem 1.25rem !important;
   min-height: 70px !important;
   display: flex !important;
