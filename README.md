@@ -84,6 +84,9 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 - **Assignment History** - Complete historical record of asset usage
 - **Bulk Import** - CSV-based employee data import
 
+![Add New Employee](./screenshots/add-new-employee.png)
+*Streamlined employee registration form with validation*
+
 #### **5. Vendor Management**
 - **Vendor Profiles** - Centralized vendor information database
 - **Type Classification** - Supplier, Service Provider, Manufacturer, etc.
@@ -99,6 +102,16 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 - **Data Export** - Export reports in PDF, Excel, and CSV formats
 - **Dashboard Analytics** - Real-time metrics and KPIs
 - **Notification System** - In-app notifications for important events
+
+## 📸 Screenshots
+
+### Login & Authentication
+![Login Screen](./screenshots/login-screen.png)
+*Secure login interface for accessing the Pebble Asset Tracker platform*
+
+### Dashboard
+![Dashboard](./screenshots/dashboard.png)
+*Comprehensive dashboard showing key metrics, quick actions, recent activity, and asset distribution*
 
 ## 🚀 Tech Stack
 
@@ -236,6 +249,12 @@ The application will be available at `http://localhost:5173`
 - **Retirement Management** - Properly retire and dispose of assets
 - **Reactivation** - Bring retired assets back into service
 
+![Asset Management](./screenshots/asset-management.png)
+*Asset inventory listing with search, filters, and quick actions*
+
+![Add New Asset](./screenshots/add-new-asset.png)
+*Intuitive form for registering new assets with comprehensive details*
+
 #### **Assignment & Collection**
 - **Issue Assets** - Assign assets to employees with full documentation
 - **Collect Assets** - Process asset returns with condition verification
@@ -250,12 +269,21 @@ The application will be available at `http://localhost:5173`
 - **Automated Alerts** - Notifications for upcoming and overdue maintenance
 - **Maintenance History** - Complete maintenance logs and reports
 
+![Maintenance & Repairs](./screenshots/maintenance-repairs.png)
+*Maintenance tracking dashboard with status overview and detailed records*
+
+![Schedule Maintenance](./screenshots/schedule-maintenance.png)
+*Easy-to-use form for scheduling maintenance activities with asset selection*
+
 #### **Reports & Analytics**
 - **Asset Reports** - Comprehensive asset inventory and status reports
 - **Assignment Reports** - Employee-wise asset assignment reports
 - **Maintenance Reports** - Maintenance schedules and cost analysis
 - **Custom Reports** - Filter and export data in multiple formats
 - **Export Options** - PDF, Excel, and CSV export capabilities
+
+![Reports & Analytics](./screenshots/reports-analytics.png)
+*Comprehensive reporting interface with predefined and custom report builders*
 
 ### 🚀 **Frontend Technical Features**
 
