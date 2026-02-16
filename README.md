@@ -1,6 +1,6 @@
 # Pebble Asset Tracker - Intelligent Asset Management Platform
 
-> **🌟 An enterprise asset management system developed by Mindstix Foundation that simplifies and automates the complete lifecycle management of organizational assets. Pebble Asset Tracker provides comprehensive tracking, maintenance scheduling, and analytics for efficient asset management across educational institutions and enterprises.**
+> **🌟 An enterprise asset management system developed by Mindstix Foundation Trust that simplifies and automates the complete lifecycle management of organizational assets. Pebble Asset Tracker provides comprehensive tracking, maintenance scheduling, and analytics for efficient asset management in IT companies.**
 
 ## 🎯 Project Vision & Problem Statement
 
@@ -31,7 +31,7 @@ Pebble Asset Tracker revolutionizes asset management by providing an intelligent
 | Aspect | Traditional Method | Pebble Asset Tracker Solution |
 |--------|-------------------|-------------------|
 | **Asset Tracking** | Manual spreadsheets | Real-time digital tracking |
-| **Assignment Process** | 30+ minutes per asset | 2-3 minutes per asset |
+| **Assignment Process** | 10+ minutes per asset | 2-3 minutes per asset |
 | **Maintenance Scheduling** | Manual calendar management | Automated scheduling & alerts |
 | **Data Accuracy** | High error rate | Near zero (automated) |
 | **Reporting** | Hours of manual work | Instant automated reports |
@@ -49,7 +49,6 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 - **Real-time Tracking** - Live asset status and location monitoring
 - **Comprehensive Reporting** - Detailed analytics and customizable reports
 - **Audit Compliance** - Complete historical tracking and documentation
-- **Multi-role Access** - Role-based permissions for admins and users
 - **Vendor Management** - Centralized vendor information and service tracking
 
 ### 📝 **Core Modules**
@@ -61,7 +60,6 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 - **Status Management** - Available, Assigned, In Maintenance, Retired, Lost
 - **Condition Tracking** - Monitor asset condition: New, Good, Fair, Poor, Damaged, Refurbished
 - **Location Management** - Track physical location of assets
-- **Document Management** - Store purchase receipts, warranties, manuals
 - **Bulk Operations** - Import multiple assets via CSV for quick onboarding
 
 #### **2. Assignment Management**
@@ -75,7 +73,6 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 #### **3. Maintenance Management**
 - **Preventive Maintenance** - Schedule regular maintenance activities
 - **Corrective Maintenance** - Track repairs and fixes
-- **Vendor Integration** - Assign maintenance to service vendors
 - **Cost Tracking** - Record estimated and actual maintenance costs
 - **Status Monitoring** - Track maintenance status from scheduled to completed
 - **Automated Reminders** - Notifications for upcoming and overdue maintenance
@@ -85,31 +82,23 @@ Pebble Asset Tracker is a comprehensive SaaS platform designed to address key ch
 - **Employee Profiles** - Comprehensive employee information
 - **Asset Assignment Tracking** - View all assets assigned to each employee
 - **Assignment History** - Complete historical record of asset usage
-- **Self-service Portal** - Employees can view their assigned assets
 - **Bulk Import** - CSV-based employee data import
 
 #### **5. Vendor Management**
 - **Vendor Profiles** - Centralized vendor information database
 - **Type Classification** - Supplier, Service Provider, Manufacturer, etc.
 - **Contact Management** - Store contact details and communication history
-- **Service Tracking** - Track maintenance and support services
 - **Status Management** - Active/Inactive vendor status
 - **Bulk Import** - CSV-based vendor data import
 
-### 👥 **Multi-Role Access System**
-- **Admin Role** - Complete system administration, asset management, and reporting
-- **Manager Role** - Asset tracking, assignment management, and team oversight
-- **Employee Role** - View assigned assets and asset history
-- **Auditor Role** - Read-only access for compliance and audit purposes
 
 ### 🏢 **Enterprise Features**
-- **Multi-department Support** - Organize assets by departments and locations
 - **Advanced Search & Filters** - Quick asset discovery with multiple filter options
 - **Custom Categories** - Create custom asset categories, types, and attributes
 - **Comprehensive Audit Logs** - Track all system activities and changes
 - **Data Export** - Export reports in PDF, Excel, and CSV formats
 - **Dashboard Analytics** - Real-time metrics and KPIs
-- **Notification System** - Email and in-app notifications for important events
+- **Notification System** - In-app notifications for important events
 
 ## 🚀 Tech Stack
 
@@ -200,11 +189,11 @@ frontend/
    ```
 
 3. **Environment Configuration**
-   Create a `.env` file in the root directory:
+   Create a `.env` file in the root directory with the required environment variables. See the [Configuration](#-configuration) section below for complete environment variable details.
+   
+   **Minimum required for development:**
    ```env
    VITE_API_BASE_URL=http://localhost:3000/api
-   VITE_APP_TITLE=Pebble Asset Tracker
-   VITE_APP_VERSION=1.0.0
    ```
 
 4. **Start development server**
@@ -268,31 +257,9 @@ The application will be available at `http://localhost:5173`
 - **Custom Reports** - Filter and export data in multiple formats
 - **Export Options** - PDF, Excel, and CSV export capabilities
 
-### 👥 **For Employees**
-
-#### **Asset View**
-- **My Assets** - View all currently assigned assets
-- **Asset Details** - Detailed information about assigned assets
-- **Assignment History** - Historical record of all asset assignments
-- **Maintenance Status** - View maintenance schedules for assigned assets
-
-#### **Profile Management**
-- **Personal Information** - View and update profile details
-- **Contact Information** - Manage contact details
-- **Asset History** - Complete history of asset usage
-
-### 🔧 **For Managers**
-
-#### **Team Management**
-- **Team Assets** - View all assets assigned to team members
-- **Assignment Oversight** - Monitor and manage team asset assignments
-- **Maintenance Coordination** - Coordinate maintenance for team assets
-- **Reports** - Generate team-specific reports and analytics
-
 ### 🚀 **Frontend Technical Features**
 
 #### **User Interface & Experience**
-- **Responsive Design** - Mobile-first approach for all screen sizes
 - **Intuitive Navigation** - Clean, user-friendly interface
 - **Real-time Updates** - Live data updates without page refresh
 - **Search & Filters** - Advanced search with multiple filter options
@@ -316,6 +283,8 @@ The application will be available at `http://localhost:5173`
 ## 🔧 Configuration
 
 ### Environment Variables
+Create a `.env` file in the root directory with the following variables:
+
 ```env
 # API Configuration
 VITE_API_BASE_URL=http://localhost:3000/api
@@ -330,6 +299,8 @@ VITE_APP_ENVIRONMENT=development
 VITE_ENABLE_ANALYTICS=true
 VITE_ENABLE_DEBUG=false
 ```
+
+**Note:** The `VITE_API_BASE_URL` is the minimum required variable to get started. Other variables have default values if not specified.
 
 ### Build Configuration
 The application uses Vite for building and development. Configuration can be found in `vite.config.ts`.
@@ -348,12 +319,6 @@ The application uses Vite for building and development. Configuration can be fou
 
 3. **Deploy the `dist` folder** to your web server
 
-### Build Optimization
-- **Code Splitting** - Automatic route-based code splitting
-- **Tree Shaking** - Remove unused code
-- **Asset Optimization** - Minification and compression
-- **Lazy Loading** - Components loaded on demand
-
 ## 🔒 Security Considerations
 
 - **JWT Authentication** - Secure token-based authentication
@@ -369,14 +334,6 @@ The application uses Vite for building and development. Configuration can be fou
 - **Safari**: 14+
 - **Edge**: 90+
 - **Mobile Browsers**: iOS Safari, Chrome Mobile
-
-## 📱 Mobile Responsiveness
-
-The application is fully responsive with:
-- **Breakpoints**: Mobile-first responsive design
-- **Touch Gestures**: Optimized for touch interactions
-- **Performance**: Optimized for mobile networks
-- **Accessibility**: Screen reader compatible
 
 ## 🛠️ Development Guidelines
 
@@ -421,61 +378,6 @@ The backend provides comprehensive REST APIs documented with Swagger:
 - **Development**: `http://localhost:3000/api`
 - **Swagger UI**: `http://localhost:3000/api/docs`
 
-### Key API Endpoints
-
-#### **Authentication**
-- `POST /auth/login` - User authentication
-- `POST /auth/logout` - User logout
-- `POST /auth/refresh` - Refresh access token
-- `GET /auth/profile` - Get user profile
-- `POST /auth/change-password` - Change password
-- `POST /auth/forgot-password` - Request password reset
-- `POST /auth/reset-password` - Reset password with token
-
-#### **Asset Management**
-- `GET /assets` - Get all assets with pagination and filters
-- `GET /assets/:id` - Get asset details
-- `POST /assets` - Create new asset
-- `PUT /assets/:id` - Update asset
-- `DELETE /assets/:id` - Delete asset
-- `POST /assets/bulk-upload` - Bulk import assets from CSV
-- `POST /assets/:id/retire` - Retire an asset
-- `POST /assets/:id/reactivate` - Reactivate a retired asset
-
-#### **Assignment Management**
-- `GET /assignments` - Get all assignments
-- `GET /assignments/active` - Get active assignments
-- `POST /assignments` - Issue asset to employee
-- `POST /assignments/:id/return` - Collect asset from employee
-
-#### **Maintenance Management**
-- `GET /maintenance` - Get maintenance schedules
-- `GET /maintenance/:id` - Get maintenance details
-- `POST /maintenance` - Schedule new maintenance
-- `PUT /maintenance/:id` - Update maintenance
-- `POST /maintenance/:id/complete` - Mark maintenance as complete
-- `POST /maintenance/:id/cancel` - Cancel maintenance
-
-#### **Employee Management**
-- `GET /employees` - Get all employees
-- `GET /employees/:id` - Get employee details
-- `POST /employees` - Create new employee
-- `PUT /employees/:id` - Update employee
-- `DELETE /employees/:id` - Delete employee
-- `POST /employees/bulk-upload` - Bulk import employees
-
-#### **Vendor Management**
-- `GET /vendors` - Get all vendors
-- `GET /vendors/:id` - Get vendor details
-- `POST /vendors` - Create new vendor
-- `PUT /vendors/:id` - Update vendor
-- `DELETE /vendors/:id` - Delete vendor
-
-#### **Reports**
-- `GET /reports/assets` - Asset inventory report
-- `GET /reports/assignments` - Assignment report
-- `GET /reports/maintenance` - Maintenance report
-- `POST /reports/export` - Export custom report
 
 ## 🐛 Troubleshooting
 
@@ -527,7 +429,7 @@ VITE_ENABLE_DEBUG=true
 
 ## 🙏 Acknowledgments
 
-Special thanks to the Mindstix Foundation team for their contributions to making Pebble Asset Tracker a reality.
+Special thanks to the Mindstix Foundation Trust team for their contributions to making Pebble Asset Tracker a reality.
 
 ---
 
@@ -539,11 +441,7 @@ Special thanks to the Mindstix Foundation team for their contributions to making
 - **Project Manager** - Siddhant Raut
 - **Developers** - Uday Narsale & Nishant Bondre
 
-## 🔗 Related Repositories
-
-- **⚙️ Backend Repository**: [Pebble Asset Tracker Backend](../asset-mgt-be) - NestJS API server providing robust backend services
-
 ---
 
-**Part of the Mindstix Foundation Asset Management Platform**  
-*Simplifying asset management, empowering organizations, one asset at a time.*
+**Developed by Mindstix Foundation Trust**  
+*Simplifying asset management for IT companies, empowering organizations, one asset at a time.*
