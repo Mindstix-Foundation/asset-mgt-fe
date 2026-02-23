@@ -1,0 +1,66 @@
+/**
+ * Navigation Styles - Pebble Asset Tracker Theme
+ * Navigation bar and menu components
+ */
+
+/* Navigation Bar - Pebble Asset Tracker Theme */
+.navbar-dark.bg-primary {
+  background-color: var(--bg-primary) !important;
+  border-bottom: 1px solid var(--element-gray);
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
+}
+
+.navbar-brand {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+  color: var(--primary-dark-gray) !important;
+  transition: all 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: var(--primary-light-gray);
+  border-radius: 0.75rem;
+}
+
+.navbar-nav .nav-link.active {
+  color: inherit !important;
+  background-color: transparent;
+  border-radius: 0.75rem;
+  font-weight: 700;
+}
+
+/* Navbar text elements - for user info */
+.navbar .text-white {
+  color: var(--primary-dark-gray) !important;
+}
+
+/* Navbar toggler for mobile - dark icon */
+.navbar-toggler {
+  border-color: var(--element-gray);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2810, 10, 10, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Dropdown Menu Enhancements with rounded corners */
+.dropdown-menu {
+  border: 1px solid var(--mindstix-border);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  margin: 0.125rem;
+  color: var(--mindstix-dark);
+}
+
+.dropdown-item:hover {
+  background-color: var(--mindstix-hover);
+  /* Preserve original text color */
+}

@@ -1,0 +1,1272 @@
+/**
+ * Employee Management Pages Styles - Pebble Asset Tracker Theme
+ * SHARED styles used across multiple employee-related pages:
+ * - EmployeesView.vue
+ * - ManageEmployeesView.vue  
+ * - EmployeeAssetHistoryView.vue
+ * - AddEmployeeView.vue
+ * - EditEmployeeView.vue
+ * 
+ * View-specific styles should be in <style scoped> sections of each component
+ */
+
+/* =================================
+   SHARED EMPLOYEE COMPONENTS
+   Used across multiple views
+================================= */
+
+/* Employee Avatar (used in cards, tables, modals) */
+.employee-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.employee-avatar.online::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--secondary-green);
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.employee-avatar.offline::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--primary-mid-gray);
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+/* Small avatar variant for tables */
+.employee-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--secondary-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Employee Info Cell (used in tables across views) */
+.employee-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.employee-info-cell .employee-details h6 {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.125rem !important;
+}
+
+.employee-info-cell .employee-details p {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.875rem !important;
+  margin: 0 !important;
+}
+
+/* =================================
+   SHARED TABLE STYLES
+   Used in EmployeesView and ManageEmployeesView
+================================= */
+
+.employee-table {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+}
+
+.employee-table .table {
+  margin-bottom: 0 !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.employee-table .table thead th {
+  background-color: var(--primary-light-gray) !important;
+  border-bottom: 2px solid var(--element-gray) !important;
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+  padding: 1rem !important;
+  text-align: left !important;
+  position: sticky !important;
+  top: 0 !important;
+}
+
+.employee-table .table tbody td {
+  padding: 1rem !important;
+  border-bottom: 1px solid var(--element-gray) !important;
+  vertical-align: middle !important;
+}
+
+.employee-table .table tbody tr:hover {
+  background-color: var(--primary-light-gray) !important;
+}
+
+.employee-table .table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* (Removed unused SHARED STATUS BADGES that were not referenced in employees views) */
+
+/* =================================
+   SHARED EMPTY & LOADING STATES
+   Used across all employee views
+================================= */
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--primary-mid-gray);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state h4,
+.empty-state h5 {
+  color: var(--primary-mid-gray);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--primary-mid-gray);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  color: var(--secondary-purple);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  color: var(--primary-mid-gray);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* =================================
+   SHARED TIMELINE STYLES
+   Used in EmployeeAssetHistory and modals
+================================= */
+
+.asset-history-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.asset-history-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--element-gray);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child { 
+  margin-bottom: 0; 
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-white);
+  background: var(--primary-mid-gray);
+}
+
+/* Timeline marker colors based on event type */
+.timeline-asset-issued .timeline-marker { 
+  background: var(--secondary-green); 
+}
+
+.timeline-asset-returned .timeline-marker { 
+  background: var(--secondary-orange); 
+}
+
+.timeline-asset-lost .timeline-marker { 
+  background: var(--secondary-red); 
+}
+
+.timeline-asset-found .timeline-marker { 
+  background: var(--secondary-green); 
+}
+
+.timeline-content { 
+  background: #fafafa; 
+  border: 1px solid #e9ecef; 
+  border-radius: 0.5rem;
+  padding: 1rem; 
+}
+
+/* (Removed unused timeline badge styles: .badge-returned, .badge-duration) */
+
+/* =================================
+   SHARED MODAL EMPLOYEE STYLES
+   Used in employee detail modals
+================================= */
+
+.employee-modal .modal-content {
+  border-radius: 0.75rem;
+  border: none;
+  box-shadow: 0 10px 40px rgba(10, 10, 10, 0.15);
+}
+
+.employee-modal .modal-header {
+  background-color: var(--primary-light-gray);
+  border-bottom: 1px solid var(--element-gray);
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 1.5rem;
+}
+
+.employee-modal .modal-title {
+  color: var(--primary-black);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.employee-modal .modal-body {
+  padding: 2rem;
+}
+
+.employee-modal .modal-footer {
+  background-color: var(--primary-light-gray);
+  border-top: 1px solid var(--element-gray);
+  border-radius: 0 0 0.75rem 0.75rem;
+  padding: 1.5rem;
+}
+
+/* =================================
+   EMPLOYEES VIEW SPECIFIC STYLES
+   Moved from EmployeesView.vue scoped styles
+================================= */
+
+/* =================================
+   GRID VIEW - EMPLOYEE CARDS
+   Specific to grid view layout
+================================= */
+
+.employees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Employee card modern styling to match AssetsView */
+.employee-card-modern {
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.2s ease !important;
+  background-color: var(--primary-white) !important;
+}
+
+.employee-card-modern:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.employee-card-modern .card-body {
+  padding: 0.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+/* Employee actions footer in grid cards */
+.employee-actions-footer { 
+  border-top: 1px solid var(--primary-light-gray) !important; 
+  background-color: var(--primary-white) !important; 
+  margin-top: auto !important;
+  padding-top: 0.5rem !important;
+}
+
+/* =================================
+   EMPLOYEE TABLE - LIST VIEW
+   Specific table column widths for this view
+================================= */
+
+#employeesTable th:nth-child(1),
+#employeesTable td:nth-child(1) { /* Employee ID */
+  width: 11% !important;
+  min-width: 100px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(2),
+#employeesTable td:nth-child(2) { /* Name */
+  width: 25% !important;
+  min-width: 150px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(3),
+#employeesTable td:nth-child(3) { /* Email */
+  width: 25% !important;
+  min-width: 180px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(4),
+#employeesTable td:nth-child(4) { /* Phone */
+  width: 12% !important;
+  min-width: 120px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(5),
+#employeesTable td:nth-child(5) { /* Assets */
+  width: 8% !important;
+  min-width: 80px !important;
+  white-space: nowrap !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(6),
+#employeesTable td:nth-child(6) { /* Status */
+  width: 8% !important;
+  min-width: 80px !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+#employeesTable th:nth-child(7),
+#employeesTable td:nth-child(7) { /* Actions */
+  width: 11% !important;
+  min-width: 100px !important;
+  padding-right: 1.25rem !important;
+  padding-left: 0.25rem !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+/* =================================
+   EMPLOYEE DETAIL MODAL
+   Specific to the modal in this view
+================================= */
+
+/* Asset Info Sections - Compact Design */
+.asset-info-section-compact {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.section-title-compact {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.info-label-compact {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0 !important;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.info-value-compact {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+  color: #212529 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Expandable Assets Section */
+.assets-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.assets-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Detailed Asset Items in Modal */
+.assets-list-detailed {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.asset-item-detailed {
+  background-color: var(--primary-white) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.asset-item-detailed:last-child {
+  margin-bottom: 0 !important;
+}
+
+.asset-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.asset-icon-detailed {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 0.375rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.asset-icon-detailed i {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.asset-basic-info {
+  min-width: 0 !important;
+  flex-grow: 1 !important;
+}
+
+.asset-name-detailed {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.asset-meta-detailed {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+}
+
+.asset-assignment-details {
+  padding: 1rem;
+  background-color: var(--primary-white);
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Asset actions footer */
+.asset-actions-footer {
+  background-color: var(--primary-white);
+  padding: 0.75rem 1rem 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Assignment Divider */
+.assignment-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Notes Display */
+.notes-display {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  color: #495057;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e9ecef;
+}
+
+/* =================================
+   DROPDOWN MENU STYLES
+   Specific to this view's action dropdowns
+================================= */
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  z-index: 1050;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(51, 31, 234, 0.1);
+}
+
+.dropdown-item:active {
+  background-color: rgba(51, 31, 234, 0.2);
+  color: #331FEA;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-top: 1px solid #dee2e6;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+/* =================================
+   ANIMATIONS
+================================= */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form styling consistency */
+:deep(.form-label) {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+:deep(.form-control), :deep(.form-select) {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Fix search input group border-radius consistency */
+.input-group .input-group-text {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+}
+
+.input-group .form-control:not(:last-child) {
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+:deep(.form-control:focus), :deep(.form-select:focus) {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Assets List Styling */
+.assets-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.asset-item {
+  background-color: var(--primary-light-gray) !important;
+  border: 1px solid var(--element-gray) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+}
+
+.asset-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 1rem !important;
+  flex-shrink: 0 !important;
+}
+
+.asset-icon i {
+  color: white !important;
+  font-size: 1.1rem !important;
+}
+
+.asset-details {
+  min-width: 0 !important;
+}
+
+.asset-specifications .spec-header .info-label-compact {
+  font-weight: 600;
+  color: var(--primary-black);
+}
+
+.specifications-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.spec-inline-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.spec-inline-label {
+  font-weight: 700;
+  color: var(--primary-black);
+}
+
+.spec-inline-value {
+  color: var(--primary-black);
+}
+
+.asset-spec-description .spec-description-text {
+  white-space: pre-wrap;
+  color: var(--primary-black);
+}
+
+.asset-name {
+  color: var(--primary-black) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.asset-meta {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+.asset-actions {
+  display: flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* =================================
+   STATUS CONFIRMATION MODAL
+   Specific to this view
+================================= */
+
+.confirmation-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* =================================
+   ASSET HISTORY IN MODAL
+   Timeline styles specific to modal view
+================================= */
+
+.asset-history-section {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background-color: #fafafa;
+}
+
+.history-chevron {
+  transition: transform 0.3s ease;
+  font-size: 1.1rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.history-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.asset-history-expanded {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.timeline-connector {
+  position: absolute;
+  left: -1.5rem;
+  top: 2rem;
+  width: 2px;
+  height: calc(100% + 1rem);
+  background-color: #dee2e6;
+  z-index: 1;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-dot.assigned {
+  background-color: var(--secondary-green);
+  color: white;
+}
+
+.timeline-dot.returned {
+  background-color: var(--secondary-orange);
+  color: white;
+}
+
+.timeline-dot i {
+  font-size: 0.8rem;
+}
+
+.timeline-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.asset-icon-timeline {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.asset-icon-timeline i {
+  color: white !important;
+  font-size: 1.1rem !important;
+}
+
+.asset-basic-info-timeline {
+  min-width: 0 !important;
+  flex-grow: 1 !important;
+}
+
+.asset-name-timeline {
+  color: var(--primary-black) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.asset-meta-timeline {
+  color: var(--primary-mid-gray) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+}
+
+.timeline-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.timeline-details {
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+/* =================================
+   RESPONSIVE DROPDOWN IMPROVEMENTS
+================================= */
+
+/* Responsive dropdown positioning */
+.dropdown-menu-responsive {
+  /* Default: left-aligned for medium+ screens */
+  left: 0;
+  right: auto;
+}
+
+/* Small screens: right-aligned to prevent overflow */
+@media (max-width: 767.98px) {
+  .dropdown-menu-responsive {
+    left: auto;
+    right: 0;
+    max-width: calc(100vw - 2rem);
+    min-width: 200px;
+  }
+}
+
+/* =================================
+   SHARED RESPONSIVE STYLES
+   For all employee pages
+================================= */
+
+@media (max-width: 768px) {
+  .employee-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .employee-avatar-small {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+  
+  .employee-table {
+    overflow-x: auto;
+  }
+  
+  .employee-table .table {
+    min-width: 600px;
+  }
+  
+  .employee-info-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .employees-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  #employeesTable th:nth-child(2),
+  #employeesTable td:nth-child(2) { /* Name */
+      width: 25% !important;
+      min-width: 150px !important;
+      white-space: nowrap !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+  #employeesTable th:nth-child(3),
+  #employeesTable td:nth-child(3) { /* Email */
+      width: 25% !important;
+      min-width: 180px !important;
+      white-space: nowrap !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+  #employeesTable th:nth-child(4),
+  #employeesTable td:nth-child(4) { /* Phone */
+      width: 12% !important;
+      min-width: 120px !important;
+      white-space: nowrap !important;
+      text-overflow: ellipsis !important;
+      overflow: hidden !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+  #employeesTable th:nth-child(5),
+  #employeesTable td:nth-child(5) { /* Assets */
+      width: 8% !important;
+      min-width: 80px !important;
+      white-space: nowrap !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+  #employeesTable th:nth-child(6),
+  #employeesTable td:nth-child(6) { /* Status */
+      width: 8% !important;
+      min-width: 80px !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+  #employeesTable th:nth-child(7),
+  #employeesTable td:nth-child(7) { /* Actions */
+      width: 11% !important;
+      min-width: 100px !important;
+      padding-right: 1.25rem !important; /* extra right gutter to mirror left */
+      padding-left: 0.25rem !important;
+      text-align: left !important;
+      vertical-align: middle !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .employee-table .table thead th,
+  .employee-table .table tbody td {
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  .asset-history-timeline {
+    padding-left: 1.5rem;
+  }
+  
+  .timeline-marker {
+    left: -1.5rem;
+    width: 10px;
+    height: 10px;
+  }
+  
+  /* Mobile-first responsive improvements */
+  .container-fluid {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .card-body {
+    padding: 0.75rem !important;
+  }
+  
+  .modal-dialog {
+    margin: 0.5rem !important;
+  }
+  
+  .modal-content {
+    border-radius: 0.5rem !important;
+  }
+  
+  .table-responsive {
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .employee-card-modern {
+    margin-bottom: 1rem;
+  }
+  
+  .employee-card-modern .card-body {
+    padding: 1rem;
+  }
+
+  /* Mobile modal responsive adjustments */
+  .modal-header {
+    padding: 0.75rem 0.75rem 0 0.75rem !important;
+  }
+  
+  .modal-body {
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .modal-footer {
+    padding: 0 0.75rem 0.75rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+  
+  .modal-footer .d-flex {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  .modal-title {
+    font-size: 1.1rem !important;
+  }
+
+  /* Employee info sections mobile adjustments */
+  .employee-info-section-compact {
+    margin-bottom: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  .employee-info-section-compact .section-title-compact {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .employee-info-section-compact .info-label-compact {
+    font-size: 0.85rem !important;
+    min-width: unset !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .employee-info-section-compact .info-value-compact {
+    font-size: 0.9rem !important;
+    text-align: left !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Asset details mobile adjustments */
+  .section-title-compact {
+    padding: 0.5rem !important;
+    margin-top: 0.75rem !important;
+  }
+  
+  .asset-item-detailed {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .asset-header {
+    padding: 0.75rem !important;
+  }
+  
+  .asset-assignment-details {
+    padding: 0.75rem !important;
+  }
+  
+  /* Asset actions footer - mobile full width button */
+  .asset-actions-footer {
+    padding: 0.5rem 0.75rem 0.25rem 0.75rem !important;
+    margin-top: 0.25rem !important;
+  }
+  
+  .asset-actions-footer .btn {
+    width: 100% !important;
+  }
+  
+  .asset-icon-detailed {
+    width: 32px !important;
+    height: 32px !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .asset-name-detailed {
+    font-size: 0.9rem !important;
+  }
+  
+  .asset-meta-detailed {
+    font-size: 0.75rem !important;
+  }
+
+  /* Status confirmation modal mobile adjustments */
+  .confirmation-icon {
+    margin-bottom: 1rem !important;
+  }
+  
+  .confirmation-icon i {
+    font-size: 2rem !important;
+  }
+
+  /* Better text handling on mobile */
+  .employee-info-section-compact .info-item-compact {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.5rem 0 !important;
+  }
+
+  /* 2x2 buttons grid for mobile footer */
+  .mobile-actions-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-auto-rows: minmax(44px, auto) !important;
+    gap: 0.5rem !important;
+  }
+  
+  .mobile-actions-grid .btn {
+    width: 100% !important;
+  }
+  
+  /* Timeline mobile adjustments */
+  .timeline-dot {
+    left: -1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .timeline-connector {
+    left: -1rem;
+  }
+  
+  .timeline-badges {
+    flex-direction: row;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .asset-icon-timeline {
+    width: 32px !important;
+    height: 32px !important;
+    margin-right: 0.5rem !important;
+  }
+  
+  .asset-name-timeline {
+    font-size: 0.9rem !important;
+  }
+  
+  .asset-meta-timeline {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Tablet responsive improvements */
+@media (min-width: 577px) and (max-width: 991.98px) {
+  .employee-card-modern {
+    margin-bottom: 1.5rem;
+  }
+  
+  .modal-lg {
+    max-width: 90vw;
+  }
+
+  /* Tablet modal responsive adjustments */
+  .modal-header {
+    padding: 1rem 1rem 0 1rem !important;
+  }
+  
+  .modal-body {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .modal-footer {
+    padding: 0 1rem 1rem 1rem !important;
+  }
+  
+  .modal-footer .d-flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  
+  .modal-footer .btn {
+    flex: 1 1 auto !important;
+    min-width: 120px !important;
+  }
+
+  /* Employee info sections tablet adjustments */
+  .employee-info-section-compact {
+    padding: 0.65rem !important;
+  }
+  
+  .employee-info-section-compact .info-label-compact {
+    min-width: 120px !important;
+  }
+  
+  .employee-info-section-compact .info-value-compact {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Asset details tablet adjustments */
+  .asset-header {
+    padding: 0.85rem !important;
+  }
+  
+  .asset-assignment-details {
+    padding: 0.85rem !important;
+  }
+  
+  .asset-actions-footer {
+    padding: 0.65rem 0.85rem 0.4rem 0.85rem !important;
+    margin-top: 0.4rem !important;
+  }
+  
+  /* Timeline tablet adjustments */
+  .timeline-content {
+    padding: 0.85rem;
+  }
+  
+  .timeline-details {
+    padding: 0.65rem;
+  }
+}
+
+/* Large tablet adjustments */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .modal-lg {
+    max-width: 95vw;
+  }
+  
+  .row.g-2 .col-md-6 {
+    margin-bottom: 1rem;
+  }
+}

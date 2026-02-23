@@ -8,9 +8,11 @@
               <!-- Logo and Header -->
               <div class="text-center mb-4">
                 <div class="login-logo mb-3">
-                  <i class="fas fa-clipboard-check"></i>
+                  <img :src="loginLogo" alt="Pebble Asset Tracker logo" class="login-logo-img" />
                 </div>
-                <div class="brand-name mb-2">TrackStix</div>
+                <div class="brand-name mb-2">
+                  <img :src="brandLogo" alt="Pebble Asset Tracker wordmark" class="brand-logo-img" />
+                </div>
                 <p class="login-subtitle">Sign in to your Asset Management portal</p>
               </div>
 
@@ -19,7 +21,7 @@
                 <!-- Username Input with clear label -->
                 <div class="login-field-label mb-2">
                   <label for="username">
-                    <i class="fas fa-user me-2"></i>Employee ID or Email Address
+                    <i class="fas fa-user me-2"></i>Username, Employee ID, or Email Address
                   </label>
                 </div>
                 <div class="mb-4 position-relative">
@@ -28,8 +30,8 @@
                     v-model="loginForm.username"
                     type="text"
                     class="form-control login-input"
-                    placeholder="Enter your employee ID or email"
-                    aria-label="Employee ID or Email Address"
+                    placeholder="Enter your username, employee ID, or email"
+                    aria-label="Username, Employee ID, or Email Address"
                     :disabled="isLoading"
                     @input="clearError"
                   />
@@ -70,17 +72,17 @@
                 
                 <!-- Forgot Password -->
                 <div class="d-flex justify-content-end align-items-center mb-3">
-                  <a href="#" class="forgot-password-link">
+                  <router-link to="/forgot-password" class="forgot-password-link">
                     <i class="fas fa-key me-1"></i>
                     Forgot password?
-                  </a>
+                  </router-link>
                 </div>
                 
                 <!-- Login Button -->
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="login-btn w-100"
+                  class="btn btn-purple btn-lg w-100"
                   :class="{ loading: isLoading }"
                   aria-label="Sign in to your account"
                 >
@@ -104,6 +106,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import loginLogo from '@/assets/logos/secondary/secondary-symbol.png'
+import brandLogo from '@/assets/logos/primary/primary-wordmark.png'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -150,6 +154,9 @@ const handleLogin = async () => {
   // Set loading state
   isLoading.value = true
   
+  // Prevent global auth expired handler from redirecting during login
+  ;(globalThis as any).preventAuthExpiredRedirect = true
+  
   try {
     // Call the backend API
     const result = await authStore.login({
@@ -164,7 +171,7 @@ const handleLogin = async () => {
       loginError.value = result.error || 'Login failed'
       
       // Add shake animation
-      const loginBtn = document.querySelector('.login-btn') as HTMLElement
+      const loginBtn = document.querySelector('.btn.btn-purple') as HTMLElement
       if (loginBtn) {
         loginBtn.style.animation = 'shake 0.5s ease-in-out'
         setTimeout(() => {
@@ -176,12 +183,15 @@ const handleLogin = async () => {
     console.error('Login error:', error)
     loginError.value = 'An error occurred during login. Please try again.'
   } finally {
+    // Re-enable global handler after login attempt completes
+    ;(globalThis as any).preventAuthExpiredRedirect = false
     isLoading.value = false
   }
 }
 </script>
 
 <style scoped>
+@import url('../../assets/styles/components/buttons.css');
 /* Use styles from main.css - no need to duplicate CSS variables */
 
 /* Custom animations matching prototype */
@@ -225,26 +235,30 @@ const handleLogin = async () => {
 .login-logo {
   width: 80px;
   height: 80px;
-  background: var(--primary-light-gray);
-  border: 2px solid var(--element-gray);
-  border-radius: 16px;
+  margin: 0 auto;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
 }
 
-.login-logo i {
-  font-size: 2rem;
-  color: var(--accent-navy);
+.login-logo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .brand-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.025em;
   margin-bottom: 0.5rem;
+}
+
+.brand-logo-img {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
 }
 
 .login-subtitle {
@@ -274,7 +288,7 @@ const handleLogin = async () => {
   font-size: 1.1rem;
 }
 
-/* Login inputs matching prototype */
+/* Login inputs matching prototype - consistent styling for both username and password */
 .login-input {
   border: 2px solid var(--element-gray);
   border-radius: 8px;
@@ -285,6 +299,7 @@ const handleLogin = async () => {
   background: var(--bg-primary);
   color: var(--text-secondary);
   box-shadow: none;
+  width: 100%;
 }
 
 .login-input::placeholder {
@@ -292,12 +307,13 @@ const handleLogin = async () => {
   opacity: 0.8;
 }
 
+/* Consistent focus effect for both input fields */
 .login-input:focus {
-  border-color: var(--accent-navy);
-  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25);
-  outline: none;
-  background-color: var(--primary-white);
-  background-image: none;
+  border-color: var(--accent-navy) !important;
+  box-shadow: 0 0 0 3px rgba(26, 42, 67, 0.25) !important;
+  outline: none !important;
+  background-color: var(--primary-white) !important;
+  background-image: none !important;
 }
 
 .login-input:hover {
@@ -321,7 +337,7 @@ const handleLogin = async () => {
   padding: 6px;
   border-radius: 4px;
   transition: all 0.2s ease;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,6 +345,7 @@ const handleLogin = async () => {
   height: 36px;
   pointer-events: auto;
   outline: none;
+  appearance: none;
   -webkit-appearance: none;
 }
 
@@ -367,45 +384,8 @@ const handleLogin = async () => {
   text-decoration: underline;
 }
 
-/* Login button styling to match prototype exactly */
-.login-btn {
-  background: var(--secondary-purple);
-  border: none;
-  border-radius: 8px;
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--bg-primary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  min-height: 48px;
-  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.1);
-  text-shadow: 0 1px 1px rgba(10, 10, 10, 0.2);
-}
-
-.login-btn:hover:not(:disabled) {
-  background: var(--accent-navy);
-  color: var(--bg-primary);
-  text-decoration: none;
-  box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
-}
-
-.login-btn:active:not(:disabled) {
-  background: var(--primary-dark-gray);
-  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.1);
-}
-
-.login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.login-btn.loading {
+/* Loading state for login button */
+.btn.loading {
   pointer-events: none;
 }
 
@@ -450,16 +430,12 @@ const handleLogin = async () => {
   }
   
   .brand-name {
-    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
   }
   
   .login-logo {
     width: 70px;
     height: 70px;
-  }
-  
-  .login-logo i {
-    font-size: 1.75rem;
   }
 }
 
@@ -469,16 +445,12 @@ const handleLogin = async () => {
   }
   
   .brand-name {
-    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
   }
   
   .login-logo {
     width: 60px;
     height: 60px;
-  }
-  
-  .login-logo i {
-    font-size: 1.5rem;
   }
 }
 </style> 

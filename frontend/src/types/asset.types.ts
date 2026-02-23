@@ -1,52 +1,281 @@
-// Asset management types
+// Asset related types for the frontend application
 
+import type { Vendor } from './vendor.types'
+import type { User as AppUser } from './common.types'
+
+export interface AssetCategory {
+  id: number
+  name: string
+  description?: string
+}
+
+export interface SpecificationFieldDefinition {
+  key?: string
+  label?: string
+  type?: string
+  required?: boolean
+  options?: Array<{ value: string; deprecated?: boolean } | string>
+}
+
+export interface SpecificationTemplate {
+  fields?: SpecificationFieldDefinition[]
+  version?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface AssetType {
+  id: number
+  name: string
+  description?: string
+  category: AssetCategory
+  specificationTemplate?: SpecificationTemplate
+}
+
+export interface Brand {
+  id: number
+  name: string
+  description?: string
+}
+
+export interface Model {
+  id: number
+  name: string
+  specifications?: Record<string, any>
+  brand?: Brand
+  assetType?: AssetType
+}
+
+export interface AssetIssue {
+  id: number
+  issueDate: string
+  returnDate?: string
+  issueReason?: string
+  notes?: string
+  employee: {
+    id: number
+    employeeId: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+  issuedByUser: {
+    username: string
+  }
+}
+
+// Optimized Asset interface for table display (minimal fields)
 export interface Asset {
-  id: string
+  id: number
   assetId: string
   serialNumber: string
-  brand: string
-  model: string
-  category: AssetCategory
-  specifications: AssetSpecifications
-  purchaseDate?: string
-  warrantyEndDate?: string
   status: AssetStatus
-  assignedTo?: string
-  assignedDate?: string
+  condition: AssetCondition
+  assetType: AssetType
+  brand: Brand
+  model: Model
+  assetIssues?: AssetIssue[]
+  specifications?: Record<string, string>
+}
+
+// Full Asset interface for detailed view (includes all fields)
+export interface DetailedAsset {
+  id: number
+  assetId: string
+  serialNumber: string
+  status: AssetStatus
+  condition: AssetCondition
   location?: string
-  qrCode?: string
+  purchaseDate?: string
+  purchaseCost?: number
+  warrantyStartDate?: string
+  warrantyEndDate?: string
+  notes?: string
+  retirementDate?: string
+  retirementReason?: string
+  retirementNotes?: string
+  reactivationDate?: string
+  reactivationReason?: string
   createdAt: string
   updatedAt: string
+  assetType: AssetType
+  brand: Brand
+  model: Model
+  specifications?: Record<string, any>
+  vendor?: Vendor
+  createdByUser: AppUser
+  assetIssues?: AssetIssue[]
+  _count: {
+    assetIssues: number
+  }
 }
 
-export type AssetCategory = 'laptop' | 'monitor' | 'mobile' | 'tablet' | 'ipad' | 'accessories'
+export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+export type AssetCondition = 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
 
-export type AssetStatus = 'available' | 'assigned' | 'under_maintenance' | 'retired' | 'lost'
-
-export interface AssetSpecifications {
-  ram?: string
-  storage?: string
-  processor?: string
-  operatingSystem?: string
-  screenSize?: string
-  other?: Record<string, string>
+export interface AssetQueryParams {
+  page?: number
+  limit?: number
+  search?: string
+  assetTypeId?: number
+  brandId?: number
+  modelId?: number
+  vendorId?: number
+  status?: AssetStatus
+  condition?: AssetCondition
+  location?: string
+  specificationFilters?: Record<string, string>
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
-export interface AssetAssignment {
-  id: string
-  assetId: string
-  employeeId: string
-  assignedDate: string
-  returnDate?: string
+export interface CreateAssetDto {
+  assetId?: string
+  serialNumber: string
+  assetTypeId: number
+  brandId: number
+  modelId: number
+  vendorId?: number
+  status: AssetStatus
+  condition: AssetCondition
+  location: string
+  purchaseDate?: string
+  purchaseCost?: number
+  warrantyStartDate?: string
+  warrantyEndDate?: string
   notes?: string
-  status: 'active' | 'returned'
 }
 
-export interface AssetHistory {
+export interface UpdateAssetDto extends Partial<CreateAssetDto> {}
+
+export interface AssetStats {
+  totalAssets: number
+  available: number
+  assigned: number
+  inMaintenance: number
+  retired: number
+  lost: number
+}
+
+export interface PaginationInfo {
+  totalCount: number
+  currentPage: number
+  totalPages: number
+  hasNext: boolean
+  hasPrevious: boolean
+}
+
+export interface AssetListResponse {
+  message: string
+  data: {
+    assets: Asset[]
+    pagination: PaginationInfo
+  }
+}
+
+export interface AssetResponse {
+  message: string
+  data: {
+    asset: Asset
+  }
+}
+
+export interface AssetStatsResponse {
+  message: string
+  data: AssetStats
+}
+
+export interface SearchResult {
+  searchResults: Asset[]
+  searchQuery: string
+  totalFound: number
+  pagination: PaginationInfo
+}
+
+export interface SearchResponse {
+  message: string
+  data: SearchResult
+}
+
+// For the frontend display - computed properties (optimized for table)
+export interface AssetDisplayItem {
   id: string
-  assetId: string
-  action: 'assigned' | 'returned' | 'repaired' | 'retired'
-  performedBy: string
-  performedAt: string
-  details: string
+  type: string
+  brand: string
+  model: string
+  serialNumber: string
+  status: AssetStatus
+  assignedTo?: string
+  condition: AssetCondition
+  specifications?: Record<string, string>
+  specificationLabelMap?: Record<string, string>
+  // Additional fields for modal (populated when viewing details)
+  purchaseDate?: string
+  location?: string
+  category?: string
+  purchaseCost?: number
+  vendor?: string
+  warrantyEndDate?: string
+  warrantyStartDate?: string
+  notes?: string
+  // Assignment details
+  assignmentReason?: string
+  assignmentNotes?: string
+  assignmentDate?: string
+  assignedBy?: string
+  // Retirement details
+  retirementDate?: string
+  retirementReason?: string
+  retirementNotes?: string
+  // Reactivation details
+  reactivationDate?: string
+  reactivationReason?: string
+}
+
+// Filter options for dropdowns
+export interface FilterOptions {
+  assetTypes: Array<{ id: number; name: string }>
+  brands: Array<{ id: number; name: string }>
+  models: Array<{ id: number; name: string }>
+  vendors: Array<{ id: number; name: string }>
+}
+
+// Bulk upload types (renamed to avoid conflict with vendor bulk upload)
+export interface AssetBulkUploadResult {
+  imported: number
+  errors: Array<{
+    row: number
+    field: string
+    message: string
+    value?: string
+  }>
+  summary: {
+    totalRows: number
+    successfulImports: number
+    failedImports: number
+    validationErrors: number
+  }
+  // For validation-only responses
+  totalRows?: number
+  validRows?: number
+  invalidRows?: number
+  validationOnly?: boolean
+}
+
+export interface AssetBulkUploadResponse {
+  message: string
+  data: AssetBulkUploadResult
+}
+
+// Specification filter types
+export interface SpecificationCombination {
+  [key: string]: string
+}
+
+export interface UniqueSpecificationsResponse {
+  message: string
+  data: {
+    requiredSpecs: string[]
+    combinations: SpecificationCombination[]
+  }
 } 

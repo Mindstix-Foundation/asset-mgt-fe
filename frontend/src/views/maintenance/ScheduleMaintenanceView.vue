@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import MaintenanceForm from '@/components/maintenance/MaintenanceForm.vue'
+import MaintenanceForm from '@/components/forms/MaintenanceForm.vue'
 </script> 

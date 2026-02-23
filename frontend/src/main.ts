@@ -6,7 +6,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 // Import Font Awesome CSS
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
-import './assets/main.css'
+// Import application styles (includes variables, base, main, and form styles)
+import './assets/styles/index.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -23,5 +24,6 @@ app.use(router)
 // Initialize auth status from localStorage
 const authStore = useAuthStore()
 authStore.checkAuthStatus()
+
 
 app.mount('#app')

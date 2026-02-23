@@ -4,10 +4,10 @@
       <div class="col-12 col-lg-11 col-xl-10 col-xxl-9">
         <div class="card mx-auto" style="max-width: 100%; border-radius: 1.5rem !important; border: none !important; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;">
           <div class="card-body text-center py-5">
-            <div class="spinner-border text-primary" role="status">
+            <div class="spinner-border text-primary">
               <span class="visually-hidden">Loading...</span>
             </div>
-            <p class="mt-3 text-muted">Loading maintenance information...</p>
+            <output class="mt-3 text-muted">Loading maintenance information...</output>
           </div>
         </div>
       </div>
@@ -41,12 +41,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { maintenanceService } from '@/services/maintenanceService'
-import { showErrorToast } from '@/utils/toast'
-import MaintenanceForm from '@/components/maintenance/MaintenanceForm.vue'
+import { maintenanceService } from '@/services/business/maintenanceService'
+import { useToastStore } from '@/stores/toast'
+import MaintenanceForm from '@/components/forms/MaintenanceForm.vue'
 
 const router = useRouter()
 const route = useRoute()
+const toastStore = useToastStore()
 
 // Get maintenance ID from route
 const maintenanceId = computed(() => route.params.id as string)
@@ -71,9 +72,9 @@ const checkMaintenanceExists = async () => {
     loadError.value = true
     
     if (error.response?.status === 404) {
-      showErrorToast('Maintenance record not found.')
+      toastStore.showError('Error', 'Maintenance record not found.')
     } else {
-      showErrorToast('Failed to load maintenance data. Please try again.')
+      toastStore.showError('Error', 'Failed to load maintenance data. Please try again.')
     }
   } finally {
     isLoading.value = false

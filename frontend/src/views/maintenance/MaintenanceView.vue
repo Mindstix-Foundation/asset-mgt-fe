@@ -7,7 +7,7 @@
           <h2 class="mb-0" style="color: var(--primary-black);">Maintenance & Repairs</h2>
           <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
         </div>
-        <button class="btn btn-warning btn-modern" @click="navigateToSchedule">
+        <button class="btn btn-orange" @click="navigateToSchedule">
           <i class="fas fa-plus me-1"></i>Schedule Maintenance
         </button>
       </div>
@@ -30,11 +30,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-warning" :style="`width: ${stats.underMaintenancePercent}%`"></div>
               </div>
-              <div class="mt-2">
-                <small class="text-success">
-                  <i class="fas fa-arrow-up me-1"></i>3.2% increase this month
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -44,7 +39,7 @@
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body p-4">
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="stats-icon bg-info rounded-circle p-3">
+                <div class="stats-icon bg-primary rounded-circle p-3">
                   <i class="fas fa-calendar-alt fa-lg"></i>
                 </div>
                 <div class="text-end">
@@ -53,12 +48,7 @@
                 </div>
               </div>
               <div class="progress" style="height: 4px;">
-                <div class="progress-bar bg-info" :style="`width: ${stats.scheduledPercent}%`"></div>
-              </div>
-              <div class="mt-2">
-                <small class="text-info">
-                  <i class="fas fa-calendar me-1"></i>Next: Tomorrow
-                </small>
+                <div class="progress-bar bg-primary" :style="`width: ${stats.scheduledPercent}%`"></div>
               </div>
             </div>
           </div>
@@ -80,11 +70,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-success" :style="`width: ${stats.completedPercent}%`"></div>
               </div>
-              <div class="mt-2">
-                <small class="text-success">
-                  <i class="fas fa-arrow-up me-1"></i>15.2% this month
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -105,11 +90,6 @@
               <div class="progress" style="height: 4px;">
                 <div class="progress-bar bg-secondary" :style="`width: ${stats.cancelledPercent}%`"></div>
               </div>
-              <div class="mt-2">
-                <small class="text-danger">
-                  Cancelled this month
-                </small>
-              </div>
             </div>
           </div>
         </div>
@@ -119,82 +99,116 @@
       <div class="row mb-2">
         <div class="col-12">
           <div class="d-flex justify-content-end align-items-center" style="margin-top: -20px;">
-            <div class="status-indicator me-2"></div>
-            <small class="text-muted">Updated 1 Minute Ago</small>
+            <StatusIndicator variant="success" :size="8" class="me-2" />
+            <small class="text-muted d-flex align-items-center gap-2">
+              <span>Updated {{ lastStatsUpdated }}</span>
+              <span v-if="isStatsRefreshing" class="d-inline-flex align-items-center text-primary fw-semibold">
+                <i class="fas fa-spinner fa-spin me-1"></i>Refreshing…
+              </span>
+            </small>
           </div>
         </div>
       </div>
 
       <!-- Filters -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-12 col-md-3 mb-3">
-              <label class="form-label">Search Maintenance</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  v-model="filters.search"
-                  placeholder="Search by asset ID, vendor, issue..."
-                  @input="filterMaintenances"
+      <div class="mb-4">
+        <div class="row align-items-end">
+          <div class="col-12 col-lg-6 mb-3">
+            <div class="form-label">Search Maintenance</div>
+            <div class="search-input-container">
+              <i class="fas fa-search search-icon"></i>
+              <input 
+                id="mv-search"
+                type="text" 
+                class="form-control search-input" 
+                v-model="filters.search"
+                placeholder="Search by asset ID, issue..."
+                @input="filterMaintenances"
+              >
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-3 mb-3">
+            <SearchableDropdown
+              id="sort-by-filter"
+              label="Sort By"
+              placeholder="Select sort option..."
+              :items="sortOptions"
+              v-model="selectedSortBy"
+              @change="onSortByChange"
+            />
+          </div>
+
+          <div class="col-12 col-lg-3 mb-3">
+            <div class="row g-3">
+              <div class="col-2">
+                <button
+                  type="button"
+                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center"
+                  @click.prevent.stop="toggleSortOrder"
+                  :title="'Toggle Sort Order'"
                 >
+                  <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']"></i>
+                </button>
               </div>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Status</label>
-              <select class="form-select" v-model="filters.status" @change="filterMaintenancesImmediate">
-                <option value="">All Status</option>
-                <option value="SCHEDULED">Scheduled</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="CANCELLED">Cancelled</option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Maintenance Type</label>
-              <select class="form-select" v-model="filters.type" @change="filterMaintenancesImmediate">
-                <option value="">All Types</option>
-                <option value="Preventive">Preventive</option>
-                <option value="Corrective">Corrective</option>
-                <option value="Emergency">Emergency</option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Vendor</label>
-              <select class="form-select" v-model="filters.vendor" @change="filterMaintenancesImmediate" :disabled="vendorsLoading">
-                <option value="">All Vendors</option>
-                <option v-if="vendorsLoading" disabled>Loading vendors...</option>
-                <option 
-                  v-for="vendor in availableVendors" 
-                  :key="vendor.id" 
-                  :value="vendor.name"
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2"
+                  :class="{ disabled: !hasAnyMaintenanceSpecifications }"
+                  :disabled="!hasAnyMaintenanceSpecifications"
+                  @click.prevent.stop="toggleAllMaintenanceSpecifications"
+                  :title="areAllMaintenanceSpecsVisible ? 'Hide all specifications' : 'Show all specifications'"
                 >
-                  {{ vendor.name }}
-                </option>
-              </select>
-            </div>
-            <div class="col-12 col-md-2 mb-3">
-              <label class="form-label">Sort By</label>
-              <div class="d-flex gap-2">
-                <select class="form-select" v-model="sortBy" @change="sortMaintenances">
-                  <option value="assetId">Asset ID</option>
-                  <option value="status">Status</option>
-                  <option value="type">Maintenance Type</option>
-                  <option value="vendor">Vendor</option>
-                  <option value="scheduledDate">Date</option>
-                  <option value="cost">Cost</option>
-                </select>
-                <button class="btn btn-outline-secondary" @click="toggleSortOrder" title="Toggle Sort Order">
-                  <i :class="sortAscending ? 'fas fa-sort-amount-down' : 'fas fa-sort-amount-up'"></i>
+                  <i class="fas" :class="areAllMaintenanceSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  <span class="fw-semibold text-nowrap">
+                    {{ areAllMaintenanceSpecsVisible ? 'Hide Specs' : 'Show Specs' }}
+                  </span>
+                </button>
+              </div>
+              <div class="col-4">
+                <button
+                  class="btn btn-filter w-100"
+                  @click="toggleFilterDropdown"
+                  :class="{ active: showFilterDropdown }"
+                >
+                  <i class="fas fa-filter me-1"></i>Filters
                 </button>
               </div>
             </div>
-            <div class="col-12 col-md-1 mb-3 d-flex align-items-end">
-              <button class="btn btn-outline-secondary w-100" @click="clearFilters" title="Clear Filters">
-                <i class="fas fa-times"></i>
-              </button>
+          </div>
+        </div>
+
+        <div v-if="showFilterDropdown" class="mt-3 border rounded p-3 shadow-sm bg-white">
+          <div class="d-flex flex-column flex-md-row gap-2">
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="maintenance-type-filter"
+                label="Maintenance Type"
+                placeholder="Search types..."
+                :items="maintenanceTypeOptions"
+                v-model="selectedType"
+                @change="onTypeChange"
+              />
+            </div>
+            
+            <div class="flex-fill">
+              <SearchableDropdown
+                id="maintenance-status-filter"
+                label="Status"
+                placeholder="Search status..."
+                :items="statusOptions"
+                v-model="selectedStatus"
+                @change="onStatusChange"
+              />
+            </div>
+            
+            <div class="filter-clear-button-container">
+              <div class="d-flex align-items-end h-100">
+                <button class="btn btn-gray filter-clear-btn" @click="clearFilters" title="Clear All Filters">
+                  <i class="fas fa-times me-1"></i>Clear
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -202,10 +216,10 @@
 
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border text-primary">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-2 text-muted">Loading maintenance records...</p>
+        <output class="mt-2 text-muted">Loading maintenance records...</output>
       </div>
 
       <!-- Maintenance Table -->
@@ -214,98 +228,131 @@
           <thead class="table-light">
             <tr>
               <th>Asset ID</th>
+              <th>Asset Details</th>
+              <th>Serial Number</th>
+              <th>Est./Actual Cost</th>
+              <th>Date</th>
               <th>Type</th>
               <th>Status</th>
-              <th>Vendor/Assigned</th>
-              <th>Date</th>
-              <th>Est./Actual Cost</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr 
-              v-for="maintenance in filteredMaintenance" 
-              :key="maintenance.id"
-              :data-asset-id="maintenance.assetId"
-              :data-status="maintenance.status"
-              :data-type="maintenance.type"
-              :data-vendor="maintenance.vendor"
-            >
-              <td>
-                <strong>{{ maintenance.assetId }}</strong><br>
-                <small class="text-muted">{{ maintenance.assetName }}</small>
-              </td>
-              <td>
-                <span :class="`badge badge-type-${maintenance.type.toLowerCase()}`">
-                  {{ maintenance.type }}
-                </span>
-              </td>
-              <td>
-                <span :class="`badge badge-${maintenance.status.toLowerCase().replace('_', '-')}`">
-                  {{ formatStatus(maintenance.status) }}
-                </span>
-              </td>
-              <td>
-                <strong>{{ maintenance.vendor }}</strong><br>
-                <small class="text-muted">{{ maintenance.assignedTo }}</small>
-              </td>
-              <td>{{ formatDate(maintenance.scheduledDate) }}</td>
-              <td>
-                <strong>{{ maintenance.cost }}</strong><br>
-                <small class="text-muted">{{ maintenance.costType }}</small>
-              </td>
-              <td>
-                <div class="btn-group btn-group-sm maintenance-actions">
-                  <button 
-                    class="btn btn-action btn-view" 
-                    @click="showMaintenanceDetails(maintenance)"
-                    title="View Details"
-                  >
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'IN_PROGRESS'"
-                    class="btn btn-action btn-complete" 
-                    @click="openCompleteModal(maintenance)"
-                    title="Complete Maintenance"
-                  >
-                    <i class="fas fa-check"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'SCHEDULED'"
-                    class="btn btn-action btn-edit" 
-                    @click="navigateToEdit(maintenance)"
-                    title="Edit Maintenance"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'CANCELLED'"
-                    class="btn btn-action btn-reschedule" 
-                    @click="navigateToSchedule"
-                    title="Reschedule Maintenance"
-                  >
-                    <i class="fas fa-calendar-plus"></i>
-                  </button>
-                  <button 
-                    v-if="maintenance.status === 'COMPLETED'"
-                    class="btn btn-action btn-report" 
-                    @click="openReportModal(maintenance)"
-                    title="Generate Report"
-                  >
-                    <i class="fas fa-file-alt"></i>
-                  </button>
-                  <button 
-                    v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
-                    class="btn btn-action btn-cancel" 
-                    @click="openCancelModal(maintenance)"
-                    title="Cancel Maintenance"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
+            <template v-for="maintenance in filteredMaintenance" :key="maintenance.id">
+              <tr 
+                :data-asset-id="maintenance.assetId"
+                :data-status="maintenance.status"
+                :data-type="maintenance.type"
+                class="maintenance-row"
+                :class="{
+                  'has-specs': hasMaintenanceSpecifications(maintenance),
+                  expanded: expandedMaintenanceIds.includes(maintenance.id),
+                  'group-hover': hoveredMaintenanceId === maintenance.id
+                }"
+                @click="toggleMaintenanceRow(maintenance)"
+                @mouseenter="setHoveredMaintenance(maintenance.id)"
+                @mouseleave="setHoveredMaintenance(null)"
+              >
+                <td>
+                  <strong>{{ maintenance.assetId }}</strong>
+                </td>
+                <td>
+                  <div class="asset-details-cell">
+                    <div class="asset-model">{{ maintenance.assetModel || 'Unknown Model' }}</div>
+                    <div class="asset-type-brand">{{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="serial-cell">
+                    <div class="serial-number">{{ maintenance.serialNumber || 'N/A' }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="cost-cell">
+                    <div class="cost-amount">{{ maintenance.cost }}</div>
+                    <div class="cost-type">{{ maintenance.costType }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="date-cell">
+                    <div class="date-value">{{ formatDate(maintenance.relevantDate || '') }}</div>
+                    <div class="date-label">{{ getDateTypeLabel(maintenance.dateType || '') }}</div>
+                  </div>
+                </td>
+                <td>
+                  {{ formatMaintenanceType(maintenance.type) }}
+                </td>
+                <td>
+                  <span :class="['badge', getStatusBadgeClass(maintenance.status)]">
+                    {{ formatStatus(maintenance.status) }}
+                  </span>
+                </td>
+                <td @click.stop>
+                  <div class="btn-group btn-group-sm asset-actions">
+                    <button 
+                      class="btn btn-action btn-brown" 
+                      @click="showMaintenanceDetails(maintenance)"
+                      title="View Details"
+                    >
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button 
+                      v-if="maintenance.status === 'IN_PROGRESS'"
+                      class="btn btn-action btn-green" 
+                      @click="openCompleteModal(maintenance)"
+                      title="Complete Maintenance"
+                    >
+                      <i class="fas fa-check"></i>
+                    </button>
+                    <button 
+                      v-if="maintenance.status === 'SCHEDULED'"
+                      class="btn btn-action btn-purple" 
+                      @click="navigateToEdit(maintenance)"
+                      title="Edit Maintenance"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button 
+                      v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
+                      class="btn btn-action btn-purple" 
+                      @click="navigateToSchedule(maintenance)"
+                      title="Reschedule Maintenance"
+                    >
+                      <i class="fas fa-calendar-plus"></i>
+                    </button>
+                    
+                    <button 
+                      v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
+                      class="btn btn-action btn-red" 
+                      @click="openCancelModal(maintenance)"
+                      title="Cancel Maintenance"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                v-if="hasMaintenanceSpecifications(maintenance) && expandedMaintenanceIds.includes(maintenance.id)"
+                class="spec-row"
+                :class="{ 'group-hover': hoveredMaintenanceId === maintenance.id }"
+                @click.stop="toggleMaintenanceRow(maintenance)"
+                @mouseenter="setHoveredMaintenance(maintenance.id)"
+                @mouseleave="setHoveredMaintenance(null)"
+              >
+                <td colspan="8">
+                  <div class="spec-row-content">
+                    <span
+                      class="spec-item"
+                      v-for="spec in getMaintenanceSpecificationEntries(maintenance)"
+                      :key="`${maintenance.id}-${spec.label}`"
+                    >
+                      <strong>{{ spec.label }}:</strong>&nbsp;{{ spec.value }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </template>
             <tr v-if="filteredMaintenance.length === 0">
               <td colspan="7" class="text-center py-4">
                 <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
@@ -318,172 +365,244 @@
       </div>
 
       <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center mt-4">
-        <div class="text-muted">
-          <small>Showing {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }} maintenance records</small>
-        </div>
-        <AppPagination 
-          :current-page="currentPage" 
-          :total-pages="totalPages" 
-          @change="changePage" 
-        />
-      </div>
+      <AppPagination 
+        :current-page="currentPage" 
+        :total-pages="totalPages"
+        :start="paginationInfo.start"
+        :end="paginationInfo.end"
+        :total="paginationInfo.total"
+        item-name="maintenance records"
+        @change="changePage" 
+      />
     </div>
 
     <!-- Maintenance Detail Modal -->
-    <div class="modal fade" id="maintenanceDetailModal" tabindex="-1" ref="detailModal">
-      <div class="modal-dialog modal-lg">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showDetailModal }" 
+      :style="{ display: showDetailModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               Maintenance Details - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
-            <!-- Asset & Maintenance Info Section -->
-            <div class="maintenance-info-section">
-              <h6 class="section-title"><i class="fas fa-tools me-2"></i>Asset & Maintenance Information</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">Asset ID</div>
-                  <div class="info-value">{{ selectedMaintenance.assetId }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Asset</div>
-                  <div class="info-value">{{ selectedMaintenance.assetName }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Maintenance Type</div>
-                  <div class="info-value">
-                    <span :class="`badge badge-type-${selectedMaintenance.type.toLowerCase()}`">
-                      {{ selectedMaintenance.type }}
-                    </span>
+            <!-- Asset Information - Compact Layout (matching AssetsView.vue) -->
+            <div class="row g-2 equal-height-columns">
+              <!-- Left Column: Asset Info -->
+              <div class="col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-laptop me-2"></i>Asset Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Asset ID</div>
+                      <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetId }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Asset Name</div>
+                      <div class="info-value-compact fw-bold">{{ selectedMaintenance.assetName }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Serial Number</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.serialNumber || 'N/A' }}</div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Status</div>
-                  <div class="info-value">
-                    <span :class="`badge badge-${selectedMaintenance.status.toLowerCase().replace('_', '-')}`">
-                      {{ formatStatus(selectedMaintenance.status) }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Timeline & Assignment Section -->
-            <div class="timeline-info-section">
-              <h6 class="section-title"><i class="fas fa-calendar-alt me-2"></i>Timeline & Assignment</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">Scheduled Date</div>
-                  <div class="info-value">{{ formatDate(selectedMaintenance.scheduledDate) }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">Frequency</div>
-                  <div class="info-value">One-time</div>
-                </div>
-                <div class="col-md-12">
-                  <div class="info-label">Assigned To</div>
-                  <div class="info-value">{{ selectedMaintenance.assignedTo }} ({{ selectedMaintenance.vendor }})</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cost Information Section -->
-            <div class="cost-info-section">
-              <h6 class="section-title"><i class="bi bi-currency-rupee me-2"></i>Cost Information</h6>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="info-label">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
-                  <div class="info-value">{{ selectedMaintenance.cost }}</div>
-                </div>
-                <div class="col-md-6">
-                  <div class="info-label">{{ selectedMaintenance.costType === 'Actual' ? 'Estimated Cost' : 'Actual Cost' }}</div>
-                  <div class="info-value" :class="selectedMaintenance.status === 'COMPLETED' ? '' : 'text-muted'">
-                    {{ selectedMaintenance.status === 'COMPLETED' ? selectedMaintenance.cost : 
-                       selectedMaintenance.status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion' }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Description Section -->
-            <div class="description-section">
-              <h6 class="section-title"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
-              <div class="description-content">
-                <p><strong>Description:</strong> {{ selectedMaintenance.description }}</p>
-                
-                <p><strong>{{ selectedMaintenance.status === 'CANCELLED' ? 'Cancellation Details:' : 'Progress Notes:' }}</strong></p>
-                <ul class="service-notes">
-                  <li 
-                    v-for="note in selectedMaintenance.progressNotes" 
-                    :key="note"
-                    :style="selectedMaintenance.status === 'CANCELLED' ? 'color: var(--secondary-red)' : ''"
+                  <div
+                    v-if="hasMaintenanceSpecifications(selectedMaintenance)"
+                    class="spec-row-content mt-2"
                   >
-                    {{ note }}
-                  </li>
-                </ul>
+                    <span
+                      class="spec-item"
+                      v-for="spec in getMaintenanceSpecificationEntries(selectedMaintenance)"
+                      :key="`selected-${spec.label}`"
+                    >
+                      <strong>{{ spec.label }}:</strong>&nbsp;{{ spec.value }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Maintenance Information -->
+              <div class="col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-calendar-alt me-2"></i>Maintenance Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Maintenance Type</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.type }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Status</div>
+                      <div class="info-value-compact">
+                        <span :class="['badge', getStatusBadgeClass(selectedMaintenance.status)]">{{ formatStatus(selectedMaintenance.status) }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Scheduled Date</div>
+                      <div class="info-value-compact">{{ formatDate(selectedMaintenance.relevantDate || '') }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">Frequency</div>
+                      <div class="info-value-compact">One-time</div>
+                    </div>
+                    <div class="info-item-compact" v-if="selectedMaintenance.vendor !== 'Internal Team'">
+                      <div class="info-label-compact">Assigned To</div>
+                      <div class="info-value-compact">
+                        {{ selectedMaintenance.assignedTo || 'Not Assigned' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <!-- Cost & Description Row -->
+            <div class="row g-2 mt-2">
+              <div class="col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-rupee-sign me-2"></i>Cost Information</h6>
+                  <div class="info-grid-compact">
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Actual Cost' : 'Estimated Cost' }}</div>
+                      <div class="info-value-compact">{{ selectedMaintenance.cost }}</div>
+                    </div>
+                    <div class="info-item-compact">
+                      <div class="info-label-compact">{{ selectedMaintenance.costType === 'Actual' ? 'Estimated Cost' : 'Actual Cost' }}</div>
+                      <div class="info-value-compact" :class="selectedMaintenance.status === 'COMPLETED' ? '' : 'text-muted'">
+                        {{ selectedMaintenance.status === 'COMPLETED' ? selectedMaintenance.cost : selectedMaintenance.status === 'CANCELLED' ? 'N/A - Cancelled' : 'Pending completion' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="asset-info-section-compact h-100">
+                  <h6 class="section-title-compact"><i class="fas fa-clipboard-list me-2"></i>Maintenance Description</h6>
+                  <div class="description-content">
+                    <p><strong>Description:</strong> {{ selectedMaintenance.description }}</p>
+                    <p><strong>{{ selectedMaintenance.status === 'CANCELLED' ? 'Cancellation Details:' : 'Progress Notes:' }}</strong></p>
+                    <ul class="service-notes">
+                      <li v-for="note in selectedMaintenance.progressNotes" :key="note" :style="selectedMaintenance.status === 'CANCELLED' ? 'color: var(--secondary-red)' : ''">
+                        {{ note }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Maintenance History moved to dedicated page -->
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button 
-              v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
-              type="button" 
-              class="btn btn-success" 
-              @click="closeDetailAndOpenComplete"
-            >
-              <i class="fas fa-check me-1"></i>Complete Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'SCHEDULED'"
-              type="button" 
-              class="btn btn-warning" 
-              @click="navigateToEdit(selectedMaintenance)"
-            >
-              <i class="fas fa-edit me-1"></i>Edit Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'CANCELLED'"
-              type="button" 
-              class="btn btn-warning" 
-              @click="navigateToSchedule"
-            >
-              <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status === 'COMPLETED'"
-              type="button" 
-              class="btn btn-primary" 
-              @click="closeDetailAndOpenReport"
-            >
-              <i class="fas fa-file-alt me-1"></i>Generate Report
-            </button>
-            <button 
-              v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
-              type="button" 
-              class="btn btn-danger" 
-              @click="closeDetailAndOpenCancel"
-            >
-              <i class="fas fa-times me-1"></i>Cancel Maintenance
-            </button>
+            <!-- Mobile: 2x2 grid like EmployeesView -->
+            <div class="mobile-actions-grid d-md-none w-100">
+              <button 
+                v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
+                type="button" 
+                class="btn btn-green btn-sm" 
+                @click="closeDetailAndOpenComplete"
+              >
+                <i class="fas fa-check me-1"></i>Complete
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status === 'SCHEDULED'"
+                type="button" 
+                class="btn btn-orange btn-sm" 
+                @click="navigateToEdit(selectedMaintenance)"
+              >
+                <i class="fas fa-edit me-1"></i>Edit
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
+                type="button" 
+                class="btn btn-orange btn-sm" 
+                @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
+              >
+                <i class="fas fa-calendar-plus me-1"></i>Reschedule
+              </button>
+              <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Close</button>
+              <button type="button" class="btn btn-brown btn-sm" @click="openHistory">
+                <i class="fas fa-history me-1"></i>History
+              </button>
+              <button 
+                v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
+                type="button" 
+                class="btn btn-red btn-sm" 
+                @click="closeDetailAndOpenCancel"
+              >
+                <i class="fas fa-times me-1"></i>Cancel
+              </button>
+            </div>
+
+            <!-- Desktop: aligned like EmployeesView -->
+            <div class="d-none d-md-flex w-100 justify-content-between align-items-center">
+              <div>
+                <button type="button" class="btn btn-brown btn-sm" @click="openHistory">
+                  <i class="fas fa-history me-1"></i>History
+                </button>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Close</button>
+                <button 
+                  v-if="selectedMaintenance?.status === 'IN_PROGRESS'"
+                  type="button" 
+                  class="btn btn-green btn-sm" 
+                  @click="closeDetailAndOpenComplete"
+                >
+                  <i class="fas fa-check me-1"></i>Complete Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status === 'SCHEDULED'"
+                  type="button" 
+                  class="btn btn-orange btn-sm" 
+                  @click="navigateToEdit(selectedMaintenance)"
+                >
+                  <i class="fas fa-edit me-1"></i>Edit Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status && ['CANCELLED', 'COMPLETED'].includes(selectedMaintenance.status)"
+                  type="button" 
+                  class="btn btn-orange btn-sm" 
+                  @click="navigateToSchedule(selectedMaintenance as MaintenanceRow)"
+                >
+                  <i class="fas fa-calendar-plus me-1"></i>Reschedule Maintenance
+                </button>
+                <button 
+                  v-if="selectedMaintenance?.status && ['IN_PROGRESS', 'SCHEDULED'].includes(selectedMaintenance.status)"
+                  type="button" 
+                  class="btn btn-red btn-sm" 
+                  @click="closeDetailAndOpenCancel"
+                >
+                  <i class="fas fa-times me-1"></i>Cancel Maintenance
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Complete Maintenance Modal -->
-    <div class="modal fade" id="completeMaintenanceModal" tabindex="-1" ref="completeModal">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showCompleteModal }" 
+      :style="{ display: showCompleteModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               Complete Maintenance - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body" v-if="selectedMaintenance">
             <form @submit.prevent="completeMaintenance" class="needs-validation" novalidate ref="completeFormElement">
@@ -495,11 +614,11 @@
                 
                 <div class="mb-3">
                   <label for="actualCost" class="form-label">Actual Cost <span class="text-danger">*</span></label>
-                  <div class="input-group has-validation">
-                    <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                  <div class="search-input-container">
+                    <span class="search-icon">₹</span>
                     <input 
                       type="number" 
-                      :class="['form-control', { 'is-invalid': completeFormErrors.actualCost }]"
+                      :class="['form-control search-input', { 'is-invalid': completeFormErrors.actualCost }]"
                       id="actualCost"
                       v-model.number="completeForm.actualCost"
                       placeholder="0.00" 
@@ -510,9 +629,9 @@
                       title="Please enter the actual cost for this maintenance"
                       @input="completeFormErrors.actualCost = ''"
                     >
-                    <div class="invalid-feedback" v-if="completeFormErrors.actualCost">
-                      {{ completeFormErrors.actualCost }}
-                    </div>
+                  </div>
+                  <div class="invalid-feedback" v-if="completeFormErrors.actualCost">
+                    {{ completeFormErrors.actualCost }}
                   </div>
                   <div class="form-text">Enter the actual cost incurred for this maintenance activity (required)</div>
                 </div>
@@ -538,8 +657,8 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success" @click="completeMaintenance" :disabled="completeLoading">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeModals">Cancel</button>
+            <button type="button" class="btn btn-green btn-sm" @click="completeMaintenance" :disabled="completeLoading">
               <i :class="completeLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-check me-1'"></i>
               {{ completeLoading ? 'Completing...' : 'Complete Maintenance' }}
             </button>
@@ -549,14 +668,20 @@
     </div>
 
     <!-- Cancel Maintenance Modal -->
-    <div class="modal fade" id="cancelMaintenanceModal" tabindex="-1" ref="cancelModal">
+    <div 
+      v-if="selectedMaintenance" 
+      class="modal fade" 
+      :class="{ show: showCancelModal }" 
+      :style="{ display: showCancelModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header border-0 pb-0">
             <h5 class="modal-title d-flex align-items-center" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
               <i class="fas fa-times-circle me-2 text-danger"></i>Cancel Maintenance - {{ selectedMaintenance?.assetId }}
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn-close" @click="closeModals"></button>
           </div>
           <div class="modal-body pt-3" v-if="selectedMaintenance">
             <div class="cancel-maintenance-form">
@@ -589,25 +714,7 @@
                 </div>
               </div>
               
-              <!-- Cancellation Date -->
-              <div class="mb-3">
-                <label for="cancelDate" class="form-label fw-semibold" style="color: var(--primary-black);">
-                  Cancellation Date <span class="text-danger">*</span>
-                </label>
-                <input 
-                  type="date" 
-                  :class="['form-control', { 'is-invalid': cancelFormErrors.cancelDate }]"
-                  id="cancelDate" 
-                  v-model="cancelForm.cancelDate"
-                  required 
-                  style="border: 2px solid #e9ecef; border-radius: 8px; padding: 0.75rem;"
-                  @change="cancelFormErrors.cancelDate = ''"
-                >
-                <div class="invalid-feedback" v-if="cancelFormErrors.cancelDate">
-                  {{ cancelFormErrors.cancelDate }}
-                </div>
-                <small class="form-text text-muted">Date when maintenance is being cancelled</small>
-              </div>
+              <!-- Cancellation Date removed: now set by backend to current timestamp -->
               
               <!-- Cancellation Notes -->
               <div class="mb-3">
@@ -638,12 +745,10 @@
             </div>
           </div>
           <div class="modal-footer border-0 pt-0" style="background-color: #f8f9fa;">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" 
-                    style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+            <button type="button" class="btn btn-cancel btn-sm" data-bs-dismiss="modal">
               Keep Maintenance
             </button>
-            <button type="button" class="btn btn-danger" @click="cancelMaintenance" :disabled="cancelLoading"
-                    style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 500;">
+            <button type="button" class="btn btn-red btn-sm" @click="cancelMaintenance" :disabled="cancelLoading">
               <i :class="cancelLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-times me-1'"></i>
               {{ cancelLoading ? 'Cancelling...' : 'Confirm Cancellation' }}
             </button>
@@ -652,77 +757,29 @@
       </div>
     </div>
 
-    <!-- Generate Report Modal -->
-    <div class="modal fade" id="generateReportModal" tabindex="-1" ref="reportModal">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">Generate Maintenance Report</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body" v-if="selectedMaintenance">
-            <div class="generate-report-form">
-              <div class="mb-3">
-                <p><strong>Asset:</strong> {{ selectedMaintenance.assetName }} ({{ selectedMaintenance.assetId }})</p>
-                <p><strong>Maintenance:</strong> {{ selectedMaintenance.description }}</p>
-                <p><strong>Completed:</strong> {{ formatDate(selectedMaintenance.scheduledDate) }}</p>
-                <p><strong>Cost:</strong> {{ selectedMaintenance.cost }}</p>
-              </div>
-              
-              <div class="mb-3">
-                <label for="reportType" class="form-label">Report Type <span class="text-danger">*</span></label>
-                <select :class="['form-select', { 'is-invalid': reportFormErrors.reportType }]" id="reportType" v-model="reportForm.reportType" required @change="reportFormErrors.reportType = ''">
-                  <option value="">Select report type</option>
-                  <option value="summary">Summary Report</option>
-                  <option value="detailed">Detailed Report</option>
-                  <option value="cost-analysis">Cost Analysis</option>
-                  <option value="warranty">Warranty Report</option>
-                </select>
-                <div class="invalid-feedback" v-if="reportFormErrors.reportType">{{ reportFormErrors.reportType }}</div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="reportFormat" class="form-label">Format</label>
-                <select class="form-select" id="reportFormat" v-model="reportForm.reportFormat">
-                  <option value="pdf">PDF Document</option>
-                  <option value="excel">Excel Spreadsheet</option>
-                  <option value="word">Word Document</option>
-                </select>
-              </div>
-              
-              <div class="mb-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="includeTimeline" v-model="reportForm.includeTimeline">
-                  <label class="form-check-label" for="includeTimeline">
-                    Include maintenance timeline
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" @click="generateReport" :disabled="reportLoading">
-              <i :class="reportLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-download me-1'"></i>
-              {{ reportLoading ? 'Generating...' : 'Generate & Download' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Modal Backdrop -->
+    <div v-if="showDetailModal || showCompleteModal || showCancelModal" class="modal-backdrop fade show" @click="closeModals"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, reactive, type Ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { Modal } from 'bootstrap'
-import { maintenanceService } from '@/services/maintenanceService'
-import { fetchDashboardStats } from '@/services/api'
-import { showToast, showErrorToast } from '@/utils/toast'
-import AppPagination from '@/components/pagination/AppPagination.vue'
+import { ref, computed, onMounted, onUnmounted, reactive, watch, type Ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useRouteToast } from '@/composables/useRouteToast'
+import { maintenanceService } from '@/services/business/maintenanceService'
+import { useToastStore } from '@/stores/toast'
+import { formatDateOnly } from '@/utils/date'
+import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
+import { StatusIndicator } from '@/components/common'
 
 const router = useRouter()
+const route = useRoute()
+useRouteToast()
+const toastStore = useToastStore()
+const MAINTENANCE_MODAL_STATE_KEY = 'maintenanceModalState'
+const MAINTENANCE_VIEW_STATE_KEY = 'maintenanceViewState'
+let isRestoringMaintenanceViewState = false
 
 // Local type representing a table row in this view
 interface MaintenanceRow {
@@ -732,6 +789,9 @@ interface MaintenanceRow {
   assetType: string
   assetBrand: string
   assetModel: string
+  serialNumber: string // Add serial number field
+  specifications?: Record<string, any>
+  specificationLabelMap?: Record<string, string>
   maintenanceTypeId: string
   maintenanceTypeName: string
   type: string // For backward compatibility with template
@@ -739,7 +799,8 @@ interface MaintenanceRow {
   vendor: string
   vendorName: string | null
   assignedTo: string | null
-  scheduledDate: string
+  relevantDate: string | null
+  dateType: 'scheduled' | 'completion' | 'cancellation' | null
   cost: string
   costType: 'Estimated' | 'Actual'
   estimatedCost: number | null
@@ -753,10 +814,11 @@ interface MaintenanceRow {
 // Reactive data
 const maintenanceData: Ref<MaintenanceRow[]> = ref([])
 const isLoading = ref(false)
+const hasLoadedMaintenances = ref(false)
+const isStatsRefreshing = ref(false)
 const totalItems = ref(0)
 const totalPages = ref(1)
-const availableVendors = ref<Array<{id: string, name: string}>>([])
-const vendorsLoading = ref(false)
+// vendor state removed
 
 const filters = reactive({
   search: '',
@@ -770,35 +832,48 @@ const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
 
+// UI state for Assets-style filters
+const showFilterDropdown = ref(false)
+
+// Dropdown selections
+const selectedType = ref<Item | null>(null)
+const selectedStatus = ref<Item | null>(null)
+// vendor selection removed
+const selectedSortBy = ref<Item | null>(null)
+
+// Dropdown items
+const maintenanceTypeOptions = computed<Item[]>(() => [
+  { id: 'Preventive', name: 'Preventive', value: 'Preventive' },
+  { id: 'Corrective', name: 'Corrective', value: 'Corrective' },
+  { id: 'Emergency', name: 'Emergency', value: 'Emergency' },
+  { id: 'Upgrade', name: 'Upgrade', value: 'Upgrade' }
+])
+
+const statusOptions = computed<Item[]>(() => [
+  { id: 'SCHEDULED', name: 'Scheduled', value: 'SCHEDULED' },
+  { id: 'IN_PROGRESS', name: 'In Progress', value: 'IN_PROGRESS' },
+  { id: 'COMPLETED', name: 'Completed', value: 'COMPLETED' },
+  { id: 'CANCELLED', name: 'Cancelled', value: 'CANCELLED' }
+])
+
+// vendor options removed
+
+const sortOptions = ref<Item[]>([
+  { id: 'assetId', name: 'Asset ID', value: 'assetId' },
+  { id: 'estimatedCost', name: 'Cost', value: 'estimatedCost' },
+  { id: 'maintenanceType', name: 'Maintenance Type', value: 'maintenanceType' },
+  { id: 'status', name: 'Status', value: 'status' },
+  { id: 'scheduledDate', name: 'Date', value: 'scheduledDate' }
+])
+
 // API functions
-  const fetchVendors = async () => {
-    try {
-      vendorsLoading.value = true
-      const response = await maintenanceService.getVendors()
-      if (response.data && response.data.vendors) {
-        availableVendors.value = response.data.vendors.map(vendor => ({
-          id: vendor.id,
-          name: vendor.name
-        }))
-      }
-    } catch (error) {
-      console.error('Error fetching vendors:', error)
-      availableVendors.value = []
-    } finally {
-      vendorsLoading.value = false
-    }
-  }
+  // fetchVendors removed
 
   const fetchMaintenances = async () => {
     try {
-      isLoading.value = true
-      
-      // Map frontend sort fields to backend fields
-      const sortFieldMap: Record<string, string> = {
-        'cost': 'estimatedCost',
-        'type': 'maintenanceType',
-        'vendor': 'vendorName',
-        'assetId': 'scheduledDate' // Asset ID sorting not supported yet, fallback to date
+      const isInitialRequest = !hasLoadedMaintenances.value
+      if (isInitialRequest) {
+        isLoading.value = true
       }
       
       // Map frontend maintenance type values to backend enum values
@@ -815,8 +890,8 @@ const itemsPerPage = 10
         search: filters.search || undefined,
         status: filters.status || undefined,
         maintenanceType: filters.type ? maintenanceTypeMap[filters.type] || filters.type : undefined,
-        vendorName: filters.vendor || undefined,
-        sortBy: sortFieldMap[sortBy.value] || sortBy.value,
+        
+        sortBy: sortBy.value || 'scheduledDate',
         sortOrder: (sortAscending.value ? 'asc' : 'desc') as 'asc' | 'desc'
       }
 
@@ -825,12 +900,15 @@ const itemsPerPage = 10
     if (response.data) {
       // Transform API data to match local interface
       maintenanceData.value = response.data.maintenances.map(maintenance => ({
-        id: parseInt(maintenance.id),
+        id: Number.parseInt(maintenance.id),
         assetId: maintenance.assetId,
         assetName: maintenance.assetName,
-        assetType: '', // Not provided in API response
-        assetBrand: '', // Not provided in API response  
-        assetModel: '', // Not provided in API response
+        assetType: maintenance.assetType || '',
+        assetBrand: maintenance.assetBrand || '',
+        assetModel: maintenance.assetModel || '',
+        serialNumber: maintenance.serialNumber || '', // Add serial number field
+        specifications: maintenance.specifications || undefined,
+        specificationLabelMap: maintenance.specificationLabelMap || undefined,
         maintenanceTypeId: maintenance.maintenanceTypeId,
         maintenanceTypeName: maintenance.maintenanceTypeName,
         type: maintenance.maintenanceTypeName, // For backward compatibility
@@ -838,7 +916,8 @@ const itemsPerPage = 10
         vendor: maintenance.vendorName || 'Internal Team',
         vendorName: maintenance.vendorName || null,
         assignedTo: maintenance.assignedTo || 'Not Assigned',
-        scheduledDate: maintenance.scheduledDate,
+        relevantDate: maintenance.relevantDate || null,
+        dateType: maintenance.dateType || null,
         cost: maintenance.actualCost 
           ? `₹${maintenance.actualCost.toFixed(2)}` 
           : `₹${maintenance.estimatedCost?.toFixed(2) || '0.00'}`,
@@ -857,19 +936,27 @@ const itemsPerPage = 10
 
       totalPages.value = pagination.totalPages || Math.ceil((pagination.total || 0) / itemsPerPage)
       
-      // Update stats after loading maintenance data
-      fetchStats()
+      tryOpenPendingMaintenance()
+      
+      // Stats are fetched separately and don't need to be updated on every data load
     } else {
-      showErrorToast('Failed to fetch maintenance data')
+      toastStore.showError('Error', 'Failed to fetch maintenance data')
     }
   } catch (error) {
     console.error('Error fetching maintenances:', error)
-    showErrorToast('Error loading maintenance data')
+    toastStore.showError('Error', 'Error loading maintenance data')
     maintenanceData.value = []
     totalItems.value = 0
     totalPages.value = 1
   } finally {
+    if (!hasLoadedMaintenances.value) {
+      hasLoadedMaintenances.value = true
+    }
     isLoading.value = false
+    // Start stats refresh interval only after initial load
+    if (!statsInterval) {
+      statsInterval = globalThis.setInterval(fetchStats, 60_000)
+    }
   }
 }
 
@@ -901,15 +988,23 @@ const generateProgressNotes = (maintenance: any): string[] => {
   return notes
 }
 
+// Modal state
+const showDetailModal = ref(false)
+const showCompleteModal = ref(false)
+const showCancelModal = ref(false)
+const expandedMaintenanceIds = ref<number[]>([])
+const hoveredMaintenanceId = ref<number | null>(null)
+
 // Modal refs
 const detailModal = ref<HTMLElement>()
 const completeModal = ref<HTMLElement>()
 const cancelModal = ref<HTMLElement>()
-const reportModal = ref<HTMLElement>()
 const completeFormElement = ref<HTMLFormElement>()
 
 // Selected maintenance for modals
 const selectedMaintenance = ref<MaintenanceRow | null>(null)
+const maintenanceHistory = ref<MaintenanceRow[]>([])
+const pendingMaintenanceAssetId = ref<string | null>(null)
 
 // Form data
 const completeForm = reactive({
@@ -918,7 +1013,6 @@ const completeForm = reactive({
 })
 
 const cancelForm = reactive({
-  cancelDate: new Date().toISOString().split('T')[0],
   cancelNotes: ''
 })
 
@@ -928,7 +1022,6 @@ const completeFormErrors = reactive({
 })
 
 const cancelFormErrors = reactive({
-  cancelDate: '',
   cancelNotes: ''
 })
 
@@ -950,10 +1043,10 @@ const validateCompleteForm = () => {
   }
   
   // Convert to number for validation
-  const actualCostValue = typeof actualCost === 'number' ? actualCost : parseFloat(String(actualCost))
+  const actualCostValue = typeof actualCost === 'number' ? actualCost : Number.parseFloat(String(actualCost))
   
   // Check if it's a valid number
-  if (isNaN(actualCostValue)) {
+  if (Number.isNaN(actualCostValue)) {
     completeFormErrors.actualCost = 'Please enter a valid number'
     isValid = false
   } else if (actualCostValue <= 0) {
@@ -971,14 +1064,7 @@ const validateCancelForm = () => {
   let isValid = true
   
   // Reset errors
-  cancelFormErrors.cancelDate = ''
   cancelFormErrors.cancelNotes = ''
-  
-  // Validate cancel date
-  if (!cancelForm.cancelDate || cancelForm.cancelDate.trim() === '') {
-    cancelFormErrors.cancelDate = 'Please select a cancellation date'
-    isValid = false
-  }
   
   // Validate cancel notes
   if (!cancelForm.cancelNotes || cancelForm.cancelNotes.trim() === '') {
@@ -992,38 +1078,214 @@ const validateCancelForm = () => {
   return isValid
 }
 
-const reportForm = reactive({
-  reportType: '',
-  reportFormat: 'pdf',
-  includeTimeline: true
-})
+const persistMaintenanceModalSnapshot = (maintenance: MaintenanceRow | null) => {
+  if (globalThis.window === undefined || !maintenance?.assetId) return
+  try {
+    const snapshot = {
+      assetId: maintenance.assetId,
+      data: maintenance,
+      timestamp: Date.now()
+    }
+    globalThis.window.sessionStorage.setItem(MAINTENANCE_MODAL_STATE_KEY, JSON.stringify(snapshot))
+  } catch (error) {
+    console.warn('Failed to persist maintenance modal state:', error)
+  }
+}
 
-// Report form validation errors
-const reportFormErrors = reactive({
-  reportType: ''
-})
+const clearMaintenanceModalSnapshot = () => {
+  if (typeof globalThis === 'undefined') return
+  try {
+    globalThis.window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+  } catch (error) {
+    console.warn('Failed to clear maintenance modal state:', error)
+  }
+}
+
+const restoreMaintenanceModalSnapshot = () => {
+  if (typeof globalThis === 'undefined') return
+  try {
+    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_MODAL_STATE_KEY)
+    if (!raw) return
+    globalThis.window.sessionStorage.removeItem(MAINTENANCE_MODAL_STATE_KEY)
+    const snapshot = JSON.parse(raw) as { assetId?: string; data?: MaintenanceRow }
+    if (snapshot?.assetId && snapshot?.data) {
+      pendingMaintenanceAssetId.value = snapshot.assetId
+      selectedMaintenance.value = snapshot.data
+      showDetailModal.value = true
+    }
+  } catch (error) {
+    console.warn('Failed to restore maintenance modal state:', error)
+  }
+}
+
+const tryOpenPendingMaintenance = () => {
+  if (!pendingMaintenanceAssetId.value) return
+  const match = maintenanceData.value.find(item => item.assetId === pendingMaintenanceAssetId.value)
+  if (match) {
+    selectedMaintenance.value = match
+    showDetailModal.value = true
+    pendingMaintenanceAssetId.value = null
+  }
+}
+
+const persistMaintenanceViewState = () => {
+  if (typeof globalThis === 'undefined') return
+  try {
+    const state = {
+      filters: { ...filters },
+      selectedTypeValue: selectedType.value?.value ?? null,
+      selectedStatusValue: selectedStatus.value?.value ?? null,
+      selectedSortByValue: selectedSortBy.value?.value ?? null,
+      sortBy: sortBy.value,
+      sortAscending: sortAscending.value,
+      currentPage: currentPage.value,
+      showFilterDropdown: showFilterDropdown.value
+    }
+    globalThis.window.sessionStorage.setItem(MAINTENANCE_VIEW_STATE_KEY, JSON.stringify(state))
+  } catch (error) {
+    console.warn('Failed to persist maintenance view state:', error)
+  }
+}
+
+const restoreMaintenanceViewState = () => {
+  if (typeof globalThis === 'undefined') return
+  try {
+    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_VIEW_STATE_KEY)
+    if (!raw) return
+    const state = JSON.parse(raw) as {
+      filters?: typeof filters,
+      selectedTypeValue?: string | null,
+      selectedStatusValue?: string | null,
+      selectedSortByValue?: string | null,
+      sortBy?: string,
+      sortAscending?: boolean,
+      currentPage?: number,
+      showFilterDropdown?: boolean
+    }
+    isRestoringMaintenanceViewState = true
+
+    if (state.filters) {
+      filters.search = state.filters.search ?? filters.search
+      filters.status = state.filters.status ?? filters.status
+      filters.type = state.filters.type ?? filters.type
+      filters.vendor = state.filters.vendor ?? filters.vendor
+    }
+
+    if (typeof state.sortBy === 'string') {
+      sortBy.value = state.sortBy
+    }
+    if (typeof state.sortAscending === 'boolean') {
+      sortAscending.value = state.sortAscending
+    }
+    if (typeof state.currentPage === 'number' && state.currentPage > 0) {
+      currentPage.value = state.currentPage
+    }
+    if (typeof state.showFilterDropdown === 'boolean') {
+      showFilterDropdown.value = state.showFilterDropdown
+    }
+
+    if ('selectedTypeValue' in state) {
+      selectedType.value = maintenanceTypeOptions.value.find(option => option.value === state.selectedTypeValue) || null
+      filters.type = state.selectedTypeValue || ''
+    }
+
+    if ('selectedStatusValue' in state) {
+      selectedStatus.value = statusOptions.value.find(option => option.value === state.selectedStatusValue) || null
+      filters.status = state.selectedStatusValue || ''
+    }
+
+    if ('selectedSortByValue' in state) {
+      const matchSort = sortOptions.value.find(option => option.value === state.selectedSortByValue) || null
+      selectedSortBy.value = matchSort
+      if (matchSort?.value) {
+        sortBy.value = matchSort.value as string
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to restore maintenance view state:', error)
+  } finally {
+    isRestoringMaintenanceViewState = false
+  }
+}
 
 // Loading states
 const completeLoading = ref(false)
 const cancelLoading = ref(false)
-const reportLoading = ref(false)
 
 // Stats interval for periodic updates
 let statsInterval: number | undefined
 
+// Last updated tracking for stats
+const lastStatsUpdated = ref('Loading...')
+let lastStatsUpdatedAt: number | null = null
+let statsTimestampInterval: number | undefined
+
 // Initialize data on component mount
-onMounted(() => {
-  fetchMaintenances()
-  fetchVendors()
-  fetchStats()
-  // Refresh every 1 minute
-  statsInterval = window.setInterval(fetchStats, 60_000)
+onMounted(async () => {
+  // Prefill search from query (e.g., coming from AssetsView)
+  if (typeof route.query.search === 'string' && route.query.search.trim() !== '') {
+    filters.search = route.query.search
+  }
+
+  restoreMaintenanceViewState()
+  restoreMaintenanceModalSnapshot()
+
+  await fetchMaintenances()
+  // Fetch stats once after initial data load
+  await fetchStats()
+  // Initialize default sort option
+  selectedSortBy.value = sortOptions.value.find(o => o.value === sortBy.value) || null
+  
+  // Start timestamp update interval (every minute)
+  statsTimestampInterval = globalThis.setInterval(updateStatsTimestampDisplay, 60_000)
 })
+
+// Watch for route changes to refresh stats when coming from form submissions
+watch(() => route.query.refreshStats, async (newValue) => {
+  if (newValue === 'true') {
+    await fetchStats()
+    // Remove the query parameter to prevent repeated refreshes
+    router.replace({ query: { ...route.query, refreshStats: undefined } })
+  }
+})
+
+// React to search query changes (e.g., deep links with ?search=ASSET123)
+watch(() => route.query.search, (newSearch) => {
+  if (typeof newSearch === 'string') {
+    filters.search = newSearch
+    filterMaintenancesImmediate()
+  }
+})
+
+watch(
+  [
+    () => filters.search,
+    () => filters.status,
+    () => filters.type,
+    () => filters.vendor,
+    () => selectedType.value,
+    () => selectedStatus.value,
+    () => selectedSortBy.value,
+    () => sortBy.value,
+    () => sortAscending.value,
+    () => currentPage.value,
+    () => showFilterDropdown.value
+  ],
+  () => {
+    if (isRestoringMaintenanceViewState) return
+    persistMaintenanceViewState()
+  },
+  { deep: true }
+)
 
 onUnmounted(() => {
   if (statsInterval) {
     clearInterval(statsInterval)
     statsInterval = undefined
+  }
+  if (statsTimestampInterval) {
+    clearInterval(statsTimestampInterval)
+    statsTimestampInterval = undefined
   }
 })
 
@@ -1039,36 +1301,46 @@ const statsData = reactive({
   cancelledPercent: 0
 })
 
+// Format relative time for stats timestamp
+function formatRelativeStatsUpdated(nowMs: number) {
+  if (!lastStatsUpdatedAt) return 'Just now'
+  const diffMs = Math.max(0, nowMs - lastStatsUpdatedAt)
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  if (diffMin <= 0) return 'Just now'
+  if (diffMin === 1) return '1 minute ago'
+  return `${diffMin} minutes ago`
+}
+
+// Update stats timestamp display
+function updateStatsTimestampDisplay() {
+  lastStatsUpdated.value = formatRelativeStatsUpdated(Date.now())
+}
+
 const fetchStats = async () => {
   try {
-    // Get all maintenance records to compute accurate stats
-    const response = await maintenanceService.getMaintenances({ page: 1, limit: 1000 })
+    isStatsRefreshing.value = true
+    // Use dedicated stats endpoint for efficient data retrieval
+    const response = await maintenanceService.getMaintenanceStats()
     
-    if (response.data && response.data.maintenances) {
-      const maintenances = response.data.maintenances
+    if (response.data) {
+      const { counts, percentages } = response.data
       
-      // Count by status
-      const counts = maintenances.reduce((acc, m) => {
-        acc.total++
-        if (m.status === "IN_PROGRESS") acc.underMaintenance++
-        if (m.status === "SCHEDULED") acc.scheduled++
-        if (m.status === "COMPLETED") acc.completed++
-        if (m.status === "CANCELLED") acc.cancelled++
-        return acc
-      }, { total: 0, underMaintenance: 0, scheduled: 0, completed: 0, cancelled: 0 })
-
-      // Update stats data
+      // Update stats data directly from API response
       statsData.underMaintenance = counts.underMaintenance
       statsData.scheduled = counts.scheduled
       statsData.completed = counts.completed
       statsData.cancelled = counts.cancelled
 
-      // Calculate percentages
-      const total = counts.total || 1
-      statsData.underMaintenancePercent = Math.round((counts.underMaintenance / total) * 100)
-      statsData.scheduledPercent = Math.round((counts.scheduled / total) * 100)
-      statsData.completedPercent = Math.round((counts.completed / total) * 100)
-      statsData.cancelledPercent = Math.round((counts.cancelled / total) * 100)
+      // Update percentages directly from API response
+      statsData.underMaintenancePercent = percentages.underMaintenancePercent
+      statsData.scheduledPercent = percentages.scheduledPercent
+      statsData.completedPercent = percentages.completedPercent
+      statsData.cancelledPercent = percentages.cancelledPercent
+
+      // Update timestamp
+      lastStatsUpdatedAt = Date.now()
+      updateStatsTimestampDisplay()
     }
   } catch (error) {
     console.error("Error fetching stats:", error)
@@ -1092,6 +1364,12 @@ const fetchStats = async () => {
     statsData.scheduledPercent = Math.round((counts.scheduled / total) * 100)
     statsData.completedPercent = Math.round((counts.completed / total) * 100)
     statsData.cancelledPercent = Math.round((counts.cancelled / total) * 100)
+
+    // Update timestamp even for fallback
+    lastStatsUpdatedAt = Date.now()
+    updateStatsTimestampDisplay()
+  } finally {
+    isStatsRefreshing.value = false
   }
 }
 const stats = computed(() => statsData)
@@ -1099,6 +1377,89 @@ const stats = computed(() => statsData)
 // Since we're using server-side pagination, we just return the data from the API
 const filteredMaintenance = computed(() => {
   return maintenanceData.value
+})
+
+const formatMaintenanceSpecificationLabel = (key: string) => {
+  let formatted = key
+  formatted = formatted.replaceAll('_', ' ')
+  formatted = formatted.replaceAll(/\s+/g, ' ')
+  formatted = formatted.replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
+  return formatted
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+const getMaintenanceSpecificationEntries = (maintenance: MaintenanceRow | null) => {
+  if (!maintenance || !maintenance.specifications) {
+    return []
+  }
+
+  return Object.entries(maintenance.specifications)
+    .filter(([key, value]) => {
+      if (!value && value !== 0) return false
+      return key.toLowerCase() !== 'description'
+    })
+    .map(([label, value]) => ({
+      label: maintenance.specificationLabelMap?.[label] || formatMaintenanceSpecificationLabel(label),
+      value: Array.isArray(value) ? value.join(', ') : String(value)
+    }))
+}
+
+const hasMaintenanceSpecifications = (maintenance: MaintenanceRow | null) => {
+  return getMaintenanceSpecificationEntries(maintenance).length > 0
+}
+
+const maintenanceWithSpecifications = computed(() =>
+  filteredMaintenance.value.filter(item => hasMaintenanceSpecifications(item))
+)
+
+const hasAnyMaintenanceSpecifications = computed(() => maintenanceWithSpecifications.value.length > 0)
+
+const areAllMaintenanceSpecsVisible = computed(() => {
+  const total = maintenanceWithSpecifications.value.length
+  if (total === 0) {
+    return false
+  }
+  return expandedMaintenanceIds.value.length === total
+})
+
+const toggleMaintenanceRow = (maintenance: MaintenanceRow) => {
+  if (!hasMaintenanceSpecifications(maintenance)) {
+    return
+  }
+
+  const index = expandedMaintenanceIds.value.indexOf(maintenance.id)
+  if (index === -1) {
+    expandedMaintenanceIds.value.push(maintenance.id)
+  } else {
+    expandedMaintenanceIds.value.splice(index, 1)
+  }
+}
+
+const setHoveredMaintenance = (rowId: number | null) => {
+  hoveredMaintenanceId.value = rowId
+}
+
+const toggleAllMaintenanceSpecifications = () => {
+  if (!hasAnyMaintenanceSpecifications.value) {
+    return
+  }
+
+  if (areAllMaintenanceSpecsVisible.value) {
+    expandedMaintenanceIds.value = []
+    return
+  }
+
+  expandedMaintenanceIds.value = maintenanceWithSpecifications.value.map(item => item.id)
+}
+
+watch(filteredMaintenance, (list) => {
+  const validIds = new Set(
+    list.filter(item => hasMaintenanceSpecifications(item)).map(item => item.id)
+  )
+  expandedMaintenanceIds.value = expandedMaintenanceIds.value.filter(id => validIds.has(id))
 })
 
 // Server-side pagination - totalPages is now a ref updated from API response
@@ -1115,20 +1476,53 @@ const paginationInfo = computed(() => {
 
 // Methods
 const formatStatus = (status: string) => {
-  return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
+  return status.replaceAll('_', ' ').replaceAll(/\b\w/g, l => l.toUpperCase())
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
+const formatDate = (dateString: string) => formatDateOnly(dateString)
+
+// Format maintenance type to title case
+const formatMaintenanceType = (type: string) => {
+  if (!type) return 'Unknown'
+  return type.replaceAll(/\w\S*/g, (txt: string) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   })
 }
 
-const navigateToSchedule = () => {
-  // Navigate to schedule maintenance page
+// Get user-friendly label for date type
+const getDateTypeLabel = (dateType: string) => {
+  if (!dateType) return ''
+  const labels = {
+    'scheduled': 'Scheduled Date',
+    'completion': 'Completion Date',
+    'cancellation': 'Cancellation Date'
+  }
+  return labels[dateType as keyof typeof labels] || ''
+}
+
+// Map maintenance status to shared badge color classes from badges.css
+const getStatusBadgeClass = (status: string) => {
+  const normalized = (status || '').toUpperCase()
+  switch (normalized) {
+    case 'SCHEDULED':
+      return 'badge-purple'
+    case 'IN_PROGRESS':
+      return 'badge-orange'
+    case 'COMPLETED':
+      return 'badge-green'
+    case 'CANCELLED':
+      return 'badge-red'
+    default:
+      return 'badge-gray'
+  }
+}
+
+const navigateToSchedule = (maintenance?: any) => {
+  // If a maintenance record (e.g., cancelled) is provided, pass external assetId as query param
+  if (maintenance?.assetId) {
+    router.push({ path: '/app/maintenance/schedule', query: { assetId: maintenance.assetId } })
+    return
+  }
   router.push('/app/maintenance/schedule')
 }
 
@@ -1142,6 +1536,9 @@ const toggleSortOrder = () => {
   fetchMaintenances()
 }
 
+// Note: Removed watch(sortAscending) to prevent duplicate API calls
+// The toggleSortOrder function already handles the API call
+
 const clearFilters = () => {
   filters.search = ''
   filters.status = ''
@@ -1150,6 +1547,12 @@ const clearFilters = () => {
   currentPage.value = 1
   // Clear any pending search timeout
   if (searchTimeout) clearTimeout(searchTimeout)
+  // Reset dropdown selections
+  selectedType.value = null
+  selectedStatus.value = null
+  
+  selectedSortBy.value = sortOptions.value.find(o => o.value === 'scheduledDate') || null
+  sortBy.value = 'scheduledDate'
   fetchMaintenances()
 }
 
@@ -1181,11 +1584,86 @@ const sortMaintenances = () => {
   fetchMaintenances()
 }
 
+// Assets-style filter dropdown handlers
+const toggleFilterDropdown = () => {
+  showFilterDropdown.value = !showFilterDropdown.value
+}
+
+const onTypeChange = (item: Item | null) => {
+  selectedType.value = item
+  filters.type = item?.value as string || ''
+  filterMaintenancesImmediate()
+}
+
+const onStatusChange = (item: Item | null) => {
+  selectedStatus.value = item
+  filters.status = (item?.value as string) || ''
+  filterMaintenancesImmediate()
+}
+
+// vendor change removed
+
+const onSortByChange = (item: Item | null) => {
+  selectedSortBy.value = item
+  if (item?.value) {
+    sortBy.value = item.value as string
+  }
+  sortMaintenances()
+}
+
 // Modal methods
-const showMaintenanceDetails = (maintenance: MaintenanceRow) => {
+const showMaintenanceDetails = async (maintenance: MaintenanceRow) => {
   selectedMaintenance.value = maintenance
-  const modal = new Modal(detailModal.value!)
-  modal.show()
+  maintenanceHistory.value = []
+  
+  // Fetch maintenance history for this asset
+  try {
+    const response = await maintenanceService.getMaintenanceHistory(maintenance.assetId)
+    if (response.data && response.data.maintenanceHistory) {
+      // Transform the history data to match our local interface
+      maintenanceHistory.value = response.data.maintenanceHistory.map(history => ({
+        id: Number.parseInt(history.id),
+        assetId: history.assetId,
+        assetName: history.assetName,
+        assetType: '', 
+        assetBrand: '', 
+        assetModel: '', 
+        serialNumber: history.serialNumber || '',
+        specifications: history.specifications || undefined,
+        specificationLabelMap: history.specificationLabelMap || undefined,
+        maintenanceTypeId: history.maintenanceTypeId,
+        maintenanceTypeName: history.maintenanceTypeName,
+        type: history.maintenanceTypeName,
+        status: history.status,
+        vendor: history.vendorName || 'Internal Team',
+        vendorName: history.vendorName || null,
+        assignedTo: history.assignedTo || 'Not Assigned',
+        relevantDate: history.relevantDate || null,
+        dateType: history.dateType || null,
+        cost: (() => {
+          if (history.actualCost) {
+            return `₹${history.actualCost.toFixed(2)}`
+          }
+          if (history.estimatedCost) {
+            return `₹${history.estimatedCost.toFixed(2)}`
+          }
+          return '₹0.00'
+        })(),
+        costType: history.actualCost ? 'Actual' : 'Estimated',
+        estimatedCost: history.estimatedCost || null,
+        actualCost: history.actualCost || null,
+        description: history.description,
+        completionNotes: history.completionNotes || null,
+        cancellationNotes: history.cancellationNotes || null,
+        progressNotes: generateProgressNotes(history)
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching maintenance history:', error)
+    // Continue showing the modal even if history fails to load
+  }
+  
+  showDetailModal.value = true
 }
 
 const openCompleteModal = (maintenance: MaintenanceRow) => {
@@ -1193,63 +1671,47 @@ const openCompleteModal = (maintenance: MaintenanceRow) => {
   completeForm.actualCost = ''
   completeForm.completionNotes = ''
   completeFormErrors.actualCost = ''
-  const modal = new Modal(completeModal.value!)
-  modal.show()
+  showCompleteModal.value = true
 }
 
 const openCancelModal = (maintenance: MaintenanceRow) => {
   selectedMaintenance.value = maintenance
-  cancelForm.cancelDate = new Date().toISOString().split('T')[0]
   cancelForm.cancelNotes = ''
-  cancelFormErrors.cancelDate = ''
   cancelFormErrors.cancelNotes = ''
-  const modal = new Modal(cancelModal.value!)
-  modal.show()
+  showCancelModal.value = true
 }
 
-const openReportModal = (maintenance: MaintenanceRow) => {
-  selectedMaintenance.value = maintenance
-  reportForm.reportType = ''
-  reportForm.reportFormat = 'pdf'
-  reportForm.includeTimeline = true
-  const modal = new Modal(reportModal.value!)
-  modal.show()
+const closeModals = () => {
+  showDetailModal.value = false
+  showCompleteModal.value = false
+  showCancelModal.value = false
+  selectedMaintenance.value = null
+  pendingMaintenanceAssetId.value = null
+  clearMaintenanceModalSnapshot()
 }
+
 
 const closeDetailAndOpenComplete = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openCompleteModal(selectedMaintenance.value)
-    }
-  }, 300)
+  showDetailModal.value = false
+  showCompleteModal.value = true
 }
 
 const closeDetailAndOpenCancel = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openCancelModal(selectedMaintenance.value)
-    }
-  }, 300)
+  showDetailModal.value = false
+  showCancelModal.value = true
 }
 
-const closeDetailAndOpenReport = () => {
-  const detailModalInstance = Modal.getInstance(detailModal.value!)
-  if (detailModalInstance) {
-    detailModalInstance.hide()
-  }
-  setTimeout(() => {
-    if (selectedMaintenance.value) {
-      openReportModal(selectedMaintenance.value)
-    }
-  }, 300)
+
+// Navigate to dedicated maintenance history page
+const viewMaintenanceHistory = (maintenance: MaintenanceRow) => {
+  persistMaintenanceModalSnapshot(maintenance)
+  showDetailModal.value = false
+  router.push(`/app/maintenance/${maintenance.assetId}/history`)
+}
+
+const openHistory = () => {
+  if (!selectedMaintenance.value) return
+  viewMaintenanceHistory(selectedMaintenance.value)
 }
 
 const completeMaintenance = async () => {
@@ -1266,7 +1728,7 @@ const completeMaintenance = async () => {
     const response = await maintenanceService.completeMaintenance(
       selectedMaintenance.value.id.toString(),
       {
-        actualCost: parseFloat(completeForm.actualCost),
+        actualCost: Number.parseFloat(completeForm.actualCost),
         completionNotes: completeForm.completionNotes || undefined
       }
     )
@@ -1276,27 +1738,31 @@ const completeMaintenance = async () => {
       const row = maintenanceData.value.find(m => m.id === selectedMaintenance.value!.id)
       if (row) {
         row.status = 'COMPLETED'
-        row.cost = `₹${parseFloat(completeForm.actualCost).toFixed(2)}`
+        row.cost = `₹${Number.parseFloat(completeForm.actualCost).toFixed(2)}`
         row.costType = 'Actual'
-        row.actualCost = parseFloat(completeForm.actualCost)
+        row.actualCost = Number.parseFloat(completeForm.actualCost)
         row.completionNotes = completeForm.completionNotes || null
       }
 
-      showToast(`Maintenance completed successfully!<br>Actual Cost: ₹${parseFloat(completeForm.actualCost).toFixed(2)}${completeForm.completionNotes ? '<br>Notes: ' + completeForm.completionNotes : ''}`, 'success')
-      const modal = Modal.getInstance(completeModal.value!)
-      if (modal) modal.hide()
+      const actual = Number.parseFloat(completeForm.actualCost)
+      const noteSuffix = completeForm.completionNotes ? ` Notes: ${completeForm.completionNotes}` : ''
+      toastStore.showSuccess('Success', `Maintenance completed successfully! Actual Cost: ₹${actual.toFixed(2)}${noteSuffix}`)
+      closeModals()
+
+      // Refresh stats after completing maintenance
+      await fetchStats()
 
       // Reset form
       completeForm.actualCost = ''
       completeForm.completionNotes = ''
       completeFormErrors.actualCost = ''
     } else {
-      showToast(response.message || 'Error completing maintenance. Please try again.', 'error')
+      toastStore.showError('Error', response.message || 'Error completing maintenance. Please try again.')
     }
 
   } catch (error) {
     console.error('Error completing maintenance:', error)
-    showToast('Error completing maintenance. Please try again.', 'error')
+    toastStore.showError('Error', 'Error completing maintenance. Please try again.')
   } finally {
     completeLoading.value = false
   }
@@ -1315,10 +1781,7 @@ const cancelMaintenance = async () => {
   try {
     const response = await maintenanceService.cancelMaintenance(
       selectedMaintenance.value.id.toString(),
-      {
-        cancelDate: cancelForm.cancelDate,
-        cancelNotes: cancelForm.cancelNotes
-      }
+      { cancelNotes: cancelForm.cancelNotes }
     )
 
     if (response.data && response.data.maintenance) {
@@ -1329,730 +1792,54 @@ const cancelMaintenance = async () => {
         row.cancellationNotes = cancelForm.cancelNotes
       }
 
-      showToast(`Maintenance cancelled successfully!<br>Date: ${cancelForm.cancelDate}<br>Notes: ${cancelForm.cancelNotes}`, 'success')
-      const modal = Modal.getInstance(cancelModal.value!)
-      if (modal) modal.hide()
+      toastStore.showSuccess('Success', `Maintenance cancelled successfully! Notes: ${cancelForm.cancelNotes}`)
+      closeModals()
+
+      // Refresh stats after cancelling maintenance
+      await fetchStats()
 
       // Reset form
-      cancelForm.cancelDate = ''
       cancelForm.cancelNotes = ''
-      cancelFormErrors.cancelDate = ''
       cancelFormErrors.cancelNotes = ''
     } else {
-      showToast(response.message || 'Error cancelling maintenance. Please try again.', 'error')
+      toastStore.showError('Error', response.message || 'Error cancelling maintenance. Please try again.')
     }
 
   } catch (error) {
     console.error('Error cancelling maintenance:', error)
-    showToast('Error cancelling maintenance. Please try again.', 'error')
+    toastStore.showError('Error', 'Error cancelling maintenance. Please try again.')
   } finally {
     cancelLoading.value = false
   }
 }
 
-const generateReport = async () => {
-  if (!reportForm.reportType) {
-    reportFormErrors.reportType = 'Please select a report type'
-    return
-  }
-  if (!selectedMaintenance.value) {
-    showToast('No maintenance selected.', 'error')
-    return
-  }
-
-  reportLoading.value = true
-
-  try {
-    const m = selectedMaintenance.value
-
-    const title = `Maintenance Report - ${m.assetId}`
-    const dateStr = new Date().toLocaleString()
-
-    const html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset=\"utf-8\" />
-  <title>${title}</title>
-  <style>
-    body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 24px; }
-    h1 { font-size: 20px; margin: 0 0 16px; }
-    h2 { font-size: 16px; margin: 24px 0 8px; }
-    .meta { color: #555; font-size: 12px; margin-bottom: 16px; }
-    .section { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
-    .row { display: flex; gap: 16px; }
-    .col { flex: 1; }
-    .label { color: #555; font-size: 12px; margin-bottom: 4px; }
-    .value { font-size: 14px; font-weight: 600; }
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 13px; }
-    .muted { color: #666; }
-    @media print {
-      @page { size: A4; margin: 16mm; }
-      .no-print { display: none !important; }
-    }
-  </style>
-</head>
-<body>
-  <div class=\"no-print\" style=\"text-align:right; margin-bottom: 8px;\">
-    <button onclick=\"window.print()\" style=\"padding:8px 12px; border:1px solid #ccc; border-radius:6px; background:#f9fafb; cursor:pointer;\">Print / Save as PDF</button>
-  </div>
-
-  <h1>${title}</h1>
-  <div class=\"meta\">Generated on ${dateStr} • Type: ${reportForm.reportType} • Format: ${reportForm.reportFormat.toUpperCase()}</div>
-
-  <div class=\"section\">
-    <div class=\"row\">
-      <div class=\"col\">
-        <div class=\"label\">Asset</div>
-        <div class=\"value\">${m.assetName} (${m.assetId})</div>
-      </div>
-      <div class=\"col\">
-        <div class=\"label\">Type / Brand / Model</div>
-        <div class=\"value\">${m.assetType} / ${m.assetBrand} / ${m.assetModel}</div>
-      </div>
-    </div>
-    <div class=\"row\" style=\"margin-top:8px;\">
-      <div class=\"col\">
-        <div class=\"label\">Status</div>
-        <div class=\"value\">${m.status}</div>
-      </div>
-      <div class=\"col\">
-        <div class=\"label\">Scheduled Date</div>
-        <div class=\"value\">${m.scheduledDate}</div>
-      </div>
-    </div>
-  </div>
-
-  <div class=\"section\">
-    <div class=\"label\">Maintenance</div>
-    <div class=\"value\">${m.description}</div>
-    <table>
-      <tr><th>Type</th><td>${m.maintenanceTypeName}</td></tr>
-      <tr><th>Vendor</th><td>${m.vendorName ?? '—'}</td></tr>
-      <tr><th>Estimated Cost</th><td>${m.estimatedCost != null ? '₹' + m.estimatedCost : '—'}</td></tr>
-      <tr><th>Actual Cost</th><td>${m.actualCost != null ? '₹' + m.actualCost : m.cost ? m.cost : '—'}</td></tr>
-      <tr><th>Completion Notes</th><td>${m.completionNotes ?? '—'}</td></tr>
-      <tr><th>Cancellation Notes</th><td>${m.cancellationNotes ?? '—'}</td></tr>
-    </table>
-  </div>
-
-  ${reportForm.includeTimeline ? `<div class=\"section\"><div class=\"label\">Timeline</div><div class=\"muted\">Timeline details not available. This section is included by request.</div></div>` : ''}
-
-  <div class=\"muted\" style=\"margin-top:16px; font-size: 11px;\">This is a system-generated report.</div>
-</body>
-</html>`
-
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) throw new Error('Popup blocked. Please allow popups to download the report.')
-
-    printWindow.document.open()
-    printWindow.document.write(html)
-    printWindow.document.close()
-
-    // Auto-print on load
-    printWindow.onload = () => {
-      try { printWindow.focus(); printWindow.print(); } catch (e) {}
-    }
-
-    showToast('Report is ready. Use the browser dialog to save as PDF.', 'success')
-
-    const modal = Modal.getInstance(reportModal.value!)
-    if (modal) modal.hide()
-
-  } catch (error) {
-    console.error('Error generating report:', error)
-    showToast('Error generating report. Please try again.', 'error')
-  } finally {
-    reportLoading.value = false
-  }
-}
 
 // Toast notification function is now imported from utils
 
 onMounted(() => {
   // Any initialization logic
 })
+
+// New method to toggle history expansion
+const toggleHistory = () => {
+  isHistoryExpanded.value = !isHistoryExpanded.value
+}
+
+// New reactive data for history expansion
+const isHistoryExpanded = ref(true)
 </script>
 
 <style scoped>
-.maintenance-page {
-  background: var(--primary-white);
-  min-height: calc(100vh - 60px);
-}
-
-/* Stats Cards */
-.stats-card-modern {
-  border-radius: 0.75rem !important;
-  border: 1px solid var(--element-gray) !important;
-  background-color: var(--primary-white) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transition: none !important;
-  overflow: hidden; /* ensure perfect rounded corners */
-  background-clip: padding-box; /* prevent background bleed under border */
-}
-
-/* Make inner content respect rounded corners */
-.stats-card-modern .card-body {
-  border-radius: inherit;
-}
-
-/* Disable hover effects on stats cards */
-.stats-card-modern,
-.stats-card-modern *,
-.stats-card-modern:hover,
-.stats-card-modern:hover *,
-.stats-card-modern:focus,
-.stats-card-modern:active {
-  transition: none !important;
-  transform: none !important;
-  cursor: default !important;
-}
-
-/* Prevent hover interactions */
-.stats-card-modern {
-  pointer-events: none;
-}
-
-/* Force same visuals on interactive states */
-.stats-card-modern,
-.stats-card-modern:hover,
-.card.stats-card-modern:hover,
-.stats-card-modern:focus,
-.card.stats-card-modern:focus,
-.stats-card-modern:active,
-.card.stats-card-modern:active,
-.stats-card-modern .card-body,
-.stats-card-modern:hover .card-body {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  transform: none !important;
-}
-
-.stats-icon.bg-warning {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-warning {
-  background-color: var(--secondary-orange) !important;
-}
-
-.stats-icon.bg-info {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-info {
-  background-color: var(--secondary-purple) !important;
-}
-
-.stats-icon.bg-success {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-success {
-  background-color: var(--secondary-green) !important;
-}
-
-.stats-icon.bg-secondary {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.progress-bar.bg-secondary {
-  background-color: var(--secondary-red) !important;
-}
-
-/* Status Indicator */
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  background-color: var(--secondary-green);
-  border-radius: 50%;
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(33, 175, 101, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(33, 175, 101, 0);
-  }
-}
-
-/* Badges */
-.badge {
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  padding: 0.35rem 0.65rem !important;
-  border-radius: 0.375rem !important;
-}
-
-.badge-scheduled {
-  background-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.badge-in-progress {
-  background-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.badge-completed {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge-cancelled {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.badge-type-preventive {
-  background-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.badge-type-corrective {
-  background-color: var(--secondary-pink) !important;
-  color: white !important;
-}
-
-.badge-type-emergency {
-  background-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-/* Modern Button Styling */
-.btn-modern {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  text-transform: none;
-  letter-spacing: 0.025em;
-  transition: all 0.2s ease;
-  border: 1.5px solid;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: relative;
-  overflow: hidden;
-  min-height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-modern:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn-modern:hover:before {
-  left: 100%;
-}
-
-.btn-modern:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-modern.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.btn-modern.btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
-  color: white !important;
-}
-
-/* Action buttons */
-.maintenance-actions .btn-action {
-  background-color: var(--primary-light-gray) !important;
-  border: 1px solid var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.375rem 0.75rem !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-  min-height: 32px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 36px !important;
-}
-
-.maintenance-actions .btn-action:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12) !important;
-  background-color: var(--primary-white) !important;
-  border-color: var(--primary-mid-light) !important;
-}
-
-.btn-action.btn-view:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-}
-
-.btn-action.btn-edit:hover {
-  color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-}
-
-.btn-action.btn-complete:hover {
-  color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-}
-
-.btn-action.btn-cancel:hover {
-  color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-}
-
-.btn-action.btn-reschedule:hover,
-.btn-action.btn-report:hover {
-  color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-}
-
-/* Table styling */
-.table-hover tbody tr:hover {
-  background-color: var(--primary-light-gray) !important;
-  transition: all 0.2s ease !important;
-}
-
-.table td, .table th {
-  padding: 0.75rem !important;
-}
-
-/* Match table alignment with EmployeesView */
-.table th:first-child, .table td:first-child {
-  padding-left: 1.25rem !important;
-}
+@import '@/assets/styles/pages/maintenance.css';
 
-.table th:last-child, .table td:last-child {
-  padding-right: 1.75rem !important; /* extra right gutter to mirror left */
-  padding-left: 0.5rem !important;
+/* Fix for rupee symbol overlapping with placeholder text in complete maintenance modal */
+.complete-maintenance-form .search-input-container .search-icon {
+  display: none !important;
 }
 
-.table-responsive {
-  margin: 0 !important;
-  padding: 0 !important;
+.complete-maintenance-form .search-input-container .search-input,
+.complete-maintenance-form .search-input-container .form-control {
+  padding-left: 0.75rem !important;
 }
 
-/* Column width distribution for 7 columns */
-/* 1: Asset ID */
-.table th:nth-child(1), .table td:nth-child(1) {
-  width: 13% !important;
-  min-width: 160px !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-}
-/* 2: Type */
-.table th:nth-child(2), .table td:nth-child(2) { width: 11% !important; }
-/* 3: Status */
-.table th:nth-child(3), .table td:nth-child(3) { width: 12% !important; }
-/* 4: Vendor/Assigned */
-.table th:nth-child(4), .table td:nth-child(4) { width: 19% !important; }
-/* 5: Date */
-.table th:nth-child(5), .table td:nth-child(5) { width: 14% !important; }
-/* 6: Cost */
-.table th:nth-child(6), .table td:nth-child(6) { width: 17% !important; }
-
-/* 7: Actions column */
-.table th:nth-child(7), .table td:nth-child(7) {
-  width: 136px !important;
-  min-width: 136px !important;
-  max-width: 136px !important;
-  text-align: left !important;
-}
-
-/* Actions button group spacing */
-.maintenance-actions {
-  justify-content: flex-start !important;
-  gap: 0.375rem !important;
-}
-
-.maintenance-actions .btn {
-  min-width: 32px !important;
-  min-height: 32px !important;
-  padding: 0.25rem !important;
-}
-
-/* Card styling */
-.card {
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-}
-
-.card:hover:not(.stats-card-modern) {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* Pagination */
-.pagination-modern {
-  --bs-pagination-padding-x: 0.75rem;
-  --bs-pagination-padding-y: 0.5rem;
-  --bs-pagination-font-size: 0.875rem;
-  --bs-pagination-color: var(--primary-dark-gray);
-  --bs-pagination-bg: var(--primary-white);
-  --bs-pagination-border-width: 1px;
-  --bs-pagination-border-color: var(--element-gray);
-  --bs-pagination-border-radius: 0.5rem;
-  --bs-pagination-hover-color: var(--secondary-purple);
-  --bs-pagination-hover-bg: var(--primary-light-gray);
-  --bs-pagination-hover-border-color: var(--primary-mid-light);
-  --bs-pagination-focus-color: var(--secondary-purple);
-  --bs-pagination-focus-bg: var(--primary-light-gray);
-  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(51, 31, 234, 0.25);
-  --bs-pagination-active-color: var(--primary-white);
-  --bs-pagination-active-bg: var(--secondary-purple);
-  --bs-pagination-active-border-color: var(--secondary-purple);
-  --bs-pagination-disabled-color: var(--primary-mid-gray);
-  --bs-pagination-disabled-bg: var(--primary-light-gray);
-  --bs-pagination-disabled-border-color: var(--element-gray);
-}
-
-.pagination-modern .page-link {
-  border-radius: 0.5rem !important;
-  margin: 0 0.125rem !important;
-  min-width: 40px !important;
-  height: 40px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(51, 31, 234, 0.25) !important;
-}
-
-.pagination-modern .page-item:not(.active) .page-link:hover {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--secondary-purple) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Modal styling */
-.modal-footer {
-  background-color: var(--primary-light-gray) !important;
-  border-top: 1px solid var(--element-gray) !important;
-  padding: 1rem 1.5rem !important;
-}
-
-.modal-footer .btn {
-  border-radius: 0.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.modal-footer .btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-.maintenance-info-section,
-.timeline-info-section,
-.cost-info-section,
-.description-section {
-  background-color: var(--primary-white) !important;
-  border: 1px solid var(--element-gray) !important;
-  border-radius: 0.5rem !important;
-  padding: 1.25rem !important;
-  margin-bottom: 1.5rem !important;
-}
-
-.section-title {
-  color: var(--primary-black) !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 0.75rem !important;
-  padding-bottom: 0.5rem !important;
-  border-bottom: 1px solid var(--element-gray) !important;
-}
-
-.info-label {
-  font-size: 0.8rem !important;
-  color: var(--primary-mid-gray) !important;
-  font-weight: 500 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.025em !important;
-  margin-bottom: 0.25rem !important;
-}
-
-.info-value {
-  color: var(--primary-black) !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-  line-height: 1.4 !important;
-}
-
-.description-content {
-  color: var(--primary-black) !important;
-  font-size: 0.9rem !important;
-  line-height: 1.5 !important;
-}
-
-.service-notes {
-  margin: 0.5rem 0 0 1rem !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.service-notes li {
-  margin-bottom: 0.25rem !important;
-  font-size: 0.85rem !important;
-}
-
-/* Form styling */
-.complete-maintenance-form .form-label,
-.cancel-maintenance-form .form-label,
-.generate-report-form .form-label {
-  font-weight: 600 !important;
-  color: var(--primary-black) !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.complete-maintenance-form .form-control,
-.complete-maintenance-form .form-select,
-.cancel-maintenance-form .form-control,
-.generate-report-form .form-control,
-.generate-report-form .form-select {
-  border: 2px solid var(--primary-mid-light) !important;
-  border-radius: 0.5rem !important;
-  padding: 0.75rem !important;
-  font-size: 0.9rem !important;
-}
-
-.complete-maintenance-form .form-control:focus,
-.complete-maintenance-form .form-select:focus,
-.cancel-maintenance-form .form-control:focus,
-.generate-report-form .form-control:focus,
-.generate-report-form .form-select:focus {
-  border-color: var(--secondary-purple) !important;
-  box-shadow: 0 0 0 0.2rem rgba(51, 31, 234, 0.25) !important;
-}
-
-.complete-maintenance-form .input-group-text {
-  background-color: var(--primary-light-gray) !important;
-  border: 2px solid var(--primary-mid-light) !important;
-  border-right: none !important;
-  color: var(--primary-dark-gray) !important;
-  font-weight: 600 !important;
-}
-
-.form-text {
-  color: var(--primary-mid-gray) !important;
-  font-size: 0.8rem !important;
-  margin-top: 0.25rem !important;
-}
-
-.character-count {
-  margin-top: 0.25rem;
-  transition: color 0.3s ease;
-}
-
-/* Button colors */
-.btn-success {
-  background-color: var(--secondary-green) !important;
-  border-color: var(--secondary-green) !important;
-  color: white !important;
-}
-
-.btn-success:hover {
-  background-color: #1e9c5a !important;
-  border-color: #1e9c5a !important;
-  color: white !important;
-}
-
-.btn-danger {
-  background-color: var(--secondary-red) !important;
-  border-color: var(--secondary-red) !important;
-  color: white !important;
-}
-
-.btn-danger:hover {
-  background-color: #d63031 !important;
-  border-color: #d63031 !important;
-  color: white !important;
-}
-
-.btn-warning {
-  background-color: var(--secondary-orange) !important;
-  border-color: var(--secondary-orange) !important;
-  color: white !important;
-}
-
-.btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
-  color: white !important;
-}
-
-.btn-primary {
-  background-color: var(--secondary-purple) !important;
-  border-color: var(--secondary-purple) !important;
-  color: white !important;
-}
-
-.btn-primary:hover {
-  background-color: #2415c7 !important;
-  border-color: #2415c7 !important;
-  color: white !important;
-}
-
-.btn-secondary {
-  background-color: var(--primary-light-gray) !important;
-  border-color: var(--element-gray) !important;
-  color: var(--primary-dark-gray) !important;
-}
-
-.btn-secondary:hover {
-  background-color: var(--element-gray) !important;
-  border-color: var(--primary-mid-light) !important;
-  color: var(--primary-black) !important;
-}
-
-/* Text colors */
-.text-success {
-  color: var(--secondary-green) !important;
-}
-
-.text-info {
-  color: var(--secondary-purple) !important;
-}
-
-.text-warning {
-  color: var(--secondary-orange) !important;
-}
-
-.text-danger {
-  color: var(--secondary-red) !important;
-}
 </style> 
