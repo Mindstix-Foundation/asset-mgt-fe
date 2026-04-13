@@ -54,8 +54,16 @@
         :aria-label="`${label} options`"
         aria-live="polite"
       >
+        <!-- Loading skeleton for dynamic options -->
+        <div v-if="showSkeleton" class="dropdown-skeleton" aria-hidden="true">
+          <div
+            v-for="n in skeletonRows"
+            :key="`skel-${n}`"
+            class="dropdown-skel-row shimmer"
+          ></div>
+        </div>
         <!-- Show "No data available" message when there are no items -->
-        <div v-if="processedItems.length === 0" class="dropdown-item no-data-item">
+        <div v-else-if="processedItems.length === 0" class="dropdown-item no-data-item">
           No data available
         </div>
         <!-- Show "No results found" when there are items but none match the search -->
@@ -110,6 +118,10 @@ interface Props {
   modelValue: Item | null
   disabled?: boolean
   required?: boolean
+  /** When true, show skeleton instead of empty message (backend fetch in progress). */
+  loading?: boolean
+  /** Skeleton rows to show while loading. */
+  skeletonCount?: number
   labelKey?: string
   valueKey?: string
   searchKeys?: string[]
@@ -121,6 +133,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   required: false,
+  loading: false,
+  skeletonCount: 5,
   labelKey: 'name',
   valueKey: 'id',
   searchKeys: () => ['name', 'abbreviation'],
@@ -240,6 +254,50 @@ const processedItems = computed(() => {
   return [] as Item[]
 })
 
+// Auto-skeleton: shows while backend fetch is in-flight even if parent doesn't pass `loading`.
+const internalLoading = ref(false)
+let internalLoadingTimeout: ReturnType<typeof setTimeout> | null = null
+const INTERNAL_LOADING_MAX_MS = 2500
+
+const skeletonRows = computed(() => Math.max(1, Math.min(Number(props.skeletonCount ?? 5), 7)))
+const showSkeleton = computed(() => {
+  if (!showDropdown.value) return false
+  if (props.disabled) return false
+  if (processedItems.value.length > 0) return false
+  return Boolean(props.loading) || internalLoading.value
+})
+
+const startInternalLoading = () => {
+  internalLoading.value = true
+  if (internalLoadingTimeout) clearTimeout(internalLoadingTimeout)
+  internalLoadingTimeout = setTimeout(() => {
+    internalLoading.value = false
+    internalLoadingTimeout = null
+  }, INTERNAL_LOADING_MAX_MS)
+}
+
+watch(
+  () => processedItems.value.length,
+  (len) => {
+    if (len > 0) {
+      internalLoading.value = false
+      if (internalLoadingTimeout) clearTimeout(internalLoadingTimeout)
+      internalLoadingTimeout = null
+    }
+  },
+)
+
+watch(
+  () => showDropdown.value,
+  (open) => {
+    if (!open) {
+      internalLoading.value = false
+      if (internalLoadingTimeout) clearTimeout(internalLoadingTimeout)
+      internalLoadingTimeout = null
+    }
+  },
+)
+
 const filteredItems = computed(() => {
   const search = searchText.value.toLowerCase()
   
@@ -272,6 +330,10 @@ const dropdownMaxHeight = computed(() => {
   const padding = 16 // 0.5rem top + 0.5rem bottom = 16px
   
   // Handle empty states (no data or no results)
+  if (showSkeleton.value) {
+    const rows = Math.min(skeletonRows.value, maxItems)
+    return `${rows * itemHeight + padding}px`
+  }
   if (processedItems.value.length === 0 || filteredItems.value.length === 0) {
     return `${itemHeight + padding}px` // Height for "No data" or "No results" message
   }
@@ -287,6 +349,7 @@ const dropdownMaxHeight = computed(() => {
 
 // Compute whether scrolling is needed
 const needsScroll = computed(() => {
+  if (showSkeleton.value) return false
   const itemCount = filteredItems.value.length
   const maxItems = 5
   return itemCount > maxItems
@@ -297,6 +360,7 @@ const handleInput = () => {
   selectedIndex.value = -1
   emit('update:modelValue', null)
   isFirstOpen.value = false // User is now typing, so disable first open behavior
+  if (!props.loading && processedItems.value.length === 0) startInternalLoading()
   
   // Ensure the dropdown is visible within scrollable containers (e.g., modal body)
   if (dropdownRef.value) {
@@ -547,6 +611,7 @@ defineExpose({
 const handleClick = () => {
   // Show dropdown and update selectedIndex to first item if input is empty and there are items
   showDropdown.value = true
+  if (!props.loading && processedItems.value.length === 0) startInternalLoading()
   
   // Ensure visibility within modals if partially hidden by footer
   if (dropdownRef.value) {
@@ -558,6 +623,10 @@ const handleClick = () => {
     scrollToSelectedItem() // Ensure first item is visible
   }
 }
+
+onUnmounted(() => {
+  if (internalLoadingTimeout) clearTimeout(internalLoadingTimeout)
+})
 </script>
 
 <style scoped>
@@ -718,6 +787,41 @@ const handleClick = () => {
 .no-data-item:hover {
   background-color: transparent;
   color: #6c757d;
+}
+
+/* Dropdown skeleton (matches app shimmer style) */
+.dropdown-skeleton {
+  padding: 0.5rem 1rem;
+}
+.dropdown-skel-row {
+  height: 0.9rem;
+  border-radius: 10px;
+  background: #e5e7eb;
+  margin: 0.6rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.dropdown-skel-row:first-child { margin-top: 0.25rem; }
+.dropdown-skel-row:last-child { margin-bottom: 0.25rem; }
+.dropdown-skel-row:nth-child(odd) { width: 78%; }
+.dropdown-skel-row:nth-child(even) { width: 58%; }
+.dropdown-skel-row:nth-child(3n) { width: 66%; }
+
+.dropdown-skeleton .shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.75) 40%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  animation: dropdown-shimmer 1.15s infinite;
+}
+@keyframes dropdown-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* Prevent browser autofill styling */

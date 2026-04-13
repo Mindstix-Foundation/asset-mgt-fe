@@ -33,7 +33,7 @@
                     placeholder="Enter your username, employee ID, or email"
                     aria-label="Username, Employee ID, or Email Address"
                     :disabled="isLoading"
-                    @input="clearError"
+                    @input="onUsernameInput"
                   />
                 </div>
 
@@ -52,7 +52,7 @@
                     placeholder="Enter your password"
                     aria-label="Password"
                     :disabled="isLoading"
-                    @input="clearError"
+                    @input="onPasswordInput"
                   />
                   <button
                     class="password-toggle"
@@ -133,6 +133,28 @@ const clearError = () => {
   if (loginError.value) {
     loginError.value = ''
   }
+}
+
+const onUsernameInput = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (!target) return
+  const valueWithoutSpaces = target.value.replace(/\s+/g, '')
+  if (valueWithoutSpaces !== target.value) {
+    target.value = valueWithoutSpaces
+  }
+  loginForm.username = valueWithoutSpaces
+  clearError()
+}
+
+const onPasswordInput = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (!target) return
+  const valueWithoutSpaces = target.value.replace(/\s+/g, '')
+  if (valueWithoutSpaces !== target.value) {
+    target.value = valueWithoutSpaces
+  }
+  loginForm.password = valueWithoutSpaces
+  clearError()
 }
 
 // Handle login form submission - using proper backend authentication
