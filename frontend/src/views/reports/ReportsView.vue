@@ -1245,10 +1245,19 @@ onUnmounted(() => {
 
 /* .card styles removed — using global cards.css */
 
-/* Custom Report Builder Card - Ensure corners are visible */
+/* Custom Report Builder Card - Ensure corners are visible.
+   IMPORTANT: do NOT set overflow:hidden here, otherwise the SearchableDropdown
+   menu (absolutely positioned) gets clipped inside the card and overlaps the
+   form fields instead of opening on top of them. */
 .reports-page .card.mb-5 {
   border-radius: 1rem !important;
-  overflow: hidden !important; /* Keep overflow hidden for proper shadow/border containment */
+  overflow: visible !important;
+}
+
+/* Round the card-header even though the card itself isn't clipping. */
+.reports-page .card.mb-5 > .card-header {
+  border-top-left-radius: 1rem !important;
+  border-top-right-radius: 1rem !important;
 }
 
 .card-header {

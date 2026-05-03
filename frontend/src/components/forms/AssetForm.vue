@@ -218,12 +218,16 @@
                         v-model="formData.specifications[field.key]"
                         :placeholder="field.placeholder || `Enter ${field.label.toLowerCase()}`"
                         :required="field.required"
+                        :maxlength="50"
                         @blur="validateSpecField(field.key, field.type, field.required || false)"
                         @focus="clearSpecFieldValidation(field.key)"
                         @input="handleSpecFieldInput(field.key)"
                       />
-                      <div class="form-text">
-                        {{ field.required ? 'Required field' : 'Optional' }}
+                      <div class="form-text d-flex justify-content-between">
+                        <span>{{ field.required ? 'Required field' : 'Optional' }}</span>
+                        <span class="text-muted">
+                          {{ (formData.specifications[field.key] || '').length }}/50
+                        </span>
                       </div>
                       <div class="invalid-feedback">{{ getSpecFieldError(field.key) }}</div>
                     </div>
@@ -2222,6 +2226,16 @@ const validateSpecField = (fieldKey: string, fieldType: string, required: boolea
       setSpecFieldError(fieldKey, `${field?.label || 'This field'} is required`)
       return false
     }
+  }
+
+  // Enforce 50-character cap on text fields (defends against paste / programmatic input).
+  if (fieldType === 'text' && typeof value === 'string' && value.length > 50) {
+    const field = specificationFields.value.find(f => f.key === fieldKey)
+    setSpecFieldError(
+      fieldKey,
+      `${field?.label || 'This field'} must be 50 characters or fewer`,
+    )
+    return false
   }
   
   // Use native validation for standard fields

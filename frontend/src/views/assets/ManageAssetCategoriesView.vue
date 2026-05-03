@@ -184,14 +184,16 @@
                             </div>
                             <div class="col-6 col-md-3 col-lg-3">
                               <label :for="`field-type-${index}`" class="form-label small fw-bold mb-2">Type</label>
-                              <input 
-                                type="text" 
+                              <select
                                 :id="`field-type-${index}`"
-                                class="form-control" 
-                                value="Dropdown"
-                                readonly
-                                disabled
+                                class="form-select"
+                                v-model="field.type"
+                                :disabled="field.isExisting"
+                                @change="onSpecFieldTypeChange(index)"
                               >
+                                <option value="dropdown">Dropdown</option>
+                                <option value="text">Text</option>
+                              </select>
                             </div>
                             <div class="col-6 col-md-2 col-lg-1">
                               <div class="form-label small fw-bold mb-2 d-block">Required</div>
@@ -226,8 +228,21 @@
                             </div>
                           </div>
                           
+                          <!-- Text type preview -->
+                          <div v-if="(field.type || 'dropdown') === 'text'" class="mt-2">
+                            <div class="form-label small fw-bold mb-1">Preview</div>
+                            <input
+                              type="text"
+                              class="form-control form-control-sm"
+                              :placeholder="`Free text input for ${field.label || 'this field'}`"
+                              :maxlength="50"
+                              disabled
+                            >
+                            <small class="text-muted">Users will type any value (max 50 characters) when adding/editing an asset.</small>
+                          </div>
+
                           <!-- Dropdown Options Section -->
-                          <div class="mt-2">
+                          <div v-else class="mt-2">
                             <div class="form-label small fw-bold mb-1">Options</div>
                             
                             <div class="row g-2 justify-content-between">
@@ -1449,28 +1464,28 @@ const buildSpecFieldsFromTemplate = (template: any): SpecField[] => {
   if (!template || !Array.isArray(template.fields)) {
     return []
   }
-  
-  return template.fields
-    .filter((field: any) => (field.type || 'dropdown') === 'dropdown')
-    .map((field: any, index: number) => {
-      const normalizedOptions: (SpecOption | null)[] = Array.isArray(field.options)
+
+  return template.fields.map((field: any, index: number) => {
+    const fieldType = (field.type || 'dropdown') as string
+    const normalizedOptions: (SpecOption | null)[] =
+      fieldType === 'dropdown' && Array.isArray(field.options)
         ? field.options.map((rawOption: any) => normalizeOptionFromTemplate(rawOption))
         : []
 
-      const options = normalizedOptions.filter(
-        (option): option is SpecOption => option !== null
-      )
-      
-      return {
-        key: field.key || `field_${index}`,
-        label: field.label || `Field ${index + 1}`,
-        type: 'dropdown',
-        required: field.required || false,
-        isExisting: true,
-        options,
-        newOptionValue: ''
-      }
-    })
+    const options = normalizedOptions.filter(
+      (option): option is SpecOption => option !== null
+    )
+
+    return {
+      key: field.key || `field_${index}`,
+      label: field.label || `Field ${index + 1}`,
+      type: fieldType,
+      required: field.required || false,
+      isExisting: true,
+      options,
+      newOptionValue: ''
+    }
+  })
 }
 
 // Validate all specification fields
@@ -1484,7 +1499,14 @@ const validateSpecificationFields = (): boolean => {
       toastStore.showError('Incomplete Fields', 'Each specification field must have a label')
       return false
     }
-    
+
+    const fieldType = field.type || 'dropdown'
+
+    if (fieldType !== 'dropdown') {
+      // Text-type fields don't require an options list.
+      continue
+    }
+
     if (!field.options || field.options.length === 0) {
       toastStore.showError(
         'Missing Options',
@@ -1518,6 +1540,17 @@ const validateSpecificationFields = (): boolean => {
   }
   
   return true
+}
+
+// When the user toggles a field's Type select, clear options if switching to text
+// and reset to an empty options array if switching back to dropdown.
+const onSpecFieldTypeChange = (index: number) => {
+  const field = formData.specFields[index]
+  if (!field) return
+  if ((field.type || 'dropdown') === 'text') {
+    field.options = []
+    field.newOptionValue = ''
+  }
 }
 
 // Build specification template JSON (for prototype - just console.log)
