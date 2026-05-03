@@ -689,7 +689,7 @@ const getCounterClass = (length: number, maxLength: number) => {
 
 // Helper function to find asset by assetId, with fallback fetch if needed
 const findAssetByExternalId = async (assetId: string): Promise<AssetApiAsset | null> => {
-  let match = availableAssets.value.find(a => a.assetId === assetId)
+  const match = availableAssets.value.find(a => a.assetId === assetId)
   
   if (match) {
     return match
@@ -821,7 +821,7 @@ const loadInitialData = async () => {
   isLoading.value = true
   try {
     const [assetsDropdownResponse, typesResponse] = await Promise.all([
-      assetApiService.getAssetsForDropdowns(props.isEditMode ? {} : { status: 'AVAILABLE' }),
+      assetApiService.getAssetsForDropdowns(props.isEditMode ? {} : { status: 'NON_ASSIGNED' }),
       maintenanceService.getMaintenanceTypes()
     ])
 

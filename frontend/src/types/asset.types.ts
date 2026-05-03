@@ -85,7 +85,7 @@ export interface DetailedAsset {
   serialNumber: string
   status: AssetStatus
   condition: AssetCondition
-  location?: string
+  location?: AssetLocation
   purchaseDate?: string
   purchaseCost?: number
   warrantyStartDate?: string
@@ -110,8 +110,29 @@ export interface DetailedAsset {
   }
 }
 
-export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
-export type AssetCondition = 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
+export type AssetStatus =
+  | 'NON_ASSIGNED'
+  | 'ASSIGNED'
+  | 'IN_MAINTENANCE'
+  | 'RETIRED'
+  | 'LOST'
+  | 'DONATED'
+export type AssetCondition =
+  | 'NEW'
+  | 'WORKING_CONDITION'
+  | 'SOFTWARE_ISSUE'
+  | 'HARDWARE_ISSUE'
+  | 'NEEDS_REPAIR'
+  | 'TRASH'
+  | 'REFURBISHED'
+export type AssetLocation = 'PUNE_INVENTORY_CENTER' | 'THANE_INVENTORY_CENTER'
+export type ReturnCondition =
+  | 'WORKING_CONDITION'
+  | 'SOFTWARE_ISSUE'
+  | 'HARDWARE_ISSUE'
+  | 'NEEDS_REPAIR'
+  | 'TRASH'
+  | 'REFURBISHED'
 
 export interface AssetQueryParams {
   page?: number
@@ -123,7 +144,7 @@ export interface AssetQueryParams {
   vendorId?: number
   status?: AssetStatus
   condition?: AssetCondition
-  location?: string
+  location?: AssetLocation
   specificationFilters?: Record<string, string>
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
@@ -138,7 +159,7 @@ export interface CreateAssetDto {
   vendorId?: number
   status: AssetStatus
   condition: AssetCondition
-  location: string
+  location: AssetLocation
   purchaseDate?: string
   purchaseCost?: number
   warrantyStartDate?: string
@@ -150,11 +171,14 @@ export interface UpdateAssetDto extends Partial<CreateAssetDto> {}
 
 export interface AssetStats {
   totalAssets: number
+  /** Backwards-compat alias for `nonAssigned` */
   available: number
+  nonAssigned?: number
   assigned: number
   inMaintenance: number
   retired: number
   lost: number
+  donated?: number
 }
 
 export interface PaginationInfo {
@@ -211,7 +235,7 @@ export interface AssetDisplayItem {
   specificationLabelMap?: Record<string, string>
   // Additional fields for modal (populated when viewing details)
   purchaseDate?: string
-  location?: string
+  location?: AssetLocation
   category?: string
   purchaseCost?: number
   vendor?: string

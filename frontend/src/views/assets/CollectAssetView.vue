@@ -505,10 +505,12 @@ const assetItems = computed(() => {
 })
 
 const conditionItems = computed(() => [
-  { id: 'GOOD', name: 'Good', value: 'GOOD' },
-  { id: 'FAIR', name: 'Fair', value: 'FAIR' },
-  { id: 'POOR', name: 'Poor', value: 'POOR' },
-  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' }
+  { id: 'WORKING_CONDITION', name: 'Working Condition', value: 'WORKING_CONDITION' },
+  { id: 'SOFTWARE_ISSUE', name: 'Software Issue', value: 'SOFTWARE_ISSUE' },
+  { id: 'HARDWARE_ISSUE', name: 'Hardware Issue', value: 'HARDWARE_ISSUE' },
+  { id: 'NEEDS_REPAIR', name: 'Needs Repair', value: 'NEEDS_REPAIR' },
+  { id: 'TRASH', name: 'Trash', value: 'TRASH' },
+  { id: 'REFURBISHED', name: 'Refurbished', value: 'REFURBISHED' }
 ])
 
 const collectionReasonItems = computed(() => [
@@ -531,10 +533,11 @@ const reasonLabels = {
 
 const conditionLabels = {
   'NEW': 'New',
-  'GOOD': 'Good',
-  'FAIR': 'Fair',
-  'POOR': 'Poor',
-  'DAMAGED': 'Damaged',
+  'WORKING_CONDITION': 'Working Condition',
+  'SOFTWARE_ISSUE': 'Software Issue',
+  'HARDWARE_ISSUE': 'Hardware Issue',
+  'NEEDS_REPAIR': 'Needs Repair',
+  'TRASH': 'Trash',
   'REFURBISHED': 'Refurbished'
 }
 
@@ -1171,7 +1174,7 @@ const confirmCollection = async () => {
     // Prepare return data for API
     const returnData: ReturnAssignmentDto = {
       returnDate: convertDateFormat(formData.collectionDate), // Convert date format
-      returnCondition: formData.assetCondition as 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED', // Already uppercase from SearchableDropdown
+      returnCondition: formData.assetCondition as 'WORKING_CONDITION' | 'SOFTWARE_ISSUE' | 'HARDWARE_ISSUE' | 'NEEDS_REPAIR' | 'TRASH' | 'REFURBISHED', // Already uppercase from SearchableDropdown
       returnReason: formData.collectionReason,
       notes: formData.collectionNotes || undefined
     }
@@ -1339,7 +1342,7 @@ const handleRefurbishedConditionAutoSelect = () => {
 const loadAssetTypeTemplate = async (assetTypeId: number) => {
   try {
     const response = await assetTypeService.getAssetTypeById(assetTypeId)
-    let assetType = response.data.assetType
+    const assetType = response.data.assetType
     
     // Handle case where specificationTemplate might be a string
     let template = assetType.specificationTemplate

@@ -1185,19 +1185,21 @@ const sortOptions = ref<Item[]>([
 const assetTypeFilterOptions = ref<Item[]>([])
 const brandFilterOptions = ref<Item[]>([])
 const statusOptions = ref<Item[]>([
-  { value: 'AVAILABLE', label: 'Available' },
+  { value: 'NON_ASSIGNED', label: 'Non Assigned' },
   { value: 'ASSIGNED', label: 'Assigned' },
   { value: 'IN_MAINTENANCE', label: 'In Maintenance' },
   { value: 'RETIRED', label: 'Retired' },
-  { value: 'LOST', label: 'Lost' }
+  { value: 'LOST', label: 'Lost' },
+  { value: 'DONATED', label: 'Donated' }
 ])
 
 const conditionOptions = ref<Item[]>([
   { value: 'NEW', label: 'New' },
-  { value: 'GOOD', label: 'Good' },
-  { value: 'FAIR', label: 'Fair' },
-  { value: 'POOR', label: 'Poor' },
-  { value: 'DAMAGED', label: 'Damaged' },
+  { value: 'WORKING_CONDITION', label: 'Working Condition' },
+  { value: 'SOFTWARE_ISSUE', label: 'Software Issue' },
+  { value: 'HARDWARE_ISSUE', label: 'Hardware Issue' },
+  { value: 'NEEDS_REPAIR', label: 'Needs Repair' },
+  { value: 'TRASH', label: 'Trash' },
   { value: 'REFURBISHED', label: 'Refurbished' }
 ])
 
@@ -1788,18 +1790,22 @@ const buildEntityData = (): any => {
 }
 
 const updateEntity = async (data: any) => {
+  if (formData.id == null) {
+    throw new Error('Cannot update entity: missing id')
+  }
+  const id = formData.id
   switch (selectedEntityType.value) {
     case 'category':
-      await assetCategoryService.updateAssetCategory(formData.id, data)
+      await assetCategoryService.updateAssetCategory(id, data)
       break
     case 'type':
-      await assetTypeService.updateAssetType(formData.id, data)
+      await assetTypeService.updateAssetType(id, data)
       break
     case 'brand':
-      await brandService.updateBrand(formData.id, data)
+      await brandService.updateBrand(id, data)
       break
     case 'model':
-      await modelService.updateModel(formData.id, data)
+      await modelService.updateModel(id, data)
       break
   }
   toastStore.showSuccess('Success', `${getEntityTitle().slice(0, -1)} updated successfully!`)
@@ -1905,7 +1911,7 @@ const deleteItem = async (item: any) => {
 
 const analyzeDeletionImpact = async (item: any) => {
   try {
-    let impact: any = {
+    const impact: any = {
       itemName: item.name,
       assetTypes: 0,
       assets: 0,

@@ -3,9 +3,12 @@ import { apiService, type ApiResponse } from '../core/apiClient'
 // Dashboard Stats Interface
 export interface DashboardStats {
   totalAssets: number
+  /** Backward-compatible alias for nonAssigned */
   available: number
+  nonAssigned?: number
   assigned: number
   maintenance: number
+  donated?: number
 }
 
 // Analytics Data Interfaces
@@ -155,11 +158,17 @@ class DashboardApiService {
         case 'ASSIGNED':
           assignedAssets += item.count
           break
+        case 'NON_ASSIGNED':
         case 'AVAILABLE':
           availableAssets += item.count
           break
         case 'IN_MAINTENANCE':
           maintenanceAssets += item.count
+          break
+        case 'RETIRED':
+        case 'LOST':
+        case 'DONATED':
+          // Excluded from dashboard headline counts
           break
         default:
           console.warn(`Unknown asset status in analytics: ${item.status}`)

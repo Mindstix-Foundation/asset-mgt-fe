@@ -1604,11 +1604,13 @@
       // Get condition badge class
       getConditionBadgeClass(condition) {
         const classes = {
-          'EXCELLENT': 'badge-success',
-          'GOOD': 'badge-info',
-          'FAIR': 'badge-warning',
-          'POOR': 'badge-danger',
-          'DAMAGED': 'badge-danger'
+          'NEW': 'badge-purple',
+          'WORKING_CONDITION': 'badge-success',
+          'SOFTWARE_ISSUE': 'badge-warning',
+          'HARDWARE_ISSUE': 'badge-danger',
+          'NEEDS_REPAIR': 'badge-warning',
+          'TRASH': 'badge-danger',
+          'REFURBISHED': 'badge-info'
         }
         return classes[condition] || 'badge-secondary'
       },

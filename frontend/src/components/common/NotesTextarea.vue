@@ -153,7 +153,7 @@ const applySmartFormatting = (value: string, target: HTMLTextAreaElement): strin
   if (!value) return value
   
   const lines = value.split('\n')
-  let formattedLines: string[] = []
+  const formattedLines: string[] = []
   
   for (const line of lines) {
     let formattedLine = line

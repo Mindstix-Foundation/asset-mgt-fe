@@ -23,6 +23,7 @@ export interface ActiveAssignment {
     condition: string
     status: string
     location?: string
+    specifications?: Record<string, any>
   }
   employee: {
     id: number
@@ -37,9 +38,11 @@ export interface ActiveAssignment {
   }
 }
 
+export type ReturnConditionValue = 'WORKING_CONDITION' | 'SOFTWARE_ISSUE' | 'HARDWARE_ISSUE' | 'NEEDS_REPAIR' | 'TRASH' | 'REFURBISHED'
+
 export interface ReturnAssignmentDto {
   returnDate: string
-  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
+  returnCondition: ReturnConditionValue
   returnReason?: string
   notes?: string
 }

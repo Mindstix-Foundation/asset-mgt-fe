@@ -1,5 +1,5 @@
 <template>
-  <div class="searchable-dropdown-wrapper">
+  <div class="searchable-dropdown-wrapper" :class="{ 'is-open': showDropdown }">
     <label :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
     <div class="dropdown" ref="dropdownRef">
       <!-- SonarQube false positive: aria-expanded and aria-controls are present via Vue binding -->
@@ -551,9 +551,28 @@ const handleBlur = (event: FocusEvent) => {
   }, 200)
 }
 
+// Close dropdown when its top edge would scroll above the navbar
+const NAVBAR_SELECTOR = '.navbar.sticky-top, .navbar.fixed-top'
+const handleScrollWhileOpen = () => {
+  if (!showDropdown.value || !dropdownRef.value) return
+  const navbar = document.querySelector(NAVBAR_SELECTOR) as HTMLElement | null
+  const navbarBottom = navbar ? navbar.getBoundingClientRect().bottom : 0
+  const inputEl = dropdownRef.value.querySelector('input') as HTMLElement | null
+  if (!inputEl) return
+  const inputRect = inputEl.getBoundingClientRect()
+  // Close when the input has scrolled above (or under) the navbar
+  if (inputRect.bottom <= navbarBottom) {
+    showDropdown.value = false
+    selectedIndex.value = -1
+    isFirstOpen.value = true
+    resetScrollTracking()
+  }
+}
+
 // Add lifecycle hooks for event listener
 onMounted(() => {
   document.addEventListener('mousedown', handleClickOutside)
+  globalThis.addEventListener('scroll', handleScrollWhileOpen, true)
 
   // Clear any browser autofill data
   clearAutofillData()
@@ -561,6 +580,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+  globalThis.removeEventListener('scroll', handleScrollWhileOpen, true)
 })
 
 // Function to clear browser autofill data
@@ -634,6 +654,12 @@ onUnmounted(() => {
 .searchable-dropdown-wrapper {
   position: relative;
   width: 100%;
+}
+
+/* When the dropdown is open, lift the wrapper above sibling form elements
+   while staying below the navbar. */
+.searchable-dropdown-wrapper.is-open {
+  z-index: var(--z-dropdown-menu);
 }
 
 /* Form label styling */

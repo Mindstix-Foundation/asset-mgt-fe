@@ -15,7 +15,7 @@
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body text-center p-4">
               <i class="fas fa-file-excel fa-3x mb-3" style="color: var(--secondary-purple) !important;"></i>
-              <h5 class="card-title">Asset Inventory Report</h5>
+              <h5 class="card-title">Total Asset Report</h5>
               <p class="card-text text-muted">Complete list of all assets with details</p>
               <button 
                 class="btn btn-purple"
@@ -695,7 +695,7 @@ const handleQuickExport = async (reportType: string) => {
       case 'asset-inventory':
         // Use the same asset export API as the Assets page
         await assetService.exportAssetsToExcel()
-        showNotification('Asset inventory report exported successfully!', 'success')
+        showNotification('Total asset report exported successfully!', 'success')
         break
       case 'employee-assets':
         // Use the same employee export API as the Employees page
@@ -916,7 +916,7 @@ const handleDateRangeChange = () => {
   
   if (customFilters.value.dateRange !== 'custom') {
     const now = new Date()
-    let fromDate = new Date()
+    const fromDate = new Date()
     
     switch (customFilters.value.dateRange) {
       case 'last7':
@@ -989,6 +989,7 @@ const getColorForIndex = (index: number): string => {
 const getStatusIcon = (status: string): string => {
   const icons: Record<string, string> = {
     'ASSIGNED': 'fas fa-user-check',
+    'NON_ASSIGNED': 'fas fa-check-circle',
     'AVAILABLE': 'fas fa-check-circle',
     'MAINTENANCE': 'fas fa-tools',
     'IN_MAINTENANCE': 'fas fa-tools',
@@ -996,6 +997,8 @@ const getStatusIcon = (status: string): string => {
     'SCHEDULED': 'fas fa-calendar',
     'CANCELLED': 'fas fa-times-circle',
     'RETIRED': 'fas fa-archive',
+    'LOST': 'fas fa-exclamation-triangle',
+    'DONATED': 'fas fa-gift',
     'ACTIVE': 'fas fa-user-check',
     'INACTIVE': 'fas fa-user-times',
     'TERMINATED': 'fas fa-user-slash',
@@ -1010,6 +1013,7 @@ const formatStatus = (status: string): string => {
   if (!status) return '-'
   const normalized = status.toUpperCase()
   if (normalized === 'IN_MAINTENANCE') return 'In Maintenance'
+  if (normalized === 'NON_ASSIGNED') return 'Non Assigned'
   if (normalized === 'TOTAL') return 'Total Assets'
   return normalized.charAt(0) + normalized.slice(1).toLowerCase()
 }
@@ -1031,7 +1035,7 @@ const formatTimeAgo = (timestamp: string): string => {
 
 const getReportTitle = (): string => {
   const titles: Record<string, string> = {
-    'assets': 'Asset Inventory Report',
+    'assets': 'Total Asset Report',
     'employees': 'Employee Asset Report',
     'maintenance': 'Completed Maintenance Report'
   }
@@ -1079,13 +1083,16 @@ const getBadgeClass = (status: string): string => {
   const classes: Record<string, string> = {
     // Assets
     'ASSIGNED': 'badge-purple',
+    'NON_ASSIGNED': 'badge-green',
     'AVAILABLE': 'badge-green',
     'MAINTENANCE': 'badge-orange',
     'IN_MAINTENANCE': 'badge-orange',
     'COMPLETED': 'badge-green',
     'SCHEDULED': 'badge-blue',
     'CANCELLED': 'badge-red',
-    'RETIRED': 'badge-gray',
+    'RETIRED': 'badge-brown',
+    'LOST': 'badge-red',
+    'DONATED': 'badge-purple',
     // Employees
     'ACTIVE': 'badge-green',
     'INACTIVE': 'badge-red',
@@ -1133,7 +1140,7 @@ const getCompleteStatusOverview = () => {
   const totalCount = getTotalAssetCount()
   
   // Define all required statuses
-  const requiredStatuses = ['AVAILABLE', 'IN_MAINTENANCE', 'ASSIGNED']
+  const requiredStatuses = ['NON_ASSIGNED', 'IN_MAINTENANCE', 'ASSIGNED']
   
   // Create a map of backend data
   const statusMap = new Map()

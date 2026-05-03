@@ -769,7 +769,16 @@ const submitForm = async (event?: Event) => {
 
     // Get the current condition of the selected asset
     const currentAsset = availableAssets.value.find(asset => asset.id === selectedAssetId)
-    const currentCondition = currentAsset?.condition || 'GOOD' // Fallback to GOOD if condition is not available
+    const currentCondition = currentAsset?.condition || 'WORKING_CONDITION' // Fallback if condition is not available
+
+    // Block assignment for TRASH-condition assets
+    if (currentCondition === 'TRASH') {
+      toastStore.showError(
+        'Cannot Assign Asset',
+        'This asset is marked as Trash and cannot be assigned. Please select a different asset.'
+      )
+      return
+    }
 
     // Convert date from dd-mm-yyyy to yyyy-mm-dd format for API
     const convertDateFormat = (dateString: string): string => {
@@ -795,7 +804,7 @@ const submitForm = async (event?: Event) => {
       assetId: selectedAssetId,
       employeeId: selectedEmployeeId,
       issueDate: convertDateFormat(formData.assignmentDate),
-      issueCondition: currentCondition as "GOOD" | "NEW" | "FAIR" | "POOR" | "DAMAGED", // Use the asset's current condition
+      issueCondition: currentCondition as 'NEW' | 'WORKING_CONDITION' | 'SOFTWARE_ISSUE' | 'HARDWARE_ISSUE' | 'NEEDS_REPAIR' | 'REFURBISHED', // Use the asset's current condition
       issueReason: reasonLabels[formData.assignmentReason as keyof typeof reasonLabels] || formData.assignmentReason,
       notes: formData.assignmentNotes || undefined
     }
@@ -914,7 +923,7 @@ const clearSelectedAssetInfo = () => {
 const loadAssetTypeTemplate = async (assetTypeId: number) => {
   try {
     const response = await assetTypeService.getAssetTypeById(assetTypeId)
-    let assetType = response.data.assetType
+    const assetType = response.data.assetType
     
     // Handle case where specificationTemplate might be a string
     let template = assetType.specificationTemplate
@@ -1081,8 +1090,8 @@ watch(() => availableAssets.value, (newAssets) => {
 const loadAvailableAssets = async () => {
   try {
     isLoadingAssets.value = true
-    // Use the dropdown API to get all available assets without pagination
-    const response = await assetApiService.getAssetsForDropdowns({ status: 'AVAILABLE' })
+    // Use the dropdown API to get all non-assigned assets without pagination
+    const response = await assetApiService.getAssetsForDropdowns({ status: 'NON_ASSIGNED' })
     availableAssets.value = response.data.assets
   } catch (error: any) {
     console.error('Error loading available assets:', error)

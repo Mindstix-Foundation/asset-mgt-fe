@@ -5,11 +5,12 @@
 
 // Asset Status
 export const ASSET_STATUS = {
-  AVAILABLE: 'AVAILABLE',
+  NON_ASSIGNED: 'NON_ASSIGNED',
   ASSIGNED: 'ASSIGNED',
   IN_MAINTENANCE: 'IN_MAINTENANCE',
   RETIRED: 'RETIRED',
   LOST: 'LOST',
+  DONATED: 'DONATED',
 } as const
 
 export type AssetStatus = (typeof ASSET_STATUS)[keyof typeof ASSET_STATUS]
@@ -17,14 +18,35 @@ export type AssetStatus = (typeof ASSET_STATUS)[keyof typeof ASSET_STATUS]
 // Asset Condition
 export const ASSET_CONDITION = {
   NEW: 'NEW',
-  GOOD: 'GOOD',
-  FAIR: 'FAIR',
-  POOR: 'POOR',
-  DAMAGED: 'DAMAGED',
+  WORKING_CONDITION: 'WORKING_CONDITION',
+  SOFTWARE_ISSUE: 'SOFTWARE_ISSUE',
+  HARDWARE_ISSUE: 'HARDWARE_ISSUE',
+  NEEDS_REPAIR: 'NEEDS_REPAIR',
+  TRASH: 'TRASH',
   REFURBISHED: 'REFURBISHED',
 } as const
 
 export type AssetCondition = (typeof ASSET_CONDITION)[keyof typeof ASSET_CONDITION]
+
+// Asset Location (predefined inventory centers)
+export const ASSET_LOCATION = {
+  PUNE_INVENTORY_CENTER: 'PUNE_INVENTORY_CENTER',
+  THANE_INVENTORY_CENTER: 'THANE_INVENTORY_CENTER',
+} as const
+
+export type AssetLocation = (typeof ASSET_LOCATION)[keyof typeof ASSET_LOCATION]
+
+// Return Condition (subset of AssetCondition: excludes NEW)
+export const RETURN_CONDITION = {
+  WORKING_CONDITION: 'WORKING_CONDITION',
+  SOFTWARE_ISSUE: 'SOFTWARE_ISSUE',
+  HARDWARE_ISSUE: 'HARDWARE_ISSUE',
+  NEEDS_REPAIR: 'NEEDS_REPAIR',
+  TRASH: 'TRASH',
+  REFURBISHED: 'REFURBISHED',
+} as const
+
+export type ReturnCondition = (typeof RETURN_CONDITION)[keyof typeof RETURN_CONDITION]
 
 // Employee Status
 export const EMPLOYEE_STATUS = {
@@ -78,19 +100,25 @@ export type VendorStatus = (typeof VENDOR_STATUS)[keyof typeof VENDOR_STATUS]
 // Status Labels for Display
 export const STATUS_LABELS = {
   // Asset Status Labels
-  [ASSET_STATUS.AVAILABLE]: 'Available',
+  [ASSET_STATUS.NON_ASSIGNED]: 'Non Assigned',
   [ASSET_STATUS.ASSIGNED]: 'Assigned',
   [ASSET_STATUS.IN_MAINTENANCE]: 'In Maintenance',
   [ASSET_STATUS.RETIRED]: 'Retired',
   [ASSET_STATUS.LOST]: 'Lost',
+  [ASSET_STATUS.DONATED]: 'Donated',
 
   // Asset Condition Labels
   [ASSET_CONDITION.NEW]: 'New',
-  [ASSET_CONDITION.GOOD]: 'Good',
-  [ASSET_CONDITION.FAIR]: 'Fair',
-  [ASSET_CONDITION.POOR]: 'Poor',
-  [ASSET_CONDITION.DAMAGED]: 'Damaged',
+  [ASSET_CONDITION.WORKING_CONDITION]: 'Working Condition',
+  [ASSET_CONDITION.SOFTWARE_ISSUE]: 'Software Issue',
+  [ASSET_CONDITION.HARDWARE_ISSUE]: 'Hardware Issue',
+  [ASSET_CONDITION.NEEDS_REPAIR]: 'Needs Repair',
+  [ASSET_CONDITION.TRASH]: 'Trash',
   [ASSET_CONDITION.REFURBISHED]: 'Refurbished',
+
+  // Asset Location Labels
+  [ASSET_LOCATION.PUNE_INVENTORY_CENTER]: 'Pune Inventory Center',
+  [ASSET_LOCATION.THANE_INVENTORY_CENTER]: 'Thane Inventory Center',
 
   // Employee Status Labels
   [EMPLOYEE_STATUS.ACTIVE]: 'Active',
@@ -125,18 +153,20 @@ export const STATUS_LABELS = {
 // Status Badge Classes for Bootstrap
 export const STATUS_BADGE_CLASSES = {
   // Asset Status
-  [ASSET_STATUS.AVAILABLE]: 'badge-available bg-success',
+  [ASSET_STATUS.NON_ASSIGNED]: 'badge-available bg-success',
   [ASSET_STATUS.ASSIGNED]: 'badge-assigned bg-primary',
   [ASSET_STATUS.IN_MAINTENANCE]: 'badge-maintenance bg-warning',
   [ASSET_STATUS.RETIRED]: 'badge-retired bg-secondary',
   [ASSET_STATUS.LOST]: 'bg-danger',
+  [ASSET_STATUS.DONATED]: 'bg-info',
 
   // Asset Condition
   [ASSET_CONDITION.NEW]: 'badge-condition-new bg-primary',
-  [ASSET_CONDITION.GOOD]: 'badge-condition-good bg-success',
-  [ASSET_CONDITION.FAIR]: 'badge-condition-fair bg-warning',
-  [ASSET_CONDITION.POOR]: 'badge-condition-poor bg-danger',
-  [ASSET_CONDITION.DAMAGED]: 'bg-danger',
+  [ASSET_CONDITION.WORKING_CONDITION]: 'badge-condition-good bg-success',
+  [ASSET_CONDITION.SOFTWARE_ISSUE]: 'badge-condition-fair bg-warning',
+  [ASSET_CONDITION.HARDWARE_ISSUE]: 'badge-condition-poor bg-danger',
+  [ASSET_CONDITION.NEEDS_REPAIR]: 'badge-condition-fair bg-warning',
+  [ASSET_CONDITION.TRASH]: 'bg-danger',
   [ASSET_CONDITION.REFURBISHED]: 'badge-condition-refurbished bg-brown',
 
   // Employee Status
@@ -154,3 +184,21 @@ export const STATUS_BADGE_CLASSES = {
   // [VENDOR_STATUS.INACTIVE]: 'badge-inactive bg-danger',  // Duplicate - same as EMPLOYEE_STATUS.INACTIVE
 } as const
 
+// Convenience arrays for dropdowns / select options
+export const ASSET_STATUS_LIST: AssetStatus[] = Object.values(ASSET_STATUS) as AssetStatus[]
+export const ASSET_CONDITION_LIST: AssetCondition[] =
+  Object.values(ASSET_CONDITION) as AssetCondition[]
+export const ASSET_LOCATION_LIST: AssetLocation[] =
+  Object.values(ASSET_LOCATION) as AssetLocation[]
+export const RETURN_CONDITION_LIST: ReturnCondition[] =
+  Object.values(RETURN_CONDITION) as ReturnCondition[]
+
+/**
+ * Statuses considered "out of inventory" – used to exclude assets from
+ * dashboard counts and to disallow new assignments. Mirrors backend logic.
+ */
+export const INACTIVE_ASSET_STATUSES: AssetStatus[] = [
+  ASSET_STATUS.RETIRED,
+  ASSET_STATUS.LOST,
+  ASSET_STATUS.DONATED,
+]

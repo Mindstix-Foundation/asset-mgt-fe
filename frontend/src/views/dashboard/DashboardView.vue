@@ -60,7 +60,7 @@
           </div>
         </div>
 
-        <!-- Available Assets -->
+        <!-- Non Assigned Assets -->
         <div class="col-12 col-sm-6 col-lg-3 mb-3">
           <div class="card border-0 shadow-sm h-100 stats-card-modern">
             <div class="card-body p-4">
@@ -69,7 +69,7 @@
                   <i class="fas fa-warehouse fa-lg"></i>
                 </div>
                                   <div class="text-end">
-                    <div class="text-dark small mb-1 fw-semibold">Available Assets</div>
+                    <div class="text-dark small mb-1 fw-semibold">Non Assigned Assets</div>
                     <div class="h3 mb-0 fw-bold text-dark">
                       <span v-if="isLoadingStats" class="placeholder-glow">
                         <span class="placeholder col-4"></span>
@@ -376,7 +376,7 @@ const loadDashboardStats = async () => {
     dashboardStats.value = {
       totalAssets: stats.totalAssets,
       assignedAssets: stats.assigned,
-      availableAssets: stats.available,
+      availableAssets: (stats as any).nonAssigned ?? stats.available,
       maintenanceAssets: stats.maintenance
     }
     

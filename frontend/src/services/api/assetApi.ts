@@ -3,7 +3,22 @@ import apiClient from '../core/apiClient'
 const API_BASE_URL = ''
 
 // Types for asset API
-export type AssetStatus = 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+export type AssetStatus =
+  | 'NON_ASSIGNED'
+  | 'ASSIGNED'
+  | 'IN_MAINTENANCE'
+  | 'RETIRED'
+  | 'LOST'
+  | 'DONATED'
+export type AssetCondition =
+  | 'NEW'
+  | 'WORKING_CONDITION'
+  | 'SOFTWARE_ISSUE'
+  | 'HARDWARE_ISSUE'
+  | 'NEEDS_REPAIR'
+  | 'TRASH'
+  | 'REFURBISHED'
+export type AssetLocation = 'PUNE_INVENTORY_CENTER' | 'THANE_INVENTORY_CENTER'
 export interface AssetQueryDto {
   page?: number
   limit?: number
@@ -13,8 +28,8 @@ export interface AssetQueryDto {
   modelId?: number
   vendorId?: number
   status?: AssetStatus
-  condition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
-  location?: string
+  condition?: AssetCondition
+  location?: AssetLocation | string
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
 }
@@ -72,11 +87,14 @@ export interface AssetStats {
   message: string
   data: {
     totalAssets: number
+    /** Backwards-compat alias for `nonAssigned` */
     available: number
+    nonAssigned?: number
     assigned: number
     inMaintenance: number
     retired: number
     lost: number
+    donated?: number
   }
 }
 

@@ -1,18 +1,21 @@
 import apiClient from '../core/apiClient'
 
 // Types for assignment API
+export type IssueConditionValue = 'NEW' | 'WORKING_CONDITION' | 'SOFTWARE_ISSUE' | 'HARDWARE_ISSUE' | 'NEEDS_REPAIR' | 'REFURBISHED'
+export type ReturnConditionValue = 'WORKING_CONDITION' | 'SOFTWARE_ISSUE' | 'HARDWARE_ISSUE' | 'NEEDS_REPAIR' | 'TRASH' | 'REFURBISHED'
+
 export interface CreateAssignmentDto {
   assetId: number
   employeeId: number
   issueDate: string
-  issueCondition?: 'NEW' | 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
+  issueCondition?: IssueConditionValue
   issueReason?: string
   notes?: string
 }
 
 export interface ReturnAssignmentDto {
   returnDate: string
-  returnCondition: 'GOOD' | 'FAIR' | 'POOR' | 'DAMAGED' | 'REFURBISHED'
+  returnCondition: ReturnConditionValue
   returnReason?: string
   notes?: string
 }

@@ -400,25 +400,18 @@
                 <div class="row g-4">
                   <!-- Location -->
                   <div class="col-md-6">
-                    <label for="location" class="form-label">
-                      Location <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      id="location" 
-                      v-model="formData.location"
-                      :class="getFieldClass('location')"
-                      placeholder="e.g., Warehouse A, Shelf B2" 
-                      required 
-                      minlength="2" 
-                      maxlength="100"
-                      title="Location must be 2-100 characters"
-                      @blur="validateFieldInline('location')"
-                      @focus="clearFieldValidation('location')"
-                      @input="handleFieldInput('location')"
-                    >
-                    <div class="form-text">Physical location where asset is stored (2-100 characters)</div>
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="location"
+                        label="Location"
+                        placeholder="Select location..."
+                        :items="locationItems"
+                        v-model="selectedLocation"
+                        required
+                        @change="onLocationChange"
+                      />
+                    </div>
+                    <div class="form-text">Inventory center where asset is currently stored</div>
                   </div>
 
                   <!-- Condition -->
@@ -603,9 +596,9 @@ const formData = reactive({
   purchaseCost: '',
   warrantyStartDate: '',
   warrantyEndDate: '',
-  location: '',
+  location: '' as string,
   condition: 'NEW',
-  status: 'AVAILABLE',
+  status: 'NON_ASSIGNED',
   notes: '',
   // PROTOTYPE: Specifications
   specifications: {} as Record<string, any>,
@@ -680,6 +673,7 @@ const getSpecDropdownItems = (field: SpecField): Item[] => {
 const selectedVendor = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
 const selectedStatus = ref<Item | null>(null)
+const selectedLocation = ref<Item | null>(null)
 
 const errors = reactive({
   serialNumber: '',
@@ -783,10 +777,11 @@ const vendorItems = computed(() => {
 
 const conditionItems = computed(() => {
   const baseConditions = [
-    { id: 'GOOD', name: 'Good', value: 'GOOD' },
-    { id: 'FAIR', name: 'Fair', value: 'FAIR' },
-    { id: 'POOR', name: 'Poor', value: 'POOR' },
-    { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' },
+    { id: 'WORKING_CONDITION', name: 'Working Condition', value: 'WORKING_CONDITION' },
+    { id: 'SOFTWARE_ISSUE', name: 'Software Issue', value: 'SOFTWARE_ISSUE' },
+    { id: 'HARDWARE_ISSUE', name: 'Hardware Issue', value: 'HARDWARE_ISSUE' },
+    { id: 'NEEDS_REPAIR', name: 'Needs Repair', value: 'NEEDS_REPAIR' },
+    { id: 'TRASH', name: 'Trash', value: 'TRASH' },
     { id: 'REFURBISHED', name: 'Refurbished', value: 'REFURBISHED' }
   ]
   
@@ -824,6 +819,25 @@ const statusItems = computed(() => {
   }))
 })
 
+const locationItems = computed(() => {
+  return [
+    { id: 'PUNE_INVENTORY_CENTER', name: 'Pune Inventory Center', value: 'PUNE_INVENTORY_CENTER' },
+    { id: 'THANE_INVENTORY_CENTER', name: 'Thane Inventory Center', value: 'THANE_INVENTORY_CENTER' }
+  ]
+})
+
+const onLocationChange = (item: any) => {
+  formData.location = item && item.value ? item.value.toString() : ''
+  if (formData.location) {
+    setFieldValid('location')
+    applyValidationToSearchableDropdown('location', 'valid')
+  } else {
+    clearFieldValidation('location')
+    applyValidationToSearchableDropdown('location', 'invalid')
+  }
+  validateFieldInline('location')
+}
+
 // Computed properties for cascading dropdowns (keeping for backward compatibility)
 const availableTypes = computed(() => {
   if (!uiFormData.assetCategory || uiFormData.assetCategory === 'add_new') {
@@ -851,36 +865,42 @@ const availableStatusOptions = computed(() => {
   const currentStatus = formData.status
   
   switch (currentStatus) {
-    case 'AVAILABLE':
+    case 'NON_ASSIGNED':
       return [
-        { value: 'AVAILABLE', label: 'AVAILABLE (Current)' },
-        { value: 'LOST', label: 'LOST' }
+        { value: 'NON_ASSIGNED', label: 'Non Assigned (Current)' },
+        { value: 'LOST', label: 'Lost' },
+        { value: 'DONATED', label: 'Donated' }
       ]
     case 'ASSIGNED':
       return [
-        { value: 'ASSIGNED', label: 'ASSIGNED (Current)' },
-        { value: 'LOST', label: 'LOST' }
+        { value: 'ASSIGNED', label: 'Assigned (Current)' },
+        { value: 'LOST', label: 'Lost' }
       ]
     case 'IN_MAINTENANCE':
       return [
-        { value: 'IN_MAINTENANCE', label: 'IN_MAINTENANCE (Current)' },
-        { value: 'AVAILABLE', label: 'AVAILABLE (Maintenance Complete)' },
-        { value: 'ASSIGNED', label: 'ASSIGNED (Return to Employee)' }
+        { value: 'IN_MAINTENANCE', label: 'In Maintenance (Current)' },
+        { value: 'NON_ASSIGNED', label: 'Non Assigned (Maintenance Complete)' },
+        { value: 'ASSIGNED', label: 'Assigned (Return to Employee)' }
       ]
     case 'RETIRED':
       return [
-        { value: 'RETIRED', label: 'RETIRED (Current)' },
-        { value: 'AVAILABLE', label: 'AVAILABLE (Reactivated)' }
+        { value: 'RETIRED', label: 'Retired (Current)' },
+        { value: 'NON_ASSIGNED', label: 'Non Assigned (Reactivated)' }
       ]
     case 'LOST':
       return [
-        { value: 'LOST', label: 'LOST (Current)' },
-        { value: 'AVAILABLE', label: 'AVAILABLE (Found)' }
+        { value: 'LOST', label: 'Lost (Current)' },
+        { value: 'NON_ASSIGNED', label: 'Non Assigned (Found)' }
+      ]
+    case 'DONATED':
+      return [
+        { value: 'DONATED', label: 'Donated (Current)' }
       ]
     default:
       return [
-        { value: 'AVAILABLE', label: 'AVAILABLE' },
-        { value: 'LOST', label: 'LOST' }
+        { value: 'NON_ASSIGNED', label: 'Non Assigned' },
+        { value: 'LOST', label: 'Lost' },
+        { value: 'DONATED', label: 'Donated' }
       ]
   }
 })
@@ -990,7 +1010,7 @@ const setFieldError = (fieldName: string, message: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'invalid')
   }
@@ -1011,7 +1031,7 @@ const setFieldValid = (fieldName: string) => {
   }
   
   // Apply validation classes to SearchableDropdown fields
-  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
   if (searchableDropdownFields.includes(fieldName)) {
     applyValidationToSearchableDropdown(fieldName, 'valid')
   }
@@ -1029,7 +1049,7 @@ const clearFieldValidation = (fieldName: string) => {
     delete errors[fieldName as keyof typeof errors]
     
     // Also clear validation for SearchableDropdown components
-    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
     if (searchableDropdownFields.includes(fieldName)) {
       const input = document.getElementById(fieldName) as HTMLInputElement
       if (input) {
@@ -1091,7 +1111,7 @@ const validateFieldInline = async (fieldName: string) => {
   }
 
   // For SearchableDropdown fields, use the dropdown validation
-  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+  const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
   if (searchableDropdownFields.includes(fieldName)) {
     console.log(`Field ${fieldName} is a SearchableDropdown, using dropdown validation`)
     // For SearchableDropdown, check if it's required and has a value
@@ -1108,7 +1128,7 @@ const validateFieldInline = async (fieldName: string) => {
 
   // Check for custom field types that need API validation (serialNumber, location, notes)
   // Note: purchaseDate, purchaseCost, warrantyStartDate, warrantyEndDate are handled by validationHandlers above
-  const customValidationFields = ['serialNumber', 'location', 'notes']
+  const customValidationFields = ['serialNumber', 'notes']
   if (customValidationFields.includes(fieldName)) {
     console.log(`Field ${fieldName} uses custom validation, calling validateFieldType`)
     return await validateFieldType(fieldName, value)
@@ -1132,6 +1152,7 @@ const validationHandlers = {
   brand: () => validateRequiredDropdown('brand', selectedBrand.value),
   model: () => validateRequiredDropdown('model', selectedModel.value),
   condition: () => validateRequiredDropdown('condition', selectedCondition.value),
+  location: () => validateRequiredDropdown('location', selectedLocation.value),
   vendor: () => validateOptionalDropdown('vendor', selectedVendor.value),
   status: () => validateOptionalDropdown('status', selectedStatus.value),
   purchaseDate: (value: any) => validatePurchaseDateField(value),
@@ -1145,7 +1166,7 @@ const validateFieldType = async (fieldName: string, value: any): Promise<boolean
     case 'serialNumber':
       return await validateSerialNumberField(value)
     case 'location':
-      return validateLocationField(value)
+      return validateRequiredDropdownField('location', selectedLocation.value)
     case 'purchaseDate':
       return validatePurchaseDateField(value)
     case 'purchaseCost':
@@ -1234,18 +1255,20 @@ const validateSerialNumberField = async (value: any): Promise<boolean> => {
   }
 }
 
+const VALID_LOCATIONS = ['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER']
+
 const validateLocationField = (value: any): boolean => {
   if (!value || value.toString().trim() === '') {
     setFieldError('location', 'Location is required')
     return false
   }
-  
+
   const location = value.toString().trim()
-  if (location.length < 2 || location.length > 100) {
-    setFieldError('location', 'Location must be 2-100 characters')
+  if (!VALID_LOCATIONS.includes(location)) {
+    setFieldError('location', 'Location must be one of the allowed inventory centers')
     return false
   }
-  
+
   setFieldValid('location')
   return true
 }
@@ -1332,12 +1355,8 @@ const validateSerialNumber = async () => {
 // Legacy validation functions removed - using new comprehensive validation system
 
 const validateLocation = (field: HTMLInputElement) => {
-  if (!formData.location || formData.location.trim() === '') {
+  if (!formData.location || !VALID_LOCATIONS.includes(formData.location)) {
     errors.location = 'Location is required'
-    field.classList.add('is-invalid')
-    field.classList.remove('is-valid')
-  } else if (formData.location.length < 2 || formData.location.length > 100) {
-    errors.location = 'Location must be 2-100 characters'
     field.classList.add('is-invalid')
     field.classList.remove('is-valid')
   } else {
@@ -1395,7 +1414,7 @@ const clearFieldError = (fieldName: string) => {
     }
     
     // Also clear validation for SearchableDropdown components
-    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor']
+    const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
     if (searchableDropdownFields.includes(fieldName)) {
       const wrapper = document.querySelector(`#${fieldName}`)?.closest('.form-searchable-dropdown')
       if (wrapper) {
@@ -1590,7 +1609,7 @@ const onConditionChange = (item: Item | null) => {
 
 const onStatusChange = (item: Item | null) => {
   selectedStatus.value = item
-  formData.status = item && item.value ? item.value.toString() : 'AVAILABLE'
+  formData.status = item && item.value ? item.value.toString() : 'NON_ASSIGNED'
   
   // Handle validation when user makes a selection
   if (item) {
@@ -1882,7 +1901,7 @@ const buildAddModeAssetData = (): any => {
     assetId: formData.assetId,
     serialNumber: formData.serialNumber,
     vendorId: formData.vendorId ? Number.parseInt(formData.vendorId) : undefined,
-    status: 'AVAILABLE',
+    status: 'NON_ASSIGNED',
     condition: formData.condition as any,
     location: formData.location,
     purchaseDate: normalizeOptionalField(formData.purchaseDate),
@@ -2430,6 +2449,21 @@ const createDropdownItem = (id: any, name: string): Item => ({
   value: id.toString()
 })
 
+const CONDITION_LABEL_MAP: Record<string, string> = {
+  NEW: 'New',
+  WORKING_CONDITION: 'Working Condition',
+  SOFTWARE_ISSUE: 'Software Issue',
+  HARDWARE_ISSUE: 'Hardware Issue',
+  NEEDS_REPAIR: 'Needs Repair',
+  TRASH: 'Trash',
+  REFURBISHED: 'Refurbished'
+}
+
+const LOCATION_LABEL_MAP: Record<string, string> = {
+  PUNE_INVENTORY_CENTER: 'Pune Inventory Center',
+  THANE_INVENTORY_CENTER: 'Thane Inventory Center'
+}
+
 const setSelectedDropdownItems = (asset: any) => {
   const dropdownMappings = [
     { condition: asset.assetType?.category, target: selectedCategory },
@@ -2445,13 +2479,23 @@ const setSelectedDropdownItems = (asset: any) => {
     }
   }
 
-  // Handle condition separately (special formatting)
+  // Handle condition separately (using friendly label)
   if (asset.condition) {
     selectedCondition.value = {
       id: asset.condition,
-      name: asset.condition.charAt(0).toUpperCase() + asset.condition.slice(1).toLowerCase(),
+      name: CONDITION_LABEL_MAP[asset.condition] || asset.condition,
       value: asset.condition
     }
+  }
+
+  // Handle location (now an enum value)
+  if (asset.location) {
+    selectedLocation.value = {
+      id: asset.location,
+      name: LOCATION_LABEL_MAP[asset.location] || asset.location,
+      value: asset.location
+    }
+    formData.location = asset.location
   }
 
   // Handle status separately (requires lookup)

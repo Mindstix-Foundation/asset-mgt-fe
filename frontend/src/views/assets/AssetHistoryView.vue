@@ -685,43 +685,46 @@ const normalizeAssetType = (assetType: string): string => {
 }
 
 const getConditionBadgeClass = (condition: string): string => {
-  // Handle condition transitions (e.g., "NEW → GOOD")
+  // Handle condition transitions (e.g., "NEW → WORKING_CONDITION")
   // Use the color of the final condition
   const finalCondition = condition.includes(' → ') ? condition.split(' → ')[1] : condition
   
   const classes: Record<string, string> = {
     'NEW': 'badge badge-gray',
-    'GOOD': 'badge badge-gray',
-    'FAIR': 'badge badge-gray',
-    'POOR': 'badge badge-gray',
-    'DAMAGED': 'badge badge-gray',
+    'WORKING_CONDITION': 'badge badge-gray',
+    'SOFTWARE_ISSUE': 'badge badge-gray',
+    'HARDWARE_ISSUE': 'badge badge-gray',
+    'NEEDS_REPAIR': 'badge badge-gray',
+    'TRASH': 'badge badge-gray',
     'REFURBISHED': 'badge badge-gray'
   }
   return classes[finalCondition] || 'badge badge-gray'
 }
 
 const getStatusBadgeClass = (status: string): string => {
-  // Handle status transitions (e.g., "AVAILABLE → IN_MAINTENANCE")
+  // Handle status transitions (e.g., "NON_ASSIGNED → IN_MAINTENANCE")
   // Use the color of the final status
   const finalStatus = status.includes(' → ') ? status.split(' → ')[1] : status
   
   const classes: Record<string, string> = {
-    'AVAILABLE': 'badge badge-green',
+    'NON_ASSIGNED': 'badge badge-green',
     'ASSIGNED': 'badge badge-blue', 
     'IN_MAINTENANCE': 'badge badge-orange',
     'RETIRED': 'badge badge-brown',
-    'LOST': 'badge badge-red'
+    'LOST': 'badge badge-red',
+    'DONATED': 'badge badge-purple'
   }
   return classes[finalStatus] || 'badge badge-gray'
 }
 
 const getStatusText = (status: string): string => {
   const texts: Record<string, string> = {
-    'AVAILABLE': 'Available',
+    'NON_ASSIGNED': 'Non Assigned',
     'ASSIGNED': 'Assigned',
     'IN_MAINTENANCE': 'In Maintenance',
     'RETIRED': 'Retired',
-    'LOST': 'Lost'
+    'LOST': 'Lost',
+    'DONATED': 'Donated'
   }
   return texts[status] || status
 }
@@ -729,10 +732,11 @@ const getStatusText = (status: string): string => {
 const getConditionText = (condition: string): string => {
   const texts: Record<string, string> = {
     'NEW': 'New',
-    'GOOD': 'Good',
-    'FAIR': 'Fair',
-    'POOR': 'Poor',
-    'DAMAGED': 'Damaged',
+    'WORKING_CONDITION': 'Working Condition',
+    'SOFTWARE_ISSUE': 'Software Issue',
+    'HARDWARE_ISSUE': 'Hardware Issue',
+    'NEEDS_REPAIR': 'Needs Repair',
+    'TRASH': 'Trash',
     'REFURBISHED': 'Refurbished'
   }
   return texts[condition] || condition

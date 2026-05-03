@@ -389,7 +389,7 @@
                           <i class="fas fa-edit"></i>
                         </button>
                         <button 
-                          v-if="asset.status === 'AVAILABLE'"
+                          v-if="asset.status === 'NON_ASSIGNED'"
                           class="btn btn-action btn-green" 
                           title="Issue Asset"
                           @click="issueAsset(asset)"
@@ -517,7 +517,7 @@
                       <i class="fas fa-edit"></i>
                     </button>
                     <button 
-                      v-if="asset.status === 'AVAILABLE'"
+                      v-if="asset.status === 'NON_ASSIGNED'"
                       class="btn btn-action btn-green btn-sm" 
                       title="Issue Asset"
                       @click="issueAsset(asset)"
@@ -974,14 +974,14 @@
               </div>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-cancel btn-sm" @click="closeDetailModal">Close</button>
-                <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-green btn-sm" @click="selectedAsset ? issueAsset(selectedAsset) : null">
+                <button v-if="selectedAsset && selectedAsset.status === 'NON_ASSIGNED'" type="button" class="btn btn-green btn-sm" @click="selectedAsset ? issueAsset(selectedAsset) : null">
                   <i class="fas fa-user-plus me-1"></i>Issue Asset
                 </button>
                 <button v-if="selectedAsset && selectedAsset.status === 'ASSIGNED'" type="button" class="btn btn-pink btn-sm" @click="selectedAsset ? collectAsset(selectedAsset) : null">
                   <i class="fas fa-user-minus me-1"></i>Collect Asset
                 </button>
                 <button 
-                  v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'"
+                  v-if="selectedAsset && selectedAsset.status === 'NON_ASSIGNED'"
                   type="button" 
                   class="btn btn-orange btn-sm" 
                   @click="selectedAsset ? handleMaintenanceAction(selectedAsset) : null"
@@ -991,7 +991,7 @@
               <button type="button" class="btn btn-purple btn-sm" @click="selectedAsset ? editAsset(selectedAsset) : null" :disabled="!selectedAsset">
                 <i class="fas fa-edit me-1"></i>Edit Asset
               </button>
-              <button v-if="selectedAsset && selectedAsset.status === 'AVAILABLE'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
+              <button v-if="selectedAsset && selectedAsset.status === 'NON_ASSIGNED'" type="button" class="btn btn-red btn-sm" @click="openRetireAssetModal">
                 <i class="fas fa-archive me-1"></i>Retire Asset
               </button>
               <button v-if="selectedAsset && selectedAsset.status === 'RETIRED'" type="button" class="btn btn-green btn-sm" @click="openReactivateAssetModal">
@@ -1236,7 +1236,7 @@
                           <div class="info-item-compact">
                             <div class="info-label-compact">Current Condition</div>
                             <div class="info-value-compact">
-                              <span :class="getConditionBadgeClass(assetToReactivate?.condition || 'POOR')">{{ assetToReactivate?.condition || 'POOR' }}</span>
+                              <span :class="getConditionBadgeClass(assetToReactivate?.condition || 'NEEDS_REPAIR')">{{ getConditionText(assetToReactivate?.condition || 'NEEDS_REPAIR') }}</span>
                             </div>
                           </div>
                         </div>
@@ -1306,25 +1306,19 @@
                       </div>
                       <div class="col-md-6">
                         <div class="mb-3">
-                          <label for="newLocation" class="form-label">New Location <span class="text-danger">*</span></label>
-                          <input 
-                            type="text" 
-                            class="form-control" 
+                          <SearchableDropdown
                             id="newLocation"
-                            v-model="reactivateFormData.location"
-                            :class="{ 'is-invalid': reactivateFormSubmitted && reactivateFormValidation.location === 'invalid', 'is-valid': reactivateFormSubmitted && reactivateFormValidation.location === 'valid' }"
-                            placeholder="e.g., Warehouse A, Shelf B2"
+                            label="New Location"
+                            :items="reactivationLocationOptions"
+                            v-model="selectedReactivationLocation"
+                            placeholder="Select location"
                             required
-                            minlength="2"
-                            maxlength="100"
-                            title="Location must be 2-100 characters"
-                            @input="() => { if (reactivateFormSubmitted) validateReactivateLocation() }"
-                            @blur="() => { if (reactivateFormSubmitted) validateReactivateLocation() }"
-                          >
-                          <div class="form-text">Where the asset will be stored/used (2-100 characters)</div>
-                          <div v-if="reactivateFormSubmitted && reactivateFormValidation.location === 'invalid'" class="invalid-feedback">
-                            {{ reactivateFormValidation.locationMessage || 'Please specify the new location.' }}
+                            @change="onReactivationLocationChange"
+                          />
+                          <div v-if="reactivateFormSubmitted && reactivateFormValidation.location === 'invalid'" class="text-danger small mt-1">
+                            {{ reactivateFormValidation.locationMessage || 'Please select a location.' }}
                           </div>
+                          <div class="form-text">Where the asset will be stored/used</div>
                         </div>
                       </div>
                     </div>
@@ -1336,7 +1330,7 @@
                             type="text" 
                             class="form-control readonly-input" 
                             id="newCondition"
-                            value="REFURBISHED"
+                            value="Refurbished"
                             readonly
                           >
                           <div class="form-text">Asset condition after refurbishment and repairs</div>
@@ -1349,7 +1343,7 @@
                             type="text" 
                             class="form-control readonly-input" 
                             id="newStatus"
-                            value="AVAILABLE"
+                            value="Non Assigned"
                             readonly
                           >
                           <div class="form-text">Status after reactivation</div>
@@ -1443,7 +1437,7 @@ interface AssetDisplayItem {
   brand: string
   model: string
   serialNumber: string
-  status: 'AVAILABLE' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST'
+  status: 'NON_ASSIGNED' | 'ASSIGNED' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST' | 'DONATED'
   assignedTo?: string
   condition: string
   specifications?: Record<string, any>
@@ -1537,12 +1531,12 @@ const isReactivatingAsset = ref(false)
 const reactivateFormData = ref({
   reactivationDate: '',
   condition: '',
-  status: 'AVAILABLE',
+  status: 'NON_ASSIGNED',
   location: '',
   reactivationReason: ''
 })
 
-// Note: Condition and Status are now fixed values (REFURBISHED and AVAILABLE)
+// Note: Condition and Status are now fixed values (REFURBISHED and NON_ASSIGNED)
 // No dropdown selections needed for reactivation modal
 
 // Reactivate form validation
@@ -1603,22 +1597,40 @@ const brands = computed(() => {
 
 // Status options for dropdown
 const statusOptions = ref<Item[]>([
-  { id: 'AVAILABLE', name: 'Available', value: 'AVAILABLE' },
+  { id: 'NON_ASSIGNED', name: 'Non Assigned', value: 'NON_ASSIGNED' },
   { id: 'ASSIGNED', name: 'Assigned', value: 'ASSIGNED' },
   { id: 'IN_MAINTENANCE', name: 'In Maintenance', value: 'IN_MAINTENANCE' },
   { id: 'RETIRED', name: 'Retired', value: 'RETIRED' },
-  { id: 'LOST', name: 'Lost', value: 'LOST' }
+  { id: 'LOST', name: 'Lost', value: 'LOST' },
+  { id: 'DONATED', name: 'Donated', value: 'DONATED' }
 ])
 
 // Condition options for dropdown
 const conditionOptions = ref<Item[]>([
   { id: 'NEW', name: 'New', value: 'NEW' },
-  { id: 'GOOD', name: 'Good', value: 'GOOD' },
-  { id: 'FAIR', name: 'Fair', value: 'FAIR' },
-  { id: 'POOR', name: 'Poor', value: 'POOR' },
-  { id: 'DAMAGED', name: 'Damaged', value: 'DAMAGED' },
+  { id: 'WORKING_CONDITION', name: 'Working Condition', value: 'WORKING_CONDITION' },
+  { id: 'SOFTWARE_ISSUE', name: 'Software Issue', value: 'SOFTWARE_ISSUE' },
+  { id: 'HARDWARE_ISSUE', name: 'Hardware Issue', value: 'HARDWARE_ISSUE' },
+  { id: 'NEEDS_REPAIR', name: 'Needs Repair', value: 'NEEDS_REPAIR' },
+  { id: 'TRASH', name: 'Trash', value: 'TRASH' },
   { id: 'REFURBISHED', name: 'Refurbished', value: 'REFURBISHED' }
 ])
+
+// Reactivation location options
+const reactivationLocationOptions = ref<Item[]>([
+  { id: 'PUNE_INVENTORY_CENTER', name: 'Pune Inventory Center', value: 'PUNE_INVENTORY_CENTER' },
+  { id: 'THANE_INVENTORY_CENTER', name: 'Thane Inventory Center', value: 'THANE_INVENTORY_CENTER' }
+])
+
+const selectedReactivationLocation = ref<Item | null>(null)
+
+const onReactivationLocationChange = (item: Item | null) => {
+  selectedReactivationLocation.value = item
+  reactivateFormData.value.location = item ? String(item.id) : ''
+  if (reactivateFormSubmitted.value) {
+    validateReactivateLocation()
+  }
+}
 
 // Sort options for dropdown
 const sortOptions = ref<Item[]>([
@@ -2220,9 +2232,9 @@ const handleBulkUpload = async (data: any[]) => {
           brandId: Number.parseInt(assetData.brandId) || 1, // Default to 1 if not provided
           modelId: Number.parseInt(assetData.modelId) || 1, // Default to 1 if not provided
           vendorId: Number.parseInt(assetData.vendorId) || 1, // Default to 1 if not provided
-          status: assetData.status || 'AVAILABLE',
+          status: assetData.status || 'NON_ASSIGNED',
           condition: assetData.condition || 'NEW',
-          location: assetData.location || 'Warehouse',
+          location: assetData.location || 'PUNE_INVENTORY_CENTER',
           purchaseDate: assetData.purchaseDate || undefined,
           purchaseCost: Number.parseFloat(assetData.purchaseCost) || undefined,
           warrantyStartDate: assetData.warrantyStartDate || undefined,
@@ -2530,8 +2542,9 @@ const openReactivateAssetModal = () => {
   // Set default reactivation date to today
   reactivateFormData.value.reactivationDate = new Date().toISOString().split('T')[0]
   reactivateFormData.value.condition = 'REFURBISHED' // Fixed value
-  reactivateFormData.value.status = 'AVAILABLE' // Fixed value
-  reactivateFormData.value.location = ''
+  reactivateFormData.value.status = 'NON_ASSIGNED' // Fixed value
+  reactivateFormData.value.location = 'PUNE_INVENTORY_CENTER'
+  selectedReactivationLocation.value = reactivationLocationOptions.value.find(item => item.id === 'PUNE_INVENTORY_CENTER') || null
   reactivateFormData.value.reactivationReason = ''
   
   // Clear validation
@@ -2551,10 +2564,11 @@ const closeReactivateAssetModal = () => {
   reactivateFormData.value = {
     reactivationDate: '',
     condition: 'REFURBISHED', // Fixed value
-    status: 'AVAILABLE', // Fixed value
-    location: '',
+    status: 'NON_ASSIGNED', // Fixed value
+    location: 'PUNE_INVENTORY_CENTER',
     reactivationReason: ''
   }
+  selectedReactivationLocation.value = null
 }
 
 const clearReactivateFormValidation = () => {
@@ -2616,6 +2630,7 @@ const reactivateAsset = async () => {
 
 // Utility functions
 // Reactivation form validation helpers
+const VALID_REACTIVATION_LOCATIONS = ['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER']
 const validateReactivateLocation = () => {
   const value = reactivateFormData.value.location || ''
   
@@ -2625,10 +2640,9 @@ const validateReactivateLocation = () => {
     return false
   }
   
-  const location = value.toString().trim()
-  if (location.length < 2 || location.length > 100) {
+  if (!VALID_REACTIVATION_LOCATIONS.includes(value)) {
     reactivateFormValidation.value.location = 'invalid'
-    reactivateFormValidation.value.locationMessage = 'Location must be 2-100 characters'
+    reactivateFormValidation.value.locationMessage = 'Please select a valid location'
     return false
   }
   
@@ -2699,34 +2713,37 @@ const getAssetTypeColor = (type: string) => {
 
 const getStatusBadgeClass = (status: string) => {
   const classes = {
-    'AVAILABLE': 'badge badge-green',        // Green for available
+    'NON_ASSIGNED': 'badge badge-green',     // Green for non-assigned
     'ASSIGNED': 'badge badge-blue',          // Blue for assigned
     'IN_MAINTENANCE': 'badge badge-orange',  // Orange for maintenance
     'RETIRED': 'badge badge-brown',          // Brown for retired
-    'LOST': 'badge badge-red'                // Red for lost
+    'LOST': 'badge badge-red',               // Red for lost
+    'DONATED': 'badge badge-purple'          // Purple for donated
   }
   return classes[status as keyof typeof classes] || 'badge badge-gray'
 }
 
 const getConditionBadgeClass = (condition: string) => {
   const classes = {
-    'Good': 'badge badge-green',           // Green for good condition
-    'New': 'badge badge-purple',           // Purple for new
-    'Fair': 'badge badge-orange',          // Orange for fair
-    'Poor': 'badge badge-red',             // Red for poor
-    'Damaged': 'badge badge-red',          // Red for damaged
-    'Refurbished': 'badge badge-brown'     // Brown for refurbished
+    'NEW': 'badge badge-purple',                // Purple for new
+    'WORKING_CONDITION': 'badge badge-green',   // Green for working
+    'SOFTWARE_ISSUE': 'badge badge-orange',     // Orange for software issue
+    'HARDWARE_ISSUE': 'badge badge-red',        // Red for hardware issue
+    'NEEDS_REPAIR': 'badge badge-orange',       // Orange for needs repair
+    'TRASH': 'badge badge-red',                 // Red for trash
+    'REFURBISHED': 'badge badge-brown'          // Brown for refurbished
   }
   return classes[condition as keyof typeof classes] || 'badge badge-gray'
 }
 
 const getStatusText = (status: string) => {
   const texts = {
-    'AVAILABLE': 'Available',
+    'NON_ASSIGNED': 'Non Assigned',
     'ASSIGNED': 'Assigned',
     'IN_MAINTENANCE': 'In Maintenance',
     'RETIRED': 'Retired',
-    'LOST': 'Lost'
+    'LOST': 'Lost',
+    'DONATED': 'Donated'
   }
   return texts[status as keyof typeof texts] || status
 }
@@ -2734,10 +2751,11 @@ const getStatusText = (status: string) => {
 const getConditionText = (condition: string) => {
   const texts = {
     'NEW': 'New',
-    'GOOD': 'Good',
-    'FAIR': 'Fair',
-    'POOR': 'Poor',
-    'DAMAGED': 'Damaged',
+    'WORKING_CONDITION': 'Working Condition',
+    'SOFTWARE_ISSUE': 'Software Issue',
+    'HARDWARE_ISSUE': 'Hardware Issue',
+    'NEEDS_REPAIR': 'Needs Repair',
+    'TRASH': 'Trash',
     'REFURBISHED': 'Refurbished'
   }
   return texts[condition as keyof typeof texts] || condition
@@ -2774,7 +2792,8 @@ const getStatusIcon = (status: string) => {
   if (status === 'ASSIGNED') return 'fas fa-user'
   if (status === 'IN_MAINTENANCE') return 'fas fa-wrench'
   if (status === 'LOST') return 'fas fa-exclamation-triangle'
-  if (status === 'AVAILABLE') return 'fas fa-box'
+  if (status === 'DONATED') return 'fas fa-gift'
+  if (status === 'NON_ASSIGNED') return 'fas fa-box'
   return 'fas fa-info-circle'
 }
 
@@ -2782,7 +2801,8 @@ const getStatusSectionTitle = (status: string) => {
   if (status === 'ASSIGNED') return 'Assignment Status & Information'
   if (status === 'IN_MAINTENANCE') return 'Maintenance Status & Information'
   if (status === 'LOST') return 'Lost Asset Information'
-  if (status === 'AVAILABLE') return 'Asset Availability Status'
+  if (status === 'DONATED') return 'Donated Asset Information'
+  if (status === 'NON_ASSIGNED') return 'Asset Availability Status'
   return 'Asset Status Information'
 }
 
@@ -2790,7 +2810,8 @@ const getStatusSecondaryLabel = (status: string) => {
   if (status === 'ASSIGNED') return 'Assigned To:'
   if (status === 'IN_MAINTENANCE') return 'Current Location:'
   if (status === 'LOST') return 'Last Known Location:'
-  if (status === 'AVAILABLE') return 'Current Location:'
+  if (status === 'DONATED') return 'Last Known Location:'
+  if (status === 'NON_ASSIGNED') return 'Current Location:'
   return 'Location:'
 }
 
@@ -2798,7 +2819,8 @@ const getStatusSecondaryValue = (asset: AssetDisplayItem) => {
   if (asset.status === 'ASSIGNED') return asset.assignedTo || 'Not Assigned'
   if (asset.status === 'IN_MAINTENANCE') return asset.location || 'Unknown'
   if (asset.status === 'LOST') return asset.location || 'Unknown'
-  if (asset.status === 'AVAILABLE') return asset.location || 'Warehouse'
+  if (asset.status === 'DONATED') return asset.location || 'Unknown'
+  if (asset.status === 'NON_ASSIGNED') return asset.location || 'Warehouse'
   return asset.location || 'Unknown'
 }
 
@@ -2811,7 +2833,8 @@ const getAssignmentStatusDescription = (status: string) => {
   if (status === 'ASSIGNED') return 'Currently with employee'
   if (status === 'IN_MAINTENANCE') return 'Asset is currently under maintenance'
   if (status === 'LOST') return 'Asset has been reported as lost'
-  if (status === 'AVAILABLE') return 'Ready to be assigned to an employee'
+  if (status === 'DONATED') return 'Asset has been donated'
+  if (status === 'NON_ASSIGNED') return 'Ready to be assigned to an employee'
   return 'Asset status information'
 }
 
@@ -2976,7 +2999,7 @@ const getSpecificationEntries = (
 // Watch for changes in filters
 const watchFilters = () => {
   // Watch search term with debounce
-  let searchTimeout: number | null = null
+  const searchTimeout: number | null = null
   
   // Watch other filters immediately
   // Note: These computed properties are kept for potential future use

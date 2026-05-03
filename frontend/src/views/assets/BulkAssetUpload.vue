@@ -62,7 +62,7 @@
       title="Bulk Upload Assets"
       entity-name="Assets"
       :columns="dynamicColumns"
-      :template-data="[]"
+      :template-data="templateSampleRows"
       upload-button-text="Upload Assets"
       :always-validate="true"
       :helper-notes="helperNotes"
@@ -101,7 +101,7 @@ const baseAssetColumns = [
   { key: 'vendorId', label: 'Vendor ID', required: false },
   { key: 'status', label: 'Status', required: true },
   { key: 'condition', label: 'Condition', required: true },
-  { key: 'location', label: 'Location', required: false },
+  { key: 'location', label: 'Location', required: true },
   { key: 'purchaseDate', label: 'Purchase Date (DD-MM-YYYY)', required: false },
   { key: 'purchaseCost', label: 'Purchase Cost', required: false },
   { key: 'warrantyStartDate', label: 'Warranty Start Date (DD-MM-YYYY)', required: false },
@@ -133,8 +133,9 @@ const dynamicColumns = computed(() => {
 const helperNotes = computed(() => {
   const notes = [
     'Asset Type ID must match the selected asset type: ' + (selectedAssetTypeDetails.value?.id || 'N/A'),
-    'Status values: AVAILABLE, ASSIGNED, IN_MAINTENANCE, RETIRED, LOST',
-    'Condition values: NEW, GOOD, FAIR, POOR, DAMAGED',
+    'Status values: NON_ASSIGNED (Note: only NON_ASSIGNED is allowed for bulk upload)',
+    'Condition values: NEW, WORKING_CONDITION, SOFTWARE_ISSUE, HARDWARE_ISSUE, NEEDS_REPAIR, TRASH, REFURBISHED',
+    'Location values: PUNE_INVENTORY_CENTER, THANE_INVENTORY_CENTER',
     'Date format: DD-MM-YYYY (e.g., 15-01-2024)',
     'IDs (assetTypeId, brandId, modelId, vendorId) must be valid numeric IDs from the system'
   ]
@@ -146,6 +147,35 @@ const helperNotes = computed(() => {
   }
   
   return notes
+})
+
+// Sample row used in template downloads to show acceptable values
+const templateSampleRows = computed(() => {
+  const sample: Record<string, string> = {
+    assetId: 'AST-1001',
+    serialNumber: 'SN-1001-EXAMPLE',
+    assetTypeId: String(selectedAssetTypeDetails.value?.id ?? ''),
+    brandId: '1',
+    modelId: '1',
+    vendorId: '',
+    status: 'NON_ASSIGNED',
+    condition: 'NEW',
+    location: 'PUNE_INVENTORY_CENTER',
+    purchaseDate: '15-01-2024',
+    purchaseCost: '50000',
+    warrantyStartDate: '15-01-2024',
+    warrantyEndDate: '15-01-2027',
+    notes: 'Example asset',
+  }
+
+  // Provide blank placeholders for any specification columns
+  if (selectedAssetTypeDetails.value?.specificationTemplate?.fields) {
+    for (const field of selectedAssetTypeDetails.value.specificationTemplate.fields) {
+      sample[`spec_${field.key}`] = ''
+    }
+  }
+
+  return [sample]
 })
 
 // Asset type items for dropdown

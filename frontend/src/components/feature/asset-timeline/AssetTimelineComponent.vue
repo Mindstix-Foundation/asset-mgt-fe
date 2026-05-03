@@ -238,10 +238,12 @@ const getEventClass = (type: string): string => {
 const getConditionClass = (condition: string): string => {
   const classes = {
     'NEW': 'condition-new',
-    'GOOD': 'condition-good',
-    'FAIR': 'condition-fair',
-    'POOR': 'condition-poor',
-    'DAMAGED': 'condition-damaged'
+    'WORKING_CONDITION': 'condition-good',
+    'SOFTWARE_ISSUE': 'condition-fair',
+    'HARDWARE_ISSUE': 'condition-damaged',
+    'NEEDS_REPAIR': 'condition-poor',
+    'TRASH': 'condition-damaged',
+    'REFURBISHED': 'condition-default'
   }
   return classes[condition as keyof typeof classes] || 'condition-default'
 }
