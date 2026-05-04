@@ -265,7 +265,9 @@
               :activities="recentActivities"
               :isLoading="isLoadingAnalytics"
               title="Recent Activity"
-            maxHeight="360px"
+              maxHeight="360px"
+              :view-all-route="{ name: 'admin-audit' }"
+              view-all-label="View All"
             />
           </div>
         </div>
@@ -1300,6 +1302,13 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--primary-black) !important;
+}
+
+/* Same border color as .compact-header — frames header + body as one card */
+.compact-chart-card.card > .card-body {
+  border: 1px solid var(--element-gray);
+  border-top: none;
+  border-radius: 0 0 1rem 1rem;
 }
 
 .mini-chart-container {

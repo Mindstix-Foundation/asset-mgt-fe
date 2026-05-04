@@ -1486,6 +1486,9 @@ const isRefurbishmentDetailsExpanded = ref(false)
 const selectedAsset = ref<AssetDisplayItem | null>(null)
 // Specification display state
 const expandedAssetIds = ref<string[]>([])
+/** When user uses Show/Hide all specs, keep that behavior for every new result set (filter, sort, search, page). */
+type SpecsListMode = 'expand-all' | 'collapse-all' | 'per-row'
+const specsListMode = ref<SpecsListMode>('per-row')
 const hoveredGroupId = ref<string | null>(null)
 const specificationFields = ref<SpecificationFieldDefinition[]>([])
 const specificationFilterSelections = reactive<Record<string, Item | null>>({})
@@ -1838,8 +1841,10 @@ const hasActiveFilters = computed(() => {
 })
 
 const areAllSpecsVisible = computed(() => {
-  return filteredAssets.value.length > 0 && 
-         expandedAssetIds.value.length === filteredAssets.value.length
+  const rows = filteredAssets.value
+  if (rows.length === 0) return false
+  const expanded = new Set(expandedAssetIds.value)
+  return rows.every((asset) => expanded.has(asset.id))
 })
 
 // API Methods
@@ -2934,6 +2939,39 @@ const debouncedLoadAssets = () => {
 }
 
 // Specification display methods
+const syncSpecsListModeFromExpandedState = () => {
+  const rows = filteredAssets.value
+  if (rows.length === 0) {
+    specsListMode.value = 'per-row'
+    return
+  }
+  const expanded = new Set(expandedAssetIds.value)
+  const allExpanded = rows.every((a) => expanded.has(a.id))
+  const noneExpanded = rows.every((a) => !expanded.has(a.id))
+  if (allExpanded) specsListMode.value = 'expand-all'
+  else if (noneExpanded) specsListMode.value = 'collapse-all'
+  else specsListMode.value = 'per-row'
+}
+
+const applySpecsListModeToVisibleRows = () => {
+  const rows = filteredAssets.value
+  if (specsListMode.value === 'expand-all') {
+    expandedAssetIds.value = rows.map((a) => a.id)
+  } else if (specsListMode.value === 'collapse-all') {
+    expandedAssetIds.value = []
+  } else {
+    const idSet = new Set(rows.map((a) => a.id))
+    expandedAssetIds.value = expandedAssetIds.value.filter((id) => idSet.has(id))
+  }
+}
+
+watch(
+  () => filteredAssets.value.map((a) => a.id).join('|'),
+  () => {
+    applySpecsListModeToVisibleRows()
+  },
+)
+
 const toggleAssetRow = (assetId: string) => {
   const index = expandedAssetIds.value.indexOf(assetId)
   if (index === -1) {
@@ -2941,13 +2979,16 @@ const toggleAssetRow = (assetId: string) => {
   } else {
     expandedAssetIds.value.splice(index, 1)
   }
+  syncSpecsListModeFromExpandedState()
 }
 
 const toggleAllSpecifications = () => {
   if (areAllSpecsVisible.value) {
+    specsListMode.value = 'collapse-all'
     expandedAssetIds.value = []
   } else {
-    expandedAssetIds.value = filteredAssets.value.map(asset => asset.id)
+    specsListMode.value = 'expand-all'
+    expandedAssetIds.value = filteredAssets.value.map((asset) => asset.id)
   }
 }
 

@@ -45,6 +45,18 @@ export interface AnalyticsData {
   recentActivity: RecentActivityData[]
 }
 
+export interface ActivitiesPagination {
+  page: number
+  limit: number
+  totalCount: number
+  totalPages: number
+}
+
+export interface PaginatedActivitiesResponse {
+  data: RecentActivityData[]
+  pagination: ActivitiesPagination
+}
+
 class DashboardApiService {
   // Get dashboard statistics
   async getDashboardStats(): Promise<DashboardStats> {
@@ -76,6 +88,36 @@ class DashboardApiService {
         statusOverview: [],
         totalValue: 0,
         recentActivity: []
+      }
+    }
+  }
+
+  // Get paginated admin audit activity feed.
+  // Backend response shape: { message, data: RecentActivityData[], pagination }
+  async getAllActivities(
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<PaginatedActivitiesResponse> {
+    try {
+      const response = await apiService.get<{
+        message: string
+        data: RecentActivityData[]
+        pagination: ActivitiesPagination
+      }>(`/reports/activities?page=${page}&limit=${limit}`)
+      return {
+        data: response.data || [],
+        pagination: response.pagination || {
+          page,
+          limit,
+          totalCount: 0,
+          totalPages: 1,
+        },
+      }
+    } catch (error) {
+      console.error('Error fetching audit activities:', error)
+      return {
+        data: [],
+        pagination: { page, limit, totalCount: 0, totalPages: 1 },
       }
     }
   }

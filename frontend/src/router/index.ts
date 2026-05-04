@@ -171,6 +171,11 @@ const router = createRouter({
           name: ROUTE_NAMES.MANAGE_ADMINS,
           component: () => import('../views/admin/ManageAdminsView.vue'),
         },
+        {
+          path: 'admin/activity',
+          name: ROUTE_NAMES.ADMIN_AUDIT,
+          component: () => import('../views/admin/AdminAuditView.vue'),
+        },
       ],
     },
   ],

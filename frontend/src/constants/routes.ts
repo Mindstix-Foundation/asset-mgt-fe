@@ -49,6 +49,7 @@ export const ROUTE_NAMES = {
 
   // Admin Routes
   MANAGE_ADMINS: 'manage-admins',
+  ADMIN_AUDIT: 'admin-audit',
 
   // Notification Routes
   NOTIFICATIONS: 'notifications',
@@ -105,6 +106,7 @@ export const ROUTE_PATHS = {
 
   // Admin
   [ROUTE_NAMES.MANAGE_ADMINS]: '/admin/manage-admins',
+  [ROUTE_NAMES.ADMIN_AUDIT]: '/admin/activity',
 
   // Notifications
   [ROUTE_NAMES.NOTIFICATIONS]: '/notifications',
@@ -144,6 +146,7 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.MAINTENANCE_HISTORY]: 'Maintenance History',
   [ROUTE_NAMES.REPORTS]: 'Reports',
   [ROUTE_NAMES.MANAGE_ADMINS]: 'Manage Admins',
+  [ROUTE_NAMES.ADMIN_AUDIT]: 'Admin Audit',
   [ROUTE_NAMES.NOTIFICATIONS]: 'Notifications',
   [ROUTE_NAMES.PROFILE]: 'Profile',
 } as const

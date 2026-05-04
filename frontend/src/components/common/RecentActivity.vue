@@ -1,10 +1,18 @@
 <template>
   <div class="recent-activity">
     <div class="card h-100">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h5 class="card-title mb-0">
           <i class="fas fa-clock me-2"></i>{{ title }}
         </h5>
+        <router-link
+          v-if="viewAllRoute"
+          :to="viewAllRoute"
+          class="btn btn-link btn-sm view-all-link p-0 text-decoration-none"
+        >
+          {{ viewAllLabel }}
+          <i class="fas fa-arrow-right ms-1 small"></i>
+        </router-link>
       </div>
       <div class="card-body p-0">
         <div class="activity-list" :class="layoutClass">
@@ -69,12 +77,21 @@ interface Props {
   isLoading?: boolean
   title?: string
   maxHeight?: string
+  /**
+   * Optional vue-router target. When provided, a "View All" link
+   * appears in the card header pointing to it.
+   */
+  viewAllRoute?: string | { name?: string; path?: string; params?: Record<string, string | number>; query?: Record<string, string | number> }
+  /** Label for the "View All" link. */
+  viewAllLabel?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isLoading: false,
   title: 'Recent Activity',
-  maxHeight: '400px'
+  maxHeight: '400px',
+  viewAllRoute: undefined,
+  viewAllLabel: 'View All',
 })
 
 // Computed class for different layouts
@@ -105,15 +122,53 @@ const getActivityIcon = (title: string): string => {
 </script>
 
 <style scoped>
+/*
+ * The component caps the OUTER card to maxHeight (e.g. 360px on Reports,
+ * 400px on Dashboard) and lets the inner activity list fill whatever
+ * remains under the header. Using flex with min-height: 0 on the body
+ * ensures the scroll area shrinks to fit so the last row is always
+ * reachable instead of being clipped behind the parent card.
+ */
 .recent-activity {
   height: 100%;
 }
 
-/* Activity List - Fixed height with scrollbar */
-.activity-list {
+.recent-activity > .card {
   height: v-bind(maxHeight);
+  max-height: v-bind(maxHeight);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.recent-activity > .card > .card-header {
+  flex-shrink: 0;
+}
+
+.recent-activity > .card > .card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.view-all-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--secondary-purple, #6f42c1) !important;
+}
+
+.view-all-link:hover {
+  color: var(--mindstix-primary, #5936a6) !important;
+  text-decoration: underline !important;
+}
+
+/* Activity list fills the remaining card body and scrolls internally
+   so the full last row is always visible (no clipping at the bottom). */
+.activity-list {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
-  /* Remove extra vertical padding so rows align perfectly */
   padding: 0;
 }
 
@@ -121,10 +176,7 @@ const getActivityIcon = (title: string): string => {
   display: flex;
   align-items: center;
   padding: 0.4rem 0.75rem;
-  /* Base calculation for activity items */
-  min-height: calc((v-bind(maxHeight) - 40.8px - 4px) / 4);
   background: transparent;
-  /* Use top border to avoid a divider line at the bottom of the viewport */
   border-top: 1px solid var(--element-gray);
   border-radius: 0;
   margin: 0;
@@ -137,12 +189,12 @@ const getActivityIcon = (title: string): string => {
 
 /* Dashboard layout: 5 items in 400px total height */
 .dashboard-layout .activity-item {
-  min-height: calc((400px - 4px) / 5);
+  min-height: calc((400px - 41px - 4px) / 5);
 }
 
 /* Reports layout: 4 items in 360px */
 .reports-layout .activity-item {
-  min-height: calc((360px - 40.8px - 4px) / 4);
+  min-height: calc((360px - 41px - 4px) / 4);
 }
 
 

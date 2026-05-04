@@ -173,11 +173,13 @@
             :isLoading="isLoadingAnalytics"
             title="Recent Activity"
             maxHeight="400px"
+            :view-all-route="{ name: 'admin-audit' }"
+            view-all-label="View All"
           />
         </div>
         
         <div class="col-12 col-lg-6 mb-4">
-          <div class="card h-100">
+          <div class="card h-100 asset-distribution-card">
             <div class="card-header">
               <h5 class="card-title mb-0">
                 <i class="fas fa-chart-pie me-2"></i>Asset Distribution
@@ -801,11 +803,35 @@ canvas {
   background-color: var(--secondary-purple) !important; 
 }
 
-/* Dashboard-specific asset distribution list */
+/*
+ * Same total height as Recent Activity (maxHeight 400px): header + scrollable
+ * body. Previously the list alone was 400px, so this card was taller than
+ * Recent Activity and misaligned.
+ */
+.dashboard-page .asset-distribution-card {
+  height: 400px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dashboard-page .asset-distribution-card > .card-header {
+  flex-shrink: 0;
+}
+
+.dashboard-page .asset-distribution-card > .card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .dashboard-page .asset-distribution-list {
-  height: 400px; /* Same fixed height as activity list */
-  overflow-y: auto; /* Always show scrollbar when content exceeds height */
-  padding: 1rem; /* Add padding since card-body padding was removed */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
 /* Dashboard-specific responsive adjustments */
