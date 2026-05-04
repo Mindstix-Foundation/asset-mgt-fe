@@ -1946,11 +1946,32 @@ const loadAssetTypeTemplate = async (assetTypeId: number) => {
         // Initialize selectedSpecFields for dropdowns (must be null, not undefined)
         if (field.type === 'dropdown') {
           const dropdownItems = getSpecDropdownItems(field)
-          const existingValue = formData.specifications[field.key]
-          const matchedItem =
-            dropdownItems.find(item => item.value === existingValue) || null
-          selectedSpecFields[field.key] =
-            matchedItem ?? selectedSpecFields[field.key] ?? null
+          const rawValue = formData.specifications[field.key]
+          const existingValue =
+            rawValue !== undefined && rawValue !== null ? String(rawValue).trim() : ''
+
+          if (existingValue) {
+            const normalize = (v: string) => v.replace(/\s+/g, '').toLowerCase()
+            const normalizedExisting = normalize(existingValue)
+            const matchedItem =
+              dropdownItems.find(
+                (item) => normalize(String(item.value)) === normalizedExisting
+              ) || null
+
+            if (matchedItem) {
+              formData.specifications[field.key] = matchedItem.value
+              selectedSpecFields[field.key] = matchedItem
+            } else {
+              // Preserve legacy / non-template values so they still show in edit mode.
+              selectedSpecFields[field.key] = {
+                id: existingValue,
+                value: existingValue,
+                label: existingValue
+              } as Item
+            }
+          } else {
+            selectedSpecFields[field.key] = selectedSpecFields[field.key] ?? null
+          }
         }
         // Initialize validation state
         const validationKey = `spec_${field.key}`
@@ -2408,6 +2429,10 @@ const generateAssetId = async () => {
 }
 
 // Helper functions for form initialization
+/** Deep snapshot for JSON-like objects (e.g. specifications). Avoids DataCloneError on Vue proxies. */
+const cloneJsonLike = <T extends Record<string, unknown>>(obj: object): T =>
+  JSON.parse(JSON.stringify(obj)) as T
+
 const populateFormDataFromAsset = (asset: any) => {
   const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = asset
   Object.assign(formData, assetDataWithoutDates)
@@ -2445,7 +2470,7 @@ const storeOriginalAssetData = (asset: any) => {
     brandId: asset.brandId,
     modelId: asset.modelId,
     specifications: asset.specifications && typeof asset.specifications === 'object'
-      ? structuredClone(asset.specifications)
+      ? cloneJsonLike(asset.specifications as object)
       : undefined
   }
 }
@@ -2546,25 +2571,19 @@ const initializeNewAsset = async () => {
 
 const restoreSpecificationValue = (key: string, value: any, field: SpecField | undefined) => {
   const normalizedValue = value === null || value === undefined ? '' : value
-  
+
+  // Dropdown values are already reconciled in loadAssetTypeTemplate against
+  // the template's options (with normalization + legacy fallback). Skipping here
+  // prevents overwriting selectedSpecFields with a non-matching item.
+  if (field?.type === 'dropdown') {
+    return
+  }
+
   if (field?.type === 'textarea') {
     formData.specifications[key] = normalizedValue ?? ''
     return
   }
-  
-  if (field?.type === 'dropdown') {
-    const option = field.options?.find(opt => opt === value || opt === String(value))
-    if (option) {
-      formData.specifications[key] = option
-      selectedSpecFields[key] = {
-        id: option,
-        name: option,
-        value: option
-      }
-    }
-    return
-  }
-  
+
   if (normalizedValue !== '' && normalizedValue !== undefined && normalizedValue !== null) {
     formData.specifications[key] = normalizedValue
   } else if (field) {
@@ -2599,38 +2618,21 @@ const loadAndRestoreAssetTypeTemplate = async (assetTypeId: number) => {
   restoreSpecifications(existingSpecs)
 }
 
-const setValidationForSelectedFields = () => {
-  const fieldMappings = [
-    { selected: selectedCategory, fieldName: 'assetCategory' },
-    { selected: selectedType, fieldName: 'assetType' },
-    { selected: selectedBrand, fieldName: 'brand' },
-    { selected: selectedModel, fieldName: 'model' },
-    { selected: selectedCondition, fieldName: 'condition' },
-    { selected: selectedVendor, fieldName: 'vendor' },
-    { selected: selectedStatus, fieldName: 'status' }
-  ]
-  
-  for (const { selected, fieldName } of fieldMappings) {
-    if (selected.value) {
-      setFieldValid(fieldName)
-      applyValidationToSearchableDropdown(fieldName, 'valid')
-    }
-  }
-}
-
 const initializeEditMode = async (asset: any) => {
   populateFormDataFromAsset(asset)
   storeOriginalAssetData(asset)
   setUIFormData(asset)
   setSelectedDropdownItems(asset)
   await loadDependentData(asset)
-  
+
   if (asset.assetType?.id) {
     await loadAndRestoreAssetTypeTemplate(asset.assetType.id)
   }
-  
+
+  // Intentionally do NOT mark pre-populated dropdowns as "valid" here — we want
+  // untouched fields to render with a neutral border until the user interacts
+  // with them (or until the form is submitted).
   await nextTick()
-  setValidationForSelectedFields()
 }
 
 // Initialize form data if editing
