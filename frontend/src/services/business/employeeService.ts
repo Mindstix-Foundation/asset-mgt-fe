@@ -1,5 +1,6 @@
 import { apiService, type ApiResponse } from '../core/apiClient'
 import apiClient from '../core/apiClient'
+import { secureRandomInt } from '@/utils/random'
 
 // Types based on the API specification
 export interface Employee {
@@ -242,19 +243,7 @@ class EmployeeService {
     
     const firstInitial = firstName.charAt(0).toUpperCase()
     const lastInitial = lastName.charAt(0).toUpperCase()
-    // Use crypto-backed randomness when available for better unpredictability (not a security token)
-    const randomNum = (() => {
-      try {
-        if (typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto) {
-          const buf = new Uint32Array(1)
-          ;(globalThis as any).crypto.getRandomValues(buf)
-          return (buf[0] % 999) + 1
-        }
-      } catch (error) {
-        console.debug('generateEmployeeIdPreview: crypto.getRandomValues failed; using Math.random fallback', error)
-      }
-      return Math.floor(Math.random() * 999) + 1
-    })()
+    const randomNum = secureRandomInt(999) + 1
     
     return `EMP-${firstInitial}${lastInitial}${randomNum.toString().padStart(3, '0')}`
   }

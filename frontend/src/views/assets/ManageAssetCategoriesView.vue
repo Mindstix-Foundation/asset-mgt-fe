@@ -1488,12 +1488,42 @@ const buildSpecFieldsFromTemplate = (template: any): SpecField[] => {
   })
 }
 
+const validateDropdownOptions = (field: any): boolean => {
+  if (!field.options || field.options.length === 0) {
+    toastStore.showError(
+      'Missing Options',
+      `Field "${field.label}" must have at least one dropdown option.`
+    )
+    return false
+  }
+
+  const seenOptions = new Set<string>()
+  for (const option of field.options) {
+    const value = option.value?.trim()
+    if (!value) {
+      toastStore.showError(
+        'Incomplete Option',
+        `One of the options in "${field.label}" is empty. Please provide a value.`
+      )
+      return false
+    }
+
+    const dedupeKey = value.toLowerCase()
+    if (seenOptions.has(dedupeKey) && !option.isExisting) {
+      toastStore.showError(
+        'Duplicate Option',
+        `Option "${value}" already exists in "${field.label}".`
+      )
+      return false
+    }
+    seenOptions.add(dedupeKey)
+  }
+
+  return true
+}
+
 // Validate all specification fields
 const validateSpecificationFields = (): boolean => {
-  if (formData.specFields.length === 0) {
-    return true  // No fields is OK
-  }
-  
   for (const field of formData.specFields) {
     if (!field.label || !field.label.trim()) {
       toastStore.showError('Incomplete Fields', 'Each specification field must have a label')
@@ -1501,44 +1531,11 @@ const validateSpecificationFields = (): boolean => {
     }
 
     const fieldType = field.type || 'dropdown'
-
-    if (fieldType !== 'dropdown') {
-      // Text-type fields don't require an options list.
-      continue
-    }
-
-    if (!field.options || field.options.length === 0) {
-      toastStore.showError(
-        'Missing Options',
-        `Field "${field.label}" must have at least one dropdown option.`
-      )
+    if (fieldType === 'dropdown' && !validateDropdownOptions(field)) {
       return false
     }
-
-    const seenOptions = new Set<string>()
-    for (const option of field.options) {
-      const value = option.value?.trim()
-      if (!value) {
-        toastStore.showError(
-          'Incomplete Option',
-          `One of the options in "${field.label}" is empty. Please provide a value.`
-        )
-        return false
-      }
-
-      const dedupeKey = value.toLowerCase()
-      const isDuplicate = seenOptions.has(dedupeKey)
-      if (isDuplicate && !option.isExisting) {
-        toastStore.showError(
-          'Duplicate Option',
-          `Option "${value}" already exists in "${field.label}".`
-        )
-        return false
-      }
-      seenOptions.add(dedupeKey)
-    }
   }
-  
+
   return true
 }
 

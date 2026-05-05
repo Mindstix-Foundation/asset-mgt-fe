@@ -342,7 +342,7 @@ const clearActivityTypeFilter = () => {
 }
 
 const goBack = () => {
-  if (window.history.length > 1) {
+  if (globalThis.history.length > 1) {
     router.back()
   } else {
     router.push('/app/dashboard')
@@ -350,7 +350,7 @@ const goBack = () => {
 }
 
 const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  globalThis.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 // Visual helpers

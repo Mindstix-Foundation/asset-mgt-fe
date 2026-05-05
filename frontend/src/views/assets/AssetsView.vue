@@ -300,6 +300,19 @@
               class="col-12 col-md-6 col-lg-4"
             >
               <SearchableDropdown
+                v-if="isTextField(field)"
+                :id="`specification-filter-${field.key}`"
+                :label="field.label || formatLabel(field.key)"
+                :placeholder="`Search ${field.label || formatLabel(field.key)}...`"
+                :items="specSuggestions[field.key] || []"
+                :loading="specSuggestionsLoading[field.key] || false"
+                :remote-search="true"
+                v-model="specificationFilterSelections[field.key]"
+                @change="item => onSpecificationFieldChange(field.key!, item)"
+                @search="text => onSpecificationSearch(field.key!, text)"
+              />
+              <SearchableDropdown
+                v-else
                 :id="`specification-filter-${field.key}`"
                 :label="field.label || formatLabel(field.key)"
                 :placeholder="`Filter by ${field.label || formatLabel(field.key)}...`"
@@ -309,7 +322,7 @@
                 @change="item => onSpecificationFieldChange(field.key!, item)"
               />
               <div
-                v-if="(specificationFieldOptions[field.key] || []).length === 0"
+                v-if="!isTextField(field) && (specificationFieldOptions[field.key] || []).length === 0"
                 class="text-muted small mt-1"
               >
                 No values found for this specification.
@@ -1492,6 +1505,9 @@ const specsListMode = ref<SpecsListMode>('per-row')
 const hoveredGroupId = ref<string | null>(null)
 const specificationFields = ref<SpecificationFieldDefinition[]>([])
 const specificationFilterSelections = reactive<Record<string, Item | null>>({})
+const specSuggestions = reactive<Record<string, Item[]>>({})
+const specSuggestionsLoading = reactive<Record<string, boolean>>({})
+const specSearchTimeouts = reactive<Record<string, ReturnType<typeof setTimeout>>>({})
 const isLoadingAssetDetails = ref(false)
 const assetToRetire = ref<AssetDisplayItem | null>(null)
 const isRetiringAsset = ref(false)
@@ -1781,6 +1797,16 @@ const clearSpecificationState = () => {
   for (const key of Object.keys(specificationFilterSelections)) {
     delete specificationFilterSelections[key]
   }
+  for (const key of Object.keys(specSuggestions)) {
+    delete specSuggestions[key]
+  }
+  for (const key of Object.keys(specSuggestionsLoading)) {
+    delete specSuggestionsLoading[key]
+  }
+  for (const key of Object.keys(specSearchTimeouts)) {
+    clearTimeout(specSearchTimeouts[key])
+    delete specSearchTimeouts[key]
+  }
 }
 
 const resetSpecificationSelections = () => {
@@ -1828,6 +1854,47 @@ const onSpecificationFieldChange = (fieldKey: string, item: Item | null) => {
   if (!fieldKey) return
   specificationFilterSelections[fieldKey] = item
   debouncedLoadAssets()
+}
+
+const isTextField = (field: SpecificationFieldDefinition): boolean => {
+  if (field.type === 'select' || field.type === 'dropdown') return false
+  if (Array.isArray(field.options) && field.options.length > 0) return false
+  return true
+}
+
+const onSpecificationSearch = (fieldKey: string, searchText: string) => {
+  if (specSearchTimeouts[fieldKey]) {
+    clearTimeout(specSearchTimeouts[fieldKey])
+  }
+
+  if (!searchText.trim()) {
+    specSuggestions[fieldKey] = []
+    specSuggestionsLoading[fieldKey] = false
+    return
+  }
+
+  specSuggestionsLoading[fieldKey] = true
+
+  specSearchTimeouts[fieldKey] = setTimeout(async () => {
+    try {
+      const assetTypeId = selectedType.value ? Number(selectedType.value.value) : null
+      if (!assetTypeId) {
+        specSuggestions[fieldKey] = []
+        return
+      }
+      const values = await assetService.getSpecificationValues(assetTypeId, fieldKey, searchText)
+      specSuggestions[fieldKey] = values.map(val => ({
+        id: `${fieldKey}-${val}`,
+        name: val,
+        value: val
+      }))
+    } catch (error) {
+      console.error(`Error fetching specification values for ${fieldKey}:`, error)
+      specSuggestions[fieldKey] = []
+    } finally {
+      specSuggestionsLoading[fieldKey] = false
+    }
+  }, 300)
 }
 
 const hasActiveFilters = computed(() => {
@@ -2635,7 +2702,7 @@ const reactivateAsset = async () => {
 
 // Utility functions
 // Reactivation form validation helpers
-const VALID_REACTIVATION_LOCATIONS = ['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER']
+const VALID_REACTIVATION_LOCATIONS = new Set(['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER'])
 const validateReactivateLocation = () => {
   const value = reactivateFormData.value.location || ''
   
@@ -2645,7 +2712,7 @@ const validateReactivateLocation = () => {
     return false
   }
   
-  if (!VALID_REACTIVATION_LOCATIONS.includes(value)) {
+  if (!VALID_REACTIVATION_LOCATIONS.has(value)) {
     reactivateFormValidation.value.location = 'invalid'
     reactivateFormValidation.value.locationMessage = 'Please select a valid location'
     return false

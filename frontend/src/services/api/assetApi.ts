@@ -29,7 +29,7 @@ export interface AssetQueryDto {
   vendorId?: number
   status?: AssetStatus
   condition?: AssetCondition
-  location?: AssetLocation | string
+  location?: AssetLocation
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
 }

@@ -1,5 +1,6 @@
 import { apiService, type ApiResponse } from '../core/apiClient'
 import apiClient from '../core/apiClient'
+import { secureRandomInt } from '@/utils/random'
 import type {
   Asset,
   AssetListResponse,
@@ -66,6 +67,19 @@ class AssetService {
     const endpoint = queryString ? `${this.baseEndpoint}?${queryString}` : this.baseEndpoint
     
     return apiService.get<AssetListResponse>(endpoint)
+  }
+
+  async getSpecificationValues(assetTypeId: number, key: string, search?: string): Promise<string[]> {
+    const params = new URLSearchParams()
+    params.append('assetTypeId', String(assetTypeId))
+    params.append('key', key)
+    if (search?.trim()) {
+      params.append('search', search.trim())
+    }
+    const response = await apiService.get<{ message: string; data: { values: string[] } }>(
+      `${this.baseEndpoint}/specification-values?${params.toString()}`
+    )
+    return response.data.values
   }
 
   // Get asset by ID
@@ -327,7 +341,7 @@ class AssetService {
       console.error('Error generating asset ID from backend:', error)
       // Fallback to timestamp-based ID if backend fails
       const timestamp = Date.now().toString().slice(-6)
-      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+      const random = secureRandomInt(1000).toString().padStart(3, '0')
       return `AST-${timestamp}${random}`
     }
   }

@@ -530,7 +530,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, toRaw } from 'vue'
+import { secureRandomInt } from '@/utils/random'
 import { assetService } from '@/services/business/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
 import SearchableDropdown, { type Item } from '../common/SearchableDropdown.vue'
@@ -1259,7 +1260,7 @@ const validateSerialNumberField = async (value: any): Promise<boolean> => {
   }
 }
 
-const VALID_LOCATIONS = ['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER']
+const VALID_LOCATIONS = new Set(['PUNE_INVENTORY_CENTER', 'THANE_INVENTORY_CENTER'])
 
 const validateLocationField = (value: any): boolean => {
   if (!value || value.toString().trim() === '') {
@@ -1268,7 +1269,7 @@ const validateLocationField = (value: any): boolean => {
   }
 
   const location = value.toString().trim()
-  if (!VALID_LOCATIONS.includes(location)) {
+  if (!VALID_LOCATIONS.has(location)) {
     setFieldError('location', 'Location must be one of the allowed inventory centers')
     return false
   }
@@ -1359,7 +1360,7 @@ const validateSerialNumber = async () => {
 // Legacy validation functions removed - using new comprehensive validation system
 
 const validateLocation = (field: HTMLInputElement) => {
-  if (!formData.location || !VALID_LOCATIONS.includes(formData.location)) {
+  if (!formData.location || !VALID_LOCATIONS.has(formData.location)) {
     errors.location = 'Location is required'
     field.classList.add('is-invalid')
     field.classList.remove('is-valid')
@@ -1925,67 +1926,78 @@ const buildAddModeAssetData = (): any => {
 // SPECIFICATION HANDLING
 // ============================================
 
+const initializeSpecFieldValue = (field: SpecField) => {
+  const hasValue = field.key in formData.specifications &&
+    formData.specifications[field.key] !== null &&
+    formData.specifications[field.key] !== undefined
+  if (!hasValue) {
+    formData.specifications[field.key] = ''
+  }
+}
+
+const initializeDropdownSelection = (field: SpecField) => {
+  const dropdownItems = getSpecDropdownItems(field)
+  const rawValue = formData.specifications[field.key]
+  const existingValue =
+    rawValue !== undefined && rawValue !== null ? String(rawValue).trim() : ''
+
+  if (!existingValue) {
+    selectedSpecFields[field.key] = selectedSpecFields[field.key] ?? null
+    return
+  }
+
+  const normalize = (v: string) => v.replaceAll(/\s+/g, '').toLowerCase()
+  const matchedItem =
+    dropdownItems.find(
+      (item) => normalize(String(item.value)) === normalize(existingValue)
+    ) || null
+
+  if (matchedItem) {
+    formData.specifications[field.key] = matchedItem.value
+    selectedSpecFields[field.key] = matchedItem
+    return
+  }
+
+  selectedSpecFields[field.key] = {
+    id: existingValue,
+    value: existingValue,
+    label: existingValue
+  } as Item
+}
+
+const applySpecificationTemplate = (template: any) => {
+  specificationFields.value = template.fields || []
+
+  for (const field of specificationFields.value) {
+    initializeSpecFieldValue(field)
+    if (field.type === 'dropdown') {
+      initializeDropdownSelection(field)
+    }
+    fieldValidation[`spec_${field.key}`] = null
+  }
+
+  console.log('Loaded specification template from backend:', template)
+}
+
+const clearSpecificationTemplate = (assetTypeId: number) => {
+  specificationFields.value = []
+  for (const key of Object.keys(specFieldErrors)) {
+    delete specFieldErrors[key]
+  }
+  console.log('No specification template found for asset type:', assetTypeId)
+}
+
 // Load specification template from asset type
 const loadAssetTypeTemplate = async (assetTypeId: number) => {
   try {
     const response = await assetTypeService.getAssetTypeById(assetTypeId)
     const assetType = response.data.assetType
-    
-    if (assetType.specificationTemplate && assetType.specificationTemplate.fields) {
-      const template = assetType.specificationTemplate
-      specificationFields.value = template.fields || []
-      
-      // Initialize form data and validation state for each field
-      for (const field of specificationFields.value) {
-        // Initialize if the key doesn't exist or value is null/undefined (preserve existing values otherwise)
-        if (field.key in formData.specifications === false || 
-            formData.specifications[field.key] === null || 
-            formData.specifications[field.key] === undefined) {
-          formData.specifications[field.key] = ''
-        }
-        // Initialize selectedSpecFields for dropdowns (must be null, not undefined)
-        if (field.type === 'dropdown') {
-          const dropdownItems = getSpecDropdownItems(field)
-          const rawValue = formData.specifications[field.key]
-          const existingValue =
-            rawValue !== undefined && rawValue !== null ? String(rawValue).trim() : ''
+    const template = assetType.specificationTemplate
 
-          if (existingValue) {
-            const normalize = (v: string) => v.replace(/\s+/g, '').toLowerCase()
-            const normalizedExisting = normalize(existingValue)
-            const matchedItem =
-              dropdownItems.find(
-                (item) => normalize(String(item.value)) === normalizedExisting
-              ) || null
-
-            if (matchedItem) {
-              formData.specifications[field.key] = matchedItem.value
-              selectedSpecFields[field.key] = matchedItem
-            } else {
-              // Preserve legacy / non-template values so they still show in edit mode.
-              selectedSpecFields[field.key] = {
-                id: existingValue,
-                value: existingValue,
-                label: existingValue
-              } as Item
-            }
-          } else {
-            selectedSpecFields[field.key] = selectedSpecFields[field.key] ?? null
-          }
-        }
-        // Initialize validation state
-        const validationKey = `spec_${field.key}`
-        fieldValidation[validationKey] = null
-      }
-      
-      console.log('Loaded specification template from backend:', template)
+    if (template?.fields) {
+      applySpecificationTemplate(template)
     } else {
-      specificationFields.value = []
-      // Clear spec field errors when template is cleared
-      for (const key of Object.keys(specFieldErrors)) {
-        delete specFieldErrors[key]
-      }
-      console.log('No specification template found for asset type:', assetTypeId)
+      clearSpecificationTemplate(assetTypeId)
     }
   } catch (error) {
     console.error('Error loading asset type template:', error)
@@ -2411,27 +2423,14 @@ const generateAssetId = async () => {
     console.error('Error generating asset ID:', error)
     // Fallback to timestamp-based ID if backend fails
     const timestamp = Date.now().toString().slice(-6)
-    const random = (() => {
-      try {
-        if (typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto) {
-          const buf = new Uint32Array(1)
-          ;(globalThis as any).crypto.getRandomValues(buf)
-          return (buf[0] % 1000).toString().padStart(3, '0')
-        }
-      } catch (error) {
-        // Log the error for debugging but continue with fallback
-        console.warn('Crypto API not available, using Math.random fallback:', error)
-      }
-      return Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-    })()
+    const random = secureRandomInt(1000).toString().padStart(3, '0')
     formData.assetId = `AST-${timestamp}${random}`
   }
 }
 
 // Helper functions for form initialization
-/** Deep snapshot for JSON-like objects (e.g. specifications). Avoids DataCloneError on Vue proxies. */
 const cloneJsonLike = <T extends Record<string, unknown>>(obj: object): T =>
-  JSON.parse(JSON.stringify(obj)) as T
+  structuredClone(toRaw(obj)) as T
 
 const populateFormDataFromAsset = (asset: any) => {
   const { purchaseDate, warrantyStartDate, warrantyEndDate, ...assetDataWithoutDates } = asset

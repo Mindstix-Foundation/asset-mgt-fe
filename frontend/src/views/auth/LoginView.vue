@@ -138,7 +138,7 @@ const clearError = () => {
 const onUsernameInput = (event: Event) => {
   const target = event.target as HTMLInputElement | null
   if (!target) return
-  const valueWithoutSpaces = target.value.replace(/\s+/g, '')
+  const valueWithoutSpaces = target.value.replaceAll(/\s+/g, '')
   if (valueWithoutSpaces !== target.value) {
     target.value = valueWithoutSpaces
   }
@@ -149,7 +149,7 @@ const onUsernameInput = (event: Event) => {
 const onPasswordInput = (event: Event) => {
   const target = event.target as HTMLInputElement | null
   if (!target) return
-  const valueWithoutSpaces = target.value.replace(/\s+/g, '')
+  const valueWithoutSpaces = target.value.replaceAll(/\s+/g, '')
   if (valueWithoutSpaces !== target.value) {
     target.value = valueWithoutSpaces
   }

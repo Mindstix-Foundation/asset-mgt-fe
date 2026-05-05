@@ -96,6 +96,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { usePopupVisibility } from '@/composables/usePopupVisibility'
+import { secureRandomHex } from '@/utils/random'
 
 export interface Item {
   id?: number | string
@@ -128,6 +129,8 @@ interface Props {
   itemKey?: string
   nextFieldId?: string
   dataPath?: string
+  /** When true, disables client-side filtering and emits 'search' events for backend-driven autocomplete. */
+  remoteSearch?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -141,12 +144,14 @@ const props = withDefaults(defineProps<Props>(), {
   itemKey: 'id',
   nextFieldId: undefined,
   dataPath: '',
+  remoteSearch: false,
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Item | null): void
   (e: 'change', value: Item | null): void
   (e: 'validated'): void
+  (e: 'search', value: string): void
 }>()
 
 const searchText = ref('')
@@ -299,6 +304,8 @@ watch(
 )
 
 const filteredItems = computed(() => {
+  if (props.remoteSearch) return processedItems.value
+
   const search = searchText.value.toLowerCase()
   
   // If no search text or it's the first time opening, return all items
@@ -360,6 +367,9 @@ const handleInput = () => {
   selectedIndex.value = -1
   emit('update:modelValue', null)
   isFirstOpen.value = false // User is now typing, so disable first open behavior
+  if (props.remoteSearch) {
+    emit('search', searchText.value)
+  }
   if (!props.loading && processedItems.value.length === 0) startInternalLoading()
   
   // Ensure the dropdown is visible within scrollable containers (e.g., modal body)
@@ -590,12 +600,8 @@ const clearAutofillData = () => {
   if (dropdownRef.value) {
     const input = dropdownRef.value.querySelector('input')
     if (input) {
-      // Set a temporary random value
       const originalValue = input.value
-      input.value = `no-autofill-${(typeof globalThis !== 'undefined' && (globalThis as any).crypto && 'getRandomValues' in (globalThis as any).crypto)
-        ? Array.from((() => { const b = new Uint8Array(16); (globalThis as any).crypto.getRandomValues(b); return b })(), (x) => x.toString(16).padStart(2, '0')).join('')
-        : Math.random().toString(36).slice(2)
-      }`
+      input.value = `no-autofill-${secureRandomHex()}`
 
       // Then restore the original value
       setTimeout(() => {

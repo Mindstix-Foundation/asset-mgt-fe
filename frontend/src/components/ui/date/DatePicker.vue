@@ -102,6 +102,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { usePopupVisibility } from '@/composables/usePopupVisibility'
+import { secureRandomString } from '@/utils/random'
 
 interface Props {
   modelValue?: string
@@ -143,7 +144,7 @@ const showYearPicker = ref(false)
 const currentDate = ref(new Date())
 const selectedDate = ref<Date | null>(null)
 const displayValue = ref('')
-const instanceId = ref<string>(`datepicker-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+const instanceId = ref<string>(`datepicker-${Date.now()}-${secureRandomString()}`)
 // Toggle to enable verbose debug logs when needed
 const DEBUG = false
 

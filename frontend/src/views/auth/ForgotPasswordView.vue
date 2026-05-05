@@ -86,6 +86,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { API_BASE_URL, API_ENDPOINTS } from '@/config/api.config'
 
 const router = useRouter()
 const email = ref('')
@@ -95,7 +96,7 @@ const successMessage = ref('')
 const isLoading = ref(false)
 
 const validateEmail = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
   return emailRegex.test(String(email).toLowerCase())
 }
 
@@ -122,8 +123,7 @@ const handleSendResetLink = async () => {
 
   try {
     isLoading.value = true
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
-    const response = await axios.post(`${apiUrl}/auth/forgot-password`, {
+    const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.auth.forgotPassword}`, {
       email: email.value,
     })
 
