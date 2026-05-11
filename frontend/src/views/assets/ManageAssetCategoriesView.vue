@@ -1144,7 +1144,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { assetCategoryService } from '../../services/api/assetCategoryService'
@@ -1561,7 +1561,7 @@ const buildSpecificationTemplate = () => {
   }
   
   const baseTemplate = originalSpecificationTemplate.value
-    ? structuredClone(originalSpecificationTemplate.value)
+    ? JSON.parse(JSON.stringify(toRaw(originalSpecificationTemplate.value)))
     : { version: 1, fields: [] as any[] }
 
   if (!Array.isArray(baseTemplate.fields)) {
