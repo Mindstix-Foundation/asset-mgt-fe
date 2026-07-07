@@ -265,7 +265,7 @@
               :activities="recentActivities"
               :isLoading="isLoadingRecentActivities"
               title="Recent Activity"
-              maxHeight="360px"
+              maxHeight="420px"
               :view-all-route="{ name: 'admin-audit' }"
               view-all-label="View All"
             />
@@ -1288,6 +1288,48 @@ onUnmounted(() => {
   background-color: #fff;
 }
 
+.analytics-cards .compact-chart-card {
+  height: 420px;
+  max-height: 420px;
+  padding-bottom: 0.75rem;
+  box-sizing: border-box;
+}
+
+.analytics-cards .compact-chart-card:not(.card) {
+  padding-bottom: 0;
+}
+
+.analytics-cards .compact-chart-card.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.analytics-cards .compact-chart-card > .recent-activity {
+  height: 100%;
+}
+
+.analytics-cards .compact-chart-card > .recent-activity :deep(> .card) {
+  height: 100%;
+  max-height: 100%;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.analytics-cards .compact-chart-card > .recent-activity :deep(> .card > .card-header) {
+  border: none;
+  border-bottom: 1px solid var(--element-gray);
+  border-radius: 0;
+  background-color: var(--bg-primary);
+  min-height: 52px;
+  padding: 0.75rem 1rem;
+}
+
+.analytics-cards .compact-chart-card > .recent-activity :deep(> .card > .card-body) {
+  border: none;
+}
+
 .compact-header {
   background-color: var(--bg-primary);
   color: var(--primary-black);
@@ -1306,6 +1348,17 @@ onUnmounted(() => {
 .compact-chart-card.card > .card-body {
   border: none;
   border-radius: 0;
+}
+
+.analytics-cards .compact-chart-card.card > .card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 1rem !important;
+}
+
+.analytics-cards .compact-stats {
+  padding-bottom: 0.25rem;
 }
 
 .mini-chart-container {
@@ -1351,6 +1404,11 @@ onUnmounted(() => {
   padding: 0.25rem;
   height: 100%;
   min-height: 280px;
+}
+
+.analytics-cards .status-grid {
+  min-height: 0;
+  padding-bottom: 0.5rem;
 }
 
 .status-mini-card {

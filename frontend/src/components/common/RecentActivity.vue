@@ -15,7 +15,7 @@
         </router-link>
       </div>
       <div class="card-body p-0">
-        <div class="activity-list" :class="layoutClass">
+        <div ref="activityListRef" class="activity-list" :class="layoutClass">
           <!-- Loading state -->
           <div v-if="isLoading" class="activity-item" v-for="n in 4" :key="'loading-' + n">
             <div class="activity-icon">
@@ -35,8 +35,13 @@
           </div>
           
           <!-- Actual data -->
-          <div v-else-if="activities.length > 0" v-for="activity in activities" :key="activity.id" 
-               class="activity-item">
+          <div
+            v-else-if="activities.length > 0"
+            v-for="(activity, index) in activities"
+            :key="activity.id"
+            v-show="index < visibleCount"
+            class="activity-item"
+          >
             <div class="activity-icon" :class="getActivityType(activity.title)">
               <i :class="getActivityIcon(activity.title)"></i>
             </div>
@@ -94,11 +99,69 @@ const props = withDefaults(defineProps<Props>(), {
   viewAllLabel: 'View All',
 })
 
-// Computed class for different layouts
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+
+const activityListRef = ref<HTMLElement | null>(null)
+const visibleCount = ref(0)
+let resizeObserver: ResizeObserver | null = null
+
 const layoutClass = computed(() => {
   return props.maxHeight === '400px' ? 'dashboard-layout' : 'reports-layout'
 })
+
+const updateVisibleCount = async () => {
+  await nextTick()
+
+  const list = activityListRef.value
+  if (!list || props.isLoading) return
+
+  if (props.activities.length === 0) {
+    visibleCount.value = 0
+    return
+  }
+
+  // Render all rows first so we can measure their natural heights.
+  visibleCount.value = props.activities.length
+  await nextTick()
+
+  const availableHeight = list.clientHeight
+  const items = list.querySelectorAll('.activity-item')
+  let usedHeight = 0
+  let count = 0
+
+  for (const item of items) {
+    const height = (item as HTMLElement).offsetHeight
+    if (usedHeight + height > availableHeight + 1) break
+    usedHeight += height
+    count++
+  }
+
+  visibleCount.value = count
+}
+
+onMounted(() => {
+  resizeObserver = new ResizeObserver(() => {
+    void updateVisibleCount()
+  })
+
+  if (activityListRef.value) {
+    resizeObserver.observe(activityListRef.value)
+  }
+
+  void updateVisibleCount()
+})
+
+onUnmounted(() => {
+  resizeObserver?.disconnect()
+})
+
+watch(
+  () => [props.activities, props.isLoading, props.maxHeight] as const,
+  () => {
+    void updateVisibleCount()
+  },
+  { deep: true },
+)
 
 // Helper functions for activity display
 const getActivityType = (title: string): string => {
@@ -130,9 +193,8 @@ const getActivityIcon = (title: string): string => {
 /*
  * The component caps the OUTER card to maxHeight (e.g. 360px on Reports,
  * 400px on Dashboard) and lets the inner activity list fill whatever
- * remains under the header. Using flex with min-height: 0 on the body
- * ensures the scroll area shrinks to fit so the last row is always
- * reachable instead of being clipped behind the parent card.
+ * remains under the header. Only activity rows that fully fit are shown;
+ * partially clipped rows are hidden instead of scrolling.
  */
 .recent-activity {
   height: 100%;
@@ -163,12 +225,11 @@ const getActivityIcon = (title: string): string => {
   text-decoration: none;
 }
 
-/* Activity list fills the remaining card body and scrolls internally
-   so the full last row is always visible (no clipping at the bottom). */
+/* Activity list fills the remaining card body; only fully visible rows are shown. */
 .activity-list {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 0;
 }
 
@@ -185,16 +246,6 @@ const getActivityIcon = (title: string): string => {
 
 .activity-item:first-child {
   border-top: none;
-}
-
-/* Dashboard layout: up to 15 items in 400px total height (scrollable) */
-.dashboard-layout .activity-item {
-  min-height: calc((400px - 52px - 4px) / 15);
-}
-
-/* Reports layout: up to 15 items in 360px (scrollable) */
-.reports-layout .activity-item {
-  min-height: calc((360px - 41px - 4px) / 15);
 }
 
 
