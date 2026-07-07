@@ -618,7 +618,7 @@
                     <span class="search-icon">₹</span>
                     <input 
                       type="number" 
-                      :class="['form-control search-input', { 'is-invalid': completeFormErrors.actualCost }]"
+                      :class="['form-control search-input no-number-spin', { 'is-invalid': completeFormErrors.actualCost }]"
                       id="actualCost"
                       v-model.number="completeForm.actualCost"
                       placeholder="0.00" 
@@ -627,13 +627,14 @@
                       max="100000" 
                       required
                       title="Please enter the actual cost for this maintenance"
-                      @input="completeFormErrors.actualCost = ''"
+                      @input="onActualCostInput"
+                      @blur="validateActualCostField()"
                     >
                   </div>
-                  <div class="invalid-feedback" v-if="completeFormErrors.actualCost">
+                  <div class="invalid-feedback d-block" v-if="completeFormErrors.actualCost">
                     {{ completeFormErrors.actualCost }}
                   </div>
-                  <div class="form-text">Enter the actual cost incurred for this maintenance activity (required)</div>
+                  <div class="form-text">Enter the actual cost incurred for this maintenance activity (required). You can update this later from Maintenance History within 30 days if the vendor invoice arrives later.</div>
                 </div>
                 
                 <div class="mb-3">
@@ -778,8 +779,15 @@ const route = useRoute()
 useRouteToast()
 const toastStore = useToastStore()
 const MAINTENANCE_MODAL_STATE_KEY = 'maintenanceModalState'
-const MAINTENANCE_VIEW_STATE_KEY = 'maintenanceViewState'
-let isRestoringMaintenanceViewState = false
+
+const clearStoredMaintenanceViewState = () => {
+  if (typeof globalThis === 'undefined') return
+  try {
+    globalThis.window.sessionStorage.removeItem('maintenanceViewState')
+  } catch (error) {
+    console.warn('Failed to clear maintenance view state:', error)
+  }
+}
 
 // Local type representing a table row in this view
 interface MaintenanceRow {
@@ -1025,40 +1033,45 @@ const cancelFormErrors = reactive({
   cancelNotes: ''
 })
 
-// Validation functions
-const validateCompleteForm = () => {
-  let isValid = true
-  
-  // Reset errors
-  completeFormErrors.actualCost = ''
-  
-  // Validate actual cost
+const MAX_ACTUAL_COST = 100000
+
+const validateActualCostField = (requireValue = false) => {
   const actualCost = completeForm.actualCost
-  
-  // Handle empty/null/undefined values  
+
   if (actualCost === null || actualCost === undefined || actualCost === '' || (typeof actualCost === 'number' && actualCost === 0)) {
-    completeFormErrors.actualCost = 'Please enter the actual cost'
-    isValid = false
-    return isValid
+    completeFormErrors.actualCost = requireValue ? 'Please enter the actual cost' : ''
+    return !requireValue
   }
-  
-  // Convert to number for validation
+
   const actualCostValue = typeof actualCost === 'number' ? actualCost : Number.parseFloat(String(actualCost))
-  
-  // Check if it's a valid number
+
   if (Number.isNaN(actualCostValue)) {
     completeFormErrors.actualCost = 'Please enter a valid number'
-    isValid = false
-  } else if (actualCostValue <= 0) {
-    completeFormErrors.actualCost = 'Actual cost must be greater than 0'
-    isValid = false
-  } else if (actualCostValue > 100000) {
-    completeFormErrors.actualCost = 'Actual cost cannot exceed ₹1,00,000'
-    isValid = false
+    return false
   }
-  
-  return isValid
+  if (actualCostValue <= 0) {
+    completeFormErrors.actualCost = 'Actual cost must be greater than 0'
+    return false
+  }
+  if (actualCostValue > MAX_ACTUAL_COST) {
+    completeFormErrors.actualCost = 'Actual cost cannot exceed ₹1,00,000'
+    return false
+  }
+
+  completeFormErrors.actualCost = ''
+  return true
 }
+
+const onActualCostInput = () => {
+  if (completeForm.actualCost === '' || completeForm.actualCost === null || completeForm.actualCost === undefined) {
+    completeFormErrors.actualCost = ''
+    return
+  }
+  validateActualCostField()
+}
+
+// Validation functions
+const validateCompleteForm = () => validateActualCostField(true)
 
 const validateCancelForm = () => {
   let isValid = true
@@ -1128,86 +1141,6 @@ const tryOpenPendingMaintenance = () => {
   }
 }
 
-const persistMaintenanceViewState = () => {
-  if (typeof globalThis === 'undefined') return
-  try {
-    const state = {
-      filters: { ...filters },
-      selectedTypeValue: selectedType.value?.value ?? null,
-      selectedStatusValue: selectedStatus.value?.value ?? null,
-      selectedSortByValue: selectedSortBy.value?.value ?? null,
-      sortBy: sortBy.value,
-      sortAscending: sortAscending.value,
-      currentPage: currentPage.value,
-      showFilterDropdown: showFilterDropdown.value
-    }
-    globalThis.window.sessionStorage.setItem(MAINTENANCE_VIEW_STATE_KEY, JSON.stringify(state))
-  } catch (error) {
-    console.warn('Failed to persist maintenance view state:', error)
-  }
-}
-
-const restoreMaintenanceViewState = () => {
-  if (typeof globalThis === 'undefined') return
-  try {
-    const raw = globalThis.window.sessionStorage.getItem(MAINTENANCE_VIEW_STATE_KEY)
-    if (!raw) return
-    const state = JSON.parse(raw) as {
-      filters?: typeof filters,
-      selectedTypeValue?: string | null,
-      selectedStatusValue?: string | null,
-      selectedSortByValue?: string | null,
-      sortBy?: string,
-      sortAscending?: boolean,
-      currentPage?: number,
-      showFilterDropdown?: boolean
-    }
-    isRestoringMaintenanceViewState = true
-
-    if (state.filters) {
-      filters.search = state.filters.search ?? filters.search
-      filters.status = state.filters.status ?? filters.status
-      filters.type = state.filters.type ?? filters.type
-      filters.vendor = state.filters.vendor ?? filters.vendor
-    }
-
-    if (typeof state.sortBy === 'string') {
-      sortBy.value = state.sortBy
-    }
-    if (typeof state.sortAscending === 'boolean') {
-      sortAscending.value = state.sortAscending
-    }
-    if (typeof state.currentPage === 'number' && state.currentPage > 0) {
-      currentPage.value = state.currentPage
-    }
-    if (typeof state.showFilterDropdown === 'boolean') {
-      showFilterDropdown.value = state.showFilterDropdown
-    }
-
-    if ('selectedTypeValue' in state) {
-      selectedType.value = maintenanceTypeOptions.value.find(option => option.value === state.selectedTypeValue) || null
-      filters.type = state.selectedTypeValue || ''
-    }
-
-    if ('selectedStatusValue' in state) {
-      selectedStatus.value = statusOptions.value.find(option => option.value === state.selectedStatusValue) || null
-      filters.status = state.selectedStatusValue || ''
-    }
-
-    if ('selectedSortByValue' in state) {
-      const matchSort = sortOptions.value.find(option => option.value === state.selectedSortByValue) || null
-      selectedSortBy.value = matchSort
-      if (matchSort?.value) {
-        sortBy.value = matchSort.value as string
-      }
-    }
-  } catch (error) {
-    console.warn('Failed to restore maintenance view state:', error)
-  } finally {
-    isRestoringMaintenanceViewState = false
-  }
-}
-
 // Loading states
 const completeLoading = ref(false)
 const cancelLoading = ref(false)
@@ -1222,12 +1155,13 @@ let statsTimestampInterval: number | undefined
 
 // Initialize data on component mount
 onMounted(async () => {
+  clearStoredMaintenanceViewState()
+
   // Prefill search from query (e.g., coming from AssetsView)
   if (typeof route.query.search === 'string' && route.query.search.trim() !== '') {
     filters.search = route.query.search
   }
 
-  restoreMaintenanceViewState()
   restoreMaintenanceModalSnapshot()
 
   await fetchMaintenances()
@@ -1256,27 +1190,6 @@ watch(() => route.query.search, (newSearch) => {
     filterMaintenancesImmediate()
   }
 })
-
-watch(
-  [
-    () => filters.search,
-    () => filters.status,
-    () => filters.type,
-    () => filters.vendor,
-    () => selectedType.value,
-    () => selectedStatus.value,
-    () => selectedSortBy.value,
-    () => sortBy.value,
-    () => sortAscending.value,
-    () => currentPage.value,
-    () => showFilterDropdown.value
-  ],
-  () => {
-    if (isRestoringMaintenanceViewState) return
-    persistMaintenanceViewState()
-  },
-  { deep: true }
-)
 
 onUnmounted(() => {
   if (statsInterval) {

@@ -44,9 +44,7 @@ const vendorColumns = ref([
 // Enhanced vendor validation using backend API
 const validateVendorFile = async (file: File) => {
   try {
-    console.log('validateVendorFile: Starting validation for file:', file.name)
     const result = await VendorApiService.validateBulkUpload(file)
-    console.log('validateVendorFile: API response:', result)
     return result
   } catch (error: any) {
     console.error('validateVendorFile: Validation error:', error)
@@ -77,17 +75,8 @@ const formatValidationErrors = (errors: any[]) => {
 // Handle validation request from BulkUploadModal
 const handleValidation = async (file: File) => {
   try {
-    console.log('BulkVendorUpload: handleValidation called with file:', file.name)
-    console.log('BulkVendorUpload: File details:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    })
-    
     // Call validation API
-    console.log('BulkVendorUpload: Calling validateVendorFile...')
     const validationResult = await validateVendorFile(file)
-    console.log('BulkVendorUpload: Validation result:', validationResult)
     
     // Transform the result to match BulkUploadModal expectations
     const transformedResult = {
@@ -96,10 +85,7 @@ const handleValidation = async (file: File) => {
       validRows: validationResult.data.summary?.successfulImports || 0
     }
     
-    console.log('BulkVendorUpload: Transformed result:', transformedResult)
-    
     // Pass transformed result back to BulkUploadModal
-    console.log('BulkVendorUpload: Calling handleValidationResult on modal...')
     bulkUploadModalRef.value?.handleValidationResult(transformedResult)
     
   } catch (error: any) {
@@ -111,10 +97,8 @@ const handleValidation = async (file: File) => {
     let errorMessage = 'Validation failed'
     if (error.response?.data?.message) {
       errorMessage = error.response.data.message
-      console.log('BulkVendorUpload: Using response message:', errorMessage)
     } else if (error.message) {
       errorMessage = error.message
-      console.log('BulkVendorUpload: Using error message:', errorMessage)
     }
     
     // Make error message more user-friendly
@@ -129,8 +113,6 @@ const handleValidation = async (file: File) => {
       totalRows: 0
     }
     
-    console.log('BulkVendorUpload: Passing error result to modal:', errorResult)
-    
     // Pass error result back to BulkUploadModal
     bulkUploadModalRef.value?.handleValidationResult(errorResult)
   }
@@ -139,8 +121,6 @@ const handleValidation = async (file: File) => {
 // Handle bulk upload (validation already completed)
 const handleBulkUpload = async (file: File) => {
   try {
-    console.log('BulkVendorUpload: Starting upload for file:', file.name)
-    
     // Show loading state
     toastStore.showInfo('Uploading Vendors', 'Please wait while we upload your vendors...')
     
@@ -175,7 +155,6 @@ const handleTemplateDownload = (type: 'csv' | 'excel') => {
 
 // Public methods
 const openModal = () => {
-  console.log('BulkVendorUpload: openModal called, bulkUploadModalRef:', bulkUploadModalRef.value)
   bulkUploadModalRef.value?.openModal()
 }
 

@@ -371,7 +371,6 @@ const loadSummary = async () => {
   
   try {
     loading.value = true
-    console.log('Loading summary for asset:', assetId.value)
     
     // Build query parameters for filtering
     const queryParams: any = { _t: Date.now() }
@@ -409,12 +408,6 @@ const loadSummary = async () => {
       summary.value = response.summary
       recentEvents.value = response.recentEvents || []
       
-      console.log('Summary loaded:', { 
-        assetInfo: response.asset, 
-        summary: response.summary,
-        recentEventsCount: response.recentEvents?.length || 0
-      })
-      
       // Set initial timeline to recent events
       timeline.value = recentEvents.value
       currentViewMode.value = 'summary'
@@ -437,7 +430,6 @@ const viewFullHistory = async () => {
   
   try {
     loading.value = true
-    console.log('Loading full history (100 events) for asset:', assetId.value)
     
     // Build query parameters for filtering
     const queryParams: any = {
@@ -479,11 +471,6 @@ const viewFullHistory = async () => {
       pagination.value = response.pagination
       currentViewMode.value = 'full'
       
-      console.log('Full history loaded:', { 
-        timelineLength: response.timeline?.length || 0,
-        totalEvents: response.pagination?.totalEvents || 0
-      })
-      
       // Hide "View Full History" button
       showViewFullHistoryButton.value = false
       
@@ -506,7 +493,6 @@ const loadMoreHistory = async () => {
   
   try {
     loading.value = true
-    console.log('Loading complete history (500 events) for asset:', assetId.value)
     
     // Build query parameters for filtering
     const queryParams: any = {
@@ -547,11 +533,6 @@ const loadMoreHistory = async () => {
       timeline.value = response.timeline || []
       pagination.value = response.pagination
       currentViewMode.value = 'complete'
-      
-      console.log('Complete history loaded:', { 
-        timelineLength: response.timeline?.length || 0,
-        totalEvents: response.pagination?.totalEvents || 0
-      })
       
       // Hide "Load More History" button
       showLoadMoreHistoryButton.value = false

@@ -187,8 +187,6 @@ class AssetService {
 
   // Validate bulk upload file
   async validateBulkUpload(file: File): Promise<AssetBulkUploadResponse> {
-    console.log('assetService.validateBulkUpload: Starting validation for file:', file.name)
-    
     const formData = new FormData()
     formData.append('file', file)
 
@@ -198,7 +196,6 @@ class AssetService {
           'Content-Type': 'multipart/form-data',
         },
       })
-      console.log('assetService.validateBulkUpload: Validation successful')
       return response.data
     } catch (error: any) {
       console.error('assetService.validateBulkUpload: Error response:', error.response?.data)
@@ -480,8 +477,6 @@ class AssetService {
     const endpoint = queryString ? `${this.baseEndpoint}/export?${queryString}` : `${this.baseEndpoint}/export`
     
     try {
-      console.log('Export request:', { endpoint })
-      
       const response = await apiClient.get(endpoint, {
         responseType: 'blob',
       })

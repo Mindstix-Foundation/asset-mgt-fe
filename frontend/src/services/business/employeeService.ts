@@ -425,8 +425,6 @@ class EmployeeService {
     const endpoint = queryString ? `/employees/export?${queryString}` : '/employees/export'
     
     try {
-      console.log('Employee export request:', { endpoint })
-      
       const response = await apiClient.get(endpoint, {
         responseType: 'blob',
       })
@@ -451,8 +449,6 @@ class EmployeeService {
       link.click()
       link.remove()
       globalThis.URL.revokeObjectURL(url)
-      
-      console.log('Employee export completed successfully')
     } catch (error) {
       console.error('Error exporting employees:', error)
       throw error

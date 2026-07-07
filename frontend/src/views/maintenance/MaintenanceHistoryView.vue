@@ -217,8 +217,19 @@
 
                   <div class="col-md-3">
                     <small class="text-muted">Cost</small>
-                    <div>
-                      {{ item.actualCost ? `₹${item.actualCost.toFixed(2)} (Actual)` : item.estimatedCost ? `₹${item.estimatedCost.toFixed(2)} (Estimated)` : 'N/A' }}
+                    <div class="d-flex align-items-center gap-2">
+                      <span>
+                        {{ item.actualCost ? `₹${item.actualCost.toFixed(2)} (Actual)` : item.estimatedCost ? `₹${item.estimatedCost.toFixed(2)} (Estimated)` : 'N/A' }}
+                      </span>
+                      <button
+                        v-if="canEditCost(item)"
+                        type="button"
+                        class="btn btn-link btn-sm p-0 edit-cost-btn"
+                        title="Edit repair cost"
+                        @click="openEditCostModal(item)"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -248,6 +259,69 @@
         />
       </div>
     </div>
+
+    <!-- Edit Repair Cost Modal -->
+    <div
+      v-if="editingCostItem"
+      class="modal fade"
+      :class="{ show: showEditCostModal }"
+      :style="{ display: showEditCostModal ? 'block' : 'none' }"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black); font-size: 1.25rem; font-weight: 600;">
+              Edit Repair Cost
+            </h5>
+            <button type="button" class="btn-close" @click="closeEditCostModal"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3 text-muted small">
+              Update the actual repair cost for the most recent maintenance on this device. Only the latest completed maintenance can be edited (within 30 days).
+            </p>
+            <div class="mb-2">
+              <strong>{{ editingCostItem.description }}</strong>
+            </div>
+            <div class="mb-3 text-muted small" v-if="editingCostItem.estimatedCost">
+              Estimated cost: ₹{{ editingCostItem.estimatedCost.toFixed(2) }}
+            </div>
+            <form @submit.prevent="saveRepairCost" class="needs-validation" novalidate>
+              <div class="mb-3">
+                <label for="editActualCost" class="form-label">Actual Cost <span class="text-danger">*</span></label>
+                <div class="search-input-container">
+                  <span class="search-icon">₹</span>
+                  <input
+                    type="number"
+                    :class="['form-control search-input no-number-spin', { 'is-invalid': editCostError }]"
+                    id="editActualCost"
+                    v-model.number="editCostForm.actualCost"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01"
+                    max="100000"
+                    required
+                    @input="onEditActualCostInput"
+                    @blur="validateEditActualCostField()"
+                  >
+                </div>
+                <div class="invalid-feedback d-block" v-if="editCostError">
+                  {{ editCostError }}
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel btn-sm" @click="closeEditCostModal">Cancel</button>
+            <button type="button" class="btn btn-green btn-sm" @click="saveRepairCost" :disabled="editCostLoading">
+              <i :class="editCostLoading ? 'fas fa-spinner fa-spin me-1' : 'fas fa-save me-1'"></i>
+              {{ editCostLoading ? 'Saving...' : 'Save Cost' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="showEditCostModal" class="modal-backdrop fade show" @click="closeEditCostModal"></div>
   </div>
 </template>
 
@@ -255,6 +329,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { maintenanceService } from '@/services/business/maintenanceService'
+import { useToastStore } from '@/stores/toast'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
@@ -293,8 +368,10 @@ interface AssetSummary {
 
 const route = useRoute()
 const router = useRouter()
+const toastStore = useToastStore()
 const assetId = String(route.params.assetId || '')
 const MAINTENANCE_HISTORY_STATE_KEY = 'maintenanceHistoryViewState'
+const COST_EDIT_WINDOW_DAYS = 30
 let isRestoringViewState = false
 
 const loading = ref(false)
@@ -314,6 +391,13 @@ const filters = ref({ search: '', dateFrom: '', dateTo: '', sortBy: 'date', sort
 const selectedSortBy = ref({ id: 'date', name: 'Date' } as any)
 const selectedStatus = ref<any>(null)
 const selectedType = ref<any>(null)
+
+const showEditCostModal = ref(false)
+const editingCostItem = ref<HistoryItem | null>(null)
+const editCostLoading = ref(false)
+const editCostError = ref('')
+const editCostForm = ref({ actualCost: '' as number | string })
+const latestCompletedMaintenanceId = ref<number | null>(null)
 
 const sortByOptions = [
   { id: 'date', name: 'Date' },
@@ -496,6 +580,103 @@ const calcDurationDays = (start?: string | null, end?: string | null) => {
 
 const goBack = () => router.back()
 
+const daysSinceDate = (dateString?: string | null) => {
+  if (!dateString) return Number.POSITIVE_INFINITY
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return Number.POSITIVE_INFINITY
+  return (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)
+}
+
+const canEditCost = (item: HistoryItem & { date?: string }) => {
+  if (item.status !== 'COMPLETED') return false
+  if (latestCompletedMaintenanceId.value === null || item.id !== latestCompletedMaintenanceId.value) return false
+  const completionDate = item.date || item.actualCompletionDate
+  return daysSinceDate(completionDate) <= COST_EDIT_WINDOW_DAYS
+}
+
+const openEditCostModal = (item: HistoryItem & { date?: string }) => {
+  if (!canEditCost(item)) return
+  editingCostItem.value = item
+  editCostForm.value.actualCost = item.actualCost ?? item.estimatedCost ?? ''
+  editCostError.value = ''
+  showEditCostModal.value = true
+}
+
+const closeEditCostModal = () => {
+  showEditCostModal.value = false
+  editingCostItem.value = null
+  editCostForm.value.actualCost = ''
+  editCostError.value = ''
+}
+
+const validateEditActualCostField = (requireValue = false) => {
+  const actualCost = editCostForm.value.actualCost
+
+  if (actualCost === null || actualCost === undefined || actualCost === '' || (typeof actualCost === 'number' && actualCost === 0)) {
+    editCostError.value = requireValue ? 'Please enter the actual cost' : ''
+    return !requireValue
+  }
+
+  const value = typeof actualCost === 'number' ? actualCost : Number.parseFloat(String(actualCost))
+  if (Number.isNaN(value)) {
+    editCostError.value = 'Please enter a valid number'
+    return false
+  }
+  if (value <= 0) {
+    editCostError.value = 'Actual cost must be greater than 0'
+    return false
+  }
+  if (value > 100000) {
+    editCostError.value = 'Actual cost cannot exceed ₹1,00,000'
+    return false
+  }
+
+  editCostError.value = ''
+  return true
+}
+
+const onEditActualCostInput = () => {
+  if (editCostForm.value.actualCost === '' || editCostForm.value.actualCost === null || editCostForm.value.actualCost === undefined) {
+    editCostError.value = ''
+    return
+  }
+  validateEditActualCostField()
+}
+
+const validateEditCostForm = () => validateEditActualCostField(true)
+
+const saveRepairCost = async () => {
+  if (!editingCostItem.value || !canEditCost(editingCostItem.value) || !validateEditCostForm()) return
+
+  editCostLoading.value = true
+  try {
+    const newCost = typeof editCostForm.value.actualCost === 'number'
+      ? editCostForm.value.actualCost
+      : Number.parseFloat(String(editCostForm.value.actualCost))
+
+    const response = await maintenanceService.updateMaintenance(
+      editingCostItem.value.id.toString(),
+      { actualCost: newCost }
+    )
+
+    if (response.data?.maintenance) {
+      const item = history.value.find(h => h.id === editingCostItem.value!.id)
+      if (item) {
+        item.actualCost = newCost
+      }
+      toastStore.showSuccess('Success', `Repair cost updated to ₹${newCost.toFixed(2)}`)
+      closeEditCostModal()
+    } else {
+      toastStore.showError('Error', response.message || 'Failed to update repair cost')
+    }
+  } catch (error) {
+    console.error('Error updating repair cost:', error)
+    toastStore.showError('Error', 'Failed to update repair cost. Please try again.')
+  } finally {
+    editCostLoading.value = false
+  }
+}
+
 const normalizeSpecificationsForDisplay = (specs: any) => {
   if (specs === null || specs === undefined || specs === '') {
     return null
@@ -634,20 +815,19 @@ const applyFilters = async () => {
       }
     }
     
-    console.log('Maintenance History API Call:', { 
-      assetId, 
-      params,
-      rawDates: {
-        dateFrom: filters.value.dateFrom,
-        dateTo: filters.value.dateTo
-      },
-      formattedDates: {
-        dateFrom: params.dateFrom,
-        dateTo: params.dateTo
-      }
-    })
-    const res = await maintenanceService.getMaintenanceEvents(assetId, params)
-    console.log('Maintenance History API Response:', res)
+    const [res, latestCompletedRes] = await Promise.all([
+      maintenanceService.getMaintenanceEvents(assetId, params),
+      maintenanceService.getMaintenanceEvents(assetId, {
+        status: 'COMPLETED',
+        sortBy: 'date',
+        sortOrder: 'desc',
+        page: 1,
+        limit: 1,
+      }),
+    ])
+
+    const latestCompletedEvent = latestCompletedRes.data?.events?.[0]
+    latestCompletedMaintenanceId.value = latestCompletedEvent?.id ?? null
     
     assetDetails.value = (res.data as any)?.asset || null
 
@@ -663,8 +843,6 @@ const applyFilters = async () => {
     
     // Transform events to the HistoryItem-like shape expected by the template
     const events = res.data?.events || []
-    console.log('Maintenance Events:', events)
-    
     history.value = events.map((e: any, idx: number) => ({
       id: e.id || idx,
       assetId: assetId,
@@ -696,6 +874,7 @@ const applyFilters = async () => {
     history.value = []
     totalPages.value = 0
     totalRecords.value = 0
+    latestCompletedMaintenanceId.value = null
   } finally {
     loading.value = false
   }
@@ -888,6 +1067,18 @@ onMounted(async () => {
   font-size: 0.95rem;
   font-weight: 500;
   color: #212529;
+}
+
+.edit-cost-btn {
+  color: var(--primary-purple, #6f42c1);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.edit-cost-btn:hover,
+.edit-cost-btn:focus {
+  color: var(--primary-black, #212529);
+  text-decoration: none;
 }
 
 .notes-display {

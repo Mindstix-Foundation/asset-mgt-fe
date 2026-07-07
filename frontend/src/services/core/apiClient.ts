@@ -67,18 +67,14 @@ const shouldRetryRequest = (originalRequest: any): boolean => {
 
 // Helper: Handle token refresh and retry
 const handleTokenRefresh = async (originalRequest: any) => {
-  console.log('[ApiClient] 401 error detected, attempting token refresh')
   originalRequest._retry = true
   
   const refreshSuccess = await authService.refreshToken()
   
   if (refreshSuccess) {
-    console.log('[ApiClient] Token refresh successful, retrying original request')
     return apiClient(originalRequest)
   }
-  
-  console.log('[ApiClient] Token refresh failed, triggering auth expired event')
-  
+
   if (!shouldPreventRedirect() && !isAuthEndpoint(originalRequest.url) && !isOnAuthPage()) {
     dispatchAuthExpired()
   }
@@ -98,7 +94,6 @@ apiClient.interceptors.response.use(
         const result = await handleTokenRefresh(originalRequest)
         if (result) return result
       } else if (isAuthEndpoint(originalRequest.url)) {
-        console.log('[ApiClient] 401 on auth endpoint, not handling')
       }
     }
 

@@ -263,7 +263,7 @@
           <div class="compact-chart-card">
             <RecentActivity 
               :activities="recentActivities"
-              :isLoading="isLoadingAnalytics"
+              :isLoading="isLoadingRecentActivities"
               title="Recent Activity"
               maxHeight="360px"
               :view-all-route="{ name: 'admin-audit' }"
@@ -361,6 +361,7 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/api/reportsApi'
 import { dashboardApi } from '@/services/api/dashboardApi'
+import { auditApi } from '@/services/api/auditApi'
 import { assetService } from '@/services/business/assetService'
 import { employeeService } from '@/services/business/employeeService'
 import { maintenanceService } from '@/services/business/maintenanceService'
@@ -373,6 +374,7 @@ Chart.register(...registerables)
 // Reactive data
 const analyticsData = ref<AnalyticsData | null>(null)
 const isLoadingAnalytics = ref(true)
+const isLoadingRecentActivities = ref(true)
 const isExporting = ref(false)
 const exportingType = ref('')
 const isLoadingPreview = ref(false)
@@ -599,24 +601,6 @@ const loadAnalyticsData = async () => {
         .sort((a, b) => b.percentage - a.percentage) // Sort by percentage descending
     }
     
-    // Transform recent activities using dashboardApi
-    if (analyticsData.value.recentActivity) {
-      // Convert the reports API format to dashboard API format
-      const convertedActivities = analyticsData.value.recentActivity.map((raw: any) => ({
-        id: raw.id,
-        type: raw.type as any,
-        description: raw.description,
-        timestamp: new Date(raw.timestamp),
-        timeAgo: raw.timeAgo || 'Unknown', // Use the backend's timeAgo value
-        needsRealTimeUpdate: raw.needsRealTimeUpdate || false,
-        assetId: raw.assetId,
-        employeeId: raw.employeeId,
-        maintenanceId: raw.maintenanceId,
-        vendorId: raw.vendorId
-      }))
-      recentActivities.value = dashboardApi.transformRecentActivity(convertedActivities)
-    }
-    
     await nextTick()
     initializeCharts()
     
@@ -627,6 +611,18 @@ const loadAnalyticsData = async () => {
     showNotification('Failed to load analytics data', 'error')
   } finally {
     isLoadingAnalytics.value = false
+  }
+}
+
+const loadRecentActivities = async () => {
+  try {
+    isLoadingRecentActivities.value = true
+    recentActivities.value = await auditApi.getRecentActivities(15)
+  } catch (error) {
+    console.error('Error loading recent audit activities:', error)
+    recentActivities.value = []
+  } finally {
+    isLoadingRecentActivities.value = false
   }
 }
 
@@ -1126,7 +1122,8 @@ const formatCellValue = (value: any, type?: string): string => {
 
 const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
   // Implement your notification system here
-  console.log(`${type.toUpperCase()}: ${message}`)
+  void message
+  void type
 }
 
 
@@ -1211,7 +1208,7 @@ const loadDropdownData = async () => {
 
 // Lifecycle
 onMounted(async () => {
-  await loadAnalyticsData()
+  await Promise.all([loadAnalyticsData(), loadRecentActivities()])
   handleDateRangeChange()
   
   // Update real-time activity times every minute for minute-level updates
@@ -1281,20 +1278,22 @@ onUnmounted(() => {
 }
 
 .compact-chart-card {
-  border: none;
+  border: 1px solid var(--element-gray);
   border-radius: 1rem;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   height: 100%;
   max-height: 360px;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .compact-header {
   background-color: var(--bg-primary);
   color: var(--primary-black);
   border-radius: 1rem 1rem 0 0;
-  border: 1px solid var(--element-gray);
+  border: none;
+  border-bottom: 1px solid var(--element-gray);
   padding: 0.75rem 1rem;
 }
 
@@ -1304,11 +1303,9 @@ onUnmounted(() => {
   color: var(--primary-black) !important;
 }
 
-/* Same border color as .compact-header — frames header + body as one card */
 .compact-chart-card.card > .card-body {
-  border: 1px solid var(--element-gray);
-  border-top: none;
-  border-radius: 0 0 1rem 1rem;
+  border: none;
+  border-radius: 0;
 }
 
 .mini-chart-container {

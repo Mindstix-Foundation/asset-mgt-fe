@@ -170,7 +170,7 @@
         <div class="col-12 col-lg-6 mb-4">
           <RecentActivity 
             :activities="recentActivities"
-            :isLoading="isLoadingAnalytics"
+            :isLoading="isLoadingRecentActivities"
             title="Recent Activity"
             maxHeight="400px"
             :view-all-route="{ name: 'admin-audit' }"
@@ -180,7 +180,7 @@
         
         <div class="col-12 col-lg-6 mb-4">
           <div class="card h-100 asset-distribution-card">
-            <div class="card-header">
+            <div class="card-header d-flex align-items-center">
               <h5 class="card-title mb-0">
                 <i class="fas fa-chart-pie me-2"></i>Asset Distribution
               </h5>
@@ -219,6 +219,7 @@ import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { dashboardApi } from '@/services/api/dashboardApi'
+import { auditApi } from '@/services/api/auditApi'
 import { RecentActivity, StatusIndicator } from '@/components/common'
 
 const router = useRouter()
@@ -232,6 +233,7 @@ const user = computed(() => authStore.user)
 // Loading states
 const isLoadingStats = ref(true)
 const isLoadingAnalytics = ref(true)
+const isLoadingRecentActivities = ref(true)
 
 // Add after the loading states
 const error = ref<string | null>(null)
@@ -413,13 +415,22 @@ const loadAnalyticsData = async () => {
       assignedAssets: statusStats.assignedAssets || dashboardStats.value.assignedAssets
     }
     
-    // Transform recent activities
-    recentActivities.value = dashboardApi.transformRecentActivity(analytics.recentActivity)
-    
   } catch (err) {
     console.error('Error loading analytics data:', err)
   } finally {
     isLoadingAnalytics.value = false
+  }
+}
+
+const loadRecentActivities = async () => {
+  try {
+    isLoadingRecentActivities.value = true
+    recentActivities.value = await auditApi.getRecentActivities(15)
+  } catch (err) {
+    console.error('Error loading recent audit activities:', err)
+    recentActivities.value = []
+  } finally {
+    isLoadingRecentActivities.value = false
   }
 }
 
@@ -451,7 +462,8 @@ const navigateToScheduleMaintenance = () => {
 const refreshDashboard = async () => {
   await Promise.all([
     loadDashboardStats(),
-    loadAnalyticsData()
+    loadAnalyticsData(),
+    loadRecentActivities(),
   ])
 }
 
@@ -816,8 +828,19 @@ canvas {
   overflow: hidden;
 }
 
+.dashboard-page :deep(.recent-activity > .card > .card-header),
 .dashboard-page .asset-distribution-card > .card-header {
+  min-height: 52px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.dashboard-page .asset-distribution-card > .card-header {
+  justify-content: flex-start;
 }
 
 .dashboard-page .asset-distribution-card > .card-body {

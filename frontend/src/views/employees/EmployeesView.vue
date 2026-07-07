@@ -161,8 +161,8 @@
                 type="text" 
                 class="form-control search-input" 
                 v-model="searchTerm"
-                placeholder="Search by name, ID, or email..."
-                @input="filterEmployees"
+                placeholder="Search by first name, last name, ID, or email..."
+                @input="onSearchInput"
               >
             </div>
           </div>
@@ -786,8 +786,8 @@
   import ToastNotification from '@/components/common/ToastNotification.vue'
   import { useToastStore } from '@/stores/toast'
   import { useRouteToast } from '@/composables/useRouteToast'
+  import { normalizeEmployeeSearchInput } from '@/utils/searchInput'
 
-  const EMPLOYEES_VIEW_STATE_KEY = 'employeesViewState'
   const EMPLOYEES_MODAL_STATE_KEY = 'employeesModalState'
   
   export default {
@@ -878,7 +878,7 @@
       //
     },
     created() {
-      this.restoreViewState()
+      this.clearStoredViewState()
       this.initPendingEmployeeFromRoute()
       this.restorePendingEmployeeSnapshot()
       if (!this.selectedSortBy) {
@@ -888,21 +888,6 @@
       this.loadEmployees()
     },
     watch: {
-      searchTerm: 'persistViewState',
-      selectedAssetCount: {
-        handler: 'persistViewState',
-        deep: false
-      },
-      selectedStatus: {
-        handler: 'persistViewState',
-        deep: false
-      },
-      selectedSortBy: {
-        handler: 'persistViewState',
-        deep: false
-      },
-      sortAscending: 'persistViewState',
-      currentPage: 'persistViewState',
       '$route.query.open'(value) {
         const openId = typeof value === 'string' && value ? value : null
         this.pendingEmployeeId = openId
@@ -972,6 +957,14 @@
       filterEmployees() {
         this.currentPage = 1
         this.loadEmployees()
+      },
+      onSearchInput(event) {
+        const normalized = normalizeEmployeeSearchInput(event.target.value)
+        if (event.target.value !== normalized) {
+          event.target.value = normalized
+        }
+        this.searchTerm = normalized
+        this.filterEmployees()
       },
       sortEmployees() {
         // Sorting will be implemented server-side in future
@@ -1413,45 +1406,12 @@
           this.pendingEmployeeId = null
         }
       },
-      persistViewState() {
-        if (globalThis === undefined) return
-        const state = {
-          searchTerm: this.searchTerm || '',
-          selectedAssetCount: this.selectedAssetCount?.value ?? null,
-          selectedStatus: this.selectedStatus?.value ?? null,
-          selectedSortBy: this.selectedSortBy?.value ?? null,
-          sortAscending: this.sortAscending,
-          currentPage: this.currentPage
-        }
+      clearStoredViewState() {
+        if (globalThis.window === undefined) return
         try {
-          globalThis.window.sessionStorage.setItem(EMPLOYEES_VIEW_STATE_KEY, JSON.stringify(state))
+          globalThis.window.sessionStorage.removeItem('employeesViewState')
         } catch (error) {
-          console.warn('Failed to persist employees view state:', error)
-        }
-      },
-      restoreViewState() {
-        if (globalThis === undefined) return
-        try {
-          const raw = globalThis.window.sessionStorage.getItem(EMPLOYEES_VIEW_STATE_KEY)
-          if (!raw) return
-          const state = JSON.parse(raw)
-          if (!state || typeof state !== 'object') return
-
-          this.searchTerm = state.searchTerm ?? this.searchTerm
-          this.sortAscending = state.sortAscending ?? this.sortAscending
-          this.currentPage = state.currentPage ?? this.currentPage
-
-          if (state.selectedAssetCount !== undefined) {
-            this.selectedAssetCount = this.assetCountOptions.find(option => option.value === state.selectedAssetCount) || null
-          }
-          if (state.selectedStatus !== undefined) {
-            this.selectedStatus = this.statusOptions.find(option => option.value === state.selectedStatus) || null
-          }
-          if (state.selectedSortBy !== undefined) {
-            this.selectedSortBy = this.sortOptions.find(option => option.value === state.selectedSortBy) || this.selectedSortBy
-          }
-        } catch (error) {
-          console.warn('Failed to restore employees view state:', error)
+          console.warn('Failed to clear employees view state:', error)
         }
       },
       async loadEmployees() {
@@ -1460,7 +1420,7 @@
           const resp = await employeeService.getEmployees({ 
             page: this.currentPage, 
             limit: this.itemsPerPage,
-            search: this.searchTerm || undefined,
+            search: normalizeEmployeeSearchInput(this.searchTerm) || undefined,
             status: this.selectedStatus?.value || undefined,
             assetCountRange: this.selectedAssetCount?.value || undefined,
             sortBy: this.selectedSortBy?.value || 'name',

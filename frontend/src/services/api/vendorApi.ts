@@ -62,8 +62,6 @@ export class VendorApiService {
 
   // Validate bulk upload file
   static async validateBulkUpload(file: File): Promise<BulkUploadResponse> {
-    console.log('vendorApi.validateBulkUpload: Starting validation for file:', file.name)
-    
     const formData = new FormData()
     formData.append('file', file)
 
@@ -73,7 +71,6 @@ export class VendorApiService {
           'Content-Type': 'multipart/form-data',
         },
       })
-      console.log('vendorApi.validateBulkUpload: Validation successful')
       return response.data
     } catch (error: any) {
       console.error('vendorApi.validateBulkUpload: Error response:', error.response?.data)

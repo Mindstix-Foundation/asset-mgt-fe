@@ -1144,7 +1144,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch, toRaw } from 'vue'
+import { ref, shallowRef, reactive, onMounted, computed, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { assetCategoryService } from '../../services/api/assetCategoryService'
@@ -1168,7 +1168,8 @@ const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model' | 'asset'
 const isSaving = ref(false)
 const showFormCard = ref(false)
 const isEditingAssetType = ref(false)
-const originalSpecificationTemplate = ref<any>(null)
+// shallowRef: template must stay a plain JSON-like object so structuredClone works on save
+const originalSpecificationTemplate = shallowRef<any>(null)
 
 // Assets-specific state
 const selectedAssetsForDeletion = ref<(string | number)[]>([])

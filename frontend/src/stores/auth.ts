@@ -42,7 +42,6 @@ export const useAuthStore = defineStore('auth', () => {
     
     // Only redirect if not already on a public route
     if (!['/','/ login', '/forgot-password', '/reset-password'].includes(currentPath)) {
-      console.log('[AuthStore] Auth expired, redirecting to login')
       router.push({
         path: '/',
         query: { redirect: currentPath },

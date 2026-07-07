@@ -1097,7 +1097,6 @@ const validateFieldInline = async (fieldName: string) => {
   const element = document.getElementById(fieldName) as FormElement
   
   if (!element) {
-    console.log(`Element not found for field: ${fieldName}`)
     return false
   }
 
@@ -1107,7 +1106,6 @@ const validateFieldInline = async (fieldName: string) => {
   // Handle specific field validations first
   const handler = validationHandlers[fieldName as keyof typeof validationHandlers]
   if (handler) {
-    console.log(`Using specific handler for field: ${fieldName}`)
     if (['purchaseDate', 'purchaseCost', 'warrantyStartDate', 'warrantyEndDate'].includes(fieldName)) {
       return (handler as (value: any) => boolean)(value)
     } else {
@@ -1118,7 +1116,6 @@ const validateFieldInline = async (fieldName: string) => {
   // For SearchableDropdown fields, use the dropdown validation
   const searchableDropdownFields = ['assetCategory', 'assetType', 'brand', 'model', 'condition', 'status', 'vendor', 'location']
   if (searchableDropdownFields.includes(fieldName)) {
-    console.log(`Field ${fieldName} is a SearchableDropdown, using dropdown validation`)
     // For SearchableDropdown, check if it's required and has a value
     const isRequired = !props.disableAssetIdentity || fieldName === 'condition'
     if (isRequired) {
@@ -1135,18 +1132,15 @@ const validateFieldInline = async (fieldName: string) => {
   // Note: purchaseDate, purchaseCost, warrantyStartDate, warrantyEndDate are handled by validationHandlers above
   const customValidationFields = ['serialNumber', 'notes']
   if (customValidationFields.includes(fieldName)) {
-    console.log(`Field ${fieldName} uses custom validation, calling validateFieldType`)
     return await validateFieldType(fieldName, value)
   }
 
   // Check if field is required for standard fields
   if (!validateRequiredField(fieldName, value, element)) {
-    console.log(`Field ${fieldName} failed required validation`)
     return false
   }
 
   // Use native validation for other fields
-  console.log(`Using standard validation for field: ${fieldName}`)
   return validateStandardField(fieldName, element)
 }
 
@@ -1893,15 +1887,6 @@ const buildAddModeAssetData = (): any => {
   // Build specifications data
   const specificationsData = buildSpecificationsData()
   
-  // Log specifications
-  if (specificationsData) {
-    console.log('====================================')
-    console.log('Asset Specifications')
-    console.log('====================================')
-    console.log('Specifications:', JSON.stringify(specificationsData, null, 2))
-    console.log('====================================')
-  }
-
   return {
     assetId: formData.assetId,
     serialNumber: formData.serialNumber,
@@ -2595,23 +2580,18 @@ const restoreSpecifications = (existingSpecs: Record<string, any>) => {
     return
   }
   
-  console.log('Restoring specifications after template load:', existingSpecs)
-  
   for (const key of Object.keys(existingSpecs)) {
     const value = existingSpecs[key]
     const field = specificationFields.value.find(f => f.key === key)
     restoreSpecificationValue(key, value, field)
   }
   
-  console.log('Form data specifications after restoration:', formData.specifications)
 }
 
 const loadAndRestoreAssetTypeTemplate = async (assetTypeId: number) => {
   const existingSpecs = formData.specifications && typeof formData.specifications === 'object' 
     ? { ...formData.specifications } 
     : {}
-  
-  console.log('Preserved existing specifications before loading template:', existingSpecs)
   
   await loadAssetTypeTemplate(assetTypeId)
   restoreSpecifications(existingSpecs)

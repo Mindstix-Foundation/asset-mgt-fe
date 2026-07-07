@@ -680,12 +680,9 @@ const fetchVendors = async () => {
     }
 
     const response = await VendorApiService.getVendors(queryParams)
-    console.log('API Response:', response)
-    console.log('Vendors data:', response.data.vendors)
     vendors.value = response.data.vendors
     totalVendors.value = response.data.pagination.totalCount
     totalPages.value = response.data.pagination.totalPages
-    console.log('Updated vendors.value:', vendors.value)
   } catch (err: any) {
     console.error('Error fetching vendors:', err)
     console.error('Error details:', {
@@ -710,8 +707,6 @@ const fetchVendors = async () => {
     totalVendors.value = 0
     totalPages.value = 1
     
-    // Show detailed error in UI for debugging
-    console.log('Setting error state with message:', error.value)
   } finally {
     loading.value = false
   }
@@ -949,15 +944,10 @@ const showVendorDetails = async (vendor: Vendor) => {
     showVendorModal.value = true
     
     // First, show the vendor data we already have
-    console.log('Showing vendor from list:', vendor)
     selectedVendor.value = vendor
     
     // Then try to fetch complete vendor details from API
-    console.log('Fetching vendor details for ID:', vendor.id)
     const response = await VendorApiService.getVendorById(vendor.id)
-    console.log('Vendor details response:', response)
-    console.log('Response data:', response.data)
-    console.log('Response structure:', JSON.stringify(response, null, 2))
     
     // Normalize response into a Vendor object
     let vendorData: Vendor | null = null
@@ -970,26 +960,9 @@ const showVendorDetails = async (vendor: Vendor) => {
       vendorData = anyResp as Vendor
     }
 
-    console.log('Final vendor data from API:', vendorData)
-    if (vendorData) {
-      console.log('Vendor data fields:', {
-        name: vendorData.name,
-        email: vendorData.email,
-        phone: vendorData.phone,
-        address: vendorData.address,
-        contactPerson: vendorData.contactPerson,
-        taxId: vendorData.taxId,
-        panNumber: vendorData.panNumber,
-        notes: vendorData.notes,
-        vendorType: vendorData.vendorType,
-        status: vendorData.status
-      })
-    }
-
     // Update with API data if available, otherwise keep the list data
     if (vendorData) {
       selectedVendor.value = vendorData
-      console.log('Updated selectedVendor.value:', selectedVendor.value)
     }
   } catch (error: any) {
     console.error('Error fetching vendor details:', error)

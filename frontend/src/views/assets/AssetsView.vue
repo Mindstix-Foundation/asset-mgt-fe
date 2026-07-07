@@ -2012,13 +2012,10 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
 // Set default view based on screen size
 const setDefaultView = () => {
   const screenWidth = window.innerWidth
-  console.log('Screen width:', screenWidth) // Debug log
   
   if (screenWidth < 768) { // sm breakpoint (768px)
-    console.log('Setting to grid view') // Debug log
     currentView.value = 'grid'
   } else {
-    console.log('Setting to list view') // Debug log
     currentView.value = 'list'
   }
 }
@@ -3123,7 +3120,6 @@ onMounted(async () => {
   const toastTitle = route.query.toastTitle as string | undefined
   const toastMessage = route.query.toastMessage as string | undefined
   if (toastType && toastTitle && toastMessage) {
-    console.log('[Assets] showing toast from onMounted query:', { toastType, toastTitle, toastMessage })
     if (toastType === 'success') toastStore.showSuccess(toastTitle, toastMessage)
     else if (toastType === 'error') toastStore.showError(toastTitle, toastMessage)
     else if (toastType === 'warning') toastStore.showWarning(toastTitle, toastMessage)
@@ -3139,7 +3135,6 @@ onMounted(async () => {
     const tTitle = q.toastTitle as string | undefined
     const tMsg = q.toastMessage as string | undefined
     if (tType && tTitle && tMsg) {
-      console.log('[Assets] showing toast from route watcher:', { tType, tTitle, tMsg })
       if (tType === 'success') toastStore.showSuccess(tTitle, tMsg)
       else if (tType === 'error') toastStore.showError(tTitle, tMsg)
       else if (tType === 'warning') toastStore.showWarning(tTitle, tMsg)

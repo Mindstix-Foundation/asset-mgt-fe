@@ -210,23 +210,19 @@ class AuthService {
    */
   private async performTokenRefresh(): Promise<boolean> {
     try {
-      console.log('[AuthService] Refreshing token...')
       // No need to send refresh_token - it's in HTTP-only cookie
       const response = await authAxios.post<RefreshTokenResponse>('/auth/refresh')
       
       if (response.data.success) {
         // New tokens set in cookies by server automatically
-        console.log('[AuthService] Token refreshed successfully:', new Date().toISOString())
         return true
       }
       
-      console.log('[AuthService] Token refresh failed: response not successful')
       return false
     } catch (error: any) {
       console.error('[AuthService] Token refresh error:', error)
       // Only logout if it's a 401 error (unauthorized), not for network errors
       if (error.response?.status === 401) {
-        console.log('[AuthService] 401 error during refresh, logging out')
         await this.logout()
       }
       return false
@@ -251,10 +247,9 @@ class AuthService {
       await this.getProfile()
       this.isAuthenticatedCache = true
       return true
-    } catch (error) {
+    } catch {
       // Expected: getProfile() throws when authentication fails
       // We catch this to return false instead of propagating the error
-      console.debug('[AuthService] Authentication verification failed:', error)
       this.isAuthenticatedCache = false
       return false
     }
@@ -298,9 +293,7 @@ class AuthService {
   private startTokenRefresh(): void {
     // Clear existing timer
     this.stopTokenRefresh()
-    
-    console.log('[AuthService] Starting token refresh interval')
-    
+
     // Set up regular refresh interval (cookies don't expose expiry time)
     // Refresh every 12 minutes (3 minutes before 15-minute expiry)
     this.refreshTimer = setInterval(async () => {

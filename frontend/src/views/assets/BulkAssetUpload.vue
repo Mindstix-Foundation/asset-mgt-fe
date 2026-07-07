@@ -217,8 +217,6 @@ const proceedToBulkUpload = async () => {
     const response = await assetTypeService.getAssetTypeById(Number(selectedAssetType.value.value))
     selectedAssetTypeDetails.value = response.data.assetType
     
-    console.log('Loaded asset type details:', selectedAssetTypeDetails.value)
-    
     // Close asset type selection modal
     const assetTypeModal = Modal.getInstance(document.getElementById('assetTypeSelectionModal')!)
     if (assetTypeModal) {
@@ -241,9 +239,7 @@ const proceedToBulkUpload = async () => {
 // Enhanced asset validation using backend API
 const validateAssetFile = async (file: File) => {
   try {
-    console.log('validateAssetFile: Starting validation for file:', file.name)
     const result = await assetService.validateBulkUpload(file)
-    console.log('validateAssetFile: API response:', result)
     return result
   } catch (error: any) {
     console.error('validateAssetFile: Validation error:', error)
@@ -274,11 +270,8 @@ const formatValidationErrors = (errors: any[]) => {
 // Handle validation request from BulkUploadModal
 const handleValidation = async (file: File) => {
   try {
-    console.log('BulkAssetUpload: Validation requested for file:', file.name)
-    
     // Always call validation API for comprehensive validation
     const validationResult = await validateAssetFile(file)
-    console.log('BulkAssetUpload: Validation result:', validationResult)
     
     // Pass result back to BulkUploadModal
     bulkUploadModalRef.value?.handleValidationResult(validationResult.data)
@@ -292,10 +285,8 @@ const handleValidation = async (file: File) => {
     let errorMessage = 'Validation failed'
     if (error.response?.data?.message) {
       errorMessage = error.response.data.message
-      console.log('BulkAssetUpload: Using response message:', errorMessage)
     } else if (error.message) {
       errorMessage = error.message
-      console.log('BulkAssetUpload: Using error message:', errorMessage)
     }
     
     // Make error message more user-friendly
@@ -310,8 +301,6 @@ const handleValidation = async (file: File) => {
       totalRows: 0
     }
     
-    console.log('BulkAssetUpload: Passing error result to modal:', errorResult)
-    
     // Pass error result back to BulkUploadModal
     bulkUploadModalRef.value?.handleValidationResult(errorResult)
   }
@@ -320,8 +309,6 @@ const handleValidation = async (file: File) => {
 // Handle bulk upload (validation already completed)
 const handleBulkUpload = async (file: File) => {
   try {
-    console.log('BulkAssetUpload: Starting upload for file:', file.name)
-    
     // Show loading state
     toastStore.showInfo('Uploading Assets', 'Please wait while we upload your assets...')
     
@@ -356,8 +343,6 @@ const handleTemplateDownload = (type: 'csv' | 'excel') => {
 
 // Public methods
 const openModal = () => {
-  console.log('BulkAssetUpload: openModal called')
-  
   // Reset selection
   selectedAssetType.value = null
   selectedAssetTypeDetails.value = null
@@ -367,7 +352,6 @@ const openModal = () => {
   if (assetTypeModalEl) {
     const modal = Modal.getInstance(assetTypeModalEl) || new Modal(assetTypeModalEl)
     modal.show()
-    console.log('BulkAssetUpload: Asset type selection modal shown')
   } else {
     console.error('BulkAssetUpload: Asset type selection modal element not found')
   }

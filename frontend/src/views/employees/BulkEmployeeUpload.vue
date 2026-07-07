@@ -168,7 +168,6 @@ const handleTemplateDownload = (type: 'csv' | 'excel') => {
 
 // Public methods
 const openModal = () => {
-  console.log('BulkEmployeeUpload: openModal called, bulkUploadModalRef:', bulkUploadModalRef.value)
   bulkUploadModalRef.value?.openModal()
 }
 

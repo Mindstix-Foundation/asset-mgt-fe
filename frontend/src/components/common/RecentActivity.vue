@@ -8,10 +8,10 @@
         <router-link
           v-if="viewAllRoute"
           :to="viewAllRoute"
-          class="btn btn-link btn-sm view-all-link p-0 text-decoration-none"
+          class="btn btn-gray btn-modern btn-sm view-all-btn"
         >
           {{ viewAllLabel }}
-          <i class="fas fa-arrow-right ms-1 small"></i>
+          <i class="fas fa-arrow-right ms-1"></i>
         </router-link>
       </div>
       <div class="card-body p-0">
@@ -102,21 +102,26 @@ const layoutClass = computed(() => {
 
 // Helper functions for activity display
 const getActivityType = (title: string): string => {
-  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'added'
-  if (title.includes('Asset Issued') || title.includes('Asset Collected')) return 'assigned'
   if (title.includes('Maintenance')) return 'maintenance'
-  if (title.includes('Employee')) return 'added'
-  if (title.includes('Vendor')) return 'added'
+  if (title.includes('Assignment')) return 'assigned'
   return 'added'
 }
 
 const getActivityIcon = (title: string): string => {
-  if (title.includes('Asset Updated') || title.includes('Asset Added')) return 'fas fa-laptop'
-  if (title.includes('Asset Issued')) return 'fas fa-arrow-right'
-  if (title.includes('Asset Collected')) return 'fas fa-arrow-left'
+  if (title.includes('Asset')) return 'fas fa-laptop'
+  if (title.includes('Assignment')) return 'fas fa-exchange-alt'
   if (title.includes('Maintenance')) return 'fas fa-tools'
   if (title.includes('Employee')) return 'fas fa-user'
   if (title.includes('Vendor')) return 'fas fa-building'
+  if (title.includes('Admin User')) return 'fas fa-user-shield'
+  if (
+    title.includes('Brand') ||
+    title.includes('Model') ||
+    title.includes('Category') ||
+    title.includes('Type')
+  ) {
+    return 'fas fa-tags'
+  }
   return 'fas fa-circle'
 }
 </script>
@@ -152,15 +157,10 @@ const getActivityIcon = (title: string): string => {
   flex-direction: column;
 }
 
-.view-all-link {
-  font-size: 0.78rem;
+.view-all-btn {
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--secondary-purple, #6f42c1) !important;
-}
-
-.view-all-link:hover {
-  color: var(--mindstix-primary, #5936a6) !important;
-  text-decoration: underline !important;
+  text-decoration: none;
 }
 
 /* Activity list fills the remaining card body and scrolls internally
@@ -187,14 +187,14 @@ const getActivityIcon = (title: string): string => {
   border-top: none;
 }
 
-/* Dashboard layout: 5 items in 400px total height */
+/* Dashboard layout: up to 15 items in 400px total height (scrollable) */
 .dashboard-layout .activity-item {
-  min-height: calc((400px - 41px - 4px) / 5);
+  min-height: calc((400px - 52px - 4px) / 15);
 }
 
-/* Reports layout: 4 items in 360px */
+/* Reports layout: up to 15 items in 360px (scrollable) */
 .reports-layout .activity-item {
-  min-height: calc((360px - 41px - 4px) / 4);
+  min-height: calc((360px - 41px - 4px) / 15);
 }
 
 

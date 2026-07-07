@@ -162,8 +162,8 @@
               class="form-control" 
               v-model="searchTerm"
               id="employees-search"
-              placeholder="Search by ID, name, or email..."
-              @input="debouncedLoadEmployees"
+              placeholder="Search by first name, last name, ID, or email..."
+              @input="onSearchInput"
             >
           </div>
         </div>
@@ -440,6 +440,7 @@ import { useToastStore } from '@/stores/toast'
 import { employeeService } from '@/services/business/employeeService'
 import SearchableDropdown, { type Item } from '@/components/common/SearchableDropdown.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
+import { normalizeEmployeeSearchInput } from '@/utils/searchInput'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -516,7 +517,7 @@ const loadEmployees = async () => {
 
     // Add search parameter
     if (searchTerm.value) {
-      params.search = searchTerm.value
+      params.search = normalizeEmployeeSearchInput(searchTerm.value)
     }
 
     // Get deletable employees (non-admin with no asset history)
@@ -792,6 +793,16 @@ const executeBulkDelete = async () => {
 }
 
 // Search and filter methods
+const onSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const normalized = normalizeEmployeeSearchInput(target.value)
+  if (target.value !== normalized) {
+    target.value = normalized
+  }
+  searchTerm.value = normalized
+  debouncedLoadEmployees()
+}
+
 const debouncedLoadEmployees = () => {
   // Debounce search input
   clearTimeout(debounceTimer)
