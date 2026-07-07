@@ -20,11 +20,11 @@ export function useNotifications() {
       error.value = null;
       
       const [notificationsData, unreadCountData] = await Promise.all([
-        notificationService.getNotifications(),
+        notificationService.getNotifications({ page: 1, limit: 20 }),
         notificationService.getUnreadCount(),
       ]);
       
-      notifications.value = notificationsData;
+      notifications.value = notificationsData.notifications;
       unreadCount.value = unreadCountData;
     } catch (err: any) {
       // Handle 401 (Unauthorized) gracefully - user might not be logged in
@@ -55,6 +55,7 @@ export function useNotifications() {
       }
       
       // No need to call loadNotifications() - local state update is sufficient
+      globalThis.dispatchEvent(new Event('notifications-updated'));
     } catch (err) {
       console.error('Failed to mark notification as read:', err);
     }
@@ -74,6 +75,7 @@ export function useNotifications() {
       unreadCount.value = 0;
       
       // No need to call loadNotifications() - local state update is sufficient
+      globalThis.dispatchEvent(new Event('notifications-updated'));
       return count;
     } catch (err) {
       console.error('Failed to mark all notifications as read:', err);

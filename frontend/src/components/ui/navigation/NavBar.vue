@@ -43,8 +43,8 @@
         
         <!-- User Info and Logout -->
         <div class="navbar-user-section d-flex align-items-center">
-          <!-- Notification Dropdown -->
-          <NotificationDropdown class="me-3" />
+          <!-- Notification bell → dedicated page -->
+          <NotificationBell class="me-3" />
           
           <div class="user-info d-flex align-items-center" @click="handleProfile" style="cursor: pointer;" title="View Profile">
             <i class="fas fa-user-circle me-2 user-icon"></i>
@@ -115,9 +115,9 @@
           </div>
         </div>
         
-        <!-- Mobile Notifications -->
+        <!-- Mobile notifications -->
         <div class="sidebar-notifications">
-          <NotificationDropdown />
+          <NotificationBell />
         </div>
         
         <button @click="handleProfile" class="sidebar-profile-btn">
@@ -167,7 +167,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import NotificationDropdown from '@/components/notifications/NotificationDropdown.vue'
+import NotificationBell from '@/components/notifications/NotificationBell.vue'
 import navLogo from '@/assets/logos/secondary/secondary-symbol.png'
 import { Modal } from 'bootstrap'
 

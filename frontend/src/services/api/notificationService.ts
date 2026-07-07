@@ -1,18 +1,32 @@
-import { apiService } from '../core/apiClient';
+import { apiService, type ApiResponse } from '../core/apiClient';
 
 export interface Notification {
   id: number;
-  type: 'MAINTENANCE_REMINDER' | 'MAINTENANCE_OVERDUE' | 'ASSET_ASSIGNED' | 'ASSET_RETURNED' | 'SYSTEM_ALERT';
+  type: 'MAINTENANCE_REMINDER';
   title: string;
   message: string;
   isRead: boolean;
-  data?: any;
+  data?: {
+    maintenanceId?: number;
+    assetId?: string;
+    maintenanceType?: string;
+    scheduledDate?: string;
+  };
   createdAt: string;
   readAt?: string;
 }
 
-export interface NotificationResponse {
-  notifications: Notification[];
+export interface NotificationsPagination {
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+export interface NotificationsQuery {
+  page?: number;
+  limit?: number;
 }
 
 export interface UnreadCountResponse {
@@ -28,12 +42,27 @@ export interface MarkAllAsReadResponse {
   message: string;
 }
 
+const PAGE_SIZE = 20;
+
 class NotificationService {
   private readonly baseUrl = '/notifications';
 
-  async getNotifications(): Promise<Notification[]> {
+  async getNotifications(
+    params: NotificationsQuery = {},
+  ): Promise<{ notifications: Notification[]; pagination: NotificationsPagination }> {
     try {
-      return await apiService.get<Notification[]>(this.baseUrl);
+      const query = new URLSearchParams();
+      const page = params.page ?? 1;
+      const limit = params.limit ?? PAGE_SIZE;
+      query.append('page', String(page));
+      query.append('limit', String(limit));
+
+      const response: ApiResponse<{
+        notifications: Notification[];
+        pagination: NotificationsPagination;
+      }> = await apiService.get(`${this.baseUrl}?${query.toString()}`);
+
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
       throw error;
@@ -62,6 +91,18 @@ class NotificationService {
     }
   }
 
+  async markAsUnread(notificationId: number): Promise<boolean> {
+    try {
+      const response = await apiService.post<MarkAsReadResponse>(`${this.baseUrl}/mark-as-unread`, {
+        notificationId,
+      });
+      return response.success;
+    } catch (error) {
+      console.error('Failed to mark notification as unread:', error);
+      throw error;
+    }
+  }
+
   async markAllAsRead(): Promise<number> {
     try {
       const response = await apiService.post<MarkAllAsReadResponse>(`${this.baseUrl}/mark-all-as-read`);
@@ -74,3 +115,4 @@ class NotificationService {
 }
 
 export const notificationService = new NotificationService();
+export { PAGE_SIZE as NOTIFICATIONS_PAGE_SIZE };
