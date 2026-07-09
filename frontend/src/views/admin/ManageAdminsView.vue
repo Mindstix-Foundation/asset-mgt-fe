@@ -1,25 +1,23 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="container-fluid px-3 py-4">
     <!-- Page Header -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h2 class="h3 mb-1" style="color: var(--primary-black); font-weight: 600;">
-              <i class="fas fa-users-cog me-2" style="color: var(--primary-color);"></i>
-              Manage Admins
-            </h2>
-            <p class="text-muted mb-0">Manage admin users and their permissions</p>
-          </div>
-          <button
-            @click="showAddAdminModal"
-            class="btn btn-modern btn-purple"
-            :disabled="isLoading"
-          >
-            <i class="fas fa-plus me-2"></i>
-            Add Admin
-          </button>
-        </div>
+    <div class="manage-admins-page-header mb-4">
+      <div class="manage-admins-page-intro">
+        <h2 class="h3 mb-1" style="color: var(--primary-black); font-weight: 600;">
+          <i class="fas fa-users-cog me-2" style="color: var(--primary-color);"></i>
+          Manage Admins
+        </h2>
+        <p class="text-muted mb-0">Manage admin users and their permissions</p>
+      </div>
+      <div class="manage-admins-page-actions">
+        <button
+          @click="showAddAdminModal"
+          class="btn btn-modern btn-purple"
+          :disabled="isLoading"
+        >
+          <i class="fas fa-plus me-2"></i>
+          Add Admin
+        </button>
       </div>
     </div>
 
@@ -40,8 +38,10 @@
           {{ error }}
         </div>
 
-            <!-- Admins Table -->
-            <div v-else-if="admins.length > 0" class="table-responsive">
+            <!-- Admins List -->
+            <div v-else-if="admins.length > 0">
+              <!-- List View -->
+              <div v-show="!isGridView" class="table-responsive manage-admins-table-wrap">
               <table class="table table-hover mb-0 admin-table">
                 <thead class="table-light">
                   <tr>
@@ -123,6 +123,102 @@
                   </tr>
                 </tbody>
               </table>
+              </div>
+
+              <!-- Grid View -->
+              <div v-show="isGridView">
+                <div class="row">
+                  <div
+                    v-for="admin in admins"
+                    :key="`admin-card-${admin.id}`"
+                    class="col-12 mb-3"
+                  >
+                    <div class="card h-100 admin-card-modern">
+                      <div class="card-body p-2">
+                        <div class="admin-card-header">
+                          <div
+                            class="avatar-sm text-white rounded-circle d-flex align-items-center justify-content-center admin-card-avatar"
+                            :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.username) }"
+                          >
+                            <i class="fas fa-user"></i>
+                          </div>
+                          <div class="admin-card-main">
+                            <div class="admin-card-top-row">
+                              <h6 class="admin-card-name mb-0">
+                                {{ admin.employee?.firstName }} {{ admin.employee?.lastName }}
+                              </h6>
+                              <span
+                                class="admin-card-status badge"
+                                :class="admin.isActive ? 'badge-green' : 'badge-red'"
+                              >
+                                {{ admin.isActive ? 'Active' : 'Inactive' }}
+                              </span>
+                            </div>
+                            <p class="admin-card-username mb-0">{{ admin.username }}</p>
+                          </div>
+                        </div>
+
+                        <div class="admin-card-details mt-2">
+                          <div class="row g-2">
+                            <div class="col-12">
+                              <small class="text-muted d-block">Email</small>
+                              <div class="text-truncate">{{ admin.employee?.email || 'Not specified' }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Employee ID</small>
+                              <span class="badge badge-gray admin-card-employee-id">
+                                {{ admin.employee?.employeeId || 'N/A' }}
+                              </span>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Last Login</small>
+                              <div class="text-truncate">
+                                {{ admin.lastLogin ? formatDate(admin.lastLogin) : 'Never' }}
+                              </div>
+                              <small v-if="admin.lastLogin" class="text-muted">
+                                {{ formatTime(admin.lastLogin) }}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="admin-card-actions mt-auto pt-2 border-top">
+                          <div class="d-flex justify-content-center gap-1 flex-wrap">
+                            <button
+                              v-if="admin.id !== currentUserId"
+                              @click="openStatusConfirm(admin)"
+                              :class="admin.isActive ? 'btn btn-action btn-orange btn-sm' : 'btn btn-action btn-green btn-sm'"
+                              :disabled="isLoading"
+                              :title="admin.isActive ? 'Deactivate Admin' : 'Activate Admin'"
+                            >
+                              <i :class="admin.isActive ? 'fas fa-ban' : 'fas fa-check-circle'"></i>
+                            </button>
+
+                            <button
+                              v-if="admin.id !== currentUserId && admin.canBeDeleted"
+                              @click="removeAdmin(admin)"
+                              class="btn btn-action btn-red btn-sm"
+                              :disabled="isLoading"
+                              title="Delete Admin (No related records)"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+
+                            <button
+                              v-if="admin.id !== currentUserId && !admin.canBeDeleted"
+                              class="btn btn-action btn-gray btn-sm"
+                              :disabled="true"
+                              :title="`Cannot delete: This admin has ${admin.deletionInfo?.totalReferences || 0} related records. Use Activate/Deactivate instead.`"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
         <!-- Empty State -->
@@ -394,7 +490,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAxios, authService } from '@/services/core/authService'
 import { useToastStore } from '@/stores/toast'
@@ -420,6 +516,8 @@ const selectedAdmin = ref<any>(null)
 const selectedStatusAdmin = ref<any>(null)
 const pendingStatusIsActivate = ref<boolean>(false)
 const selectedEmployee = ref<any>(null)
+const isGridView = ref(false)
+let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Password visibility states
 const showPassword = ref(false)
@@ -890,10 +988,32 @@ const formatTime = (dateString: string) => {
 }
 
 // Lifecycle
+const setDefaultView = () => {
+  const screenWidth = globalThis.window.innerWidth
+  isGridView.value = screenWidth < 768
+}
+
+const handleResize = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => {
+    setDefaultView()
+  }, 150)
+}
+
 onMounted(() => {
+  setDefaultView()
+  globalThis.window.addEventListener('resize', handleResize)
   // Ensure we have the latest user id
   currentUserId.value = authService.getUserId()
   fetchAdmins()
+})
+
+onUnmounted(() => {
+  globalThis.window.removeEventListener('resize', handleResize)
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
 })
 </script>
 
@@ -1249,5 +1369,145 @@ onMounted(() => {
 .btn-action.btn-gray[disabled]:hover {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.manage-admins-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.manage-admins-page-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-admins-page-intro h2,
+.manage-admins-page-intro p {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.manage-admins-page-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.admin-card-modern {
+  border: 1px solid var(--element-gray, #dee2e6);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.admin-card-avatar {
+  flex-shrink: 0;
+}
+
+.admin-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.15rem;
+}
+
+.admin-card-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.admin-card-username {
+  color: var(--primary-mid-gray, #6c757d);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.admin-card-status.badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.admin-card-employee-id {
+  font-size: 0.75rem !important;
+  padding: 0.2rem 0.45rem !important;
+}
+
+.admin-card-details {
+  font-size: 0.875rem;
+  color: var(--primary-black);
+}
+
+.admin-card-actions {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 991.98px) {
+  .manage-admins-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .manage-admins-page-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .manage-admins-page-actions .btn {
+    width: 100%;
+  }
+
+  .manage-admins-page-intro h2 {
+    font-size: 1.25rem;
+  }
+
+  .manage-admins-page-intro p {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .manage-admins-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .manage-admins-table-wrap .admin-table {
+    min-width: 720px;
+  }
+
+  .admin-table th:nth-child(6),
+  .admin-table td:nth-child(6) {
+    text-align: center !important;
+  }
 }
 </style>

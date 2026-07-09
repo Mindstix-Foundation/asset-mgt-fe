@@ -2,14 +2,16 @@
   <div class="maintenance-page">
     <div class="container-fluid px-3 py-4">
       <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
+      <div class="maintenance-page-header mb-4">
+        <div class="maintenance-page-intro">
           <h2 class="mb-0" style="color: var(--primary-black);">Maintenance & Repairs</h2>
           <p class="text-muted mb-0">Track asset maintenance, repairs, and service history</p>
         </div>
-        <button class="btn btn-orange" @click="navigateToSchedule">
-          <i class="fas fa-plus me-1"></i>Schedule Maintenance
-        </button>
+        <div class="maintenance-page-actions">
+          <button class="btn btn-orange" @click="navigateToSchedule">
+            <i class="fas fa-plus me-1"></i>Schedule Maintenance
+          </button>
+        </div>
       </div>
 
       <!-- Stats Cards -->
@@ -154,13 +156,13 @@
               <div class="col-6">
                 <button
                   type="button"
-                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2"
+                  class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2 specs-toggle-btn"
                   :class="{ disabled: !hasAnyMaintenanceSpecifications }"
                   :disabled="!hasAnyMaintenanceSpecifications"
                   @click.prevent.stop="toggleAllMaintenanceSpecifications"
                   :title="areAllMaintenanceSpecsVisible ? 'Hide all specifications' : 'Show all specifications'"
                 >
-                  <i class="fas" :class="areAllMaintenanceSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  <i class="fas specs-toggle-btn__icon" :class="areAllMaintenanceSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
                   <span class="fw-semibold text-nowrap">
                     {{ areAllMaintenanceSpecsVisible ? 'Hide Specs' : 'Show Specs' }}
                   </span>
@@ -222,9 +224,11 @@
         <output class="mt-2 text-muted">Loading maintenance records...</output>
       </div>
 
-      <!-- Maintenance Table -->
-      <div v-else class="table-responsive">
-        <table class="table table-hover mb-0">
+      <!-- Maintenance Records -->
+      <div v-else>
+        <!-- List View -->
+        <div v-show="!isGridView" class="table-responsive">
+          <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
               <th>Asset ID</th>
@@ -354,7 +358,7 @@
               </tr>
             </template>
             <tr v-if="filteredMaintenance.length === 0">
-              <td colspan="7" class="text-center py-4">
+              <td colspan="8" class="text-center py-4">
                 <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
                 <h6 class="text-muted">No maintenance records found</h6>
                 <p class="text-muted mb-0">Try adjusting your search criteria</p>
@@ -362,6 +366,138 @@
             </tr>
           </tbody>
         </table>
+        </div>
+
+        <!-- Grid View -->
+        <div v-show="isGridView">
+          <div class="row" v-if="filteredMaintenance.length > 0">
+            <div
+              v-for="maintenance in filteredMaintenance"
+              :key="`card-${maintenance.id}`"
+              class="col-12 mb-3"
+            >
+              <div
+                class="card h-100 maintenance-card-modern"
+                :class="{
+                  'maintenance-card-modern--has-specs': hasMaintenanceSpecifications(maintenance),
+                  'maintenance-card-modern--expanded': expandedMaintenanceIds.includes(maintenance.id),
+                }"
+                @click="toggleMaintenanceRow(maintenance)"
+              >
+                <div class="card-body p-2">
+                  <div class="maintenance-card-header">
+                    <div
+                      class="maintenance-card-icon rounded-circle d-flex align-items-center justify-content-center"
+                      :style="{ backgroundColor: getMaintenanceStatusColor(maintenance.status) }"
+                    >
+                      <i class="fas fa-wrench text-white"></i>
+                    </div>
+                    <div class="maintenance-card-main">
+                      <div class="maintenance-card-top-row">
+                        <h6 class="maintenance-card-id mb-0">{{ maintenance.assetId }}</h6>
+                        <span class="maintenance-card-status badge" :class="getStatusBadgeClass(maintenance.status)">
+                          {{ formatStatus(maintenance.status) }}
+                        </span>
+                      </div>
+                      <p class="maintenance-card-subtitle mb-0">
+                        {{ maintenance.assetModel || 'Unknown Model' }}
+                      </p>
+                      <p class="maintenance-card-meta mb-0">
+                        {{ maintenance.assetType || 'Unknown Type' }} - {{ maintenance.assetBrand || 'Unknown Brand' }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="maintenance-card-details mt-2">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <small class="text-muted d-block">Serial</small>
+                        <div class="fw-medium text-truncate">{{ maintenance.serialNumber || 'N/A' }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block">Type</small>
+                        <div class="text-truncate">{{ formatMaintenanceType(maintenance.type) }}</div>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block">Cost</small>
+                        <div class="text-truncate">{{ maintenance.cost }}</div>
+                        <small class="text-muted">{{ maintenance.costType }}</small>
+                      </div>
+                      <div class="col-6">
+                        <small class="text-muted d-block">{{ getDateTypeLabel(maintenance.dateType || '') || 'Date' }}</small>
+                        <div class="text-truncate">{{ formatDate(maintenance.relevantDate || '') }}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="hasMaintenanceSpecifications(maintenance) && expandedMaintenanceIds.includes(maintenance.id)"
+                    class="maintenance-card-specs spec-row-content mt-2"
+                    @click.stop
+                  >
+                    <span
+                      class="spec-item"
+                      v-for="spec in getMaintenanceSpecificationEntries(maintenance)"
+                      :key="`${maintenance.id}-card-${spec.label}`"
+                    >
+                      <strong>{{ spec.label }}:</strong>&nbsp;{{ spec.value }}
+                    </span>
+                  </div>
+
+                  <div class="maintenance-card-actions mt-auto pt-2 border-top" @click.stop>
+                    <div class="d-flex justify-content-center gap-1 flex-wrap">
+                      <button
+                        class="btn btn-action btn-brown btn-sm"
+                        @click="showMaintenanceDetails(maintenance)"
+                        title="View Details"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button
+                        v-if="maintenance.status === 'IN_PROGRESS'"
+                        class="btn btn-action btn-green btn-sm"
+                        @click="openCompleteModal(maintenance)"
+                        title="Complete Maintenance"
+                      >
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        v-if="maintenance.status === 'SCHEDULED'"
+                        class="btn btn-action btn-purple btn-sm"
+                        @click="navigateToEdit(maintenance)"
+                        title="Edit Maintenance"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button
+                        v-if="['CANCELLED', 'COMPLETED'].includes(maintenance.status)"
+                        class="btn btn-action btn-purple btn-sm"
+                        @click="navigateToSchedule(maintenance)"
+                        title="Reschedule Maintenance"
+                      >
+                        <i class="fas fa-calendar-plus"></i>
+                      </button>
+                      <button
+                        v-if="['IN_PROGRESS', 'SCHEDULED'].includes(maintenance.status)"
+                        class="btn btn-action btn-red btn-sm"
+                        @click="openCancelModal(maintenance)"
+                        title="Cancel Maintenance"
+                      >
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="text-center py-5">
+            <i class="fas fa-search fa-2x text-muted mb-2 d-block"></i>
+            <h6 class="text-muted">No maintenance records found</h6>
+            <p class="text-muted mb-0">Try adjusting your search criteria</p>
+          </div>
+        </div>
       </div>
 
       <!-- Pagination -->
@@ -839,6 +975,8 @@ const sortBy = ref('scheduledDate')
 const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
+const isGridView = ref(false)
+let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 
 // UI state for Assets-style filters
 const showFilterDropdown = ref(false)
@@ -1155,6 +1293,9 @@ let statsTimestampInterval: number | undefined
 
 // Initialize data on component mount
 onMounted(async () => {
+  setDefaultView()
+  globalThis.window.addEventListener('resize', handleResize)
+
   clearStoredMaintenanceViewState()
 
   // Prefill search from query (e.g., coming from AssetsView)
@@ -1192,6 +1333,11 @@ watch(() => route.query.search, (newSearch) => {
 })
 
 onUnmounted(() => {
+  globalThis.window.removeEventListener('resize', handleResize)
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
   if (statsInterval) {
     clearInterval(statsInterval)
     statsInterval = undefined
@@ -1428,6 +1574,34 @@ const getStatusBadgeClass = (status: string) => {
     default:
       return 'badge-gray'
   }
+}
+
+const getMaintenanceStatusColor = (status: string) => {
+  const normalized = (status || '').toUpperCase()
+  switch (normalized) {
+    case 'SCHEDULED':
+      return 'var(--secondary-purple, #667eea)'
+    case 'IN_PROGRESS':
+      return 'var(--secondary-orange, #f59e0b)'
+    case 'COMPLETED':
+      return 'var(--secondary-green, #28a745)'
+    case 'CANCELLED':
+      return '#dc3545'
+    default:
+      return '#6c757d'
+  }
+}
+
+const setDefaultView = () => {
+  const screenWidth = globalThis.window.innerWidth
+  isGridView.value = screenWidth < 768
+}
+
+const handleResize = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => {
+    setDefaultView()
+  }, 150)
 }
 
 const navigateToSchedule = (maintenance?: any) => {
@@ -1753,6 +1927,82 @@ const isHistoryExpanded = ref(true)
 .complete-maintenance-form .search-input-container .search-input,
 .complete-maintenance-form .search-input-container .form-control {
   padding-left: 0.75rem !important;
+}
+
+.maintenance-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.maintenance-page-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenance-page-intro h2 {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.maintenance-page-intro p {
+  line-height: 1.45;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.maintenance-page-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+@media (max-width: 991.98px) {
+  .maintenance-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem !important;
+  }
+
+  .maintenance-page-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .maintenance-page-actions .btn {
+    width: 100%;
+  }
+
+  .maintenance-page-intro h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .maintenance-page-intro p {
+    font-size: 0.875rem;
+  }
+
+  .specs-toggle-btn__icon {
+    display: none;
+  }
+
+  .specs-toggle-btn {
+    gap: 0 !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .maintenance-page-intro h2 {
+    font-size: 1.15rem;
+  }
+
+  .maintenance-page-intro p {
+    font-size: 0.8125rem;
+  }
 }
 
 </style> 

@@ -1,13 +1,13 @@
 <template>
   <div style="min-height: 100vh;">
     <!-- Main Content -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid px-3 py-4">
       <!-- Page Header -->
-      <div class="row align-items-center mb-4">
+      <div class="row align-items-center mb-4 employees-page-header">
         <!-- Title Section -->
-        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-3 mb-lg-0">
-          <h2 class="mb-0 single-line">Employee Management</h2>
-          <p class="text-muted mb-0 single-line">Manage employee information and asset assignments</p>
+        <div class="col-12 col-md-6 col-lg-6 mb-3 mb-md-0 employees-page-intro">
+          <h2 class="mb-0">Employee Management</h2>
+          <p class="text-muted mb-0">Manage employee information and asset assignments</p>
         </div>
         
         <!-- Actions Section -->
@@ -789,6 +789,7 @@
   import { normalizeEmployeeSearchInput } from '@/utils/searchInput'
 
   const EMPLOYEES_MODAL_STATE_KEY = 'employeesModalState'
+  let resizeTimeout = null
   
   export default {
     name: 'EmployeesView',
@@ -821,7 +822,6 @@
         showStatusModal: false,
         showEmployeeModal: false,
         statusChangeEmployee: null,
-        isMobileView: globalThis.window.innerWidth <= 576,
         isExporting: false,
         pendingEmployeeId: null
       }
@@ -953,6 +953,15 @@
       },
       switchToGridView() {
         this.isGridView = true
+      },
+      setDefaultView() {
+        const screenWidth = globalThis.window.innerWidth
+
+        if (screenWidth < 768) {
+          this.isGridView = true
+        } else {
+          this.isGridView = false
+        }
       },
       filterEmployees() {
         this.currentPage = 1
@@ -1506,9 +1515,12 @@
           }
         }
       },
-      // Handle window resize for responsive pagination
+      // Handle window resize for responsive view and pagination
       handleResize() {
-        this.isMobileView = globalThis.window.innerWidth <= 576
+        if (resizeTimeout) clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(() => {
+          this.setDefaultView()
+        }, 150)
       },
       // Load asset history for the selected employee
       async loadAssetHistory() {
@@ -1611,11 +1623,10 @@
       },
     },
     mounted() {
-      // Default to grid view on mobile screens
-      this.isGridView = globalThis.window.innerWidth <= 576
+      this.setDefaultView()
       // Add click outside listener for dropdown
       document.addEventListener('click', this.handleClickOutside)
-      // Add resize listener for responsive pagination
+      // Add resize listener for responsive view switching
       globalThis.window.addEventListener('resize', this.handleResize)
     },
     unmounted() {

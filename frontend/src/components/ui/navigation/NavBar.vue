@@ -1,16 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" aria-label="Main navigation">
     <div class="container-fluid">
-      <!-- Logo and Brand -->
-      <RouterLink to="/app/dashboard" class="navbar-brand fw-bold d-flex align-items-center">
-        <img
-          :src="navLogo"
-          alt="Pebble Asset Tracker logo"
-          class="navbar-logo"
-        />
-      </RouterLink>
-      
-      <!-- Mobile menu button -->
+      <!-- Mobile menu button (left on mobile/tablet) -->
       <button 
         class="navbar-toggler d-lg-none" 
         type="button" 
@@ -21,6 +12,20 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
+      <!-- Logo and Brand (desktop only) -->
+      <RouterLink to="/app/dashboard" class="navbar-brand fw-bold d-none d-lg-flex align-items-center">
+        <img
+          :src="navLogo"
+          alt="Pebble Asset Tracker logo"
+          class="navbar-logo"
+        />
+      </RouterLink>
+
+      <!-- Mobile topbar actions -->
+      <div class="navbar-mobile-actions d-lg-none ms-auto">
+        <NotificationBell />
+      </div>
       
       <!-- Desktop Navigation Menu -->
       <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
@@ -114,16 +119,6 @@
             <span class="sidebar-user-role">Administrator</span>
           </div>
         </div>
-        
-        <!-- Mobile notifications -->
-        <div class="sidebar-notifications">
-          <NotificationBell />
-        </div>
-        
-        <button @click="handleProfile" class="sidebar-profile-btn">
-          <i class="fas fa-user me-2"></i>
-          My Profile
-        </button>
         <button @click="showLogoutModal" class="sidebar-logout-btn">
           <i class="fas fa-sign-out-alt me-2"></i>
           Logout
@@ -595,10 +590,9 @@ onMounted(() => {
   border-radius: 0.5rem;
 }
 
-.sidebar-notifications {
-  margin: 1rem 0;
+.navbar-mobile-actions {
   display: flex;
-  justify-content: center;
+  align-items: center;
 }
 
 .sidebar-profile-btn {
@@ -653,6 +647,7 @@ onMounted(() => {
   .navbar .container-fluid {
     padding-left: 1rem;
     padding-right: 1rem;
+    justify-content: flex-start;
   }
 }
 
@@ -660,10 +655,6 @@ onMounted(() => {
   .navbar .container-fluid {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-  }
-  
-  .navbar-brand {
-    font-size: 1rem;
   }
   
   .mobile-sidebar {

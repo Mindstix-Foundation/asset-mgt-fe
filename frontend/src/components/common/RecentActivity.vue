@@ -1,8 +1,8 @@
 <template>
   <div class="recent-activity">
     <div class="card h-100">
-      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h5 class="card-title mb-0">
+      <div class="card-header recent-activity__header">
+        <h5 class="card-title mb-0 recent-activity__title">
           <i class="fas fa-clock me-2"></i>{{ title }}
         </h5>
         <router-link
@@ -212,6 +212,22 @@ const getActivityIcon = (title: string): string => {
   flex-shrink: 0;
 }
 
+.recent-activity__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+}
+
+.recent-activity__title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .recent-activity > .card > .card-body {
   flex: 1 1 auto;
   min-height: 0;
@@ -220,9 +236,11 @@ const getActivityIcon = (title: string): string => {
 }
 
 .view-all-btn {
+  flex-shrink: 0;
   font-size: 0.8rem;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 /* Activity list fills the remaining card body; only fully visible rows are shown. */
@@ -291,6 +309,20 @@ const getActivityIcon = (title: string): string => {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .recent-activity__header {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .recent-activity__title {
+    font-size: 0.95rem;
+  }
+
+  .view-all-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
   .activity-item {
     padding: 0.5rem;
   }

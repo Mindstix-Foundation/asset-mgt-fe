@@ -1,12 +1,12 @@
 <template>
   <div class="container-fluid px-3 py-4">
     <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
+    <div class="manage-employees-page-header">
+      <div class="manage-employees-page-intro">
         <h2 class="mb-0" style="color: var(--primary-black);">Manage Employees</h2>
         <p class="text-muted mb-0">Manage deletable employees (employees without assigned assets)</p>
       </div>
-      <div class="d-flex align-items-center gap-3">
+      <div class="manage-employees-page-actions">
         <button class="btn btn-gray" @click="goBack">
           <i class="fas fa-arrow-left me-1"></i>Back to Employees
         </button>
@@ -15,10 +15,8 @@
 
     <!-- Main Form -->
     <div class="mb-4">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-        </div>
-        <div class="d-flex gap-2">
+      <div class="manage-employees-section-header">
+        <div class="manage-employees-section-actions">
           <button class="btn btn-red" @click="startBulkDelete">
             <i class="fas fa-trash me-1"></i>Bulk Delete
           </button>
@@ -29,11 +27,11 @@
         <div v-if="showFormCard" class="filter-card mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
-              <div class="row g-3 justify-content-between">
-                <div class="col-4">
+              <div class="row g-3 justify-content-between employee-delete-inputs-row">
+                <div class="col-12 col-lg-4">
                   <label class="form-label" for="single-emp-input">Add Single Employee</label>
-                  <div class="row justify-content-around">
-                    <div class="col-7">
+                  <div class="row g-2 align-items-center employee-single-input-row">
+                    <div class="col-8 col-sm-7">
                       <input 
                         type="text" 
                         class="form-control" 
@@ -45,7 +43,7 @@
                         title="Format: 4 digits (e.g., 0001)"
                       >
                     </div>
-                    <div class="col-4">
+                    <div class="col-4 col-sm-5 col-md-4">
                       <button 
                         class="btn btn-brown w-100 employee-add-btn" 
                         type="button" 
@@ -60,11 +58,11 @@
                     Enter a single employee ID (e.g., 0001) to add to deletion list
                   </small>
                 </div>
-                <div class="col-7">
+                <div class="col-12 col-lg-7">
                   <span class="form-label">Add Employee Range</span>
-                  <div class="row justify-content-around">
-                    <div class="col-9">
-                      <div class="d-flex align-items-center gap-2">
+                  <div class="row g-2 align-items-center employee-range-row">
+                    <div class="col-12 col-md-9">
+                      <div class="d-flex align-items-center gap-2 employee-range-inputs">
                         <label class="text-muted mb-0" for="employee-from-input">From</label>
                         <input 
                           type="text" 
@@ -89,7 +87,7 @@
                         >
                       </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-12 col-md-3 col-lg-2">
                       <button 
                         class="btn btn-brown w-100 employee-add-btn" 
                         type="button" 
@@ -135,7 +133,7 @@
           </div>
           
           <!-- Form Action Buttons - Bottom Right -->
-          <div class="d-flex justify-content-end gap-2 mt-4">
+          <div class="manage-employees-form-actions mt-4">
             <button type="button" class="btn btn-cancel" @click="clearEmployeeSelection">
               <i class="fas fa-times me-1"></i>Clear
             </button>
@@ -189,9 +187,10 @@
       </div>
     </div>
 
-    <!-- Employees Table -->
+    <!-- Employees List -->
     <div class="mt-5" v-if="items.length > 0">
-      <div class="table-responsive">
+      <!-- List View -->
+      <div v-show="!isGridView" class="table-responsive manage-employees-table-wrap">
         <table class="table table-hover mb-0 table-employee" :class="{ 'show-checkboxes': showFormCard }">
           <thead class="table-light">
             <tr>
@@ -230,7 +229,7 @@
               
               <!-- Email column -->
               <td>
-                <span class="text-muted">{{ employee.email }}</span>
+                <span class="text-muted employee-email-cell" :title="employee.email">{{ employee.email }}</span>
               </td>
               
               <!-- Phone column -->
@@ -261,6 +260,83 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Grid View -->
+      <div v-show="isGridView" class="manage-employees-grid">
+        <div class="row">
+          <div
+            v-for="employee in items"
+            :key="`employee-card-${employee.id}`"
+            class="col-12 mb-3"
+          >
+            <div class="card h-100 manage-employee-card-modern">
+              <div class="card-body p-2">
+                <div class="manage-employee-card-header">
+                  <div
+                    v-if="showFormCard"
+                    class="manage-employee-card-checkbox"
+                  >
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      :checked="selectedEmployeesForDeletion.includes(employee.id)"
+                      @change="toggleEmployeeSelection(employee.id)"
+                    >
+                  </div>
+                  <div
+                    class="manage-employee-card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    :style="{ backgroundColor: getEmployeeIconColor(employee.employeeId) }"
+                  >
+                    <i class="fas fa-user text-white"></i>
+                  </div>
+                  <div class="manage-employee-card-main">
+                    <div class="manage-employee-card-top-row">
+                      <h6 class="manage-employee-card-id mb-0">{{ employee.employeeId }}</h6>
+                      <span
+                        class="manage-employee-card-status badge"
+                        :class="employee.status === 'ACTIVE' ? 'badge-green' : 'badge-red'"
+                      >
+                        {{ employee.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                      </span>
+                    </div>
+                    <p class="manage-employee-card-name mb-0">
+                      {{ employee.firstName }} {{ employee.lastName }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="manage-employee-card-details mt-2">
+                  <div class="row g-2">
+                    <div class="col-12 manage-employee-card-field">
+                      <small class="text-muted d-block">Email</small>
+                      <div class="employee-email-cell text-truncate" :title="employee.email">
+                        {{ employee.email }}
+                      </div>
+                    </div>
+                    <div class="col-12 manage-employee-card-field">
+                      <small class="text-muted d-block">Phone</small>
+                      <div class="text-truncate">{{ employee.phone || 'N/A' }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="manage-employee-card-actions mt-auto pt-2 border-top">
+                  <div class="d-flex justify-content-center gap-1">
+                    <button
+                      class="btn btn-action btn-red btn-sm"
+                      @click="deleteSingleEmployee(employee)"
+                      title="Delete Employee"
+                      :disabled="employee.isAdmin"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Pagination -->
@@ -434,7 +510,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { employeeService } from '@/services/business/employeeService'
@@ -447,6 +523,8 @@ const toastStore = useToastStore()
 
 // State
 const showFormCard = ref(false)
+const isGridView = ref(false)
+let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Employees-specific state
 const selectedEmployeesForDeletion = ref<(string | number)[]>([])
@@ -854,9 +932,52 @@ const goBack = () => {
   router.push('/app/employees')
 }
 
+const getEmployeeIconColor = (employeeId: string) => {
+  const colors = [
+    'var(--secondary-purple)',
+    'var(--secondary-green)',
+    'var(--secondary-pink)',
+    'var(--secondary-orange)',
+    'var(--secondary-red)',
+    'var(--secondary-blue)',
+    'var(--secondary-brown)',
+    'var(--primary-dark-gray)',
+  ]
+
+  let hash = 0
+  for (const ch of employeeId || '') {
+    const codePoint = ch.codePointAt(0) || 0
+    hash = ((hash << 5) - hash) + codePoint
+    hash = Math.trunc(hash)
+  }
+
+  return colors[Math.abs(hash) % colors.length]
+}
+
+const setDefaultView = () => {
+  isGridView.value = globalThis.window.innerWidth < 768
+}
+
+const handleResize = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => {
+    setDefaultView()
+  }, 150)
+}
+
 // Lifecycle
 onMounted(async () => {
+  setDefaultView()
+  globalThis.window.addEventListener('resize', handleResize)
   await loadEmployees()
+})
+
+onUnmounted(() => {
+  globalThis.window.removeEventListener('resize', handleResize)
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
 })
 </script>
 
@@ -954,6 +1075,176 @@ onMounted(async () => {
 .table-employee:not(.show-checkboxes) th:nth-child(6), 
 .table-employee:not(.show-checkboxes) td:nth-child(6) { width: 8% !important; }
 
+/* Keep employee table readable on mobile by scrolling horizontally. */
+.manage-employees-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Truncate long emails with an ellipsis. */
+.employee-email-cell {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .manage-employees-table-wrap .table-employee {
+    table-layout: auto !important;
+    width: max-content;
+    min-width: 780px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes {
+    min-width: 860px;
+  }
+
+  .manage-employees-table-wrap .table-employee th,
+  .manage-employees-table-wrap .table-employee td {
+    width: auto !important;
+    white-space: nowrap;
+    vertical-align: middle !important;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(1),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(1) {
+    min-width: 48px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(2),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(2),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(1),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(1) {
+    min-width: 120px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(3),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(3),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(2),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(2) {
+    min-width: 170px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(4),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(4),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(3),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(3) {
+    min-width: 240px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(5),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(5),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(4),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(4) {
+    min-width: 140px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(6),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(6),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(5),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(5) {
+    min-width: 110px;
+  }
+
+  .manage-employees-table-wrap .table-employee.show-checkboxes th:nth-child(7),
+  .manage-employees-table-wrap .table-employee.show-checkboxes td:nth-child(7),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) th:nth-child(6),
+  .manage-employees-table-wrap .table-employee:not(.show-checkboxes) td:nth-child(6) {
+    min-width: 110px;
+    text-align: center !important;
+  }
+
+  .manage-employees-table-wrap .employee-actions {
+    justify-content: center;
+  }
+}
+
+.manage-employee-card-modern {
+  border: 1px solid var(--element-gray, #dee2e6);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.manage-employee-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.manage-employee-card-checkbox {
+  display: flex;
+  align-items: center;
+  padding-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.manage-employee-card-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.manage-employee-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-employee-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.15rem;
+}
+
+.manage-employee-card-id {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.manage-employee-card-name {
+  color: var(--primary-black);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.manage-employee-card-status.badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.manage-employee-card-details {
+  font-size: 0.875rem;
+  color: var(--primary-black);
+}
+
+.manage-employee-card-field {
+  min-width: 0;
+}
+
+.manage-employee-card-actions {
+  margin-top: 0.75rem;
+}
+
 /* Checkbox styling */
 .form-check-input {
   border-radius: 0.25rem !important;
@@ -991,6 +1282,74 @@ onMounted(async () => {
 .employee-add-btn:disabled {
   opacity: 0.6 !important;
   cursor: not-allowed !important;
+}
+
+.manage-employees-page-header,
+.manage-employees-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.manage-employees-page-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-employees-page-actions,
+.manage-employees-section-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.manage-employees-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 991.98px) {
+  .manage-employees-page-header,
+  .manage-employees-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .manage-employees-page-actions,
+  .manage-employees-section-actions,
+  .manage-employees-form-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+    margin-left: 0;
+  }
+
+  .manage-employees-page-actions .btn,
+  .manage-employees-section-actions .btn,
+  .manage-employees-form-actions .btn,
+  .employee-add-btn {
+    width: 100% !important;
+    margin: 0;
+  }
+
+  .employee-range-inputs {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .employee-range-inputs .form-control {
+    width: 100%;
+  }
 }
 
 /* =================================

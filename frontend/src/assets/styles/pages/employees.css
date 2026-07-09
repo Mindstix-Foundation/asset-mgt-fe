@@ -11,6 +11,52 @@
  */
 
 /* =================================
+   PAGE HEADER
+   Employees list and related views
+================================= */
+
+.employees-page-intro {
+  min-width: 0;
+}
+
+.employees-page-intro h2 {
+  color: var(--primary-black);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.employees-page-intro p {
+  line-height: 1.45;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 991.98px) {
+  .employees-page-header {
+    margin-bottom: 1rem !important;
+  }
+
+  .employees-page-intro h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .employees-page-intro p {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .employees-page-intro h2 {
+    font-size: 1.15rem;
+  }
+
+  .employees-page-intro p {
+    font-size: 0.8125rem;
+  }
+}
+
+/* =================================
    SHARED EMPLOYEE COMPONENTS
    Used across multiple views
 ================================= */

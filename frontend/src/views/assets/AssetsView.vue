@@ -218,11 +218,11 @@
           </div>
           <div class="col-6">
             <button
-              class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2"
+              class="btn btn-gray w-100 d-flex align-items-center justify-content-center gap-2 specs-toggle-btn"
               @click="toggleAllSpecifications"
               :title="areAllSpecsVisible ? 'Hide all specifications' : 'Show all specifications'"
             >
-              <i class="fas" :class="areAllSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+              <i class="fas specs-toggle-btn__icon" :class="areAllSpecsVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
               <span class="fw-semibold text-nowrap">{{ areAllSpecsVisible ? 'Hide Specs' : 'Show Specs' }}</span>
             </button>
           </div>
@@ -474,20 +474,22 @@
             <div class="card h-100 asset-card-modern">
               <div class="card-body p-2">
                 <!-- Header with icon, asset ID and status -->
-                <div class="d-flex align-items-center mb-2">
+                <div class="asset-card-header">
                   <div 
-                    class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                    :style="{ width: '36px', height: '36px', backgroundColor: getAssetTypeColor(asset.type), flexShrink: 0 }"
+                    class="asset-card-icon rounded-circle d-flex align-items-center justify-content-center" 
+                    :style="{ width: '36px', height: '36px', backgroundColor: getAssetTypeColor(asset.type) }"
                   >
                     <i :class="[getAssetTypeIconClass(asset.type), 'text-white', 'text-small-medium']"></i>
                   </div>
-                  <div class="flex-grow-1">
-                    <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black); font-size: 0.9rem;">{{ asset.id }}</h6>
-                    <small class="text-muted text-truncate d-block">{{ asset.type }} - {{ asset.brand }}</small>
+                  <div class="asset-card-main">
+                    <div class="asset-card-top-row">
+                      <h6 class="asset-card-id">{{ asset.id }}</h6>
+                      <span class="asset-card-status" :class="getStatusBadgeClass(asset.status)">
+                        {{ getStatusText(asset.status) }}
+                      </span>
+                    </div>
+                    <p class="asset-card-subtitle">{{ asset.type }} - {{ asset.brand }}</p>
                   </div>
-                  <span :class="getStatusBadgeClass(asset.status)">
-                    {{ getStatusText(asset.status) }}
-                  </span>
                 </div>
                 
                 <!-- Asset Details - Custom layout -->
@@ -3168,13 +3170,95 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* AssetsView.vue now uses styles from assets.css */
-/* All styles have been moved to the proper CSS file structure */
-
 /* Character count styling for reactivation reason */
 .character-count {
   margin-top: 0.25rem;
   font-size: 0.875rem;
+}
+
+.asset-card-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.asset-card-icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.asset-card-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.15rem;
+}
+
+.asset-card-top-row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.asset-card-id {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary-black);
+  line-height: 1.2;
+}
+
+.asset-card-subtitle {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--primary-dark-gray, #6c757d);
+  line-height: 1.3;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.asset-card-status {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+  .asset-card-subtitle {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .asset-card-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.4rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .specs-toggle-btn__icon {
+    display: none;
+  }
+
+  .specs-toggle-btn {
+    gap: 0 !important;
+  }
 }
 </style>
 

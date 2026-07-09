@@ -69,7 +69,7 @@
           </div>
           <!-- Toggle Sort Order + Filters Button -->
           <div class="col-12 col-lg-2 mb-3">
-            <div class="row g-3">
+            <div class="row g-1">
               <div class="col-4">
                 <button type="button" class="btn btn-gray w-100 d-flex align-items-center justify-content-center" @click="toggleSortOrder" title="Toggle Sort Order" style="min-width: 40px; height: 38px;">
                   <i :class="['fas', sortAscending ? 'fa-sort-amount-down' : 'fa-sort-amount-up']" style="font-size: 0.9rem;"></i>

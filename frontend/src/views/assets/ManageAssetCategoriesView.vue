@@ -1,12 +1,12 @@
 <template>
   <div class="container-fluid px-3 py-4">
     <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
+    <div class="manage-categories-page-header">
+      <div class="manage-categories-page-intro">
         <h2 class="mb-0" style="color: var(--primary-black);">Manage Asset Categories</h2>
         <p class="text-muted mb-0">Simple form to manage categories, types, brands, models, and vendors</p>
       </div>
-      <div class="d-flex align-items-center gap-3">
+      <div class="manage-categories-page-actions">
         <button class="btn btn-gray" @click="goBack">
           <i class="fas fa-arrow-left me-1"></i>Back to Assets
         </button>
@@ -14,67 +14,57 @@
     </div>
 
     <!-- Entity Type Selection -->
-    <div class="mb-4">
-      <div class="row g-3 justify-content-end">
-        <div class="col-md-2">
-          <button 
-            class="btn btn-modern w-100" 
-            :class="selectedEntityType === 'category' ? 'btn-entity-active' : 'btn-entity-inactive'"
-            @click="setEntityType('category')"
-          >
-            Categories
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button 
-            class="btn btn-modern w-100" 
-            :class="selectedEntityType === 'type' ? 'btn-entity-active' : 'btn-entity-inactive'"
-            @click="setEntityType('type')"
-          >
-            Asset Types
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button 
-            class="btn btn-modern w-100" 
-            :class="selectedEntityType === 'brand' ? 'btn-entity-active' : 'btn-entity-inactive'"
-            @click="setEntityType('brand')"
-          >
-            Brands
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button 
-            class="btn btn-modern w-100" 
-            :class="selectedEntityType === 'model' ? 'btn-entity-active' : 'btn-entity-inactive'"
-            @click="setEntityType('model')"
-          >
-            Models
-          </button>
-        </div>
-        <div class="col-md-2">
-          <button 
-            class="btn btn-modern w-100" 
-            :class="selectedEntityType === 'asset' ? 'btn-entity-active' : 'btn-entity-inactive'"
-            @click="setEntityType('asset')"
-          >
-            Assets
-          </button>
-        </div>
+    <div class="manage-categories-entity-tabs mb-4">
+      <div class="manage-categories-entity-tabs-row">
+        <button 
+          class="btn btn-modern" 
+          :class="selectedEntityType === 'category' ? 'btn-entity-active' : 'btn-entity-inactive'"
+          @click="setEntityType('category')"
+        >
+          Categories
+        </button>
+        <button 
+          class="btn btn-modern" 
+          :class="selectedEntityType === 'type' ? 'btn-entity-active' : 'btn-entity-inactive'"
+          @click="setEntityType('type')"
+        >
+          Asset Types
+        </button>
+        <button 
+          class="btn btn-modern" 
+          :class="selectedEntityType === 'brand' ? 'btn-entity-active' : 'btn-entity-inactive'"
+          @click="setEntityType('brand')"
+        >
+          Brands
+        </button>
+        <button 
+          class="btn btn-modern" 
+          :class="selectedEntityType === 'model' ? 'btn-entity-active' : 'btn-entity-inactive'"
+          @click="setEntityType('model')"
+        >
+          Models
+        </button>
+        <button 
+          class="btn btn-modern" 
+          :class="selectedEntityType === 'asset' ? 'btn-entity-active' : 'btn-entity-inactive'"
+          @click="setEntityType('asset')"
+        >
+          Assets
+        </button>
       </div>
     </div>
 
     <!-- Main Form -->
     <div class="mb-4">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
+      <div class="manage-categories-section-header">
+        <div class="manage-categories-section-intro">
           <h5 class="mb-1">
             {{ getEntityTitle() }}
           </h5>
           <p class="text-muted mb-0">{{ getEntityDescription() }}</p>
           <small class="text-muted">Showing {{ items.length }} items</small>
         </div>
-        <div class="d-flex gap-2">
+        <div class="manage-categories-section-actions">
           <button v-if="selectedEntityType !== 'asset'" class="btn btn-purple" @click="startAdding">
             <i class="fas fa-plus me-1"></i>Add New
           </button>
@@ -85,7 +75,7 @@
       </div>
       <form @submit.prevent="saveEntity">
         <!-- Form Card - Using same design as filter dropdown in AssetsView.vue -->
-        <div v-if="showFormCard" class="form-card scrollable-form mt-3 p-3 bg-light rounded">
+        <div v-if="showFormCard" ref="formCardRef" class="form-card mt-3 p-3 bg-light rounded">
           <div class="row">
             <div class="col-12">
               
@@ -171,8 +161,8 @@
                           class="spec-field-item"
                         >
                           <!-- Field Header Row -->
-                          <div class="row g-2 align-items-start mb-2">
-                            <div class="col-12 col-md-7 col-lg-7">
+                          <div class="spec-field-header-row mb-2">
+                            <div class="spec-field-col spec-field-col--label">
                               <label :for="`field-label-${index}`" class="form-label small fw-bold mb-2">Field Label</label>
                               <input 
                                 type="text" 
@@ -182,7 +172,7 @@
                                 placeholder="e.g., Operating System"
                               >
                             </div>
-                            <div class="col-6 col-md-3 col-lg-3">
+                            <div class="spec-field-col spec-field-col--type">
                               <label :for="`field-type-${index}`" class="form-label small fw-bold mb-2">Type</label>
                               <select
                                 :id="`field-type-${index}`"
@@ -195,36 +185,38 @@
                                 <option value="text">Text</option>
                               </select>
                             </div>
-                            <div class="col-6 col-md-2 col-lg-1">
-                              <div class="form-label small fw-bold mb-2 d-block">Required</div>
-                              <div class="form-check form-switch">
-                                <!-- NOSONAR: aria-checked is present via Vue binding on line 205, SonarQube static analyzer doesn't recognize Vue template syntax -->
-                                <input 
-                                  :id="`field-required-${index}`"
-                                  class="form-check-input" 
-                                  type="checkbox" 
-                                  v-model="field.required"
-                                  role="switch"
-                                  :aria-checked="field.required ? 'true' : 'false'"
-                                  aria-label="Required field"
-                                >
-                                <label :for="`field-required-${index}`" class="form-check-label small">
-                                  {{ field.required ? 'Yes' : 'No' }}
-                                </label>
+                            <div class="spec-field-controls-group">
+                              <div class="spec-field-col spec-field-col--required">
+                                <div class="form-label small fw-bold mb-2 d-block">Required</div>
+                                <div class="form-check form-switch spec-field-required">
+                                  <!-- NOSONAR: aria-checked is present via Vue binding on line 205, SonarQube static analyzer doesn't recognize Vue template syntax -->
+                                  <input 
+                                    :id="`field-required-${index}`"
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    v-model="field.required"
+                                    role="switch"
+                                    :aria-checked="field.required ? 'true' : 'false'"
+                                    aria-label="Required field"
+                                  >
+                                  <label :for="`field-required-${index}`" class="form-check-label small">
+                                    {{ field.required ? 'Yes' : 'No' }}
+                                  </label>
+                                </div>
                               </div>
-                            </div>
-                            <div class="col-12 col-md-2 col-lg-1 text-md-end">
-                              <div class="form-label small fw-bold mb-2 d-block text-md-end">Actions</div>
-                              <button 
-                                type="button" 
-                                class="btn btn-sm btn-red" 
-                                @click="removeSpecField(index)"
-                                title="Remove this field"
-                                :disabled="field.isExisting"
-                                :class="{ 'disabled-button': field.isExisting }"
-                              >
-                                <i class="fas fa-trash"></i>
-                              </button>
+                              <div class="spec-field-col spec-field-col--actions">
+                                <div class="form-label small fw-bold mb-2 d-block">Actions</div>
+                                <button 
+                                  type="button" 
+                                  class="btn btn-sm btn-red" 
+                                  @click="removeSpecField(index)"
+                                  title="Remove this field"
+                                  :disabled="field.isExisting"
+                                  :class="{ 'disabled-button': field.isExisting }"
+                                >
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                              </div>
                             </div>
                           </div>
                           
@@ -440,8 +432,8 @@
 
               <!-- Assets Form -->
               <div v-if="selectedEntityType === 'asset'">
-                <div class="row g-3 justify-content-between">
-                  <div class="col-4">
+                <div class="row g-3 justify-content-between asset-delete-inputs-row">
+                  <div class="col-12 col-lg-4">
                     <label for="single-asset-input" class="form-label">Single Asset <span class="text-danger">*</span></label>
                     <div class="row justify-content-around">
                       <div class="col-7">
@@ -471,7 +463,7 @@
                       Enter a single asset ID (e.g., AST-0001) to add to deletion list
                     </small>
                   </div>
-                  <div class="col-7">
+                  <div class="col-12 col-lg-7">
                     <label for="asset-range-from" class="form-label">Asset Range <span class="text-danger">*</span></label>
                      <div class="row justify-content-around">
                        <div class="col-9">
@@ -548,7 +540,7 @@
           </div>
           
           <!-- Form Action Buttons - Bottom Right -->
-          <div class="d-flex justify-content-end gap-2 mt-4  ">
+          <div class="manage-categories-form-actions mt-4">
             <button v-if="selectedEntityType !== 'asset'" type="button" class="btn btn-gray btn-sm" @click="resetForm">
               <i class="fas fa-refresh me-1"></i>Reset
             </button>
@@ -682,7 +674,8 @@
     <div class="mt-5" v-if="items.length > 0">
         <div class="card">
         <div class="card-body p-0">
-          <div class="table-responsive">
+          <!-- List View -->
+          <div v-show="!isGridView" class="table-responsive manage-categories-table-wrap">
             <table class="table table-hover mb-0" :class="[`table-${selectedEntityType}`, { 'show-checkboxes': selectedEntityType === 'asset' && showFormCard }]">
               <thead class="table-light">
                 <tr>
@@ -805,6 +798,135 @@
             </tr>
           </tbody>
         </table>
+          </div>
+
+          <!-- Grid View -->
+          <div v-show="isGridView" class="manage-categories-grid p-2">
+            <div class="row">
+              <div
+                v-for="item in items"
+                :key="`entity-card-${item.id}`"
+                class="col-12 mb-3"
+              >
+                <div class="card h-100 manage-category-card-modern">
+                  <div class="card-body p-2">
+                    <div class="manage-category-card-header">
+                      <div
+                        v-if="selectedEntityType === 'asset' && showFormCard"
+                        class="manage-category-card-checkbox"
+                      >
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          :checked="selectedAssetsForDeletion.includes(item.id)"
+                          @change="toggleAssetSelection(item.id)"
+                        >
+                      </div>
+                      <div
+                        class="manage-category-card-icon rounded-circle d-flex align-items-center justify-content-center"
+                        :style="{ backgroundColor: getEntityCardColor() }"
+                      >
+                        <i :class="[getEntityIcon(), 'text-white']"></i>
+                      </div>
+                      <div class="manage-category-card-main">
+                        <div class="manage-category-card-top-row">
+                          <h6 class="manage-category-card-title mb-0">{{ getItemCardTitle(item) }}</h6>
+                        </div>
+                        <p class="manage-category-card-subtitle mb-0">{{ getItemCardSubtitle(item) }}</p>
+                      </div>
+                    </div>
+
+                    <div class="manage-category-card-details mt-2">
+                      <div
+                        v-if="selectedEntityType === 'category' || selectedEntityType === 'brand'"
+                        class="manage-category-card-field"
+                      >
+                        <small class="text-muted d-block">Description</small>
+                        <div>{{ item.description || 'No description' }}</div>
+                      </div>
+
+                      <div v-else-if="selectedEntityType === 'type'" class="row g-2">
+                        <div class="col-6 manage-category-card-field">
+                          <small class="text-muted d-block">Category</small>
+                          <div class="text-truncate">{{ item.category?.name || 'Unknown' }}</div>
+                        </div>
+                        <div class="col-12 manage-category-card-field">
+                          <small class="text-muted d-block">Description</small>
+                          <div>{{ item.description || 'No description' }}</div>
+                        </div>
+                      </div>
+
+                      <div v-else-if="selectedEntityType === 'model'" class="row g-2">
+                        <div class="col-6 manage-category-card-field">
+                          <small class="text-muted d-block">Brand</small>
+                          <div class="text-truncate">{{ item.brand?.name || 'Unknown' }}</div>
+                        </div>
+                        <div class="col-6 manage-category-card-field">
+                          <small class="text-muted d-block">Asset Type</small>
+                          <div class="text-truncate">{{ item.assetType?.name || 'Unknown' }}</div>
+                        </div>
+                      </div>
+
+                      <div v-else-if="selectedEntityType === 'asset'" class="row g-2">
+                        <div class="col-12 manage-category-card-field">
+                          <small class="text-muted d-block">Name (Type - Brand - Model)</small>
+                          <div class="fw-medium">{{ item.model?.name || 'Unknown Model' }}</div>
+                          <small class="text-muted">
+                            {{ item.assetType?.name || 'Unknown Type' }} -
+                            {{ item.brand?.name || 'Unknown Brand' }}
+                          </small>
+                        </div>
+                        <div class="col-6 manage-category-card-field">
+                          <small class="text-muted d-block">Serial Number</small>
+                          <div class="text-truncate">{{ item.serialNumber || 'N/A' }}</div>
+                        </div>
+                        <div class="col-6 manage-category-card-field">
+                          <small class="text-muted d-block">Condition</small>
+                          <div class="text-truncate">{{ item.condition || 'Unknown' }}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="manage-category-card-actions mt-auto pt-2 border-top">
+                      <div class="d-flex justify-content-center gap-1 flex-wrap">
+                        <button
+                          v-if="selectedEntityType === 'type'"
+                          class="btn btn-action btn-purple btn-sm"
+                          @click="editAssetType(item)"
+                          title="Edit"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button
+                          v-if="selectedEntityType === 'model'"
+                          class="btn btn-action btn-brown btn-sm"
+                          @click="viewModelDetails(item)"
+                          title="View Model Details"
+                        >
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button
+                          v-if="selectedEntityType !== 'asset'"
+                          class="btn btn-action btn-red btn-sm"
+                          @click="deleteItem(item)"
+                          title="Delete"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                        <button
+                          v-if="selectedEntityType === 'asset'"
+                          class="btn btn-action btn-red btn-sm"
+                          @click="deleteSingleAsset(item)"
+                          title="Delete Asset"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -983,7 +1105,7 @@
               <small class="text-muted d-block mt-1" style="font-size: 0.8rem;">Analyzing deletion impact...</small>
             </div>
           </div>
-          <div class="modal-footer justify-content-center">
+          <div class="modal-footer justify-content-center manage-categories-modal-footer">
             <button type="button" class="btn btn-gray btn-sm" @click="closeDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
@@ -1039,7 +1161,7 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer justify-content-center">
+          <div class="modal-footer justify-content-center manage-categories-modal-footer">
             <button type="button" class="btn btn-gray btn-sm" @click="closeBulkDeleteConfirmationModal">
               <i class="fas fa-times me-1"></i>Cancel
             </button>
@@ -1116,12 +1238,12 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer py-2">
-            <div class="d-flex justify-content-between w-100">
+          <div class="modal-footer py-2 manage-categories-modal-footer">
+            <div class="manage-categories-modal-actions w-100">
               <div>
                 <!-- Left side: Additional actions (none for models) -->
               </div>
-              <div class="d-flex gap-2">
+              <div class="manage-categories-modal-actions-group">
                 <button type="button" class="btn btn-gray btn-sm" @click="closeModelDetailsModal">Close</button>
                 <button type="button" class="btn btn-red btn-sm" @click="deleteItem(selectedModel)">
                   <i class="fas fa-trash me-1"></i>Delete Model
@@ -1144,7 +1266,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, onMounted, computed, watch, toRaw } from 'vue'
+import { ref, shallowRef, reactive, onMounted, onUnmounted, computed, watch, toRaw, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { assetCategoryService } from '../../services/api/assetCategoryService'
@@ -1165,8 +1287,11 @@ const toastStore = useToastStore()
 
 // State
 const selectedEntityType = ref<'category' | 'type' | 'brand' | 'model' | 'asset'>('category')
+const isGridView = ref(false)
+let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 const isSaving = ref(false)
 const showFormCard = ref(false)
+const formCardRef = ref<HTMLElement | null>(null)
 const isEditingAssetType = ref(false)
 // shallowRef: template must stay a plain JSON-like object so structuredClone works on save
 const originalSpecificationTemplate = shallowRef<any>(null)
@@ -1318,6 +1443,52 @@ const getEntityDescription = () => {
     asset: 'Manage deletable assets (AVAILABLE status, no assignment/maintenance history)'
   }
   return descriptions[selectedEntityType.value]
+}
+
+const getEntityCardColor = () => {
+  const colors = {
+    category: 'var(--secondary-purple)',
+    type: 'var(--secondary-blue)',
+    brand: 'var(--secondary-orange)',
+    model: 'var(--secondary-green)',
+    asset: 'var(--secondary-brown)',
+  }
+  return colors[selectedEntityType.value]
+}
+
+const getItemCardTitle = (item: any) => {
+  if (selectedEntityType.value === 'asset') {
+    return item.assetId || 'Unknown Asset'
+  }
+  return item.name || 'Unknown'
+}
+
+const getItemCardSubtitle = (item: any) => {
+  switch (selectedEntityType.value) {
+    case 'type':
+      return item.category?.name || 'Unknown Category'
+    case 'model':
+      return `${item.brand?.name || 'Unknown Brand'} - ${item.assetType?.name || 'Unknown Type'}`
+    case 'asset':
+      return item.model?.name || 'Unknown Model'
+    case 'category':
+      return 'Category'
+    case 'brand':
+      return 'Brand'
+    default:
+      return ''
+  }
+}
+
+const setDefaultView = () => {
+  isGridView.value = globalThis.window.innerWidth < 768
+}
+
+const handleResize = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => {
+    setDefaultView()
+  }, 150)
 }
 
 // Computed properties for dropdown filtering
@@ -1652,6 +1823,14 @@ const buildSpecificationTemplate = () => {
   return baseTemplate
 }
 
+const scrollToFormCard = async () => {
+  await nextTick()
+  formCardRef.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+}
+
 const startAdding = () => {
   showFormCard.value = !showFormCard.value
   if (showFormCard.value) {
@@ -1672,6 +1851,8 @@ const startAdding = () => {
     selectedBrand.value = null
     selectedAssetType.value = null
     
+    void scrollToFormCard()
+
     // Focus on the first input field after a short delay to ensure it's rendered
     setTimeout(() => {
       const firstInput = document.querySelector('.form-card input, .form-card select, .form-card textarea')
@@ -1713,6 +1894,7 @@ const editAssetType = async (assetType: any) => {
     }
     
     formData.specFields = buildSpecFieldsFromTemplate(detailedAssetType.specificationTemplate)
+    await scrollToFormCard()
   } catch (error: any) {
     console.error('Error loading asset type details:', error)
     toastStore.showError('Error', error.message || 'Failed to load asset type details for editing')
@@ -2634,7 +2816,17 @@ watch(() => formData.specifications, () => {
 
 // Lifecycle
 onMounted(async () => {
+  setDefaultView()
+  globalThis.window.addEventListener('resize', handleResize)
   await loadInitialData()
+})
+
+onUnmounted(() => {
+  globalThis.window.removeEventListener('resize', handleResize)
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
 })
 </script>
 
@@ -2656,12 +2848,8 @@ onMounted(async () => {
   border: 1px solid #dee2e6;
   background-color: #f8f9fa !important;
   animation: slideDown 0.2s ease-out;
-}
-
-.scrollable-form {
-  max-height: 75vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
+  scroll-margin-top: 5rem;
 }
 
 @keyframes slideDown {
@@ -2875,6 +3063,223 @@ onMounted(async () => {
 .table-asset:not(.show-checkboxes) th:nth-child(5), 
 .table-asset:not(.show-checkboxes) td:nth-child(5) { width: 10% !important; } /* Actions */
 
+.manage-categories-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.manage-categories-table-wrap .table th:last-child,
+.manage-categories-table-wrap .table td:last-child {
+  text-align: center !important;
+}
+
+.manage-categories-table-wrap .table td:last-child .btn-group {
+  justify-content: center;
+}
+
+@media (max-width: 991.98px) {
+  .manage-categories-table-wrap .table {
+    table-layout: auto !important;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .manage-categories-table-wrap .table-category,
+  .manage-categories-table-wrap .table-brand {
+    min-width: 560px;
+  }
+
+  .manage-categories-table-wrap .table-type {
+    min-width: 700px;
+  }
+
+  .manage-categories-table-wrap .table-model {
+    min-width: 640px;
+  }
+
+  .manage-categories-table-wrap .table-asset {
+    min-width: 920px;
+  }
+
+  .manage-categories-table-wrap .table th,
+  .manage-categories-table-wrap .table td {
+    width: auto !important;
+    white-space: nowrap;
+  }
+
+  .manage-categories-table-wrap .table-category th:nth-child(1),
+  .manage-categories-table-wrap .table-category td:nth-child(1),
+  .manage-categories-table-wrap .table-brand th:nth-child(1),
+  .manage-categories-table-wrap .table-brand td:nth-child(1) {
+    min-width: 140px;
+  }
+
+  .manage-categories-table-wrap .table-category th:nth-child(2),
+  .manage-categories-table-wrap .table-category td:nth-child(2),
+  .manage-categories-table-wrap .table-brand th:nth-child(2),
+  .manage-categories-table-wrap .table-brand td:nth-child(2) {
+    min-width: 260px;
+    white-space: normal;
+  }
+
+  .manage-categories-table-wrap .table-type th:nth-child(1),
+  .manage-categories-table-wrap .table-type td:nth-child(1) {
+    min-width: 140px;
+  }
+
+  .manage-categories-table-wrap .table-type th:nth-child(2),
+  .manage-categories-table-wrap .table-type td:nth-child(2) {
+    min-width: 140px;
+  }
+
+  .manage-categories-table-wrap .table-type th:nth-child(3),
+  .manage-categories-table-wrap .table-type td:nth-child(3) {
+    min-width: 240px;
+    white-space: normal;
+  }
+
+  .manage-categories-table-wrap .table-model th:nth-child(1),
+  .manage-categories-table-wrap .table-model td:nth-child(1) {
+    min-width: 160px;
+  }
+
+  .manage-categories-table-wrap .table-model th:nth-child(2),
+  .manage-categories-table-wrap .table-model td:nth-child(2),
+  .manage-categories-table-wrap .table-model th:nth-child(3),
+  .manage-categories-table-wrap .table-model td:nth-child(3) {
+    min-width: 150px;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(1),
+  .manage-categories-table-wrap .table-asset td:nth-child(1) {
+    min-width: 48px;
+  }
+
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) th:nth-child(1),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) td:nth-child(1) {
+    min-width: 110px;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(2),
+  .manage-categories-table-wrap .table-asset td:nth-child(2),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) th:nth-child(2),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) td:nth-child(2) {
+    min-width: 110px;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(3),
+  .manage-categories-table-wrap .table-asset td:nth-child(3),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) th:nth-child(3),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) td:nth-child(3) {
+    min-width: 220px;
+    white-space: normal;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(4),
+  .manage-categories-table-wrap .table-asset td:nth-child(4),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) th:nth-child(4),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) td:nth-child(4) {
+    min-width: 140px;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(5),
+  .manage-categories-table-wrap .table-asset td:nth-child(5),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) th:nth-child(5),
+  .manage-categories-table-wrap .table-asset:not(.show-checkboxes) td:nth-child(5) {
+    min-width: 120px;
+  }
+
+  .manage-categories-table-wrap .table-asset th:nth-child(6),
+  .manage-categories-table-wrap .table-asset td:nth-child(6) {
+    min-width: 110px;
+  }
+
+  .manage-categories-table-wrap .table th:last-child,
+  .manage-categories-table-wrap .table td:last-child {
+    min-width: 110px;
+  }
+}
+
+.manage-category-card-modern {
+  border: 1px solid var(--element-gray, #dee2e6);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.manage-category-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.manage-category-card-checkbox {
+  display: flex;
+  align-items: center;
+  padding-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.manage-category-card-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.manage-category-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-category-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.15rem;
+}
+
+.manage-category-card-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.manage-category-card-subtitle {
+  color: var(--primary-mid-gray, #6c757d);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.manage-category-card-details {
+  font-size: 0.875rem;
+  color: var(--primary-black);
+}
+
+.manage-category-card-field {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.manage-category-card-actions {
+  margin-top: 0.75rem;
+}
+
 /* Model Details Modal - Using same design as AssetsView.vue */
 .equal-height-columns {
   display: flex;
@@ -2993,6 +3398,88 @@ onMounted(async () => {
   font-size: 0.9rem;
 }
 
+.spec-field-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.spec-field-col {
+  min-width: 0;
+}
+
+.spec-field-col--label {
+  flex: 0 0 100%;
+}
+
+.spec-field-col--type,
+.spec-field-col--required,
+.spec-field-col--actions {
+  flex: 0 0 100%;
+}
+
+.spec-field-controls-group {
+  display: contents;
+}
+
+@media (min-width: 768px) {
+  .spec-field-col--label {
+    flex: 5 1 0;
+    max-width: none;
+  }
+
+  .spec-field-col--type {
+    flex: 3 1 0;
+    max-width: none;
+  }
+
+  .spec-field-col--required {
+    flex: 1 1 0;
+    max-width: none;
+  }
+
+  .spec-field-col--actions {
+    flex: 1 1 0;
+    max-width: none;
+    text-align: center;
+  }
+}
+
+.spec-field-required {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+  .spec-field-col {
+    margin-bottom: 0.25rem;
+  }
+
+  .spec-field-controls-group {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .spec-field-controls-group .spec-field-col--required {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+  }
+
+  .spec-field-controls-group .spec-field-col--actions {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    text-align: right;
+  }
+}
+
 .specification-builder .alert-info {
   border-left: 4px solid var(--secondary-purple);
   background-color: #f0e7ff;
@@ -3028,6 +3515,126 @@ onMounted(async () => {
 
 .disabled-button:disabled {
   cursor: not-allowed !important;
+}
+
+.manage-categories-page-header,
+.manage-categories-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.manage-categories-page-intro,
+.manage-categories-section-intro {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-categories-page-actions,
+.manage-categories-section-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.manage-categories-entity-tabs-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.manage-categories-entity-tabs-row .btn {
+  flex: 0 0 auto;
+  min-width: 7.5rem;
+}
+
+.manage-categories-form-actions,
+.manage-categories-modal-actions,
+.manage-categories-modal-actions-group {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.manage-categories-modal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.manage-categories-modal-actions {
+  justify-content: space-between;
+}
+
+@media (max-width: 991.98px) {
+  .manage-categories-page-header,
+  .manage-categories-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .manage-categories-page-actions,
+  .manage-categories-section-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .manage-categories-page-actions .btn,
+  .manage-categories-section-actions .btn {
+    width: 100%;
+    margin: 0;
+  }
+
+  .manage-categories-entity-tabs-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .manage-categories-entity-tabs-row .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .manage-categories-form-actions,
+  .manage-categories-modal-footer,
+  .manage-categories-modal-actions,
+  .manage-categories-modal-actions-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.625rem;
+  }
+
+  .manage-categories-form-actions .btn,
+  .manage-categories-modal-footer .btn,
+  .manage-categories-modal-actions-group .btn {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .manage-categories-page-header,
+  .manage-categories-section-header {
+    gap: 0.625rem;
+    margin-bottom: 0.75rem;
+  }
 }
 
 

@@ -23,8 +23,8 @@
         </div>
       </div>
 
-      <div class="row mb-3 g-3">
-        <div class="col-12 col-md-4 col-lg-3">
+      <div class="row mb-3 g-1">
+        <div class="col-12 col-md-4 col-lg-1">
           <SearchableDropdown
             id="audit-entity-filter"
             label="Entity type"
@@ -48,7 +48,7 @@
             @change="onFilterChange"
           />
         </div>
-        <div class="col-12 col-md-4 col-lg-3">
+        <div class="col-12 col-md-4 col-lg-1">
           <label class="form-label" for="audit-search">Search</label>
           <div class="search-input-container">
             <i class="fas fa-search search-icon"></i>

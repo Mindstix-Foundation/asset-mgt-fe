@@ -695,6 +695,101 @@
   color: var(--primary-black);
 }
 
+/* =================================
+   MAINTENANCE CARD GRID VIEW
+================================= */
+
+.maintenance-card-modern {
+  border: 1px solid var(--element-gray, #dee2e6);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.maintenance-card-modern--has-specs {
+  cursor: pointer;
+}
+
+.maintenance-card-modern--expanded {
+  border-color: rgba(102, 126, 234, 0.35);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+}
+
+.maintenance-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.maintenance-card-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.maintenance-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.maintenance-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+  width: 100%;
+}
+
+.maintenance-card-id {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-black);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.maintenance-card-status.badge {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.maintenance-card-subtitle {
+  color: var(--primary-black);
+  font-size: 0.85rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.maintenance-card-meta {
+  color: var(--primary-mid-gray, #6c757d);
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
+.maintenance-card-details {
+  font-size: 0.875rem;
+  color: var(--primary-black);
+}
+
+.maintenance-card-specs {
+  width: 100%;
+}
+
+.maintenance-card-actions {
+  margin-top: 0.75rem;
+}
+
 /* Hide number spinners on cost inputs — they overlap the validation icon */
 input.no-number-spin[type="number"]::-webkit-outer-spin-button,
 input.no-number-spin[type="number"]::-webkit-inner-spin-button {

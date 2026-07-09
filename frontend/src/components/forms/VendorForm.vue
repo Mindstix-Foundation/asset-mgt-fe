@@ -277,7 +277,7 @@
               <div class="container">
                 <!-- Row 1: Buttons -->
                 <div class="row">
-                  <div class="col-12 d-flex justify-content-center gap-3 mb-1">
+                  <div class="col-12 form-action-buttons mb-1">
                     <button type="button" class="btn btn-cancel" @click="handleCancel">
                       Cancel
                     </button>

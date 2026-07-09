@@ -27,6 +27,7 @@ export interface NotificationsPagination {
 export interface NotificationsQuery {
   page?: number;
   limit?: number;
+  unreadOnly?: boolean;
 }
 
 export interface UnreadCountResponse {
@@ -56,6 +57,9 @@ class NotificationService {
       const limit = params.limit ?? PAGE_SIZE;
       query.append('page', String(page));
       query.append('limit', String(limit));
+      if (params.unreadOnly) {
+        query.append('unreadOnly', 'true');
+      }
 
       const response: ApiResponse<{
         notifications: Notification[];

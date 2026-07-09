@@ -13,16 +13,31 @@
                 Stay up to date with maintenance reminders and other alerts.
               </p>
             </div>
-            <button
-              v-if="unreadCount > 0"
-              type="button"
-              class="btn btn-gray btn-modern btn-sm"
-              :disabled="isMarkingAll"
-              @click="handleMarkAllAsRead"
-            >
-              <i class="fas fa-check-double me-1"></i>
-              {{ isMarkingAll ? 'Marking...' : 'Mark all as read' }}
-            </button>
+            <div class="notifications-inbox__header-actions">
+              <div class="form-check form-switch notifications-inbox__unread-toggle">
+                <input
+                  id="unread-only-toggle"
+                  v-model="unreadOnly"
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  @change="onUnreadOnlyChange"
+                >
+                <label class="form-check-label" for="unread-only-toggle">
+                  Unread only
+                </label>
+              </div>
+              <button
+                v-if="unreadCount > 0"
+                type="button"
+                class="btn btn-gray btn-modern btn-sm"
+                :disabled="isMarkingAll"
+                @click="handleMarkAllAsRead"
+              >
+                <i class="fas fa-check-double me-1"></i>
+                {{ isMarkingAll ? 'Marking...' : 'Mark all as read' }}
+              </button>
+            </div>
           </header>
 
           <div v-if="isLoading" class="notifications-inbox__state">
@@ -34,9 +49,14 @@
 
           <div v-else-if="notifications.length === 0" class="notifications-inbox__state">
             <i class="fas fa-bell-slash notifications-inbox__empty-icon"></i>
-            <h3 class="h5 mb-2">No notifications</h3>
+            <h3 class="h5 mb-2">{{ unreadOnly ? 'No unread notifications' : 'No notifications' }}</h3>
             <p class="text-muted mb-0">
-              When something needs your attention, it will appear here.
+              <template v-if="unreadOnly">
+                You're all caught up. Turn off "Unread only" to see your full notification history.
+              </template>
+              <template v-else>
+                When something needs your attention, it will appear here.
+              </template>
             </p>
           </div>
 
@@ -58,7 +78,7 @@
                   <i :class="notificationIcon(notification.type)"></i>
                 </div>
                 <div class="notifications-inbox__content">
-                  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                  <div class="notifications-inbox__item-header">
                     <h2 class="notifications-inbox__item-title h6 mb-0">{{ notification.title }}</h2>
                     <span class="notifications-inbox__time">{{ formatTime(notification.createdAt) }}</span>
                   </div>
@@ -74,12 +94,15 @@
                       <strong>Due:</strong> {{ formatDate(notification.data.scheduledDate) }}
                     </span>
                   </div>
-                  <div class="notifications-inbox__footer">
+                  <div
+                    v-if="!notification.isRead || getReviewRoute(notification)"
+                    class="notifications-inbox__footer"
+                  >
                     <span
-                      class="notifications-inbox__status"
-                      :class="notification.isRead ? 'is-read' : 'is-unread'"
+                      v-if="!notification.isRead"
+                      class="notifications-inbox__status is-unread"
                     >
-                      {{ notification.isRead ? 'Read' : 'Unread' }}
+                      Unread
                     </span>
                     <router-link
                       v-if="getReviewRoute(notification)"
@@ -131,6 +154,7 @@ const notifications = ref<Notification[]>([])
 const unreadCount = ref(0)
 const totalCount = ref(0)
 const page = ref(1)
+const unreadOnly = ref(false)
 const isLoading = ref(false)
 const isLoadingMore = ref(false)
 const isMarkingAll = ref(false)
@@ -165,6 +189,7 @@ async function loadPage(targetPage: number, append = false) {
       notificationService.getNotifications({
         page: targetPage,
         limit: NOTIFICATIONS_PAGE_SIZE,
+        unreadOnly: unreadOnly.value,
       }),
       append ? Promise.resolve(unreadCount.value) : notificationService.getUnreadCount(),
     ])
@@ -188,6 +213,10 @@ async function loadPage(targetPage: number, append = false) {
 async function loadMore() {
   if (!hasMore.value || isLoadingMore.value) return
   await loadPage(page.value + 1, true)
+}
+
+async function onUnreadOnlyChange() {
+  await loadPage(1)
 }
 
 function notificationIcon(type: Notification['type']) {
@@ -221,6 +250,10 @@ async function markOneRead(notification: Notification) {
     notification.isRead = true
     notification.readAt = new Date().toISOString()
     unreadCount.value = Math.max(0, unreadCount.value - 1)
+    if (unreadOnly.value) {
+      notifications.value = notifications.value.filter((item) => item.id !== notification.id)
+      totalCount.value = Math.max(0, totalCount.value - 1)
+    }
     dispatchNotificationsUpdated()
   } catch (error) {
     console.error('Failed to mark notification as read:', error)
@@ -238,6 +271,10 @@ async function markOneUnread(notification: Notification) {
     notification.isRead = false
     notification.readAt = undefined
     unreadCount.value += 1
+    if (unreadOnly.value && !notifications.value.some((item) => item.id === notification.id)) {
+      notifications.value = [notification, ...notifications.value]
+      totalCount.value += 1
+    }
     dispatchNotificationsUpdated()
   } catch (error) {
     console.error('Failed to mark notification as unread:', error)
@@ -262,10 +299,15 @@ const handleMarkAllAsRead = async () => {
   try {
     isMarkingAll.value = true
     await notificationService.markAllAsRead()
-    for (const notification of notifications.value) {
-      if (!notification.isRead) {
-        notification.isRead = true
-        notification.readAt = new Date().toISOString()
+    if (unreadOnly.value) {
+      notifications.value = []
+      totalCount.value = 0
+    } else {
+      for (const notification of notifications.value) {
+        if (!notification.isRead) {
+          notification.isRead = true
+          notification.readAt = new Date().toISOString()
+        }
       }
     }
     unreadCount.value = 0
@@ -331,6 +373,40 @@ const formatDate = (dateString: string) =>
 .notifications-inbox__subtitle {
   color: var(--primary-dark-gray, #6c757d);
   font-size: 0.95rem;
+}
+
+.notifications-inbox__header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.notifications-inbox__unread-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+  min-height: 2rem;
+  padding-left: 0;
+}
+
+.notifications-inbox__unread-toggle .form-check-input {
+  width: 2.5rem;
+  height: 1.25rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.notifications-inbox__unread-toggle .form-check-label {
+  color: var(--primary-black, #212529);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .notifications-inbox__state {
@@ -399,6 +475,15 @@ const formatDate = (dateString: string) =>
   min-width: 0;
 }
 
+.notifications-inbox__item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
 .notifications-inbox__item-title {
   color: var(--primary-black, #212529);
   font-weight: 600;
@@ -413,6 +498,8 @@ const formatDate = (dateString: string) =>
 .notifications-inbox__message {
   color: #495057;
   line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .notifications-inbox__meta {
@@ -422,6 +509,11 @@ const formatDate = (dateString: string) =>
   font-size: 0.875rem;
   color: #495057;
   margin-bottom: 0.75rem;
+}
+
+.notifications-inbox__meta span {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .notifications-inbox__footer {
@@ -444,11 +536,6 @@ const formatDate = (dateString: string) =>
   color: #fff;
 }
 
-.notifications-inbox__status.is-read {
-  background: #e9ecef;
-  color: #6c757d;
-}
-
 .notifications-inbox__review {
   text-decoration: none;
 }
@@ -461,14 +548,135 @@ const formatDate = (dateString: string) =>
   background: #fff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
+  .notifications-page .container-fluid.py-4 {
+    max-width: 100%;
+    padding: 0.75rem;
+  }
+
+  .notifications-inbox {
+    border-radius: 0.75rem;
+  }
+
   .notifications-inbox__header {
     flex-direction: column;
     align-items: stretch;
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .notifications-inbox__header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.625rem;
+  }
+
+  .notifications-inbox__unread-toggle {
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.25rem 0;
+  }
+
+  .notifications-inbox__header .btn {
+    width: 100%;
+  }
+
+  .notifications-inbox__title {
+    font-size: 1.15rem;
+  }
+
+  .notifications-inbox__subtitle {
+    font-size: 0.875rem;
   }
 
   .notifications-inbox__item {
+    padding: 0.875rem 1rem;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .notifications-inbox__item--unread {
+    border-left-width: 3px;
+  }
+
+  .notifications-inbox__icon {
+    width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
+  }
+
+  .notifications-inbox__item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .notifications-inbox__time {
+    white-space: normal;
+    font-size: 0.8125rem;
+  }
+
+  .notifications-inbox__message {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .notifications-inbox__meta {
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .notifications-inbox__footer {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .notifications-inbox__load-more {
     padding: 1rem;
+  }
+
+  .notifications-inbox__load-more .btn {
+    width: 100%;
+  }
+
+  .notifications-inbox__state {
+    min-height: 240px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .notifications-page .container-fluid.py-4 {
+    padding: 0.5rem;
+  }
+
+  .notifications-inbox {
+    border-radius: 0.5rem;
+  }
+
+  .notifications-inbox__header {
+    padding: 0.875rem;
+  }
+
+  .notifications-inbox__item {
+    padding: 0.75rem;
+    gap: 0.625rem;
+  }
+
+  .notifications-inbox__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .notifications-inbox__review {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

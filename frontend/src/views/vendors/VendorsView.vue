@@ -283,30 +283,31 @@
         </div>
         
         <!-- Grid View -->
-        <div :class="{ 'd-none': !isGridView }" id="gridView">
+        <div v-show="isGridView" id="gridView">
           <div class="row" id="gridContainer" v-if="filteredVendors.length > 0">
             <div 
               v-for="vendor in filteredVendors" 
               :key="vendor.id"
-              class="col-12 col-sm-12 col-md-6 col-lg-4 mb-4"
+              class="col-12 mb-3"
             >
               <div class="card h-100 vendor-card-modern">
                 <div class="card-body p-2">
-                  <!-- Header with icon, vendor name and status -->
-                  <div class="d-flex align-items-center mb-2">
-                    <div 
-                      class="rounded-circle d-flex align-items-center justify-content-center me-2" 
-                      :style="{ width: '36px', height: '36px', backgroundColor: getVendorTypeColor(vendor.vendorType), flexShrink: 0 }"
+                  <div class="vendor-card-header">
+                    <div
+                      class="vendor-card-icon rounded-circle d-flex align-items-center justify-content-center"
+                      :style="{ backgroundColor: getVendorTypeColor(vendor.vendorType) }"
                     >
-                      <i :class="getVendorTypeIcon(vendor.vendorType)" class="text-white" style="font-size: 0.9rem; color: white !important;"></i>
+                      <i :class="getVendorTypeIcon(vendor.vendorType)" class="text-white"></i>
                     </div>
-                    <div class="flex-grow-1">
-                      <h6 class="mb-0 fw-bold text-truncate" style="color: var(--primary-black);">{{ vendor.name }}</h6>
-                      <small class="text-muted text-truncate d-block">{{ getTypeLabel(vendor.vendorType) }}</small>
+                    <div class="vendor-card-main">
+                      <div class="vendor-card-top-row">
+                        <h6 class="vendor-card-name mb-0">{{ vendor.name }}</h6>
+                        <span class="vendor-card-status" :class="getStatusBadgeClass(vendor.status)">
+                          {{ getStatusLabel(vendor.status) }}
+                        </span>
+                      </div>
+                      <p class="vendor-card-subtitle mb-0">{{ getTypeLabel(vendor.vendorType) }}</p>
                     </div>
-                    <span :class="getStatusBadgeClass(vendor.status)">
-                      {{ getStatusLabel(vendor.status) }}
-                    </span>
                   </div>
                   
                   <!-- Vendor Details Grid - 3 fields in sequence -->
@@ -603,7 +604,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRouteToast } from '@/composables/useRouteToast'
 import { useToastStore } from '@/stores/toast'
@@ -640,6 +641,7 @@ const totalPages = ref(1)
 const searchTerm = ref('')
 const sortAscending = ref(true)
 const isGridView = ref(false)
+let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Filter state variables
 const selectedType = ref<Item | null>(null)
@@ -742,6 +744,18 @@ const sortOptions = computed(() => [
 // Methods
 const toggleView = (view: 'list' | 'grid') => {
   isGridView.value = view === 'grid'
+}
+
+const setDefaultView = () => {
+  const screenWidth = globalThis.window.innerWidth
+  isGridView.value = screenWidth < 768
+}
+
+const handleResize = () => {
+  if (resizeTimeout) clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(() => {
+    setDefaultView()
+  }, 150)
 }
 
 const toggleSortOrder = () => {
@@ -1056,7 +1070,17 @@ const updateVendorStatus = async (vendor: Vendor, newStatus: VendorStatus) => {
 
 // Initialize
 onMounted(() => {
+  setDefaultView()
+  globalThis.window.addEventListener('resize', handleResize)
   fetchVendors()
+})
+
+onUnmounted(() => {
+  globalThis.window.removeEventListener('resize', handleResize)
+  if (resizeTimeout) {
+    clearTimeout(resizeTimeout)
+    resizeTimeout = null
+  }
 })
 </script>
 

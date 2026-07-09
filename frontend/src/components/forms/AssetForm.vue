@@ -491,7 +491,7 @@
               <div class="container">
                 <!-- Row 1: Buttons -->
                 <div class="row">
-                  <div class="col-12 d-flex justify-content-center gap-3 mb-3">
+                  <div class="col-12 form-action-buttons mb-3">
                     <button 
                       type="button" 
                       class="btn btn-cancel" 
@@ -2662,11 +2662,6 @@ const handleNotesValidation = (isValid: boolean, errorMessage?: string) => {
 @media (max-width: 768px) {
   .card-body {
     padding: 1.5rem !important;
-  }
-  
-  .d-flex.gap-3 {
-    flex-direction: column;
-    gap: 0 !important;
   }
 }
 
