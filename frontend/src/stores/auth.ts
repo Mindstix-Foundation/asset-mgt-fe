@@ -117,6 +117,10 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.name || user.value?.username || null
   }
 
+  const getTenantName = () => {
+    return user.value?.tenantName || null
+  }
+
   return {
     user,
     isAuthenticated,
@@ -124,6 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     checkAuthStatus,
-    getUsername
+    getUsername,
+    getTenantName,
   }
 }) 

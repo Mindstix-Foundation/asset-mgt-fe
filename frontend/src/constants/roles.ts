@@ -3,9 +3,10 @@
  * Centralized role and permission definitions
  */
 
-// User Roles
+// User Roles — match backend roleName strings
 export const USER_ROLES = {
-  ADMIN: 'admin',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
   HR: 'hr',
   EMPLOYEE: 'employee',
   MANAGER: 'manager',
@@ -15,6 +16,7 @@ export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
 
 // Role Labels
 export const ROLE_LABELS = {
+  [USER_ROLES.SUPER_ADMIN]: 'Platform Super Admin',
   [USER_ROLES.ADMIN]: 'Administrator',
   [USER_ROLES.HR]: 'Human Resources',
   [USER_ROLES.EMPLOYEE]: 'Employee',
@@ -71,6 +73,10 @@ export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
 // Role-Permission Mapping
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
+  [USER_ROLES.SUPER_ADMIN]: [
+    // Platform-only: organization access management (enforced on backend)
+    PERMISSIONS.ADMIN_SYSTEM_SETTINGS,
+  ],
   [USER_ROLES.ADMIN]: [
     // All permissions for admin
     PERMISSIONS.ASSET_CREATE,

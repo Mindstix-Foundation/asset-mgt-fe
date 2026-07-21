@@ -12,6 +12,8 @@ export interface Employee {
   phone?: string
   dateOfBirth?: string
   address?: string
+  designationId?: number | null
+  designation?: { id: number; name: string } | null
   status: 'ACTIVE' | 'INACTIVE'
   createdAt: string
   updatedAt: string
@@ -45,6 +47,7 @@ export interface CreateEmployeeData {
   phone?: string
   dateOfBirth?: string
   address?: string
+  designationId?: number
 }
 
 export interface UpdateEmployeeData {
@@ -54,6 +57,7 @@ export interface UpdateEmployeeData {
   phone?: string
   dateOfBirth?: string
   address?: string
+  designationId?: number | null
   status?: 'ACTIVE' | 'INACTIVE'
 }
 

@@ -67,6 +67,11 @@
                       <i class="fas fa-cogs me-2 text-info"></i>Manage Employees
                     </button>
                   </li>
+                  <li>
+                    <button class="dropdown-item" @click="() => { openManageDesignations(); closeDropdown('moreActionsDropdownSm'); }">
+                      <i class="fas fa-id-badge me-2 text-secondary"></i>Manage Designations
+                    </button>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -133,6 +138,11 @@
                       <li>
                         <button class="dropdown-item" @click="() => { openManageEmployeesModal(); closeDropdown('moreActionsDropdown'); }">
                           <i class="fas fa-cogs me-2 text-info"></i>Manage Employees
+                        </button>
+                      </li>
+                      <li>
+                        <button class="dropdown-item" @click="() => { openManageDesignations(); closeDropdown('moreActionsDropdown'); }">
+                          <i class="fas fa-id-badge me-2 text-secondary"></i>Manage Designations
                         </button>
                       </li>
                     </ul>
@@ -1610,6 +1620,9 @@
       // Open manage employees page
       openManageEmployeesModal() {
         this.$router.push('/app/employees/manage')
+      },
+      openManageDesignations() {
+        this.$router.push('/app/employees/manage-designations')
       },
       // Close dropdown helper
       closeDropdown(dropdownId) {

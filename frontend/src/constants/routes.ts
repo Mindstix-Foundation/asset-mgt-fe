@@ -15,6 +15,8 @@ export const ROUTE_NAMES = {
   RESET_PASSWORD: `reset-${_pw}`,
   CHANGE_PASSWORD: `change-${_pw}`,
 
+  REGISTER_ORGANIZATION: 'register-organization',
+
   // Dashboard
   DASHBOARD: 'dashboard',
 
@@ -35,6 +37,7 @@ export const ROUTE_NAMES = {
   EMPLOYEE_ASSET_HISTORY: 'employee-asset-history',
   BULK_EMPLOYEE_UPLOAD: 'bulk-employee-upload',
   MANAGE_EMPLOYEES: 'manage-employees',
+  MANAGE_DESIGNATIONS: 'manage-designations',
 
   // Vendor Routes
   VENDORS: 'vendors',
@@ -55,6 +58,9 @@ export const ROUTE_NAMES = {
   MANAGE_ADMINS: 'manage-admins',
   ADMIN_AUDIT: 'admin-audit',
 
+  // Platform (super-admin)
+  PLATFORM_ORGANIZATIONS: 'platform-organizations',
+
   // Notification Routes
   NOTIFICATIONS: 'notifications',
 
@@ -71,6 +77,7 @@ export const ROUTE_PATHS = {
   [ROUTE_NAMES.FORGOT_PASSWORD]: `/forgot-${_pw}`,
   [ROUTE_NAMES.RESET_PASSWORD]: `/reset-${_pw}`,
   [ROUTE_NAMES.CHANGE_PASSWORD]: `/change-${_pw}`,
+  [ROUTE_NAMES.REGISTER_ORGANIZATION]: '/register-organization',
 
   // Dashboard
   [ROUTE_NAMES.DASHBOARD]: '/',
@@ -92,6 +99,7 @@ export const ROUTE_PATHS = {
   [ROUTE_NAMES.EMPLOYEE_ASSET_HISTORY]: '/employees/asset-history/:id',
   [ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD]: '/employees/bulk-upload',
   [ROUTE_NAMES.MANAGE_EMPLOYEES]: '/employees/manage',
+  [ROUTE_NAMES.MANAGE_DESIGNATIONS]: '/employees/manage-designations',
 
   // Vendors
   [ROUTE_NAMES.VENDORS]: '/vendors',
@@ -112,6 +120,9 @@ export const ROUTE_PATHS = {
   [ROUTE_NAMES.MANAGE_ADMINS]: '/admin/manage-admins',
   [ROUTE_NAMES.ADMIN_AUDIT]: '/admin/activity',
 
+  // Platform
+  [ROUTE_NAMES.PLATFORM_ORGANIZATIONS]: '/platform/organizations',
+
   // Notifications
   [ROUTE_NAMES.NOTIFICATIONS]: '/notifications',
 
@@ -125,6 +136,7 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.FORGOT_PASSWORD]: `Forgot ${_Pw}`,
   [ROUTE_NAMES.RESET_PASSWORD]: `Reset ${_Pw}`,
   [ROUTE_NAMES.CHANGE_PASSWORD]: `Change ${_Pw}`,
+  [ROUTE_NAMES.REGISTER_ORGANIZATION]: 'Register Organization',
   [ROUTE_NAMES.DASHBOARD]: 'Dashboard',
   [ROUTE_NAMES.ASSETS]: 'Assets',
   [ROUTE_NAMES.ADD_ASSET]: 'Add Asset',
@@ -140,6 +152,7 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.EMPLOYEE_ASSET_HISTORY]: 'Employee Asset History',
   [ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD]: 'Bulk Employee Upload',
   [ROUTE_NAMES.MANAGE_EMPLOYEES]: 'Manage Employees',
+  [ROUTE_NAMES.MANAGE_DESIGNATIONS]: 'Manage Designations',
   [ROUTE_NAMES.VENDORS]: 'Vendors',
   [ROUTE_NAMES.ADD_VENDOR]: 'Add Vendor',
   [ROUTE_NAMES.EDIT_VENDOR]: 'Edit Vendor',
@@ -151,6 +164,7 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.REPORTS]: 'Reports',
   [ROUTE_NAMES.MANAGE_ADMINS]: 'Manage Admins',
   [ROUTE_NAMES.ADMIN_AUDIT]: 'Admin Audit',
+  [ROUTE_NAMES.PLATFORM_ORGANIZATIONS]: 'Organizations',
   [ROUTE_NAMES.NOTIFICATIONS]: 'Notifications',
   [ROUTE_NAMES.PROFILE]: 'Profile',
 } as const

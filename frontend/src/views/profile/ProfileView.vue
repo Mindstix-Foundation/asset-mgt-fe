@@ -74,6 +74,10 @@
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.name || 'N/A' }}</p>
                 </div>
                 <div class="col-12 col-md-6">
+                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Organization</span>
+                  <p class="mb-0" style="color: var(--primary-black);">{{ userData.tenantName || 'N/A' }}</p>
+                </div>
+                <div class="col-12 col-md-6">
                   <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Email Address</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.email || 'N/A' }}</p>
                 </div>
@@ -210,6 +214,9 @@ interface UserData {
   email: string
   name: string
   employeeId: string
+  tenantId?: number
+  tenantName?: string
+  isPlatform?: boolean
   employee: EmployeeData | null
   roles: string[]
   lastLogin: string | null
@@ -226,6 +233,9 @@ const userData = ref<UserData>({
   email: '',
   name: '',
   employeeId: '',
+  tenantId: undefined,
+  tenantName: undefined,
+  isPlatform: undefined,
   employee: null,
   roles: [],
   lastLogin: null,

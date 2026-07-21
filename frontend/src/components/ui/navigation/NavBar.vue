@@ -24,7 +24,7 @@
 
       <!-- Mobile topbar actions -->
       <div class="navbar-mobile-actions d-lg-none ms-auto">
-        <NotificationBell />
+        <NotificationBell v-if="!isSuperAdmin" />
       </div>
       
       <!-- Desktop Navigation Menu -->
@@ -39,7 +39,7 @@
               {{ item.name }}
             </RouterLink>
           </li>
-          <li class="nav-item nav-item-disabled">
+          <li v-if="!isSuperAdmin" class="nav-item nav-item-disabled">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
               QR Scanner
             </a>
@@ -49,7 +49,7 @@
         <!-- User Info and Logout -->
         <div class="navbar-user-section d-flex align-items-center">
           <!-- Notification bell → dedicated page -->
-          <NotificationBell class="me-3" />
+          <NotificationBell v-if="!isSuperAdmin" class="me-3" />
           
           <div class="user-info d-flex align-items-center" @click="handleProfile" style="cursor: pointer;" title="View Profile">
             <i class="fas fa-user-circle me-2 user-icon"></i>
@@ -101,7 +101,7 @@
               {{ item.name }}
             </RouterLink>
           </li>
-          <li class="sidebar-nav-item">
+          <li v-if="!isSuperAdmin" class="sidebar-nav-item">
             <a class="sidebar-nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
               <i class="fas fa-qrcode sidebar-nav-icon"></i>
               QR Scanner
@@ -116,7 +116,7 @@
           <i class="fas fa-user-circle sidebar-user-icon"></i>
           <div class="sidebar-user-details">
             <span class="sidebar-username">{{ authStore.getUsername() || 'Admin User' }}</span>
-            <span class="sidebar-user-role">Administrator</span>
+            <span class="sidebar-user-role">{{ isSuperAdmin ? 'Platform Super Admin' : (authStore.user?.tenantName || 'Administrator') }}</span>
           </div>
         </div>
         <button @click="showLogoutModal" class="sidebar-logout-btn">
@@ -159,9 +159,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { isPlatformUser } from '@/types/auth.types'
 import NotificationBell from '@/components/notifications/NotificationBell.vue'
 import navLogo from '@/assets/logos/secondary/secondary-symbol.png'
 import { Modal } from 'bootstrap'
@@ -170,38 +171,29 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-// Mobile menu state
 const mobileMenuOpen = ref(false)
 
-// Navigation items
-const navigationItems = [
-  {
-    name: 'Dashboard',
-    path: '/app/dashboard'
-  },
-  {
-    name: 'Assets & Inventory',
-    path: '/app/assets'
-  },
-  {
-    name: 'Employees',
-    path: '/app/employees'
-  },
-  {
-    name: 'Maintenance',
-    path: '/app/maintenance'
-  },
-  {
-    name: 'Vendors',
-    path: '/app/vendors'
-  },
-  {
-    name: 'Reports',
-    path: '/app/reports'
-  }
-]
+const isSuperAdmin = computed(() => isPlatformUser(authStore.user))
 
-// Methods
+const navigationItems = computed(() => {
+  if (isSuperAdmin.value) {
+    return [
+      {
+        name: 'Organizations',
+        path: '/app/platform/organizations',
+      },
+    ]
+  }
+  return [
+    { name: 'Dashboard', path: '/app/dashboard' },
+    { name: 'Assets & Inventory', path: '/app/assets' },
+    { name: 'Employees', path: '/app/employees' },
+    { name: 'Maintenance', path: '/app/maintenance' },
+    { name: 'Vendors', path: '/app/vendors' },
+    { name: 'Reports', path: '/app/reports' },
+  ]
+})
+
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
@@ -229,7 +221,6 @@ const handleConfirmLogout = async () => {
     }
     await authStore.logout()
   } finally {
-    // Always navigate to home/login regardless of logout result
     router.push('/')
   }
 }
@@ -238,25 +229,27 @@ const handleProfile = () => {
   router.push('/app/profile')
 }
 
-// QR scanner disabled - keep placeholder without action
 const handleQRScanner = () => {}
 
 const getNavIcon = (itemName: string) => {
   const icons: Record<string, string> = {
-    'Dashboard': 'fas fa-tachometer-alt',
+    Dashboard: 'fas fa-tachometer-alt',
     'Assets & Inventory': 'fas fa-boxes',
-    'Employees': 'fas fa-users',
-    'Maintenance': 'fas fa-tools',
-    'Vendors': 'fas fa-handshake',
-    'Reports': 'fas fa-chart-bar'
+    Employees: 'fas fa-users',
+    Maintenance: 'fas fa-tools',
+    Vendors: 'fas fa-handshake',
+    Reports: 'fas fa-chart-bar',
+    Organizations: 'fas fa-building',
   }
   return icons[itemName] || 'fas fa-circle'
 }
 
-// Close mobile menu when route changes
-watch(() => route.path, () => {
-  closeMobileMenu()
-})
+watch(
+  () => route.path,
+  () => {
+    closeMobileMenu()
+  },
+)
 
 onMounted(() => {
   const modalElement = document.getElementById('navbarLogoutModal')

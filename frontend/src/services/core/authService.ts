@@ -65,6 +65,12 @@ interface LoginResponse {
     email: string
     name: string
     employeeId: string
+    tenantId: number
+    tenantName: string
+    isPlatform?: boolean
+    /** @deprecated use isPlatform */
+    tenantSlug?: string
+    roles?: string[]
   }
 }
 
@@ -76,6 +82,11 @@ interface ProfileResponse {
     email: string
     name: string
     employeeId: string
+    tenantId: number
+    tenantName: string
+    isPlatform?: boolean
+    /** @deprecated use isPlatform */
+    tenantSlug?: string
     employee: {
       id: number
       firstName: string
@@ -267,9 +278,10 @@ class AuthService {
   /**
    * Get stored user data
    */
-  getUserData(): any {
+  getUserData(): LoginResponse['user'] | null {
     const userData = localStorage.getItem(this.USER_KEY)
-    return userData ? JSON.parse(userData) : null
+    if (!userData) return null
+    return this.normalizeUserData(JSON.parse(userData))
   }
 
   /**
@@ -281,10 +293,21 @@ class AuthService {
   }
 
   /**
+   * Normalize API user payload (maps legacy tenantSlug to isPlatform).
+   */
+  private normalizeUserData(userData: LoginResponse['user']): LoginResponse['user'] {
+    const { tenantSlug, ...rest } = userData as LoginResponse['user'] & { tenantSlug?: string }
+    return {
+      ...rest,
+      isPlatform: rest.isPlatform ?? tenantSlug === 'platform',
+    }
+  }
+
+  /**
    * Set user data in localStorage
    */
-  private setUserData(userData: any): void {
-    localStorage.setItem(this.USER_KEY, JSON.stringify(userData))
+  private setUserData(userData: LoginResponse['user']): void {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(this.normalizeUserData(userData)))
   }
 
   /**

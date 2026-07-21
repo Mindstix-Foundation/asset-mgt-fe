@@ -188,6 +188,28 @@
                     <div v-if="fieldErrors.phone" class="invalid-feedback">{{ fieldErrors.phone }}</div>
                   </div>
                 </div>
+
+                <div class="row g-4 mt-2">
+                  <!-- Designation -->
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="designation"
+                        label="Designation"
+                        placeholder="Select designation..."
+                        :items="designationItems"
+                        v-model="selectedDesignation"
+                        :disabled="isSubmitting || isLoadingDesignations"
+                        :required="false"
+                        @change="onDesignationChange"
+                      />
+                    </div>
+                    <div class="form-text">
+                      Choose from your organization's designations
+                      <router-link to="/app/employees/manage-designations" class="ms-1">Manage</router-link>
+                    </div>
+                  </div>
+                </div>
               </fieldset>
 
               <!-- Section 2: Personal Information -->
@@ -291,6 +313,7 @@ import { ref, reactive, onMounted, nextTick, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { employeeService } from '@/services/business/employeeService'
 import type { CreateEmployeeData, UpdateEmployeeData } from '@/services/business/employeeService'
+import { designationService } from '@/services/api/designationService'
 import { useToastStore } from '@/stores/toast'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
 import { NotesTextarea } from '@/components/common'
@@ -323,6 +346,7 @@ const formData = reactive({
   phone: '',
   dateOfBirth: '',
   address: '',
+  designationId: null as number | null,
   status: 'ACTIVE' as EmployeeStatus
 })
 
@@ -334,6 +358,8 @@ const isLoading = ref(false)
 const formSubmitted = ref(false)
 const nextAvailableEmployeeId = ref('0001')
 const isLoadingEmployeeIds = ref(false)
+const isLoadingDesignations = ref(false)
+const designationItems = ref<Item[]>([])
 
 // Store original email for validation (edit mode)
 const originalEmail = ref('')
@@ -341,6 +367,7 @@ const isAdmin = ref(false)
 
 // Selected items for SearchableDropdown components
 const selectedStatus = ref<Item | null>(null)
+const selectedDesignation = ref<Item | null>(null)
 // Keep a snapshot of the originally loaded employee data for diffing on update
 const originalData = ref<{
   employeeId: string
@@ -350,6 +377,7 @@ const originalData = ref<{
   phone?: string
   dateOfBirth?: string
   address?: string
+  designationId?: number | null
   status: EmployeeStatus
 } | null>(null)
 
@@ -381,6 +409,32 @@ const onStatusChange = (item: Item | null) => {
   } else {
     setFieldError('status', 'Status is required')
     applyValidationToSearchableDropdown('status', 'invalid')
+  }
+}
+
+const onDesignationChange = (item: Item | null) => {
+  selectedDesignation.value = item
+  formData.designationId = item?.id != null ? Number(item.id) : null
+}
+
+const loadDesignations = async () => {
+  isLoadingDesignations.value = true
+  try {
+    const response = await designationService.getDesignations({
+      limit: 100,
+      sortBy: 'name',
+      sortOrder: 'asc',
+    })
+    designationItems.value = (response.data.designations || []).map((d) => ({
+      id: d.id,
+      name: d.name,
+      value: d.id,
+    }))
+  } catch (error) {
+    console.error('Failed to load designations', error)
+    designationItems.value = []
+  } finally {
+    isLoadingDesignations.value = false
   }
 }
 
@@ -825,12 +879,30 @@ const loadEmployeeData = async () => {
     formData.phone = formatPhoneFromApi(employee.phone)
     formData.dateOfBirth = employee.dateOfBirth || ''
     formData.address = employee.address || ''
+    formData.designationId = employee.designationId ?? null
     formData.status = employee.status || 'ACTIVE'
 
     // Set selectedStatus for SearchableDropdown
     const statusOption = statusItems.value.find(item => item.value === (employee.status || 'ACTIVE'))
     if (statusOption) {
       selectedStatus.value = statusOption
+    }
+
+    if (employee.designationId) {
+      const designationOption = designationItems.value.find(
+        (item) => Number(item.id) === Number(employee.designationId),
+      )
+      if (designationOption) {
+        selectedDesignation.value = designationOption
+      } else if (employee.designation) {
+        selectedDesignation.value = {
+          id: employee.designation.id,
+          name: employee.designation.name,
+          value: employee.designation.id,
+        }
+      }
+    } else {
+      selectedDesignation.value = null
     }
 
     originalEmail.value = employee.email
@@ -845,6 +917,7 @@ const loadEmployeeData = async () => {
       phone: normalizePhoneForSubmit(formatPhoneFromApi(employee.phone) as any),
       dateOfBirth: employee.dateOfBirth || undefined,
       address: employee.address || undefined,
+      designationId: employee.designationId ?? null,
       status: (employee.status || 'ACTIVE') as EmployeeStatus
     }
 
@@ -926,6 +999,7 @@ const buildUpdateEmployeeData = (): UpdateEmployeeData => {
     phone: normalizePhoneForSubmit(formData.phone),
     dateOfBirth: formData.dateOfBirth || undefined,
     address: formData.address || undefined,
+    designationId: formData.designationId,
     status: formData.status as EmployeeStatus
   }
 
@@ -937,6 +1011,7 @@ const buildUpdateEmployeeData = (): UpdateEmployeeData => {
     phone: undefined,
     dateOfBirth: undefined,
     address: undefined,
+    designationId: null,
     status: 'ACTIVE' as EmployeeStatus
   }
 
@@ -951,6 +1026,9 @@ const buildUpdateEmployeeData = (): UpdateEmployeeData => {
   if (current.phone !== base.phone) payload.phone = current.phone
   if (current.dateOfBirth !== base.dateOfBirth) payload.dateOfBirth = current.dateOfBirth
   if (current.address !== base.address) payload.address = current.address
+  if (current.designationId !== base.designationId) {
+    payload.designationId = current.designationId
+  }
   if (current.status !== base.status) payload.status = current.status
 
   // Allow updating employeeId if changed and valid
@@ -970,7 +1048,8 @@ const buildCreateEmployeeData = (): CreateEmployeeData => {
     email: formData.email,
     phone: normalizePhoneForSubmit(formData.phone),
     dateOfBirth: formData.dateOfBirth || undefined,
-    address: formData.address || undefined
+    address: formData.address || undefined,
+    designationId: formData.designationId ?? undefined,
   }
 }
 
@@ -1111,6 +1190,8 @@ watch(() => formData.address, (newValue) => {
 
 // Lifecycle
 onMounted(async () => {
+  await loadDesignations()
+
   if (props.isEditMode) {
     await loadEmployeeData()
     // Immediately validate all fields on landing in edit mode

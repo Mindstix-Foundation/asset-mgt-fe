@@ -3,6 +3,7 @@ import LoginView from '../views/auth/LoginView.vue'
 import MainLayout from '../layouts/MainLayout.vue'
 import { useAuthStore } from '../stores/auth'
 import { ROUTE_NAMES } from '@/constants'
+import { isPlatformUser } from '@/types/auth.types'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/forgot-password',
       name: ROUTE_NAMES.FORGOT_PASSWORD,
       component: () => import('../views/auth/ForgotPasswordView.vue'),
+    },
+    {
+      path: '/register-organization',
+      name: ROUTE_NAMES.REGISTER_ORGANIZATION,
+      component: () => import('../views/auth/RegisterOrganizationView.vue'),
     },
     {
       path: '/reset-password',
@@ -102,6 +108,11 @@ const router = createRouter({
           component: () => import('../views/employees/ManageEmployeesView.vue'),
         },
         {
+          path: 'employees/manage-designations',
+          name: ROUTE_NAMES.MANAGE_DESIGNATIONS,
+          component: () => import('../views/employees/ManageDesignationsView.vue'),
+        },
+        {
           path: 'employees/bulk-upload',
           name: ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD,
           component: () => import('../views/employees/BulkEmployeeUpload.vue'),
@@ -176,13 +187,26 @@ const router = createRouter({
           name: ROUTE_NAMES.ADMIN_AUDIT,
           component: () => import('../views/admin/AdminAuditView.vue'),
         },
+        {
+          path: 'platform/organizations',
+          name: ROUTE_NAMES.PLATFORM_ORGANIZATIONS,
+          component: () => import('../views/platform/OrganizationsView.vue'),
+          meta: { roles: ['SUPER_ADMIN'] },
+        },
       ],
     },
   ],
 })
 
 // Public routes that don't require authentication
-const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password']
+const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/register-organization']
+
+const homeForUser = (authStore: ReturnType<typeof useAuthStore>) => {
+  if (isPlatformUser(authStore.user)) {
+    return '/app/platform/organizations'
+  }
+  return '/app/dashboard'
+}
 
 // Navigation guards
 router.beforeEach((to, from, next) => {
@@ -194,9 +218,9 @@ router.beforeEach((to, from, next) => {
   // Check if user is authenticated
   const isAuthenticated = authStore.isAuthenticated
 
-  // If going to login page but already authenticated, redirect to dashboard
+  // If going to login page but already authenticated, redirect to home
   if (to.path === '/' && isAuthenticated) {
-    next('/app/dashboard')
+    next(homeForUser(authStore))
     return
   }
 
@@ -204,6 +228,32 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     next('/')
+    return
+  }
+
+  const requiredRoles = to.matched
+    .map((r) => r.meta?.roles as string[] | undefined)
+    .find((roles) => Array.isArray(roles) && roles.length > 0)
+
+  if (requiredRoles && isAuthenticated) {
+    const userRoles: string[] = authStore.user?.roles || []
+    const allowed = requiredRoles.some((role) => userRoles.includes(role))
+    if (!allowed) {
+      next(homeForUser(authStore))
+      return
+    }
+  }
+
+  // Super-admin should stay on platform pages (no company ops UI)
+  if (
+    isAuthenticated &&
+    isPlatformUser(authStore.user) &&
+    to.path.startsWith('/app') &&
+    !to.path.startsWith('/app/platform') &&
+    to.path !== '/app/profile' &&
+    to.path !== '/app/change-password'
+  ) {
+    next('/app/platform/organizations')
     return
   }
   
