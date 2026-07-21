@@ -1,4 +1,5 @@
 import { apiService, type ApiResponse } from '../core/apiClient'
+import { parseApiDate } from '@/utils/date'
 
 export interface AuditChange {
   field: string
@@ -77,9 +78,8 @@ class AuditApiService {
   }
 
   private formatRelativeTime(ts?: string) {
-    if (!ts) return 'Unknown'
-    const d = new Date(ts)
-    if (Number.isNaN(d.getTime())) return 'Unknown'
+    const d = parseApiDate(ts)
+    if (!d) return 'Unknown'
     const diffMs = Date.now() - d.getTime()
     const mins = Math.floor(diffMs / 60000)
     if (mins < 1) return 'Just now'
@@ -91,20 +91,24 @@ class AuditApiService {
   }
 
   private needsRealTimeUpdate(ts?: string) {
-    if (!ts) return false
-    const diffMs = Date.now() - new Date(ts).getTime()
+    const d = parseApiDate(ts)
+    if (!d) return false
+    const diffMs = Date.now() - d.getTime()
     return diffMs < 60 * 60 * 1000
   }
 
   transformForRecentActivity(logs: AuditLogEntry[]) {
-    return logs.map((log) => ({
-      id: String(log.id),
-      title: `${log.tableDisplayName} ${this.formatAuditAction(log.action)}`,
-      description: log.summary || '—',
-      timeAgo: this.formatRelativeTime(log.createdAt),
-      needsRealTimeUpdate: this.needsRealTimeUpdate(log.createdAt),
-      timestamp: new Date(log.createdAt),
-    }))
+    return logs.map((log) => {
+      const timestamp = parseApiDate(log.createdAt) ?? new Date(NaN)
+      return {
+        id: String(log.id),
+        title: `${log.tableDisplayName} ${this.formatAuditAction(log.action)}`,
+        description: log.summary || '—',
+        timeAgo: this.formatRelativeTime(log.createdAt),
+        needsRealTimeUpdate: this.needsRealTimeUpdate(log.createdAt),
+        timestamp,
+      }
+    })
   }
 
   async getRecentActivities(limit = 15) {

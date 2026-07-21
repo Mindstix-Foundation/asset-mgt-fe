@@ -1598,9 +1598,13 @@
           )
         } catch (error) {
           console.error('Error exporting employees:', error)
+          const message =
+            error instanceof Error && error.message
+              ? error.message
+              : 'Failed to export employee data. Please try again.'
           this.toastStore.showToast(
             'Export Failed',
-            'Failed to export employee data. Please try again.',
+            message,
             'error'
           )
         } finally {

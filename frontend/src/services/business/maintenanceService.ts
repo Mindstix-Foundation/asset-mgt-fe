@@ -1,4 +1,9 @@
 import apiClient, { apiService } from '../core/apiClient'
+import {
+  filenameFromContentDisposition,
+  parseBlobApiError,
+  triggerBlobDownload,
+} from '@/utils/exportDownload'
 
 export interface Asset {
   id: string
@@ -194,7 +199,7 @@ class MaintenanceService {
     return apiService.get(`/maintenance/asset/${assetId}/history-events${suffix}`)
   }
 
-  // Export maintenance records to Excel
+  // Export maintenance records to Excel (server-side streaming)
   async exportMaintenanceToExcel(params: MaintenanceQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
 
@@ -212,27 +217,14 @@ class MaintenanceService {
         responseType: 'blob',
       })
 
-      const contentDisposition = response.headers['content-disposition']
-      let filename = 'maintenance_export.xlsx'
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
-        if (filenameMatch) {
-          filename = filenameMatch[1]
-        }
-      }
-
-      const blob = response.data
-      const url = globalThis.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      globalThis.URL.revokeObjectURL(url)
+      const filename = filenameFromContentDisposition(
+        response.headers['content-disposition'],
+        'maintenance_export.xlsx',
+      )
+      triggerBlobDownload(response.data, filename)
     } catch (error) {
       console.error('Error exporting maintenance:', error)
-      throw error
+      throw await parseBlobApiError(error)
     }
   }
 

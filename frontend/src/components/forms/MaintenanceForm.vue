@@ -129,7 +129,7 @@
                   <div class="col-md-6">
                     <DatePicker
                       :inputId="'scheduledDate'"
-                      label="Scheduled Date *"
+                      label="Scheduled Date"
                       v-model="formData.scheduledDate"
                       :inputClass="getFieldClass('scheduledDate')"
                       :error-message="fieldErrors.scheduledDate"

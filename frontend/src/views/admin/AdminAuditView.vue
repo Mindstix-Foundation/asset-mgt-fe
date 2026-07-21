@@ -23,8 +23,8 @@
         </div>
       </div>
 
-      <div class="row mb-3 g-1">
-        <div class="col-12 col-md-4 col-lg-1">
+      <div class="row mb-3 g-2 g-lg-3 align-items-end audit-filters">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <SearchableDropdown
             id="audit-entity-filter"
             label="Entity type"
@@ -36,7 +36,7 @@
             @change="onFilterChange"
           />
         </div>
-        <div class="col-12 col-md-4 action-filter-col">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
           <SearchableDropdown
             id="audit-action-filter"
             label="Action"
@@ -48,7 +48,7 @@
             @change="onFilterChange"
           />
         </div>
-        <div class="col-12 col-md-4 col-lg-1">
+        <div class="col-12 col-sm-8 col-md-4 col-lg-5">
           <label class="form-label" for="audit-search">Search</label>
           <div class="search-input-container">
             <i class="fas fa-search search-icon"></i>
@@ -62,7 +62,7 @@
             />
           </div>
         </div>
-        <div class="col-12 col-md-4 col-lg-2">
+        <div class="col-12 col-sm-4 col-md-4 col-lg-2">
           <SearchableDropdown
             id="audit-page-size"
             label="Per page"
@@ -73,11 +73,6 @@
             value-key="value"
             @change="onPageSizeChange"
           />
-        </div>
-        <div class="col-12 col-lg-2 d-flex align-items-end">
-          <small class="text-muted" v-if="!isLoading && totalCount > 0">
-            {{ totalCount.toLocaleString() }} total records
-          </small>
         </div>
       </div>
 
@@ -264,6 +259,7 @@ import { useRouter } from 'vue-router'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
 import { auditApi, type AuditChange, type AuditLogEntry } from '@/services/api/auditApi'
+import { parseApiDate } from '@/utils/date'
 
 const router = useRouter()
 
@@ -438,9 +434,8 @@ const formatValue = (value: unknown) => {
 }
 
 const formatTimestamp = (ts?: string) => {
-  if (!ts) return '—'
-  const d = new Date(ts)
-  if (Number.isNaN(d.getTime())) return '—'
+  const d = parseApiDate(ts)
+  if (!d) return '—'
   return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -451,8 +446,8 @@ const formatTimestamp = (ts?: string) => {
 }
 
 const formatRelative = (ts?: string) => {
-  if (!ts) return ''
-  const d = new Date(ts)
+  const d = parseApiDate(ts)
+  if (!d) return ''
   const diffMs = Date.now() - d.getTime()
   const mins = Math.floor(diffMs / 60000)
   if (mins < 1) return 'Just now'
@@ -499,14 +494,8 @@ onMounted(() => loadLogs())
   color: var(--secondary-purple);
 }
 
-.action-filter-col {
-  max-width: 150px;
-}
-
-@media (max-width: 767.98px) {
-  .action-filter-col {
-    max-width: 100%;
-  }
+.audit-filters .form-label {
+  margin-bottom: 0.35rem;
 }
 
 .audit-card {

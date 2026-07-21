@@ -1,6 +1,11 @@
 import { apiService, type ApiResponse } from '../core/apiClient'
 import apiClient from '../core/apiClient'
 import { secureRandomInt } from '@/utils/random'
+import {
+  filenameFromContentDisposition,
+  parseBlobApiError,
+  triggerBlobDownload,
+} from '@/utils/exportDownload'
 import type {
   Asset,
   AssetListResponse,
@@ -462,11 +467,10 @@ class AssetService {
     }
   }
 
-  // Export assets to Excel (server-side)
+  // Export assets to Excel (server-side streaming)
   async exportAssetsToExcel(params: AssetQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
     
-    // Add all query parameters
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, this.safeStringify(value))
@@ -481,29 +485,14 @@ class AssetService {
         responseType: 'blob',
       })
 
-      // Get filename from Content-Disposition header
-      const contentDisposition = response.headers['content-disposition']
-      let filename = 'assets_export.xlsx'
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
-        if (filenameMatch) {
-          filename = filenameMatch[1]
-        }
-      }
-
-      // Create blob and download
-      const blob = response.data
-      const url = globalThis.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      globalThis.URL.revokeObjectURL(url)
+      const filename = filenameFromContentDisposition(
+        response.headers['content-disposition'],
+        'assets_export.xlsx',
+      )
+      triggerBlobDownload(response.data, filename)
     } catch (error) {
       console.error('Export error:', error)
-      throw error
+      throw await parseBlobApiError(error)
     }
   }
 

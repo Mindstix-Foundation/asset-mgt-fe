@@ -709,7 +709,11 @@ const handleQuickExport = async (reportType: string) => {
     }
   } catch (error) {
     console.error('Error exporting report:', error)
-    showNotification('Failed to export report', 'error')
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Failed to export report'
+    showNotification(message, 'error')
   } finally {
     isExporting.value = false
     exportingType.value = ''
@@ -791,7 +795,11 @@ const handleCustomExport = async (format: string) => {
     showPreviewModal.value = false
   } catch (error) {
     console.error('Error exporting custom report:', error)
-    showNotification('Failed to export custom report', 'error')
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Failed to export custom report'
+    showNotification(message, 'error')
   } finally {
     isExporting.value = false
     exportingType.value = ''

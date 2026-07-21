@@ -2273,7 +2273,11 @@ const exportAssets = async () => {
     
   } catch (error) {
     console.error('Error exporting assets:', error)
-    toastStore.showError('Export Failed', 'Error exporting assets. Please try again.')
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : 'Error exporting assets. Please try again.'
+    toastStore.showError('Export Failed', message)
   } finally {
     isLoading.value = false
   }

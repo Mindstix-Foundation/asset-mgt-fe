@@ -1,6 +1,11 @@
 import { apiService, type ApiResponse } from '../core/apiClient'
 import apiClient from '../core/apiClient'
 import { secureRandomInt } from '@/utils/random'
+import {
+  filenameFromContentDisposition,
+  parseBlobApiError,
+  triggerBlobDownload,
+} from '@/utils/exportDownload'
 
 // Types based on the API specification
 export interface Employee {
@@ -410,11 +415,10 @@ class EmployeeService {
     }
   }
 
-  // Export employees to Excel (server-side)
+  // Export employees to Excel (server-side streaming)
   async exportEmployeesToExcel(params: EmployeeQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
     
-    // Add all query parameters
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
@@ -429,29 +433,14 @@ class EmployeeService {
         responseType: 'blob',
       })
 
-      // Get filename from Content-Disposition header
-      const contentDisposition = response.headers['content-disposition']
-      let filename = 'employees_export.xlsx'
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
-        if (filenameMatch) {
-          filename = filenameMatch[1]
-        }
-      }
-
-      // Create blob and download
-      const blob = response.data
-      const url = globalThis.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      globalThis.URL.revokeObjectURL(url)
+      const filename = filenameFromContentDisposition(
+        response.headers['content-disposition'],
+        'employees_export.xlsx',
+      )
+      triggerBlobDownload(response.data, filename)
     } catch (error) {
       console.error('Error exporting employees:', error)
-      throw error
+      throw await parseBlobApiError(error)
     }
   }
 
