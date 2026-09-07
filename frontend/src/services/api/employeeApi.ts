@@ -8,6 +8,7 @@ export interface EmployeeQueryDto {
   status?: 'ACTIVE' | 'INACTIVE'
   hasAssets?: boolean
   assetCountRange?: string
+  assetTypeId?: number
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
 }

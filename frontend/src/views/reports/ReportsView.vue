@@ -128,7 +128,32 @@
                 />
               </div>
 
-              
+              <div class="col-12 col-md-3 mb-3" v-if="customFilters.reportType === 'employees'">
+                <SearchableDropdown
+                  id="report-asset-count"
+                  label="Asset Count"
+                  placeholder="Search asset counts..."
+                  :items="assetCountOptions"
+                  v-model="selectedAssetCount"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                />
+              </div>
+
+              <div class="col-12 col-md-3 mb-3" v-if="customFilters.reportType === 'employees'">
+                <SearchableDropdown
+                  id="report-employee-asset-type"
+                  label="Asset Type"
+                  placeholder="Search asset types..."
+                  :items="employeeAssetTypeOptions"
+                  v-model="selectedEmployeeAssetType"
+                  :labelKey="'label'"
+                  :valueKey="'value'"
+                  :searchKeys="['label']"
+                  :disabled="isLoadingDropdowns"
+                />
+              </div>
 
               <div class="col-12 col-md-3 mb-3">
                 <SearchableDropdown
@@ -363,6 +388,7 @@ import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/a
 import { dashboardApi } from '@/services/api/dashboardApi'
 import { auditApi } from '@/services/api/auditApi'
 import { assetService } from '@/services/business/assetService'
+import { assetTypeService } from '@/services/api/assetTypeService'
 import { employeeService } from '@/services/business/employeeService'
 import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
@@ -425,8 +451,9 @@ const assetDistributionChartInstance = ref<any | null>(null)
 const customFilters = ref<ReportFilters>({
   reportType: 'assets',
   assetType: '',
+  assetTypeId: '',
+  assetCountRange: '',
   assetStatus: '',
-  
   dateRange: 'last30',
   fromDate: '',
   toDate: ''
@@ -435,11 +462,16 @@ const customFilters = ref<ReportFilters>({
 // Dynamic dropdown data
 const assetTypes = ref<Array<{value: string, label: string}>>([])
 const assetStatuses = ref<Array<{value: string, label: string}>>([])
+const employeeAssetTypeOptions = ref<Array<{value: string, label: string}>>([
+  { value: '', label: 'All Types' }
+])
 const isLoadingDropdowns = ref(false)
 
 // Selected SearchableDropdown models
 const selectedAssetType = ref<SDItem | null>(null)
 const selectedAssetStatus = ref<SDItem | null>(null)
+const selectedAssetCount = ref<SDItem | null>(null)
+const selectedEmployeeAssetType = ref<SDItem | null>(null)
 const selectedReportType = ref<SDItem | null>({ value: 'assets', label: 'Asset Report' })
 const selectedDateRange = ref<SDItem | null>({ value: 'last30', label: 'Last 30 Days' })
 
@@ -447,6 +479,17 @@ const reportTypeOptions = [
   { value: 'assets', label: 'Asset Report' },
   { value: 'employees', label: 'Employee Report' },
   { value: 'maintenance', label: 'Maintenance Report' }
+]
+
+const assetCountOptions = [
+  { value: '', label: 'All' },
+  { value: '0', label: 'No Assets' },
+  { value: '1', label: '1' },
+  { value: '2', label: '2' },
+  { value: '3', label: '3' },
+  { value: '4', label: '4' },
+  { value: '5', label: '5' },
+  { value: '5+', label: '5+' }
 ]
 
 const dateRangeOptions = [
@@ -489,6 +532,12 @@ watch(selectedAssetType, (val: SDItem | null) => {
 })
 watch(selectedAssetStatus, (val: SDItem | null) => {
   customFilters.value.assetStatus = (val?.value as string) ?? ''
+})
+watch(selectedAssetCount, (val: SDItem | null) => {
+  customFilters.value.assetCountRange = (val?.value as string) ?? ''
+})
+watch(selectedEmployeeAssetType, (val: SDItem | null) => {
+  customFilters.value.assetTypeId = (val?.value as string) ?? ''
 })
 
 watch(selectedReportType, (val: SDItem | null) => {
@@ -735,6 +784,11 @@ const buildEmployeeExportParams = (filters: any) => {
   const params: any = {}
   if (filters.fromDate) params.fromDate = filters.fromDate
   if (filters.toDate) params.toDate = filters.toDate
+  if (filters.assetCountRange) params.assetCountRange = filters.assetCountRange
+  if (filters.assetTypeId !== undefined && filters.assetTypeId !== null && filters.assetTypeId !== '') {
+    const parsed = Number(filters.assetTypeId)
+    if (Number.isFinite(parsed)) params.assetTypeId = parsed
+  }
   return params
 }
 
@@ -814,6 +868,11 @@ const buildApiParams = (filters: any, additionalParams: any = {}) => {
   if (filters.assetStatus) params.status = filters.assetStatus
   if (filters.fromDate) params.fromDate = filters.fromDate
   if (filters.toDate) params.toDate = filters.toDate
+  if (filters.assetCountRange) params.assetCountRange = filters.assetCountRange
+  if (filters.assetTypeId !== undefined && filters.assetTypeId !== null && filters.assetTypeId !== '') {
+    const parsed = Number(filters.assetTypeId)
+    if (Number.isFinite(parsed)) params.assetTypeId = parsed
+  }
   
   return params
 }
@@ -955,13 +1014,22 @@ const clearFilters = () => {
   customFilters.value = {
     reportType: 'assets',
     assetType: '',
+    assetTypeId: '',
+    assetCountRange: '',
     assetStatus: '',
     department: '',
     dateRange: 'last30',
     fromDate: '',
     toDate: ''
   }
+  selectedReportType.value = { value: 'assets', label: 'Asset Report' }
+  selectedAssetType.value = null
+  selectedAssetStatus.value = null
+  selectedAssetCount.value = null
+  selectedEmployeeAssetType.value = null
+  selectedDateRange.value = { value: 'last30', label: 'Last 30 Days' }
   showCustomDateRange.value = false
+  handleDateRangeChange()
   showNotification('All filters have been cleared', 'info')
 }
 
@@ -1185,7 +1253,7 @@ const loadDropdownData = async () => {
   try {
     isLoadingDropdowns.value = true
     
-    // Load asset types from asset distribution
+    // Load asset types from asset distribution (name-based for asset reports)
     if (analyticsData.value?.assetDistribution) {
       assetTypes.value = analyticsData.value.assetDistribution
         .filter(item => item.count > 0) // Only show types with assets
@@ -1204,8 +1272,27 @@ const loadDropdownData = async () => {
           label: formatStatus(item.status)
         }))
     }
-    
-    
+
+    // Load asset types with IDs for employee report filters
+    try {
+      const response = await assetTypeService.getAssetTypes({
+        limit: 100,
+        isActive: true,
+        sortBy: 'name',
+        sortOrder: 'asc',
+      })
+      const types = response.data?.assetTypes || []
+      employeeAssetTypeOptions.value = [
+        { value: '', label: 'All Types' },
+        ...types.map((type) => ({
+          value: String(type.id),
+          label: type.name,
+        })),
+      ]
+    } catch (typeError) {
+      console.warn('Failed to load asset types for employee report filters:', typeError)
+      employeeAssetTypeOptions.value = [{ value: '', label: 'All Types' }]
+    }
     
   } catch (error) {
     console.error('Error loading dropdown data:', error)

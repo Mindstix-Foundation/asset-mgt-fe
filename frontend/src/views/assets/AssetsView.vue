@@ -1917,25 +1917,37 @@ const areAllSpecsVisible = computed(() => {
 })
 
 // API Methods
+const getActiveAssetFilters = (): AssetQueryParams => {
+  const params: AssetQueryParams = {
+    search: searchTerm.value || undefined,
+    assetTypeId: selectedType.value
+      ? Number.parseInt(selectedType.value.value as string)
+      : undefined,
+    brandId: selectedBrand.value
+      ? Number.parseInt(selectedBrand.value.value as string)
+      : undefined,
+    status: (selectedStatus.value?.value as any) || undefined,
+    condition: (selectedCondition.value?.value as any) || undefined,
+    sortBy: (selectedSortBy.value?.value as string) || 'assetId',
+    sortOrder: sortAscending.value ? 'asc' : 'desc',
+  }
+
+  const specFilters = specificationFiltersPayload.value
+  if (Object.keys(specFilters).length > 0) {
+    params.specificationFilters = specFilters
+  }
+
+  return params
+}
+
 const loadAssets = async () => {
   try {
     isLoading.value = true
     
     const params: AssetQueryParams = {
+      ...getActiveAssetFilters(),
       page: currentPage.value,
       limit: itemsPerPage.value,
-      search: searchTerm.value || undefined,
-      assetTypeId: selectedType.value ? Number.parseInt(selectedType.value.value as string) : undefined,
-      brandId: selectedBrand.value ? Number.parseInt(selectedBrand.value.value as string) : undefined,
-      status: selectedStatus.value?.value as any || undefined,
-      condition: selectedCondition.value?.value as any || undefined,
-      sortBy: selectedSortBy.value?.value as string || 'assetId',
-      sortOrder: sortAscending.value ? 'asc' : 'desc'
-    }
-
-    const specFilters = specificationFiltersPayload.value
-    if (Object.keys(specFilters).length > 0) {
-      params.specificationFilters = specFilters
     }
 
     const response = await assetService.getAssets(params)
@@ -2255,22 +2267,9 @@ const clearRetireFormValidation = () => {
 const exportAssets = async () => {
   try {
     isLoading.value = true
-    
-    // Build export parameters from current filters
-    const exportParams: any = {
-      // Include current search and filter values
-      search: searchTerm.value || undefined,
-      assetTypeId: selectedType.value ? Number.parseInt(selectedType.value.value as string) : undefined,
-      brandId: selectedBrand.value ? Number.parseInt(selectedBrand.value.value as string) : undefined,
-      status: selectedStatus.value?.value as any || undefined,
-      condition: selectedCondition.value?.value as any || undefined,
-      sortBy: selectedSortBy.value?.value as string || 'assetId',
-      sortOrder: sortAscending.value ? 'asc' : 'desc'
-    }
-    
-    // Use server-side Excel export
-    await assetService.exportAssetsToExcel(exportParams)
-    
+
+    // Export using the exact same filters as the current assets list
+    await assetService.exportAssetsToExcel(getActiveAssetFilters())
   } catch (error) {
     console.error('Error exporting assets:', error)
     const message =

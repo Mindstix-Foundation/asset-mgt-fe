@@ -220,6 +220,18 @@
                     @change="onAssetCountChange"
                   />
                 </div>
+
+                <!-- Asset Type Filter -->
+                <div class="flex-fill">
+                  <SearchableDropdown
+                    id="asset-type-filter"
+                    label="Asset Type"
+                    placeholder="Search asset types..."
+                    :items="assetTypeOptions"
+                    v-model="selectedAssetType"
+                    @change="onAssetTypeChange"
+                  />
+                </div>
                 
                 <!-- Status Filter -->
                 <div class="flex-fill">
@@ -780,6 +792,7 @@
 <script>
   import { employeeService } from '@/services/business/employeeService'
   import { employeeApiService } from '@/services/api/employeeApi'
+  import { assetTypeService } from '@/services/api/assetTypeService'
   import AppPagination from '@/components/ui/pagination/AppPagination.vue'
   import BulkEmployeeUpload from '@/views/employees/BulkEmployeeUpload.vue'
   import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
@@ -806,6 +819,7 @@
         isGridView: false,
         searchTerm: '',
         selectedAssetCount: null,
+        selectedAssetType: null,
         selectedStatus: null,
         selectedSortBy: null,
         sortAscending: false,
@@ -813,6 +827,7 @@
         itemsPerPage: 10,
         selectedEmployee: null,
         employees: [],
+        assetTypeOptions: [{ id: '', name: 'All Types', value: '' }],
         totalEmployees: 0,
         serverTotalPages: 1,
         showFilterDropdown: false,
@@ -843,8 +858,12 @@
         return [
           { id: '', name: 'All', value: '' },
           { id: '0', name: 'No Assets', value: '0' },
-          { id: '1-2', name: '1-2 Assets', value: '1-2' },
-          { id: '3+', name: '3+ Assets', value: '3+' }
+          { id: '1', name: '1', value: '1' },
+          { id: '2', name: '2', value: '2' },
+          { id: '3', name: '3', value: '3' },
+          { id: '4', name: '4', value: '4' },
+          { id: '5', name: '5', value: '5' },
+          { id: '5+', name: '5+', value: '5+' }
         ]
       },
       
@@ -885,6 +904,7 @@
         // Default sort by creation date descending
         this.selectedSortBy = this.sortOptions.find(option => option.value === 'createdAt') || null
       }
+      this.loadAssetTypes()
       this.loadEmployees()
     },
     watch: {
@@ -986,6 +1006,7 @@
       clearFilters() {
         this.searchTerm = ''
         this.selectedAssetCount = null
+        this.selectedAssetType = null
         this.selectedStatus = null
         this.currentPage = 1
         this.loadEmployees()
@@ -1426,14 +1447,10 @@
       async loadEmployees() {
         try {
           // Load employees with server-side pagination
-          const resp = await employeeService.getEmployees({ 
-            page: this.currentPage, 
+          const resp = await employeeService.getEmployees({
+            ...this.getActiveEmployeeFilters(),
+            page: this.currentPage,
             limit: this.itemsPerPage,
-            search: normalizeEmployeeSearchInput(this.searchTerm) || undefined,
-            status: this.selectedStatus?.value || undefined,
-            assetCountRange: this.selectedAssetCount?.value || undefined,
-            sortBy: this.selectedSortBy?.value || 'name',
-            sortOrder: this.sortAscending ? 'asc' : 'desc'
           })
           
           const list = resp.data.employees || []
@@ -1488,6 +1505,36 @@
           this.serverTotalPages = 1
         }
       },
+      getActiveEmployeeFilters() {
+        const assetTypeRaw = this.selectedAssetType?.value
+        const assetTypeId =
+          assetTypeRaw !== undefined &&
+          assetTypeRaw !== null &&
+          assetTypeRaw !== ''
+            ? Number(assetTypeRaw)
+            : undefined
+        const statusRaw = this.selectedStatus?.value
+          ? String(this.selectedStatus.value).toUpperCase()
+          : undefined
+        const assetCountRaw = this.selectedAssetCount?.value
+
+        return {
+          search: normalizeEmployeeSearchInput(this.searchTerm) || undefined,
+          status:
+            statusRaw === 'ACTIVE' || statusRaw === 'INACTIVE'
+              ? statusRaw
+              : undefined,
+          assetCountRange:
+            assetCountRaw !== undefined &&
+            assetCountRaw !== null &&
+            assetCountRaw !== ''
+              ? assetCountRaw
+              : undefined,
+          assetTypeId: Number.isFinite(assetTypeId) ? assetTypeId : undefined,
+          sortBy: this.selectedSortBy?.value || 'name',
+          sortOrder: this.sortAscending ? 'asc' : 'desc',
+        }
+      },
       // Change handlers for searchable dropdowns
       onSortByChange(item) {
         this.selectedSortBy = item
@@ -1498,10 +1545,37 @@
         this.selectedAssetCount = item
         this.filterEmployees()
       },
+
+      onAssetTypeChange(item) {
+        this.selectedAssetType = item
+        this.filterEmployees()
+      },
       
       onStatusChange(item) {
         this.selectedStatus = item
         this.filterEmployees()
+      },
+      async loadAssetTypes() {
+        try {
+          const response = await assetTypeService.getAssetTypes({
+            limit: 100,
+            isActive: true,
+            sortBy: 'name',
+            sortOrder: 'asc',
+          })
+          const types = response.data?.assetTypes || []
+          this.assetTypeOptions = [
+            { id: '', name: 'All Types', value: '' },
+            ...types.map((type) => ({
+              id: type.id,
+              name: type.name,
+              value: String(type.id),
+            })),
+          ]
+        } catch (error) {
+          console.warn('Failed to load asset types for filter:', error)
+          this.assetTypeOptions = [{ id: '', name: 'All Types', value: '' }]
+        }
       },
       // Close dropdown when clicking outside
       handleClickOutside(event) {
@@ -1586,11 +1660,11 @@
         }
         return classes[condition] || 'badge-secondary'
       },
-      // Export employees to Excel
+      // Export employees to Excel using the same filters as the current list view
       async exportEmployees() {
         try {
           this.isExporting = true
-          await employeeService.exportEmployeesToExcel()
+          await employeeService.exportEmployeesToExcel(this.getActiveEmployeeFilters())
           this.toastStore.showToast(
             'Export Successful',
             'Employee data has been exported to Excel successfully!',

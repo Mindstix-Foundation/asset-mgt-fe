@@ -467,10 +467,10 @@ class AssetService {
     }
   }
 
-  // Export assets to Excel (server-side streaming)
+  // Export assets to Excel (server-side streaming) using active list filters
   async exportAssetsToExcel(params: AssetQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
-    
+
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, this.safeStringify(value))
@@ -478,8 +478,10 @@ class AssetService {
     }
 
     const queryString = searchParams.toString()
-    const endpoint = queryString ? `${this.baseEndpoint}/export?${queryString}` : `${this.baseEndpoint}/export`
-    
+    const endpoint = queryString
+      ? `${this.baseEndpoint}/export?${queryString}`
+      : `${this.baseEndpoint}/export`
+
     try {
       const response = await apiClient.get(endpoint, {
         responseType: 'blob',

@@ -68,7 +68,10 @@ export interface EmployeeQueryParams {
   search?: string
   status?: 'ACTIVE' | 'INACTIVE'
   hasAssets?: boolean
-  assetCountRange?: '0' | '1-2' | '3+'
+  assetCountRange?: '0' | '1' | '2' | '3' | '4' | '5' | '5+'
+  assetTypeId?: number
+  fromDate?: string
+  toDate?: string
   sortBy?: 'name' | 'employeeId' | 'email' | 'status' | 'createdAt'
   sortOrder?: 'asc' | 'desc'
 }
@@ -170,6 +173,9 @@ class EmployeeService {
     }
     if (params?.hasAssets !== undefined) searchParams.append('hasAssets', params.hasAssets.toString())
     if (params?.assetCountRange) searchParams.append('assetCountRange', params.assetCountRange)
+    if (params?.assetTypeId) searchParams.append('assetTypeId', params.assetTypeId.toString())
+    if (params?.fromDate) searchParams.append('fromDate', params.fromDate)
+    if (params?.toDate) searchParams.append('toDate', params.toDate)
     if (params?.sortBy) searchParams.append('sortBy', params.sortBy)
     if (params?.sortOrder) searchParams.append('sortOrder', params.sortOrder)
 
@@ -415,10 +421,10 @@ class EmployeeService {
     }
   }
 
-  // Export employees to Excel (server-side streaming)
+  // Export employees to Excel (server-side streaming) using active list filters
   async exportEmployeesToExcel(params: EmployeeQueryParams = {}): Promise<void> {
     const searchParams = new URLSearchParams()
-    
+
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined && value !== null && value !== '') {
         searchParams.append(key, value.toString())
@@ -426,8 +432,10 @@ class EmployeeService {
     }
 
     const queryString = searchParams.toString()
-    const endpoint = queryString ? `/employees/export?${queryString}` : '/employees/export'
-    
+    const endpoint = queryString
+      ? `/employees/export?${queryString}`
+      : '/employees/export'
+
     try {
       const response = await apiClient.get(endpoint, {
         responseType: 'blob',

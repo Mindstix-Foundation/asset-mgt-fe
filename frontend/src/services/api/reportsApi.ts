@@ -4,6 +4,8 @@ import apiClient from '../core/apiClient'
 export interface ReportFilters {
   reportType?: 'assets' | 'employees' | 'maintenance' | 'audit'
   assetType?: string
+  assetTypeId?: number | string
+  assetCountRange?: string
   assetStatus?: string
   department?: string
   dateRange?: string
