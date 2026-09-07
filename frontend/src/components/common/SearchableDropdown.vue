@@ -1,6 +1,6 @@
 <template>
   <div class="searchable-dropdown-wrapper" :class="{ 'is-open': showDropdown }">
-    <label :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
+    <label v-if="label" :for="id" class="form-label">{{ label }} <span v-if="required" class="text-danger">*</span></label>
     <div class="dropdown" ref="dropdownRef">
       <!-- SonarQube false positive: aria-expanded and aria-controls are present via Vue binding -->
       <input

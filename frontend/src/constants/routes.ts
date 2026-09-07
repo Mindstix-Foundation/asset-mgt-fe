@@ -29,6 +29,10 @@ export const ROUTE_NAMES = {
   ISSUE_ASSET: 'issue-asset',
   COLLECT_ASSET: 'collect-asset',
   MANAGE_ASSET_CATEGORIES: 'manage-asset-categories',
+  QR_SCANNER: 'qr-scanner',
+
+  // Public (no auth)
+  PUBLIC_ASSET: 'public-asset',
 
   // Employee Routes
   EMPLOYEES: 'employees',
@@ -38,6 +42,9 @@ export const ROUTE_NAMES = {
   BULK_EMPLOYEE_UPLOAD: 'bulk-employee-upload',
   MANAGE_EMPLOYEES: 'manage-employees',
   MANAGE_DESIGNATIONS: 'manage-designations',
+
+  // License Routes
+  SOFTWARE_LICENSES: 'software-licenses',
 
   // Vendor Routes
   VENDORS: 'vendors',
@@ -91,6 +98,8 @@ export const ROUTE_PATHS = {
   [ROUTE_NAMES.ISSUE_ASSET]: '/assets/issue',
   [ROUTE_NAMES.COLLECT_ASSET]: '/assets/collect',
   [ROUTE_NAMES.MANAGE_ASSET_CATEGORIES]: '/assets/manage-categories',
+  [ROUTE_NAMES.QR_SCANNER]: '/qr-scanner',
+  [ROUTE_NAMES.PUBLIC_ASSET]: '/a/:token',
 
   // Employees
   [ROUTE_NAMES.EMPLOYEES]: '/employees',
@@ -100,6 +109,9 @@ export const ROUTE_PATHS = {
   [ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD]: '/employees/bulk-upload',
   [ROUTE_NAMES.MANAGE_EMPLOYEES]: '/employees/manage',
   [ROUTE_NAMES.MANAGE_DESIGNATIONS]: '/employees/manage-designations',
+
+  // Licenses
+  [ROUTE_NAMES.SOFTWARE_LICENSES]: '/licenses',
 
   // Vendors
   [ROUTE_NAMES.VENDORS]: '/vendors',
@@ -146,6 +158,8 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.ISSUE_ASSET]: 'Issue Asset',
   [ROUTE_NAMES.COLLECT_ASSET]: 'Collect Asset',
   [ROUTE_NAMES.MANAGE_ASSET_CATEGORIES]: 'Manage Categories',
+  [ROUTE_NAMES.QR_SCANNER]: 'QR Scanner',
+  [ROUTE_NAMES.PUBLIC_ASSET]: 'Asset Info',
   [ROUTE_NAMES.EMPLOYEES]: 'Employees',
   [ROUTE_NAMES.ADD_EMPLOYEE]: 'Add Employee',
   [ROUTE_NAMES.EDIT_EMPLOYEE]: 'Edit Employee',
@@ -153,6 +167,7 @@ export const ROUTE_TITLES = {
   [ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD]: 'Bulk Employee Upload',
   [ROUTE_NAMES.MANAGE_EMPLOYEES]: 'Manage Employees',
   [ROUTE_NAMES.MANAGE_DESIGNATIONS]: 'Manage Designations',
+  [ROUTE_NAMES.SOFTWARE_LICENSES]: 'Software Licenses',
   [ROUTE_NAMES.VENDORS]: 'Vendors',
   [ROUTE_NAMES.ADD_VENDOR]: 'Add Vendor',
   [ROUTE_NAMES.EDIT_VENDOR]: 'Edit Vendor',

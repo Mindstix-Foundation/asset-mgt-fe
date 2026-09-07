@@ -39,8 +39,9 @@ const isAuthEndpoint = (url?: string): boolean => {
 // Helper: Check if user is on a login/auth page
 const isOnAuthPage = (): boolean => {
   if (globalThis.window === undefined) return false
-  const authPages = ['/', '/login', '/forgot-password', '/reset-password']
-  return authPages.includes(globalThis.window.location.pathname)
+  const path = globalThis.window.location.pathname
+  const authPages = ['/', '/login', '/forgot-password', '/reset-password', '/register-organization']
+  return authPages.includes(path) || path.startsWith('/a/')
 }
 
 // Helper: Dispatch auth expired event with debounce

@@ -90,6 +90,34 @@ export interface DetailedAsset {
   purchaseCost?: number
   warrantyStartDate?: string
   warrantyEndDate?: string
+  depreciationMethod?: 'STRAIGHT_LINE' | 'REDUCING_BALANCE' | 'INITIAL_HIGH_REDUCING' | null
+  usefulLifeMonths?: number | null
+  salvageValue?: number | null
+  depreciationRatePercent?: number | null
+  firstYearDepreciationRatePercent?: number | null
+  depreciation?: {
+    method: string
+    usefulLifeMonths: number | null
+    salvageValue: number
+    purchaseCost: number
+    depreciationRatePercent: number | null
+    firstYearDepreciationRatePercent: number | null
+    yearsElapsed: number
+    monthsElapsed: number
+    monthlyDepreciation: number | null
+    accumulatedDepreciation: number
+    bookValue: number
+    depreciationPercent: number
+    isFullyDepreciated: boolean
+    schedule?: Array<{
+      year: number
+      openingValue: number
+      ratePercent: number
+      depreciation: number
+      closingValue: number
+      isPartialYear: boolean
+    }>
+  } | null
   notes?: string
   retirementDate?: string
   retirementReason?: string

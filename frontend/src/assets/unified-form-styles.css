@@ -238,7 +238,6 @@
 .container-fluid.py-4 .form-control, 
 .container-fluid.py-4 .form-select {
     height: 40px;
-    padding: 0.75rem;
     font-size: 1rem;
     border: 1px solid #dee2e6;
     border-radius: 0.5rem;
@@ -249,6 +248,15 @@
     line-height: 1.5;
     box-sizing: border-box;
     width: 100%;
+}
+
+.container-fluid.py-4 .form-control {
+    padding: 0.75rem;
+}
+
+/* Selects need tighter vertical padding + right space for caret so text isn't clipped */
+.container-fluid.py-4 .form-select {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
 }
 
 .container-fluid.py-4 .form-floating .form-control, 
@@ -472,9 +480,16 @@
 .form-control, .form-select {
   border: 2px solid #999999;
   border-radius: 0.5rem;
-  padding: 0.75rem;
   transition: all 0.2s ease;
   color: #1f2937;
+}
+
+.form-control {
+  padding: 0.75rem;
+}
+
+.form-select {
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
 }
 
 .form-control::placeholder {

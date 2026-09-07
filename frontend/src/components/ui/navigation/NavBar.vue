@@ -39,10 +39,14 @@
               {{ item.name }}
             </RouterLink>
           </li>
-          <li v-if="!isSuperAdmin" class="nav-item nav-item-disabled">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+          <li v-if="!isSuperAdmin" class="nav-item">
+            <RouterLink
+              to="/app/qr-scanner"
+              class="nav-link"
+              :class="{ active: isActiveRoute('/app/qr-scanner') }"
+            >
               QR Scanner
-            </a>
+            </RouterLink>
           </li>
         </ul>
         
@@ -102,10 +106,10 @@
             </RouterLink>
           </li>
           <li v-if="!isSuperAdmin" class="sidebar-nav-item">
-            <a class="sidebar-nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+            <RouterLink to="/app/qr-scanner" class="sidebar-nav-link" @click="closeMobileMenu">
               <i class="fas fa-qrcode sidebar-nav-icon"></i>
               QR Scanner
-            </a>
+            </RouterLink>
           </li>
         </ul>
       </nav>
@@ -186,8 +190,9 @@ const navigationItems = computed(() => {
   }
   return [
     { name: 'Dashboard', path: '/app/dashboard' },
-    { name: 'Assets & Inventory', path: '/app/assets' },
+    { name: 'Assets', path: '/app/assets' },
     { name: 'Employees', path: '/app/employees' },
+    { name: 'Licenses', path: '/app/licenses' },
     { name: 'Maintenance', path: '/app/maintenance' },
     { name: 'Vendors', path: '/app/vendors' },
     { name: 'Reports', path: '/app/reports' },
@@ -229,13 +234,12 @@ const handleProfile = () => {
   router.push('/app/profile')
 }
 
-const handleQRScanner = () => {}
-
 const getNavIcon = (itemName: string) => {
   const icons: Record<string, string> = {
     Dashboard: 'fas fa-tachometer-alt',
-    'Assets & Inventory': 'fas fa-boxes',
+    'Assets': 'fas fa-boxes',
     Employees: 'fas fa-users',
+    Licenses: 'fas fa-key',
     Maintenance: 'fas fa-tools',
     Vendors: 'fas fa-handshake',
     Reports: 'fas fa-chart-bar',

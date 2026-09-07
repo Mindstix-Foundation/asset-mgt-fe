@@ -178,6 +178,23 @@ class AssetApiService {
     }
   }
 
+  // Get or create QR token + public URL for an asset
+  async getAssetQr(id: number): Promise<{
+    message: string
+    data: { token: string; url: string; assetId: string }
+  }> {
+    try {
+      const response = await apiClient.get<{
+        message: string
+        data: { token: string; url: string; assetId: string }
+      }>(`${this.baseURL}/${id}/qr`)
+      return response.data
+    } catch (error: any) {
+      console.error('Error fetching asset QR:', error)
+      throw this.handleError(error)
+    }
+  }
+
   // Get assets for dropdown selection (minimal data)
   async getAssetsForDropdowns(params: {
     status?: AssetStatus

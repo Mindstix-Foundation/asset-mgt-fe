@@ -264,6 +264,7 @@ import { useRouter } from 'vue-router'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
 import { auditApi, type AuditChange, type AuditLogEntry } from '@/services/api/auditApi'
+import { parseApiDate } from '@/utils/date'
 
 const router = useRouter()
 
@@ -439,8 +440,8 @@ const formatValue = (value: unknown) => {
 
 const formatTimestamp = (ts?: string) => {
   if (!ts) return '—'
-  const d = new Date(ts)
-  if (Number.isNaN(d.getTime())) return '—'
+  const d = parseApiDate(ts)
+  if (!d) return '—'
   return d.toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -452,7 +453,8 @@ const formatTimestamp = (ts?: string) => {
 
 const formatRelative = (ts?: string) => {
   if (!ts) return ''
-  const d = new Date(ts)
+  const d = parseApiDate(ts)
+  if (!d) return ''
   const diffMs = Date.now() - d.getTime()
   const mins = Math.floor(diffMs / 60000)
   if (mins < 1) return 'Just now'

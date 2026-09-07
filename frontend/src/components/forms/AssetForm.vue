@@ -398,6 +398,92 @@
                 </div>
               </fieldset>
 
+              <!-- Section 3b: Depreciation -->
+              <fieldset class="form-fieldset" :disabled="!canConfigureDepreciation">
+                <legend class="form-legend">Depreciation (Optional)</legend>
+                <div class="form-text mb-3" v-if="!canConfigureDepreciation">
+                  Enter purchase date and purchase cost first to configure depreciation.
+                </div>
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="form-searchable-dropdown">
+                      <SearchableDropdown
+                        id="depreciationMethod"
+                        label="Method"
+                        placeholder="Select depreciation method..."
+                        :items="depreciationMethodItems"
+                        v-model="selectedDepreciationMethod"
+                        :disabled="!canConfigureDepreciation"
+                        @change="onDepreciationMethodChange"
+                      />
+                    </div>
+                    <div class="form-text">{{ depreciationHelpText }}</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="salvageValue" class="form-label">Salvage Value (₹)</label>
+                    <input
+                      id="salvageValue"
+                      type="number"
+                      class="form-control"
+                      v-model="formData.salvageValue"
+                      min="0"
+                      step="0.01"
+                      placeholder="0"
+                      :disabled="!canConfigureDepreciation || !formData.depreciationMethod"
+                    >
+                    <div class="form-text">Minimum residual book value</div>
+                  </div>
+                  <div v-if="formData.depreciationMethod === 'STRAIGHT_LINE'" class="col-md-6">
+                    <label for="usefulLifeMonths" class="form-label">Useful Life (months)</label>
+                    <input
+                      id="usefulLifeMonths"
+                      type="number"
+                      class="form-control"
+                      v-model="formData.usefulLifeMonths"
+                      min="1"
+                      placeholder="e.g. 36"
+                      :disabled="!canConfigureDepreciation"
+                    >
+                  </div>
+                  <div
+                    v-if="formData.depreciationMethod === 'REDUCING_BALANCE' || formData.depreciationMethod === 'INITIAL_HIGH_REDUCING'"
+                    class="col-md-6"
+                  >
+                    <label for="depreciationRatePercent" class="form-label">
+                      {{ formData.depreciationMethod === 'INITIAL_HIGH_REDUCING' ? 'Ongoing Rate (% / year)' : 'Annual Rate (% / year)' }}
+                    </label>
+                    <input
+                      id="depreciationRatePercent"
+                      type="number"
+                      class="form-control"
+                      v-model="formData.depreciationRatePercent"
+                      min="0.01"
+                      max="100"
+                      step="0.01"
+                      placeholder="e.g. 10"
+                      :disabled="!canConfigureDepreciation"
+                    >
+                  </div>
+                  <div
+                    v-if="formData.depreciationMethod === 'INITIAL_HIGH_REDUCING'"
+                    class="col-md-6"
+                  >
+                    <label for="firstYearDepreciationRatePercent" class="form-label">Year 1 Rate (% / year)</label>
+                    <input
+                      id="firstYearDepreciationRatePercent"
+                      type="number"
+                      class="form-control"
+                      v-model="formData.firstYearDepreciationRatePercent"
+                      min="0.01"
+                      max="100"
+                      step="0.01"
+                      placeholder="e.g. 40"
+                      :disabled="!canConfigureDepreciation"
+                    >
+                  </div>
+                </div>
+              </fieldset>
+
               <!-- Section 4: Location & Status -->
               <fieldset class="form-fieldset">
                 <legend class="form-legend">Location & Status</legend>
@@ -530,7 +616,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick, toRaw } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, toRaw, watch } from 'vue'
 import { secureRandomInt } from '@/utils/random'
 import { assetService } from '@/services/business/assetService'
 import NotesTextarea from '../common/NotesTextarea.vue'
@@ -601,6 +687,11 @@ const formData = reactive({
   purchaseCost: '',
   warrantyStartDate: '',
   warrantyEndDate: '',
+  depreciationMethod: '' as '' | 'STRAIGHT_LINE' | 'REDUCING_BALANCE' | 'INITIAL_HIGH_REDUCING',
+  usefulLifeMonths: '',
+  salvageValue: '',
+  depreciationRatePercent: '',
+  firstYearDepreciationRatePercent: '',
   location: '' as string,
   condition: 'NEW',
   status: 'NON_ASSIGNED',
@@ -678,6 +769,7 @@ const getSpecDropdownItems = (field: SpecField): Item[] => {
 const selectedVendor = ref<Item | null>(null)
 const selectedCondition = ref<Item | null>(null)
 const selectedStatus = ref<Item | null>(null)
+const selectedDepreciationMethod = ref<Item | null>(null)
 const selectedLocation = ref<Item | null>(null)
 
 const errors = reactive({
@@ -734,6 +826,42 @@ const todayDate = computed(() => new Date().toISOString().split('T')[0])
 // Warranty end date minimum (based on warranty start date)
 const warrantyEndDateMin = computed(() => {
   return formData.warrantyStartDate || ''
+})
+
+const depreciationHelpText = computed(() => {
+  if (!canConfigureDepreciation.value) {
+    return 'Requires purchase date and purchase cost'
+  }
+  switch (formData.depreciationMethod) {
+    case 'STRAIGHT_LINE':
+      return 'Equal amount each month over useful life'
+    case 'REDUCING_BALANCE':
+      return 'Fixed % of remaining book value each year (WDV)'
+    case 'INITIAL_HIGH_REDUCING':
+      return 'Higher % in year 1, then fixed % of remaining value'
+    default:
+      return 'Uses purchase cost and purchase date'
+  }
+})
+
+const canConfigureDepreciation = computed(() => {
+  const cost = Number.parseFloat(String(formData.purchaseCost ?? ''))
+  return Boolean(formData.purchaseDate) && Number.isFinite(cost) && cost > 0
+})
+
+const clearDepreciationSelection = () => {
+  selectedDepreciationMethod.value = { id: 'NONE', name: 'None', value: '' }
+  formData.depreciationMethod = ''
+  formData.usefulLifeMonths = ''
+  formData.salvageValue = ''
+  formData.depreciationRatePercent = ''
+  formData.firstYearDepreciationRatePercent = ''
+}
+
+watch(canConfigureDepreciation, (enabled) => {
+  if (!enabled && formData.depreciationMethod) {
+    clearDepreciationSelection()
+  }
 })
 
 // Transform API data to SearchableDropdown format
@@ -815,6 +943,23 @@ const conditionItems = computed(() => {
     ...baseConditions
   ]
 })
+
+const depreciationMethodItems = computed(() => [
+  { id: 'NONE', name: 'None', value: '' },
+  { id: 'STRAIGHT_LINE', name: 'Straight Line', value: 'STRAIGHT_LINE' },
+  { id: 'REDUCING_BALANCE', name: 'Reducing Balance (WDV)', value: 'REDUCING_BALANCE' },
+  {
+    id: 'INITIAL_HIGH_REDUCING',
+    name: 'High Year-1 + Reducing Balance',
+    value: 'INITIAL_HIGH_REDUCING',
+  },
+])
+
+const DEPRECIATION_METHOD_LABEL_MAP: Record<string, string> = {
+  STRAIGHT_LINE: 'Straight Line',
+  REDUCING_BALANCE: 'Reducing Balance (WDV)',
+  INITIAL_HIGH_REDUCING: 'High Year-1 + Reducing Balance',
+}
 
 const statusItems = computed(() => {
   return availableStatusOptions.value.map(option => ({
@@ -1606,6 +1751,31 @@ const onConditionChange = (item: Item | null) => {
   validateFieldInline('condition')
 }
 
+const onDepreciationMethodChange = (item: Item | null) => {
+  selectedDepreciationMethod.value = item
+  const method = item?.value != null ? String(item.value) : ''
+  formData.depreciationMethod = method as
+    | ''
+    | 'STRAIGHT_LINE'
+    | 'REDUCING_BALANCE'
+    | 'INITIAL_HIGH_REDUCING'
+
+  if (!method) {
+    formData.usefulLifeMonths = ''
+    formData.salvageValue = ''
+    formData.depreciationRatePercent = ''
+    formData.firstYearDepreciationRatePercent = ''
+  } else if (method === 'STRAIGHT_LINE') {
+    formData.depreciationRatePercent = ''
+    formData.firstYearDepreciationRatePercent = ''
+  } else if (method === 'REDUCING_BALANCE') {
+    formData.usefulLifeMonths = ''
+    formData.firstYearDepreciationRatePercent = ''
+  } else if (method === 'INITIAL_HIGH_REDUCING') {
+    formData.usefulLifeMonths = ''
+  }
+}
+
 const onStatusChange = (item: Item | null) => {
   selectedStatus.value = item
   formData.status = item && item.value ? item.value.toString() : 'NON_ASSIGNED'
@@ -1867,6 +2037,73 @@ const processSpecifications = (original: any, assetData: any) => {
   }
 }
 
+const buildDepreciationPayload = () => {
+  const method = formData.depreciationMethod || null
+  return {
+    depreciationMethod: method,
+    usefulLifeMonths:
+      method === 'STRAIGHT_LINE' && formData.usefulLifeMonths
+        ? Number.parseInt(formData.usefulLifeMonths.toString(), 10)
+        : null,
+    salvageValue: method
+      ? formData.salvageValue !== '' && formData.salvageValue != null
+        ? Number.parseFloat(formData.salvageValue.toString())
+        : 0
+      : null,
+    depreciationRatePercent:
+      method === 'REDUCING_BALANCE' || method === 'INITIAL_HIGH_REDUCING'
+        ? formData.depreciationRatePercent !== '' &&
+          formData.depreciationRatePercent != null
+          ? Number.parseFloat(formData.depreciationRatePercent.toString())
+          : null
+        : null,
+    firstYearDepreciationRatePercent:
+      method === 'INITIAL_HIGH_REDUCING'
+        ? formData.firstYearDepreciationRatePercent !== '' &&
+          formData.firstYearDepreciationRatePercent != null
+          ? Number.parseFloat(formData.firstYearDepreciationRatePercent.toString())
+          : null
+        : null,
+  }
+}
+
+const processDepreciationFields = (original: any, assetData: any) => {
+  const next = buildDepreciationPayload()
+  const prevMethod = original.depreciationMethod || null
+  const prevUsefulLife = original.usefulLifeMonths ?? null
+  const prevSalvage =
+    original.salvageValue !== undefined && original.salvageValue !== null
+      ? Number(original.salvageValue)
+      : null
+  const prevRate =
+    original.depreciationRatePercent !== undefined &&
+    original.depreciationRatePercent !== null
+      ? Number(original.depreciationRatePercent)
+      : null
+  const prevFirstYear =
+    original.firstYearDepreciationRatePercent !== undefined &&
+    original.firstYearDepreciationRatePercent !== null
+      ? Number(original.firstYearDepreciationRatePercent)
+      : null
+
+  if (next.depreciationMethod !== prevMethod) {
+    assetData.depreciationMethod = next.depreciationMethod
+  }
+  if (next.usefulLifeMonths !== prevUsefulLife) {
+    assetData.usefulLifeMonths = next.usefulLifeMonths
+  }
+  if (next.salvageValue !== prevSalvage) {
+    assetData.salvageValue = next.salvageValue
+  }
+  if (next.depreciationRatePercent !== prevRate) {
+    assetData.depreciationRatePercent = next.depreciationRatePercent
+  }
+  if (next.firstYearDepreciationRatePercent !== prevFirstYear) {
+    assetData.firstYearDepreciationRatePercent =
+      next.firstYearDepreciationRatePercent
+  }
+}
+
 const buildEditModeAssetData = (): any => {
   const original = originalAssetData.value
   const assetData: any = {}
@@ -1875,6 +2112,7 @@ const buildEditModeAssetData = (): any => {
   processVendorId(original, assetData)
   processIdentityFields(original, assetData)
   processSpecifications(original, assetData)
+  processDepreciationFields(original, assetData)
 
   return assetData
 }
@@ -1886,6 +2124,7 @@ const buildAddModeAssetData = (): any => {
 
   // Build specifications data
   const specificationsData = buildSpecificationsData()
+  const depreciation = buildDepreciationPayload()
   
   return {
     assetId: formData.assetId,
@@ -1898,6 +2137,7 @@ const buildAddModeAssetData = (): any => {
     purchaseCost: formData.purchaseCost ? Number.parseFloat(formData.purchaseCost.toString()) : undefined,
     warrantyStartDate: normalizeOptionalField(formData.warrantyStartDate),
     warrantyEndDate: normalizeOptionalField(formData.warrantyEndDate),
+    ...depreciation,
     notes: normalizeOptionalField(formData.notes),
     assetTypeId: Number.parseInt(formData.assetTypeId!),
     brandId: Number.parseInt(formData.brandId!),
@@ -2425,6 +2665,35 @@ const populateFormDataFromAsset = (asset: any) => {
   formData.purchaseDate = ensureDateFormat(purchaseDate)
   formData.warrantyStartDate = ensureDateFormat(warrantyStartDate)
   formData.warrantyEndDate = ensureDateFormat(warrantyEndDate)
+
+  formData.depreciationMethod = (asset.depreciationMethod || '') as
+    | ''
+    | 'STRAIGHT_LINE'
+    | 'REDUCING_BALANCE'
+    | 'INITIAL_HIGH_REDUCING'
+  if (asset.depreciationMethod) {
+    selectedDepreciationMethod.value = {
+      id: asset.depreciationMethod,
+      name:
+        DEPRECIATION_METHOD_LABEL_MAP[asset.depreciationMethod] ||
+        asset.depreciationMethod,
+      value: asset.depreciationMethod,
+    }
+  } else {
+    selectedDepreciationMethod.value = { id: 'NONE', name: 'None', value: '' }
+  }
+  formData.usefulLifeMonths =
+    asset.usefulLifeMonths != null ? String(asset.usefulLifeMonths) : ''
+  formData.salvageValue =
+    asset.salvageValue != null ? String(asset.salvageValue) : ''
+  formData.depreciationRatePercent =
+    asset.depreciationRatePercent != null
+      ? String(asset.depreciationRatePercent)
+      : ''
+  formData.firstYearDepreciationRatePercent =
+    asset.firstYearDepreciationRatePercent != null
+      ? String(asset.firstYearDepreciationRatePercent)
+      : ''
   
   // Convert null values to empty strings for string fields
   formData.notes = formData.notes ?? ''
@@ -2453,6 +2722,22 @@ const storeOriginalAssetData = (asset: any) => {
     assetTypeId: asset.assetTypeId,
     brandId: asset.brandId,
     modelId: asset.modelId,
+    depreciationMethod: asset.depreciationMethod || null,
+    usefulLifeMonths: asset.usefulLifeMonths ?? null,
+    salvageValue:
+      asset.salvageValue !== undefined && asset.salvageValue !== null
+        ? Number(asset.salvageValue)
+        : null,
+    depreciationRatePercent:
+      asset.depreciationRatePercent !== undefined &&
+      asset.depreciationRatePercent !== null
+        ? Number(asset.depreciationRatePercent)
+        : null,
+    firstYearDepreciationRatePercent:
+      asset.firstYearDepreciationRatePercent !== undefined &&
+      asset.firstYearDepreciationRatePercent !== null
+        ? Number(asset.firstYearDepreciationRatePercent)
+        : null,
     specifications: asset.specifications && typeof asset.specifications === 'object'
       ? cloneJsonLike(asset.specifications as object)
       : undefined
@@ -2544,6 +2829,7 @@ const loadDependentData = async (asset: any) => {
 const initializeNewAsset = async () => {
   await generateAssetId()
   selectedCondition.value = createDropdownItem('NEW', 'New')
+  selectedDepreciationMethod.value = { id: 'NONE', name: 'None', value: '' }
   
   // Wait for DOM to be updated before applying validation
   await nextTick()

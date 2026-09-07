@@ -149,6 +149,7 @@ import {
   type Notification,
 } from '@/services/api/notificationService'
 import { ROUTE_NAMES } from '@/constants/routes'
+import { parseApiDate } from '@/utils/date'
 
 const notifications = ref<Notification[]>([])
 const unreadCount = ref(0)
@@ -320,7 +321,9 @@ const handleMarkAllAsRead = async () => {
 }
 
 const formatTime = (dateString: string) => {
-  const date = new Date(dateString)
+  const date = parseApiDate(dateString)
+  if (!date) return '—'
+
   const now = new Date()
   const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
 
@@ -332,13 +335,15 @@ const formatTime = (dateString: string) => {
   return date.toLocaleDateString()
 }
 
-const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString('en-US', {
+const formatDate = (dateString: string) => {
+  const date = parseApiDate(dateString)
+  if (!date) return '—'
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
-</script>
+}</script>
 
 <style scoped>
 .notifications-page {

@@ -33,6 +33,12 @@ const router = createRouter({
       component: () => import('../views/auth/ResetPasswordView.vue'),
     },
     {
+      path: '/a/:token',
+      name: ROUTE_NAMES.PUBLIC_ASSET,
+      component: () => import('../views/public/PublicAssetView.vue'),
+      meta: { public: true },
+    },
+    {
       path: '/app',
       component: MainLayout,
       redirect: '/app/dashboard',
@@ -83,6 +89,11 @@ const router = createRouter({
           component: () => import('../views/assets/BulkAssetUpload.vue'),
         },
         {
+          path: 'qr-scanner',
+          name: ROUTE_NAMES.QR_SCANNER,
+          component: () => import('../views/assets/QrScannerView.vue'),
+        },
+        {
           path: 'employees',
           name: ROUTE_NAMES.EMPLOYEES,
           component: () => import('../views/employees/EmployeesView.vue'),
@@ -116,6 +127,11 @@ const router = createRouter({
           path: 'employees/bulk-upload',
           name: ROUTE_NAMES.BULK_EMPLOYEE_UPLOAD,
           component: () => import('../views/employees/BulkEmployeeUpload.vue'),
+        },
+        {
+          path: 'licenses',
+          name: ROUTE_NAMES.SOFTWARE_LICENSES,
+          component: () => import('../views/licenses/SoftwareLicensesView.vue'),
         },
         {
           path: 'maintenance',
@@ -199,7 +215,16 @@ const router = createRouter({
 })
 
 // Public routes that don't require authentication
-const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/register-organization']
+const publicRoutes = [
+  '/',
+  '/login',
+  '/forgot-password',
+  '/reset-password',
+  '/register-organization',
+]
+
+const isPublicRoute = (path: string) =>
+  publicRoutes.includes(path) || path.startsWith('/a/')
 
 const homeForUser = (authStore: ReturnType<typeof useAuthStore>) => {
   if (isPlatformUser(authStore.user)) {
@@ -221,6 +246,12 @@ router.beforeEach((to, from, next) => {
   // If going to login page but already authenticated, redirect to home
   if (to.path === '/' && isAuthenticated) {
     next(homeForUser(authStore))
+    return
+  }
+
+  // Public asset pages never require auth
+  if (isPublicRoute(to.path) || to.meta?.public) {
+    next()
     return
   }
 

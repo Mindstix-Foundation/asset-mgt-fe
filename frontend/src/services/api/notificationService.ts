@@ -2,15 +2,27 @@ import { apiService, type ApiResponse } from '../core/apiClient';
 
 export interface Notification {
   id: number;
-  type: 'MAINTENANCE_REMINDER';
+  type:
+    | 'MAINTENANCE_REMINDER'
+    | 'WARRANTY_EXPIRING'
+    | 'WARRANTY_EXPIRED'
+    | 'LICENSE_EXPIRING'
+    | 'LICENSE_EXPIRED'
+    | 'SYSTEM_ALERT';
   title: string;
   message: string;
   isRead: boolean;
   data?: {
     maintenanceId?: number;
     assetId?: string;
+    assetDbId?: number;
+    licenseId?: number;
+    licenseName?: string;
     maintenanceType?: string;
     scheduledDate?: string;
+    warrantyEndDate?: string;
+    expiryDate?: string;
+    daysUntilExpiry?: number;
   };
   createdAt: string;
   readAt?: string;

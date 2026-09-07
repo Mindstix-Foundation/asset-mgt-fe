@@ -425,7 +425,11 @@
                         >
                           <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                         </button>
-                        <button class="btn btn-action btn-gray" title="View QR Code">
+                        <button
+                          class="btn btn-action btn-gray"
+                          title="View QR Code"
+                          @click.stop="openQrModal(asset)"
+                        >
                           <i class="fas fa-qrcode"></i>
                         </button>
                       </div>
@@ -555,7 +559,11 @@
                     >
                       <i :class="getMaintenanceButtonIcon(asset.status)"></i>
                     </button>
-                    <button class="btn btn-action btn-gray btn-sm" title="View QR Code">
+                    <button
+                      class="btn btn-action btn-gray btn-sm"
+                      title="View QR Code"
+                      @click.stop="openQrModal(asset)"
+                    >
                       <i class="fas fa-qrcode"></i>
                     </button>
                   </div>
@@ -660,6 +668,17 @@
                       <div class="info-label-compact">Purchase Cost</div>
                       <div class="info-value-compact">{{ selectedAsset.purchaseCost ? `₹${Number(selectedAsset.purchaseCost).toLocaleString()}` : 'Not specified' }}</div>
                     </div>
+                    <div v-if="selectedAsset.depreciation" class="info-item-compact">
+                      <div class="info-label-compact">Book Value</div>
+                      <div class="info-value-compact">
+                        ₹{{ Number(selectedAsset.depreciation.bookValue).toLocaleString() }}
+                        <div class="text-muted small">
+                          {{ depreciationMethodLabel(selectedAsset.depreciation.method) }}
+                          · {{ selectedAsset.depreciation.depreciationPercent }}% depreciated
+                          <span v-if="selectedAsset.depreciation.isFullyDepreciated">(at salvage)</span>
+                        </div>
+                      </div>
+                    </div>
                     <div class="info-item-compact">
                       <div class="info-label-compact">Vendor</div>
                       <div class="info-value-compact">{{ selectedAsset.vendor }}</div>
@@ -739,8 +758,15 @@
                         <div class="text-muted text-small">{{ selectedAsset ? getAssignmentStatusDescription(selectedAsset.status) : '' }}</div>
                       </div>
                     </div>
-                    <div class="qr-code-mini">
-                      <i class="fas fa-qrcode fa-lg text-muted" title="QR Code Available"></i>
+                    <div
+                      class="qr-code-mini"
+                      role="button"
+                      tabindex="0"
+                      title="View QR Code"
+                      @click.stop="openQrModalFromSelected"
+                      @keydown.enter.prevent="openQrModalFromSelected"
+                    >
+                      <i class="fas fa-qrcode fa-lg text-muted"></i>
                     </div>
                   </div>
                   
@@ -1421,6 +1447,12 @@
       class="modal-backdrop fade show"
       @click="closeModals"
     ></div>
+
+    <AssetQrModal
+      v-model="showQrModal"
+      :numeric-asset-id="qrNumericAssetId"
+      :asset-tag="qrAssetTag"
+    />
   </div>
 </template>
 
@@ -1436,6 +1468,7 @@ import SearchableDropdown, { type Item } from '@/components/common/SearchableDro
 import NotesDisplay from '@/components/common/NotesDisplay.vue'
 import NotesTextarea from '@/components/common/NotesTextarea.vue'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
+import AssetQrModal from '@/components/assets/AssetQrModal.vue'
 import BulkAssetUpload from './BulkAssetUpload.vue'
 import AppPagination from '@/components/ui/pagination/AppPagination.vue'
 
@@ -1465,6 +1498,14 @@ interface AssetDisplayItem {
   vendor?: string
   warrantyEndDate?: string
   warrantyStartDate?: string
+  depreciation?: {
+    method?: string
+    bookValue: number
+    depreciationPercent: number
+    isFullyDepreciated: boolean
+    usefulLifeMonths?: number | null
+    accumulatedDepreciation: number
+  } | null
   notes?: string
   // Assignment details
   assignmentReason?: string
@@ -1492,6 +1533,9 @@ const sortAscending = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const showDetailModal = ref(false)
+const showQrModal = ref(false)
+const qrNumericAssetId = ref<number | null>(null)
+const qrAssetTag = ref('')
 const showRetireAssetModal = ref(false)
 const showFilterDropdown = ref(false)
 const isAssignmentDetailsExpanded = ref(false)
@@ -1995,6 +2039,7 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
     vendor: detailedAsset.vendor?.name || 'Not specified',
     warrantyEndDate: detailedAsset.warrantyEndDate || '',
     warrantyStartDate: detailedAsset.warrantyStartDate,
+    depreciation: (detailedAsset as any).depreciation || null,
     notes: detailedAsset.notes,
     // Assignment details from current assignment
     assignmentReason: currentAssignment?.issueReason,
@@ -2118,23 +2163,27 @@ const viewAssetDetails = async (asset: AssetDisplayItem) => {
       return
     }
 
-    // Show modal and loading state
-    showDetailModal.value = true
-    isLoadingAssetDetails.value = true
-    selectedAsset.value = null // Clear previous data
-    
-    // Reset collapse states
-    isAssignmentDetailsExpanded.value = false
-    isRetirementDetailsExpanded.value = false
-    isRefurbishmentDetailsExpanded.value = false
+    await openAssetDetailsByNumericId(originalAsset.id)
+  } catch (error) {
+    console.error('Error loading asset details:', error)
+    toastStore.showError('Error', 'Failed to load asset details')
+    showDetailModal.value = false
+  }
+}
 
-    // Fetch detailed asset data
-    const response = await assetService.getAssetById(originalAsset.id)
+const openAssetDetailsByNumericId = async (numericId: number) => {
+  showDetailModal.value = true
+  isLoadingAssetDetails.value = true
+  selectedAsset.value = null
+
+  isAssignmentDetailsExpanded.value = false
+  isRetirementDetailsExpanded.value = false
+  isRefurbishmentDetailsExpanded.value = false
+
+  try {
+    const response = await assetService.getAssetById(numericId)
     const detailedAsset = response.data.asset
-    
-    // Transform the detailed asset data for the modal
     selectedAsset.value = transformDetailedAssetForModal(detailedAsset as DetailedAsset)
-    
   } catch (error) {
     console.error('Error loading asset details:', error)
     toastStore.showError('Error', 'Failed to load asset details')
@@ -2144,9 +2193,80 @@ const viewAssetDetails = async (asset: AssetDisplayItem) => {
   }
 }
 
+/** Open detail modal by business asset tag (e.g. MX-DEMO-002), even if not on current page */
+const openAssetDetailsByAssetTag = async (assetTag: string) => {
+  const tag = assetTag.trim()
+  if (!tag) return
+
+  try {
+    const local = assets.value.find((a) => a.assetId === tag)
+    if (local) {
+      await openAssetDetailsByNumericId(local.id)
+      return
+    }
+
+    showDetailModal.value = true
+    isLoadingAssetDetails.value = true
+    selectedAsset.value = null
+
+    const response = await assetService.getAssets({
+      search: tag,
+      page: 1,
+      limit: 20,
+    })
+    const match = response.data.assets.find((a) => a.assetId === tag)
+    if (!match) {
+      showDetailModal.value = false
+      toastStore.showError('Not found', `Asset ${tag} was not found in your inventory.`)
+      return
+    }
+
+    await openAssetDetailsByNumericId(match.id)
+  } catch (error) {
+    console.error('Error opening asset from QR scan:', error)
+    showDetailModal.value = false
+    toastStore.showError('Error', 'Failed to open asset details from QR scan')
+  }
+}
+
+const clearViewAssetQuery = () => {
+  if (!route.query.viewAsset) return
+  const nextQuery = { ...route.query }
+  delete nextQuery.viewAsset
+  router.replace({ path: route.path, query: nextQuery })
+}
+
+const handleViewAssetQuery = async (raw?: string | string[] | null) => {
+  const tag = Array.isArray(raw) ? raw[0] : raw
+  if (!tag) return
+  await openAssetDetailsByAssetTag(String(tag))
+  clearViewAssetQuery()
+}
+
 const closeDetailModal = () => {
   showDetailModal.value = false
   selectedAsset.value = null
+}
+
+const resolveNumericAssetId = (displayAsset: AssetDisplayItem): number | null => {
+  const originalAsset = assets.value.find((a) => a.assetId === displayAsset.id)
+  return originalAsset?.id ?? null
+}
+
+const openQrModal = (displayAsset: AssetDisplayItem) => {
+  const numericId = resolveNumericAssetId(displayAsset)
+  if (!numericId) {
+    toastStore.showError('Error', 'Could not load QR code for this asset')
+    return
+  }
+  qrNumericAssetId.value = numericId
+  qrAssetTag.value = displayAsset.id
+  showQrModal.value = true
+}
+
+const openQrModalFromSelected = () => {
+  if (!selectedAsset.value) return
+  openQrModal(selectedAsset.value)
 }
 
 const closeModals = () => {
@@ -2924,6 +3044,19 @@ const getRetirementStatusDescription = (retirementReason: string) => {
   return reasonMap[retirementReason] || 'Asset has been retired'
 }
 
+const depreciationMethodLabel = (method?: string) => {
+  switch (method) {
+    case 'STRAIGHT_LINE':
+      return 'Straight line'
+    case 'REDUCING_BALANCE':
+      return 'Reducing balance (WDV)'
+    case 'INITIAL_HIGH_REDUCING':
+      return 'High year-1 + reducing'
+    default:
+      return method || 'Depreciation'
+  }
+}
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', { 
@@ -3156,6 +3289,16 @@ onMounted(async () => {
     loadFilterOptions(),
     loadAssets()
   ])
+
+  // Open detail modal when arriving from in-app QR Scanner (?viewAsset=AST-xxxx)
+  await handleViewAssetQuery(route.query.viewAsset as string | undefined)
+
+  watch(
+    () => route.query.viewAsset,
+    (tag) => {
+      void handleViewAssetQuery(tag as string | undefined)
+    },
+  )
   
   // Add click outside listener for dropdown
   document.addEventListener('click', handleClickOutside)
