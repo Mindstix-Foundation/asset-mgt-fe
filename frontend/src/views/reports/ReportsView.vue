@@ -19,7 +19,7 @@
               <p class="card-text text-muted">Complete list of all assets with details</p>
               <button 
                 class="btn btn-purple"
-                @click="handleQuickExport('asset-inventory')"
+                @click="requestQuickExport('asset-inventory')"
                 :disabled="isExporting"
               >
                 <i class="fas fa-spinner fa-spin me-1" v-if="isExporting && exportingType === 'asset-inventory'"></i>
@@ -38,7 +38,7 @@
               <p class="card-text text-muted">Assets assigned to each employee</p>
               <button 
                 class="btn btn-green"
-                @click="handleQuickExport('employee-assets')"
+                @click="requestQuickExport('employee-assets')"
                 :disabled="isExporting"
               >
                 <i class="fas fa-spinner fa-spin me-1" v-if="isExporting && exportingType === 'employee-assets'"></i>
@@ -57,7 +57,7 @@
               <p class="card-text text-muted">Completed maintenance history and costs</p>
               <button 
                 class="btn btn-orange"
-                @click="handleQuickExport('maintenance')"
+                @click="requestQuickExport('maintenance')"
                 :disabled="isExporting"
               >
                 <i class="fas fa-spinner fa-spin me-1" v-if="isExporting && exportingType === 'maintenance'"></i>
@@ -378,11 +378,68 @@
     
     <!-- Modal Backdrop -->
     <div v-if="showPreviewModal" class="modal-backdrop fade show" @click="showPreviewModal = false"></div>
+
+    <!-- Quick Export Confirmation Modal -->
+    <div
+      class="modal fade"
+      :class="{ show: showExportConfirmModal }"
+      :style="{ display: showExportConfirmModal ? 'block' : 'none' }"
+      tabindex="-1"
+      @click.self="closeExportConfirmModal"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: var(--primary-black);">
+              <i class="fas fa-file-excel me-2" style="color: var(--secondary-green);"></i>
+              Confirm Download
+            </h5>
+            <button type="button" class="btn-close" @click="closeExportConfirmModal" :disabled="isExporting"></button>
+          </div>
+          <div class="modal-body text-center py-4">
+            <div class="mb-3">
+              <i class="fas fa-download fa-2x" style="color: var(--secondary-purple);"></i>
+            </div>
+            <h6 class="mb-2" style="color: var(--primary-black);">
+              Download {{ pendingExportLabel }}?
+            </h6>
+            <p class="text-muted mb-0">
+              This will generate and download an Excel file. Do you want to continue?
+            </p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button
+              type="button"
+              class="btn btn-gray"
+              @click="closeExportConfirmModal"
+              :disabled="isExporting"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-green"
+              @click="confirmQuickExport"
+              :disabled="isExporting || !pendingExportType"
+            >
+              <i class="fas fa-spinner fa-spin me-1" v-if="isExporting"></i>
+              <i class="fas fa-download me-1" v-else></i>
+              {{ isExporting ? 'Generating...' : 'Download Excel' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="showExportConfirmModal"
+      class="modal-backdrop fade show"
+      @click="closeExportConfirmModal"
+    ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch, computed } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import { reportsApi, type ReportFilters, type AnalyticsData } from '@/services/api/reportsApi'
 import { dashboardApi } from '@/services/api/dashboardApi'
@@ -405,6 +462,8 @@ const isExporting = ref(false)
 const exportingType = ref('')
 const isLoadingPreview = ref(false)
 const showPreviewModal = ref(false)
+const showExportConfirmModal = ref(false)
+const pendingExportType = ref<string | null>(null)
 const previewData = ref<any[]>([])
 const previewTotal = ref(0)
 const showCustomDateRange = ref(false)
@@ -731,6 +790,38 @@ const initializeCharts = () => {
       assetDistributionChartInstance.value = chart
     }
   }
+}
+
+const quickExportLabels: Record<string, string> = {
+  'asset-inventory': 'Total Asset Report',
+  'employee-assets': 'Employee Asset Report',
+  maintenance: 'Maintenance Report',
+}
+
+const pendingExportLabel = computed(
+  () =>
+    (pendingExportType.value && quickExportLabels[pendingExportType.value]) ||
+    'this report',
+)
+
+const requestQuickExport = (reportType: string) => {
+  if (isExporting.value) return
+  pendingExportType.value = reportType
+  showExportConfirmModal.value = true
+}
+
+const closeExportConfirmModal = () => {
+  if (isExporting.value) return
+  showExportConfirmModal.value = false
+  pendingExportType.value = null
+}
+
+const confirmQuickExport = async () => {
+  const reportType = pendingExportType.value
+  if (!reportType) return
+  showExportConfirmModal.value = false
+  await handleQuickExport(reportType)
+  pendingExportType.value = null
 }
 
 const handleQuickExport = async (reportType: string) => {
