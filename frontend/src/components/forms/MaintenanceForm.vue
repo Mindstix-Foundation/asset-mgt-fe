@@ -1391,14 +1391,14 @@ onMounted(async () => {
 }
 
 .btn-warning {
-  background-color: #FF8C61 !important;
-  border-color: #FF8C61 !important;
+  background-color: #C2410C !important;
+  border-color: #C2410C !important;
   color: #FFFFFF !important;
 }
 
 .btn-warning:hover {
-  background-color: #e67d4d !important;
-  border-color: #e67d4d !important;
+  background-color: #9A3412 !important;
+  border-color: #9A3412 !important;
   color: #FFFFFF !important;
 }
 

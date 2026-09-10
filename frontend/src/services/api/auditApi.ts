@@ -23,7 +23,7 @@ export interface AuditLogEntry {
   metadata: Record<string, unknown>
   performedBy: {
     userId: number
-    username?: string
+    name?: string
     name: string
     employeeId?: string
   }
@@ -99,7 +99,7 @@ class AuditApiService {
 
   transformForRecentActivity(logs: AuditLogEntry[]) {
     return logs.map((log) => {
-      const timestamp = parseApiDate(log.createdAt) ?? new Date(NaN)
+      const timestamp = parseApiDate(log.createdAt) ?? new Date('Invalid Date')
       return {
         id: String(log.id),
         title: `${log.tableDisplayName} ${this.formatAuditAction(log.action)}`,

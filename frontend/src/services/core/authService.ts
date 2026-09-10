@@ -48,31 +48,35 @@ authAxios.interceptors.request.use(
   (error) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
 )
 
-// No Authorization header needed - cookies are sent automatically
+export interface LoginUserPayload {
+  id: number
+  email: string
+  name: string
+  employeeId: string
+  roles?: string[]
+}
 
-// Types
-interface LoginRequest {
-  username: string
-  password: string
+interface GoogleLoginRequest {
+  credential: string
+  remember_me?: boolean
+}
+
+interface GoogleCodeLoginRequest {
+  code: string
+  redirect_uri: string
+  remember_me?: boolean
 }
 
 interface LoginResponse {
   success: boolean
-  access_token: string
-  user: {
-    id: number
-    username: string
-    email: string
-    name: string
-    employeeId: string
-  }
+  access_token?: string
+  user?: LoginUserPayload
 }
 
 interface ProfileResponse {
   success: boolean
   data: {
     id: number
-    username: string
     email: string
     name: string
     employeeId: string
@@ -92,6 +96,7 @@ interface ProfileResponse {
     createdAt: string
     updatedAt: string
   }
+  user?: LoginUserPayload
 }
 
 interface RefreshTokenResponse {
@@ -116,26 +121,72 @@ class AuthService {
   }
 
   /**
-   * Login user with username/email and password
+   * HRIS-style Google sign-in: full-page redirect to backend → Google → callback.
    */
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
+  buildGoogleOAuthStartUrl(rememberMe: boolean = false, returnPath?: string): string {
+    const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api').replace(/\/$/, '')
+    const params = new URLSearchParams()
+    if (rememberMe) params.set('remember_me', '1')
+    if (returnPath?.trim()) params.set('redirect', returnPath.trim())
+    const qs = params.toString()
+    return qs ? `${apiBase}/auth/google?${qs}` : `${apiBase}/auth/google`
+  }
+
+  async loginWithGoogle(payload: GoogleLoginRequest): Promise<LoginResponse> {
     try {
-      const response = await authAxios.post<LoginResponse>('/auth/login', credentials)
-      
-      if (response.data.success) {
-        // Store only user data (tokens are in HTTP-only cookies now)
+      const response = await authAxios.post<LoginResponse>('/auth/google-login', payload)
+
+      if (response.data.success && response.data.user) {
         this.setUserData(response.data.user)
         this.isAuthenticatedCache = true
-        
-        // Start automatic token refresh
         this.startTokenRefresh()
       }
-      
+
       return response.data
-    } catch (error: any) {
-      console.error('Login error:', error)
-      throw new Error(error.response?.data?.message || 'Login failed')
+    } catch (error: unknown) {
+      console.error('Google login error:', error)
+      const msg = (error as any).response?.data?.message
+      const text = Array.isArray(msg) ? msg.join(', ') : msg
+      throw new Error(text || 'Google login failed')
     }
+  }
+
+  async loginWithGoogleCode(payload: GoogleCodeLoginRequest): Promise<LoginResponse> {
+    try {
+      const response = await authAxios.post<LoginResponse>('/auth/google-code-login', payload)
+
+      if (response.data.success && response.data.user) {
+        this.setUserData(response.data.user)
+        this.isAuthenticatedCache = true
+        this.startTokenRefresh()
+      }
+
+      return response.data
+    } catch (error: unknown) {
+      console.error('Google code login error:', error)
+      const msg = (error as any).response?.data?.message
+      const text = Array.isArray(msg) ? msg.join(', ') : msg
+      throw new Error(text || 'Google code login failed')
+    }
+  }
+
+  /**
+   * After server redirect OAuth, cookies are set but localStorage user_data is empty.
+   * Hydrate the client session from GET /auth/profile.
+   */
+  async activateSessionFromProfile(): Promise<LoginUserPayload> {
+    const profile = await this.getProfile()
+    const payload: LoginUserPayload = profile.user ?? {
+      id: profile.data.id,
+      email: profile.data.email,
+      name: profile.data.name,
+      employeeId: profile.data.employeeId,
+      roles: profile.data.roles,
+    }
+    this.setUserData(payload)
+    this.isAuthenticatedCache = true
+    this.startTokenRefresh()
+    return payload
   }
 
   /**
@@ -350,4 +401,4 @@ class AuthService {
 // Export singleton instance
 export const authService = new AuthService()
 export { authAxios }
-export default authService 
+export default authService

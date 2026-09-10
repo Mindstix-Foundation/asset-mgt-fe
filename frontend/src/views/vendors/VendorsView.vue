@@ -105,10 +105,11 @@
       <div class="row align-items-end">
         <!-- Search Vendors -->
         <div class="col-12 col-lg-7 mb-3">
-          <div class="form-label">Search Vendors</div>
+          <label for="vendors-search" class="form-label">Search Vendors</label>
           <div class="search-input-container">
             <i class="fas fa-search search-icon"></i>
             <input 
+              id="vendors-search"
               type="text" 
               class="form-control search-input" 
               v-model="searchTerm" 

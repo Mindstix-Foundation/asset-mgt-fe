@@ -66,6 +66,6 @@ export function filenameFromContentDisposition(
   fallback: string,
 ): string {
   if (!header) return fallback
-  const match = header.match(/filename="(.+)"/)
+  const match = /filename="(.+)"/.exec(header)
   return match?.[1] || fallback
 }

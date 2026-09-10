@@ -3,17 +3,10 @@
  * Centralized route name definitions for type-safe navigation
  */
 
-// Sonar S2068: these are route identifiers, not credentials
-const _pw = 'password'
-const _Pw = 'Password'
-
 // Route Names (must match router/index.ts)
 export const ROUTE_NAMES = {
   // Auth Routes
   LOGIN: 'login',
-  FORGOT_PASSWORD: `forgot-${_pw}`,
-  RESET_PASSWORD: `reset-${_pw}`,
-  CHANGE_PASSWORD: `change-${_pw}`,
 
   // Dashboard
   DASHBOARD: 'dashboard',
@@ -68,9 +61,6 @@ export type RouteName = (typeof ROUTE_NAMES)[keyof typeof ROUTE_NAMES]
 export const ROUTE_PATHS = {
   // Auth
   [ROUTE_NAMES.LOGIN]: '/login',
-  [ROUTE_NAMES.FORGOT_PASSWORD]: `/forgot-${_pw}`,
-  [ROUTE_NAMES.RESET_PASSWORD]: `/reset-${_pw}`,
-  [ROUTE_NAMES.CHANGE_PASSWORD]: `/change-${_pw}`,
 
   // Dashboard
   [ROUTE_NAMES.DASHBOARD]: '/',
@@ -122,9 +112,6 @@ export const ROUTE_PATHS = {
 // Route Titles (for breadcrumbs, page titles, etc.)
 export const ROUTE_TITLES = {
   [ROUTE_NAMES.LOGIN]: 'Login',
-  [ROUTE_NAMES.FORGOT_PASSWORD]: `Forgot ${_Pw}`,
-  [ROUTE_NAMES.RESET_PASSWORD]: `Reset ${_Pw}`,
-  [ROUTE_NAMES.CHANGE_PASSWORD]: `Change ${_Pw}`,
   [ROUTE_NAMES.DASHBOARD]: 'Dashboard',
   [ROUTE_NAMES.ASSETS]: 'Assets',
   [ROUTE_NAMES.ADD_ASSET]: 'Add Asset',
@@ -172,4 +159,3 @@ export function getRoutePath(routeName: RouteName, params?: Record<string, strin
 export function isCurrentRoute(currentName: string, routeName: RouteName): boolean {
   return currentName === routeName
 }
-

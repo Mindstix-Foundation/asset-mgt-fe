@@ -485,7 +485,7 @@ const exportEvent = () => {
 
 .cost-over {
   background: #FEE2E2;
-  color: #DC2626;
+  color: #B91C1C;
 }
 
 .cost-under {
@@ -525,7 +525,7 @@ const exportEvent = () => {
 
 .condition-poor {
   background: #FED7AA;
-  color: #C2410C;
+  color: #9A3412;
 }
 
 .condition-damaged {
@@ -566,7 +566,7 @@ const exportEvent = () => {
 
 .status-progress {
   background: #FED7AA;
-  color: #C2410C;
+  color: #9A3412;
 }
 
 .status-completed {

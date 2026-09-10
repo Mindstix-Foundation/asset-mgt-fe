@@ -410,14 +410,16 @@ const getDisplayChanges = (log: AuditLogEntry): AuditChange[] => {
     }))
   }
 
-  const fields =
-    log.changedFields?.length
-      ? log.changedFields
-      : log.action === 'INSERT'
-        ? Object.keys(log.newValues ?? {})
-        : log.action === 'DELETE'
-          ? Object.keys(log.oldValues ?? {})
-          : []
+  let fields: string[]
+  if (log.changedFields?.length) {
+    fields = log.changedFields
+  } else if (log.action === 'INSERT') {
+    fields = Object.keys(log.newValues ?? {})
+  } else if (log.action === 'DELETE') {
+    fields = Object.keys(log.oldValues ?? {})
+  } else {
+    fields = []
+  }
 
   return fields.map((field) => ({
     field,
@@ -571,7 +573,7 @@ onMounted(() => loadLogs())
 
 .audit-table .col-summary {
   white-space: normal;
-  word-break: break-word;
+  overflow-wrap: break-word;
   line-height: 1.4;
   vertical-align: middle;
 }

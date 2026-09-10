@@ -31,7 +31,7 @@ export interface Vendor {
   userId?: number
   user?: {
     id: number
-    username: string
+    name: string
   }
   _count?: {
     assets: number

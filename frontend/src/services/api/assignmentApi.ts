@@ -61,7 +61,7 @@ export interface Assignment {
   }
   issuedByUser: {
     id: number
-    username: string
+    name: string
   }
 }
 

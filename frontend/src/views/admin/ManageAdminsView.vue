@@ -59,13 +59,13 @@
                       <div class="d-flex align-items-center">
                         <div 
                           class="avatar-sm text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                          :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.username), flexShrink: 0 }"
+                          :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.employee?.email), flexShrink: 0 }"
                         >
                           <i class="fas fa-user"></i>
                         </div>
                         <div class="flex-grow-1 min-width-0">
                           <div class="fw-semibold text-truncate">{{ admin.employee?.firstName }} {{ admin.employee?.lastName }}</div>
-                          <small class="text-muted text-truncate d-block">{{ admin.username }}</small>
+                          <small class="text-muted text-truncate d-block">{{ admin.employee?.email }}</small>
                         </div>
                       </div>
                     </td>
@@ -138,7 +138,7 @@
                         <div class="admin-card-header">
                           <div
                             class="avatar-sm text-white rounded-circle d-flex align-items-center justify-content-center admin-card-avatar"
-                            :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.username) }"
+                            :style="{ backgroundColor: getEmployeeIconColor(admin.employee?.employeeId || admin.employee?.email) }"
                           >
                             <i class="fas fa-user"></i>
                           </div>
@@ -154,7 +154,7 @@
                                 {{ admin.isActive ? 'Active' : 'Inactive' }}
                               </span>
                             </div>
-                            <p class="admin-card-username mb-0">{{ admin.username }}</p>
+                            <p class="admin-card-email mb-0">{{ admin.employee?.email }}</p>
                           </div>
                         </div>
 
@@ -262,120 +262,9 @@
                 </div>
               </div>
 
-              <!-- Username -->
-              <div class="mb-3">
-                <label for="username" class="form-label field-label">Username</label>
-                <div class="input-with-icon">
-                  <i class="fas fa-at input-icon" aria-hidden="true"></i>
-                  <input
-                    type="text"
-                    id="username"
-                    v-model="newAdmin.username"
-                    :class="['form-control', getFieldClass('username')]"
-                    placeholder="Enter username"
-                    name="username"
-                    autocomplete="username"
-                    required
-                    @input="clearFieldValidation('username')"
-                  />
-                </div>
-                <div v-if="errors.username" class="invalid-feedback d-block">
-                  {{ errors.username }}
-                </div>
-              </div>
-
-              <!-- Password -->
-              <div class="mb-3">
-                <label for="password" class="form-label field-label">Password</label>
-                <div class="input-with-icon input-with-action">
-                  <i class="fas fa-lock input-icon" aria-hidden="true"></i>
-                  <input
-                    :type="showPassword ? 'text' : 'password'"
-                    id="password"
-                    v-model="newAdmin.password"
-                    :class="['form-control', getFieldClass('password')]"
-                    placeholder="Enter password"
-                    name="password"
-                    :autocomplete="showPassword ? 'off' : 'new-password'"
-                    required
-                    @input="validatePassword"
-                    @focus="clearFieldValidation('password')"
-                  />
-                  <button
-                    type="button"
-                    class="input-action-btn"
-                    @click="togglePasswordVisibility"
-                    :title="showPassword ? 'Hide password' : 'Show password'"
-                    :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                  >
-                    <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                  </button>
-                </div>
-                <div v-if="errors.password" class="invalid-feedback d-block">
-                  {{ errors.password }}
-                </div>
-                <div v-if="passwordStrength" class="mt-2">
-                  <div class="password-strength">
-                    <div class="strength-item" :class="{ 'valid': passwordStrength.length }">
-                      <i class="fas" :class="passwordStrength.length ? 'fa-check text-success' : 'fa-times text-danger'"></i>
-                      <span>At least 8 characters</span>
-                    </div>
-                    <div class="strength-item" :class="{ 'valid': passwordStrength.uppercase }">
-                      <i class="fas" :class="passwordStrength.uppercase ? 'fa-check text-success' : 'fa-times text-danger'"></i>
-                      <span>One uppercase letter</span>
-                    </div>
-                    <div class="strength-item" :class="{ 'valid': passwordStrength.lowercase }">
-                      <i class="fas" :class="passwordStrength.lowercase ? 'fa-check text-success' : 'fa-times text-danger'"></i>
-                      <span>One lowercase letter</span>
-                    </div>
-                    <div class="strength-item" :class="{ 'valid': passwordStrength.number }">
-                      <i class="fas" :class="passwordStrength.number ? 'fa-check text-success' : 'fa-times text-danger'"></i>
-                      <span>One number</span>
-                    </div>
-                    <div class="strength-item" :class="{ 'valid': passwordStrength.special }">
-                      <i class="fas" :class="passwordStrength.special ? 'fa-check text-success' : 'fa-times text-danger'"></i>
-                      <span>One special character</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Confirm Password -->
-              <div class="mb-3">
-                <label for="confirmPassword" class="form-label field-label">Confirm Password</label>
-                <div class="input-with-icon input-with-action">
-                  <i class="fas fa-lock input-icon" aria-hidden="true"></i>
-                  <input
-                    :type="showConfirmPassword ? 'text' : 'password'"
-                    id="confirmPassword"
-                    v-model="newAdmin.confirmPassword"
-                    :class="['form-control', getFieldClass('confirmPassword')]"
-                    placeholder="Confirm password"
-                    name="confirmPassword"
-                    :autocomplete="showConfirmPassword ? 'off' : 'new-password'"
-                    required
-                    @input="markFieldTouched('confirmPassword'); validatePasswordMatch()"
-                    @blur="markFieldTouched('confirmPassword'); validatePasswordMatch()"
-                    @focus="clearFieldValidation('confirmPassword')"
-                  />
-                  <button
-                    type="button"
-                    class="input-action-btn"
-                    @click="toggleConfirmPasswordVisibility"
-                    :title="showConfirmPassword ? 'Hide password' : 'Show password'"
-                    :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
-                  >
-                    <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                  </button>
-                </div>
-                <div v-if="errors.confirmPassword" class="invalid-feedback d-block">
-                  {{ errors.confirmPassword }}
-                </div>
-                <div v-else-if="passwordsMatch" class="valid-feedback d-block">
-                  <i class="fas fa-check text-success me-1"></i>
-                  Passwords match
-                </div>
-              </div>
+              <p class="text-muted small mb-0">
+                Admins sign in with Google using the selected employee&apos;s email.
+              </p>
             </form>
           </div>
           <div class="modal-footer modal-theme-footer">
@@ -498,11 +387,6 @@ import { Modal } from 'bootstrap'
 import SearchableDropdown from '@/components/common/SearchableDropdown.vue'
 import { employeeApiService } from '@/services/api/employeeApi'
 
-// Sonar S2068: field name constants to avoid false-positive "hard-coded password" detection
-const _PW = 'password'
-const _CPW = 'confirmPassword'
-const _PW_CAP = 'Password'
-
 const router = useRouter()
 const toast = useToastStore()
 
@@ -519,25 +403,9 @@ const selectedEmployee = ref<any>(null)
 const isGridView = ref(false)
 let resizeTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Password visibility states
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-
-// Password strength validation
-const passwordStrength = ref({
-  length: false,
-  uppercase: false,
-  lowercase: false,
-  number: false,
-  special: false
-})
-
 // New admin form
 const newAdmin = ref({
   employeeId: '',
-  username: '',
-  [_PW]: '',
-  [_CPW]: ''
 })
 
 const errors = ref<Record<string, string>>({})
@@ -562,13 +430,6 @@ const employeeItems = computed(() => {
     firstName: employee.firstName,
     lastName: employee.lastName
   }))
-})
-
-const passwordsMatch = computed(() => {
-  if (!newAdmin.value[_PW] || !newAdmin.value[_CPW]) {
-    return false
-  }
-  return newAdmin.value[_PW] === newAdmin.value[_CPW]
 })
 
 // Methods
@@ -621,69 +482,10 @@ const onEmployeeChange = (employee: any) => {
   selectedEmployee.value = employee
   if (employee) {
     newAdmin.value.employeeId = employee.id
-    // Keep username empty so admins must choose their own value
-    newAdmin.value.username = ''
     clearFieldValidation('employeeId')
   } else {
     newAdmin.value.employeeId = ''
-    newAdmin.value.username = ''
   }
-}
-
-// Password visibility toggle methods
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
-
-const toggleConfirmPasswordVisibility = () => {
-  showConfirmPassword.value = !showConfirmPassword.value
-}
-
-const validatePassword = () => {
-  const pw = newAdmin.value[_PW]
-  
-  passwordStrength.value = {
-    length: pw.length >= 8,
-    uppercase: /[A-Z]/.test(pw),
-    lowercase: /[a-z]/.test(pw),
-    number: /\d/.test(pw),
-    special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw)
-  }
-  
-  if (Object.values(passwordStrength.value).every(Boolean)) {
-    delete errors.value[_PW]
-  }
-  
-  validatePasswordMatch()
-}
-
-const validatePasswordMatch = () => {
-  const confirmTouched = touchedFields.value[_CPW] || !!newAdmin.value[_CPW]
-  
-  if (!newAdmin.value[_PW]) {
-    delete errors.value[_CPW]
-    return
-  }
-  
-  if (!confirmTouched) {
-    delete errors.value[_CPW]
-    return
-  }
-  
-  if (!newAdmin.value[_CPW]) {
-    errors.value[_CPW] = `Please confirm your ${_PW}`
-    return
-  }
-  
-  if (newAdmin.value[_PW] === newAdmin.value[_CPW]) {
-    delete errors.value[_CPW]
-  } else {
-    errors.value[_CPW] = `${_PW_CAP}s do not match`
-  }
-}
-
-const isPasswordValid = () => {
-  return Object.values(passwordStrength.value).every(Boolean)
 }
 
 const scrollToFirstError = () => {
@@ -703,19 +505,6 @@ const scrollToFirstError = () => {
 const getFieldClass = (fieldName: string) => {
   if (errors.value[fieldName]) {
     return 'is-invalid'
-  }
-  
-  if (fieldName === _PW && newAdmin.value[_PW] && isPasswordValid()) {
-    return 'is-valid'
-  }
-  
-  if (fieldName === _CPW && newAdmin.value[_PW] && newAdmin.value[_CPW] && passwordsMatch.value) {
-    return 'is-valid'
-  }
-  
-  // For username, show valid when it has content
-  if (fieldName === 'username' && newAdmin.value.username?.trim()) {
-    return 'is-valid'
   }
   
   // For employee selection, show valid when selected
@@ -750,25 +539,6 @@ const handleAddAdmin = async () => {
       isFormValid = false
     }
 
-    // Check if username is provided
-    if (!newAdmin.value.username?.trim()) {
-      errors.value.username = 'Username is required'
-      isFormValid = false
-    }
-
-    if (!isPasswordValid()) {
-      errors.value[_PW] = `${_PW_CAP} must meet all requirements`
-      isFormValid = false
-    }
-
-    if (newAdmin.value[_PW] && newAdmin.value[_CPW] && !passwordsMatch.value) {
-      errors.value[_CPW] = `${_PW_CAP}s do not match`
-      isFormValid = false
-    } else if (!newAdmin.value[_CPW]) {
-      errors.value[_CPW] = `Please confirm your ${_PW}`
-      isFormValid = false
-    }
-
     // If validation fails, scroll to first error and return
     if (!isFormValid) {
       await nextTick()
@@ -778,8 +548,6 @@ const handleAddAdmin = async () => {
 
     const response = await authAxios.post('/admin/users', {
       employeeId: Number.parseInt(newAdmin.value.employeeId),
-      username: newAdmin.value.username,
-      [_PW]: newAdmin.value[_PW],
       roles: ['ADMIN']
     })
 
@@ -789,9 +557,6 @@ const handleAddAdmin = async () => {
       // Reset form
       newAdmin.value = {
         employeeId: '',
-        username: '',
-        [_PW]: '',
-        [_CPW]: ''
       }
       touchedFields.value = {}
       selectedEmployee.value = null
@@ -1385,7 +1150,6 @@ onUnmounted(() => {
 
 .manage-admins-page-intro h2,
 .manage-admins-page-intro p {
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
@@ -1440,11 +1204,14 @@ onUnmounted(() => {
   line-height: 1.2;
 }
 
-.admin-card-username {
-  color: var(--primary-mid-gray, #6c757d);
+.admin-card-email {
   font-size: 0.8rem;
+  color: var(--primary-mid-gray, #6c757d);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   line-height: 1.3;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .admin-card-status.badge {

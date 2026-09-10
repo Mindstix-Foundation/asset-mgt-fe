@@ -116,7 +116,7 @@
       <div class="mb-4">
         <div class="row align-items-end">
           <div class="col-12 col-lg-6 mb-3">
-            <div class="form-label">Search Maintenance</div>
+            <label for="mv-search" class="form-label">Search Maintenance</label>
             <div class="search-input-container">
               <i class="fas fa-search search-icon"></i>
               <input 
@@ -1942,13 +1942,11 @@ const isHistoryExpanded = ref(true)
 }
 
 .maintenance-page-intro h2 {
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
 .maintenance-page-intro p {
   line-height: 1.45;
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 

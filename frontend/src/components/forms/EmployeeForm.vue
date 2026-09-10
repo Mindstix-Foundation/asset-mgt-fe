@@ -1320,8 +1320,8 @@ onMounted(async () => {
 }
 
 .btn-outline-secondary:hover {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
+  background-color: #B91C1C !important;
+  border-color: #B91C1C !important;
   color: #FFFFFF !important;
 }
 

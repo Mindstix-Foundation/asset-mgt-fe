@@ -14,7 +14,7 @@
   font-weight: 600 !important;
   font-size: 0.875rem !important;
   text-transform: none !important;
-  letter-spacing: 0.025em !important;
+  letter-spacing: 0.025em;
   transition: all 0.2s ease !important;
   border: 1.5px solid !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
@@ -184,8 +184,8 @@
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background-color: #E97676 !important;
-  border-color: #E97676 !important;
+  background-color: #B91C1C !important;
+  border-color: #B91C1C !important;
   color: white !important;
 }
 

@@ -451,6 +451,7 @@ import { maintenanceService } from '@/services/business/maintenanceService'
 import SearchableDropdown, { type Item as SDItem } from '@/components/common/SearchableDropdown.vue'
 import DatePicker from '@/components/ui/date/DatePicker.vue'
 import { RecentActivity } from '@/components/common'
+import { useToastStore } from '@/stores/toast'
 
 Chart.register(...registerables)
 
@@ -1287,10 +1288,15 @@ const formatCellValue = (value: any, type?: string): string => {
   }
 }
 
+const toastStore = useToastStore()
+
 const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
-  // Implement your notification system here
-  void message
-  void type
+  const titles: Record<'success' | 'error' | 'info', string> = {
+    success: 'Success',
+    error: 'Error',
+    info: 'Info'
+  }
+  toastStore.showToast(titles[type], message, type)
 }
 
 

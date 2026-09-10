@@ -768,13 +768,13 @@
   color: var(--primary-black);
   font-size: 0.85rem;
   font-weight: 600;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .maintenance-card-meta {
   color: var(--primary-mid-gray, #6c757d);
   font-size: 0.8rem;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .maintenance-card-details {

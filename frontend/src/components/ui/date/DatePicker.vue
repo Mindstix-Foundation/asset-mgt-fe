@@ -476,7 +476,7 @@ onUnmounted(() => {
 
 .date-input-wrapper.disabled .form-control {
   background-color: #e9ecef !important;
-  color: #6c757d !important;
+  color: #495057 !important;
   cursor: default;
   border-color: #dee2e6;
 }
@@ -494,7 +494,7 @@ onUnmounted(() => {
 /* Ensure disabled input styling */
 .form-control.disabled {
   background-color: #e9ecef !important;
-  color: #6c757d !important;
+  color: #495057 !important;
   cursor: default;
   border-color: #dee2e6;
 }

@@ -34,7 +34,7 @@ export interface ActiveAssignment {
   }
   issuedByUser: {
     id: number
-    username: string
+    name: string
   }
 }
 

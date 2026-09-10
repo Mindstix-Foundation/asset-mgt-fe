@@ -39,7 +39,7 @@ const isAuthEndpoint = (url?: string): boolean => {
 // Helper: Check if user is on a login/auth page
 const isOnAuthPage = (): boolean => {
   if (globalThis.window === undefined) return false
-  const authPages = ['/', '/login', '/forgot-password', '/reset-password']
+  const authPages = ['/', '/login']
   return authPages.includes(globalThis.window.location.pathname)
 }
 
@@ -88,13 +88,10 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    // Handle 401 Unauthorized errors
-    if (error.response?.status === 401) {
-      if (shouldRetryRequest(originalRequest)) {
-        const result = await handleTokenRefresh(originalRequest)
-        if (result) return result
-      } else if (isAuthEndpoint(originalRequest.url)) {
-      }
+    // Handle 401 Unauthorized errors (skip refresh for auth endpoints)
+    if (error.response?.status === 401 && shouldRetryRequest(originalRequest)) {
+      const result = await handleTokenRefresh(originalRequest)
+      if (result) return result
     }
 
     throw error

@@ -187,10 +187,11 @@
     <!-- Search and Sort Bar -->
     <div class="row align-items-end mb-4">
       <div class="col-12 col-lg-6 mb-3">
-        <div class="form-label">Search Assets</div>
+        <label for="assets-search" class="form-label">Search Assets</label>
         <div class="search-input-container">
           <i class="fas fa-search search-icon"></i>
           <input
+            id="assets-search"
             v-model="searchTerm"
             type="text"
             class="form-control search-input"
@@ -2012,7 +2013,7 @@ const transformDetailedAssetForModal = (detailedAsset: DetailedAsset): AssetDisp
     assignmentReason: currentAssignment?.issueReason,
     assignmentNotes: currentAssignment?.notes,
     assignmentDate: currentAssignment?.issueDate,
-    assignedBy: currentAssignment?.issuedByUser?.username || 'system',
+    assignedBy: currentAssignment?.issuedByUser?.name || 'system',
     // Retirement details from API
     retirementDate: detailedAsset.retirementDate,
     retirementReason: detailedAsset.retirementReason,
@@ -3230,7 +3231,6 @@ onUnmounted(() => {
   font-size: 0.8125rem;
   color: var(--primary-dark-gray, #6c757d);
   line-height: 1.3;
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 

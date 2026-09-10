@@ -1,20 +1,18 @@
-// Authentication related types
-
-export interface LoginCredentials {
-  username: string
-  password: string
-}
-
 export interface AuthUser {
-  id: string
-  username: string
-  role: 'admin' | 'hr' | 'employee'
-  permissions: string[]
-  token: string
+  id: number
+  email: string
+  name: string
+  employeeId: string
+  roles?: string[]
 }
 
-export interface AuthState {
-  user: AuthUser | null
-  isAuthenticated: boolean
-  loading: boolean
-} 
+export interface GoogleLoginRequest {
+  credential: string
+  remember_me?: boolean
+}
+
+export interface GoogleCodeLoginRequest {
+  code: string
+  redirect_uri: string
+  remember_me?: boolean
+}
