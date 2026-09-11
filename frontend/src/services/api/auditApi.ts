@@ -24,7 +24,6 @@ export interface AuditLogEntry {
   performedBy: {
     userId: number
     name?: string
-    name: string
     employeeId?: string
   }
   createdAt: string
