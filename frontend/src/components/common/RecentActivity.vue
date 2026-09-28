@@ -17,40 +17,43 @@
       <div class="card-body p-0">
         <div ref="activityListRef" class="activity-list" :class="layoutClass">
           <!-- Loading state -->
-          <div v-if="isLoading" class="activity-item" v-for="n in 4" :key="'loading-' + n">
-            <div class="activity-icon">
-              <i class="fas fa-spinner fa-spin"></i>
+          <template v-if="isLoading">
+            <div class="activity-item" v-for="n in 4" :key="'loading-' + n">
+              <div class="activity-icon">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+              <div class="activity-content">
+                <div class="placeholder-glow">
+                  <span class="placeholder col-6"></span>
+                </div>
+                <div class="placeholder-glow mt-1">
+                  <span class="placeholder col-8"></span>
+                </div>
+                <div class="placeholder-glow mt-1">
+                  <span class="placeholder col-4"></span>
+                </div>
+              </div>
             </div>
-            <div class="activity-content">
-              <div class="placeholder-glow">
-                <span class="placeholder col-6"></span>
-              </div>
-              <div class="placeholder-glow mt-1">
-                <span class="placeholder col-8"></span>
-              </div>
-              <div class="placeholder-glow mt-1">
-                <span class="placeholder col-4"></span>
-              </div>
-            </div>
-          </div>
+          </template>
           
           <!-- Actual data -->
-          <div
-            v-else-if="activities.length > 0"
-            v-for="(activity, index) in activities"
-            :key="activity.id"
-            v-show="index < visibleCount"
-            class="activity-item"
-          >
-            <div class="activity-icon" :class="getActivityType(activity.title)">
-              <i :class="getActivityIcon(activity.title)"></i>
+          <template v-else-if="activities.length > 0">
+            <div
+              v-for="(activity, index) in activities"
+              :key="activity.id"
+              v-show="index < visibleCount"
+              class="activity-item"
+            >
+              <div class="activity-icon" :class="getActivityType(activity.title)">
+                <i :class="getActivityIcon(activity.title)"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-text">{{ activity.title }}</div>
+                <div class="activity-description">{{ activity.description }}</div>
+                <div class="activity-time">{{ activity.timeAgo || 'Unknown' }}</div>
+              </div>
             </div>
-            <div class="activity-content">
-              <div class="activity-text">{{ activity.title }}</div>
-              <div class="activity-description">{{ activity.description }}</div>
-              <div class="activity-time">{{ activity.timeAgo || 'Unknown' }}</div>
-            </div>
-          </div>
+          </template>
           
           <!-- No data state -->
           <div v-else class="activity-item text-center py-4">

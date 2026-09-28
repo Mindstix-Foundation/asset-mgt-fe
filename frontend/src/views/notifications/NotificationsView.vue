@@ -20,7 +20,6 @@
                   v-model="unreadOnly"
                   class="form-check-input"
                   type="checkbox"
-                  role="switch"
                   @change="onUnreadOnlyChange"
                 >
                 <label class="form-check-label" for="unread-only-toggle">
@@ -41,9 +40,9 @@
           </header>
 
           <div v-if="isLoading" class="notifications-inbox__state">
-            <div class="spinner-border text-primary" role="status">
+            <output class="spinner-border text-primary">
               <span class="visually-hidden">Loading...</span>
-            </div>
+            </output>
             <p class="mt-3 text-muted mb-0">Loading notifications...</p>
           </div>
 
@@ -67,55 +66,52 @@
                 :key="notification.id"
                 class="notifications-inbox__item"
                 :class="{ 'notifications-inbox__item--unread': !notification.isRead }"
-                tabindex="0"
-                @click="onNotificationRowClick(notification)"
-                @dblclick="onNotificationRowDoubleClick(notification)"
-                @keydown.enter.prevent="onNotificationRowClick(notification)"
-                @keydown.space.prevent="onNotificationRowClick(notification)"
               >
-                <span v-if="!notification.isRead" class="visually-hidden">Unread. </span>
-                <div class="notifications-inbox__icon">
-                  <i :class="notificationIcon(notification.type)"></i>
-                </div>
-                <div class="notifications-inbox__content">
-                  <div class="notifications-inbox__item-header">
-                    <h2 class="notifications-inbox__item-title h6 mb-0">{{ notification.title }}</h2>
-                    <span class="notifications-inbox__time">{{ formatTime(notification.createdAt) }}</span>
+                <button
+                  type="button"
+                  class="notifications-inbox__item-button"
+                  @click="onNotificationRowClick(notification)"
+                  @dblclick="onNotificationRowDoubleClick(notification)"
+                >
+                  <span v-if="!notification.isRead" class="visually-hidden">Unread. </span>
+                  <div class="notifications-inbox__icon">
+                    <i :class="notificationIcon(notification.type)"></i>
                   </div>
-                  <p class="notifications-inbox__message mb-2">{{ notification.message }}</p>
-                  <div v-if="notification.data" class="notifications-inbox__meta">
-                    <span v-if="notification.data.assetId">
-                      <strong>Asset:</strong> {{ notification.data.assetId }}
-                    </span>
-                    <span v-if="notification.data.maintenanceType">
-                      <strong>Type:</strong> {{ notification.data.maintenanceType }}
-                    </span>
-                    <span v-if="notification.data.scheduledDate">
-                      <strong>Due:</strong> {{ formatDate(notification.data.scheduledDate) }}
-                    </span>
-                  </div>
-                  <div
-                    v-if="!notification.isRead || getReviewRoute(notification)"
-                    class="notifications-inbox__footer"
-                  >
-                    <span
+                  <div class="notifications-inbox__content">
+                    <div class="notifications-inbox__item-header">
+                      <h2 class="notifications-inbox__item-title h6 mb-0">{{ notification.title }}</h2>
+                      <span class="notifications-inbox__time">{{ formatTime(notification.createdAt) }}</span>
+                    </div>
+                    <p class="notifications-inbox__message mb-2">{{ notification.message }}</p>
+                    <div v-if="notification.data" class="notifications-inbox__meta">
+                      <span v-if="notification.data.assetId">
+                        <strong>Asset:</strong> {{ notification.data.assetId }}
+                      </span>
+                      <span v-if="notification.data.maintenanceType">
+                        <strong>Type:</strong> {{ notification.data.maintenanceType }}
+                      </span>
+                      <span v-if="notification.data.scheduledDate">
+                        <strong>Due:</strong> {{ formatDate(notification.data.scheduledDate) }}
+                      </span>
+                    </div>
+                    <div
                       v-if="!notification.isRead"
-                      class="notifications-inbox__status is-unread"
+                      class="notifications-inbox__footer"
                     >
-                      Unread
-                    </span>
-                    <router-link
-                      v-if="getReviewRoute(notification)"
-                      :to="getReviewRoute(notification)!"
-                      class="btn btn-gray btn-modern btn-sm notifications-inbox__review"
-                      @click.stop
-                      @dblclick.stop
-                    >
-                      Review now
-                      <i class="fas fa-arrow-right ms-1"></i>
-                    </router-link>
+                      <span class="notifications-inbox__status is-unread">
+                        Unread
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </button>
+                <router-link
+                  v-if="getReviewRoute(notification)"
+                  :to="getReviewRoute(notification)!"
+                  class="btn btn-gray btn-modern btn-sm notifications-inbox__review"
+                >
+                  Review now
+                  <i class="fas fa-arrow-right ms-1"></i>
+                </router-link>
               </li>
             </ul>
 
@@ -127,7 +123,9 @@
                 @click="loadMore"
               >
                 <span v-if="isLoadingMore">
-                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <output class="spinner-border spinner-border-sm me-2">
+                    <span class="visually-hidden">Loading...</span>
+                  </output>
                   Loading...
                 </span>
                 <span v-else>Load more ({{ notifications.length }} of {{ totalCount }})</span>
@@ -220,21 +218,17 @@ async function onUnreadOnlyChange() {
 }
 
 function notificationIcon(type: Notification['type']) {
-  switch (type) {
-    case 'MAINTENANCE_REMINDER':
-      return 'fas fa-wrench'
-    default:
-      return 'fas fa-bell'
+  if (type === 'MAINTENANCE_REMINDER') {
+    return 'fas fa-wrench'
   }
+  return 'fas fa-bell'
 }
 
 function getReviewRoute(notification: Notification): RouteLocationRaw | null {
-  switch (notification.type) {
-    case 'MAINTENANCE_REMINDER':
-      return { name: ROUTE_NAMES.MAINTENANCE }
-    default:
-      return null
+  if (notification.type === 'MAINTENANCE_REMINDER') {
+    return { name: ROUTE_NAMES.MAINTENANCE }
   }
+  return null
 }
 
 function dispatchNotificationsUpdated() {
@@ -431,11 +425,25 @@ const formatDate = (dateString: string) =>
 
 .notifications-inbox__item {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
   padding: 1.25rem 1.5rem;
   border-top: 1px solid #f1f3f4;
-  cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.notifications-inbox__item-button {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
 }
 
 .notifications-inbox__item:first-child {
@@ -443,9 +451,13 @@ const formatDate = (dateString: string) =>
 }
 
 .notifications-inbox__item:hover,
-.notifications-inbox__item:focus-visible {
+.notifications-inbox__item:focus-within {
   background-color: #f8f9fa;
-  outline: none;
+}
+
+.notifications-inbox__item-button:focus-visible {
+  outline: 2px solid var(--secondary-purple, #667eea);
+  outline-offset: 2px;
 }
 
 .notifications-inbox__item--unread {
@@ -466,7 +478,7 @@ const formatDate = (dateString: string) =>
 }
 
 .notifications-inbox__item--unread .notifications-inbox__icon {
-  background: var(--secondary-purple, #667eea);
+  background: #4C51BF;
   color: #fff;
 }
 
@@ -498,7 +510,6 @@ const formatDate = (dateString: string) =>
 .notifications-inbox__message {
   color: #495057;
   line-height: 1.5;
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
@@ -512,7 +523,6 @@ const formatDate = (dateString: string) =>
 }
 
 .notifications-inbox__meta span {
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
@@ -532,12 +542,14 @@ const formatDate = (dateString: string) =>
 }
 
 .notifications-inbox__status.is-unread {
-  background: var(--secondary-purple, #667eea);
+  background: #4C51BF;
   color: #fff;
 }
 
 .notifications-inbox__review {
   text-decoration: none;
+  align-self: flex-start;
+  margin-left: calc(42px + 1rem);
 }
 
 .notifications-inbox__load-more {

@@ -443,7 +443,7 @@ const isMaintenanceEvent = (type: string): boolean => {
 
 .condition-poor {
   background: #FED7AA;
-  color: #C2410C;
+  color: #9A3412;
 }
 
 .condition-damaged {

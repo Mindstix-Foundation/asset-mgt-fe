@@ -21,13 +21,11 @@
 
 .employees-page-intro h2 {
   color: var(--primary-black);
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
 .employees-page-intro p {
   line-height: 1.45;
-  word-break: break-word;
   overflow-wrap: anywhere;
 }
 
@@ -632,8 +630,8 @@
 }
 
 .dropdown-item:active {
-  background-color: rgba(51, 31, 234, 0.2);
-  color: #331FEA;
+  background-color: #E8E6FC;
+  color: #15108A;
 }
 
 .dropdown-divider {
@@ -1129,7 +1127,6 @@
   .employee-info-section-compact .info-value-compact {
     font-size: 0.9rem !important;
     text-align: left !important;
-    word-break: break-word !important;
     overflow-wrap: break-word !important;
   }
 
@@ -1278,7 +1275,6 @@
   }
   
   .employee-info-section-compact .info-value-compact {
-    word-break: break-word !important;
     overflow-wrap: break-word !important;
   }
 

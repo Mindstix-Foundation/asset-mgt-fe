@@ -451,11 +451,11 @@
                     </div>
                     <div v-else>
                       <!-- New Asset Mode: Fixed AVAILABLE status -->
-                      <label for="status" class="form-label">Status</label>
+                      <label for="status-readonly" class="form-label">Status</label>
                       <input 
                         type="text" 
                         class="form-control" 
-                        id="status" 
+                        id="status-readonly" 
                         value="AVAILABLE"
                         readonly 
                         style="background-color: #F3F3F3;"

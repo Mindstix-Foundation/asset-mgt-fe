@@ -222,8 +222,9 @@
                           
                           <!-- Text type preview -->
                           <div v-if="(field.type || 'dropdown') === 'text'" class="mt-2">
-                            <div class="form-label small fw-bold mb-1">Preview</div>
+                            <label :for="`spec-field-preview-${index}`" class="form-label small fw-bold mb-1">Preview</label>
                             <input
+                              :id="`spec-field-preview-${index}`"
                               type="text"
                               class="form-control form-control-sm"
                               :placeholder="`Free text input for ${field.label || 'this field'}`"
@@ -547,7 +548,7 @@
             <button v-if="selectedEntityType === 'asset'" type="button" class="btn btn-gray btn-sm" @click="clearAssetSelection">
               <i class="fas fa-times me-1"></i>Clear
             </button>
-            <button v-if="selectedEntityType !== 'asset'" class="btn btn-green btn-sm" @click="saveEntity" :disabled="isSaving">
+            <button v-if="selectedEntityType !== 'asset'" type="button" class="btn btn-green btn-sm" @click="saveEntity" :disabled="isSaving">
               <i v-if="isSaving" class="fas fa-spinner fa-spin me-1"></i>
               <i v-else class="fas fa-save me-1"></i>
               {{ isSaving ? 'Saving...' : 'Save' }}
@@ -697,11 +698,15 @@
               <!-- Checkbox column for assets -->
               <td v-if="selectedEntityType === 'asset' && showFormCard">
                 <input 
+                  :id="`select-asset-table-${item.id}`"
                   type="checkbox" 
                   class="form-check-input" 
                   :checked="selectedAssetsForDeletion.includes(item.id)"
                   @change="toggleAssetSelection(item.id)"
                 >
+                <label :for="`select-asset-table-${item.id}`" class="visually-hidden">
+                  Select asset {{ item.assetId || item.id }}
+                </label>
               </td>
               
               <!-- Asset ID column -->
@@ -816,11 +821,15 @@
                         class="manage-category-card-checkbox"
                       >
                         <input
+                          :id="`select-asset-card-${item.id}`"
                           type="checkbox"
                           class="form-check-input"
                           :checked="selectedAssetsForDeletion.includes(item.id)"
                           @change="toggleAssetSelection(item.id)"
                         >
+                        <label :for="`select-asset-card-${item.id}`" class="visually-hidden">
+                          Select asset {{ item.assetId || item.id }}
+                        </label>
                       </div>
                       <div
                         class="manage-category-card-icon rounded-circle d-flex align-items-center justify-content-center"
@@ -3258,7 +3267,7 @@ onUnmounted(() => {
   color: var(--primary-mid-gray, #6c757d);
   font-size: 0.8rem;
   line-height: 1.35;
-  word-break: break-word;
+  overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -3273,7 +3282,7 @@ onUnmounted(() => {
 
 .manage-category-card-field {
   min-width: 0;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .manage-category-card-actions {

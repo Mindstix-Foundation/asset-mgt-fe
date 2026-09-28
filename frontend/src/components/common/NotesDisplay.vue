@@ -90,7 +90,6 @@ const hasNotes = computed(() => {
 .notes-text-formatted {
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  word-break: break-word;
   max-height: 200px;
   overflow-y: auto;
   scrollbar-width: thin;

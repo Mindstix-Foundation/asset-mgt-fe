@@ -60,7 +60,7 @@ export interface AssetIssue {
     email: string
   }
   issuedByUser: {
-    username: string
+    name: string
   }
 }
 

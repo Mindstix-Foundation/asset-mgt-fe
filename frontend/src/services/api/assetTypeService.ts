@@ -15,7 +15,7 @@ export interface AssetType {
   }
   createdByUser: {
     id: number
-    username: string
+    name: string
   }
   _count: {
     assets: number

@@ -8,7 +8,7 @@ export interface Brand {
   updatedAt: string
   createdByUser: {
     id: number
-    username: string
+    name: string
   }
   _count: {
     assets: number

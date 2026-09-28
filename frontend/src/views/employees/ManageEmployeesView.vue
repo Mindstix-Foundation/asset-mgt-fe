@@ -208,11 +208,15 @@
               <!-- Checkbox column -->
               <td v-if="showFormCard">
                 <input 
+                  :id="`select-employee-table-${employee.id}`"
                   type="checkbox" 
                   class="form-check-input" 
                   :checked="selectedEmployeesForDeletion.includes(employee.id)"
                   @change="toggleEmployeeSelection(employee.id)"
                 >
+                <label :for="`select-employee-table-${employee.id}`" class="visually-hidden">
+                  Select employee {{ employee.employeeId || employee.id }}
+                </label>
               </td>
               
               <!-- Employee ID column -->
@@ -278,11 +282,15 @@
                     class="manage-employee-card-checkbox"
                   >
                     <input
+                      :id="`select-employee-card-${employee.id}`"
                       type="checkbox"
                       class="form-check-input"
                       :checked="selectedEmployeesForDeletion.includes(employee.id)"
                       @change="toggleEmployeeSelection(employee.id)"
                     >
+                    <label :for="`select-employee-card-${employee.id}`" class="visually-hidden">
+                      Select employee {{ employee.employeeId || employee.id }}
+                    </label>
                   </div>
                   <div
                     class="manage-employee-card-icon rounded-circle d-flex align-items-center justify-content-center"
@@ -1220,7 +1228,7 @@ onUnmounted(() => {
   font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.3;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .manage-employee-card-status.badge {

@@ -6,20 +6,16 @@
 // Base API URL - can be overridden by environment variable
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'
 
-// Sonar S2068: these are URL path segments, not credentials
-const _pw = 'password'
-
 // API Endpoints
 export const API_ENDPOINTS = {
   // Auth endpoints
   auth: {
-    login: '/auth/login',
+    google: '/auth/google',
+    googleLogin: '/auth/google-login',
+    googleCodeLogin: '/auth/google-code-login',
     logout: '/auth/logout',
     refresh: '/auth/refresh',
     profile: '/auth/profile',
-    changePassword: `/auth/change-${_pw}`,
-    forgotPassword: `/auth/forgot-${_pw}`,
-    resetPassword: `/auth/reset-${_pw}`,
   },
 
   // Asset endpoints

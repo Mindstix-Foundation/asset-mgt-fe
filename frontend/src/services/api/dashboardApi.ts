@@ -138,11 +138,12 @@ class DashboardApiService {
     }
 
     // Initialize all standard categories with 0 values
-    const standardCategories = ['Laptop', 'Desktop', 'Monitor', 'Mobile', 'Tablet', 'Accessories']
+    const standardCategoryOrder = ['Laptop', 'Desktop', 'Monitor', 'Mobile', 'Tablet', 'Accessories']
+    const standardCategories = new Set(standardCategoryOrder)
     const distributionMap = new Map<string, { count: number; percentage: number }>()
     
     // Initialize standard categories
-    for (const category of standardCategories) {
+    for (const category of standardCategoryOrder) {
       distributionMap.set(category, { count: 0, percentage: 0 })
     }
 
@@ -165,7 +166,7 @@ class DashboardApiService {
     const result: Array<{ name: string; count: number; percentage: number }> = []
     
     // Add standard categories in order
-    for (const category of standardCategories) {
+    for (const category of standardCategoryOrder) {
       const data = distributionMap.get(category)!
       result.push({
         name: category,
@@ -176,7 +177,7 @@ class DashboardApiService {
     
     // Add any additional categories from backend
     for (const [name, data] of distributionMap) {
-      if (!standardCategories.includes(name)) {
+      if (!standardCategories.has(name)) {
         result.push({
           name,
           count: data.count,

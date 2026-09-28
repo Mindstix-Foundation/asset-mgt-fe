@@ -39,7 +39,7 @@ export type Status = 'active' | 'inactive' | 'pending' | 'archived'
 
 export interface User {
   id: string
-  username: string
+  name: string
   role: 'admin' | 'hr' | 'employee'
   permissions: string[]
-} 
+}

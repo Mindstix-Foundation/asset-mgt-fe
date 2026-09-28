@@ -22,7 +22,7 @@ export interface Model {
   }
   createdByUser: {
     id: number
-    username: string
+    name: string
   }
   _count: {
     assets: number

@@ -3,18 +3,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import authService from '@/services/core/authService'
 
-export interface LoginCredentials {
-  username: string
-  password: string
-}
-
 export interface LoginResult {
   success: boolean
   error?: string
   user?: any
 }
-
-const API_BASE_URL = 'http://localhost:3000/api'
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
@@ -41,7 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
     const currentPath = globalThis.window.location.pathname
     
     // Only redirect if not already on a public route
-    if (!['/','/ login', '/forgot-password', '/reset-password'].includes(currentPath)) {
+    if (!['/', '/login'].includes(currentPath)) {
       router.push({
         path: '/',
         query: { redirect: currentPath },
@@ -54,31 +47,53 @@ export const useAuthStore = defineStore('auth', () => {
     globalThis.window.addEventListener('auth:expired', handleAuthExpired)
   }
 
-  const login = async (credentials: LoginCredentials): Promise<LoginResult> => {
+  const activateGoogleSession = async (): Promise<LoginResult> => {
     try {
-      // Use the authService for consistent authentication
-      const data = await authService.login(credentials)
-      
-      if (data.success && data.access_token) {
-        user.value = data.user
-        isAuthenticated.value = true
-        token.value = data.access_token
-        return { success: true, user: data.user }
-      } else {
-        return { success: false, error: 'Invalid response from server' }
-      }
+      const profileUser = await authService.activateSessionFromProfile()
+      user.value = profileUser
+      isAuthenticated.value = true
+      token.value = null
+      return { success: true, user: profileUser }
     } catch (error) {
-      console.error('Login error:', error)
-      
-      // Check if it's a network error
+      console.error('Google session activate error:', error)
       if (error instanceof TypeError && error.message.includes('fetch')) {
-        return { 
-          success: false, 
-          error: 'Unable to connect to server. Please make sure the backend is running on http://localhost:3000' 
+        return {
+          success: false,
+          error:
+            'Unable to connect to server. Please make sure the backend is running on http://localhost:3000',
         }
       }
-      
-      return { success: false, error: 'Login failed. Please try again.' }
+      const message = error instanceof Error ? error.message : undefined
+      return {
+        success: false,
+        error: message || 'Google login failed. Please try again.',
+      }
+    }
+  }
+
+  const loginWithGoogle = async (
+    credential: string,
+    rememberMe: boolean = false,
+  ): Promise<LoginResult> => {
+    try {
+      const data = await authService.loginWithGoogle({
+        credential,
+        remember_me: rememberMe,
+      })
+      if (data.success && data.user) {
+        user.value = data.user
+        isAuthenticated.value = true
+        token.value = data.access_token ?? null
+        return { success: true, user: data.user }
+      }
+      return { success: false, error: 'Invalid response from server' }
+    } catch (error) {
+      console.error('Google login error:', error)
+      const message = error instanceof Error ? error.message : undefined
+      return {
+        success: false,
+        error: message || 'Google login failed. Please try again.',
+      }
     }
   }
 
@@ -114,16 +129,17 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const getUsername = () => {
-    return user.value?.name || user.value?.username || null
+    return user.value?.name || user.value?.email || null
   }
 
   return {
     user,
     isAuthenticated,
     token,
-    login,
+    activateGoogleSession,
+    loginWithGoogle,
     logout,
     checkAuthStatus,
     getUsername
   }
-}) 
+})

@@ -17,16 +17,6 @@ const router = createRouter({
       redirect: '/'
     },
     {
-      path: '/forgot-password',
-      name: ROUTE_NAMES.FORGOT_PASSWORD,
-      component: () => import('../views/auth/ForgotPasswordView.vue'),
-    },
-    {
-      path: '/reset-password',
-      name: ROUTE_NAMES.RESET_PASSWORD,
-      component: () => import('../views/auth/ResetPasswordView.vue'),
-    },
-    {
       path: '/app',
       component: MainLayout,
       redirect: '/app/dashboard',
@@ -152,11 +142,6 @@ const router = createRouter({
           component: () => import('../views/reports/ReportsView.vue'),
         },
         {
-          path: 'change-password',
-          name: ROUTE_NAMES.CHANGE_PASSWORD,
-          component: () => import('../views/auth/ChangePasswordView.vue'),
-        },
-        {
           path: 'profile',
           name: ROUTE_NAMES.PROFILE,
           component: () => import('../views/profile/ProfileView.vue'),
@@ -182,7 +167,7 @@ const router = createRouter({
 })
 
 // Public routes that don't require authentication
-const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password']
+const publicRoutes = ['/', '/login']
 
 // Navigation guards
 router.beforeEach((to, from, next) => {

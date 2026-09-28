@@ -8,7 +8,7 @@ export interface AssetCategory {
   updatedAt: string
   createdByUser: {
     id: number
-    username: string
+    name: string
   }
   _count: {
     assetTypes: number

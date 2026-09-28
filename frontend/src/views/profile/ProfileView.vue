@@ -77,18 +77,6 @@
                   <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Email Address</span>
                   <p class="mb-0" style="color: var(--primary-black);">{{ userData.email || 'N/A' }}</p>
                 </div>
-                <div class="col-12 col-md-6" v-if="userData.employee?.phone">
-                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Phone Number</span>
-                  <p class="mb-0" style="color: var(--primary-black);">{{ userData.employee.phone }}</p>
-                </div>
-                <div class="col-12 col-md-6" v-if="userData.employee?.dateOfBirth">
-                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Date of Birth</span>
-                  <p class="mb-0" style="color: var(--primary-black);">{{ formatDate(userData.employee.dateOfBirth) }}</p>
-                </div>
-                <div class="col-12" v-if="userData.employee?.address">
-                  <span class="form-label fw-semibold text-muted" style="font-size: 0.875rem;">Address</span>
-                  <p class="mb-0" style="color: var(--primary-black);">{{ userData.employee.address }}</p>
-                </div>
               </div>
             </div>
           </div>
@@ -134,10 +122,6 @@
             >
               <i class="fas fa-users-cog me-2"></i>
               Manage Admins
-            </button>
-            <button @click="handleChangePassword" class="btn btn-gray">
-              <i class="fas fa-key me-2"></i>
-              Change Password
             </button>
             <button @click="showLogoutModal" class="btn btn-red">
               <i class="fas fa-sign-out-alt me-2"></i>
@@ -198,15 +182,11 @@ interface EmployeeData {
   lastName: string
   email: string
   employeeId: string
-  phone: string | null
-  dateOfBirth: string | null
-  address: string | null
   status: boolean
 }
 
 interface UserData {
   id: number
-  username: string
   email: string
   name: string
   employeeId: string
@@ -222,7 +202,6 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const userData = ref<UserData>({
   id: 0,
-  username: '',
   email: '',
   name: '',
   employeeId: '',
@@ -263,12 +242,6 @@ const fetchUserData = async () => {
   }
 }
 
-const formatDate = (dateString: string | null) => {
-  if (!dateString) return 'N/A'
-  const date = parseBackendDate(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
 const formatDateTime = (dateString: string | null) => {
   if (!dateString) return 'N/A'
   const date = parseBackendDate(dateString)
@@ -295,10 +268,6 @@ const parseBackendDate = (dateString: string): Date => {
   
   // Fallback to original parsing if format is different
   return new Date(dateString)
-}
-
-const handleChangePassword = () => {
-  router.push({ name: 'change-password' })
 }
 
 const handleManageAdmins = () => {
